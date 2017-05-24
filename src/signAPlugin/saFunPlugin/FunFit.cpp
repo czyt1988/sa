@@ -10,7 +10,7 @@
 #include "SAChart2D.h"
 #include <QMdiSubWindow>
 #include "qwt_plot_curve.h"
-
+#include "SAConfig.h"
 #define TR(str)\
     QApplication::translate("FunFit", str, 0)
 
@@ -41,7 +41,8 @@ void FunFit::polyfitInChart()
         return;
     }
     const QString idPolyN = "polyN";
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr()
+                            ,static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     dlg.appendIntProperty(idPolyN,TR("order of poly")
                              ,1,20

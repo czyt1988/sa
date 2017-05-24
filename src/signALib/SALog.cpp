@@ -640,6 +640,7 @@ bool SALog::appendInFile(const SALogInfo &info)
                << QString::number(info.getLineNum())
                << QString::number(info.getType());
     str = SACsvWriter::toCsvStringLine(csvSection);
+    emit appendLogInfoToFile(str);
     return true;
 }
 

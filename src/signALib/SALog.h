@@ -232,6 +232,11 @@ signals:
     /// \brief 发生错误
     ///
     void occurError(const QString& errString);
+    ///
+    /// \brief 在写入log文件之前发射的信号，触发写日志线程
+    /// \param str 写入一行日志文件的内容
+    ///
+    void appendLogInfoToFile(const QString& str);
 private slots:
     void onWtiterErrorHappen(int code,const QString& errString);
 private:

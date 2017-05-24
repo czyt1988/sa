@@ -13,7 +13,7 @@
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include <QMdiSubWindow>
-
+#include "SAConfig.h"
 
 #define TR(str)\
     QApplication::translate("FunDataPreprocessing", str, 0)
@@ -29,7 +29,7 @@ void FunDataPreprocessing::sigmaDetect()
         return;
     }
     QList<SAFigureWindow*> figList;//用于保存当前主界面所有的绘图窗口
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
     const QString idSigma = "sigma";
     const QString idPlotInNewFigure = "isPlotInNewFigure";
     const QString idPlotOriginDataAndOutRangDataInNewFigure = "isPlotOriginDataAndOutRangDataInNewFigure";
@@ -225,7 +225,7 @@ void FunDataPreprocessing::pointSmooth()
     const QString idPoint = "points";
     const QString idPower = "power";
     const QString idIsPlot = "isPlot";
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     dlg.appendEnumProperty(idPoint,TR("points")
                            ,{"3","5","7"}

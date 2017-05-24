@@ -1,7 +1,8 @@
 #include "SAConfig.h"
 #include <QDir>
 #include <QApplication>
-
+#include <QXmlStreamReader>
+#include <QXmlStreamWriter>
 #include "SALog.h"
 
 #define CONFIG_FOLDER_NAME "config"
@@ -10,8 +11,21 @@ SAConfig* SAConfig::s_instance = nullptr;
 class SAConfigPrivate
 {
 public:
+    SAConfigPrivate();
+    init();
+public:
     SAConfig::PropertyBrowserType propertyBrowserType;
 };
+
+SAConfigPrivate::SAConfigPrivate()
+{
+    init();
+}
+
+SAConfigPrivate::init()
+{
+    this->propertyBrowserType = SAConfig::GroupBoxType;
+}
 
 SAConfig::SAConfig():QObject(nullptr)
   ,m_d(new SAConfigPrivate)
@@ -69,3 +83,12 @@ SAConfig::PropertyBrowserType SAConfig::getDefaultPropertySetDialogType() const
 {
     return m_d->propertyBrowserType;
 }
+///
+/// \brief 所有参数设置为默认
+///
+void SAConfig::setDefault()
+{
+    m_d->init();
+}
+
+
