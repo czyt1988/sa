@@ -1,10 +1,20 @@
 #include "SAConfig.h"
 #include <QDir>
 #include <QApplication>
+
+#include "SALog.h"
+
 #define CONFIG_FOLDER_NAME "config"
+
 SAConfig* SAConfig::s_instance = nullptr;
+class SAConfigPrivate
+{
+public:
+    SAConfig::PropertyBrowserType propertyBrowserType;
+};
 
 SAConfig::SAConfig():QObject(nullptr)
+  ,m_d(new SAConfigPrivate)
 {
     QString configPath = getConfigFolderPath();
     QDir dir(configPath);
@@ -12,6 +22,7 @@ SAConfig::SAConfig():QObject(nullptr)
     {
         dir.mkpath(configPath);
     }
+    load();
 }
 
 SAConfig::~SAConfig()
@@ -35,6 +46,14 @@ void SAConfig::load()
 
 }
 ///
+/// \brief 保存配置
+/// \return 成功保存返回true
+///
+bool SAConfig::save()
+{
+
+}
+///
 /// \brief 获取配置文件的路径
 /// \return
 ///
@@ -48,5 +67,5 @@ QString SAConfig::getConfigFolderPath()
 ///
 SAConfig::PropertyBrowserType SAConfig::getDefaultPropertySetDialogType() const
 {
-
+    return m_d->propertyBrowserType;
 }
