@@ -10,7 +10,6 @@
 # Copied and modified from qt_functions.prf
 
 defineReplace(qwtLibraryTarget) {
-
     unset(LIBRARY_NAME)
     LIBRARY_NAME = $$1
 
@@ -36,20 +35,19 @@ defineReplace(qwtLibraryTarget) {
 defineTest(qwtAddLibrary) {
 
     LIB_NAME = $$1
-
     unset(LINKAGE)
 
     mac:contains(QWT_CONFIG, QwtFramework) {
 
         LINKAGE = -framework $${LIB_NAME}$${QT_LIBINFIX}
     }
-
     isEmpty(LINKAGE) {
 
         if(!debug_and_release|build_pass):CONFIG(debug, debug|release) {
 
             mac:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}_debug
             win32:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}d
+
         }
     }
 
