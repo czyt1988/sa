@@ -1,0 +1,1218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1219</width>
+    <height>689</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>signA-信号处理</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonTextUnderIcon</enum>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="maximumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1219</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <widget class="QMenu" name="menu_export">
+     <property name="title">
+      <string>导出</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="menu_import">
+     <property name="title">
+      <string>导入</string>
+     </property>
+    </widget>
+    <addaction name="actionOpen"/>
+    <addaction name="actionOpenProject"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionClearProject"/>
+    <addaction name="menu_export"/>
+    <addaction name="menu_import"/>
+    <addaction name="separator"/>
+    <addaction name="actionExportReport"/>
+    <addaction name="actionQuite"/>
+   </widget>
+   <widget class="QMenu" name="menu_window">
+    <property name="title">
+     <string>窗口</string>
+    </property>
+    <widget class="QMenu" name="menu_2">
+     <property name="title">
+      <string>窗口</string>
+     </property>
+     <addaction name="action_chartViewer"/>
+     <addaction name="action_dataFeatureDock"/>
+     <addaction name="action_subWindowListDock"/>
+     <addaction name="action_layerOutDock"/>
+     <addaction name="action_valueManagerDock"/>
+     <addaction name="action_valueViewerDock"/>
+     <addaction name="action_chartDataViewerDock"/>
+    </widget>
+    <addaction name="action_Window_WindowMode"/>
+    <addaction name="action_Window_TabMode"/>
+    <addaction name="separator"/>
+    <addaction name="action_Window_Cascade"/>
+    <addaction name="action_Window_Tile"/>
+    <addaction name="separator"/>
+    <addaction name="menu_2"/>
+    <addaction name="actionSetDefalutDockPos"/>
+   </widget>
+   <widget class="QMenu" name="menu_Analysis">
+    <property name="title">
+     <string>分析</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_chart">
+    <property name="title">
+     <string>图表</string>
+    </property>
+    <addaction name="actionNewChart"/>
+    <addaction name="actionNewTrend"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuData">
+    <property name="title">
+     <string>数据</string>
+    </property>
+    <widget class="QMenu" name="menu_chartDataManager">
+     <property name="title">
+      <string>图线数据操作</string>
+     </property>
+     <property name="icon">
+      <iconset resource="signA_Res.qrc">
+       <normaloff>:/image/res_image/dataManager.png</normaloff>:/image/res_image/dataManager.png</iconset>
+     </property>
+     <addaction name="actionInRangDataRemove"/>
+     <addaction name="action_OutRangDataRemove"/>
+     <addaction name="actionPickCurveToData"/>
+    </widget>
+    <widget class="QMenu" name="menu_dataManager">
+     <property name="title">
+      <string>变量操作</string>
+     </property>
+     <addaction name="actionViewValueInCurrentTab"/>
+     <addaction name="actionViewValueInNewTab"/>
+     <addaction name="actionDeleteValue"/>
+     <addaction name="actionRenameValue"/>
+    </widget>
+    <addaction name="menu_chartDataManager"/>
+    <addaction name="menu_dataManager"/>
+   </widget>
+   <widget class="QMenu" name="menu_chartSet">
+    <property name="title">
+     <string>图表操作</string>
+    </property>
+    <widget class="QMenu" name="menu_grid">
+     <property name="title">
+      <string>网格设置</string>
+     </property>
+     <property name="icon">
+      <iconset resource="signA_Res.qrc">
+       <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid.png</iconset>
+     </property>
+     <addaction name="action_showGrid"/>
+     <addaction name="separator"/>
+     <addaction name="action_showHGrid"/>
+     <addaction name="action_showVGrid"/>
+     <addaction name="separator"/>
+     <addaction name="action_showCrowdedHGrid"/>
+     <addaction name="action_showCrowdedVGrid"/>
+    </widget>
+    <widget class="QMenu" name="menu_legend">
+     <property name="title">
+      <string>图例</string>
+     </property>
+     <property name="icon">
+      <iconset resource="signA_Res.qrc">
+       <normaloff>:/chartCtrlToolbar/res_image/legend_menu.png</normaloff>:/chartCtrlToolbar/res_image/legend_menu.png</iconset>
+     </property>
+     <addaction name="action_showLegend"/>
+     <addaction name="action_legendPanel"/>
+    </widget>
+    <widget class="QMenu" name="menuZoomSet">
+     <property name="title">
+      <string>缩放操作</string>
+     </property>
+     <property name="icon">
+      <iconset resource="signA_Res.qrc">
+       <normaloff>:/image/res_image/zoom.png</normaloff>:/image/res_image/zoom.png</iconset>
+     </property>
+     <addaction name="action_zoom"/>
+     <addaction name="action_zoomReset"/>
+    </widget>
+    <widget class="QMenu" name="menu_chartWidgetInfo">
+     <property name="title">
+      <string>信息</string>
+     </property>
+     <property name="icon">
+      <iconset resource="signA_Res.qrc">
+       <normaloff>:/chartCtrlToolbar/res_image/chartInfo_menu.png</normaloff>:/chartCtrlToolbar/res_image/chartInfo_menu.png</iconset>
+     </property>
+     <addaction name="action_showChartInfo"/>
+    </widget>
+    <widget class="QMenu" name="menu_dataPickMenu">
+     <property name="title">
+      <string>数据显示</string>
+     </property>
+     <addaction name="action_yDataPicker"/>
+     <addaction name="action_XYDataPicker"/>
+    </widget>
+    <addaction name="action_crossCursor"/>
+    <addaction name="action_panner"/>
+    <addaction name="menu_grid"/>
+    <addaction name="menu_legend"/>
+    <addaction name="menuZoomSet"/>
+    <addaction name="action_chartSet"/>
+    <addaction name="menu_chartWidgetInfo"/>
+    <addaction name="menu_dataPickMenu"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>编辑</string>
+    </property>
+    <addaction name="actionRescind"/>
+    <addaction name="actionRedo"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menu_chart"/>
+   <addaction name="menu_Analysis"/>
+   <addaction name="menuData"/>
+   <addaction name="menu_window"/>
+   <addaction name="menu_chartSet"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <property name="allowedAreas">
+    <set>Qt::LeftToolBarArea|Qt::RightToolBarArea|Qt::TopToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionClearProject"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="dockWidget_DataFeature">
+   <property name="windowIcon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/dataFeatureDock.png</normaloff>:/image/res_image/dataFeatureDock.png</iconset>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string extracomment="显示图形的数据相关特性">数据特性</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="DataFeatureWidget" name="dataFeatureWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar_chart">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPickCurveToData"/>
+   <addaction name="actionInRangDataRemove"/>
+   <addaction name="action_OutRangDataRemove"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_chartSet">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_crossCursor"/>
+   <addaction name="action_panner"/>
+   <addaction name="action_zoom"/>
+   <addaction name="action_XYDataPicker"/>
+   <addaction name="action_showGrid"/>
+   <addaction name="action_showLegend"/>
+   <addaction name="action_legendPanel"/>
+   <addaction name="action_chartSet"/>
+   <addaction name="action_showChartInfo"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_plot">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonFollowStyle</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNewChart"/>
+   <addaction name="actionNewTrend"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_windowList">
+   <property name="windowIcon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/subWindowListDock.png</normaloff>:/image/res_image/subWindowListDock.png</iconset>
+   </property>
+   <property name="windowTitle">
+    <string>子窗口列表</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <property name="spacing">
+      <number>1</number>
+     </property>
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="QListView" name="listView_window"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_valueManage">
+   <property name="windowIcon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/valueViewer.png</normaloff>:/image/res_image/valueViewer.png</iconset>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>变量管理</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="spacing">
+      <number>1</number>
+     </property>
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="QTreeView" name="treeView_valueManager">
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_plotLayer">
+   <property name="windowTitle">
+    <string>图层</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <property name="spacing">
+      <number>1</number>
+     </property>
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
+      <number>1</number>
+     </property>
+     <item>
+      <widget class="QTableView" name="tableView_layer">
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_chartDataViewer">
+   <property name="windowIcon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/chartDataViewer.png</normaloff>:/image/res_image/chartDataViewer.png</iconset>
+   </property>
+   <property name="windowTitle">
+    <string>绘图数据预览</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_chartDataViewer">
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QSplitter" name="splitter_chartDataViewer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QTreeView" name="treeView_curPlotItem">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+       </widget>
+       <widget class="QTableView" name="tableView_curSelItemDatas">
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_main">
+   <property name="windowIcon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/chartViewer.png</normaloff>:/image/res_image/chartViewer.png</iconset>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllDockWidgetAreas</set>
+   </property>
+   <property name="windowTitle">
+    <string>主视图</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_7">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QMdiArea" name="mdiArea">
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="viewMode">
+        <enum>QMdiArea::TabbedView</enum>
+       </property>
+       <property name="documentMode">
+        <bool>false</bool>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="tabsMovable">
+        <bool>true</bool>
+       </property>
+       <property name="tabShape">
+        <enum>QTabWidget::Triangular</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_valueViewer">
+   <property name="windowIcon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/valueViewer.png</normaloff>:/image/res_image/valueViewer.png</iconset>
+   </property>
+   <property name="windowTitle">
+    <string>变量数据预览</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_6">
+    <layout class="QVBoxLayout" name="verticalLayout_8">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="SATabValueViewerWidget" name="tabWidget_valueViewer">
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_message">
+   <property name="windowTitle">
+    <string>信息窗口</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_8">
+    <layout class="QVBoxLayout" name="verticalLayout_9">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="SAMessageWidget" name="saMessageWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/open.png</normaloff>:/image/res_image/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开文件</string>
+   </property>
+   <property name="toolTip">
+    <string>打开数据源</string>
+   </property>
+  </action>
+  <action name="action_Window_Cascade">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/windowStack.png</normaloff>:/image/res_image/windowStack.png</iconset>
+   </property>
+   <property name="text">
+    <string>层叠布局</string>
+   </property>
+  </action>
+  <action name="action_Window_Tile">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/tile.png</normaloff>:/image/res_image/tile.png</iconset>
+   </property>
+   <property name="text">
+    <string>平铺布局</string>
+   </property>
+  </action>
+  <action name="action_Window_WindowMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/windowMode.png</normaloff>:/image/res_image/windowMode.png</iconset>
+   </property>
+   <property name="text">
+    <string>窗口模式</string>
+   </property>
+  </action>
+  <action name="action_Window_TabMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/tabmode.png</normaloff>:/image/res_image/tabmode.png</iconset>
+   </property>
+   <property name="text">
+    <string>标签模式</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/save.png</normaloff>:/image/res_image/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </action>
+  <action name="actionQuite">
+   <property name="text">
+    <string>退出</string>
+   </property>
+  </action>
+  <action name="action_A_FFT">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/Chart-Axes.png</normaloff>:/image/res_image/Chart-Axes.png</iconset>
+   </property>
+   <property name="text">
+    <string>频谱</string>
+   </property>
+  </action>
+  <action name="action_A_PowerS">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/power-s.png</normaloff>:/image/res_image/power-s.png</iconset>
+   </property>
+   <property name="text">
+    <string>功率谱</string>
+   </property>
+  </action>
+  <action name="actionProjectTree">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/projectTree.png</normaloff>:/image/res_image/projectTree.png</iconset>
+   </property>
+   <property name="text">
+    <string>项目结构</string>
+   </property>
+  </action>
+  <action name="action_dataFeatureDock">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/dataFeatureDock.png</normaloff>:/image/res_image/dataFeatureDock.png</iconset>
+   </property>
+   <property name="text">
+    <string>数据特性</string>
+   </property>
+  </action>
+  <action name="actionNewChart">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/Graph-add.png</normaloff>:/image/res_image/Graph-add.png</iconset>
+   </property>
+   <property name="text">
+    <string>新图例</string>
+   </property>
+   <property name="toolTip">
+    <string>新图例-根据用户定义x,y轴的数据绘制图形</string>
+   </property>
+  </action>
+  <action name="actionNewTrend">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/trendChart.png</normaloff>:/image/res_image/trendChart.png</iconset>
+   </property>
+   <property name="text">
+    <string>趋势图</string>
+   </property>
+   <property name="toolTip">
+    <string>按数据序列顺序绘制趋势</string>
+   </property>
+  </action>
+  <action name="actionClearProject">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/clear.png</normaloff>:/image/res_image/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>清除方案</string>
+   </property>
+  </action>
+  <action name="action_LeastSquare1Dim">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/linerFit.png</normaloff>:/image/res_image/linerFit.png</iconset>
+   </property>
+   <property name="text">
+    <string>线性回归</string>
+   </property>
+   <property name="toolTip">
+    <string>一元线性回归分析</string>
+   </property>
+  </action>
+  <action name="actionPolyfit">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/ployFit.png</normaloff>:/image/res_image/ployFit.png</iconset>
+   </property>
+   <property name="text">
+    <string>多项式拟合</string>
+   </property>
+  </action>
+  <action name="actionExportDataToFile">
+   <property name="text">
+    <string>导出曲线数据到文件</string>
+   </property>
+  </action>
+  <action name="actionInRangDataRemove">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/InRangDataRemove.png</normaloff>:/image/res_image/InRangDataRemove.png</iconset>
+   </property>
+   <property name="text">
+    <string>移除选定范围数据</string>
+   </property>
+  </action>
+  <action name="action_OutRangDataRemove">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/OutRangDataRemove.png</normaloff>:/image/res_image/OutRangDataRemove.png</iconset>
+   </property>
+   <property name="text">
+    <string>移除范围外数据</string>
+   </property>
+  </action>
+  <action name="actionExportReport">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/ExportReport.png</normaloff>:/image/res_image/ExportReport.png</iconset>
+   </property>
+   <property name="text">
+    <string>生成报表</string>
+   </property>
+  </action>
+  <action name="action_subWindowListDock">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/subWindowListDock.png</normaloff>:/image/res_image/subWindowListDock.png</iconset>
+   </property>
+   <property name="text">
+    <string>子窗口列表</string>
+   </property>
+  </action>
+  <action name="action_crossCursor">
+   <property name="icon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/crosserPicker.png</normaloff>:/chartCtrlToolbar/res_image/crosserPicker.png</iconset>
+   </property>
+   <property name="text">
+    <string>十字光标</string>
+   </property>
+  </action>
+  <action name="action_panner">
+   <property name="icon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/handPanner.png</normaloff>:/chartCtrlToolbar/res_image/handPanner.png</iconset>
+   </property>
+   <property name="text">
+    <string>移动</string>
+   </property>
+  </action>
+  <action name="action_zoom">
+   <property name="icon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/zoomInRect.png</normaloff>:/chartCtrlToolbar/res_image/zoomInRect.png</iconset>
+   </property>
+   <property name="text">
+    <string>范围缩放</string>
+   </property>
+   <property name="iconText">
+    <string>缩放</string>
+   </property>
+  </action>
+  <action name="action_yDataPicker">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/dataPicker_y.png</normaloff>:/chartCtrlToolbar/res_image/dataPicker_y.png</iconset>
+   </property>
+   <property name="text">
+    <string>Y值显示</string>
+   </property>
+   <property name="iconText">
+    <string>数据</string>
+   </property>
+   <property name="toolTip">
+    <string>在图表上显示鼠标经过曲线的数据</string>
+   </property>
+  </action>
+  <action name="action_showGrid">
+   <property name="icon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/grid.png</normaloff>:/chartCtrlToolbar/res_image/grid.png</iconset>
+   </property>
+   <property name="text">
+    <string>显示网格</string>
+   </property>
+   <property name="iconText">
+    <string>网格</string>
+   </property>
+  </action>
+  <action name="action_showHGrid">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XOnly.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XOnly.png</iconset>
+   </property>
+   <property name="text">
+    <string>显示水平网格</string>
+   </property>
+   <property name="iconText">
+    <string>水平网格</string>
+   </property>
+   <property name="toolTip">
+    <string>显示/隐藏 水平网格线</string>
+   </property>
+  </action>
+  <action name="action_showVGrid">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YOnly.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YOnly.png</iconset>
+   </property>
+   <property name="text">
+    <string>显示垂直网格</string>
+   </property>
+   <property name="iconText">
+    <string>垂直网格</string>
+   </property>
+   <property name="toolTip">
+    <string>显示/隐藏垂直网格</string>
+   </property>
+  </action>
+  <action name="action_showCrowdedHGrid">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XMin.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XMin.png</iconset>
+   </property>
+   <property name="text">
+    <string>密集水平网格</string>
+   </property>
+   <property name="toolTip">
+    <string>显示/隐藏 密集水平网格</string>
+   </property>
+  </action>
+  <action name="action_showCrowdedVGrid">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YMin.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YMin.png</iconset>
+   </property>
+   <property name="text">
+    <string>密集垂直网格</string>
+   </property>
+  </action>
+  <action name="action_showLegend">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/legend.png</normaloff>:/chartCtrlToolbar/res_image/legend.png</iconset>
+   </property>
+   <property name="text">
+    <string>显示/隐藏 图例</string>
+   </property>
+   <property name="iconText">
+    <string>图例</string>
+   </property>
+   <property name="toolTip">
+    <string>显示/隐藏 图例</string>
+   </property>
+  </action>
+  <action name="action_legendPanel">
+   <property name="icon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/legendPanel.png</normaloff>:/chartCtrlToolbar/res_image/legendPanel.png</iconset>
+   </property>
+   <property name="text">
+    <string>图例选择器</string>
+   </property>
+   <property name="iconText">
+    <string>图例选择</string>
+   </property>
+  </action>
+  <action name="action_chartSet">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/chartSet.png</normaloff>:/chartCtrlToolbar/res_image/chartSet.png</iconset>
+   </property>
+   <property name="text">
+    <string>图表设置</string>
+   </property>
+  </action>
+  <action name="action_zoomReset">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/zoom_reset.png</normaloff>:/image/res_image/zoom_reset.png</iconset>
+   </property>
+   <property name="text">
+    <string>最优视图</string>
+   </property>
+  </action>
+  <action name="action_showChartInfo">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/showChartInfo.png</normaloff>:/chartCtrlToolbar/res_image/showChartInfo.png</iconset>
+   </property>
+   <property name="text">
+    <string>显示信息窗口</string>
+   </property>
+  </action>
+  <action name="actionPickCurveToData">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/pickCurveToData.png</normaloff>:/image/res_image/pickCurveToData.png</iconset>
+   </property>
+   <property name="text">
+    <string>从曲线提取数据</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/about.png</normaloff>:/image/res_image/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
+  <action name="actionRescind">
+   <property name="text">
+    <string>撤销</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>重做</string>
+   </property>
+  </action>
+  <action name="action_valueManagerDock">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/valueManager.png</normaloff>:/image/res_image/valueManager.png</iconset>
+   </property>
+   <property name="text">
+    <string>变量管理窗口</string>
+   </property>
+  </action>
+  <action name="actionViewValueInCurrentTab">
+   <property name="text">
+    <string>在当前标签页浏览</string>
+   </property>
+  </action>
+  <action name="actionViewValueInNewTab">
+   <property name="text">
+    <string>在新标签页浏览</string>
+   </property>
+  </action>
+  <action name="action_layerOutDock">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/layer.png</normaloff>:/image/res_image/layer.png</iconset>
+   </property>
+   <property name="text">
+    <string>图层管理</string>
+   </property>
+  </action>
+  <action name="actionRenameValue">
+   <property name="icon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/rename.png</normaloff>:/image/res_image/rename.png</iconset>
+   </property>
+   <property name="text">
+    <string>重命名</string>
+   </property>
+   <property name="toolTip">
+    <string>重命名变量</string>
+   </property>
+  </action>
+  <action name="actionSetDefalutDockPos">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/defaultDocker.png</normaloff>:/image/res_image/defaultDocker.png</iconset>
+   </property>
+   <property name="text">
+    <string>恢复默认布局</string>
+   </property>
+  </action>
+  <action name="action_valueViewerDock">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/valueViewer.png</normaloff>:/image/res_image/valueViewer.png</iconset>
+   </property>
+   <property name="text">
+    <string>变量预览</string>
+   </property>
+  </action>
+  <action name="action_chartViewer">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/chartViewer.png</normaloff>:/image/res_image/chartViewer.png</iconset>
+   </property>
+   <property name="text">
+    <string>图形界面</string>
+   </property>
+  </action>
+  <action name="action_chartDataViewerDock">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/chartDataViewer.png</normaloff>:/image/res_image/chartDataViewer.png</iconset>
+   </property>
+   <property name="text">
+    <string>图线数据视图</string>
+   </property>
+  </action>
+  <action name="action_XYDataPicker">
+   <property name="icon">
+    <iconset resource="signA_Res.qrc">
+     <normaloff>:/chartCtrlToolbar/res_image/dataPicker_xy.png</normaloff>:/chartCtrlToolbar/res_image/dataPicker_xy.png</iconset>
+   </property>
+   <property name="text">
+    <string>XY值捕获</string>
+   </property>
+  </action>
+  <action name="actionDeleteValue">
+   <property name="icon">
+    <iconset theme="normal" resource="signA_Res.qrc">
+     <normaloff>:/image/res_image/deleteValue.png</normaloff>:/image/res_image/deleteValue.png</iconset>
+   </property>
+   <property name="text">
+    <string>删除变量</string>
+   </property>
+   <property name="toolTip">
+    <string>删除选中的变量，需在变量管理目录中选中需要删除的变量，并进行操作</string>
+   </property>
+  </action>
+  <action name="actionOpenProject">
+   <property name="text">
+    <string>打开项目</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>另存为</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>SATabValueViewerWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">SATabValueViewerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DataFeatureWidget</class>
+   <extends>QWidget</extends>
+   <header>DataFeatureWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAMessageWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">SAMessageWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="signA_Res.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionQuite</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>225</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

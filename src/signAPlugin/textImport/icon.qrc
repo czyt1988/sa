@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>ico/import_csv.png</file>
+        <file>ico/import_txt.png</file>
+        <file>ico/parser.png</file>
+    </qresource>
+</RCC>

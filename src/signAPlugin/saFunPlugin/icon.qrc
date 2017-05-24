@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/menu_DSP">
+        <file>icon/detrendDirect.png</file>
+        <file>icon/powerSpectrum.png</file>
+        <file>icon/spectrum.png</file>
+    </qresource>
+</RCC>
