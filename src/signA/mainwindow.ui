@@ -215,6 +215,12 @@
     <addaction name="actionRescind"/>
     <addaction name="actionRedo"/>
    </widget>
+   <widget class="QMenu" name="menu_tool">
+    <property name="title">
+     <string>Tool</string>
+    </property>
+    <addaction name="actionProjectSetting"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menu_chart"/>
@@ -223,6 +229,7 @@
    <addaction name="menu_window"/>
    <addaction name="menu_chartSet"/>
    <addaction name="menuHelp"/>
+   <addaction name="menu_tool"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="allowedAreas">
@@ -1172,6 +1179,15 @@
     <string>另存为</string>
    </property>
   </action>
+  <action name="actionProjectSetting">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/project.png</normaloff>:/icons/icons/project.png</iconset>
+   </property>
+   <property name="text">
+    <string>Project Setting</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1196,6 +1212,7 @@
  </customwidgets>
  <resources>
   <include location="signA_Res.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections>
   <connection>

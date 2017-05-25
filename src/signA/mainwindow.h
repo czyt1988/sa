@@ -304,11 +304,15 @@ private slots:
     /// \group window menu(窗口菜单)
     /// \{
     //视图 - 恢复默认布局
-    void onActionSetDefalutDockPosRriggered();
+    void onActionSetDefalutDockPosTriggered();
     /// \}
 
-
-
+    ///
+    /// \group Tool menu(工具菜单)
+    /// \{
+    // 项目属性设置
+    void onActionProjectSettingTriggered();
+    /// \}
 public slots:
     void onChartDataChanged(QWidget* widget,const QwtPlotItem* pC);
 public:
@@ -391,6 +395,8 @@ private:
 
     //图层表格的选择样式生成
     QString getPlotLayerNewItemSelectedQSS(const QColor& rgb);
+    //设置项目信息
+    bool setProjectInfomation();
 private:
     Ui::MainWindow *ui;
     SAUI* uiInterface;

@@ -84,6 +84,15 @@ SAConfig::PropertyBrowserType SAConfig::getDefaultPropertySetDialogType() const
     return m_d->propertyBrowserType;
 }
 ///
+/// \brief 设置默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式
+/// \param type
+/// \see SAConfig::PropertyBrowserType
+///
+void SAConfig::setDefaultPropertySetDialogType(SAConfig::PropertyBrowserType type)
+{
+    m_d->propertyBrowserType = type;
+}
+///
 /// \brief 所有参数设置为默认
 ///
 void SAConfig::setDefault()

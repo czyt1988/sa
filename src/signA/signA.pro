@@ -73,7 +73,8 @@ FORMS    += mainwindow.ui \
 
 
 RESOURCES += \
-    signA_Res.qrc
+    signA_Res.qrc \
+    icons.qrc
 RC_FILE += logo.rc
 
 #3thparty

@@ -24,12 +24,15 @@
 #include <limits>
 #include <functional>
 #include <memory>
-//----------SA--------------
-// |------Dialog------------
 
+//----------SA--------------
+
+// |------Dialog------------
 #include <dialog_renameproject.h>
 #include <Dialog_AddChart.h>
 #include "CurveSelectDialog.h"
+#include "SAProjectInfomationSetDialog.h"
+
 
 #include <PickCurveDataModeSetDialog.h>
 #include <SAPropertySetDialog.h>
@@ -286,9 +289,12 @@ void MainWindow::initUI()
     // - TreeView CurPlotItem slots(曲线条目树形窗口)
     connect(ui->actionRescind,&QAction::triggered,this,&MainWindow::onActionRescindTriggered);
     connect(ui->actionRedo,&QAction::triggered,this,&MainWindow::onActionRedoTriggered);
+    //-------------------------------------
+    // - tool menu signal/slots connect
+    connect(ui->actionProjectSetting,&QAction::triggered,this,&MainWindow::onActionProjectSettingTriggered);
     //------------------------------------------------------------
     //- window menu 窗口 菜单
-    connect(ui->actionSetDefalutDockPos,&QAction::triggered,this,&MainWindow::onActionSetDefalutDockPosRriggered);
+    connect(ui->actionSetDefalutDockPos,&QAction::triggered,this,&MainWindow::onActionSetDefalutDockPosTriggered);
     //窗口模式
     connect(ui->action_Window_WindowMode,&QAction::triggered,[&](){
         czy::QtApp::QWaitCursor waitCur;
@@ -469,7 +475,7 @@ void MainWindow::initUIReflection()
 ///
 /// \brief 重置布局
 ///
-void MainWindow::onActionSetDefalutDockPosRriggered()
+void MainWindow::onActionSetDefalutDockPosTriggered()
 {
     addDockWidget(Qt::LeftDockWidgetArea,ui->dockWidget_valueManage);//从最左上角的dock开始布置，先把列布置完
     splitDockWidget(ui->dockWidget_valueManage,ui->dockWidget_main,Qt::Horizontal);
@@ -490,6 +496,11 @@ void MainWindow::onActionSetDefalutDockPosRriggered()
     ui->dockWidget_message->show();
     ui->dockWidget_chartDataViewer->raise();
     ui->dockWidget_main->raise();
+}
+
+void MainWindow::onActionProjectSettingTriggered()
+{
+    setProjectInfomation();
 }
 
 MainWindow::~MainWindow()
@@ -533,11 +544,11 @@ void MainWindow::loadWindowState(const QSettings& setting)
     if(var.isValid())
     {
         if(var.toBool())
-            onActionSetDefalutDockPosRriggered();
+            onActionSetDefalutDockPosTriggered();
     }
     else
     {
-        onActionSetDefalutDockPosRriggered();
+        onActionSetDefalutDockPosTriggered();
     }
 	var = setting.value("mainWindow/geometry");
 	if(var.isValid())
@@ -662,6 +673,14 @@ void MainWindow::onActionSaveTriggered()
     QString projectPath = saProjectManager->getProjectFullPath();
     if(projectPath.isEmpty())
     {
+        if(saProjectManager->getProjectName().isEmpty())
+        {
+            if(!setProjectInfomation())
+            {
+                showWarningMessageInfo(tr("you need to set a project name"));
+                return;
+            }
+        }
         onActionSaveAsTriggered();
     }
     else
@@ -1520,6 +1539,20 @@ QString MainWindow::getPlotLayerNewItemSelectedQSS(const QColor& rgb)
                   .arg (rgb.red ()).arg (rgb.green ()).arg (rgb.blue ())
                   .arg (fgrgb.red ()).arg (fgrgb.green ()).arg (fgrgb.blue ());//文字用反色
     return qss;
+}
+
+bool MainWindow::setProjectInfomation()
+{
+    SAProjectInfomationSetDialog dlg(this);
+    dlg.setProjectName(saProjectManager->getProjectName());
+    dlg.setProjectDescribe(saProjectManager->getProjectDescribe());
+    if(QDialog::Accepted != dlg.exec())
+    {
+        return false;
+    }
+    saProjectManager->setProjectName(dlg.getProjectName());
+    saProjectManager->setProjectDescribe(dlg.getProjectDescribe());
+    return true;
 }
 
 QwtPlotItemTreeModel *MainWindow::getDataViewerPlotItemTreeModel() const

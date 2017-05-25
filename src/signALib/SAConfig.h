@@ -33,6 +33,7 @@ public:
     static QString getConfigFolderPath();
     //默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式
     PropertyBrowserType getDefaultPropertySetDialogType() const;
+    void setDefaultPropertySetDialogType(PropertyBrowserType type);
     //设置为默认
     void setDefault();
 private:
