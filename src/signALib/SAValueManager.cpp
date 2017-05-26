@@ -825,7 +825,7 @@ QList<SAAbstractDatas *> SAValueManager::PointerContainer::getVectorDataPtrs() c
 {
     QList<SAAbstractDatas*> res;
     auto fun = [&res](SAAbstractDatas* p){
-        if(SAAbstractDatas::isVector(p))
+        if(SA::Dim1 == p->getDim())
         {
             res.append(p);
         }

@@ -14,21 +14,21 @@
 class SALIB_EXPORT SAVariantDatas : public SASingleDatas<QVariant>
 {
 public:
-    SAVariantDatas(const QVariant& d){m_d = d;}
-    SAVariantDatas(int d){m_d = d;}
-    SAVariantDatas(float d){m_d = d;}
-    SAVariantDatas(double d){m_d = d;}
-    SAVariantDatas(char d){m_d = d;}
-    SAVariantDatas(unsigned int d){m_d = d;}
-    SAVariantDatas(unsigned char d){m_d = d;}
-    SAVariantDatas(const QString& d){m_d = d;}
-    SAVariantDatas(const QPoint& d){m_d = d;}
-    SAVariantDatas(const QPointF& d){m_d = d;}
-    SAVariantDatas(const QHash<QString, QVariant>& d){m_d = d;}
-    SAVariantDatas(const QMap<QString, QVariant>& d){m_d = d;}
-    SAVariantDatas(const QList<QVariant>& d){m_d = d;}
-    virtual int getType() const{return SA::Variant;}
-    virtual QString getTypeName() const{return "var";}
+    SAVariantDatas(const QVariant& d);
+    SAVariantDatas(int d);
+    SAVariantDatas(float d);
+    SAVariantDatas(double d);
+    SAVariantDatas(char d);
+    SAVariantDatas(unsigned int d);
+    SAVariantDatas(unsigned char d);
+    SAVariantDatas(const QString& d);
+    SAVariantDatas(const QPoint& d);
+    SAVariantDatas(const QPointF& d);
+    SAVariantDatas(const QHash<QString, QVariant>& d);
+    SAVariantDatas(const QMap<QString, QVariant>& d);
+    SAVariantDatas(const QList<QVariant>& d);
+    virtual int getType() const;
+    virtual QString getTypeName() const;
 
     ///
     /// \brief 转换为某数据，需要调用canConvert进行预先判断
@@ -77,3 +77,5 @@ public:
 
 
 #endif // SAINT_H
+
+

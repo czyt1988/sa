@@ -20,9 +20,11 @@ public:
     virtual int getDim() const;
     virtual QVariant getAt(const std::initializer_list<size_t>& index) const;
     virtual QString displayAt(const std::initializer_list<size_t>& index) const;
-    void disLink();
     SAAbstractDatas* getLinkData() const{return m_linkData;}
     virtual void write(QDataStream & out) const;
+    virtual bool isDirty() const;
+public:
+    void disLink();
 private:
     SAAbstractDatas* m_linkData;
 };

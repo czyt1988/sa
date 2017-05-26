@@ -18,6 +18,7 @@
 build*
 /tmp
 /test
+/bin
 /src/bin
 /src/build-*
 /src/signAPlugin/build-*

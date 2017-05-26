@@ -24,4 +24,6 @@ SOURCES += \
     $$PWD/SAVectorVariant.cpp \
     $$PWD/SAVectorInterval.cpp \
     $$PWD/SAVectorPointF.cpp \
-    $$PWD/SATableVariant.cpp
+    $$PWD/SATableVariant.cpp \
+    $$PWD/SATableDouble.cpp \
+    $$PWD/SAVariantDatas.cpp

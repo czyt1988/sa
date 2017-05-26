@@ -49,49 +49,6 @@ QString SAAbstractDatas::displayAt(size_t dim1, size_t dim2) const
 }
 
 
-///
-/// \brief 根据类型判断是否是数据，数据是包含数据的类型，有些如tdms的组，这些不属于数据
-/// \param type 数据类型
-/// \return
-///
-bool SAAbstractDatas::isEmpty() const
-{
-    int dim = getDim();
-    if(0 == dim)
-    {
-        return false;
-    }
-    for(int i=1;i<dim;++i)
-    {
-        if(getSize(i) > 0)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-
-
-///
-/// \brief 是否是向量，也就是是否是1维数据
-/// \param data 数据指针
-/// \return
-///
-bool SAAbstractDatas::isVector(SAAbstractDatas *data)
-{
-    const int r = data->getSize(SA::Row);
-    const int c = data->getSize(SA::Column);
-    if((r > 0 && 0 == c)
-            ||
-        (0 == r && c > 0)
-      )
-    {
-        return true;
-    }
-    return false;
-}
 
 void SAAbstractDatas::read(QDataStream &in)
 {
@@ -114,16 +71,7 @@ bool SAAbstractDatas::converToDoubleVector(const SAAbstractDatas *input, QVector
 {
     return SAVectorDouble::toDoubleVector(input,data);
 }
-///
-/// \brief 从数组获取double vector
-/// \param data 获取的double vector
-/// \return 成功获取返回true
-/// \see SAVectorDouble::toDoubleVector
-///
-bool SAAbstractDatas::converToDoubleVector(QVector<double> &data) const
-{
-    return SAAbstractDatas::converToDoubleVector(this,data);
-}
+
 ///
 /// \brief 转换为QPointF数组
 /// \param ptr SAAbstractDatas指针
@@ -135,16 +83,7 @@ bool SAAbstractDatas::converToPointFVector(const SAAbstractDatas *input, QVector
 {
     return SAVectorPointF::toPointFVector(input,data);
 }
-///
-/// \brief 转换为QPointF数组
-/// \param data 结果
-/// \return 可以转换返回true
-/// \see SAVectorPointF::toPointFVector
-///
-bool SAAbstractDatas::converToPointFVector(QVector<QPointF> &data) const
-{
-    return SAAbstractDatas::converToPointFVector(this,data);
-}
+
 ///
 /// \brief 转换为double如果不行返回false
 /// \param input
@@ -156,15 +95,6 @@ bool SAAbstractDatas::converToDouble(const SAAbstractDatas *input, double &val)
 {
     return SAVariantDatas::toData<double>(input,val);
 }
-///
-/// \brief 转换为double如果不行返回false
-/// \param val
-/// \return 可以转换返回true
-/// \see SAVariantDatas::toData
-///
-bool SAAbstractDatas::converToDouble(double &val) const
-{
-    return SAAbstractDatas::converToDouble(this,val);
-}
+
 
 

@@ -68,3 +68,10 @@ void SADataReference::write(QDataStream &out) const
     out << type;
     SAAbstractDatas::write(out);
 }
+
+bool SADataReference::isDirty() const
+{
+    if(m_linkData)
+        return m_linkData->isDirty ();
+    return false;
+}
