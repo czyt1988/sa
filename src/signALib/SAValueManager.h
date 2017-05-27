@@ -136,13 +136,15 @@ public:
     //保存数据到文件系统
     int saveAs(const QString& path);
     //从文件系统中加载数据
-    int load(const QString& path);
+    int load(const QString& path,QMap<SAAbstractDatas*,QString>& dataPtr2DataFileName);
     //判断数据是否处于管理状态
     bool isDataInManager(const SAAbstractDatas* data) const;
     //从任意数据转换为double vector，如果可以转换的话
     static std::shared_ptr<SAVectorDouble> createVectorDoubleFromData(const SAAbstractDatas *data);
     // 根据类型，创建数据
     std::shared_ptr<SAAbstractDatas> createDataByType(SA::DataType type);
+    // 判断变量是否有更改而没保存
+    bool isDirty() const;
 public:
     ///
     /// \name 对于1维数据的操作
@@ -213,10 +215,10 @@ private:
     public:
         PointerContainer();
         ~PointerContainer();
-        void append(std::shared_ptr<SAAbstractDatas> data,const QString& dataFile = QString());
-        void append(SAAbstractDatas* data,const QString& dataFile = QString());
+        void append(std::shared_ptr<SAAbstractDatas> data);
+        void append(SAAbstractDatas* data);
         //设置数据文件的文件映射路径
-        void setDataFilePath(SAAbstractDatas* data,const QString& dataFile);
+        void setDataFilePath(SAAbstractDatas* data);
         //根据索引查找
         SAAbstractDatas* at(int index) const;
         //根据指针找到索引
@@ -225,8 +227,6 @@ private:
         SAAbstractDatas* findData(int id) const;
         //根据名字查找
         SAAbstractDatas* findData(const QString& name) const;
-        //获取每个数据对应的文件路径
-        QString getDataFilePath(const SAAbstractDatas* dataPtr) const;
         //清空所有数据
         void clear(bool deletePtr = true);
         //获取变量的数量
@@ -253,10 +253,6 @@ private:
 
         QMap<int,SAAbstractDatas*> m_id2data;///<记录变量的id和内存地址，通过此可以快速查找
         QMap<QString,SAAbstractDatas*> m_dataName2DataPtr;///< 记录变量名对应的数据类型
-
-        QMap<QString,SAAbstractDatas*> m_dataFileName2DataPtr;///< 记录数据文件路径
-        QMap<SAAbstractDatas*,QString> m_dataPtr2DataFileName;///< 记录数据指针对应的保存文件名
-
     };
     PointerContainer m_ptrContainer;///< 此数据结构的指针管理容器
     static SAValueManager* s_instance;

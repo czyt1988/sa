@@ -28,7 +28,8 @@ HEADERS += \
     SATextReadWriter.h \
     SADataHeader.h \
     SAProjectManager.h \
-    SAConfig.h
+    SAConfig.h \
+    SAValueControlCommand.h
 
 SOURCES += \
     SAData.cpp \
@@ -45,7 +46,8 @@ SOURCES += \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
     SAProjectManager.cpp \
-    SAConfig.cpp
+    SAConfig.cpp \
+    SAValueControlCommand.cpp
 
 include($$PWD/Private/Private.pri)
 include($$PWD/SABaseValueType/SABaseValueType.pri)

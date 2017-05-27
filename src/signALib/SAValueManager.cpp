@@ -295,9 +295,6 @@ int SAValueManager::saveAs(const QString &path)
             ++errCount;
             continue;
         }
-        //更新文件映射
-        m_ptrContainer.setDataFilePath(data,file.fileName());
-        qDebug() << file.fileName();
     }
     return errCount;
 }
@@ -306,7 +303,7 @@ int SAValueManager::saveAs(const QString &path)
 /// \param path 指定的路径
 /// \return 成功返回0,否则返回失败的个数，如果一个变量失败返回1，以此类推,-1代表路径不正确
 ///
-int SAValueManager::load(const QString &path)
+int SAValueManager::load(const QString &path, QMap<SAAbstractDatas *, QString> &dataPtr2DataFileName)
 {
     QDir dir(path);
     int errCount = 0;
@@ -348,7 +345,8 @@ int SAValueManager::load(const QString &path)
             //记录id映射
             if(toCorrectName(data.get()))
             {
-                m_ptrContainer.append(data,fullFilePath);
+                m_ptrContainer.append(data);
+                dataPtr2DataFileName[data.get()] = fullFilePath;
                 datasBeLoad.append(data.get());
             }
         }
@@ -579,6 +577,20 @@ std::shared_ptr<SAAbstractDatas> SAValueManager::createDataByType(SA::DataType t
     }
     return nullptr;
 }
+///
+/// \brief 判断变量是否有更改而没保存
+/// \return 如果有变量没有保存，将返回true
+///
+bool SAValueManager::isDirty() const
+{
+    int count = m_ptrContainer.count();
+    for(int i=0;i<count;++i)
+    {
+        if(m_ptrContainer.at(i)->isDirty())
+            return true;
+    }
+    return false;
+}
 
 
 
@@ -588,7 +600,7 @@ std::shared_ptr<SAAbstractDatas> SAValueManager::createDataByType(SA::DataType t
 /// \param filePath 文件路径
 /// \param typeInfo 文件的信息
 /// \param err 错误信息
-/// \return 返回SAAbstractDatas 指针，此函数建立，若不使用，需要手动delete
+/// \return 返回SAAbstractDatas 指针,需要手动addData,否则不在manager管理下
 ///
 std::shared_ptr<SAAbstractDatas> SAValueManager::loadSad(const QString &filePath)
 {
@@ -647,8 +659,6 @@ SAValueManager::PointerContainer::PointerContainer()
     m_smrPtrListSet.clear();
     m_id2data.clear();
     m_dataName2DataPtr.clear();
-    m_dataFileName2DataPtr.clear();
-    m_dataPtr2DataFileName.clear();
 }
 
 SAValueManager::PointerContainer::~PointerContainer()
@@ -656,7 +666,7 @@ SAValueManager::PointerContainer::~PointerContainer()
 
 }
 
-void SAValueManager::PointerContainer::append(std::shared_ptr<SAAbstractDatas> data,const QString& dataFile)
+void SAValueManager::PointerContainer::append(std::shared_ptr<SAAbstractDatas> data)
 {
     m_ptrList.append(data.get());
     m_ptrListSet.insert(data.get(),m_ptrList.size()-1);
@@ -666,15 +676,9 @@ void SAValueManager::PointerContainer::append(std::shared_ptr<SAAbstractDatas> d
 
     m_id2data[data->getID()] = data.get();
     m_dataName2DataPtr[data->getName()] = data.get();
-
-    if(!dataFile.isEmpty())
-    {
-        m_dataFileName2DataPtr[dataFile] = data.get();
-        m_dataPtr2DataFileName[data.get()] = dataFile;
-    }
 }
 
-void SAValueManager::PointerContainer::append(SAAbstractDatas *data, const QString &dataFile)
+void SAValueManager::PointerContainer::append(SAAbstractDatas *data)
 {
     m_ptrList.append(data);
     m_ptrListSet.insert(data,m_ptrList.size()-1);
@@ -684,21 +688,11 @@ void SAValueManager::PointerContainer::append(SAAbstractDatas *data, const QStri
 
     m_id2data[data->getID()] = data;
     m_dataName2DataPtr[data->getName()] = data;
-
-    if(!dataFile.isEmpty())
-    {
-        m_dataFileName2DataPtr[dataFile] = data;
-        m_dataPtr2DataFileName[data] = dataFile;
-    }
 }
 
 
 
-void SAValueManager::PointerContainer::setDataFilePath(SAAbstractDatas *data, const QString &dataFile)
-{
-    m_dataFileName2DataPtr[dataFile] = data;
-    m_dataPtr2DataFileName[data] = dataFile;
-}
+
 
 SAAbstractDatas *SAValueManager::PointerContainer::at(int index) const
 {
@@ -722,11 +716,6 @@ SAAbstractDatas *SAValueManager::PointerContainer::findData(int id) const
 SAAbstractDatas *SAValueManager::PointerContainer::findData(const QString &name) const
 {
     return m_dataName2DataPtr.value(name,nullptr);
-}
-
-QString SAValueManager::PointerContainer::getDataFilePath(const SAAbstractDatas *dataPtr) const
-{
-    return m_dataPtr2DataFileName.value(const_cast<SAAbstractDatas*>(dataPtr),QString());
 }
 
 void SAValueManager::PointerContainer::clear(bool deletePtr)
@@ -764,8 +753,7 @@ void SAValueManager::PointerContainer::clear(bool deletePtr)
 
     m_id2data.clear();
     m_dataName2DataPtr.clear();
-    m_dataFileName2DataPtr.clear();
-    m_dataPtr2DataFileName.clear();
+
 }
 
 int SAValueManager::PointerContainer::count() const
@@ -789,12 +777,7 @@ void SAValueManager::PointerContainer::deleteData(SAAbstractDatas *data)
 
         m_id2data.remove(data->getID());
         m_dataName2DataPtr.remove(data->getName());
-        QString fileName = m_dataPtr2DataFileName.value(data,QString());
-        if(!fileName.isEmpty())
-        {
-            m_dataPtr2DataFileName.remove(data);
-            m_dataFileName2DataPtr.remove(fileName);
-        }
+
         m_ptrListSet.erase(ite);
     }
     auto iteNor = m_ptrNormalListSet.find(data);

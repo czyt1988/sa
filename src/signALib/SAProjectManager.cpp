@@ -10,7 +10,9 @@ SAProjectManager* SAProjectManager::s_instance = nullptr;
 
 SAProjectManager::SAProjectManager():QObject(nullptr)
 {
-
+    connect(saValueManager,&SAValueManager::dataDeleted,this,&SAProjectManager::onDataDeleted);
+    connect(saValueManager,&SAValueManager::dataNameChanged,this,&SAProjectManager::onDataNameChanged);
+    connect(saValueManager,&SAValueManager::dataClear,this,&SAProjectManager::onDataClear);
 }
 
 SAProjectManager::~SAProjectManager()
@@ -130,6 +132,64 @@ bool SAProjectManager::loadProjectInfo(const QString &projectFullPath)
 
 }
 
+void SAProjectManager::loadValues(const QString &projectFullPath)
+{
+    QString dataPath = getProjectDataFolderPath(projectFullPath);
+    QDir dir(dataPath);
+    if(!dir.exists())
+    {
+        emit messageInformation(tr("project may have not datas path :\"%1\"").arg(dataPath),SA::ErrorMessage);
+        return;
+    }
+    saValueManager->clear();
+    m_dataPtr2DataFileName.clear();
+    m_dataFileName2DataPtr.clear();
+    int r = saValueManager->load(dataPath,m_dataPtr2DataFileName);
+    for(auto i = m_dataPtr2DataFileName.begin();i != m_dataPtr2DataFileName.end();++i)
+    {
+        m_dataFileName2DataPtr[i.value()] = i.key();
+    }
+    return;
+}
+///
+/// \brief 加载变量
+/// \param projectFullPath
+/// \return
+///
+bool SAProjectManager::saveValues(const QString &projectFullPath)
+{
+    QString dataPath = getProjectDataFolderPath(projectFullPath);
+    QDir dir(dataPath);
+    if(!dir.exists())
+    {
+        if(!dir.mkdir (dataPath))
+        {
+            emit messageInformation(tr("can not make dir:%1").arg(dataPath)
+                                    ,SA::ErrorMessage
+                                    );
+            return false;
+        }
+    }
+    int r = saValueManager->saveAs(dataPath);
+    return (0 == r);
+}
+
+void SAProjectManager::onDataDeleted(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
+{
+    setDirty(true);
+}
+
+void SAProjectManager::onDataClear()
+{
+    setDirty(true);
+}
+
+void SAProjectManager::onDataNameChanged(SAAbstractDatas *data, const QString &oldName)
+{
+    setDirty(true);
+}
+
+
 QString SAProjectManager::getProjectDescribe() const
 {
     return m_projectDescribe;
@@ -157,12 +217,28 @@ QString SAProjectManager::getProjectDataFolderPath(const QString &projectFolder)
 {
     return QDir::cleanPath (projectFolder) + QDir::separator () + DATA_FOLDER_NAME;
 }
-
+///
+/// \brief 获取数据对应的文件路径,如果已经保存了的话，
+/// \param dataPtr 数据指针
+/// \return 返回的路径，如果没有，返回一个QString()
+///
+QString SAProjectManager::getDataFilePath(const SAAbstractDatas *dataPtr) const
+{
+    return m_dataPtr2DataFileName.value(const_cast<SAAbstractDatas *>(dataPtr));
+}
+///
+/// \brief 获取工程的名称
+/// \return
+///
 QString SAProjectManager::getProjectName() const
 {
     return m_projectName;
 }
-
+///
+/// \brief 设置工程的名称
+/// \param projectName
+/// \see getProjectName
+///
 void SAProjectManager::setProjectName(const QString &projectName)
 {
     m_projectName = projectName;
@@ -175,8 +251,7 @@ void SAProjectManager::setProjectName(const QString &projectName)
 ///
 bool SAProjectManager::saveAs(const QString &savePath)
 {
-    //---------------------------------------
-    //- start %验证目录正确性
+    //验证目录正确性
     QDir dir(savePath);
     if(!dir.exists ())
     {
@@ -188,28 +263,12 @@ bool SAProjectManager::saveAs(const QString &savePath)
             return false;
         }
     }
-    // - end %验证目录正确性结束
 
-    //- start %保存项目描述
+    //保存项目描述
     saveProjectInfo(savePath);
+    //保存数据
+    saveValues(savePath);
 
-
-
-    //-----------------------------------------
-    //- start %保存数据
-    QString dataPath = getProjectDataFolderPath(savePath);
-    if(!QFileInfo::exists(dataPath))
-    {
-        if(!dir.mkdir (dataPath))
-        {
-            emit messageInformation(tr("can not make dir:%1").arg(dataPath)
-                                    ,SA::ErrorMessage
-                                    );
-            return false;
-        }
-    }
-    saValueManager->saveAs(dataPath);
-    // - end %保存数据结束
 
     setProjectFullPath(savePath);
     setDirty(false);
@@ -225,8 +284,7 @@ bool SAProjectManager::saveAs(const QString &savePath)
 ///
 bool SAProjectManager::load(const QString &projectedPath)
 {
-    //1.---------------------------------------
-    //- start %验证目录正确性
+    //验证目录正确性
     QDir dir(projectedPath);
     if(!dir.exists ())
     {
@@ -235,26 +293,14 @@ bool SAProjectManager::load(const QString &projectedPath)
                                 );
         return false;
     }
-    // - end %验证目录正确性结束
 
 
     //- start %加载项目描述
     loadProjectInfo(projectedPath);
 
+    //加载变量
+    loadValues(projectedPath);
 
-    //3.-----------------------------------------
-    //- start %加载数据数据
-    QString dataPath = getProjectDataFolderPath(projectedPath);
-    if(QFileInfo::exists(dataPath))
-    {
-        saValueManager->clear();
-        int r = saValueManager->load(dataPath);
-        if(0 != r)
-        {
-            return false;
-        }
-    }
-    // - end %加载数据结束
 
     setProjectFullPath(projectedPath);
     setDirty(false);
