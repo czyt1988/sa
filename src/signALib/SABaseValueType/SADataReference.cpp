@@ -75,3 +75,16 @@ bool SADataReference::isDirty() const
         return m_linkData->isDirty ();
     return false;
 }
+
+void SADataReference::setDirty(bool dirty)
+{
+    if(m_linkData)
+        m_linkData->setDirty (dirty);
+}
+
+bool SADataReference::isEmpty() const
+{
+    if(m_linkData)
+        return m_linkData->isEmpty ();
+    return false;
+}

@@ -21,7 +21,7 @@
 std::shared_ptr<SAVectorDouble> saFun::detrendDirect(SAAbstractDatas* wave)
 {
     QVector<double> waveData;
-    if(!wave->converToDoubleVector(waveData))
+    if(!SAAbstractDatas::converToDoubleVector(wave,waveData))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return nullptr;
@@ -48,7 +48,7 @@ saFun::spectrum(SAAbstractDatas* wave
                                   , czy::Math::DSP::SpectrumType ampType)
 {
     QVector<double> waveArr;
-    if(!wave->converToDoubleVector(waveArr))
+    if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return std::make_tuple(nullptr,nullptr);
@@ -96,7 +96,7 @@ saFun::powerSpectrum(SAAbstractDatas* wave
                                   ,double samplingInterval)
 {
     QVector<double> waveArr;
-    if(!wave->converToDoubleVector(waveArr))
+    if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return std::make_tuple(nullptr,nullptr);
@@ -133,7 +133,7 @@ saFun::powerSpectrum(SAAbstractDatas* wave
 std::shared_ptr<SAVectorDouble> saFun::setWindow(SAAbstractDatas *wave, czy::Math::DSP::WindowType window)
 {
     QVector<double> waveArr;
-    if(!wave->converToDoubleVector(waveArr))
+    if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return nullptr;

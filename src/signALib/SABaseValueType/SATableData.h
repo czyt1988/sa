@@ -14,7 +14,7 @@
         out << type;\
         SAAbstractDatas::write(out);\
         out << getTable();\
-        setDirty(false);\
+        m_isDirty = false;\
     }
 #endif
 
@@ -37,6 +37,8 @@ public:
     virtual bool isDirty() const;
     //设置内存有变更
     virtual void setDirty(bool dirty);
+    //根据类型判断是否是数据,如nan就返回true，如空的一维数据都返回true
+    virtual bool isEmpty() const;
 public:
     bool isHaveData(uint r,uint c) const;
     void setTableData(uint row,uint col,const T& d);
@@ -60,7 +62,8 @@ public:
 #endif
 private:
     Table m_table;
-    bool m_isDirty;
+protected:
+    mutable bool m_isDirty;
 };
 
 
@@ -244,6 +247,11 @@ template<typename T>
 void SATableData<T>::setDirty(bool dirty)
 {
     m_isDirty = dirty;
+}
+template<typename T>
+bool SATableData<T>::isEmpty() const
+{
+    return ((0 == m_table.columnCount()) && (0 == m_table.rowCount()));
 }
 #if 0
 template<typename T>

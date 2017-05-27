@@ -14,15 +14,6 @@ public:
     virtual ~SAVectorInt(){}
     virtual int getType() const   {return SA::VectorInt;}
     virtual QString getTypeName() const{return QString("int Array");}
-//    virtual bool toDoubleVector(QVector<double>& data) const;
-//    virtual bool isCanCast2DoubleVector() const{return true;}
-//    virtual bool isCanCast2PointFVector() const{return false;}
-//    virtual bool toPointFVector(QVector<QPointF>& data) const
-//    {
-//        Q_UNUSED(data);
-//        return false;
-//    }
-
     virtual void write(QDataStream & out) const;
 };
 

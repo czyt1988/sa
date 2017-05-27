@@ -12,125 +12,290 @@ template<typename T>
 class SALIB_EXPORT SAVectorDatas : public SAAbstractDatas
 {
 public:
-    SAVectorDatas():SAAbstractDatas(){}
-    SAVectorDatas(const QString & name):SAAbstractDatas(name){}
-    SAVectorDatas(const QString& name,const QVector<T>& datas):SAAbstractDatas(name)
-    {
-        setValueDatas(datas);
-    }
+    SAVectorDatas();
+    SAVectorDatas(const QString & name);
+    SAVectorDatas(const QString& name,const QVector<T>& datas);
+    virtual ~SAVectorDatas();
+
+    int getSize(int dim=SA::Dim1) const;
+    virtual QVariant getAt(const std::initializer_list<size_t>& index) const;
+    virtual QString displayAt(const std::initializer_list<size_t>& index) const;
+    int getDim() const;
+    //判断该数据在上次write之后是否内存有变更
+    virtual void read(QDataStream & in);
+    virtual bool isDirty() const;
+    //设置内存有变更
+    virtual void setDirty(bool dirty);
+    //根据类型判断是否是数据,如nan就返回true，如空的一维数据都返回true
+    virtual bool isEmpty() const;
+public:
     typedef T value_type;
     typedef value_type* pointer;
     typedef const value_type* const_pointer;
     typedef value_type& reference;
     typedef const value_type& const_reference;
-    virtual ~SAVectorDatas(){}
-    ///
-    /// \brief 设置数据
-    /// \param datas
-    ///
-    void setValueDatas(const QVector<T>& datas)    {this->m_datas = std::move(datas);}
+    //设置数据
+    void setValueDatas(const QVector<T>& datas);
+
     template<typename IT>
     void setValueDatas(IT begin,IT end)
     {
         m_datas.resize(std::distance(begin,end));
         std::copy(begin,end,m_datas.begin());
-    }
-    const QVector<T>& getValueDatas() const         {return this->m_datas;}
-    QVector<T>& getValueDatas()         {return this->m_datas;}
-    void getValueDatas(QVector<T>& dataBeGet) const {dataBeGet = std::move(m_datas);}
-    ///
-    /// \brief 获取值
-    /// \param dataBeGet
-    /// \param index 需要获取的索引
-    ///
-    void getValueDatas (QVector<T>& dataBeGet,const QVector<int>& index) const
-    {
-        dataBeGet.reserve (index.size ());
-        auto end = index.end ();
-        for(auto i=index.begin ();i!=end;++i)
-        {
-            dataBeGet.push_back (m_datas[*i]);
-        }
+        setDirty(true);
     }
 
-    virtual int getType() const   {return SA::UnknowType;}
-    ///
-    /// \brief 线性数组，只返回1维的数据，其他维度返回0
-    /// \param dim 维度
-    /// \return 其他维度都是1
-    ///
-    int getSize(int dim=SA::Dim1) const {
-        if(dim==SA::Dim1)
-        {
-            return this->m_datas.size();
-        }
-        else if(dim==SA::Dim2)
-        {
-            return 1;
-        }
-        return 0;
-    }
-    virtual QVariant getAt(const std::initializer_list<size_t>& index) const
-    {
-        if(1 == index.size())
-            return QVariant::fromValue<T>(get(*index.begin()));
-        return QVariant();
-    }
-    virtual QString displayAt(const std::initializer_list<size_t>& index) const
-    {
-        return getAt(index).toString();
-    }
-    int getDim() const{return 1;}
+    const QVector<T>& getValueDatas() const;
+    QVector<T>& getValueDatas();
+    void getValueDatas(QVector<T>& dataBeGet) const;
+    void getValueDatas (QVector<T>& dataBeGet,const QVector<int>& index) const;
+    T getValue(int index) const;
+    T& get(int index);
+    const T& get(int index) const;
+    void set(size_t index,const T& value);
+    void append(const T& value);
+    void resize(int size);
+    void reserve(int size);
+    void push_back(const T& value);
 
-    T getValue(int index) const     {return m_datas[index];}
-    T& get(int index) {return m_datas[index];}
-    const T& get(int index) const {return m_datas[index];}
-    void set(size_t index,const T& value){m_datas[index] = value;}
-    void append(const T& value){m_datas.append (value);}
-    void resize(int size){m_datas.resize (size);}
-    void reserve(int size){m_datas.reserve (size);}
-    void push_back(const T& value){m_datas.push_back (value);}
-    ///
-    /// \brief 写文件时，会额外加一个SADataTypeInfo，用于判断类型，在读取时，是不会读取这个SADataTypeInfo的，因为读取时需要
-    /// 先读取SADataTypeInfo，根据信息再来进行其它操作
-    /// \param in
-    ///
-    virtual void read(QDataStream & in){
-        SAAbstractDatas::read(in);
-        in >> getValueDatas();
-    }
-    typename QVector<T>::iterator begin() {
-        return m_datas.begin();
-    }
-    typename QVector<T>::iterator end() {
-        return m_datas.end();
-    }
-    typename QVector<T>::const_iterator cbegin() const{
-        return m_datas.cbegin();
-    }
-    typename QVector<T>::const_iterator cend() const{
-        return m_datas.cend();
-    }
-    //
-    T &operator[](int i)
-    {
-        return m_datas[i];
-    }
-
-    const T &operator[](int i) const
-    {
-        return m_datas[i];
-    }
-    void clear()
-    {
-        m_datas.clear();
-    }
-
+    typename QVector<T>::iterator begin();
+    typename QVector<T>::iterator end();
+    typename QVector<T>::const_iterator cbegin() const;
+    typename QVector<T>::const_iterator cend() const;
+    T &operator[](int i);
+    const T &operator[](int i) const;
+    void clear();
 protected:
     QVector<T> m_datas;
+    mutable bool m_isDirty;
 };
 
+
+
+
+
+template<typename T>
+SAVectorDatas<T>::SAVectorDatas():SAAbstractDatas()
+{
+
+}
+
+template<typename T>
+SAVectorDatas<T>::SAVectorDatas(const QString &name):SAAbstractDatas(name)
+{
+
+}
+template<typename T>
+SAVectorDatas<T>::SAVectorDatas(const QString &name, const QVector<T> &datas):SAAbstractDatas(name)
+{
+    setValueDatas(datas);
+}
+template<typename T>
+SAVectorDatas<T>::~SAVectorDatas()
+{
+
+}
+///
+/// \brief 设置数据
+/// \param datas
+///
+template<typename T>
+void SAVectorDatas<T>::setValueDatas(const QVector<T> &datas)
+{
+    this->m_datas = std::move(datas);
+    setDirty(true);
+}
+
+template<typename T>
+const QVector<T> &SAVectorDatas<T>::getValueDatas() const
+{
+    return this->m_datas;
+}
+template<typename T>
+QVector<T> &SAVectorDatas<T>::getValueDatas()
+{
+    return this->m_datas;
+}
+template<typename T>
+void SAVectorDatas<T>::getValueDatas(QVector<T> &dataBeGet) const
+{
+    dataBeGet = std::move(m_datas);
+}
+///
+/// \brief 获取值
+/// \param dataBeGet
+/// \param index 需要获取的索引
+///
+template<typename T>
+void SAVectorDatas<T>::getValueDatas(QVector<T> &dataBeGet, const QVector<int> &index) const
+{
+    dataBeGet.reserve (index.size ());
+    auto end = index.end ();
+    for(auto i=index.begin ();i!=end;++i)
+    {
+        dataBeGet.push_back (m_datas[*i]);
+    }
+}
+///
+/// \brief 线性数组，只返回1维的数据，其他维度返回0
+/// \param dim 维度
+/// \return 其他维度都是1
+///
+template<typename T>
+int SAVectorDatas<T>::getSize(int dim) const {
+    if(dim==SA::Dim1)
+    {
+        return this->m_datas.size();
+    }
+    else if(dim==SA::Dim2)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+template<typename T>
+QVariant SAVectorDatas<T>::getAt(const std::initializer_list<size_t> &index) const
+{
+    if(1 == index.size())
+        return QVariant::fromValue<T>(get(*index.begin()));
+    return QVariant();
+}
+
+template<typename T>
+QString SAVectorDatas<T>::displayAt(const std::initializer_list<size_t> &index) const
+{
+    return getAt(index).toString();
+}
+
+template<typename T>
+int SAVectorDatas<T>::getDim() const
+{
+    return SA::Dim1;
+}
+template<typename T>
+bool SAVectorDatas<T>::isDirty() const
+{
+    return m_isDirty;
+}
+
+template<typename T>
+void SAVectorDatas<T>::setDirty(bool dirty)
+{
+    m_isDirty = dirty;
+}
+template<typename T>
+bool SAVectorDatas<T>::isEmpty() const
+{
+    return (0 == m_datas.size());
+}
+
+template<typename T>
+T SAVectorDatas<T>::getValue(int index) const
+{
+    return m_datas[index];
+}
+
+template<typename T>
+T &SAVectorDatas<T>::get(int index)
+{
+    return m_datas[index];
+}
+
+template<typename T>
+const T &SAVectorDatas<T>::get(int index) const
+{
+    return m_datas[index];
+}
+
+template<typename T>
+void SAVectorDatas<T>::set(size_t index, const T &value)
+{
+    m_datas[index] = value;
+    setDirty(true);
+}
+template<typename T>
+void SAVectorDatas<T>::append(const T &value)
+{
+    m_datas.append (value);
+    setDirty(true);
+}
+template<typename T>
+void SAVectorDatas<T>::resize(int size)
+{
+    m_datas.resize (size);
+    setDirty(true);
+}
+
+template<typename T>
+void SAVectorDatas<T>::reserve(int size)
+{
+    m_datas.reserve (size);
+}
+
+template<typename T>
+void SAVectorDatas<T>::push_back(const T &value)
+{
+    m_datas.push_back (value);
+    setDirty(true);
+}
+///
+/// \brief 写文件时，会额外加一个SADataTypeInfo，用于判断类型，在读取时，是不会读取这个SADataTypeInfo的，因为读取时需要
+/// 先读取SADataTypeInfo，根据信息再来进行其它操作
+/// \param in
+///
+template<typename T>
+void SAVectorDatas<T>::read(QDataStream &in)
+{
+    SAAbstractDatas::read(in);
+    in >> getValueDatas();
+    setDirty(false);
+}
+
+template<typename T>
+typename QVector<T>::iterator SAVectorDatas<T>::begin()
+{
+    return m_datas.begin();
+}
+
+template<typename T>
+typename QVector<T>::iterator SAVectorDatas<T>::end()
+{
+    return m_datas.end();
+}
+
+template<typename T>
+typename QVector<T>::const_iterator SAVectorDatas<T>::cbegin() const
+{
+    return m_datas.cbegin();
+}
+
+template<typename T>
+typename QVector<T>::const_iterator SAVectorDatas<T>::cend() const
+{
+    return m_datas.cend();
+}
+
+template<typename T>
+T &SAVectorDatas<T>::operator[](int i)
+{
+    return m_datas[i];
+}
+
+template<typename T>
+const T &SAVectorDatas<T>::operator[](int i) const
+{
+    return m_datas[i];
+}
+
+template<typename T>
+void SAVectorDatas<T>::clear()
+{
+    m_datas.clear();
+    setDirty(true);
+}
+
+
+
+
 #endif // SAVECTORDATAS_H
-
-
-

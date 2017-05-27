@@ -30,7 +30,7 @@ public:
     const DATA_TYPE& innerData() const;
 protected:
     DATA_TYPE m_d;
-    bool m_isDirty;
+    mutable bool m_isDirty;
 };
 
 
@@ -44,7 +44,7 @@ SASingleDatas<DATA_TYPE>::SASingleDatas():SAAbstractDatas()
 {
     setDirty(true);
 }
-
+template<typename DATA_TYPE>
 int SASingleDatas<DATA_TYPE>::getSize(int dim) const
 {
     Q_UNUSED(dim);
@@ -89,12 +89,13 @@ void SASingleDatas<DATA_TYPE>::read(QDataStream &in)
     in >> m_d;
     setDirty(false);
 }
+
 template<typename DATA_TYPE>
 void SASingleDatas<DATA_TYPE>::write(QDataStream &out) const
 {
     SAAbstractDatas::write(out);
     out << m_d;
-    setDirty(false);
+    m_isDirty = false;
 }
 
 template<typename DATA_TYPE>
@@ -108,6 +109,8 @@ void SASingleDatas<DATA_TYPE>::setDirty(bool dirty)
 {
     m_isDirty = dirty;
 }
+
+
 #if 0
 template<typename DATA_TYPE>
 DATA_TYPE &SASingleDatas<DATA_TYPE>::innerData()

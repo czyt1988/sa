@@ -110,7 +110,7 @@ std::shared_ptr<SAAbstractDatas> saFun::division(SAAbstractDatas* a,SAAbstractDa
 std::shared_ptr<SAVectorDouble> saFun::diff(SAAbstractDatas *data, unsigned diffCount)
 {
     QVector<double> waveData;
-    if(!data->converToDoubleVector(waveData))
+    if(!SAAbstractDatas::converToDoubleVector(data,waveData))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return nullptr;

@@ -29,16 +29,14 @@ public:
     SAVariantDatas(const QList<QVariant>& d);
     virtual int getType() const;
     virtual QString getTypeName() const;
+    virtual bool isEmpty() const;
 
     ///
     /// \brief 转换为某数据，需要调用canConvert进行预先判断
     /// \return
     ///
     template<typename DATA_TYPE>
-    DATA_TYPE toData() const
-    {
-        return innerData().value<DATA_TYPE>();
-    }
+    DATA_TYPE toData() const;
 
     ///
     /// \brief toData 转换的静态函数
@@ -48,32 +46,48 @@ public:
     /// \return
     ///
     template<typename DATA_TYPE>
-    static bool toData(const SAAbstractDatas* dptr, DATA_TYPE& data)
-    {
-        const SAVariantDatas* var = dynamic_cast<const SAVariantDatas*>(dptr);
-        if(var == nullptr)
-        {
-            return false;
-        }
-        if(!var->canConvert<DATA_TYPE>())
-        {
-            return false;
-        }
-        data = var->toData<DATA_TYPE>();
-        return true;
-    }
+    static bool toData(const SAAbstractDatas* dptr, DATA_TYPE& data);
+
 
     ///
     /// \brief 用于判断是否可以转换为某种类型
     /// \return
     ///
     template<typename DATA_TYPE>
-    bool canConvert() const
-    {
-        return innerData().canConvert<DATA_TYPE>();
-    }
+    bool canConvert() const;
+
+
 };
 
+
+template<typename DATA_TYPE>
+DATA_TYPE SAVariantDatas::toData() const
+{
+     return innerData().value<DATA_TYPE>();
+}
+
+
+template<typename DATA_TYPE>
+bool SAVariantDatas::toData(const SAAbstractDatas *dptr, DATA_TYPE &data)
+{
+    const SAVariantDatas* var = dynamic_cast<const SAVariantDatas*>(dptr);
+    if(var == nullptr)
+    {
+        return false;
+    }
+    if(!var->canConvert<DATA_TYPE>())
+    {
+        return false;
+    }
+    data = var->toData<DATA_TYPE>();
+    return true;
+}
+
+template<typename DATA_TYPE>
+bool SAVariantDatas::canConvert() const
+{
+    return innerData().canConvert<DATA_TYPE>();
+}
 
 
 #endif // SAINT_H

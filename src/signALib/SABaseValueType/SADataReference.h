@@ -23,6 +23,8 @@ public:
     SAAbstractDatas* getLinkData() const{return m_linkData;}
     virtual void write(QDataStream & out) const;
     virtual bool isDirty() const;
+    virtual void setDirty(bool dirty);
+    virtual bool isEmpty() const;
 public:
     void disLink();
 private:

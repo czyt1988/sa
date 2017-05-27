@@ -13,8 +13,6 @@ public:
     virtual ~SAVectorDouble(){}
     virtual int getType() const   {return SA::VectorDouble;}
     virtual QString getTypeName() const{return QString("double Vector");}
-//    //转换为double vector
-//    static SAVectorDouble* createFrom(const SAAbstractDatas* data);
     virtual void write(QDataStream & out) const;
     //转换为double数组
     static bool toDoubleVector(const SAAbstractDatas* ptr,QVector<double>& data);

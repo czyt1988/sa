@@ -75,3 +75,10 @@ QString SAVariantDatas::getTypeName() const
 {
     return "var";
 }
+
+bool SAVariantDatas::isEmpty() const
+{
+    return m_d.isValid();
+}
+
+
