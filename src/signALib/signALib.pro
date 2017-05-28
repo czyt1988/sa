@@ -54,5 +54,5 @@ include($$PWD/SABaseValueType/SABaseValueType.pri)
 include($$PWD/../czy/czy.pri)
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
 DEFINES += SALIB_MAKE #定义此宏将构建库
-RESOURCES += \
-    ico.qrc
+#RESOURCES += \
+#    ico.qrc

@@ -1,5 +1,14 @@
 <RCC>
     <qresource prefix="/icons">
         <file>icons/project.png</file>
+        <file>icons/layout.png</file>
+        <file>icons/newChart.png</file>
+        <file>icons/open.png</file>
+        <file>icons/openProject.png</file>
+        <file>icons/setDefalutDockPos.png</file>
+        <file>icons/newTrend.png</file>
+    </qresource>
+    <qresource prefix="/logo">
+        <file>logo.png</file>
     </qresource>
 </RCC>

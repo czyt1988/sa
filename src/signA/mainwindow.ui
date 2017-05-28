@@ -39,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>1219</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -673,8 +673,8 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/open.png</normaloff>:/image/res_image/open.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/open.png</normaloff>:/icons/icons/open.png</iconset>
    </property>
    <property name="text">
     <string>打开文件</string>
@@ -745,33 +745,6 @@
     <string>退出</string>
    </property>
   </action>
-  <action name="action_A_FFT">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/Chart-Axes.png</normaloff>:/image/res_image/Chart-Axes.png</iconset>
-   </property>
-   <property name="text">
-    <string>频谱</string>
-   </property>
-  </action>
-  <action name="action_A_PowerS">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/power-s.png</normaloff>:/image/res_image/power-s.png</iconset>
-   </property>
-   <property name="text">
-    <string>功率谱</string>
-   </property>
-  </action>
-  <action name="actionProjectTree">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/projectTree.png</normaloff>:/image/res_image/projectTree.png</iconset>
-   </property>
-   <property name="text">
-    <string>项目结构</string>
-   </property>
-  </action>
   <action name="action_dataFeatureDock">
    <property name="icon">
     <iconset resource="signA_Res.qrc">
@@ -783,8 +756,8 @@
   </action>
   <action name="actionNewChart">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/Graph-add.png</normaloff>:/image/res_image/Graph-add.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/newChart.png</normaloff>:/icons/icons/newChart.png</iconset>
    </property>
    <property name="text">
     <string>新图例</string>
@@ -795,8 +768,8 @@
   </action>
   <action name="actionNewTrend">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/trendChart.png</normaloff>:/image/res_image/trendChart.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/newTrend.png</normaloff>:/icons/icons/newTrend.png</iconset>
    </property>
    <property name="text">
     <string>趋势图</string>
@@ -812,32 +785,6 @@
    </property>
    <property name="text">
     <string>清除方案</string>
-   </property>
-  </action>
-  <action name="action_LeastSquare1Dim">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/linerFit.png</normaloff>:/image/res_image/linerFit.png</iconset>
-   </property>
-   <property name="text">
-    <string>线性回归</string>
-   </property>
-   <property name="toolTip">
-    <string>一元线性回归分析</string>
-   </property>
-  </action>
-  <action name="actionPolyfit">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/ployFit.png</normaloff>:/image/res_image/ployFit.png</iconset>
-   </property>
-   <property name="text">
-    <string>多项式拟合</string>
-   </property>
-  </action>
-  <action name="actionExportDataToFile">
-   <property name="text">
-    <string>导出曲线数据到文件</string>
    </property>
   </action>
   <action name="actionInRangDataRemove">
@@ -1114,8 +1061,8 @@
   </action>
   <action name="actionSetDefalutDockPos">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/defaultDocker.png</normaloff>:/image/res_image/defaultDocker.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/setDefalutDockPos.png</normaloff>:/icons/icons/setDefalutDockPos.png</iconset>
    </property>
    <property name="text">
     <string>恢复默认布局</string>
@@ -1170,6 +1117,10 @@
    </property>
   </action>
   <action name="actionOpenProject">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/openProject.png</normaloff>:/icons/icons/openProject.png</iconset>
+   </property>
    <property name="text">
     <string>打开项目</string>
    </property>
@@ -1211,8 +1162,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="signA_Res.qrc"/>
   <include location="icons.qrc"/>
+  <include location="signA_Res.qrc"/>
  </resources>
  <connections>
   <connection>
