@@ -30,9 +30,9 @@ namespace SA {
     ///
     enum PickDataMode
     {
-        xOnly///< 只导出x值，这样导出的数据为DataMode::DoubleSeries
-        ,yOnly///< 只导出y值，这样导出的数据为DataMode::DoubleSeries
-        ,xyPoint///< 导出xy值，这样导出的数据为DataMode::PointSeries
+        XOnly///< 只导出x值，这样导出的数据为DataMode::DoubleSeries
+        ,YOnly///< 只导出y值，这样导出的数据为DataMode::DoubleSeries
+        ,XYPoint///< 导出xy值，这样导出的数据为DataMode::PointSeries
     };
 
     ///

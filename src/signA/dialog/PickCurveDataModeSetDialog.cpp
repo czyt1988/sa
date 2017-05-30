@@ -27,12 +27,12 @@ SA::ViewRange PickCurveDataModeSetDialog::getViewRange() const
 SA::PickDataMode PickCurveDataModeSetDialog::getPickDataMode() const
 {
     if(ui->radioButton_xOnly->isChecked())
-        return SA::xOnly;
+        return SA::XOnly;
     else if(ui->radioButton_yOnly->isChecked())
-        return SA::yOnly;
+        return SA::YOnly;
     else if(ui->radioButton_point->isChecked())
-        return SA::xyPoint;
-    return SA::xyPoint;
+        return SA::XYPoint;
+    return SA::XYPoint;
 }
 
 void PickCurveDataModeSetDialog::on_buttonBox_accepted()

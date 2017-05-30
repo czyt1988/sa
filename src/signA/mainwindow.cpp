@@ -1261,7 +1261,10 @@ void MainWindow::onActionPickCurveToDataTriggered()
 {
     SAChart2D* chart = getCurSubWindowChart();
     if(!chart)
+    {
+        showWarningMessageInfo(tr("you should select a figure window"));
         return;
+    }
     QList<QwtPlotCurve*> curs = CurveSelectDialog::getSelCurve(chart,this);
     if(curs.size()==0)
         return;
@@ -1416,25 +1419,25 @@ SAPlotLayerModel* MainWindow::getPlotLayerModel() const
 ///
 void MainWindow::pickCurData(const QString& name, QwtPlotCurve *cur, SA::PickDataMode pickMode, const QRectF& rang)
 {
-    SAAbstractDatas* p =nullptr;
-    if(SA::xOnly == pickMode)
+    std::shared_ptr<SAAbstractDatas> p = nullptr;
+    if(SA::XOnly == pickMode)
     {
         QVector<double> x;
         SAChart2D::getXDatas(x,cur,rang);
-        p = new SAVectorDouble(name,x);
+        p = SAValueManager::makeData<SAVectorDouble>(name,x);//new SAVectorDouble(name,x);
 
     }
-    else if(SA::yOnly == pickMode)
+    else if(SA::YOnly == pickMode)
     {
         QVector<double> y;
         SAChart2D::getYDatas(y,cur,rang);
-        p = new SAVectorDouble(name,y);
+        p = SAValueManager::makeData<SAVectorDouble>(name,y);//new SAVectorDouble(name,y);
     }
-    else if(SA::xyPoint == pickMode)
+    else if(SA::XYPoint == pickMode)
     {
         QVector<QPointF> xy;
         SAChart2D::getXYDatas(xy,cur,rang);
-        p = new SAVectorPointF(name,xy);
+        p = SAValueManager::makeData<SAVectorPointF>(name,xy);//new SAVectorPointF(name,xy);
     }
     saValueManager->addData(p);
 }

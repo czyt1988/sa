@@ -130,7 +130,7 @@
        <normaloff>:/icons/icons/chartDataManager.png</normaloff>:/icons/icons/chartDataManager.png</iconset>
      </property>
      <addaction name="actionInRangDataRemove"/>
-     <addaction name="action_OutRangDataRemove"/>
+     <addaction name="actionOutRangDataRemove"/>
      <addaction name="actionPickCurveToData"/>
     </widget>
     <widget class="QMenu" name="menu_dataManager">
@@ -316,7 +316,7 @@
    </attribute>
    <addaction name="actionPickCurveToData"/>
    <addaction name="actionInRangDataRemove"/>
-   <addaction name="action_OutRangDataRemove"/>
+   <addaction name="actionOutRangDataRemove"/>
   </widget>
   <widget class="QToolBar" name="toolBar_chartSet">
    <property name="windowTitle">
@@ -523,6 +523,10 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_main">
+   <property name="windowIcon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/windowIcons/icons/windowIcon/figureWindow.svg</normaloff>:/windowIcons/icons/windowIcon/figureWindow.svg</iconset>
+   </property>
    <property name="toolTip">
     <string/>
    </property>
@@ -768,11 +772,19 @@
    </property>
   </action>
   <action name="actionInRangDataRemove">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/inRangDataRemove.png</normaloff>:/icons/icons/inRangDataRemove.png</iconset>
+   </property>
    <property name="text">
     <string>移除选定范围数据</string>
    </property>
   </action>
-  <action name="action_OutRangDataRemove">
+  <action name="actionOutRangDataRemove">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/outRangDataRemove.png</normaloff>:/icons/icons/outRangDataRemove.png</iconset>
+   </property>
    <property name="text">
     <string>移除范围外数据</string>
    </property>
@@ -945,6 +957,10 @@
    </property>
   </action>
   <action name="actionPickCurveToData">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/pickCurveToData.png</normaloff>:/icons/icons/pickCurveToData.png</iconset>
+   </property>
    <property name="text">
     <string>从曲线提取数据</string>
    </property>
