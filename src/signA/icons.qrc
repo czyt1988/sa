@@ -7,8 +7,60 @@
         <file>icons/openProject.png</file>
         <file>icons/setDefalutDockPos.png</file>
         <file>icons/newTrend.png</file>
+        <file>icons/deleteValue.png</file>
+        <file>icons/information.png</file>
+        <file>icons/windowTile.png</file>
+        <file>icons/windowCascade.png</file>
+        <file>icons/save.png</file>
+        <file>icons/tabMode.png</file>
+        <file>icons/windowMode.png</file>
+        <file>icons/quit.svg</file>
+        <file>icons/saveAs.png</file>
+        <file>icons/export.png</file>
+        <file>icons/import.png</file>
+        <file>icons/chartDataManager.png</file>
+        <file>icons/windowViewSet.png</file>
+        <file>icons/redo.png</file>
+        <file>icons/undo.png</file>
+        <file>icons/figureViewer.png</file>
+        <file>icons/dataFeatureDock.png</file>
+        <file>icons/valueManagerDock.png</file>
+        <file>icons/valueViewerDock.png</file>
+        <file>icons/subWindowListDock.png</file>
+        <file>icons/viewValueInCurrentTab.png</file>
+        <file>icons/viewValueInNewTab.png</file>
+        <file>icons/clearProject.png</file>
+        <file>icons/renameValue.png</file>
+        <file>icons/errorInfo.png</file>
+        <file>icons/normalInfo.png</file>
+        <file>icons/warningInfo.png</file>
+        <file>icons/layerBarChart.png</file>
+        <file>icons/layerCurve.png</file>
+        <file>icons/layerNotView.svg</file>
+        <file>icons/layerView.svg</file>
+        <file>icons/layeroutLegend.svg</file>
+        <file>icons/layeroutMarker.png</file>
+        <file>icons/layeroutPointMarker.png</file>
+        <file>icons/layeroutYValueMarker.png</file>
+        <file>icons/clearMarked.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>
+    </qresource>
+    <qresource prefix="/figureSet">
+        <file>icons/figureSet/crossCursor.svg</file>
+        <file>icons/figureSet/pannerChart.png</file>
+        <file>icons/figureSet/zoomChart.png</file>
+        <file>icons/figureSet/zoomChartReset.png</file>
+        <file>icons/figureSet/yDataPicker.png</file>
+        <file>icons/figureSet/xyDataPicker.png</file>
+        <file>icons/figureSet/showGrid.png</file>
+        <file>icons/figureSet/GridXMin.png</file>
+        <file>icons/figureSet/GridXOnly.png</file>
+        <file>icons/figureSet/GridYMin.png</file>
+        <file>icons/figureSet/GridYOnly.png</file>
+        <file>icons/figureSet/ShowLegend.png</file>
+        <file>icons/figureSet/chartSet.png</file>
+        <file>icons/figureSet/legendPanel.svg</file>
     </qresource>
 </RCC>

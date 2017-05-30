@@ -4,6 +4,7 @@
 #include <QPalette>
 #include <QTimer>
 #include <QGraphicsOpacityEffect>
+#include "SAResourDefine.h"
 SAInformationStatusWidget::SAInformationStatusWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SAInformationStatusWidget)
@@ -272,7 +273,7 @@ void SAInformationStatusWidget::setUIMode(SA::MeaasgeType type)
     switch (type) {
     case SA::NormalMessage:
     {
-        ui->label_icon->setPixmap (QPixmap(":/info/res_imageInfomation/normalInfo.png"));
+        ui->label_icon->setPixmap (PIXMAP_NormalInfo);
         ui->label_icon->setStyleSheet ("");
         ui->label_info->setStyleSheet("");
     }break;
@@ -280,21 +281,21 @@ void SAInformationStatusWidget::setUIMode(SA::MeaasgeType type)
     {
         QColor clr(239,176,60);
         ui->label_icon->setStyleSheet (QString("border-color: %1").arg (clr.name ()));
-        ui->label_icon->setPixmap (QPixmap(":/info/res_imageInfomation/warningInfo.png"));
+        ui->label_icon->setPixmap (PIXMAP_WarningInfo);
         ui->label_info->setStyleSheet(QString("background-color: %1").arg (clr.name ()));
     }break;
     case SA::ErrorMessage:
     {
         QColor clr(200,0,0);
         ui->label_icon->setStyleSheet (QString("border-color: %1").arg (clr.name ()));
-        ui->label_icon->setPixmap (QPixmap(":/info/res_imageInfomation/errorInfo.png"));
+        ui->label_icon->setPixmap (PIXMAP_ErrorInfo);
         ui->label_info->setStyleSheet(QString("background-color: %1").arg (clr.name ()));
     }break;
     case SA::QuesstionMessage:
     {
         QColor clr(78,160,221);
         ui->label_icon->setStyleSheet (QString("border-color: %1").arg (clr.name ()));
-        ui->label_icon->setPixmap (QPixmap(":/info/res_imageInfomation/warningInfo.png"));
+        ui->label_icon->setPixmap (PIXMAP_WarningInfo);
         ui->label_info->setStyleSheet(QString("background-color: %1").arg (clr.name ()));
 
     }break;

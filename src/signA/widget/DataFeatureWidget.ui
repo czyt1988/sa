@@ -52,8 +52,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../signA_Res.qrc">
-         <normaloff>:/image/res_image/clearMarked.png</normaloff>:/image/res_image/clearMarked.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/icons/clearMarked.png</normaloff>:/icons/icons/clearMarked.png</iconset>
        </property>
       </widget>
      </item>
@@ -85,7 +85,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../signA_Res.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

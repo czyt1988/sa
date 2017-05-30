@@ -50,10 +50,18 @@
      <property name="title">
       <string>导出</string>
      </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/icons/icons/export.png</normaloff>:/icons/icons/export.png</iconset>
+     </property>
     </widget>
     <widget class="QMenu" name="menu_import">
      <property name="title">
       <string>导入</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/icons/icons/import.png</normaloff>:/icons/icons/import.png</iconset>
      </property>
     </widget>
     <addaction name="actionOpen"/>
@@ -72,25 +80,28 @@
     <property name="title">
      <string>窗口</string>
     </property>
-    <widget class="QMenu" name="menu_2">
+    <widget class="QMenu" name="menu_windowsViewSet">
      <property name="title">
       <string>窗口</string>
      </property>
-     <addaction name="action_chartViewer"/>
-     <addaction name="action_dataFeatureDock"/>
-     <addaction name="action_subWindowListDock"/>
-     <addaction name="action_layerOutDock"/>
-     <addaction name="action_valueManagerDock"/>
-     <addaction name="action_valueViewerDock"/>
-     <addaction name="action_chartDataViewerDock"/>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/icons/icons/windowViewSet.png</normaloff>:/icons/icons/windowViewSet.png</iconset>
+     </property>
+     <addaction name="actionFigureViewer"/>
+     <addaction name="actionDataFeatureDock"/>
+     <addaction name="actionSubWindowListDock"/>
+     <addaction name="actionLayerOutDock"/>
+     <addaction name="actionValueManagerDock"/>
+     <addaction name="actionValueViewerDock"/>
     </widget>
-    <addaction name="action_Window_WindowMode"/>
-    <addaction name="action_Window_TabMode"/>
+    <addaction name="actionWindowMode"/>
+    <addaction name="actionTabMode"/>
     <addaction name="separator"/>
-    <addaction name="action_Window_Cascade"/>
-    <addaction name="action_Window_Tile"/>
+    <addaction name="actionWindowCascade"/>
+    <addaction name="actionWindowTile"/>
     <addaction name="separator"/>
-    <addaction name="menu_2"/>
+    <addaction name="menu_windowsViewSet"/>
     <addaction name="actionSetDefalutDockPos"/>
    </widget>
    <widget class="QMenu" name="menu_Analysis">
@@ -115,8 +126,8 @@
       <string>图线数据操作</string>
      </property>
      <property name="icon">
-      <iconset resource="signA_Res.qrc">
-       <normaloff>:/image/res_image/dataManager.png</normaloff>:/image/res_image/dataManager.png</iconset>
+      <iconset resource="icons.qrc">
+       <normaloff>:/icons/icons/chartDataManager.png</normaloff>:/icons/icons/chartDataManager.png</iconset>
      </property>
      <addaction name="actionInRangDataRemove"/>
      <addaction name="action_OutRangDataRemove"/>
@@ -143,63 +154,52 @@
       <string>网格设置</string>
      </property>
      <property name="icon">
-      <iconset resource="signA_Res.qrc">
-       <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid.png</iconset>
+      <iconset resource="icons.qrc">
+       <normaloff>:/figureSet/icons/figureSet/showGrid.png</normaloff>:/figureSet/icons/figureSet/showGrid.png</iconset>
      </property>
-     <addaction name="action_showGrid"/>
+     <addaction name="actionShowGrid"/>
      <addaction name="separator"/>
-     <addaction name="action_showHGrid"/>
-     <addaction name="action_showVGrid"/>
+     <addaction name="actionShowHGrid"/>
+     <addaction name="actionShowVGrid"/>
      <addaction name="separator"/>
-     <addaction name="action_showCrowdedHGrid"/>
-     <addaction name="action_showCrowdedVGrid"/>
+     <addaction name="actionShowCrowdedHGrid"/>
+     <addaction name="actionShowCrowdedVGrid"/>
     </widget>
     <widget class="QMenu" name="menu_legend">
      <property name="title">
       <string>图例</string>
      </property>
      <property name="icon">
-      <iconset resource="signA_Res.qrc">
-       <normaloff>:/chartCtrlToolbar/res_image/legend_menu.png</normaloff>:/chartCtrlToolbar/res_image/legend_menu.png</iconset>
+      <iconset resource="icons.qrc">
+       <normaloff>:/figureSet/icons/figureSet/ShowLegend.png</normaloff>:/figureSet/icons/figureSet/ShowLegend.png</iconset>
      </property>
-     <addaction name="action_showLegend"/>
-     <addaction name="action_legendPanel"/>
+     <addaction name="actionShowLegend"/>
+     <addaction name="actionLegendPanel"/>
     </widget>
     <widget class="QMenu" name="menuZoomSet">
      <property name="title">
       <string>缩放操作</string>
      </property>
      <property name="icon">
-      <iconset resource="signA_Res.qrc">
-       <normaloff>:/image/res_image/zoom.png</normaloff>:/image/res_image/zoom.png</iconset>
+      <iconset resource="icons.qrc">
+       <normaloff>:/figureSet/icons/figureSet/zoomChart.png</normaloff>:/figureSet/icons/figureSet/zoomChart.png</iconset>
      </property>
-     <addaction name="action_zoom"/>
-     <addaction name="action_zoomReset"/>
-    </widget>
-    <widget class="QMenu" name="menu_chartWidgetInfo">
-     <property name="title">
-      <string>信息</string>
-     </property>
-     <property name="icon">
-      <iconset resource="signA_Res.qrc">
-       <normaloff>:/chartCtrlToolbar/res_image/chartInfo_menu.png</normaloff>:/chartCtrlToolbar/res_image/chartInfo_menu.png</iconset>
-     </property>
-     <addaction name="action_showChartInfo"/>
+     <addaction name="actionZoomChart"/>
+     <addaction name="actionZoomChartReset"/>
     </widget>
     <widget class="QMenu" name="menu_dataPickMenu">
      <property name="title">
       <string>数据显示</string>
      </property>
-     <addaction name="action_yDataPicker"/>
-     <addaction name="action_XYDataPicker"/>
+     <addaction name="actionYDataPicker"/>
+     <addaction name="actionXYDataPicker"/>
     </widget>
-    <addaction name="action_crossCursor"/>
-    <addaction name="action_panner"/>
+    <addaction name="actionCrossCursor"/>
+    <addaction name="actionPannerChart"/>
     <addaction name="menu_grid"/>
     <addaction name="menu_legend"/>
     <addaction name="menuZoomSet"/>
-    <addaction name="action_chartSet"/>
-    <addaction name="menu_chartWidgetInfo"/>
+    <addaction name="actionChartSet"/>
     <addaction name="menu_dataPickMenu"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -254,15 +254,12 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionOpenProject"/>
    <addaction name="actionSave"/>
-   <addaction name="actionClearProject"/>
+   <addaction name="actionSaveAs"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidget_DataFeature">
-   <property name="windowIcon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/dataFeatureDock.png</normaloff>:/image/res_image/dataFeatureDock.png</iconset>
-   </property>
    <property name="floating">
     <bool>false</bool>
    </property>
@@ -334,15 +331,14 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_crossCursor"/>
-   <addaction name="action_panner"/>
-   <addaction name="action_zoom"/>
-   <addaction name="action_XYDataPicker"/>
-   <addaction name="action_showGrid"/>
-   <addaction name="action_showLegend"/>
-   <addaction name="action_legendPanel"/>
-   <addaction name="action_chartSet"/>
-   <addaction name="action_showChartInfo"/>
+   <addaction name="actionCrossCursor"/>
+   <addaction name="actionPannerChart"/>
+   <addaction name="actionZoomChart"/>
+   <addaction name="actionXYDataPicker"/>
+   <addaction name="actionShowGrid"/>
+   <addaction name="actionShowLegend"/>
+   <addaction name="actionLegendPanel"/>
+   <addaction name="actionChartSet"/>
   </widget>
   <widget class="QToolBar" name="toolBar_plot">
    <property name="windowTitle">
@@ -361,10 +357,6 @@
    <addaction name="actionNewTrend"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_windowList">
-   <property name="windowIcon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/subWindowListDock.png</normaloff>:/image/res_image/subWindowListDock.png</iconset>
-   </property>
    <property name="windowTitle">
     <string>子窗口列表</string>
    </property>
@@ -395,10 +387,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_valueManage">
-   <property name="windowIcon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/valueViewer.png</normaloff>:/image/res_image/valueViewer.png</iconset>
-   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -476,10 +464,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_chartDataViewer">
-   <property name="windowIcon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/chartDataViewer.png</normaloff>:/image/res_image/chartDataViewer.png</iconset>
-   </property>
    <property name="windowTitle">
     <string>绘图数据预览</string>
    </property>
@@ -539,10 +523,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_main">
-   <property name="windowIcon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/chartViewer.png</normaloff>:/image/res_image/chartViewer.png</iconset>
-   </property>
    <property name="toolTip">
     <string/>
    </property>
@@ -604,10 +584,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_valueViewer">
-   <property name="windowIcon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/valueViewer.png</normaloff>:/image/res_image/valueViewer.png</iconset>
-   </property>
    <property name="windowTitle">
     <string>变量数据预览</string>
    </property>
@@ -683,25 +659,25 @@
     <string>打开数据源</string>
    </property>
   </action>
-  <action name="action_Window_Cascade">
+  <action name="actionWindowCascade">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/windowStack.png</normaloff>:/image/res_image/windowStack.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/windowCascade.png</normaloff>:/icons/icons/windowCascade.png</iconset>
    </property>
    <property name="text">
     <string>层叠布局</string>
    </property>
   </action>
-  <action name="action_Window_Tile">
+  <action name="actionWindowTile">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/tile.png</normaloff>:/image/res_image/tile.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/windowTile.png</normaloff>:/icons/icons/windowTile.png</iconset>
    </property>
    <property name="text">
     <string>平铺布局</string>
    </property>
   </action>
-  <action name="action_Window_WindowMode">
+  <action name="actionWindowMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -709,20 +685,20 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/windowMode.png</normaloff>:/image/res_image/windowMode.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/windowMode.png</normaloff>:/icons/icons/windowMode.png</iconset>
    </property>
    <property name="text">
     <string>窗口模式</string>
    </property>
   </action>
-  <action name="action_Window_TabMode">
+  <action name="actionTabMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/tabmode.png</normaloff>:/image/res_image/tabmode.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/tabMode.png</normaloff>:/icons/icons/tabMode.png</iconset>
    </property>
    <property name="text">
     <string>标签模式</string>
@@ -733,22 +709,26 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/save.png</normaloff>:/image/res_image/save.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/save.png</normaloff>:/icons/icons/save.png</iconset>
    </property>
    <property name="text">
     <string>保存</string>
    </property>
   </action>
   <action name="actionQuite">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/quit.svg</normaloff>:/icons/icons/quit.svg</iconset>
+   </property>
    <property name="text">
     <string>退出</string>
    </property>
   </action>
-  <action name="action_dataFeatureDock">
+  <action name="actionDataFeatureDock">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/dataFeatureDock.png</normaloff>:/image/res_image/dataFeatureDock.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/dataFeatureDock.png</normaloff>:/icons/icons/dataFeatureDock.png</iconset>
    </property>
    <property name="text">
     <string>数据特性</string>
@@ -780,71 +760,59 @@
   </action>
   <action name="actionClearProject">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/clear.png</normaloff>:/image/res_image/clear.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/clearProject.png</normaloff>:/icons/icons/clearProject.png</iconset>
    </property>
    <property name="text">
     <string>清除方案</string>
    </property>
   </action>
   <action name="actionInRangDataRemove">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/InRangDataRemove.png</normaloff>:/image/res_image/InRangDataRemove.png</iconset>
-   </property>
    <property name="text">
     <string>移除选定范围数据</string>
    </property>
   </action>
   <action name="action_OutRangDataRemove">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/OutRangDataRemove.png</normaloff>:/image/res_image/OutRangDataRemove.png</iconset>
-   </property>
    <property name="text">
     <string>移除范围外数据</string>
    </property>
   </action>
   <action name="actionExportReport">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/ExportReport.png</normaloff>:/image/res_image/ExportReport.png</iconset>
-   </property>
    <property name="text">
     <string>生成报表</string>
    </property>
   </action>
-  <action name="action_subWindowListDock">
+  <action name="actionSubWindowListDock">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/subWindowListDock.png</normaloff>:/image/res_image/subWindowListDock.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/subWindowListDock.png</normaloff>:/icons/icons/subWindowListDock.png</iconset>
    </property>
    <property name="text">
     <string>子窗口列表</string>
    </property>
   </action>
-  <action name="action_crossCursor">
+  <action name="actionCrossCursor">
    <property name="icon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/crosserPicker.png</normaloff>:/chartCtrlToolbar/res_image/crosserPicker.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/crossCursor.svg</normaloff>:/figureSet/icons/figureSet/crossCursor.svg</iconset>
    </property>
    <property name="text">
     <string>十字光标</string>
    </property>
   </action>
-  <action name="action_panner">
+  <action name="actionPannerChart">
    <property name="icon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/handPanner.png</normaloff>:/chartCtrlToolbar/res_image/handPanner.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/pannerChart.png</normaloff>:/figureSet/icons/figureSet/pannerChart.png</iconset>
    </property>
    <property name="text">
     <string>移动</string>
    </property>
   </action>
-  <action name="action_zoom">
+  <action name="actionZoomChart">
    <property name="icon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/zoomInRect.png</normaloff>:/chartCtrlToolbar/res_image/zoomInRect.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/zoomChart.png</normaloff>:/figureSet/icons/figureSet/zoomChart.png</iconset>
    </property>
    <property name="text">
     <string>范围缩放</string>
@@ -853,10 +821,10 @@
     <string>缩放</string>
    </property>
   </action>
-  <action name="action_yDataPicker">
+  <action name="actionYDataPicker">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/dataPicker_y.png</normaloff>:/chartCtrlToolbar/res_image/dataPicker_y.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/yDataPicker.png</normaloff>:/figureSet/icons/figureSet/yDataPicker.png</iconset>
    </property>
    <property name="text">
     <string>Y值显示</string>
@@ -868,10 +836,10 @@
     <string>在图表上显示鼠标经过曲线的数据</string>
    </property>
   </action>
-  <action name="action_showGrid">
+  <action name="actionShowGrid">
    <property name="icon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/grid.png</normaloff>:/chartCtrlToolbar/res_image/grid.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/showGrid.png</normaloff>:/figureSet/icons/figureSet/showGrid.png</iconset>
    </property>
    <property name="text">
     <string>显示网格</string>
@@ -880,10 +848,10 @@
     <string>网格</string>
    </property>
   </action>
-  <action name="action_showHGrid">
+  <action name="actionShowHGrid">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XOnly.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XOnly.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/GridXOnly.png</normaloff>:/figureSet/icons/figureSet/GridXOnly.png</iconset>
    </property>
    <property name="text">
     <string>显示水平网格</string>
@@ -895,10 +863,10 @@
     <string>显示/隐藏 水平网格线</string>
    </property>
   </action>
-  <action name="action_showVGrid">
+  <action name="actionShowVGrid">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YOnly.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YOnly.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/GridYOnly.png</normaloff>:/figureSet/icons/figureSet/GridYOnly.png</iconset>
    </property>
    <property name="text">
     <string>显示垂直网格</string>
@@ -910,10 +878,10 @@
     <string>显示/隐藏垂直网格</string>
    </property>
   </action>
-  <action name="action_showCrowdedHGrid">
+  <action name="actionShowCrowdedHGrid">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XMin.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_XMin.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/GridXMin.png</normaloff>:/figureSet/icons/figureSet/GridXMin.png</iconset>
    </property>
    <property name="text">
     <string>密集水平网格</string>
@@ -922,19 +890,19 @@
     <string>显示/隐藏 密集水平网格</string>
    </property>
   </action>
-  <action name="action_showCrowdedVGrid">
+  <action name="actionShowCrowdedVGrid">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YMin.png</normaloff>:/mdi_toolBar/res_mdi_toolbar/Grid_YMin.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/GridYMin.png</normaloff>:/figureSet/icons/figureSet/GridYMin.png</iconset>
    </property>
    <property name="text">
     <string>密集垂直网格</string>
    </property>
   </action>
-  <action name="action_showLegend">
+  <action name="actionShowLegend">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/legend.png</normaloff>:/chartCtrlToolbar/res_image/legend.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/ShowLegend.png</normaloff>:/figureSet/icons/figureSet/ShowLegend.png</iconset>
    </property>
    <property name="text">
     <string>显示/隐藏 图例</string>
@@ -946,10 +914,10 @@
     <string>显示/隐藏 图例</string>
    </property>
   </action>
-  <action name="action_legendPanel">
+  <action name="actionLegendPanel">
    <property name="icon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/legendPanel.png</normaloff>:/chartCtrlToolbar/res_image/legendPanel.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/legendPanel.svg</normaloff>:/figureSet/icons/figureSet/legendPanel.svg</iconset>
    </property>
    <property name="text">
     <string>图例选择器</string>
@@ -958,62 +926,57 @@
     <string>图例选择</string>
    </property>
   </action>
-  <action name="action_chartSet">
+  <action name="actionChartSet">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/chartSet.png</normaloff>:/chartCtrlToolbar/res_image/chartSet.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/chartSet.png</normaloff>:/figureSet/icons/figureSet/chartSet.png</iconset>
    </property>
    <property name="text">
     <string>图表设置</string>
    </property>
   </action>
-  <action name="action_zoomReset">
+  <action name="actionZoomChartReset">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/zoom_reset.png</normaloff>:/image/res_image/zoom_reset.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/zoomChartReset.png</normaloff>:/figureSet/icons/figureSet/zoomChartReset.png</iconset>
    </property>
    <property name="text">
     <string>最优视图</string>
    </property>
   </action>
-  <action name="action_showChartInfo">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/showChartInfo.png</normaloff>:/chartCtrlToolbar/res_image/showChartInfo.png</iconset>
-   </property>
-   <property name="text">
-    <string>显示信息窗口</string>
-   </property>
-  </action>
   <action name="actionPickCurveToData">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/pickCurveToData.png</normaloff>:/image/res_image/pickCurveToData.png</iconset>
-   </property>
    <property name="text">
     <string>从曲线提取数据</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/about.png</normaloff>:/image/res_image/about.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/information.png</normaloff>:/icons/icons/information.png</iconset>
    </property>
    <property name="text">
     <string>关于</string>
    </property>
   </action>
   <action name="actionRescind">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/undo.png</normaloff>:/icons/icons/undo.png</iconset>
+   </property>
    <property name="text">
     <string>撤销</string>
    </property>
   </action>
   <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/redo.png</normaloff>:/icons/icons/redo.png</iconset>
+   </property>
    <property name="text">
     <string>重做</string>
    </property>
   </action>
-  <action name="action_valueManagerDock">
+  <action name="actionValueManagerDock">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -1021,27 +984,35 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/valueManager.png</normaloff>:/image/res_image/valueManager.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/valueManagerDock.png</normaloff>:/icons/icons/valueManagerDock.png</iconset>
    </property>
    <property name="text">
     <string>变量管理窗口</string>
    </property>
   </action>
   <action name="actionViewValueInCurrentTab">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/viewValueInCurrentTab.png</normaloff>:/icons/icons/viewValueInCurrentTab.png</iconset>
+   </property>
    <property name="text">
     <string>在当前标签页浏览</string>
    </property>
   </action>
   <action name="actionViewValueInNewTab">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/viewValueInNewTab.png</normaloff>:/icons/icons/viewValueInNewTab.png</iconset>
+   </property>
    <property name="text">
     <string>在新标签页浏览</string>
    </property>
   </action>
-  <action name="action_layerOutDock">
+  <action name="actionLayerOutDock">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/layer.png</normaloff>:/image/res_image/layer.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/layout.png</normaloff>:/icons/icons/layout.png</iconset>
    </property>
    <property name="text">
     <string>图层管理</string>
@@ -1049,8 +1020,8 @@
   </action>
   <action name="actionRenameValue">
    <property name="icon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/rename.png</normaloff>:/image/res_image/rename.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/renameValue.png</normaloff>:/icons/icons/renameValue.png</iconset>
    </property>
    <property name="text">
     <string>重命名</string>
@@ -1068,37 +1039,28 @@
     <string>恢复默认布局</string>
    </property>
   </action>
-  <action name="action_valueViewerDock">
+  <action name="actionValueViewerDock">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/valueViewer.png</normaloff>:/image/res_image/valueViewer.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/valueViewerDock.png</normaloff>:/icons/icons/valueViewerDock.png</iconset>
    </property>
    <property name="text">
     <string>变量预览</string>
    </property>
   </action>
-  <action name="action_chartViewer">
+  <action name="actionFigureViewer">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/chartViewer.png</normaloff>:/image/res_image/chartViewer.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/figureViewer.png</normaloff>:/icons/icons/figureViewer.png</iconset>
    </property>
    <property name="text">
     <string>图形界面</string>
    </property>
   </action>
-  <action name="action_chartDataViewerDock">
+  <action name="actionXYDataPicker">
    <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/chartDataViewer.png</normaloff>:/image/res_image/chartDataViewer.png</iconset>
-   </property>
-   <property name="text">
-    <string>图线数据视图</string>
-   </property>
-  </action>
-  <action name="action_XYDataPicker">
-   <property name="icon">
-    <iconset resource="signA_Res.qrc">
-     <normaloff>:/chartCtrlToolbar/res_image/dataPicker_xy.png</normaloff>:/chartCtrlToolbar/res_image/dataPicker_xy.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/figureSet/icons/figureSet/xyDataPicker.png</normaloff>:/figureSet/icons/figureSet/xyDataPicker.png</iconset>
    </property>
    <property name="text">
     <string>XY值捕获</string>
@@ -1106,8 +1068,8 @@
   </action>
   <action name="actionDeleteValue">
    <property name="icon">
-    <iconset theme="normal" resource="signA_Res.qrc">
-     <normaloff>:/image/res_image/deleteValue.png</normaloff>:/image/res_image/deleteValue.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/deleteValue.png</normaloff>:/icons/icons/deleteValue.png</iconset>
    </property>
    <property name="text">
     <string>删除变量</string>
@@ -1126,6 +1088,10 @@
    </property>
   </action>
   <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/saveAs.png</normaloff>:/icons/icons/saveAs.png</iconset>
+   </property>
    <property name="text">
     <string>另存为</string>
    </property>
@@ -1163,7 +1129,6 @@
  </customwidgets>
  <resources>
   <include location="icons.qrc"/>
-  <include location="signA_Res.qrc"/>
  </resources>
  <connections>
   <connection>

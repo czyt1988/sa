@@ -208,7 +208,6 @@ void MainWindow::initUI()
     m_drawDelegate.reset (new SADrawDelegate(this));
     m_importDelegate.reset (new SADataImportDelegate(this));
 
-    ui->actionProjectTree->setChecked(true);
     //变量管理树
     SAValueManagerModel* modelValueMgr = new SAValueManagerModel(this);
     ui->treeView_valueManager->setDragEnabled(true);
@@ -296,22 +295,22 @@ void MainWindow::initUI()
     //- window menu 窗口 菜单
     connect(ui->actionSetDefalutDockPos,&QAction::triggered,this,&MainWindow::onActionSetDefalutDockPosTriggered);
     //窗口模式
-    connect(ui->action_Window_WindowMode,&QAction::triggered,[&](){
+    connect(ui->actionWindowMode,&QAction::triggered,[&](){
         czy::QtApp::QWaitCursor waitCur;
         Q_UNUSED(waitCur);
-        ui->action_Window_TabMode->setChecked(false);
-        ui->action_Window_WindowMode->setChecked(true);
+        ui->actionTabMode->setChecked(false);
+        ui->actionWindowMode->setChecked(true);
         if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
             return;
         }
         ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
     });
     //标签模式
-    connect(ui->action_Window_TabMode,&QAction::triggered,[&](){
+    connect(ui->actionTabMode,&QAction::triggered,[&](){
         czy::QtApp::QWaitCursor waitCur;
         Q_UNUSED(waitCur);
-        ui->action_Window_TabMode->setChecked(true);
-        ui->action_Window_WindowMode->setChecked(false);
+        ui->actionTabMode->setChecked(true);
+        ui->actionWindowMode->setChecked(false);
 
         if(QMdiArea::TabbedView == ui->mdiArea->viewMode()){
             return;
@@ -319,7 +318,7 @@ void MainWindow::initUI()
         ui->mdiArea->setViewMode(QMdiArea::TabbedView);
     });
     //层叠布置
-    connect(ui->action_Window_Cascade,&QAction::triggered,[&](){
+    connect(ui->actionWindowCascade,&QAction::triggered,[&](){
         czy::QtApp::QWaitCursor waitCur;
         Q_UNUSED(waitCur);
         if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
@@ -327,7 +326,7 @@ void MainWindow::initUI()
         }
     });
     //均匀布置
-    connect(ui->action_Window_Tile,&QAction::triggered,[&](){
+    connect(ui->actionWindowTile,&QAction::triggered,[&](){
         czy::QtApp::QWaitCursor waitCur;
         Q_UNUSED(waitCur);
         if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
@@ -335,86 +334,86 @@ void MainWindow::initUI()
         }
     });
     //显示隐藏dock窗口
-    connect(ui->action_dataFeatureDock,&QAction::triggered,[&](){ui->dockWidget_DataFeature->show();});
-    connect(ui->action_subWindowListDock,&QAction::triggered,[&](){ui->dockWidget_windowList->show();});
-    connect(ui->action_valueManagerDock,&QAction::triggered,[&](){ui->dockWidget_valueManage->show();});
-    connect(ui->action_layerOutDock,&QAction::triggered,[&](){ui->dockWidget_plotLayer->show();});
-    connect(ui->action_valueViewerDock,&QAction::triggered,[&](){ui->dockWidget_valueViewer->show();});
-    connect(ui->action_chartDataViewerDock,&QAction::triggered,[&](){ui->dockWidget_main->show();});
+    connect(ui->actionDataFeatureDock,&QAction::triggered,[&](){ui->dockWidget_DataFeature->show();});
+    connect(ui->actionSubWindowListDock,&QAction::triggered,[&](){ui->dockWidget_windowList->show();});
+    connect(ui->actionValueManagerDock,&QAction::triggered,[&](){ui->dockWidget_valueManage->show();});
+    connect(ui->actionLayerOutDock,&QAction::triggered,[&](){ui->dockWidget_plotLayer->show();});
+    connect(ui->actionValueViewerDock,&QAction::triggered,[&](){ui->dockWidget_valueViewer->show();});
+    connect(ui->actionFigureViewer,&QAction::triggered,[&](){ui->dockWidget_main->show();});
 
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
-    ui->action_crossCursor->setCheckable(true);
-    connect(ui->action_crossCursor,&QAction::triggered,Lambda_SaChartEnable(Picker));
+    ui->actionCrossCursor->setCheckable(true);
+    connect(ui->actionCrossCursor,&QAction::triggered,Lambda_SaChartEnable(Picker));
     //拖动
-    ui->action_panner->setCheckable(true);
-    connect(ui->action_panner,&QAction::triggered,Lambda_SaChartEnable(Panner));
+    ui->actionPannerChart->setCheckable(true);
+    connect(ui->actionPannerChart,&QAction::triggered,Lambda_SaChartEnable(Panner));
     //区间缩放
-    ui->action_zoom->setCheckable(true);
-    connect(ui->action_zoom,&QAction::triggered,Lambda_SaChartEnable(Zoomer));
-    QToolButton* toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->action_zoom));
+    ui->actionZoomChart->setCheckable(true);
+    connect(ui->actionZoomChart,&QAction::triggered,Lambda_SaChartEnable(Zoomer));
+    QToolButton* toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionZoomChart));
     if(toolbtn)
     {
         QMenu* m1 = new QMenu(toolbtn);
-        m1->addAction(ui->action_zoomReset);
+        m1->addAction(ui->actionZoomChartReset);
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m1);
     }
-    connect(ui->action_zoomReset,&QAction::triggered,this,[this](bool a){
+    connect(ui->actionZoomChartReset,&QAction::triggered,this,[this](bool a){
         Q_UNUSED(a);
         SAChart2D* chart = this->getCurSubWindowChart();
         if(chart)
             chart->setZoomReset();
     });
     //数据显示
-    ui->action_yDataPicker->setCheckable(true);
-    connect(ui->action_yDataPicker,&QAction::triggered,Lambda_SaChartEnable(YDataPicker));
-    ui->action_XYDataPicker->setCheckable(true);
-    connect(ui->action_XYDataPicker,&QAction::triggered,Lambda_SaChartEnable(XYDataPicker));
+    ui->actionYDataPicker->setCheckable(true);
+    connect(ui->actionYDataPicker,&QAction::triggered,Lambda_SaChartEnable(YDataPicker));
+    ui->actionXYDataPicker->setCheckable(true);
+    connect(ui->actionXYDataPicker,&QAction::triggered,Lambda_SaChartEnable(XYDataPicker));
 
-    toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->action_XYDataPicker));
+    toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionXYDataPicker));
     if(toolbtn)
     {
         QMenu* m = new QMenu(toolbtn);
-        m->addAction(ui->action_yDataPicker);
+        m->addAction(ui->actionYDataPicker);
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m);
     }
 
     //网格
-    ui->action_showGrid->setCheckable(true);
-    connect(ui->action_showGrid,&QAction::triggered,Lambda_SaChartEnable(Grid));
-    toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->action_showGrid));
+    ui->actionShowGrid->setCheckable(true);
+    connect(ui->actionShowGrid,&QAction::triggered,Lambda_SaChartEnable(Grid));
+    toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionShowGrid));
     if(toolbtn)
     {
         QMenu* m1 = new QMenu(toolbtn);
-        m1->addAction(ui->action_showHGrid);
-        m1->addAction(ui->action_showCrowdedHGrid);
-        m1->addAction(ui->action_showVGrid);
-        m1->addAction(ui->action_showCrowdedVGrid);
+        m1->addAction(ui->actionShowHGrid);
+        m1->addAction(ui->actionShowCrowdedHGrid);
+        m1->addAction(ui->actionShowVGrid);
+        m1->addAction(ui->actionShowCrowdedVGrid);
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m1);
     }
 
     //显示水平网格
-    ui->action_showHGrid->setCheckable(true);
-    connect(ui->action_showHGrid,&QAction::triggered,Lambda_SaChartEnable(GridY));
+    ui->actionShowHGrid->setCheckable(true);
+    connect(ui->actionShowHGrid,&QAction::triggered,Lambda_SaChartEnable(GridY));
     //显示密集水平网格
-    ui->action_showCrowdedHGrid->setCheckable(true);
-    connect(ui->action_showCrowdedHGrid,&QAction::triggered,Lambda_SaChartEnable(GridYMin));
+    ui->actionShowCrowdedHGrid->setCheckable(true);
+    connect(ui->actionShowCrowdedHGrid,&QAction::triggered,Lambda_SaChartEnable(GridYMin));
     //显示垂直网格
-    ui->action_showVGrid->setCheckable(true);
-    connect(ui->action_showVGrid,&QAction::triggered,Lambda_SaChartEnable(GridX));
+    ui->actionShowVGrid->setCheckable(true);
+    connect(ui->actionShowVGrid,&QAction::triggered,Lambda_SaChartEnable(GridX));
     //显示密集水平网格
-    ui->action_showCrowdedVGrid->setCheckable(true);
-    connect(ui->action_showCrowdedVGrid,&QAction::triggered,Lambda_SaChartEnable(GridXMin));
+    ui->actionShowCrowdedVGrid->setCheckable(true);
+    connect(ui->actionShowCrowdedVGrid,&QAction::triggered,Lambda_SaChartEnable(GridXMin));
     //显示图例
-    ui->action_showLegend->setCheckable(true);
-    connect(ui->action_showLegend,&QAction::triggered,Lambda_SaChartEnable(Legend));
+    ui->actionShowLegend->setCheckable(true);
+    connect(ui->actionShowLegend,&QAction::triggered,Lambda_SaChartEnable(Legend));
     //显示图例选择器
-    ui->action_legendPanel->setCheckable(true);
-    connect(ui->action_legendPanel,&QAction::triggered,Lambda_SaChartEnable(LegendPanel));
+    ui->actionLegendPanel->setCheckable(true);
+    connect(ui->actionLegendPanel,&QAction::triggered,Lambda_SaChartEnable(LegendPanel));
 
 
     //
@@ -1039,18 +1038,18 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
     auto c = w->current2DPlot();
     if(c)
     {
-        ui->action_crossCursor->setChecked( c->isEnablePicker() );
-        ui->action_panner->setChecked( c->isEnablePanner() );
-        ui->action_zoom->setChecked(c->isEnableZoomer());
-        ui->action_yDataPicker->setChecked(c->isEnableYDataPicker());
-        ui->action_XYDataPicker->setChecked(c->isEnableXYDataPicker());
-        ui->action_showGrid->setChecked(c->isEnableGrid());
-        ui->action_showHGrid->setChecked(c->isEnableGridY());
-        ui->action_showVGrid->setChecked(c->isEnableGridX());
-        ui->action_showCrowdedHGrid->setChecked(c->isEnableGridYMin());
-        ui->action_showCrowdedVGrid->setChecked(c->isEnableGridXMin());
-        ui->action_showLegend->setChecked(c->isEnableLegend());
-        ui->action_legendPanel->setChecked(c->isEnableLegendPanel());
+        ui->actionCrossCursor->setChecked( c->isEnablePicker() );
+        ui->actionPannerChart->setChecked( c->isEnablePanner() );
+        ui->actionZoomChart->setChecked(c->isEnableZoomer());
+        ui->actionYDataPicker->setChecked(c->isEnableYDataPicker());
+        ui->actionXYDataPicker->setChecked(c->isEnableXYDataPicker());
+        ui->actionShowGrid->setChecked(c->isEnableGrid());
+        ui->actionShowHGrid->setChecked(c->isEnableGridY());
+        ui->actionShowVGrid->setChecked(c->isEnableGridX());
+        ui->actionShowCrowdedHGrid->setChecked(c->isEnableGridYMin());
+        ui->actionShowCrowdedVGrid->setChecked(c->isEnableGridXMin());
+        ui->actionShowLegend->setChecked(c->isEnableLegend());
+        ui->actionLegendPanel->setChecked(c->isEnableLegendPanel());
     }
 }
 ///

@@ -15,7 +15,7 @@
 #include <QAction>
 #include <QSettings>
 
-#include "def_str.h"
+#include "SAResourDefine.h"
 #include <SAMdiSubWindow.h>
 
 #include "progressStateWidget.h"

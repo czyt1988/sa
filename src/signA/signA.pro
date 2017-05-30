@@ -47,7 +47,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     DebugInfo.h \
     SortIndex.h \
-    def_str.h \
     progressStateWidget.h \
     AboutDialog.h \
     SAMimeData.h \
@@ -60,7 +59,8 @@ HEADERS  += mainwindow.h \
     QtPropertyIdStorage.h \
     CurveSelectDialog.h \
     SAPluginManager.h \
-    SAUI.h
+    SAUI.h \
+    SAResourDefine.h
 
 
 
@@ -73,7 +73,6 @@ FORMS    += mainwindow.ui \
 
 
 RESOURCES += \
-    signA_Res.qrc \
     icons.qrc
 RC_FILE += logo.rc
 

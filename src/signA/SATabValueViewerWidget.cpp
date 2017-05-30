@@ -5,6 +5,8 @@
 #include <QFileDialog>
 #include <QTabBar>
 #include <QTableView>
+#include "SAResourDefine.h"
+
 SATabValueViewerWidget::SATabValueViewerWidget(QWidget *parent):
     QTabWidget(parent)
   ,m_count(0)
@@ -12,7 +14,7 @@ SATabValueViewerWidget::SATabValueViewerWidget(QWidget *parent):
     setTabsClosable(true);
     m_menuTab = new QMenu(tr("table operation"),this);//表格操作
     QMenu* save=new  QMenu(tr("save"),m_menuTab);
-    save->setIcon (QIcon(":/image/res_image/Save.png"));
+    save->setIcon (ICON_Save);
     QAction* actSave2csv = new QAction(this);
     actSave2csv->setText(tr("save as csv"));
     save->addAction(actSave2csv);

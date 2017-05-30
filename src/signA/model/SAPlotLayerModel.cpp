@@ -6,15 +6,7 @@
 #include <QColorDialog>
 //#include <SAChart.h>
 #include <SAPlotMarker.h>
-#define ICON_Curve QIcon(":/image/res_image/layerCurve.png")
-#define ICON_Grid QIcon(":/image/res_image/grid.png")
-#define ICON_Visible QIcon(":/image/res_image/layerView.png")
-#define ICON_Unvisible QIcon(":/image/res_image/layerNotView.png")
-#define ICON_Legend QIcon(":/image/res_image/legend.png")
-#define ICON_Mark QIcon(":/image/res_image/marker.png")
-#define ICON_Bar QIcon(":/image/res_image/layerBarChart.png")
-#define ICON_PointMarker QIcon(":/image/res_image/pointMarker.png")
-#define ICON_YValueMarker QIcon(":/image/res_image/YValueMarker.png")
+#include "SAResourDefine.h"
 
 #define COLUMN_COUNT 4
 SAPlotLayerModel::SAPlotLayerModel(QObject * parent):QAbstractTableModel(parent)
@@ -272,19 +264,19 @@ QVariant SAPlotLayerModel::getIconFromItem(const QwtPlotItem* item) const
 	switch (rtti)
 	{
 	case QwtPlotItem::Rtti_PlotGrid:
-        return ICON_Grid;
+        return ICON_LayeroutGrid;
 	case QwtPlotItem::Rtti_PlotCurve :
-        return ICON_Curve;
+        return ICON_LayeroutCurve;
     case QwtPlotItem::Rtti_PlotBarChart:
-        return ICON_Bar;
+        return ICON_LayoutBarChart;
 	case QwtPlotItem::Rtti_PlotLegend:
-        return ICON_Legend;
+        return ICON_LayoutLegend;
 	case QwtPlotItem::Rtti_PlotMarker:
-        return ICON_Legend;
+        return ICON_LayoutMark;
     case SAAbstractPlotMarker::Rtti_SAPointMarker:
-        return ICON_PointMarker;
+        return ICON_LayoutPointMarker;
     case SAAbstractPlotMarker::Rtti_SAYValueMarker:
-        return ICON_YValueMarker;
+        return ICON_LayoutYValueMarker;
 	}
 	return QVariant();
 }
@@ -292,6 +284,6 @@ QVariant SAPlotLayerModel::getIconFromItem(const QwtPlotItem* item) const
 QVariant SAPlotLayerModel::getVisibleIconFromItem(const QwtPlotItem* item) const
 {
 	if(item->isVisible())
-        return ICON_Visible;
-    return ICON_Unvisible;
+        return ICON_LayoutVisible;
+    return ICON_LayoutUnvisible;
 }
