@@ -46,7 +46,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     DebugInfo.h \
-    SortIndex.h \
     progressStateWidget.h \
     AboutDialog.h \
     SAMimeData.h \
