@@ -2,6 +2,7 @@
 #include "SAValueManagerModel.h"
 #include "SAValueManager.h"
 #include "SAData.h"
+#include "SALibResourDefine.h"
 #define COL_COUNT 3
 #define COL_INDEX_NAME 0
 #define COL_INDEX_TYPE 1
@@ -310,7 +311,7 @@ QIcon SAValueManagerModel::getDataIcon(const SAAbstractDatas *data)
     QIcon ico = s_dataType2Icon.value(data->getType(),QIcon());
     if(ico.isNull())
     {
-        return QIcon(":/dataIco/ico/dataIcon/UserDefineDataIcon.png");
+        return ICON_DEFAULT_DATA_TYPE;
     }
     return ico;
 }
