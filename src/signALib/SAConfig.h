@@ -31,11 +31,12 @@ public:
     bool save();
     //获取配置文件的路径
     static QString getConfigFolderPath();
+    //设置为默认
+    void setDefault();
+public:
     //默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式
     PropertyBrowserType getDefaultPropertySetDialogType() const;
     void setDefaultPropertySetDialogType(PropertyBrowserType type);
-    //设置为默认
-    void setDefault();
 private:
     static SAConfig* s_instance;
 private:

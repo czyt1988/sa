@@ -30,7 +30,8 @@ HEADERS += \
     SAProjectManager.h \
     SAConfig.h \
     SAValueControlCommand.h \
-    SALibResourDefine.h
+    SALibResourDefine.h \
+    SAValueOptCommand.h
 
 SOURCES += \
     SAData.cpp \
@@ -48,7 +49,8 @@ SOURCES += \
     SADataHeader.cpp \
     SAProjectManager.cpp \
     SAConfig.cpp \
-    SAValueControlCommand.cpp
+    SAValueControlCommand.cpp \
+    SAValueOptCommand.cpp
 
 include($$PWD/Private/Private.pri)
 include($$PWD/SABaseValueType/SABaseValueType.pri)
