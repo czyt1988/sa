@@ -161,7 +161,7 @@ void SAFunPlugin::setupDSPMenu()
     m_menuDSP.reset(new QMenu(tr("Signal processing"),m_ui->getMainWindowPtr()));
 
     //去趋势
-    m_detrendDirectAction = m_menuDSP->addAction(QIcon(ICON_detrendDirect),tr("detrend(direct)"));
+    m_detrendDirectAction = m_menuDSP->addAction(ICON_detrendDirect,tr("detrend(direct)"));
     m_detrendDirectAction->setObjectName("detrend(direct)");
     m_detrendDirectAction->setWhatsThis(tr("direct detrend for signal"));
     connect(m_detrendDirectAction,&QAction::triggered
@@ -173,13 +173,13 @@ void SAFunPlugin::setupDSPMenu()
     connect(m_waveSetWindowAction,&QAction::triggered,this,&SAFunPlugin::on_setWindowToWave);
 
     //频谱分析
-    m_spectrumAction = m_menuDSP->addAction(QIcon(ICON_spectrum),tr("spectrum"));
+    m_spectrumAction = m_menuDSP->addAction(ICON_spectrum,tr("spectrum"));
     m_spectrumAction->setObjectName("spectrum");
     m_spectrumAction->setWhatsThis(tr("make spectrum for signal"));
     connect(m_spectrumAction,&QAction::triggered,this,&SAFunPlugin::on_spectrumAction);
 
     //功率谱分析
-    m_powerSpectrumAction = m_menuDSP->addAction(QIcon(ICON_powerSpectrum),tr("PSD(power Spectrum)"));
+    m_powerSpectrumAction = m_menuDSP->addAction(ICON_powerSpectrum,tr("PSD(power Spectrum)"));
     m_powerSpectrumAction->setObjectName("PSD(power Spectrum)");
     m_powerSpectrumAction->setWhatsThis(tr("make power spectrum for signal"));
     connect(m_powerSpectrumAction,&QAction::triggered,this,&SAFunPlugin::on_powerSpectrumAction);
@@ -255,7 +255,7 @@ void SAFunPlugin::setupFittingMenu()
 {
     m_dataFitting.reset(new QMenu(tr("data fitting"),m_ui->getMainWindowPtr()));
     //拟合图表曲线
-    m_FittingFigureCurve = m_dataFitting->addAction(tr("Fitting Curve in Fig"));
+    m_FittingFigureCurve = m_dataFitting->addAction(ICON_fit, tr("Fitting Curve in Fig"));
     m_FittingFigureCurve->setObjectName("Fitting Curve in Fig");
     m_FittingFigureCurve->setWhatsThis(tr("Fitting the Curves in Current Figure"));
     connect(m_FittingFigureCurve,&QAction::triggered,this,&SAFunPlugin::on_fittingFigureCurveAction);
