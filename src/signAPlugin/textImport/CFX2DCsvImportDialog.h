@@ -21,7 +21,7 @@ class CFX2DCsvImportDialog : public QDialog
 public:
     explicit CFX2DCsvImportDialog(QWidget *parent = 0);
     ~CFX2DCsvImportDialog();
-    QList<SAAbstractDatas*> getResult() const;
+    QList<std::shared_ptr<SAAbstractDatas> > getResult() const;
 public slots:
     void addCsvFile();
     void removeFile();
@@ -41,7 +41,7 @@ private:
 private:
     QString m_codec;
     Ui::CFX2DCsvImportDialog *ui;
-    QList<SAAbstractDatas*> m_datas;
+    QList<std::shared_ptr<SAAbstractDatas> > m_datas;
     std::unique_ptr<CfxCsvDataImportConfig> m_dataConfigs;
     QStringList m_pathList;
     bool m_isDeleteMakeValue;

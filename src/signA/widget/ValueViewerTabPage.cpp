@@ -59,14 +59,14 @@ void ValueViewerTabPage::on_actionToLinerData_triggered()
         QVariant var = getModel()->headerData (i.key (),Qt::Horizontal,Qt::DisplayRole);
         QString name = var.toString ();
         name += QStringLiteral(" - %1").arg(m_countNewData);
-        SAVectorDouble* data = new SAVectorDouble(name,i.value());
+        auto data = SAValueManager::makeData<SAVectorDouble>(name,i.value());
         saValueManager->addData(data);
     }
 }
 
 void ValueViewerTabPage::on_actionToPointFVectorData_triggered()
 {
-    std::unique_ptr<SAVectorPointF> points(new SAVectorPointF);
+    auto points = SAValueManager::makeData<SAVectorPointF>();
     if(!getSelectVectorPointData(points.get ()))
         return;
     bool ok = false;
@@ -75,7 +75,7 @@ void ValueViewerTabPage::on_actionToPointFVectorData_triggered()
     points->setName(name);
     if (ok)
     {
-        saValueManager->addData(points.release ());
+        saValueManager->addData(points);
     }
 //    QVector< std::shared_ptr<QVector<QPointF> > > rawData;
 //    getSelectVectorPointData(rawData);

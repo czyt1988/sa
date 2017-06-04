@@ -4,6 +4,7 @@
 #include "SAVectorInt.h"
 #include "SAVectorPointF.h"
 #include "SAVariantDatas.h"
+#include <QDebug>
 SAAbstractDatas::SAAbstractDatas():SAItem()
 {
 
@@ -16,6 +17,7 @@ SAAbstractDatas::SAAbstractDatas(const QString &text):SAItem(text)
 
 SAAbstractDatas::~SAAbstractDatas()
 {
+    qDebug() << "destroy:" << getName();
 }
 
 QVariant SAAbstractDatas::getAt() const

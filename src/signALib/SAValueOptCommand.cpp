@@ -8,6 +8,7 @@ SAValueOptCommand::SAValueOptCommand(const QString &text, QUndoCommand *parent):
 {
 
 }
+
 SAValueAddCommand::SAValueAddCommand(const QString &text, QUndoCommand *parent):SAValueOptCommand(text,parent)
 {
 

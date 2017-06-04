@@ -24,7 +24,6 @@
 #include <SAMdiSubWindowManager.h>
 
 #include "SADrawDelegate.h"
-#include <SADataImportDelegate.h>
 
 #include <SAInformationStatusWidget.h>
 #include <tuple>
@@ -34,9 +33,6 @@ namespace Ui {
 class MainWindow;
 }
 
-#ifdef IET
-#include <IET_AnsysThread.h>
-#endif
 
 class QProgressBar;
 
@@ -413,7 +409,6 @@ private:
     SAMdiSubWindowManager m_mdiManager;
 
     std::unique_ptr<SADrawDelegate> m_drawDelegate;///< 绘图代理
-    std::unique_ptr<SADataImportDelegate> m_importDelegate;///< 导入代理
     SAFigureWindow* m_lastShowFigureWindow;///<记录最后一次显示的figure window
 };
 

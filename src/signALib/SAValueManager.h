@@ -37,6 +37,7 @@ private:
     explicit SAValueManager();
     Q_DISABLE_COPY(SAValueManager)
 public:
+    typedef std::shared_ptr<SAAbstractDatas> IDATA_PTR;
     ~SAValueManager();
     //获取对象
     static SAValueManager* getInstance();
@@ -45,64 +46,24 @@ public:
     /// 生成的数据并不会加入管理系统中需要调用addData
     /// \return 数据指针
     ///
-    template<typename DataType>
-    static DataType* makeData_s()
-    {
-        return new DataType;
-    }
-    template<typename DataType,typename ARG1>
-    static DataType* makeData_s(ARG1 arg1)
-    {
-        return new DataType(arg1);
-    }
-    template<typename DataType,typename ARG1,typename ARG2>
-    static DataType* makeData_s(ARG1 arg1,ARG2 arg2)
-    {
-        return new DataType(arg1,arg2);
-    }
-    template<typename DataType,typename ARG1,typename ARG2,typename ARG3>
-    static DataType* makeData_s(ARG1 arg1,ARG2 arg2,ARG3 arg3)
-    {
-        return new DataType(arg1,arg2,arg3);
-    }
-    template<typename DataType,typename ARG1,typename ARG2,typename ARG3,typename ARG4>
-    static DataType* makeData_s(ARG1 arg1,ARG2 arg2,ARG3 arg3,ARG4 arg4)
-    {
-        return new DataType(arg1,arg2,arg3,arg4);
-    }
-    template<typename DataType,typename ARG1,typename ARG2,typename ARG3,typename ARG4,typename ARG5>
-    static DataType* makeData_s(ARG1 arg1,ARG2 arg2,ARG3 arg3,ARG4 arg4,ARG5 arg5)
-    {
-        return new DataType(arg1,arg2,arg3,arg4,arg5);
-    }
-
-#if 1
     template<typename DataType, typename... _Args>
     static std::shared_ptr<DataType> makeData(_Args&&... __args)
     {
         return  std::make_shared<DataType>(std::forward<_Args>(__args)...);
     }
     //创建一个引用数据,引用和原始数据有一样的功能，但引用删除原始不删除，原始删除引用都会删除
-    static std::shared_ptr<SADataReference> makeRefData(SAAbstractDatas* data);
-
+    static IDATA_PTR makeRefData(SAAbstractDatas* data);
+    //把智能指针列表转换为普通指针列表
+    static QList<SAAbstractDatas*> toNormalPtrList(const QList<IDATA_PTR>& ptrs);
+    ///
+    /// \brief 把智能指针转换为基类智能指针
+    /// \param r 数据的智能指针
+    /// \return 基类智能指针
+    ///
     template<typename DATA_TYPE>
-    static std::shared_ptr<SAAbstractDatas> castPointToBase(const std::shared_ptr<DATA_TYPE>& r)
+    static IDATA_PTR castPointToBase(const std::shared_ptr<DATA_TYPE>& r)
     {
         return std::static_pointer_cast<SAAbstractDatas>(r);
-    }
-
-#endif
-    ///
-    /// \brief 删除数据，注意此函数用于使用makeData生成，但没有添加到变量管理系统的指针删除
-    /// 添加到变量管理系统的指针需要使用SAValueManager::deleteData(SAABstractData*)函数
-    ///
-    template<typename DataType>
-    static void deleteData_s(DataType* p)
-    {
-        if(nullptr != p)
-        {
-            delete p;
-        }
     }
 
     //清空所有数据
@@ -117,8 +78,6 @@ public:
     SAAbstractDatas* at(int index) const;
     //
     int indexOf(SAAbstractDatas* dataPtr) const;
-    //根据类型查找
-    //QList<SAAbstractDatas*> findDataByType(SA::DataType type) const;
     //变量数量
     int count() const;
     //判断是否是有效名字
@@ -142,7 +101,7 @@ public:
     //从任意数据转换为double vector，如果可以转换的话
     static std::shared_ptr<SAVectorDouble> createVectorDoubleFromData(const SAAbstractDatas *data);
     // 根据类型，创建数据
-    std::shared_ptr<SAAbstractDatas> createDataByType(SA::DataType type);
+    IDATA_PTR createDataByType(SA::DataType type);
     // 判断变量是否有更改而没保存
     bool isDirty() const;
 public:
@@ -160,11 +119,9 @@ public:
     /// \{
     ///
     //添加变量，返回变量的id
-    void addData(SAAbstractDatas* data);
     void addData(std::shared_ptr<SAAbstractDatas> data);
      //添加变量，返回变量的id
-    void addDatas(QList<SAAbstractDatas*> datas);
-    void addDatas(QList<std::shared_ptr<SAAbstractDatas>> datas);
+    void addDatas(QList<std::shared_ptr<SAAbstractDatas> > datas);
     /// \}
     ///
 signals:
@@ -194,8 +151,7 @@ signals:
     /// \note clear函数不会触发此信号，需要观察dataClear
     /// \see dataClear dataAdded
     ///
-    //void dataDeleted(const QList<quintptr>& dataBeDeletedPtr);
-    void dataDeleted(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
+    void dataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
     ///
     /// \brief 数据被清除时触发的信号
     ///
@@ -204,7 +160,7 @@ private:
     //自动转换为正确的变量名，若变量名重复或冲突，会自动把输入的名字后加上其他内容改为正确的变量名
     bool toCorrectName(SAAbstractDatas* data);
     //加载一个sad文件
-    std::shared_ptr<SAAbstractDatas> loadSad(const QString &filePath);
+    IDATA_PTR loadSad(const QString &filePath);
 private:
 
     ///
@@ -216,7 +172,6 @@ private:
         PointerContainer();
         ~PointerContainer();
         void append(std::shared_ptr<SAAbstractDatas> data);
-        void append(SAAbstractDatas* data);
         //设置数据文件的文件映射路径
         void setDataFilePath(SAAbstractDatas* data);
         //根据索引查找
@@ -228,7 +183,7 @@ private:
         //根据名字查找
         SAAbstractDatas* findData(const QString& name) const;
         //清空所有数据
-        void clear(bool deletePtr = true);
+        void clear();
         //获取变量的数量
         int count() const;
         //删除数据指针内存同时在容器移除
@@ -246,8 +201,6 @@ private:
         QList<SAAbstractDatas*> m_ptrList;///< 总指针队列
         QMap <SAAbstractDatas*,int> m_ptrListSet;///< 用于快速判断是否存在
 
-        QList<SAAbstractDatas*> m_ptrNormalList;///< 指针队列,此队列通过普通指针添加
-        QMap <SAAbstractDatas*,int> m_ptrNormalListSet;
         QList<std::shared_ptr<SAAbstractDatas> > m_smrPtrList;///< 指针队列,此队列通过智能指针添加
         QMap <std::shared_ptr<SAAbstractDatas>,int> m_smrPtrListSet;
 

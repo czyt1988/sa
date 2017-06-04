@@ -44,9 +44,9 @@ bool CfxCsvDataImportConfig::isOpenFile()
 /// \brief 获取数据，此操作会把所有csv的数据导出为点数组
 /// \return
 ///
-QList<SAAbstractDatas *> CfxCsvDataImportConfig::createResultPtr()
+QList<std::shared_ptr<SAAbstractDatas> > CfxCsvDataImportConfig::createResultPtr()
 {
-    QList<SAAbstractDatas *> res;
+    QList<std::shared_ptr<SAAbstractDatas> > res;
     switch(m_exportWay)
     {
     case ToVectorDouble_1XnY:
@@ -136,7 +136,7 @@ QString CfxCsvDataImportConfig::getCodec() const
 /// \brief 把解析的数据转换为1行x，n行y的形式，此时默认所有的数据x值都一样，将只获取第一列的x值
 /// \param res
 ///
-void CfxCsvDataImportConfig::createBy1XnYWay(QList<SAAbstractDatas *> &res)
+void CfxCsvDataImportConfig::createBy1XnYWay(QList<std::shared_ptr<SAAbstractDatas> > &res)
 {
     const int count = getFileCount();
     for(int i=0;i<count;++i)
@@ -149,7 +149,7 @@ void CfxCsvDataImportConfig::createBy1XnYWay(QList<SAAbstractDatas *> &res)
         {
             if(0 == seriesCount && 0 == i)//第一个文件的第一列，读取x
             {
-                std::unique_ptr<SAVectorDouble> x(SAValueManager::makeData_s<SAVectorDouble>());
+                std::shared_ptr<SAVectorDouble> x = SAValueManager::makeData<SAVectorDouble>();
                 if(parser->getXSeries(0,x.get()))
                 {
                     QString xName = parser->getSeriesXName(0);
@@ -158,11 +158,11 @@ void CfxCsvDataImportConfig::createBy1XnYWay(QList<SAAbstractDatas *> &res)
                         xName = xName.mid(atIndex+1,xName.size()-1);
                     xName += QString("-X");
                     x->setName(xName);
-                    res.append(x.release());
+                    res.append(x);
                 }
             }
             //处理y值
-            std::unique_ptr<SAVectorDouble> y(SAValueManager::makeData_s<SAVectorDouble>());
+            std::shared_ptr<SAVectorDouble> y = SAValueManager::makeData<SAVectorDouble>();
             if(parser->getYSeries(seriesCount,y.get()))
             {
                 QString yName = parser->getSeriesYName(seriesCount);
@@ -171,7 +171,7 @@ void CfxCsvDataImportConfig::createBy1XnYWay(QList<SAAbstractDatas *> &res)
                     yName = yName.mid(atIndex+1,yName.size()-1);
                 yName += QString("-Y");
                 y->setName(yName);
-                res.append(y.release());
+                res.append(y);
             }
         }
     }
@@ -180,7 +180,7 @@ void CfxCsvDataImportConfig::createBy1XnYWay(QList<SAAbstractDatas *> &res)
 /// \brief 把解析的数据转换为1行y，n行x的形式，此时默认所有的数据y值都一样，将只获取第一列的y值
 /// \param res
 ///
-void CfxCsvDataImportConfig::createBynX1YWay(QList<SAAbstractDatas *> &res)
+void CfxCsvDataImportConfig::createBynX1YWay(QList<std::shared_ptr<SAAbstractDatas> > &res)
 {
     const int count = getFileCount();
     for(int i=0;i<count;++i)
@@ -193,7 +193,7 @@ void CfxCsvDataImportConfig::createBynX1YWay(QList<SAAbstractDatas *> &res)
         {
             if(0 == seriesCount && 0 == i)//第一个文件的第一列，读取y
             {
-                std::unique_ptr<SAVectorDouble> y(SAValueManager::makeData_s<SAVectorDouble>());
+                std::shared_ptr<SAVectorDouble> y = SAValueManager::makeData<SAVectorDouble>();
                 if(parser->getYSeries(0,y.get()))
                 {
                     QString yName = parser->getSeriesYName(0);
@@ -202,11 +202,11 @@ void CfxCsvDataImportConfig::createBynX1YWay(QList<SAAbstractDatas *> &res)
                         yName = yName.mid(atIndex+1,yName.size()-1);
                     yName += QString("-Y");
                     y->setName(yName);
-                    res.append(y.release());
+                    res.append(y);
                 }
             }
             //处理y值
-            std::unique_ptr<SAVectorDouble> x(SAValueManager::makeData_s<SAVectorDouble>());
+            std::shared_ptr<SAVectorDouble> x = SAValueManager::makeData<SAVectorDouble>();
             if(parser->getXSeries(seriesCount,x.get()))
             {
                 QString xName = parser->getSeriesXName(seriesCount);
@@ -215,13 +215,13 @@ void CfxCsvDataImportConfig::createBynX1YWay(QList<SAAbstractDatas *> &res)
                     xName = xName.mid(atIndex+1,xName.size()-1);
                 xName += QString("-X");
                 x->setName(xName);
-                res.append(x.release());
+                res.append(x);
             }
         }
     }
 }
 
-void CfxCsvDataImportConfig::createBynXnYWay(QList<SAAbstractDatas *> &res)
+void CfxCsvDataImportConfig::createBynXnYWay(QList<std::shared_ptr<SAAbstractDatas> > &res)
 {
     const int count = getFileCount();
     for(int i=0;i<count;++i)
@@ -232,8 +232,8 @@ void CfxCsvDataImportConfig::createBynXnYWay(QList<SAAbstractDatas *> &res)
         int colCount = parser->getColumnCount();//获取列数，代表解析的数据系列数目
         for(int seriesCount = 0;seriesCount<colCount;++seriesCount)
         {
-            std::unique_ptr<SAVectorDouble> x(SAValueManager::makeData_s<SAVectorDouble>());
-            std::unique_ptr<SAVectorDouble> y(SAValueManager::makeData_s<SAVectorDouble>());
+            std::shared_ptr<SAVectorDouble> x = SAValueManager::makeData<SAVectorDouble>();
+            std::shared_ptr<SAVectorDouble> y = SAValueManager::makeData<SAVectorDouble>();
             if(parser->getXYSeries(seriesCount,x.get(),y.get()))
             {
                 QString xName = parser->getSeriesXName(seriesCount);
@@ -248,15 +248,15 @@ void CfxCsvDataImportConfig::createBynXnYWay(QList<SAAbstractDatas *> &res)
                 yName += QString("-Y");
                 x->setName(xName);
                 y->setName(yName);
-                res.push_back(x.release());
-                res.push_back(y.release());
+                res.push_back(x);
+                res.push_back(y);
             }
         }
     }
 
 }
 
-void CfxCsvDataImportConfig::createByPointFWay(QList<SAAbstractDatas *> &res)
+void CfxCsvDataImportConfig::createByPointFWay(QList<std::shared_ptr<SAAbstractDatas> > &res)
 {
     const int count = getFileCount();
     for(int i=0;i<count;++i)
@@ -267,7 +267,7 @@ void CfxCsvDataImportConfig::createByPointFWay(QList<SAAbstractDatas *> &res)
         int colCount = parser->getColumnCount();//获取列数，代表解析的数据系列数目
         for(int seriesCount = 0;seriesCount<colCount;++seriesCount)
         {
-            std::unique_ptr<SAVectorPointF> series(SAValueManager::makeData_s<SAVectorPointF>());
+            std::shared_ptr<SAVectorPointF> series = SAValueManager::makeData<SAVectorPointF>();
             if(parser->getSeries(seriesCount,series.get()))
             {
                 QString name = parser->getSeriesName(seriesCount);
@@ -275,7 +275,7 @@ void CfxCsvDataImportConfig::createByPointFWay(QList<SAAbstractDatas *> &res)
                 if(atIndex > 0 && atIndex != name.size()-1)
                     name = name.mid(atIndex+1,name.size()-1);
                 series->setName(name);
-                res.push_back(series.release());
+                res.push_back(series);
             }
         }
     }

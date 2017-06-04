@@ -206,7 +206,6 @@ void MainWindow::initUI()
     m_mdiManager.setMdi(ui->mdiArea);
     //项目结构树
     m_drawDelegate.reset (new SADrawDelegate(this));
-    m_importDelegate.reset (new SADataImportDelegate(this));
 
     //变量管理树
     SAValueManagerModel* modelValueMgr = new SAValueManagerModel(this);

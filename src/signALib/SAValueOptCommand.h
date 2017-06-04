@@ -20,8 +20,6 @@ class SAValueAddCommand : public SAValueOptCommand
 {
 public:
     SAValueAddCommand(const QString &text, QUndoCommand *parent = nullptr);
-    void redo() override;
-    void undo() override;
 };
 
 ///

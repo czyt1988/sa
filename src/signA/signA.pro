@@ -38,7 +38,6 @@ SOURCES += main.cpp\
     SATabValueViewerWidget.cpp \
     SADrawDelegate.cpp \
     SAMainWindowDelegate.cpp \
-    SADataImportDelegate.cpp\
     SAInformationStatusWidget.cpp \
     CurveSelectDialog.cpp \
     SAPluginManager.cpp \
@@ -53,7 +52,6 @@ HEADERS  += mainwindow.h \
     SATabValueViewerWidget.h \
     SADrawDelegate.h \
     SAMainWindowDelegate.h \
-    SADataImportDelegate.h\
     SAInformationStatusWidget.h \
     QtPropertyIdStorage.h \
     CurveSelectDialog.h \

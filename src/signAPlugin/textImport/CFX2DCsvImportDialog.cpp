@@ -26,7 +26,7 @@ CFX2DCsvImportDialog::~CFX2DCsvImportDialog()
     delete ui;
 }
 
-QList<SAAbstractDatas*> CFX2DCsvImportDialog::getResult() const
+QList<std::shared_ptr<SAAbstractDatas> > CFX2DCsvImportDialog::getResult() const
 {
     return m_datas;
 }
@@ -85,12 +85,15 @@ void CFX2DCsvImportDialog::parser()
         return;
     }
 
-    QList<SAAbstractDatas*> res = m_dataConfigs->createResultPtr ();
+    QList<std::shared_ptr<SAAbstractDatas> > res = m_dataConfigs->createResultPtr ();
     if(res.size () <= 0)
         return;
     m_datas = res;
     if(model)
-        model->setSADataPtrs (m_datas);
+    {
+        QList<SAAbstractDatas*> norPtrs = SAValueManager::toNormalPtrList(res);
+        model->setSADataPtrs (norPtrs);
+    }
 }
 
 void CFX2DCsvImportDialog::initUI()
@@ -133,13 +136,6 @@ void CFX2DCsvImportDialog::clearAndDeleteDatas()
 {
     if(m_datas.size ()<=0)
         return;
-    for(int i=0;i<m_datas.size ();++i)
-    {
-        if(m_datas[i])
-        {
-            SAValueManager::deleteData_s(m_datas[i]);
-        }
-    }
     m_datas.clear ();
 }
 

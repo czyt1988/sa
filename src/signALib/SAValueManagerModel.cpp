@@ -17,7 +17,7 @@ SAValueManagerModel::SAValueManagerModel(QObject *parent):QAbstractItemModel(par
             ,this,&SAValueManagerModel::onDataAdded);
     connect(saValueManager,&SAValueManager::dataNameChanged
             ,this,&SAValueManagerModel::onDataNameChanged);
-    connect(saValueManager,&SAValueManager::dataDeleted
+    connect(saValueManager,&SAValueManager::dataRemoved
             ,this,&SAValueManagerModel::onDataDeleted);
     connect(saValueManager,&SAValueManager::dataClear
             ,this,&SAValueManagerModel::onDataClear);

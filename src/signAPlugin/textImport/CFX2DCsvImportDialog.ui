@@ -80,6 +80,12 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QPushButton" name="pushButton_add">
+         <property name="minimumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>添加需要解析的csv文件，文件需要由cfx后处理器导出，否则解析会出问题</string>
          </property>
@@ -87,8 +93,17 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/image/res_image/add.png</normaloff>:/image/res_image/add.png</iconset>
+          <iconset resource="icon.qrc">
+           <normaloff>:/icon/ico/open.png</normaloff>:/icon/ico/open.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="default">
+          <bool>true</bool>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -97,6 +112,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton_remove">
+         <property name="minimumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>移除文件</string>
          </property>
@@ -104,8 +125,14 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/image/res_image/remove.png</normaloff>:/image/res_image/remove.png</iconset>
+          <iconset resource="icon.qrc">
+           <normaloff>:/icon/ico/remove.png</normaloff>:/icon/ico/remove.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -210,6 +237,12 @@
           <iconset resource="icon.qrc">
            <normaloff>:/icon/ico/parser.png</normaloff>:/icon/ico/parser.png</iconset>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
         </widget>
        </item>
       </layout>
@@ -239,12 +272,20 @@
        <property name="text">
         <string>退出</string>
        </property>
+       <property name="icon">
+        <iconset resource="icon.qrc">
+         <normaloff>:/icon/ico/delete.png</normaloff>:/icon/ico/delete.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_ok">
        <property name="text">
         <string>完成</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icon.qrc">
+         <normaloff>:/icon/ico/ok.png</normaloff>:/icon/ico/ok.png</iconset>
        </property>
       </widget>
      </item>

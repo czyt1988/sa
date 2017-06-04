@@ -47,9 +47,24 @@ SAValueManager *SAValueManager::getInstance()
 /// \param data 需要引用的数据
 /// \return 引用的数据指针
 ///
-std::shared_ptr<SADataReference> SAValueManager::makeRefData(SAAbstractDatas *data)
+SAValueManager::IDATA_PTR SAValueManager::makeRefData(SAAbstractDatas *data)
 {
     return  std::make_shared<SADataReference>(data);
+}
+///
+/// \brief 把智能指针列表转换为普通指针列表
+/// \param ptrs 智能指针列表
+/// \return 普通指针列表
+///
+QList<SAAbstractDatas *> SAValueManager::toNormalPtrList(const QList<SAValueManager::IDATA_PTR> &ptrs)
+{
+    QList<SAAbstractDatas *> res;
+    const int size = ptrs.size();
+    for(int i=0;i<size;++i)
+    {
+        res.append(ptrs[i].get());
+    }
+    return res;
 }
 
 ///
@@ -57,7 +72,7 @@ std::shared_ptr<SADataReference> SAValueManager::makeRefData(SAAbstractDatas *da
 ///
 void SAValueManager::clear()
 {
-    m_ptrContainer.clear(true);
+    m_ptrContainer.clear();
     emit dataClear();
 }
 ///
@@ -172,7 +187,7 @@ void SAValueManager::deleteDatas(QList<SAAbstractDatas *> datas)
     {
         m_ptrContainer.deleteData(*i);
     }
-    emit dataDeleted(datas);
+    emit dataRemoved(datas);
 }
 ///
 /// \brief 销毁数据内存
@@ -181,7 +196,7 @@ void SAValueManager::deleteDatas(QList<SAAbstractDatas *> datas)
 void SAValueManager::deleteData(SAAbstractDatas *datas)
 {
     m_ptrContainer.deleteData(datas);
-    emit dataDeleted(QList<SAAbstractDatas*>()<<datas);
+    emit dataRemoved(QList<SAAbstractDatas*>()<<datas);
 }
 ///
 /// \brief 更改变量名字
@@ -402,23 +417,6 @@ bool SAValueManager::getVectorData(SAAbstractDatas *dataPtr, QVector<double> &da
 /// \brief 添加变量
 /// \param data 变量指针
 ///
-void SAValueManager::addData(SAAbstractDatas *data)
-{
-    if(!toCorrectName(data))
-    {
-        //变量名不合法
-        emit messageInformation(tr("value name:%1 is not correct!")
-                                ,SA::WarningMessage);
-        return;
-    }
-
-    m_ptrContainer.append(data);
-    emit dataAdded({data});
-}
-///
-/// \brief 添加变量
-/// \param data 变量指针
-///
 void SAValueManager::addData(std::shared_ptr<SAAbstractDatas> data)
 {
     if(!toCorrectName(data.get()))
@@ -431,22 +429,7 @@ void SAValueManager::addData(std::shared_ptr<SAAbstractDatas> data)
     m_ptrContainer.append(data);
     emit dataAdded({data.get()});
 }
-///
-/// \brief 添加多个变量
-/// \param data 变量指针列表
-///
-void SAValueManager::addDatas(QList<SAAbstractDatas *> datas)
-{
-    QList<SAAbstractDatas*> r;
-    auto end = datas.end();
-    for(auto i=datas.begin();i!=end;++i)
-    {
-        toCorrectName(*i);
-        this->m_ptrContainer.append(*i);
-        r << *i;
-    }
-    emit dataAdded(r);
-}
+
 
 void SAValueManager::addDatas(QList<std::shared_ptr<SAAbstractDatas> > datas)
 {
@@ -545,7 +528,7 @@ bool SAValueManager::toCorrectName(SAAbstractDatas *data)
 /// \return 如果没有对应，返回nullptr
 /// \see SA::DataType
 ///
-std::shared_ptr<SAAbstractDatas> SAValueManager::createDataByType(SA::DataType type)
+SAValueManager::IDATA_PTR SAValueManager::createDataByType(SA::DataType type)
 {
     if(SA::VectorInt == type)
     {
@@ -602,7 +585,7 @@ bool SAValueManager::isDirty() const
 /// \param err 错误信息
 /// \return 返回SAAbstractDatas 指针,需要手动addData,否则不在manager管理下
 ///
-std::shared_ptr<SAAbstractDatas> SAValueManager::loadSad(const QString &filePath)
+SAValueManager::IDATA_PTR SAValueManager::loadSad(const QString &filePath)
 {
     SADataHeader typeInfo;
     QFile file(filePath);
@@ -653,8 +636,6 @@ SAValueManager::PointerContainer::PointerContainer()
 {
     m_ptrList.clear();
     m_ptrListSet.clear();
-    m_ptrNormalList.clear();
-    m_ptrNormalListSet.clear();
     m_smrPtrList.clear();
     m_smrPtrListSet.clear();
     m_id2data.clear();
@@ -678,17 +659,6 @@ void SAValueManager::PointerContainer::append(std::shared_ptr<SAAbstractDatas> d
     m_dataName2DataPtr[data->getName()] = data.get();
 }
 
-void SAValueManager::PointerContainer::append(SAAbstractDatas *data)
-{
-    m_ptrList.append(data);
-    m_ptrListSet.insert(data,m_ptrList.size()-1);
-
-    m_ptrNormalList.append(data);
-    m_ptrNormalListSet.insert(data,m_ptrNormalList.size()-1);
-
-    m_id2data[data->getID()] = data;
-    m_dataName2DataPtr[data->getName()] = data;
-}
 
 
 
@@ -718,35 +688,10 @@ SAAbstractDatas *SAValueManager::PointerContainer::findData(const QString &name)
     return m_dataName2DataPtr.value(name,nullptr);
 }
 
-void SAValueManager::PointerContainer::clear(bool deletePtr)
+void SAValueManager::PointerContainer::clear()
 {
-    if(deletePtr)
-    {
-        //删除智能指针保存的
-        std::for_each(m_smrPtrList.begin(),m_smrPtrList.end(),[this](std::shared_ptr<SAAbstractDatas>& p){
-            SAAbstractDatas* tmp = m_id2data.value(p->getID(),nullptr);
-            if(tmp)
-            {
-                this->m_id2data[p->getID()] = nullptr;
-                p = nullptr;
-            }
-        });
-
-        //删除普通指针保存的
-        std::for_each(m_ptrList.begin(),m_ptrList.end()
-                      ,[this](SAAbstractDatas* p){
-            if(p)
-            {
-                delete p;
-            }
-        });
-
-    }
     m_ptrList.clear();
     m_ptrListSet.clear();
-
-    m_ptrNormalList.clear();
-    m_ptrNormalListSet.clear();
 
     m_smrPtrList.clear();
     m_smrPtrListSet.clear();
@@ -780,23 +725,14 @@ void SAValueManager::PointerContainer::deleteData(SAAbstractDatas *data)
 
         m_ptrListSet.erase(ite);
     }
-    auto iteNor = m_ptrNormalListSet.find(data);
-    if(iteNor != m_ptrNormalListSet.end())
+
+    std::shared_ptr<SAAbstractDatas> smr(data,[](SAAbstractDatas* p){Q_UNUSED(p);});
+    auto iteSmr = m_smrPtrListSet.find(smr);
+    if(iteSmr != m_smrPtrListSet.end())
     {
-        int index = iteNor.value();
-        m_ptrNormalList.removeAt(index);
-        m_ptrNormalListSet.erase(iteNor);
-        delete data;
+        m_smrPtrListSet.erase(iteSmr);
     }
-    else
-    {
-        std::shared_ptr<SAAbstractDatas> smr(data,[](SAAbstractDatas* p){Q_UNUSED(p);});
-        auto iteSmr = m_smrPtrListSet.find(smr);
-        if(iteSmr != m_smrPtrListSet.end())
-        {
-            m_smrPtrListSet.erase(iteSmr);
-        }
-    }
+
 }
 
 bool SAValueManager::PointerContainer::isHaveDataName(const QString &name) const

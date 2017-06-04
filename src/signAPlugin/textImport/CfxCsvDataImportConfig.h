@@ -16,7 +16,7 @@ public:
     //是否打开文件，执行done的前置操作
     virtual bool isOpenFile();
     //完成操作
-    virtual QList<SAAbstractDatas*> createResultPtr();
+    virtual QList<std::shared_ptr<SAAbstractDatas> > createResultPtr();
     //解析
     bool parser();
     //获取parser
@@ -40,10 +40,10 @@ public:
    void setCodec(const QString& codex);
    QString getCodec() const;
 private:
-   void createBy1XnYWay(QList<SAAbstractDatas*>& res);
-   void createBynX1YWay(QList<SAAbstractDatas*>& res);
-   void createBynXnYWay(QList<SAAbstractDatas*>& res);
-   void createByPointFWay(QList<SAAbstractDatas*>& res);
+   void createBy1XnYWay(QList<std::shared_ptr<SAAbstractDatas> >& res);
+   void createBynX1YWay(QList<std::shared_ptr<SAAbstractDatas> >& res);
+   void createBynXnYWay(QList<std::shared_ptr<SAAbstractDatas> >& res);
+   void createByPointFWay(QList<std::shared_ptr<SAAbstractDatas> >& res);
 private:
     bool m_isOpenFile;
     typedef std::shared_ptr<SACfxCsv2DDataParser> PARSER;

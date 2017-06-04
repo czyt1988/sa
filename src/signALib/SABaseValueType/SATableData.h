@@ -42,7 +42,7 @@ public:
 public:
     bool isHaveData(uint r,uint c) const;
     void setTableData(uint row,uint col,const T& d);
-    const T& getValue(uint r,uint c) const;
+    const T getValue(uint r,uint c) const;
     T& getValue(uint r,uint c);
     int rowCount() const;
     int columnCount() const{return m_table.columnCount ();}
@@ -163,7 +163,7 @@ void SATableData<T>::setTableData(uint row, uint col, const T &d)
 /// \return 数据
 ///
 template<typename T>
-const T& SATableData<T>::getValue(uint r, uint c) const
+const T SATableData<T>::getValue(uint r, uint c) const
 {
     return m_table.at (r,c);
 }

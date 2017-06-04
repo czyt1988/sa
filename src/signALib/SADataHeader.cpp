@@ -141,6 +141,7 @@ bool SADataHeader::parserXML(SADataHeader *d, const QString &xmlString,QString& 
             }
         }
     }
+    return true;
 }
 
 bool SADataHeader::makeXML(const SADataHeader* d, QString &xmlString)

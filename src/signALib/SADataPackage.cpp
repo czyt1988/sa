@@ -64,7 +64,7 @@ int SADataPackage::getSize(int sizeType) const
 QVariant SADataPackage::getAt(size_t index, size_t index2) const
 {
     Q_UNUSED(index2);
-    if(index>=rowCount())
+    if((int)index >= rowCount())
     {
         return QVariant();
     }

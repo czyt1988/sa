@@ -10,7 +10,7 @@ SAProjectManager* SAProjectManager::s_instance = nullptr;
 
 SAProjectManager::SAProjectManager():QObject(nullptr)
 {
-    connect(saValueManager,&SAValueManager::dataDeleted,this,&SAProjectManager::onDataDeleted);
+    connect(saValueManager,&SAValueManager::dataRemoved,this,&SAProjectManager::onDataDeleted);
     connect(saValueManager,&SAValueManager::dataNameChanged,this,&SAProjectManager::onDataNameChanged);
     connect(saValueManager,&SAValueManager::dataClear,this,&SAProjectManager::onDataClear);
 }
@@ -51,7 +51,7 @@ bool SAProjectManager::save()
     {
         return false;
     }
-    saveAs(m_projectFullPath);
+    return saveAs(m_projectFullPath);
 }
 ///
 /// \brief 设置项目的路径
@@ -129,7 +129,7 @@ bool SAProjectManager::loadProjectInfo(const QString &projectFullPath)
             node = node.nextSibling();//读取下一个兄弟节点
         }
     }
-
+    return true;
 }
 
 void SAProjectManager::loadValues(const QString &projectFullPath)
@@ -144,7 +144,7 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
     saValueManager->clear();
     m_dataPtr2DataFileName.clear();
     m_dataFileName2DataPtr.clear();
-    int r = saValueManager->load(dataPath,m_dataPtr2DataFileName);
+    saValueManager->load(dataPath,m_dataPtr2DataFileName);
     for(auto i = m_dataPtr2DataFileName.begin();i != m_dataPtr2DataFileName.end();++i)
     {
         m_dataFileName2DataPtr[i.value()] = i.key();
@@ -176,16 +176,19 @@ bool SAProjectManager::saveValues(const QString &projectFullPath)
 
 void SAProjectManager::onDataDeleted(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
+    //TODO:
     setDirty(true);
 }
 
 void SAProjectManager::onDataClear()
 {
+    //TODO:
     setDirty(true);
 }
 
 void SAProjectManager::onDataNameChanged(SAAbstractDatas *data, const QString &oldName)
 {
+    //TODO:
     setDirty(true);
 }
 
