@@ -424,6 +424,8 @@ void MainWindow::initUI()
     //saValueManager和saUI的关联
     connect(saValueManager,&SAValueManager::messageInformation
             ,this,&MainWindow::showMessageInfo);
+    connect(saValueManager,&SAValueManager::dataRemoved
+            ,this,&MainWindow::showMessageInfo);
     //SAProjectManager和saUI的关联
     connect(saProjectManager,&SAProjectManager::messageInformation
             ,this,&MainWindow::showMessageInfo);
@@ -1555,6 +1557,14 @@ bool MainWindow::setProjectInfomation()
     saProjectManager->setProjectDescribe(dlg.getProjectDescribe());
     return true;
 }
+///
+/// \brief 变量管理器的移除控制触发的槽
+/// \param dataBeDeletedPtr 移除控制的数据
+///
+void MainWindow::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
+{
+    ui->tabWidget_valueViewer->removeDatas(dataBeDeletedPtr);
+}
 
 QwtPlotItemTreeModel *MainWindow::getDataViewerPlotItemTreeModel() const
 {
@@ -1610,19 +1620,18 @@ void MainWindow::onTreeViewCurPlotItemClicked(const QModelIndex &index)
 void MainWindow::onActionDeleteValueTriggered()
 {
     QList<SAAbstractDatas*> datas = getSeletedDatas();
-    QString info=QStringLiteral("确定删除:\n");
+    QString info=tr("Are you sure remove:\n");
     for(int i=0;i<datas.size () && i < 5;++i)
     {
         info += QStringLiteral("%1;").arg(datas[i]->text ());
     }
-    info += QStringLiteral("\n等条目？此操作会删除本条目及其子条目");
-    QMessageBox::StandardButton btn = QMessageBox::question (this,QStringLiteral("询问"),QStringLiteral("确定删除选择的数据？"));
-    if(btn != QMessageBox::Yes)
+    info += tr("\n datas?");
+    QMessageBox::StandardButton btn = QMessageBox::question (this,tr("Quesstion"),info);
+    if(QMessageBox::Yes != btn)
     {
         return;
     }
-    ui->tabWidget_valueViewer->removeDatas(datas);
-    saValueManager->deleteDatas(datas);
+    saValueManager->removeDatas(datas);
 }
 
 

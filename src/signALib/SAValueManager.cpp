@@ -181,7 +181,7 @@ bool SAValueManager::isNameNotConflict(const QString &name, const SAAbstractData
 /// \brief 删除数据
 /// \param datas 数据指针
 ///
-void SAValueManager::deleteDatas(QList<SAAbstractDatas *> datas)
+void SAValueManager::removeDatas(QList<SAAbstractDatas *> datas)
 {
     for (auto i = datas.begin();i!=datas.end();++i)
     {
@@ -193,7 +193,7 @@ void SAValueManager::deleteDatas(QList<SAAbstractDatas *> datas)
 /// \brief 销毁数据内存
 /// \param datas
 ///
-void SAValueManager::deleteData(SAAbstractDatas *datas)
+void SAValueManager::removeData(SAAbstractDatas *datas)
 {
     m_ptrContainer.deleteData(datas);
     emit dataRemoved(QList<SAAbstractDatas*>()<<datas);

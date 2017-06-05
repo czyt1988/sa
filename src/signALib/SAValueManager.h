@@ -38,19 +38,13 @@ private:
     Q_DISABLE_COPY(SAValueManager)
 public:
     typedef std::shared_ptr<SAAbstractDatas> IDATA_PTR;
+
     ~SAValueManager();
     //获取对象
     static SAValueManager* getInstance();
-    ///
-    /// \brief 用于生成数据的工厂
-    /// 生成的数据并不会加入管理系统中需要调用addData
-    /// \return 数据指针
-    ///
+    //用于生成数据的工厂函数
     template<typename DataType, typename... _Args>
-    static std::shared_ptr<DataType> makeData(_Args&&... __args)
-    {
-        return  std::make_shared<DataType>(std::forward<_Args>(__args)...);
-    }
+    static std::shared_ptr<DataType> makeData(_Args&&... __args);
     //创建一个引用数据,引用和原始数据有一样的功能，但引用删除原始不删除，原始删除引用都会删除
     static IDATA_PTR makeRefData(SAAbstractDatas* data);
     //把智能指针列表转换为普通指针列表
@@ -85,9 +79,9 @@ public:
     //判断变量的名字是否有冲突，无冲突返回true
     bool isNameNotConflict(const QString& name,const SAAbstractDatas* ignoreDataPtr = nullptr) const;
     //删除数据
-    void deleteDatas(QList<SAAbstractDatas*> datas);
+    void removeDatas(QList<SAAbstractDatas*> datas);
     //删除数据
-    void deleteData(SAAbstractDatas* datas);
+    void removeData(SAAbstractDatas* datas);
     //更改变量名字，变量如果不通过SAValueManager更改名字，将无法获得管理权
     bool renameData(SAAbstractDatas* data, const QString& name);
     //保存数据到文件系统
@@ -211,7 +205,30 @@ private:
     static SAValueManager* s_instance;
     QString m_lastSaveDataFolder;///< 记录最后保存的目录
 };
+
+///
+/// \brief 用于生成数据的工厂
+/// 生成的数据并不会加入管理系统中需要调用addData
+/// \return 数据指针
+///
+template<typename DataType, typename... _Args>
+std::shared_ptr<DataType> SAValueManager::makeData(_Args &&... __args)
+{
+    return  std::make_shared<DataType>(std::forward<_Args>(__args)...);
+}
 #ifndef saValueManager
 #define saValueManager SAValueManager::getInstance()
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
 #endif // SAVALUEMANAGER_H

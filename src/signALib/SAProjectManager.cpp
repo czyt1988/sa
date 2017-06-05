@@ -10,7 +10,7 @@ SAProjectManager* SAProjectManager::s_instance = nullptr;
 
 SAProjectManager::SAProjectManager():QObject(nullptr)
 {
-    connect(saValueManager,&SAValueManager::dataRemoved,this,&SAProjectManager::onDataDeleted);
+    connect(saValueManager,&SAValueManager::dataRemoved,this,&SAProjectManager::onDataRemoved);
     connect(saValueManager,&SAValueManager::dataNameChanged,this,&SAProjectManager::onDataNameChanged);
     connect(saValueManager,&SAValueManager::dataClear,this,&SAProjectManager::onDataClear);
 }
@@ -173,10 +173,42 @@ bool SAProjectManager::saveValues(const QString &projectFullPath)
     int r = saValueManager->saveAs(dataPath);
     return (0 == r);
 }
-
-void SAProjectManager::onDataDeleted(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
+///
+/// \brief 移除记录的要删除的数据
+///
+void SAProjectManager::removeWillDeletedFiles()
 {
-    //TODO:
+    for(auto i = m_dataWillBeDeleted.begin();i!=m_dataWillBeDeleted.end();++i)
+    {
+        if(QFile::exists(*i))
+        {
+            QFile::remove(*i);
+        }
+    }
+    m_dataWillBeDeleted.clear();
+}
+///
+/// \brief 数据管理器移除数据时
+///
+/// 记录移除数据对应的文件，保存时把这些文件删除
+/// \param dataBeDeletedPtr 移除的数据文件
+///
+void SAProjectManager::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
+{
+    for(auto i = dataBeDeletedPtr.begin();i!=dataBeDeletedPtr.end();++i)
+    {
+        auto dataPtr2PathIte = m_dataPtr2DataFileName.find(*i);
+        if(dataPtr2PathIte != m_dataPtr2DataFileName.end())
+        {
+            m_dataWillBeDeleted.insert(dataPtr2PathIte.value());
+            m_dataPtr2DataFileName.erase(dataPtr2PathIte);
+            auto dataPath2Ptr = m_dataFileName2DataPtr.find(dataPtr2PathIte.value());
+            if(dataPath2Ptr != m_dataFileName2DataPtr.end())
+            {
+                m_dataFileName2DataPtr.erase(dataPath2Ptr);
+            }
+        }
+    }
     setDirty(true);
 }
 
@@ -272,6 +304,8 @@ bool SAProjectManager::saveAs(const QString &savePath)
     //保存数据
     saveValues(savePath);
 
+    //删除要移除的数据
+    removeWillDeletedFiles();
 
     setProjectFullPath(savePath);
     setDirty(false);
@@ -296,7 +330,8 @@ bool SAProjectManager::load(const QString &projectedPath)
                                 );
         return false;
     }
-
+    //- 本地变量初始化
+    m_dataWillBeDeleted.clear();
 
     //- start %加载项目描述
     loadProjectInfo(projectedPath);

@@ -393,6 +393,8 @@ private:
     QString getPlotLayerNewItemSelectedQSS(const QColor& rgb);
     //设置项目信息
     bool setProjectInfomation();
+    //变量管理器的移除控制触发的槽
+    Q_SLOT void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
 private:
     Ui::MainWindow *ui;
     SAUI* uiInterface;

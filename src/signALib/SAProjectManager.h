@@ -2,6 +2,7 @@
 #define SAPROJECTMANAGER_H
 #include <QObject>
 #include <QMap>
+#include <QSet>
 #include "SAGlobals.h"
 #include "SALibGlobal.h"
 class QDomDocument;
@@ -51,6 +52,8 @@ private:
     void loadValues(const QString &projectFullPath);
     //保存变量
     bool saveValues(const QString &projectFullPath);
+    //移除记录的要删除的数据
+    void removeWillDeletedFiles();
 signals:
     ///
     /// \brief 信息，对于一些操作的错误等内容，通过message信号发射，信息的类型通过type进行筛选
@@ -60,7 +63,7 @@ signals:
     void messageInformation(const QString& des,SA::MeaasgeType type);
 private slots:
     //数据管理器删除数据发射信号的绑定
-    void onDataDeleted(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
+    void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
     //数据管理器清除数据发射信号的绑定
     void onDataClear();
     //数据管理器变量名字变更的绑定
@@ -74,6 +77,7 @@ private:
     QMap<QString,SAAbstractDatas*> m_dataFileName2DataPtr;///< 记录数据文件路径
     QMap<SAAbstractDatas*,QString> m_dataPtr2DataFileName;///< 记录数据指针对应的保存文件名
     //end
+    QSet<QString> m_dataWillBeDeleted;///< 记录将要删除的数据文件
 private:
     static SAProjectManager* s_instance;
 };
