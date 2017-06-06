@@ -38,7 +38,7 @@ public:
     //获取工程的xml描述文件
     static QString getProjectDescribeFilePath(const QString &projectFolder);
     //获取工程的数据文件目录
-    static QString getProjectDataFolderPath(const QString &projectFolder);
+    static QString getProjectDataFolderPath(const QString &projectFolder, bool autoMakePath= true);
     //获取每个数据对应的文件路径
     QString getDataFilePath(const SAAbstractDatas* dataPtr) const;
 private:

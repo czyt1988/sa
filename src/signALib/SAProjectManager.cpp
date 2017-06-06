@@ -152,24 +152,23 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
     return;
 }
 ///
-/// \brief 加载变量
+/// \brief 保存变量
 /// \param projectFullPath
 /// \return
 ///
 bool SAProjectManager::saveValues(const QString &projectFullPath)
 {
     QString dataPath = getProjectDataFolderPath(projectFullPath);
-    QDir dir(dataPath);
-    if(!dir.exists())
+    if(dataPath.isEmpty())
     {
-        if(!dir.mkdir (dataPath))
-        {
-            emit messageInformation(tr("can not make dir:%1").arg(dataPath)
-                                    ,SA::ErrorMessage
-                                    );
-            return false;
-        }
+        emit messageInformation(tr("can not make dir:%1").arg(dataPath)
+                                ,SA::ErrorMessage
+                                );
+        return false;
     }
+
+    //保存之前，先对变量文件夹和变量进行比对，对已经变更名字的变量进行处理
+
     int r = saValueManager->saveAs(dataPath);
     return (0 == r);
 }
@@ -201,27 +200,57 @@ void SAProjectManager::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDelet
         if(dataPtr2PathIte != m_dataPtr2DataFileName.end())
         {
             m_dataWillBeDeleted.insert(dataPtr2PathIte.value());
-            m_dataPtr2DataFileName.erase(dataPtr2PathIte);
             auto dataPath2Ptr = m_dataFileName2DataPtr.find(dataPtr2PathIte.value());
             if(dataPath2Ptr != m_dataFileName2DataPtr.end())
             {
                 m_dataFileName2DataPtr.erase(dataPath2Ptr);
             }
+            m_dataPtr2DataFileName.erase(dataPtr2PathIte);
         }
     }
     setDirty(true);
 }
-
+///
+/// \brief 数据管理器进行清除时触发的槽
+///
 void SAProjectManager::onDataClear()
 {
-    //TODO:
+    //变量管理器的数据进行了清除
+    //把所有已经记录的数据文件映射标记位删除状态
+    for(auto i = m_dataFileName2DataPtr.begin();i != m_dataFileName2DataPtr.end();++i)
+    {
+        m_dataWillBeDeleted.insert(i.key());
+    }
     setDirty(true);
 }
-
+///
+/// \brief 变量名更改
+/// \param data 变量数据指针
+/// \param oldName 旧的名字
+///
 void SAProjectManager::onDataNameChanged(SAAbstractDatas *data, const QString &oldName)
 {
-    //TODO:
     setDirty(true);
+    if(m_projectFullPath.isEmpty())
+    {
+        //说明没指定项目位置
+        return;
+    }
+    QString dataPath = getProjectDataFolderPath(m_projectFullPath);
+    if(dataPath.isEmpty())
+    {
+        emit messageInformation(tr("can not make dir:%1").arg(dataPath)
+                                ,SA::ErrorMessage
+                                );
+        return;
+    }
+    QString oldFilePath = dataPath + QDir::separator() + oldName;
+    QString newFilePath = dataPath + QDir::separator() + data->getName();
+    if(!QFile::exists(oldFilePath))
+    {
+        return;
+    }
+    QFile::rename(oldFilePath,newFilePath);
 }
 
 
@@ -248,9 +277,21 @@ QString SAProjectManager::getProjectDescribeFilePath(const QString &projectFolde
 /// \param projectFolder 当前工程的顶层目录
 /// \return
 ///
-QString SAProjectManager::getProjectDataFolderPath(const QString &projectFolder)
+QString SAProjectManager::getProjectDataFolderPath(const QString &projectFolder,bool autoMakePath)
 {
-    return QDir::cleanPath (projectFolder) + QDir::separator () + DATA_FOLDER_NAME;
+    QString dataPath = QDir::cleanPath (projectFolder) + QDir::separator () + DATA_FOLDER_NAME;
+    if(autoMakePath)
+    {
+        QDir dir(dataPath);
+        if(!dir.exists())
+        {
+            if(!dir.mkdir (dataPath))
+            {
+                return QString();
+            }
+        }
+    }
+    return dataPath;
 }
 ///
 /// \brief 获取数据对应的文件路径,如果已经保存了的话，
@@ -301,11 +342,11 @@ bool SAProjectManager::saveAs(const QString &savePath)
 
     //保存项目描述
     saveProjectInfo(savePath);
+    //删除要移除的数据
+    removeWillDeletedFiles();
     //保存数据
     saveValues(savePath);
 
-    //删除要移除的数据
-    removeWillDeletedFiles();
 
     setProjectFullPath(savePath);
     setDirty(false);

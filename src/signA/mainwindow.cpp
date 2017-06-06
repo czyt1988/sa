@@ -425,7 +425,7 @@ void MainWindow::initUI()
     connect(saValueManager,&SAValueManager::messageInformation
             ,this,&MainWindow::showMessageInfo);
     connect(saValueManager,&SAValueManager::dataRemoved
-            ,this,&MainWindow::showMessageInfo);
+            ,this,&MainWindow::onDataRemoved);
     //SAProjectManager和saUI的关联
     connect(saProjectManager,&SAProjectManager::messageInformation
             ,this,&MainWindow::showMessageInfo);
@@ -1472,22 +1472,14 @@ void MainWindow::showElapesdMessageInfo(const QString& info, SA::MeaasgeType typ
 ///
 void MainWindow::onActionRescindTriggered()
 {
-    showNormalMessageInfo(tr("un…… i am working hard to make this function,please wait"));
-    SAFigureWindow* w = getCurrentFigureWindow();
-    if(!w)
-        return;
-    //TODO rescind_triggered
+    saValueManager->getUndoStack()->undo();
 }
 ///
 /// \brief Redo （重做）
 ///
 void MainWindow::onActionRedoTriggered()
 {
-    showNormalMessageInfo(tr("un…… i am working hard to make this function,please wait"));
-    SAFigureWindow* w = getCurrentFigureWindow();
-    if(!w)
-        return;
-    //TODO redo
+    saValueManager->getUndoStack()->redo();
 }
 
 ///

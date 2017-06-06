@@ -9,7 +9,10 @@
 #include <QObject>
 #include <QList>
 #include <QSet>
+#include <QUndoStack>
+
 class QFile;
+class PointerContainerPrivate;
 ///
 /// \brief sa的变量管理类
 /// 此类设计为单例模式，不允许拷贝，通过getInstance();获取实例
@@ -98,6 +101,13 @@ public:
     IDATA_PTR createDataByType(SA::DataType type);
     // 判断变量是否有更改而没保存
     bool isDirty() const;
+    //把普通指针转换为智能指针
+    std::shared_ptr<SAAbstractDatas> fromNormalPtr(SAAbstractDatas* norPtr);
+    QList<std::shared_ptr<SAAbstractDatas> > fromNormalPtr(QList<SAAbstractDatas*> norPtrs);
+    //把智能指针列表转换为普通指针列表
+    static QList<SAAbstractDatas*> fromSmartPtr(const QList<std::shared_ptr<SAAbstractDatas> >& smrPtrs);
+    //清空undo stack
+    void clearUndoStack();
 public:
     ///
     /// \name 对于1维数据的操作
@@ -118,6 +128,7 @@ public:
     void addDatas(QList<std::shared_ptr<SAAbstractDatas> > datas);
     /// \}
     ///
+    QUndoStack* getUndoStack();
 signals:
     ///
     /// \brief 信息，对于一些操作的错误等内容，通过message信号发射，信息的类型通过type进行筛选
@@ -155,55 +166,26 @@ private:
     bool toCorrectName(SAAbstractDatas* data);
     //加载一个sad文件
     IDATA_PTR loadSad(const QString &filePath);
+    //删除数据
+    void __removeData(SAAbstractDatas* datas);
+    void __removeDatas(QList<SAAbstractDatas*> datas);
+    //
+    void __addData(std::shared_ptr<SAAbstractDatas> data);
+    void __addDatas(QList<std::shared_ptr<SAAbstractDatas> > datas);
+    //
+    bool __renameData(SAAbstractDatas* data, const QString& name);
+    //友元类
+    friend class SAValueAddCommand;
+    friend class SAValuesAddCommand;
+    friend class SAValueRemoveCommand;
+    friend class SAValuesRemoveCommand;
+    friend class SAValueRenameCommand;
 private:
-
-    ///
-    /// \brief 保存指针和一些额外信息的容器
-    ///
-    class PointerContainer
-    {
-    public:
-        PointerContainer();
-        ~PointerContainer();
-        void append(std::shared_ptr<SAAbstractDatas> data);
-        //设置数据文件的文件映射路径
-        void setDataFilePath(SAAbstractDatas* data);
-        //根据索引查找
-        SAAbstractDatas* at(int index) const;
-        //根据指针找到索引
-        int indexOf(SAAbstractDatas* dataPtr) const;
-        //根据id查找
-        SAAbstractDatas* findData(int id) const;
-        //根据名字查找
-        SAAbstractDatas* findData(const QString& name) const;
-        //清空所有数据
-        void clear();
-        //获取变量的数量
-        int count() const;
-        //删除数据指针内存同时在容器移除
-        void deleteData(SAAbstractDatas* data);
-        //变量改名
-        bool changDataName(SAAbstractDatas* data,const QString& name);
-        //判断是否已存在名字
-        bool isHaveDataName(const QString& name) const;
-        //获取所有的一维向量数据
-        QList<SAAbstractDatas*> getVectorDataPtrs() const;
-        //判断数据是否处于管理状态
-        bool isDataInManager(const SAAbstractDatas* data) const;
-
-    private:
-        QList<SAAbstractDatas*> m_ptrList;///< 总指针队列
-        QMap <SAAbstractDatas*,int> m_ptrListSet;///< 用于快速判断是否存在
-
-        QList<std::shared_ptr<SAAbstractDatas> > m_smrPtrList;///< 指针队列,此队列通过智能指针添加
-        QMap <std::shared_ptr<SAAbstractDatas>,int> m_smrPtrListSet;
-
-        QMap<int,SAAbstractDatas*> m_id2data;///<记录变量的id和内存地址，通过此可以快速查找
-        QMap<QString,SAAbstractDatas*> m_dataName2DataPtr;///< 记录变量名对应的数据类型
-    };
-    PointerContainer m_ptrContainer;///< 此数据结构的指针管理容器
     static SAValueManager* s_instance;
+private:
+    std::unique_ptr<PointerContainerPrivate> m_ptrContainer;///< 此数据结构的指针管理容器
     QString m_lastSaveDataFolder;///< 记录最后保存的目录
+    QUndoStack m_undoStack;
 };
 
 ///
