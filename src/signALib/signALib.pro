@@ -29,9 +29,8 @@ HEADERS += \
     SADataHeader.h \
     SAProjectManager.h \
     SAConfig.h \
-    SAValueControlCommand.h \
-    SALibResourDefine.h \
-    SAValueOptCommand.h
+    SALibResourDefine.h
+
 
 SOURCES += \
     SAData.cpp \
@@ -48,9 +47,8 @@ SOURCES += \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
     SAProjectManager.cpp \
-    SAConfig.cpp \
-    SAValueControlCommand.cpp \
-    SAValueOptCommand.cpp
+    SAConfig.cpp
+
 
 include($$PWD/Private/Private.pri)
 include($$PWD/SABaseValueType/SABaseValueType.pri)
