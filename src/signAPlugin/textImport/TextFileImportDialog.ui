@@ -432,7 +432,7 @@
          <number>1</number>
         </property>
         <item>
-         <widget class="QTextBrowser" name="textBrowser"/>
+         <widget class="QPlainTextEdit" name="plainTextEdit"/>
         </item>
        </layout>
       </widget>

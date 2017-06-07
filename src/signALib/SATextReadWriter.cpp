@@ -362,3 +362,4 @@ void SATextReadWriter::setStopRead(volatile bool stopRead)
 
 
 
+

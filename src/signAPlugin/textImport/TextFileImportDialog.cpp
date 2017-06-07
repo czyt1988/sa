@@ -406,8 +406,7 @@ void TextFileImportDialog::onTextReadComplete(const QString &text, bool isOK)
     if(isOK)
     {
         //ui->textBrowser->setText(text);
-        m_readedText.append(text);
-        QTimer::singleShot(10,this,&TextFileImportDialog::onAppendTextTimeOut);
+        ui->plainTextEdit->setPlainText(text);//->append( m_readedText.takeFirst() );
     }
     saElapsed();
 }
@@ -421,7 +420,7 @@ void TextFileImportDialog::onTextThreadDestroyed(QObject *obj)
 
 void TextFileImportDialog::startReadTextThread(const QString &filePath)
 {
-    ui->textBrowser->clear();
+    ui->plainTextEdit->clear();
     //打开文本线程
     //如果上个线程还没结束，就让它结束,线程的资源(m_textReaderThread and m_textReader)自动释放
     {
@@ -436,8 +435,8 @@ void TextFileImportDialog::startReadTextThread(const QString &filePath)
     m_textReaderThread = new QThread();
     m_textReader = new SATextReadWriter();
     m_textReader->moveToThread(m_textReaderThread);
-    m_textReader->setReadOnceCharCount(0);
-    m_textReader->setReadOnceLineCount(0);
+    m_textReader->setReadOnceCharCount(-1);
+    m_textReader->setReadOnceLineCount(-1);
     m_textReader->setFileName(filePath);
     m_textReader->setCodec(ui->comboBox_codec->currentText());
 
@@ -453,8 +452,5 @@ void TextFileImportDialog::startReadTextThread(const QString &filePath)
 
 void TextFileImportDialog::onAppendTextTimeOut()
 {
-    if(!m_readedText.isEmpty())
-    {
-        ui->textBrowser->append( m_readedText.takeFirst() );
-    }
+
 }
