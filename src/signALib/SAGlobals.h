@@ -144,6 +144,8 @@ namespace SA {
         ,Dim3=3
     };
 
+
+
 }
 
 #define ROLE_ITEM_MARK Qt::UserRole + 1///< 标志角色
@@ -185,48 +187,6 @@ namespace SA {
 #ifndef SA_ROLE_DATA_ID
 #define SA_ROLE_DATA_ID (Qt::UserRole + 1099)
 #endif
-
-
-//#ifndef SA_TYPE_CAN_BE_DRAW_BOUNDARY
-//#define SA_TYPE_CAN_BE_DRAW_BOUNDARY 0
-//#endif
-
-//#ifndef SA_CLOUMN_TYPE_DOUBLE
-//#define SA_CLOUMN_TYPE_DOUBLE 1
-//#endif
-//#ifndef SA_CLOUMN_TYPE_POINT
-//#define SA_CLOUMN_TYPE_POINT 2
-//#endif
-
-//#ifndef SA_TYPE_TABLE_BEGIN//table文件标记的起始数据
-//#define SA_TYPE_TABLE_BEGIN 1000
-//#endif
-//#ifndef SA_TYPE_TABLE_UNKNOW
-//#define SA_TYPE_TABLE_UNKNOW -2
-//#endif
-//#ifndef SA_TYPE_TABLE_VARIANT
-//#define SA_TYPE_TABLE_VARIANT 1001
-//#endif
-//#ifndef SA_TYPE_TABLE_DOUBLE
-//#define SA_TYPE_TABLE_DOUBLE 1002
-//#endif
-//#ifndef SA_TYPE_TABLE_END//table文件标记的结束数据
-//#define SA_TYPE_TABLE_END 2000
-//#endif
-
-//#ifndef SA_TYPE_TDMS_BEGIN //tdm文件标记的起始数据
-//#define SA_TYPE_TDMS_BEGIN 100
-//#endif
-//#ifndef SA_TYPE_TDMS
-//#define SA_TYPE_TDMS -100
-//#endif
-//#ifndef SA_TYPE_TDMS_GROUP
-//#define SA_TYPE_TDMS_GROUP -101
-//#endif
-//#ifndef SA_TYPE_TDMS_CHANNEL
-//#define SA_TYPE_TDMS_CHANNEL 102
-//#endif
-
 
 
 #ifndef SA_SIZE_TYPE_ROW

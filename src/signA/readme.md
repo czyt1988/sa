@@ -1,5 +1,6 @@
 sa 的ui程序
 #正在进行
+- SAGlobalConfig的修改 配置
 - 完成XML配置文件读取的类
 - 格式化mainwindow的函数
 - 变量选择窗口完善

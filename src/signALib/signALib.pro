@@ -28,8 +28,9 @@ HEADERS += \
     SATextReadWriter.h \
     SADataHeader.h \
     SAProjectManager.h \
-    SAConfig.h \
-    SALibResourDefine.h
+    SALibResourDefine.h \
+    SAGlobalConfigDefine.h \
+    SAGUIConfig.h
 
 
 SOURCES += \
@@ -47,7 +48,7 @@ SOURCES += \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
     SAProjectManager.cpp \
-    SAConfig.cpp
+    SAGUIConfig.cpp
 
 
 include($$PWD/Private/Private.pri)
