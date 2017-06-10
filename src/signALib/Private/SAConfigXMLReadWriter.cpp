@@ -15,6 +15,7 @@
 #include <QDataStream>
 #include <QBitArray>
 #include <QBitmap>
+#include <QDate>
 SAConfigXMLReadWriter::SAConfigXMLReadWriter(SAGlobalConfig *config, QObject *par):QObject(par)
   ,m_config(config)
 {
@@ -34,26 +35,43 @@ QString SAConfigXMLReadWriter::variantToString(const QVariant &var)
     case QVariant::Invalid:
         return QString();
     case QVariant::BitArray:
-    {
-        QByteArray byte;
-        QDataStream st(&byte,QIODevice::ReadWrite);
-        QBitArray ba = var.toBitArray();
-        st << ba;
-        return QString(byte.toBase64());
-    }
+        return converVariantToBase64String<QBitArray>(var);
     case QVariant::Bitmap:
+        return converVariantToBase64String<QBitmap>(var);
+    case QVariant::Bool:
+        return var.toBool() ? "1" : "0";
+    case QVariant::Brush:
+        return converVariantToBase64String<QBrush>(var);
+    case QVariant::ByteArray:
+        return converVariantToBase64String<QByteArray>(var);
+    case QVariant::Char:
+        return var.toChar();
+    case QVariant::Color:
     {
-        if(var.canConvert<QBitmap>())
-        {
-            QByteArray byte;
-            QDataStream st(&byte,QIODevice::ReadWrite);
-            QBitmap ba = var.value<QBitmap>();
-            st << ba;
-            return QString(byte.toBase64());
-        }
-        return QString();
+        QColor clr = var.value<QColor>();
+        return clr.name(QColor::HexArgb);
     }
-        ==
+    case QVariant::Cursor:
+        return converVariantToBase64String<QCursor>(var);
+    case QVariant::Date:
+    {
+        QDate d = var.toDate();
+        return d.toString(Qt::ISODate);
+    }
+    case QVariant::DateTime:
+    {
+        QDateTime d = var.toDateTime();
+        return d.toString(Qt::ISODate);
+    }
+    case QVariant::Double:
+    {
+        double d = var.toDouble();
+        return QString::number(d);
+    }
+    case QVariant::EasingCurve:
+    {
+        return converVariantToBase64String<QEasingCurve>(var);
+    }
     }
     return QString();
 }
@@ -116,19 +134,7 @@ void SAConfigXMLReadWriter::startWrite()
 
 void SAConfigXMLReadWriter::readConfigSection(QXmlStreamReader* xml)
 {
-    while(!xml->atEnd() && !xml->hasError())
-    {
-        xml->readNext();
-        if(xml->isStartElement())
-        {
-            FUN_PTR fun = s_element2funptr.value(xml->name().toString(),nullptr);
-            QString val = xml->readElementText();
-            if(fun)
-            {
-                fun(m_config,val);
-            }
-        }
-    }
+
 }
 
 void SAConfigXMLReadWriter::writeContent(QXmlStreamWriter *xml, const QString &content)
@@ -142,7 +148,7 @@ void SAConfigXMLReadWriter::writeContent(QXmlStreamWriter *xml, const QString &c
     xml->writeStartElement(CONFIG_CONTENT_NAME);//每个start ele都要有write end
     for(int i=0;i<keySize;++i)
     {
-        writeKey(&xml,keys[i],m_config->getKey(content,keys[i]));
+        writeKey(xml,keys[i],m_config->getKey(content,keys[i]));
     }
     xml->writeEndElement();
 }

@@ -22,6 +22,7 @@ private:
     //
 
     void init();
+public:
     //检测是否存在目录
     bool isHasContent(const QString& content) const;
     //检测是否存在对应索引
