@@ -18,23 +18,6 @@ class SAConfigXMLReadWriter : public QObject
 public:
     SAConfigXMLReadWriter(SAGlobalConfig* config,QObject* par = nullptr);
     static QString getConfigXMLFileFullPath();
-    static QString variantToString(const QVariant& var);
-    static QVariant stringTovariant(const QString& str,const QString& typeName);
-
-    template<typename T>
-    static QString converVariantToBase64String(const QVariant& var)
-    {
-        if(var.canConvert<T>())
-        {
-            QByteArray byte;
-            QDataStream st(&byte,QIODevice::ReadWrite);
-            T ba = var.value<T>();
-            st << ba;
-            return QString(byte.toBase64());
-        }
-        return QString();
-    }
-
 public slots:
     void startRead();
     void startWrite();

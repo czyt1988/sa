@@ -4,18 +4,14 @@
 #include <QFile>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-
+#include "SAVariantCaster.h"
 #define CONFIG_FILE_NAME "saconfig.cfg"
 #define CONFIG_SECTION_NAME "config"
 #define CONFIG_CONTENT_NAME "content"
 #define CONFIG_KEY_NAME "key"
 #define CONFIG_KEY_PROP_NAME_NAME "name"
 #define CONFIG_KEY_PROP_TYPE_NAME "type"
-#include <QByteArray>
-#include <QDataStream>
-#include <QBitArray>
-#include <QBitmap>
-#include <QDate>
+
 SAConfigXMLReadWriter::SAConfigXMLReadWriter(SAGlobalConfig *config, QObject *par):QObject(par)
   ,m_config(config)
 {
@@ -28,83 +24,6 @@ QString SAConfigXMLReadWriter::getConfigXMLFileFullPath()
     return (str + QDir::separator() + CONFIG_FILE_NAME);
 }
 
-QString SAConfigXMLReadWriter::variantToString(const QVariant &var)
-{
-    switch(var.type())
-    {
-    case QVariant::Invalid:
-        return QString();
-    case QVariant::BitArray:
-        return converVariantToBase64String<QBitArray>(var);
-    case QVariant::Bitmap:
-        return converVariantToBase64String<QBitmap>(var);
-    case QVariant::Bool:
-        return var.toBool() ? "1" : "0";
-    case QVariant::Brush:
-        return converVariantToBase64String<QBrush>(var);
-    case QVariant::ByteArray:
-        return converVariantToBase64String<QByteArray>(var);
-    case QVariant::Char:
-        return var.toChar();
-    case QVariant::Color:
-    {
-        QColor clr = var.value<QColor>();
-        return clr.name(QColor::HexArgb);
-    }
-    case QVariant::Cursor:
-        return converVariantToBase64String<QCursor>(var);
-    case QVariant::Date:
-    {
-        QDate d = var.toDate();
-        return d.toString(Qt::ISODate);
-    }
-    case QVariant::DateTime:
-    {
-        QDateTime d = var.toDateTime();
-        return d.toString(Qt::ISODate);
-    }
-    case QVariant::Double:
-    {
-        double d = var.toDouble();
-        return QString::number(d);
-    }
-    case QVariant::EasingCurve:
-    {
-        return converVariantToBase64String<QEasingCurve>(var);
-    }
-    }
-    return QString();
-}
-
-QVariant SAConfigXMLReadWriter::stringTovariant(const QString &str, const QString &typeName)
-{
-
-}
-
-void SAConfigXMLReadWriter::startRead()
-{
-    QFile file(getConfigXMLFileFullPath());
-    if(!file.open(QIODevice::ReadOnly))
-    {
-        emit message(tr("can not open config file:\"%1\",because:%2").arg(file.fileName()).arg(file.errorString())
-                     ,SA::ErrorMessage);
-        emit readComplete(false);
-        return;
-    }
-    QXmlStreamReader xml(&file);
-    while(!xml.atEnd() && !xml.hasError())
-    {
-        xml.readNext();
-        if(xml.isStartElement())
-        {
-            if(xml.name() == CONFIG_SECTION_NAME)
-            {
-                readConfigSection(&xml);
-            }
-        }
-    }
-    emit readComplete(true);
-}
 
 void SAConfigXMLReadWriter::startWrite()
 {
@@ -132,10 +51,6 @@ void SAConfigXMLReadWriter::startWrite()
     emit writeComplete(true);
 }
 
-void SAConfigXMLReadWriter::readConfigSection(QXmlStreamReader* xml)
-{
-
-}
 
 void SAConfigXMLReadWriter::writeContent(QXmlStreamWriter *xml, const QString &content)
 {
@@ -158,6 +73,36 @@ void SAConfigXMLReadWriter::writeKey(QXmlStreamWriter *xml, const QString &key, 
     xml->writeStartElement(CONFIG_KEY_NAME);//每个start ele都要有write end
     xml->writeAttribute(CONFIG_KEY_PROP_NAME_NAME,key);
     xml->writeAttribute(CONFIG_KEY_PROP_TYPE_NAME,var.typeName());
-
+    xml->writeCharacters(SAVariantCaster::variantToString(var));
     xml->writeEndElement();
+}
+
+void SAConfigXMLReadWriter::startRead()
+{
+    QFile file(getConfigXMLFileFullPath());
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        emit message(tr("can not open config file:\"%1\",because:%2").arg(file.fileName()).arg(file.errorString())
+                     ,SA::ErrorMessage);
+        emit readComplete(false);
+        return;
+    }
+    QXmlStreamReader xml(&file);
+    while(!xml.atEnd() && !xml.hasError())
+    {
+        xml.readNext();
+        if(xml.isStartElement())
+        {
+            if(xml.name() == CONFIG_SECTION_NAME)
+            {
+                readConfigSection(&xml);
+            }
+        }
+    }
+    emit readComplete(true);
+}
+
+void SAConfigXMLReadWriter::readConfigSection(QXmlStreamReader* xml)
+{
+
 }

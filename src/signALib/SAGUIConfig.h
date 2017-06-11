@@ -12,7 +12,6 @@ class SAConfigPrivate;
 ///
 class SALIB_EXPORT SAGUIConfig
 {
-    Q_OBJECT
 private:
     explicit SAGUIConfig();
     Q_DISABLE_COPY(SAGUIConfig)
