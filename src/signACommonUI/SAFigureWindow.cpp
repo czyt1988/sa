@@ -9,8 +9,7 @@
 //sa lib
 #include "SAData.h"
 #include "SARandColorMaker.h"
-#include "SAGlobalConfig.h"
-
+#include "SAFigureGlobalConfig.h"
 #define GET_CHART_PTR \
 SAChart2D* chart = current2DPlot();\
 if(nullptr == chart)\
@@ -250,9 +249,10 @@ QwtPlotCurve *SAFigureWindow::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, c
 QwtPlotCurve *SAFigureWindow::addCurve(const QVector<QPointF> &points,const QString &name)
 {
     GET_CHART_PTR
+
     QwtPlotCurve* cur = chart->addCurve(points);
     cur->setPen(SARandColorMaker::getCurveColor()
-                ,saConfig->getPlotCurWidth(points.size()));
+                ,SAFigureGlobalConfig::getPlotCurWidth(points.size()));
     cur->setTitle(name);
     calcDataFeature(chart,cur);
     m_lastPlotItem = cur;
@@ -277,7 +277,7 @@ QwtPlotCurve *SAFigureWindow::addCurve(const QVector<double> &datas, double xSta
     }
     QwtPlotCurve* cur = chart->addCurve(x,datas);
     cur->setPen(SARandColorMaker::getCurveColor()
-                ,saConfig->getPlotCurWidth(datas.size()));
+                ,SAFigureGlobalConfig::getPlotCurWidth(datas.size()));
     cur->setTitle(name);
     calcDataFeature(chart,cur);
     m_lastPlotItem = cur;
@@ -296,7 +296,7 @@ QwtPlotCurve *SAFigureWindow::addCurve(const QVector<double> &x, const QVector<d
     int min = std::min(x.size(),y.size());
     QwtPlotCurve* cur = chart->addCurve(x,y);
     cur->setPen(SARandColorMaker::getCurveColor()
-                ,saConfig->getPlotCurWidth(min));
+                ,SAFigureGlobalConfig::getPlotCurWidth(min));
     cur->setTitle(name);
     calcDataFeature(chart,cur);
     m_lastPlotItem = cur;
@@ -313,7 +313,7 @@ QwtPlotHistogram *SAFigureWindow::addBar(SAVectorInterval *datas, QwtPlotHistogr
     GET_CHART_PTR
     QwtPlotHistogram* hp = chart->addHistogram (datas->getValueDatas ());
     QColor clr = SARandColorMaker::getCurveColor();
-    hp->setPen(clr,saConfig->getPlotCurWidth(datas->getSize()));
+    hp->setPen(clr,SAFigureGlobalConfig::getPlotCurWidth(datas->getSize()));
     clr.setAlpha(125);
     hp->setBrush(QBrush(clr));
     hp->setTitle(datas->getName ());
@@ -335,7 +335,7 @@ QwtPlotCurve *SAFigureWindow::addVirtualCurve(const QString &strName, const QVec
     GET_CHART_PTR
     QwtPlotCurve* cur =  chart->addCurve(datas);
     cur->setPen(SARandColorMaker::getCurveColor()
-                ,saConfig->getPlotCurWidth(datas.size()));
+                ,SAFigureGlobalConfig::getPlotCurWidth(datas.size()));
     cur->setTitle(strName);
     m_lastPlotItem = cur;
     return cur;

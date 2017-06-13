@@ -19,8 +19,7 @@ private:
     explicit SAGlobalConfig();
     ~SAGlobalConfig();
     Q_DISABLE_COPY(SAGlobalConfig)
-    //
-
+    //初始化函数
     void init();
 public:
     //检测是否存在目录
@@ -28,9 +27,9 @@ public:
     //检测是否存在对应索引
     bool isHasKey(const QString& content,const QString& key) const;
     //获取键值对应的内容
-    QVariant getKey(const QString& content,const QString& key) const;
+    QVariant getValue(const QString& content,const QString& key) const;
     //设置键值
-    void setKey(const QString& content,const QString& key,const QVariant& var);
+    void setValue(const QString& content,const QString& key,const QVariant& var);
     //获取数据，确保数据有默认构造函数
     template<typename T>
     T valueFromKey(const QString& content,const QString& key,const T& defaultVal = T());
@@ -40,23 +39,23 @@ public:
     QList<QString> getKeyList(const QString& content) const;
 public:
     //获取uint型的配置
-    unsigned int getUIntConfig(const QString& content,const QString& key,const unsigned int& defaultVal = -1) const;
-    void setUIntConfig(const QString& content,const QString& key,const unsigned int& val);
+    unsigned int getUIntValue(const QString& content,const QString& key,const unsigned int& defaultVal = -1) const;
+    void setUIntValue(const QString& content,const QString& key,const unsigned int& val);
     //获取int型的配置
-    int getIntConfig(const QString& content,const QString& key,const int& defaultVal = -1) const;
-    void setIntConfig(const QString& content,const QString& key,const int& val);
+    int getIntValue(const QString& content,const QString& key,const int& defaultVal = -1) const;
+    void setIntValue(const QString& content,const QString& key,const int& val);
     //获取double型的配置
-    double getDoubleConfig(const QString& content,const QString& key,const double& defaultVal = 0) const;
-    void setDoubleConfig(const QString& content,const QString& key,const double& val);
+    double getDoubleValue(const QString& content,const QString& key,const double& defaultVal = 0) const;
+    void setDoubleValue(const QString& content,const QString& key,const double& val);
     //获取float型的配置
-    float getFloatConfig(const QString& content,const QString& key,const float& defaultVal = 0) const;
-    void setFloatConfig(const QString& content,const QString& key,const float& val);
+    float getFloatValue(const QString& content,const QString& key,const float& defaultVal = 0) const;
+    void setFloatValue(const QString& content,const QString& key,const float& val);
     //获取qlonglong型的配置
-    qlonglong getLongLongConfig(const QString& content,const QString& key,const qlonglong& defaultVal = 0) const;
-    void setLongLongConfig(const QString& content,const QString& key,const qlonglong& val);
+    qlonglong getLongLongValue(const QString& content,const QString& key,const qlonglong& defaultVal = 0) const;
+    void setLongLongValue(const QString& content,const QString& key,const qlonglong& val);
     //获取QString型的配置
-    QString getStringConfig(const QString& content,const QString& key,const QString& defaultVal = QString()) const;
-    void setStringConfig(const QString& content,const QString& key,const QString& val);
+    QString getStringValue(const QString& content,const QString& key,const QString& defaultVal = QString()) const;
+    void setStringValue(const QString& content,const QString& key,const QString& val);
 public:
     //获取sa的home page
     QString getHomePath() const;
@@ -80,7 +79,7 @@ T SAGlobalConfig::valueFromKey(const QString &content, const QString &key,const 
     {
         return defaultVal;
     }
-    QVariant var = getKey(content,key);
+    QVariant var = getValue(content,key);
     if(!var.isValid())
     {
         return defaultVal;

@@ -1,4 +1,4 @@
-#include "SAGUIConfig.h"
+#include "SAGUIGlobalConfig.h"
 #include <QDir>
 #include <QApplication>
 #include <QXmlStreamReader>
@@ -6,12 +6,12 @@
 #include "SALog.h"
 #include "SAGlobalConfig.h"
 #include "SAGlobalConfigDefine.h"
-SAGUIConfig::SAGUIConfig()
+SAGUIGlobalConfig::SAGUIGlobalConfig()
 {
 
 }
 
-SAGUIConfig::~SAGUIConfig()
+SAGUIGlobalConfig::~SAGUIGlobalConfig()
 {
 
 }
@@ -20,24 +20,24 @@ SAGUIConfig::~SAGUIConfig()
 /// \brief 默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式
 /// \return
 ///
-SAGUIConfig::PropertyBrowserType SAGUIConfig::getDefaultPropertySetDialogType()
+SAGUIGlobalConfig::PropertyBrowserType SAGUIGlobalConfig::getDefaultPropertySetDialogType()
 {
     int def = (int)GroupBoxType;
-    return (SAGUIConfig::PropertyBrowserType)(saConfig->getIntConfig(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,def));
+    return (SAGUIGlobalConfig::PropertyBrowserType)(saConfig->getIntValue(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,def));
 }
 ///
 /// \brief 设置默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式
 /// \param type
 /// \see SAConfig::PropertyBrowserType
 ///
-void SAGUIConfig::setDefaultPropertySetDialogType(SAGUIConfig::PropertyBrowserType type)
+void SAGUIGlobalConfig::setDefaultPropertySetDialogType(SAGUIGlobalConfig::PropertyBrowserType type)
 {
-    saConfig->setIntConfig(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,(int)type);
+    saConfig->setIntValue(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,(int)type);
 }
 ///
 /// \brief 所有参数设置为默认
 ///
-void SAGUIConfig::setDefault()
+void SAGUIGlobalConfig::setDefault()
 {
     setDefaultPropertySetDialogType(GroupBoxType);
 }

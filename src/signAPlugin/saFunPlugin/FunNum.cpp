@@ -12,7 +12,7 @@
 #include "SAFigureWindow.h"
 
 #include "SAVectorInterval.h"
-#include "SAConfig.h"
+#include "SAGUIGlobalConfig.h"
 #include <QMdiSubWindow>
 #define TR(str)\
     QApplication::translate("FunStatistics", str, 0)
@@ -53,7 +53,7 @@ void FunNum::diff()
     {
         return;
     }
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     auto tmp = dlg.appendIntProperty(TR("diff count")
                              ,1,std::numeric_limits<int>::max()
@@ -130,7 +130,7 @@ void FunNum::hist()
     }
     const QString idHistCount = "histCount";
     const QString idIsPlot = "isPlot";
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     dlg.appendIntProperty(idHistCount,TR("hist count")
                           ,1,std::numeric_limits<int>::max()

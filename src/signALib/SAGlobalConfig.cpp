@@ -5,6 +5,7 @@
 #include <QSet>
 #include <QDir>
 #include <QFileInfo>
+#include "SAConfigXMLReadWriter.h"
 SAGlobalConfig* SAGlobalConfig::s_instance = nullptr;
 
 class SAGlobalConfigPrivate
@@ -47,13 +48,7 @@ QList<QString> SAGlobalConfigPrivate::getKeyList(const QString &content) const
     return m_configContentDict[content].keys();
 }
 
-void SAGlobalConfigPrivate::init()
-{
-    m_configContentDict[CFG_CONTENT_ROOT][CFG_ROOT_HomePath]
-            = SAGlobalConfig::makeDefaultHomePath();
-    m_configContentDict[CFG_CONTENT_ROOT][CFG_ROOT_ConfigFolderPath]
-            = SAGlobalConfig::makeDefaultConfigPath();
-}
+
 
 bool SAGlobalConfigPrivate::isHasContent(const QString &content) const
 {
@@ -76,7 +71,15 @@ QVariant SAGlobalConfigPrivate::getKey(const QString &content, const QString &ke
 
 void SAGlobalConfigPrivate::setKey(const QString &content, const QString &key, const QVariant &var)
 {
+
     m_configContentDict[content][key] = var;
+}
+void SAGlobalConfigPrivate::init()
+{
+    m_configContentDict[CFG_CONTENT_ROOT][CFG_ROOT_HomePath]
+            = SAGlobalConfig::makeDefaultHomePath();
+    m_configContentDict[CFG_CONTENT_ROOT][CFG_ROOT_ConfigFolderPath]
+            = SAGlobalConfig::makeDefaultConfigPath();
 }
 
 //============================================
@@ -84,7 +87,9 @@ void SAGlobalConfigPrivate::setKey(const QString &content, const QString &key, c
 SAGlobalConfig::SAGlobalConfig()
     :m_d(new SAGlobalConfigPrivate)
 {
-    m_d->init();
+    init();
+    SAConfigXMLReadWriter xmlReadWriter(this);
+    xmlReadWriter.startRead();
 }
 
 SAGlobalConfig::~SAGlobalConfig()
@@ -94,6 +99,13 @@ SAGlobalConfig::~SAGlobalConfig()
         delete s_instance;
         s_instance = NULL;
     }
+}
+///
+/// \brief 初始化函数
+///
+void SAGlobalConfig::init()
+{
+    m_d->init();
 }
 ///
 /// \brief 检测是否存在目录
@@ -120,7 +132,7 @@ bool SAGlobalConfig::isHasKey(const QString &content, const QString &key) const
 /// \param key 索引名称
 /// \return 如果没有内容，返回为QVariant(),可以通过isValid判断
 ///
-QVariant SAGlobalConfig::getKey(const QString &content, const QString &key) const
+QVariant SAGlobalConfig::getValue(const QString &content, const QString &key) const
 {
     return m_d->getKey(content,key);
 }
@@ -130,7 +142,7 @@ QVariant SAGlobalConfig::getKey(const QString &content, const QString &key) cons
 /// \param key 索引名称
 /// \param var 值
 ///
-void SAGlobalConfig::setKey(const QString &content, const QString &key, const QVariant &var)
+void SAGlobalConfig::setValue(const QString &content, const QString &key, const QVariant &var)
 {
     return m_d->setKey(content,key,var);
 }
@@ -156,7 +168,7 @@ QList<QString> SAGlobalConfig::getKeyList(const QString &content) const
 #define SET_XX_CONFIG(type,TypeFunName) \
     void SAGlobalConfig::TypeFunName(const QString& content,const QString& key,const type& val)\
     {\
-        setKey(content,key,val);\
+        setValue(content,key,val);\
     }
 
 #define GET_XX_CONFIG(type,TypeFunName,varToFunName) \
@@ -166,7 +178,7 @@ QList<QString> SAGlobalConfig::getKeyList(const QString &content) const
         {\
             return defaultVal;\
         }\
-        QVariant var = getKey(content,key);\
+        QVariant var = getValue(content,key);\
         if(!var.isValid())\
         {\
             return defaultVal;\
@@ -187,7 +199,7 @@ QList<QString> SAGlobalConfig::getKeyList(const QString &content) const
         {\
             return defaultVal;\
         }\
-        QVariant var = getKey(content,key);\
+        QVariant var = getValue(content,key);\
         if(!var.isValid())\
         {\
             return defaultVal;\
@@ -202,14 +214,14 @@ QList<QString> SAGlobalConfig::getKeyList(const QString &content) const
 /// 如果没有对应的索引或目录将返回默认值
 /// \return 获取对应的设定值，如果没有对应的索引或索引对应的值无法转为int，将返回默认值
 ///
-GET_XX_CONFIG(unsigned int,getUIntConfig,toUInt)
+GET_XX_CONFIG(unsigned int,getUIntValue,toUInt)
 ///
 /// \brief 设置int值
 /// \param content 目录
 /// \param key 索引
 /// \param var 值
 ///
-SET_XX_CONFIG(unsigned int,setUIntConfig)
+SET_XX_CONFIG(unsigned int,setUIntValue)
 
 ///
 /// \brief 获取int值
@@ -219,14 +231,14 @@ SET_XX_CONFIG(unsigned int,setUIntConfig)
 /// 如果没有对应的索引或目录将返回默认值
 /// \return 获取对应的设定值，如果没有对应的索引或索引对应的值无法转为int，将返回默认值
 ///
-GET_XX_CONFIG(int,getIntConfig,toInt)
+GET_XX_CONFIG(int,getIntValue,toInt)
 ///
 /// \brief 设置int值
 /// \param content 目录
 /// \param key 索引
 /// \param var 值
 ///
-SET_XX_CONFIG(int,setIntConfig)
+SET_XX_CONFIG(int,setIntValue)
 
 ///
 /// \brief 获取double值
@@ -236,14 +248,14 @@ SET_XX_CONFIG(int,setIntConfig)
 /// 如果没有对应的索引或目录将返回默认值
 /// \return 获取对应的设定值，如果没有对应的索引或索引对应的值无法转为double，将返回默认值
 ///
-GET_XX_CONFIG(double,getDoubleConfig,toDouble)
+GET_XX_CONFIG(double,getDoubleValue,toDouble)
 ///
 /// \brief 设置int值
 /// \param content 目录
 /// \param key 索引
 /// \param var 值
 ///
-SET_XX_CONFIG(double,setDoubleConfig)
+SET_XX_CONFIG(double,setDoubleValue)
 
 ///
 /// \brief 获取double值
@@ -253,14 +265,14 @@ SET_XX_CONFIG(double,setDoubleConfig)
 /// 如果没有对应的索引或目录将返回默认值
 /// \return 获取对应的设定值，如果没有对应的索引或索引对应的值无法转为double，将返回默认值
 ///
-GET_XX_CONFIG(float,getFloatConfig,toFloat)
+GET_XX_CONFIG(float,getFloatValue,toFloat)
 ///
 /// \brief 设置int值
 /// \param content 目录
 /// \param key 索引
 /// \param var 值
 ///
-SET_XX_CONFIG(float,setFloatConfig)
+SET_XX_CONFIG(float,setFloatValue)
 
 ///
 /// \brief 获取double值
@@ -270,14 +282,14 @@ SET_XX_CONFIG(float,setFloatConfig)
 /// 如果没有对应的索引或目录将返回默认值
 /// \return 获取对应的设定值，如果没有对应的索引或索引对应的值无法转为double，将返回默认值
 ///
-GET_XX_CONFIG(qlonglong,getLongLongConfig,toLongLong)
+GET_XX_CONFIG(qlonglong,getLongLongValue,toLongLong)
 ///
 /// \brief 设置int值
 /// \param content 目录
 /// \param key 索引
 /// \param var 值
 ///
-SET_XX_CONFIG(qlonglong,setLongLongConfig)
+SET_XX_CONFIG(qlonglong,setLongLongValue)
 
 ///
 /// \brief 获取QString值
@@ -287,14 +299,14 @@ SET_XX_CONFIG(qlonglong,setLongLongConfig)
 /// 如果没有对应的索引或目录将返回默认值
 /// \return 获取对应的设定值，如果没有对应的索引或索引对应的值无法转为double，将返回默认值
 ///
-GET_XX_CONFIG_Arg0(QString,getStringConfig,toString)
+GET_XX_CONFIG_Arg0(QString,getStringValue,toString)
 ///
 /// \brief 设置QString值
 /// \param content 目录
 /// \param key 索引
 /// \param var 值
 ///
-SET_XX_CONFIG(QString,setStringConfig)
+SET_XX_CONFIG(QString,setStringValue)
 
 
 
@@ -323,7 +335,7 @@ SAGlobalConfig *SAGlobalConfig::getInstance()
 ///
 QString SAGlobalConfig::getHomePath() const
 {
-    return getStringConfig(CFG_CONTENT_ROOT,CFG_ROOT_HomePath,makeDefaultHomePath());
+    return getStringValue(CFG_CONTENT_ROOT,CFG_ROOT_HomePath,makeDefaultHomePath());
 }
 ///
 /// \brief 获取sa的配置文件目录
@@ -331,7 +343,7 @@ QString SAGlobalConfig::getHomePath() const
 ///
 QString SAGlobalConfig::getConfigPath() const
 {
-    return getStringConfig(CFG_CONTENT_ROOT,CFG_ROOT_ConfigFolderPath,makeDefaultConfigPath());
+    return getStringValue(CFG_CONTENT_ROOT,CFG_ROOT_ConfigFolderPath,makeDefaultConfigPath());
 }
 ///
 /// \brief 获取默认home path

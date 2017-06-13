@@ -30,8 +30,9 @@ HEADERS += \
     SAProjectManager.h \
     SALibResourDefine.h \
     SAGlobalConfigDefine.h \
-    SAGUIConfig.h \
-    SAVariantCaster.h
+    SAVariantCaster.h \
+    SAFigureGlobalConfig.h \
+    SAGUIGlobalConfig.h
 
 
 SOURCES += \
@@ -49,8 +50,9 @@ SOURCES += \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
     SAProjectManager.cpp \
-    SAGUIConfig.cpp \
-    SAVariantCaster.cpp
+    SAVariantCaster.cpp \
+    SAFigureGlobalConfig.cpp \
+    SAGUIGlobalConfig.cpp
 
 
 include($$PWD/Private/Private.pri)

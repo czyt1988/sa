@@ -11,7 +11,7 @@
 #include "SAValueManager.h"
 #include "SAFigureWindow.h"
 #include "SATimeFrequencyAnalysis.h"
-#include "SAConfig.h"
+#include "SAGUIGlobalConfig.h"
 #define TR(str)\
     QApplication::translate("FunDSP", str, 0)
 
@@ -58,7 +58,7 @@ void FunDsp::setWindowToWave()
         return;
     }
 
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     auto tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
                                                    ,TR("Hanning")
@@ -127,7 +127,7 @@ void FunDsp::spectrum()
         return;
     }
 
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     auto tmp = dlg.appendDoubleProperty(TR("sample frequency(Hz)")
                              ,0,std::numeric_limits<double>::max()
@@ -261,7 +261,7 @@ void FunDsp::powerSpectrum()
     }
     QtVariantProperty * enumProp = nullptr;
     QtVariantProperty * timeInput = nullptr;
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(saConfig->getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     auto tmp = dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
                                         ,0,std::numeric_limits<double>::max()

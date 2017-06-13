@@ -15,18 +15,31 @@ class QXmlStreamWriter;
 class SAConfigXMLReadWriter : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(CompleteInfo)
 public:
     SAConfigXMLReadWriter(SAGlobalConfig* config,QObject* par = nullptr);
     static QString getConfigXMLFileFullPath();
+    ///
+    /// \brief The CompleteInfo enum
+    ///
+    enum CompleteInfo
+    {
+        ReadComplete ///< 读取完成
+        ,WriteComplete ///< 写入完成
+        ,WriteError ///< 写入文件错误
+        ,ReadError ///< 读取文件错误
+        ,FileOpenError ///< 文件打开错误
+    };
+
 public slots:
-    void startRead();
-    void startWrite();
+    bool startRead();
+    bool startWrite();
 signals:
-    void readComplete(bool isSuccess);
-    void writeComplete(bool isSuccess);
-    void message(const QString& info,SA::MeaasgeType type);
+    void readWriteComplete(SAConfigXMLReadWriter::CompleteInfo info);
 private:
-    void readConfigSection(QXmlStreamReader* xml);
+    void readContent(QXmlStreamReader* xml);
+    void readKey(QXmlStreamReader* xml,const QString& contentName);
+
     void writeContent(QXmlStreamWriter* xml,const QString& content);
     void writeKey(QXmlStreamWriter* xml,const QString& key,const QVariant& var);
 private:

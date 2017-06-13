@@ -30,7 +30,11 @@
 #ifndef CFG_GUI_DefaultPropertySetDialogType
 #define CFG_GUI_DefaultPropertySetDialogType "DefaultPropertySetDialogType"
 #endif
-
+//=======================================================
+/// \def FIG 定义绘图时点数达到设定值线宽为1
+#ifndef CFG_FIG_PlotCurWidthAdded
+#define CFG_FIG_PlotCurWidthAdded "PlotCurWidthAdded"
+#endif
 
 
 

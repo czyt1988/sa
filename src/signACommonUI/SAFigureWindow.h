@@ -18,6 +18,9 @@ class SAChart2D;
 class SAMultWidget;
 class CurveDataFeatureItem;
 
+///
+/// \brief SA的绘图窗口
+///
 class SA_COMMON_UI_EXPORT SAFigureWindow : public QMainWindow
         ,public SAAbstractFigure
 {

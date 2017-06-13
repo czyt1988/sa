@@ -10,18 +10,18 @@ class SAConfigPrivate;
 /// \author czy
 /// \date 2017-05-23
 ///
-class SALIB_EXPORT SAGUIConfig
+class SALIB_EXPORT SAGUIGlobalConfig
 {
 private:
-    explicit SAGUIConfig();
-    Q_DISABLE_COPY(SAGUIConfig)
+    Q_DISABLE_COPY(SAGUIGlobalConfig)
 public:
+    explicit SAGUIGlobalConfig();
     enum PropertyBrowserType{
         TreeType
         ,GroupBoxType
         ,ButtonType
     };
-    ~SAGUIConfig();
+    ~SAGUIGlobalConfig();
 public:
     static void setDefault();
     //默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式

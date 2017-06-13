@@ -7,6 +7,28 @@
 #include <QEasingCurve>
 #include <QBrush>
 #include <QCursor>
+#include <QUuid>
+#include <QFont>
+#include <QIcon>
+#include <QImage>
+#include <QKeySequence>
+#include <QLocale>
+#include <QTransform>
+#include <QMatrix>
+#include <QMatrix4x4>
+#include <QPolygon>
+#include <QQuaternion>
+#include <QPalette>
+#include <QPen>
+#include <QRegularExpression>
+#include <QSizePolicy>
+#include <QTextLength>
+#include <QTextFormat>
+#include <QUrl>
+#include <QVector2D>
+#include <QVector3D>
+#include <QVector4D>
+#include <QStringList>
 SAVariantCaster::SAVariantCaster()
 {
 
@@ -56,11 +78,501 @@ QString SAVariantCaster::variantToString(const QVariant &var)
     {
         return converVariantToBase64String<QEasingCurve>(var);
     }
+    case QVariant::Uuid:
+    {
+        return var.toUuid().toString();
+    }
+    case QVariant::Font:
+    {
+        return converVariantToBase64String<QFont>(var);
+    }
+    case QVariant::Hash:
+    {
+        return converVariantToBase64String<QVariantHash>(var);
+    }
+    case QVariant::Icon:
+    {
+        return converVariantToBase64String<QIcon>(var);
+    }
+    case QVariant::Image:
+    {
+        return converVariantToBase64String<QImage>(var);
+    }
+    case QVariant::Int:
+    {
+        return QString::number(var.toInt());
+    }
+    case QVariant::KeySequence:
+    {
+        return converVariantToBase64String<QKeySequence>(var);
+    }
+    case QVariant::Line:
+    {
+        QLine d = var.toLine();
+        return QString("%1;%2;%3;%4")
+                .arg(d.x1()).arg(d.y1())
+                .arg(d.x2()).arg(d.y2());
+    }
+    case QVariant::LineF:
+    {
+        QLineF d = var.toLineF();
+        return QString("%1;%2;%3;%4").arg(d.x1(),d.y1(),d.x2(),d.y2());
+    }
+    case QVariant::List:
+    {
+        return converVariantToBase64String<QVariantList>(var);
+    }
+    case QVariant::Locale:
+    {
+        return var.toLocale().name();
+    }
+    case QVariant::LongLong:
+    {
+        return QString::number(var.toLongLong());
+    }
+    case QVariant::Map:
+    {
+        return converVariantToBase64String<QVariantMap>(var);
+    }
+    case QVariant::Matrix:
+    {
+        QMatrix d = var.value<QMatrix>();
+        return QString("%1;%2;%3;%4;%5;%6").arg(d.m11()).arg(d.m12()).arg(d.m21()).arg(d.m22()).arg(d.dx()).arg(d.dy());
+    }
+    case QVariant::Transform:
+    {
+        QTransform d = var.value<QTransform>();
+        return QString("%1;%2;%3;%4;%5;%6;%7;%8;%9")
+                .arg(d.m11()).arg(d.m12()).arg(d.m13())
+                .arg(d.m21()).arg(d.m22()).arg(d.m23())
+                .arg(d.m31()).arg(d.m32()).arg(d.m33());
+    }
+    case QVariant::Matrix4x4:
+    {
+        return converVariantToBase64String<QMatrix4x4>(var);
+    }
+    case QVariant::Palette:
+    {
+        return converVariantToBase64String<QPalette>(var);
+    }
+    case QVariant::Pen:
+    {
+        return converVariantToBase64String<QPen>(var);
+    }
+    case QVariant::Pixmap:
+    {
+        return converVariantToBase64String<QPixmap>(var);
+    }
+    case QVariant::Point:
+    {
+        QPoint d = var.toPoint();
+        return QString("%1;%2").arg(d.x()).arg(d.y());
+    }
+    case QVariant::PointF:
+    {
+        QPointF d = var.toPointF();
+        return QString("%1;%2").arg(d.x()).arg(d.y());
+    }
+    case QVariant::Polygon:
+    {
+        return converVariantToBase64String<QPolygon>(var);
+    }
+    case QVariant::PolygonF:
+    {
+        return converVariantToBase64String<QPolygonF>(var);
+    }
+    case QVariant::Quaternion:
+    {
+        return converVariantToBase64String<QQuaternion>(var);
+    }
+    case QVariant::Rect:
+    {
+        QRect d = var.toRect();
+        return QString("%1;%2;%3;%4")
+                .arg(d.x()).arg(d.y()).arg(d.width()).arg(d.height());
+    }
+    case QVariant::RectF:
+    {
+        QRectF d = var.toRectF();
+        return QString("%1;%2;%3;%4")
+                .arg(d.x()).arg(d.y()).arg(d.width()).arg(d.height());
+    }
+    case QVariant::RegExp:
+    {
+        return converVariantToBase64String<QRegExp>(var);
+    }
+    case QVariant::RegularExpression:
+    {
+        return converVariantToBase64String<QRegularExpression>(var);
+    }
+    case QVariant::Region:
+    {
+        return converVariantToBase64String<QRegion>(var);
+    }
+    case QVariant::Size:
+    {
+        QSize d = var.toSize();
+        return QString("%1;%2")
+                .arg(d.width()).arg(d.height());
+    }
+    case QVariant::SizeF:
+    {
+        QSizeF d = var.toSizeF();
+        return QString("%1;%2")
+                .arg(d.width()).arg(d.height());
+    }
+    case QVariant::SizePolicy:
+    {
+        return converVariantToBase64String<QSizePolicy>(var);
+    }
+    case QVariant::String:
+    {
+        return var.toString();
+    }
+    case QVariant::StringList:
+    {
+        return converVariantToBase64String<QStringList>(var);
+    }
+    case QVariant::TextFormat:
+    {
+        return converVariantToBase64String<QTextFormat>(var);
+    }
+    case QVariant::TextLength:
+    {
+        return converVariantToBase64String<QTextLength>(var);
+    }
+    case QVariant::Time:
+    {
+        return var.toTime().toString(Qt::ISODate);
+    }
+    case QVariant::UInt:
+    {
+        return QString::number(var.toUInt());
+    }
+    case QVariant::ULongLong:
+    {
+        return QString::number(var.toULongLong());
+    }
+    case QVariant::Url:
+    {
+        return converVariantToBase64String<QUrl>(var);
+    }
+    case QVariant::Vector2D:
+    {
+        return converVariantToBase64String<QVector2D>(var);
+    }
+    case QVariant::Vector3D:
+    {
+        return converVariantToBase64String<QVector3D>(var);
+    }
+    case QVariant::Vector4D:
+    {
+        return converVariantToBase64String<QVector4D>(var);
+    }
+    default:
+        return QString();
     }
     return QString();
 }
 
-QVariant SAVariantCaster::stringToVariant(const QString &str, const QString &typeName)
+QVariant SAVariantCaster::stringToVariant(const QString &var, const QString &typeName)
 {
+    QVariant::Type type = QVariant::nameToType(typeName.toLocal8Bit().data());
 
+    switch(type)
+    {
+    case QVariant::Invalid:
+        return QVariant();
+    case QVariant::BitArray:
+        return converBase64StringToVariant<QBitArray>(var);
+    case QVariant::Bitmap:
+        return converBase64StringToVariant<QBitmap>(var);
+    case QVariant::Bool:
+    {
+        bool d = var.toInt();
+        return d;
+    }
+    case QVariant::Brush:
+        return converBase64StringToVariant<QBrush>(var);
+    case QVariant::ByteArray:
+        return converBase64StringToVariant<QByteArray>(var);
+    case QVariant::Char:
+    {
+        if (var.size() <= 0)
+        {
+            return QVariant();
+        }
+        return QChar(var[0]);
+    }
+    case QVariant::Color:
+    {
+        QColor clr;
+        clr.setNamedColor(var);
+        return clr;
+    }
+    case QVariant::Cursor:
+        return converBase64StringToVariant<QCursor>(var);
+    case QVariant::Date:
+    {
+        QDate d;
+        d.fromString(var,Qt::ISODate);
+        return d;
+    }
+    case QVariant::DateTime:
+    {
+        QDateTime d;
+        d.fromString(var,Qt::ISODate);
+        return d;
+    }
+    case QVariant::Double:
+    {
+        double d = var.toDouble();
+        return d;
+    }
+    case QVariant::EasingCurve:
+    {
+        return converBase64StringToVariant<QEasingCurve>(var);
+    }
+    case QVariant::Uuid:
+    {
+        QUuid d(var);
+        return d;
+    }
+    case QVariant::Font:
+    {
+        return converBase64StringToVariant<QFont>(var);
+    }
+    case QVariant::Hash:
+    {
+        return converBase64StringToVariant<QVariantHash>(var);
+    }
+    case QVariant::Icon:
+    {
+        return converBase64StringToVariant<QIcon>(var);
+    }
+    case QVariant::Image:
+    {
+        return converBase64StringToVariant<QImage>(var);
+    }
+    case QVariant::Int:
+    {
+        return QString::number(var.toInt());
+    }
+    case QVariant::KeySequence:
+    {
+        return converBase64StringToVariant<QKeySequence>(var);
+    }
+    case QVariant::Line:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 4)
+        {
+            return QVariant();
+        }
+        QLine d(list[0].toInt(),list[1].toInt(),list[2].toInt(),list[3].toInt());
+        return d;
+    }
+    case QVariant::LineF:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 4)
+        {
+            return QVariant();
+        }
+        QLineF d(list[0].toDouble(),list[1].toDouble(),list[2].toDouble(),list[3].toDouble());
+        return d;
+    }
+    case QVariant::List:
+    {
+        return converBase64StringToVariant<QVariantList>(var);
+    }
+    case QVariant::Locale:
+    {
+        return QLocale(var);
+    }
+    case QVariant::LongLong:
+    {
+        return QString::number(var.toLongLong());
+    }
+    case QVariant::Map:
+    {
+        return converBase64StringToVariant<QVariantMap>(var);
+    }
+    case QVariant::Matrix:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 6)
+        {
+            return QVariant();
+        }
+        QMatrix d(list[0].toDouble(),list[1].toDouble(),list[2].toDouble(),list[3].toDouble()
+                ,list[4].toDouble(),list[5].toDouble());
+        return d;
+    }
+    case QVariant::Transform:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 9)
+        {
+            return QVariant();
+        }
+        QTransform d(list[0].toDouble(),list[1].toDouble(),list[2].toDouble()
+                ,list[3].toDouble(),list[4].toDouble(),list[5].toDouble()
+                ,list[6].toDouble(),list[7].toDouble(),list[8].toDouble());
+        return d;
+    }
+    case QVariant::Matrix4x4:
+    {
+        return converBase64StringToVariant<QMatrix4x4>(var);
+    }
+    case QVariant::Palette:
+    {
+        return converBase64StringToVariant<QPalette>(var);
+    }
+    case QVariant::Pen:
+    {
+        return converBase64StringToVariant<QPen>(var);
+    }
+    case QVariant::Pixmap:
+    {
+        return converBase64StringToVariant<QPixmap>(var);
+    }
+    case QVariant::Point:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 2)
+        {
+            return QVariant();
+        }
+        QPoint d(list[0].toInt(),list[1].toInt());
+        return d;
+    }
+    case QVariant::PointF:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 2)
+        {
+            return QVariant();
+        }
+        QPointF d(list[0].toDouble(),list[1].toDouble());
+        return d;
+    }
+    case QVariant::Polygon:
+    {
+        return converBase64StringToVariant<QPolygon>(var);
+    }
+    case QVariant::PolygonF:
+    {
+        return converBase64StringToVariant<QPolygonF>(var);
+    }
+    case QVariant::Quaternion:
+    {
+        return converBase64StringToVariant<QQuaternion>(var);
+    }
+    case QVariant::Rect:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 4)
+        {
+            return QVariant();
+        }
+        QRect d(list[0].toInt(),list[1].toInt(),list[2].toInt(),list[3].toInt());
+        return d;
+    }
+    case QVariant::RectF:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 4)
+        {
+            return QVariant();
+        }
+        QRectF d(list[0].toDouble(),list[1].toDouble(),list[2].toDouble(),list[3].toDouble());
+        return d;
+    }
+    case QVariant::RegExp:
+    {
+        return converBase64StringToVariant<QRegExp>(var);
+    }
+    case QVariant::RegularExpression:
+    {
+        return converBase64StringToVariant<QRegularExpression>(var);
+    }
+    case QVariant::Region:
+    {
+        return converBase64StringToVariant<QRegion>(var);
+    }
+    case QVariant::Size:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 2)
+        {
+            return QVariant();
+        }
+        QSize d(list[0].toInt(),list[1].toInt());
+        return d;
+    }
+    case QVariant::SizeF:
+    {
+        QStringList list = var.split(';');
+        if(list.size() != 2)
+        {
+            return QVariant();
+        }
+        QSizeF d(list[0].toDouble(),list[1].toDouble());
+        return d;
+    }
+    case QVariant::SizePolicy:
+    {
+        return converBase64StringToVariant<QSizePolicy>(var);
+    }
+    case QVariant::String:
+    {
+        return var;
+    }
+    case QVariant::StringList:
+    {
+        return converBase64StringToVariant<QStringList>(var);
+    }
+    case QVariant::TextFormat:
+    {
+        return converBase64StringToVariant<QTextFormat>(var);
+    }
+    case QVariant::TextLength:
+    {
+        return converBase64StringToVariant<QTextLength>(var);
+    }
+    case QVariant::Time:
+    {
+        QTime t;
+        t.fromString(var,Qt::ISODate);
+        return t;
+    }
+    case QVariant::UInt:
+    {
+        return var.toUInt();
+    }
+    case QVariant::ULongLong:
+    {
+        return var.toULongLong();
+    }
+    case QVariant::Url:
+    {
+        return converBase64StringToVariant<QUrl>(var);
+    }
+    case QVariant::Vector2D:
+    {
+        return converBase64StringToVariant<QVector2D>(var);
+    }
+    case QVariant::Vector3D:
+    {
+        return converBase64StringToVariant<QVector3D>(var);
+    }
+    case QVariant::Vector4D:
+    {
+        return converBase64StringToVariant<QVector4D>(var);
+    }
+    default:
+        return QVariant();
+    }
+    return QVariant();
 }
