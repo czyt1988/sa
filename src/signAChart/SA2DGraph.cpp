@@ -1127,27 +1127,6 @@ QwtPlotCurve* SA2DGraph::addCurve(const QVector<QPointF>& xyDatas)
     return pCurve;
 }
 
-QwtPlotCurve* SA2DGraph::addCurve(std::vector<std::pair<double,double>>& xyDatas)
-{
-    QwtPlotCurve* pCurve = nullptr;
-    QVector<double> x,y;
-    x.reserve(xyDatas.size());
-    y.reserve(xyDatas.size());
-    std::vector<std::pair<double,double>>::iterator ite;
-    for(ite = xyDatas.begin();ite != xyDatas.end();++ite){
-        x.push_back(ite->first);
-        y.push_back(ite->second);
-    }
-    pCurve = new QwtPlotCurve;
-    pCurve->setYAxis(yLeft);
-    pCurve->setXAxis(xBottom);
-  //  pCurve->setRenderHint( QwtPlotItem::RenderAntialiased );
-    pCurve->setStyle(QwtPlotCurve::Lines);
-    pCurve->setSamples(x,y);
-    pCurve->attach(this);
-
-    return pCurve;
-}
 QwtPlotCurve* SA2DGraph::addCurve(std::vector<double>& xDatas,std::vector<double>& yDatas)
 {
     QwtPlotCurve* pCurve = nullptr;

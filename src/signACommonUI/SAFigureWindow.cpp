@@ -132,135 +132,6 @@ QList<AbstractDataFeatureItem *> SAFigureWindow::getDataFeatureItemList() const
 }
 
 ///
-/// \brief 添加趋势线
-/// \param datas 数据
-/// \return 曲线指针
-/// \note 需要保证数据能toPointFVector转换为点序列,否则返回空指针
-///
-QwtPlotCurve *SAFigureWindow::addCurve(SAAbstractDatas *datas)
-{
-    GET_CHART_PTR
-    QVector<QPointF> serPoints;
-    if(SAAbstractDatas::converToPointFVector(datas,serPoints))
-    {
-        QwtPlotCurve* cur =  addCurve(serPoints,datas->getName());
-        rememberRelationShip(cur,{datas});
-        m_lastPlotItem = cur;
-        return cur;
-    }
-    QVector<double> serVectors;
-    if(SAAbstractDatas::converToDoubleVector(datas,serVectors))
-    {
-        QwtPlotCurve* cur =  addCurve(serVectors,0,1,datas->getName());
-        rememberRelationShip(cur,{datas});
-        m_lastPlotItem = cur;
-        return cur;
-    }
-    return nullptr;
-
-}
-///
-/// \brief 添加趋势线
-/// \param datas 趋势线的值
-/// \param xStart 趋势开始的x点
-/// \param xDetal 趋势每两个点的间距
-/// \return 添加的趋势线指针
-///
-QwtPlotCurve *SAFigureWindow::addCurve(SAAbstractDatas *datas, double xStart, double xDetal)
-{
-    GET_CHART_PTR
-    QVector<double> yd;
-    if(!SAAbstractDatas::converToDoubleVector(datas,yd))
-    {
-        return nullptr;
-    }
-    if(0 == yd.size())
-    {
-        return nullptr;
-    }
-    QwtPlotCurve* cur =  addCurve(yd,xStart,xDetal,datas->getName());
-    rememberRelationShip(cur,{datas});
-    m_lastPlotItem = cur;
-    return cur;
-}
-
-QwtPlotCurve *SAFigureWindow::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QString &name)
-{
-    GET_CHART_PTR
-    QVector<double> xd,yd;
-    if(!SAAbstractDatas::converToDoubleVector(x,xd))
-        return nullptr;
-    if(!SAAbstractDatas::converToDoubleVector(y,yd))
-        return nullptr;
-
-    QwtPlotCurve* cur = addCurve(xd,yd,name);
-    rememberRelationShip(cur,{x,y} );
-    m_lastPlotItem = cur;
-    return cur;
-}
-///
-/// \brief 绘制基本图形
-/// \param points 点集
-/// \param name 图形名字
-/// \return 绘图曲线
-///
-QwtPlotCurve *SAFigureWindow::addCurve(const QVector<QPointF> &points,const QString &name)
-{
-    GET_CHART_PTR
-
-    QwtPlotCurve* cur = chart->addCurve(points);
-    cur->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(points.size()));
-    cur->setTitle(name);
-    calcDataFeature(chart,cur);
-    m_lastPlotItem = cur;
-    return cur;
-}
-///
-/// \brief 绘制基本图形
-/// \param datas 数据（y）
-/// \param xStart x初始
-/// \param xDetal x增加
-/// \param name 图形名字
-/// \return
-///
-QwtPlotCurve *SAFigureWindow::addCurve(const QVector<double> &datas, double xStart, double xDetal,const QString &name)
-{
-    GET_CHART_PTR
-    QVector<double> x;
-    x.resize(datas.size());
-    for(int i=0;i<datas.size();++i)
-    {
-        x[i] = xStart + xDetal * i;
-    }
-    QwtPlotCurve* cur = chart->addCurve(x,datas);
-    cur->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(datas.size()));
-    cur->setTitle(name);
-    calcDataFeature(chart,cur);
-    m_lastPlotItem = cur;
-    return cur;
-}
-///
-/// \brief 绘制基本图形
-/// \param x 数据（x）
-/// \param y 数据（y）
-/// \param name 图形名字
-/// \return
-///
-QwtPlotCurve *SAFigureWindow::addCurve(const QVector<double> &x, const QVector<double> &y, const QString &name)
-{
-    GET_CHART_PTR
-    int min = std::min(x.size(),y.size());
-    QwtPlotCurve* cur = chart->addCurve(x,y);
-    cur->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(min));
-    cur->setTitle(name);
-    calcDataFeature(chart,cur);
-    m_lastPlotItem = cur;
-    return cur;
-}
-///
 /// \brief 添加柱状图
 /// \param datas 数据
 /// \param style 柱状图的样式
@@ -282,22 +153,7 @@ QwtPlotHistogram *SAFigureWindow::addBar(SAVectorInterval *datas, QwtPlotHistogr
     return hp;
 
 }
-///
-/// \brief 添加一个虚拟的线，此线不会记录其
-/// \param strName 曲线名
-/// \param datas 数据
-/// \return
-///
-QwtPlotCurve *SAFigureWindow::addVirtualCurve(const QString &strName, const QVector<QPointF> &datas)
-{
-    GET_CHART_PTR
-    QwtPlotCurve* cur =  chart->addCurve(datas);
-    cur->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(datas.size()));
-    cur->setTitle(strName);
-    m_lastPlotItem = cur;
-    return cur;
-}
+
 ///
 /// \brief 移除范围内数据
 /// \param curves 需要移除的曲线列表
@@ -330,20 +186,7 @@ void SAFigureWindow::setBackgroundColor(const QColor &clr)
     p.setColor(QPalette::Window,clr);
     setPalette(p);
 }
-///
-/// \brief 添加曲线
-/// \param pC
-///
-void SAFigureWindow::addCurve(QwtPlotCurve *pC)
-{
-    GET_CHART_PTR_RETURN_VOID
-    chart->addCurve(pC);
-    m_realPlotItem.append(pC);
-    QColor c = SARandColorMaker::getCurveColor();
-    pC->setBrush(QBrush(c));
-    calcDataFeature(chart,pC);
-    m_lastPlotItem = pC;
-}
+
 
 
 

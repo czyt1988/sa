@@ -12,6 +12,7 @@
 #include "SAFigureWindow.h"
 #include "SATimeFrequencyAnalysis.h"
 #include "SAGUIGlobalConfig.h"
+#include "SAChart2D.h"
 #define TR(str)\
     QApplication::translate("FunDSP", str, 0)
 
@@ -98,8 +99,8 @@ void FunDsp::setWindowToWave()
                                                       .arg(data->getName())
                                                       .arg(saFun::windowName(window)));
         SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        w->create2DPlot();
-        w->addCurve(res.get());
+        SAChart2D* chart = w->create2DPlot();
+        chart->addCurve(res.get());
         saUI->raiseMainDock();
         sub->show();
     }
@@ -230,8 +231,8 @@ void FunDsp::spectrum()
     {
         QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1-spectrum").arg(data->getName()));
         SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        w->create2DPlot();
-        w->addCurve(fre.get(),mag.get());
+        SAChart2D* chart = w->create2DPlot();
+        chart->addCurve(fre.get(),mag.get());
         saUI->raiseMainDock();
         sub->show();
     }
@@ -369,8 +370,8 @@ void FunDsp::powerSpectrum()
     {
         QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1-psd").arg(data->getName()));
         SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        w->create2DPlot();
-        w->addCurve(fre.get(),mag.get());
+        SAChart2D* chart = w->create2DPlot();
+        chart->addCurve(fre.get(),mag.get());
         saUI->raiseMainDock();
         sub->show();
     }

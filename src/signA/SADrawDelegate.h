@@ -29,7 +29,7 @@ public:
     //把QMdiSubWindow的内部SAFigureWidget获取
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* w);
 protected:
-    QwtPlotCurve* drawVPoint(SAFigureWindow* chart, SAVectorPointF* points);
+    QwtPlotCurve* drawVPoint(SAFigureWindow* fig, SAVectorPointF* points);
 private:
     unsigned int m_nUserChartCount;
 };

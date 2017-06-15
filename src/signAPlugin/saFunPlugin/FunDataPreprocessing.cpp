@@ -122,28 +122,32 @@ void FunDataPreprocessing::sigmaDetect()
     {
         QMdiSubWindow* sub = saUI->createFigureWindow();
         SAFigureWindow* fig = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        fig->create2DPlot();
+        SAChart2D* chart = fig->current2DPlot();
+        if(nullptr == chart)
+        {
+            chart = fig->create2DPlot();
+        }
         if(fig)
         {
             if(dlg.getDataByID<bool>(idPlotOriginDataAndOutRangDataInNewFigure))
             {
-                fig->addCurve(data);
+                chart->addCurve(data);
                 if(SA::VectorPoint == data->getType() )
                 {
-                    auto cur = fig->addCurve(waveRemove.get());
+                    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(waveRemove.get()));
                     if(cur)
                     {
-                        SAChart2D::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
-                        SAChart2D::setCurveLinePenStyle(cur,Qt::NoPen);
+                        SA2DGraph::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
+                        SA2DGraph::setCurveLinePenStyle(cur,Qt::NoPen);
                     }
                 }
                 else
                 {
-                    auto cur = fig->addCurve(outRangIndex.get(),waveRemove.get());
+                    QwtPlotCurve* cur  = (QwtPlotCurve*)(chart->addCurve(outRangIndex.get(),waveRemove.get()));
                     if(cur)
                     {
-                        SAChart2D::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
-                        SAChart2D::setCurveLinePenStyle(cur,Qt::NoPen);
+                        SA2DGraph::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
+                        SA2DGraph::setCurveLinePenStyle(cur,Qt::NoPen);
                     }
                 }
             }
@@ -151,11 +155,11 @@ void FunDataPreprocessing::sigmaDetect()
             {
                 if(SA::VectorPoint == data->getType() )
                 {
-                    fig->addCurve(waveDenoising.get());
+                    chart->addCurve(waveDenoising.get());
                 }
                 else
                 {
-                    fig->addCurve(inRangIndex.get(),waveDenoising.get());
+                    chart->addCurve(inRangIndex.get(),waveDenoising.get());
                 }
             }
         }
@@ -178,19 +182,20 @@ void FunDataPreprocessing::sigmaDetect()
             return;
         }
         SAFigureWindow* fig = figList[index-1];
-        if(nullptr == fig->current2DPlot())
+        SAChart2D* chart = fig->current2DPlot();
+        if(nullptr == chart)
         {
-            fig->create2DPlot();
+            chart = fig->create2DPlot();
         }
         if(dlg.getDataByID<bool>(idIsPlotDenoiseDataInCurrentFig))
         {
             if(SA::VectorPoint == data->getType() )
             {
-                fig->addCurve(waveDenoising.get());
+                chart->addCurve(waveDenoising.get());
             }
             else
             {
-                fig->addCurve(inRangIndex.get(),waveDenoising.get());
+                chart->addCurve(inRangIndex.get(),waveDenoising.get());
             }
         }
         if(dlg.getDataByID<bool>(idIsPlotOutRangMarkInCurrentFig))
@@ -198,11 +203,11 @@ void FunDataPreprocessing::sigmaDetect()
             QwtPlotCurve* cur = nullptr;
             if(SA::VectorPoint == data->getType() )
             {
-                cur = fig->addCurve(waveRemove.get());
+                cur = (QwtPlotCurve*)(chart->addCurve(waveRemove.get()));
             }
             else
             {
-                cur = fig->addCurve(outRangIndex.get(),waveRemove.get());
+                cur = (QwtPlotCurve*)(chart->addCurve(outRangIndex.get(),waveRemove.get()));
             }
             if(cur)
             {
@@ -271,10 +276,14 @@ void FunDataPreprocessing::pointSmooth()
     {
         QMdiSubWindow* sub = saUI->createFigureWindow();
         SAFigureWindow* fig = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        fig->create2DPlot();
-        if(fig)
+        SAChart2D* chart = fig->current2DPlot();
+        if(nullptr == chart)
         {
-            fig->addCurve(res.get());
+            chart = fig->create2DPlot();
+        }
+        if(chart)
+        {
+            chart->addCurve(res.get());
         }
         saUI->raiseMainDock();
         sub->show();

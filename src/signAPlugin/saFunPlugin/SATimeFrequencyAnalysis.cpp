@@ -370,6 +370,7 @@ void SATimeFrequencyAnalysis::initUI()
 ///
 void SATimeFrequencyAnalysis::initChart()
 {
+
     m_wave->setPen(Qt::blue);
     m_spectrum->setPen(Qt::red);
     ui->waveChart->setAxisTitle (QwtPlot::xBottom,QString("time(s)"));

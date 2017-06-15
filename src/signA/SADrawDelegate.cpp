@@ -41,8 +41,8 @@ void SADrawDelegate::drawTrend()
     {
         chart = pFigure->create2DPlot();
     }
-    std::for_each(datas.begin(),datas.end(),[pFigure](SAAbstractDatas* data){
-        pFigure->addCurve(data,1,1);
+    std::for_each(datas.begin(),datas.end(),[chart](SAAbstractDatas* data){
+        chart->addCurve(data,1,1);
     });
 
     chart->setAutoReplot(false);
@@ -70,7 +70,7 @@ QwtPlotCurve* SADrawDelegate::draw(SAAbstractDatas* data)
     {
         pFigure->create2DPlot();
     }
-    QwtPlotCurve* cur = pFigure->addCurve(data);
+    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(data));
     w->show ();
     return cur;
 }
@@ -88,7 +88,7 @@ QwtPlotCurve *SADrawDelegate::draw(SAAbstractDatas* x, SAAbstractDatas* y, QStri
     {
         pFigure->create2DPlot();
     }
-    QwtPlotCurve* cur = pFigure->addCurve (x,y,name);
+    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve (x,y,name));
     w->show ();
     return cur;
 }
@@ -227,13 +227,14 @@ SAMdiSubWindow*SADrawDelegate::createFigureMdiSubWidget(const QString &title)
 }
 
 
-QwtPlotCurve *SADrawDelegate::drawVPoint(SAFigureWindow *chart , SAVectorPointF* points)
+QwtPlotCurve *SADrawDelegate::drawVPoint(SAFigureWindow *fig , SAVectorPointF* points)
 {
-    if(nullptr == chart->current2DPlot())
+    SAChart2D* chart = fig->current2DPlot();
+    if(nullptr == chart)
     {
-        chart->create2DPlot();
+        chart = fig->create2DPlot();
     }
-    return chart->addCurve(points);
+    return (QwtPlotCurve *)(chart->addCurve(points));
 }
 ///
 /// \brief 从subwindow指针中查找是否含有SAFigureWindow

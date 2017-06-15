@@ -124,7 +124,7 @@ void FunFit::polyfitInChart()
         strDes += TR("Goodness=%1").arg(info->getAt({5,1}).toString());
         strDes += "</p>";
 
-        fig->addCurve(pfitVal.get());
+        chart->addCurve(pfitVal.get());
         saUI->showNormalMessageInfo(strDes);
     }
 

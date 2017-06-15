@@ -13,7 +13,7 @@ CONFIG += dll
 DESTDIR = ../bin/libs
 
 CONFIG += c++11
-
+QWT_CONFIG  += QwtDll
 #czy
 include($$PWD/../czy/czy.pri)
 #propertybrowser

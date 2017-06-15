@@ -38,28 +38,19 @@ public:
     //获取绘图结果中的特征属性信息
     QList<AbstractDataFeatureItem*> getDataFeatureItemList() const;
 
+    //设置画布背景色
+    void setBackgroundColor(const QBrush& brush);
+    void setBackgroundColor(const QColor& clr);
+    //
     //============
  //不满足单一职责原则
     //============
 
-    //添加并绘制点序列曲线
-    QwtPlotCurve* addCurve(SAAbstractDatas* datas);
-    QwtPlotCurve* addCurve(SAAbstractDatas* datas,double xStart,double xDetal);
-    QwtPlotCurve* addCurve(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
-    QwtPlotCurve* addCurve(const QVector<QPointF>& points, const QString &name = QString());
-    QwtPlotCurve* addCurve(const QVector<double>& datas, double xStart, double xDetal,const QString &name = QString());
-    QwtPlotCurve* addCurve(const QVector<double>& x, const QVector<double>& y,const QString &name = QString());
-    void addCurve(QwtPlotCurve* pC);
+
     //绘制bar
     QwtPlotHistogram* addBar(SAVectorInterval* datas,QwtPlotHistogram::HistogramStyle style = QwtPlotHistogram::Columns);
-    QwtPlotCurve* addVirtualCurve(const QString& strName,const QVector< QPointF > &datas);
-
     //移除范围内数据
     void removeDataInRang(QList<QwtPlotCurve *> curves);
-    //
-    void setBackgroundColor(const QBrush& brush);
-    void setBackgroundColor(const QColor& clr);
-    //
 signals:
     //绘图数据变更消息
     void chartDataChanged(QWidget* plot,QwtPlotItem* item);

@@ -254,10 +254,10 @@ public:
     /// \return
     ///
     QwtPlotCurve* addCurve(const QVector<QPointF>& xyDatas);
-    QwtPlotCurve* addCurve(std::vector<std::pair <double,double> >& xyDatas);
     QwtPlotCurve* addCurve(std::vector<double>& xDatas,std::vector<double>& yDatas);
     QwtPlotCurve* addCurve(const double *xData, const double *yData, int size);
     QwtPlotCurve* addCurve(const QVector< double > &xData, const QVector< double > &yData);
+
     static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size);
     static void setCurveLinePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
 
