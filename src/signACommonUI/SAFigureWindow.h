@@ -15,7 +15,7 @@ class SAVectorInterval;
 class AbstractDataFeatureItem;
 class DataFeaturePlotInfoItem;
 class SAChart2D;
-class SAMultWidget;
+class SAFigureContainer;
 class CurveDataFeatureItem;
 
 ///
@@ -30,17 +30,18 @@ public:
     ~SAFigureWindow();
     //添加一个2D chart
     SAChart2D* create2DPlot();
-    //添加一个2D sub chart
-    SAChart2D* create2DSubPlot(int fromRow, int fromColumn
-                        , int rowSpan, int columnSpan);
+    SAChart2D* create2DSubPlot(float xPresent, float yPresent, float wPresent, float hPresent);
     //获取所有的图表
     QList<SAChart2D*> get2DPlots() const;
-    //根据定位获取子绘图窗口
-    SAChart2D* get2DPlot(int fromRow=0, int fromColumn=0) const;
     //获取当前的2d绘图指针
     SAChart2D* current2DPlot() const;
     //获取绘图结果中的特征属性信息
     QList<AbstractDataFeatureItem*> getDataFeatureItemList() const;
+
+    //============
+ //不满足单一职责原则
+    //============
+
     //添加并绘制点序列曲线
     QwtPlotCurve* addCurve(SAAbstractDatas* datas);
     QwtPlotCurve* addCurve(SAAbstractDatas* datas,double xStart,double xDetal);
@@ -87,7 +88,7 @@ private:
     public:
         void setupUI(SAFigureWindow* par);
         void retranslateUi(SAFigureWindow* par);
-        SAMultWidget *centralwidget;
+        SAFigureContainer *centralwidget;
     };
 protected:
     //记忆关系
@@ -103,6 +104,7 @@ protected:
 private:
     QScopedPointer<UI> ui;
     QwtPlotSeriesItem* m_lastPlotItem;
+    SAChart2D *m_currentPlot;
 };
 
 #endif // SAFIGUREWINDOW_H

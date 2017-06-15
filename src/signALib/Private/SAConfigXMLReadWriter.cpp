@@ -24,7 +24,7 @@ SAConfigXMLReadWriter::SAConfigXMLReadWriter(SAGlobalConfig *config, QObject *pa
 
 QString SAConfigXMLReadWriter::getConfigXMLFileFullPath()
 {
-    QString str = saConfig->getConfigPath();
+    QString str = m_config->getConfigPath();
     return (str + QDir::separator() + CONFIG_FILE_NAME);
 }
 

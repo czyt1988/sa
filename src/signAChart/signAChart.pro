@@ -31,7 +31,6 @@ HEADERS += \
     SAChart2D.h \
     SAChart3D.h \
     SAMarkSymbol.h \
-    SAMultWidget.h \
     SAPlotMarker.h \
     SAXYDataTracker.h \
     SAYDataTracker.h \
@@ -45,7 +44,6 @@ SOURCES += \
     SAChart2D.cpp \
     SAChart3D.cpp \
     SAMarkSymbol.cpp \
-    SAMultWidget.cpp \
     SAPlotMarker.cpp \
     SAXYDataTracker.cpp \
     SAYDataTracker.cpp \

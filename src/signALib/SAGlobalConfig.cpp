@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include "SAConfigXMLReadWriter.h"
+#include <QApplication>
 SAGlobalConfig* SAGlobalConfig::s_instance = nullptr;
 
 class SAGlobalConfigPrivate
@@ -231,7 +232,27 @@ SET_XX_CONFIG(unsigned int,setUIntValue)
 /// 如果没有对应的索引或目录将返回默认值
 /// \return 获取对应的设定值，如果没有对应的索引或索引对应的值无法转为int，将返回默认值
 ///
-GET_XX_CONFIG(int,getIntValue,toInt)
+//GET_XX_CONFIG(int,getIntValue,toInt)
+int SAGlobalConfig::getIntValue(const QString &content, const QString &key,const int& defaultVal) const
+{
+    if(!isHasKey(content,key))
+    {
+        return defaultVal;
+    }
+    QVariant var = getValue(content,key);
+    if(!var.isValid())
+    {
+        return defaultVal;
+    }
+    bool isOK = false;
+    int res = var.toInt(&isOK);
+    if(!isOK)
+    {
+        return defaultVal;
+    }
+    return res;
+}
+
 ///
 /// \brief 设置int值
 /// \param content 目录
@@ -351,7 +372,7 @@ QString SAGlobalConfig::getConfigPath() const
 ///
 QString SAGlobalConfig::makeDefaultHomePath()
 {
-    QString saHomePath = QDir::toNativeSeparators(QDir::homePath());
+    QString saHomePath = QApplication::applicationDirPath();
     saHomePath = saHomePath + QDir::separator() + "SA";
     if(!QFileInfo::exists(saHomePath))
     {

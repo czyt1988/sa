@@ -4,12 +4,13 @@
 #include <QGridLayout>
 //sa chart
 #include "DataFeatureItem.h"
-#include "SAMultWidget.h"
 #include "SAChart2D.h"
 //sa lib
 #include "SAData.h"
 #include "SARandColorMaker.h"
 #include "SAFigureGlobalConfig.h"
+//sa common ui
+#include "SAFigureContainer.h"
 #define GET_CHART_PTR \
 SAChart2D* chart = current2DPlot();\
 if(nullptr == chart)\
@@ -26,7 +27,7 @@ if(nullptr == chart)\
 
 void SAFigureWindow::UI::setupUI(SAFigureWindow *par)
 {
-    centralwidget = new SAMultWidget(par);
+    centralwidget = new SAFigureContainer(par);
     centralwidget->setObjectName(QStringLiteral("centralwidget"));
     par->setCentralWidget(centralwidget);
 }
@@ -42,6 +43,7 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
     QMainWindow(parent)
     ,ui(new UI)
   ,m_lastPlotItem(nullptr)
+  ,m_currentPlot(nullptr)
 {
     ui->setupUI(this);
     setAutoFillBackground(true);
@@ -72,36 +74,16 @@ SAFigureWindow::~SAFigureWindow()
 ///
 SAChart2D *SAFigureWindow::create2DPlot()
 {
-    try
-    {
-        SAChart2D* plot = new SAChart2D(this);
-        ui->centralwidget->addWidget (plot,0,0,-1,-1,0);
-        return plot;
-    }
-    catch(std::bad_alloc& b)
-    {
-        Q_UNUSED(b);
-        QMessageBox::warning (this,tr("memory out"),tr("memory out"));
-        return nullptr;
-    }
-    return nullptr;
+    return create2DSubPlot(0.05,0.05,0.9,0.9);
 }
-///
-/// \brief 添加一个2D sub chart
-/// \param widget 要添加的窗体指针
-/// \param fromRow 行
-/// \param fromColumn 列
-/// \param rowSpan 行的占用
-/// \param columnSpan 列的占用
-/// \param alignment 对齐方式
-/// \return 返回绘图的Chart指针
-///
-SAChart2D *SAFigureWindow::create2DSubPlot(int fromRow, int fromColumn, int rowSpan, int columnSpan)
+
+SAChart2D *SAFigureWindow::create2DSubPlot(float xPresent, float yPresent, float wPresent, float hPresent)
 {
     try
     {
-        SAChart2D* plot = new SAChart2D(this);
-        ui->centralwidget->addWidget (plot,fromRow,fromColumn,rowSpan,columnSpan,0);
+        SAChart2D* plot = new SAChart2D(ui->centralwidget);
+        ui->centralwidget->addWidget (plot,xPresent,yPresent,wPresent,hPresent);
+        m_currentPlot = plot;
         return plot;
     }
     catch(std::bad_alloc& b)
@@ -112,6 +94,7 @@ SAChart2D *SAFigureWindow::create2DSubPlot(int fromRow, int fromColumn, int rowS
     }
     return nullptr;
 }
+
 ///
 /// \brief 获取所有的图像列表
 /// \return
@@ -119,50 +102,25 @@ SAChart2D *SAFigureWindow::create2DSubPlot(int fromRow, int fromColumn, int rowS
 QList<SAChart2D *> SAFigureWindow::get2DPlots() const
 {
     QList<SAChart2D*> res;
-    QGridLayout* grid = ui->centralwidget->getGridLayout();
-    const int itemCount = grid->count();
-    for(int i=0;i<itemCount;++i)
+    QList<QWidget *> widgets = ui->centralwidget->getWidgetList();
+    for(auto i=widgets.begin();i!=widgets.end();++i)
     {
-        QLayoutItem* item = grid->itemAt(i);
-        if(item)
+        SAChart2D* chart = qobject_cast<SAChart2D*>(*i);
+        if(chart)
         {
-            QWidget* w = item->widget();
-            if(w)
-            {
-                SAChart2D* chart = qobject_cast<SAChart2D*>(w);
-                res.append(chart);
-            }
+            res.append(chart);
         }
-
     }
     return res;
 }
-///
-/// \brief 根据定位信息获取子绘图窗口
-/// \param fromRow 行
-/// \param fromColumn 列
-/// \param rowSpan 行占位
-/// \param columnSpan 列占位
-/// \return 如果没有，返回nullptr
-///
-SAChart2D *SAFigureWindow::get2DPlot(int fromRow, int fromColumn) const
-{
-    QGridLayout* grid = ui->centralwidget->getGridLayout();
-    QLayoutItem * item = grid->itemAtPosition(fromRow,fromColumn);
-    if(item)
-    {
-        QWidget* w = item->widget();
-        return qobject_cast<SAChart2D*>(w);
-    }
-    return nullptr;
-}
+
 ///
 /// \brief 当前的2d绘图指针
 /// \return 当没有2d绘图时返回nullptr
 ///
 SAChart2D *SAFigureWindow::current2DPlot() const
 {
-    return qobject_cast<SAChart2D*>(ui->centralwidget->currentWidget());
+    return m_currentPlot;
 }
 ///
 /// \brief 获取绘图结果中的特征属性信息

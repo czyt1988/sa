@@ -14,12 +14,9 @@ public:
     //添加一个2D chart
     virtual SAChart2D* create2DPlot() = 0;
     //添加一个2D sub chart
-    virtual SAChart2D* create2DSubPlot(int fromRow, int fromColumn
-                        , int rowSpan, int columnSpan) = 0;
+    virtual SAChart2D* create2DSubPlot(float xPresent, float yPresent, float wPresent, float hPresent) = 0;
     //获取所有的图表
     virtual QList<SAChart2D*> get2DPlots() const = 0;
-    //根据定位获取子绘图窗口
-    virtual SAChart2D* get2DPlot(int fromRow=0, int fromColumn=0) const = 0;
     //获取当前的2d绘图指针
     virtual SAChart2D* current2DPlot() const = 0;
 };

@@ -42,7 +42,8 @@ HEADERS += \
     SAValueSelectDialog.h \
     SAUIInterface.h \
     SAUIHelper.h \
-    SAMdiSubWindow.h
+    SAMdiSubWindow.h \
+    SAFigureContainer.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -53,7 +54,8 @@ SOURCES += \
     SAValueSelectDialog.cpp \
     SAUIInterface.cpp \
     SAUIHelper.cpp \
-    SAMdiSubWindow.cpp
+    SAMdiSubWindow.cpp \
+    SAFigureContainer.cpp
 
 FORMS += \
     SAValueSelectDialog.ui

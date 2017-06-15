@@ -18,7 +18,7 @@ class SAConfigXMLReadWriter : public QObject
     Q_ENUMS(CompleteInfo)
 public:
     SAConfigXMLReadWriter(SAGlobalConfig* config,QObject* par = nullptr);
-    static QString getConfigXMLFileFullPath();
+    QString getConfigXMLFileFullPath();
     ///
     /// \brief The CompleteInfo enum
     ///
