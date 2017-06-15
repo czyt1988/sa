@@ -31,20 +31,14 @@ QList<QWidget *> SAFigureContainer::getWidgetList() const
     }
     return res;
 }
-#include <QDebug>
 void SAFigureContainer::resizeEvent(QResizeEvent *event)
 {
-    qDebug() << "SAFigureContainer::resizeEvent(QResizeEvent *event)";
     QRect subWidgetSize;
     for(auto i=m_widgetPos.begin();i!=m_widgetPos.end();++i)
     {
         calcWidgetSize(i.value(),subWidgetSize);
         QWidget* w = i.key();
-        qDebug() << "subwidget begin resize";
-        qDebug() << "widget size "<<size() <<" plot size " <<subWidgetSize;
         w->setGeometry(subWidgetSize);
-
-        qDebug() << "subwidget end resize";
     }
   //  QWidget:resizeEvent(event);
 }
