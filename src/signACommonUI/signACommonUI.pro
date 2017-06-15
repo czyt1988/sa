@@ -43,7 +43,8 @@ HEADERS += \
     SAUIInterface.h \
     SAUIHelper.h \
     SAMdiSubWindow.h \
-    SAFigureContainer.h
+    SAFigureContainer.h \
+    QwtPlotPropertySetDialog.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -55,7 +56,11 @@ SOURCES += \
     SAUIInterface.cpp \
     SAUIHelper.cpp \
     SAMdiSubWindow.cpp \
-    SAFigureContainer.cpp
+    SAFigureContainer.cpp \
+    QwtPlotPropertySetDialog.cpp
 
 FORMS += \
     SAValueSelectDialog.ui
+
+#Chart2D
+include($$PWD/Chart2D/Chart2D.pri)

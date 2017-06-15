@@ -1,4 +1,4 @@
-#include "SAChart2D.h"
+#include "SA2DGraph.h"
 #include <qstyle.h>
 #include <qstyleoption.h>
 
@@ -886,7 +886,7 @@ struct compareX
 //	return line;
 //}
 
-SAChart2D::SAChart2D(QWidget *parent):QwtPlot(parent)
+SA2DGraph::SA2DGraph(QWidget *parent):QwtPlot(parent)
   ,m_grid(nullptr)
   ,m_picker(nullptr)
   ,m_zoomer(nullptr)
@@ -916,12 +916,12 @@ SAChart2D::SAChart2D(QWidget *parent):QwtPlot(parent)
     setAutoReplot( true );
 }
 
-SAChart2D::~SAChart2D()
+SA2DGraph::~SA2DGraph()
 {
 
 }
 
-void SAChart2D::resizeEvent( QResizeEvent *event )
+void SA2DGraph::resizeEvent( QResizeEvent *event )
 {
     QwtPlot::resizeEvent( event );
 	
@@ -929,7 +929,7 @@ void SAChart2D::resizeEvent( QResizeEvent *event )
     //updateGradient();
 }
 
-bool SAChart2D::isEnableZoomerScroll() const
+bool SA2DGraph::isEnableZoomerScroll() const
 {
     Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
     if(zm)
@@ -939,14 +939,14 @@ bool SAChart2D::isEnableZoomerScroll() const
     return false;
 }
 
-bool SAChart2D::isEnableGrid() const
+bool SA2DGraph::isEnableGrid() const
 {
     if(m_grid)
         return m_grid->isVisible();
     return false;
 }
 
-bool SAChart2D::isEnableGridX() const
+bool SA2DGraph::isEnableGridX() const
 {
     if(m_grid)
         if(m_grid->isVisible())
@@ -954,7 +954,7 @@ bool SAChart2D::isEnableGridX() const
     return false;
 }
 
-bool SAChart2D::isEnableGridY() const
+bool SA2DGraph::isEnableGridY() const
 {
     if(m_grid)
         if(m_grid->isVisible())
@@ -962,7 +962,7 @@ bool SAChart2D::isEnableGridY() const
     return false;
 }
 
-bool SAChart2D::isEnableGridXMin() const
+bool SA2DGraph::isEnableGridXMin() const
 {
     if(m_grid)
         if(m_grid->isVisible())
@@ -970,7 +970,7 @@ bool SAChart2D::isEnableGridXMin() const
     return false;
 }
 
-bool SAChart2D::isEnableGridYMin() const
+bool SA2DGraph::isEnableGridYMin() const
 {
     if(m_grid)
         if(m_grid->isVisible())
@@ -978,21 +978,21 @@ bool SAChart2D::isEnableGridYMin() const
     return false;
 }
 
-bool SAChart2D::isEnablePanner() const
+bool SA2DGraph::isEnablePanner() const
 {
     if(m_panner)
         return m_panner->isEnabled();
     return false;
 }
 
-bool SAChart2D::isEnableLegend() const
+bool SA2DGraph::isEnableLegend() const
 {
     if(m_legend)
         return m_legend->isVisible();
     return false;
 }
 
-bool SAChart2D::isEnableLegendPanel() const
+bool SA2DGraph::isEnableLegendPanel() const
 {
     if(m_legendPanel)
         return m_legendPanel->isVisible();
@@ -1000,14 +1000,14 @@ bool SAChart2D::isEnableLegendPanel() const
 
 }
 
-bool SAChart2D::isEnableYDataPicker() const
+bool SA2DGraph::isEnableYDataPicker() const
 {
     if(m_yDataPicker)
         return m_yDataPicker->isEnabled();
     return false;
 }
 
-bool SAChart2D::isEnableXYDataPicker() const
+bool SA2DGraph::isEnableXYDataPicker() const
 {
     if(m_xyDataPicker)
         return m_xyDataPicker->isEnabled();
@@ -1016,7 +1016,7 @@ bool SAChart2D::isEnableXYDataPicker() const
 //========================================================================================
 //网格 grid 操作
 //========================================================================================
-QwtPlotGrid* SAChart2D::setupGrid(
+QwtPlotGrid* SA2DGraph::setupGrid(
         const QColor & 	color
         ,qreal 	width
         ,Qt::PenStyle style)
@@ -1035,7 +1035,7 @@ QwtPlotGrid* SAChart2D::setupGrid(
     return m_grid;
 }
 
-void SAChart2D::deleteGrid(){
+void SA2DGraph::deleteGrid(){
     if(nullptr == m_grid){
         return;
     }
@@ -1045,7 +1045,7 @@ void SAChart2D::deleteGrid(){
     replot();//刷新，否则不显示
 }
 
-void SAChart2D::enableGrid(bool isShow)
+void SA2DGraph::enableGrid(bool isShow)
 {
 	if (isShow)
 	{
@@ -1071,7 +1071,7 @@ void SAChart2D::enableGrid(bool isShow)
 	emit enableGridChanged(isShow);
 }
 
-void SAChart2D::enableGridX(bool enable)
+void SA2DGraph::enableGridX(bool enable)
 {
 	if (nullptr == m_grid)
 		return;
@@ -1084,7 +1084,7 @@ void SAChart2D::enableGridX(bool enable)
 	//m_grid->show();//刷新
 }
 
-void SAChart2D::enableGridY(bool enable)
+void SA2DGraph::enableGridY(bool enable)
 {
 	if (nullptr == m_grid)
 		return;
@@ -1096,14 +1096,14 @@ void SAChart2D::enableGridY(bool enable)
 	}
 }
 
-void SAChart2D::enableGridXMin(bool enable)
+void SA2DGraph::enableGridXMin(bool enable)
 {
 	if (nullptr == m_grid)
 		return;
 	m_grid->enableXMin(enable);
 	emit enableGridXMinChanged(enable);
 }
-void SAChart2D::enableGridYMin(bool enable)
+void SA2DGraph::enableGridYMin(bool enable)
 {
 	if (nullptr == m_grid)
 		return;
@@ -1115,7 +1115,7 @@ void SAChart2D::enableGridYMin(bool enable)
 //画线和数据 操作
 //========================================================================================
 
-QwtPlotCurve* SAChart2D::addCurve(const QVector<QPointF>& xyDatas)
+QwtPlotCurve* SA2DGraph::addCurve(const QVector<QPointF>& xyDatas)
 {
     QwtPlotCurve* pCurve = nullptr;
     pCurve = new QwtPlotCurve;
@@ -1127,7 +1127,7 @@ QwtPlotCurve* SAChart2D::addCurve(const QVector<QPointF>& xyDatas)
     return pCurve;
 }
 
-QwtPlotCurve* SAChart2D::addCurve(std::vector<std::pair<double,double>>& xyDatas)
+QwtPlotCurve* SA2DGraph::addCurve(std::vector<std::pair<double,double>>& xyDatas)
 {
     QwtPlotCurve* pCurve = nullptr;
     QVector<double> x,y;
@@ -1148,7 +1148,7 @@ QwtPlotCurve* SAChart2D::addCurve(std::vector<std::pair<double,double>>& xyDatas
 
     return pCurve;
 }
-QwtPlotCurve* SAChart2D::addCurve(std::vector<double>& xDatas,std::vector<double>& yDatas)
+QwtPlotCurve* SA2DGraph::addCurve(std::vector<double>& xDatas,std::vector<double>& yDatas)
 {
     QwtPlotCurve* pCurve = nullptr;
     pCurve = new QwtPlotCurve;
@@ -1160,7 +1160,7 @@ QwtPlotCurve* SAChart2D::addCurve(std::vector<double>& xDatas,std::vector<double
     return pCurve;
 }
 
-QwtPlotCurve* SAChart2D::addCurve(const double *xData, const double *yData, int size)
+QwtPlotCurve* SA2DGraph::addCurve(const double *xData, const double *yData, int size)
 {
     QwtPlotCurve* pCurve = nullptr;
     pCurve = new QwtPlotCurve;
@@ -1172,7 +1172,7 @@ QwtPlotCurve* SAChart2D::addCurve(const double *xData, const double *yData, int 
     return pCurve;
 }
 
-QwtPlotCurve* SAChart2D::addCurve(const QVector< double > &xData
+QwtPlotCurve* SA2DGraph::addCurve(const QVector< double > &xData
                                       , const QVector< double > &yData)
 {
     QwtPlotCurve* pCurve = nullptr;
@@ -1185,7 +1185,7 @@ QwtPlotCurve* SAChart2D::addCurve(const QVector< double > &xData
     return pCurve;
 }
 
-void SAChart2D::setCurveSymbol(QwtPlotCurve *cur, QwtSymbol::Style style, const QSize &size)
+void SA2DGraph::setCurveSymbol(QwtPlotCurve *cur, QwtSymbol::Style style, const QSize &size)
 {
     QBrush brush = cur->brush();
     QPen pen = cur->pen();
@@ -1193,14 +1193,14 @@ void SAChart2D::setCurveSymbol(QwtPlotCurve *cur, QwtSymbol::Style style, const 
     cur->setSymbol(symbol);
 }
 
-void SAChart2D::setCurveLinePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
+void SA2DGraph::setCurveLinePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
 {
     QPen pen = cur->pen();
     pen.setStyle(style);
     cur->setPen(pen);
 }
 
-void SAChart2D::addCurve(QwtPlotCurve* pC)
+void SA2DGraph::addCurve(QwtPlotCurve* pC)
 {
     pC->attach(this);
 }
@@ -1208,7 +1208,7 @@ void SAChart2D::addCurve(QwtPlotCurve* pC)
 /// \brief 添加一条竖直线
 /// \return
 ///
-QwtPlotMarker* SAChart2D::addVLine(double val)
+QwtPlotMarker* SA2DGraph::addVLine(double val)
 {
     QwtPlotMarker *marker = new QwtPlotMarker();
     marker->setXValue(val);
@@ -1217,7 +1217,7 @@ QwtPlotMarker* SAChart2D::addVLine(double val)
     marker->attach( this );
     return marker;
 }
-QwtPlotMarker* SAChart2D::addHLine(double val)
+QwtPlotMarker* SA2DGraph::addHLine(double val)
 {
     QwtPlotMarker *marker = new QwtPlotMarker();
     marker->setYValue(val);
@@ -1227,7 +1227,7 @@ QwtPlotMarker* SAChart2D::addHLine(double val)
     return marker;
 }
 
-QwtPlotHistogram*SAChart2D::addHistogram(const QVector<QwtIntervalSample>& sample)
+QwtPlotHistogram*SA2DGraph::addHistogram(const QVector<QwtIntervalSample>& sample)
 {
     QwtPlotHistogram* his = new QwtPlotHistogram();
     his->setSamples (sample);
@@ -1245,7 +1245,7 @@ QwtPlotHistogram*SAChart2D::addHistogram(const QVector<QwtIntervalSample>& sampl
 /// \param type 样式，默认为0，就是箭头
 /// \todo type and clr show be use
 ///
-void SAChart2D::markPoint(QPointF pos, const QString& strLabel, QColor clr, int type)
+void SA2DGraph::markPoint(QPointF pos, const QString& strLabel, QColor clr, int type)
 {
     SAPointMarker* pointMark = new SAPointMarker(pos);
     SATriangleMarkSymbol* tra = new SATriangleMarkSymbol();
@@ -1267,7 +1267,7 @@ void SAChart2D::markPoint(QPointF pos, const QString& strLabel, QColor clr, int 
 /// \param type
 /// \todo type show be use
 ///
-void SAChart2D::markYValue(double data, const QString &strLabel, QColor clr, int type)
+void SA2DGraph::markYValue(double data, const QString &strLabel, QColor clr, int type)
 {
     double x = axisXmax();
     SAYValueMarker* valueMark = new SAYValueMarker(data);
@@ -1281,7 +1281,7 @@ void SAChart2D::markYValue(double data, const QString &strLabel, QColor clr, int
 ///
 /// \brief 擦除所有的标记
 ///
-void SAChart2D::removeAllMarker()
+void SA2DGraph::removeAllMarker()
 {
     detachItems(QwtPlotItem::Rtti_PlotMarker);
     QList<QwtPlotItem*> items = itemList();
@@ -1302,7 +1302,7 @@ void SAChart2D::removeAllMarker()
 /// \brief 根据给定的item进行删除
 /// \param markRtti 标记要删除的item的rtti
 ///
-void SAChart2D::deleteItems(const QList<int> markRtti)
+void SA2DGraph::deleteItems(const QList<int> markRtti)
 {
     QList<QwtPlotItem*> items = itemList();
     for(auto i=items.begin();i!=items.end();++i)
@@ -1318,7 +1318,7 @@ void SAChart2D::deleteItems(const QList<int> markRtti)
     }
 }
 
-double SAChart2D::axisXmin(int axisId) const
+double SA2DGraph::axisXmin(int axisId) const
 {
     QwtInterval inl = axisInterval(axisId);
     if(inl.isValid())
@@ -1330,7 +1330,7 @@ double SAChart2D::axisXmin(int axisId) const
     return double();
 }
 
-double SAChart2D::axisXmax(int axisId) const
+double SA2DGraph::axisXmax(int axisId) const
 {
     QwtInterval inl = axisInterval(axisId);
     if(inl.isValid())
@@ -1342,7 +1342,7 @@ double SAChart2D::axisXmax(int axisId) const
     return double();
 }
 
-double SAChart2D::axisYmin(int axisId) const
+double SA2DGraph::axisYmin(int axisId) const
 {
     QwtInterval inl = axisInterval(axisId);
     if(inl.isValid())
@@ -1354,7 +1354,7 @@ double SAChart2D::axisYmin(int axisId) const
     return double();
 }
 
-double SAChart2D::axisYmax(int axisId) const
+double SA2DGraph::axisYmax(int axisId) const
 {
     QwtInterval inl = axisInterval(axisId);
     if(inl.isValid())
@@ -1367,7 +1367,7 @@ double SAChart2D::axisYmax(int axisId) const
 }
 
 
-void SAChart2D::setupPicker()
+void SA2DGraph::setupPicker()
 {
     if(nullptr == m_picker)
     {
@@ -1382,7 +1382,7 @@ void SAChart2D::setupPicker()
 
 }
 
-void SAChart2D::enablePicker(bool enable)
+void SA2DGraph::enablePicker(bool enable)
 {
     if(nullptr == m_picker)
         setupPicker();
@@ -1399,7 +1399,7 @@ void SAChart2D::enablePicker(bool enable)
 }
 
 
-void SAChart2D::enablePanner(bool enable)
+void SA2DGraph::enablePanner(bool enable)
 {
 	if (enable)
 	{
@@ -1421,7 +1421,7 @@ void SAChart2D::enablePanner(bool enable)
 ///
 /// \brief 建立一个内置的Panner(拖动)，默认使用鼠标中键
 ///
-void SAChart2D::setupPanner()
+void SA2DGraph::setupPanner()
 {
 	//设置拖动
 	if (nullptr == m_panner)
@@ -1430,7 +1430,7 @@ void SAChart2D::setupPanner()
 		m_panner->setMouseButton( Qt::MidButton );
 	}
 }
-void SAChart2D::deletePanner()
+void SA2DGraph::deletePanner()
 {
 	if (nullptr != m_panner)
 	{
@@ -1440,7 +1440,7 @@ void SAChart2D::deletePanner()
 	}
 }
 
-void SAChart2D::enableZoomer(bool enable)
+void SA2DGraph::enableZoomer(bool enable)
 {
     if(nullptr == m_zoomer /*|| nullptr == m_zoomerSecond*/)
         setupZoomer(false);
@@ -1467,7 +1467,7 @@ void SAChart2D::enableZoomer(bool enable)
     m_bEnableZoom = enable;
     emit enableZoomerChanged(enable);
 }
-void SAChart2D::setupZoomer(bool isHaveScroll)
+void SA2DGraph::setupZoomer(bool isHaveScroll)
 {
     if(nullptr == m_zoomer)
     {
@@ -1504,7 +1504,7 @@ void SAChart2D::setupZoomer(bool isHaveScroll)
 
 }
 
-void SAChart2D::deleteZoomer()
+void SA2DGraph::deleteZoomer()
 {
     if(m_zoomer)
     {
@@ -1521,7 +1521,7 @@ void SAChart2D::deleteZoomer()
 /// \brief 设置是否显示滚动条
 /// \param enable
 ///
-void SAChart2D::enableZoomerScroll(bool enable)
+void SA2DGraph::enableZoomerScroll(bool enable)
 {
     Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
     if(zm)
@@ -1532,7 +1532,7 @@ void SAChart2D::enableZoomerScroll(bool enable)
 ///
 /// \brief 设置缩放重置
 ///
-void SAChart2D::setZoomReset()
+void SA2DGraph::setZoomReset()
 {
     setAxisAutoScale(QwtPlot::yLeft,true);
     setAxisAutoScale(QwtPlot::xBottom,true);
@@ -1551,7 +1551,7 @@ void SAChart2D::setZoomReset()
 //    qDebug()<<"zoomBase1:"<<m_zoomer->zoomBase()<<",zoomBase2:"<<m_zoomerSecond->zoomBase();
 }
 
-void SAChart2D::setupLegend()
+void SA2DGraph::setupLegend()
 {
 	if (nullptr == m_legend)
 	{
@@ -1560,7 +1560,7 @@ void SAChart2D::setupLegend()
 	}
 }
 
-void SAChart2D::enableLegend(bool enable)
+void SA2DGraph::enableLegend(bool enable)
 {
 	if (enable)
 	{
@@ -1586,7 +1586,7 @@ void SAChart2D::enableLegend(bool enable)
 	emit enableLegendChanged(enable);
 }
 
-void SAChart2D::enableLegendPanel(bool enable )
+void SA2DGraph::enableLegendPanel(bool enable )
 {
 	if (enable)
 	{
@@ -1598,7 +1598,7 @@ void SAChart2D::enableLegendPanel(bool enable )
 	}
 	emit enableLegendPanelChanged(enable);
 }
-void SAChart2D::setuplegendPanel()
+void SA2DGraph::setuplegendPanel()
 {
 	if (m_legendPanel)
 	{
@@ -1621,13 +1621,13 @@ void SAChart2D::setuplegendPanel()
 			legendLabel->setChecked( items[i]->isVisible() );
 	}
 }
-void SAChart2D::deletelegendPanel()
+void SA2DGraph::deletelegendPanel()
 {
 	insertLegend( nullptr);//内部会销毁
 	m_legendPanel = nullptr;
 }
 
-void SAChart2D::setupYDataPicker()
+void SA2DGraph::setupYDataPicker()
 {
     if (nullptr == m_yDataPicker)
 	{
@@ -1635,7 +1635,7 @@ void SAChart2D::setupYDataPicker()
         m_yDataPicker->setRubberBandPen( QPen( "MediumOrchid" ) );
 	}
 }
-void SAChart2D::deleteYDataPicker()
+void SA2DGraph::deleteYDataPicker()
 {
     if (nullptr != m_yDataPicker)
 	{
@@ -1645,7 +1645,7 @@ void SAChart2D::deleteYDataPicker()
     }
 }
 
-void SAChart2D::setupXYDataPicker()
+void SA2DGraph::setupXYDataPicker()
 {
     if (nullptr == m_xyDataPicker)
     {
@@ -1654,7 +1654,7 @@ void SAChart2D::setupXYDataPicker()
     }
 }
 
-void SAChart2D::deleteXYDataPicker()
+void SA2DGraph::deleteXYDataPicker()
 {
     if (nullptr != m_xyDataPicker)
     {
@@ -1664,7 +1664,7 @@ void SAChart2D::deleteXYDataPicker()
     }
 }
 
-void SAChart2D::enableYDataPicker(bool enable)
+void SA2DGraph::enableYDataPicker(bool enable)
 {
 	if (enable)
 	{
@@ -1677,7 +1677,7 @@ void SAChart2D::enableYDataPicker(bool enable)
     emit enableYDataPickerChanged(enable);
 }
 
-void SAChart2D::enableXYDataPicker(bool enable)
+void SA2DGraph::enableXYDataPicker(bool enable)
 {
     if (enable)
     {
@@ -1689,14 +1689,14 @@ void SAChart2D::enableXYDataPicker(bool enable)
     }
     emit enableXYDataPickerChanged(enable);
 }
-void SAChart2D::showItem( const QVariant &itemInfo, bool on )
+void SA2DGraph::showItem( const QVariant &itemInfo, bool on )
 {
 	QwtPlotItem *plotItem = infoToItem( itemInfo );
 	if ( plotItem )
 		plotItem->setVisible( on );
 }
 
-QList<QwtPlotCurve*> SAChart2D::getCurveList()
+QList<QwtPlotCurve*> SA2DGraph::getCurveList()
 {
     QList<QwtPlotCurve*> curves;
     QwtPlotItemList items = itemList(QwtPlotItem::Rtti_PlotCurve);
@@ -1705,7 +1705,7 @@ QList<QwtPlotCurve*> SAChart2D::getCurveList()
     }
     return curves;
 }
-QList<QwtPlotMarker*> SAChart2D::getMakerList()
+QList<QwtPlotMarker*> SA2DGraph::getMakerList()
 {
     QList<QwtPlotMarker*> list;
     QwtPlotItemList items = itemList(QwtPlotItem::Rtti_PlotMarker);
@@ -1715,7 +1715,7 @@ QList<QwtPlotMarker*> SAChart2D::getMakerList()
     return list;
 }
 
-QwtPlotCurve* SAChart2D::getCurveByTitle(const QString& strName)
+QwtPlotCurve* SA2DGraph::getCurveByTitle(const QString& strName)
 {
     QList<QwtPlotCurve*> curs = getCurveList();
     QwtPlotCurve* cur(nullptr);
@@ -1730,7 +1730,7 @@ QwtPlotCurve* SAChart2D::getCurveByTitle(const QString& strName)
     return nullptr;
 }
 
-void SAChart2D::getYDatas(QVector<double>& ys,int nCur)
+void SA2DGraph::getYDatas(QVector<double>& ys,int nCur)
 {
     QwtPlotCurve* cur = getCurveList().at(nCur);
     if(nullptr == cur){
@@ -1744,7 +1744,7 @@ void SAChart2D::getYDatas(QVector<double>& ys,int nCur)
 //    ys = datas->yData();
 }
 
-void SAChart2D::getYDatas(QVector<double>& ys,const QString& strCurName)
+void SA2DGraph::getYDatas(QVector<double>& ys,const QString& strCurName)
 {
     QwtPlotCurve* cur = getCurveByTitle(strCurName);
     if(nullptr == cur){
@@ -1758,7 +1758,7 @@ void SAChart2D::getYDatas(QVector<double>& ys,const QString& strCurName)
 //    ys = datas->yData();
 }
 
-void SAChart2D::getXDatas(QVector<double>& xs,int nCur)
+void SA2DGraph::getXDatas(QVector<double>& xs,int nCur)
 {
     QwtPlotCurve* cur = getCurveList().at(nCur);
     if(nullptr == cur){
@@ -1772,7 +1772,7 @@ void SAChart2D::getXDatas(QVector<double>& xs,int nCur)
 //    xs = datas->xData();
 }
 
-void SAChart2D::getXDatas(QVector<double>& xs,const QString& strCurName)
+void SA2DGraph::getXDatas(QVector<double>& xs,const QString& strCurName)
 {
     QwtPlotCurve* cur = getCurveByTitle(strCurName);
     if(nullptr == cur){
@@ -1786,7 +1786,7 @@ void SAChart2D::getXDatas(QVector<double>& xs,const QString& strCurName)
 //    xs = datas->xData();
 }
 
-void SAChart2D::getXYDatas(QVector<QPointF>& xys,int nCur)
+void SA2DGraph::getXYDatas(QVector<QPointF>& xys,int nCur)
 {
     QwtPlotCurve* cur = getCurveList().at(nCur);
     if(nullptr == cur){
@@ -1804,7 +1804,7 @@ void SAChart2D::getXYDatas(QVector<QPointF>& xys,int nCur)
 //    }
 }
 
-void SAChart2D::getXYDatas(QVector<QPointF>& xys,const QString& strCurName)
+void SA2DGraph::getXYDatas(QVector<QPointF>& xys,const QString& strCurName)
 {
     QwtPlotCurve* cur = getCurveByTitle(strCurName);
     if(nullptr == cur){
@@ -1822,7 +1822,7 @@ void SAChart2D::getXYDatas(QVector<QPointF>& xys,const QString& strCurName)
 //    }
 }
 
-void SAChart2D::getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur)
+void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur)
 {
     QwtPlotCurve* cur = getCurveList().at(nCur);
     if(nullptr == cur){
@@ -1838,7 +1838,7 @@ void SAChart2D::getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur)
 //    ys = datas->yData();
 }
 
-void SAChart2D::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString& strCurName)
+void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString& strCurName)
 {
     QwtPlotCurve* cur = getCurveByTitle(strCurName);
     if(nullptr == cur){
@@ -1859,7 +1859,7 @@ void SAChart2D::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString
 /// \param ys vector double y
 /// \return 获取的尺寸
 ///
-size_t SAChart2D::getYDatas(const QVector<QPointF>& xys, QVector<double>& ys)
+size_t SA2DGraph::getYDatas(const QVector<QPointF>& xys, QVector<double>& ys)
 {
     auto e = xys.end();
     auto s = 0;
@@ -1875,7 +1875,7 @@ size_t SAChart2D::getYDatas(const QVector<QPointF>& xys, QVector<double>& ys)
 /// \param xs vector double x
 /// \return 获取的尺寸
 ///
-size_t SAChart2D::getXDatas(const QVector<QPointF>& xys, QVector<double>& xs)
+size_t SA2DGraph::getXDatas(const QVector<QPointF>& xys, QVector<double>& xs)
 {
     auto e = xys.end();
     auto s = 0;
@@ -1886,7 +1886,7 @@ size_t SAChart2D::getXDatas(const QVector<QPointF>& xys, QVector<double>& xs)
     return s;
 }
 
-size_t SAChart2D::getYDatas(QVector<double>& ys, QwtPlotCurve* cur, const QRectF &rang)
+size_t SA2DGraph::getYDatas(QVector<double>& ys, QwtPlotCurve* cur, const QRectF &rang)
 {
     QwtSeriesData<QPointF>* datas = cur->data();
     size_t size = datas->size();
@@ -1913,7 +1913,7 @@ size_t SAChart2D::getYDatas(QVector<double>& ys, QwtPlotCurve* cur, const QRectF
     return realSize;
 }
 
-size_t SAChart2D::getXDatas(QVector<double>& xs, QwtPlotCurve* cur, const QRectF &rang)
+size_t SA2DGraph::getXDatas(QVector<double>& xs, QwtPlotCurve* cur, const QRectF &rang)
 {
     QwtSeriesData<QPointF>* datas = cur->data();
     size_t size = datas->size();
@@ -1940,7 +1940,7 @@ size_t SAChart2D::getXDatas(QVector<double>& xs, QwtPlotCurve* cur, const QRectF
     return realSize;
 }
 
-size_t SAChart2D::getXYDatas(QVector<QPointF>& xys,const QwtPlotCurve* cur,const QRectF& rang)
+size_t SA2DGraph::getXYDatas(QVector<QPointF>& xys,const QwtPlotCurve* cur,const QRectF& rang)
 {
     const QwtSeriesData<QPointF>* datas = cur->data();
     size_t size = datas->size();
@@ -1967,7 +1967,7 @@ size_t SAChart2D::getXYDatas(QVector<QPointF>& xys,const QwtPlotCurve* cur,const
     return realSize;
 }
 
-size_t SAChart2D::getXYDatas(QVector<double>& xs, QVector<double>& ys, const QwtPlotCurve* cur, const QRectF& rang)
+size_t SA2DGraph::getXYDatas(QVector<double>& xs, QVector<double>& ys, const QwtPlotCurve* cur, const QRectF& rang)
 {
     const QwtSeriesData<QPointF>* datas = cur->data();
     size_t size = datas->size();
@@ -1998,7 +1998,7 @@ size_t SAChart2D::getXYDatas(QVector<double>& xs, QVector<double>& ys, const Qwt
     return realSize;
 }
 
-size_t SAChart2D::getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys, const QwtPlotCurve* cur, const QRectF& rang)
+size_t SA2DGraph::getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys, const QwtPlotCurve* cur, const QRectF& rang)
 {
     const QwtSeriesData<QPointF>* datas = cur->data();
     size_t size = datas->size();
@@ -2031,7 +2031,7 @@ size_t SAChart2D::getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector
     return realSize;
 }
 
-void SAChart2D::getSharpPeakPoint(QVector<QPointF>& sharpPoints,QwtPlotCurve* cur,bool getMax)
+void SA2DGraph::getSharpPeakPoint(QVector<QPointF>& sharpPoints,QwtPlotCurve* cur,bool getMax)
 {
     QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
     if(nullptr == datas)
@@ -2045,7 +2045,7 @@ void SAChart2D::getSharpPeakPoint(QVector<QPointF>& sharpPoints,QwtPlotCurve* cu
     getSharpPeakPoint(sharpPoints,points,getMax);
 }
 
-void SAChart2D::getSharpPeakPoint(QVector<QPointF>& sharpPoints,const QVector<QPointF>& Points,bool getMax)
+void SA2DGraph::getSharpPeakPoint(QVector<QPointF>& sharpPoints,const QVector<QPointF>& Points,bool getMax)
 {
     sharpPoints.clear();
     sharpPoints.reserve(int(Points.size()/2));
@@ -2074,14 +2074,14 @@ void SAChart2D::getSharpPeakPoint(QVector<QPointF>& sharpPoints,const QVector<QP
 }
 
 
-void SAChart2D::sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,QwtPlotCurve* cur,bool getMax )
+void SA2DGraph::sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,QwtPlotCurve* cur,bool getMax )
 {
     getSharpPeakPoint(sharpPointsSorted,cur,getMax);
     std::sort(sharpPointsSorted.begin(),sharpPointsSorted.end(),cmpPointF_Y);
     std::reverse(sharpPointsSorted.begin(),sharpPointsSorted.end());//最大值需要进行一次翻转
 }
 
-void SAChart2D::sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,const QVector<QPointF>& Points,bool getMax )
+void SA2DGraph::sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,const QVector<QPointF>& Points,bool getMax )
 {
     getSharpPeakPoint(sharpPointsSorted,Points,getMax);
     std::sort(sharpPointsSorted.begin(),sharpPointsSorted.end(),cmpPointF_Y);
@@ -2092,7 +2092,7 @@ void SAChart2D::sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,const QVector
 /// \param curve
 /// \return 返回区域的索引x为第一个索引，y为第二个索引
 ///
-QPoint SAChart2D::getPlottingRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const
+QPoint SA2DGraph::getPlottingRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const
 {
 	if (!curve)
 		return QPoint(0,0);
@@ -2126,7 +2126,7 @@ QPoint SAChart2D::getPlottingRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve*
 	return boundary;
 }
 
-QPoint SAChart2D::getPlottingRegionDatas(std::vector<double>& out_xs
+QPoint SA2DGraph::getPlottingRegionDatas(std::vector<double>& out_xs
 	,std::vector<double>& out_ys
     ,QwtPlotCurve* curve) const
 {
@@ -2164,7 +2164,7 @@ QPoint SAChart2D::getPlottingRegionDatas(std::vector<double>& out_xs
     return boundary;
 }
 
-QPoint SAChart2D::getPlottingRegionDatas(QVector<double>& out_xs, QVector<double>& out_ys, QwtPlotCurve* curve) const
+QPoint SA2DGraph::getPlottingRegionDatas(QVector<double>& out_xs, QVector<double>& out_ys, QwtPlotCurve* curve) const
 {
     if (!curve)
         return QPoint(0,0);
@@ -2203,7 +2203,7 @@ QPoint SAChart2D::getPlottingRegionDatas(QVector<double>& out_xs, QVector<double
 /// \brief 获取当前正在显示的区域
 /// \return
 ///
-QRectF SAChart2D::getPlottingRegionRang() const
+QRectF SA2DGraph::getPlottingRegionRang() const
 {
     QwtPlot::Axis xaxis = QwtPlot::xBottom;
     if(!axisEnabled(QwtPlot::xBottom))
@@ -2225,7 +2225,7 @@ QRectF SAChart2D::getPlottingRegionRang() const
 /// \param curve 需要移除数据的曲线
 /// \return
 ///
-size_t SAChart2D::removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve)
+size_t SA2DGraph::removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve)
 {
     //由于vector不善于删除，因此此处为了提高效率，先进行一份拷贝，再进行替换
     size_t length = curve->data()->size();
@@ -2247,20 +2247,20 @@ size_t SAChart2D::removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve)
 /// \param type 类型
 /// \return
 ///
-QString SAChart2D::axisDateScaleType2String(AxisDateScaleType type)
+QString SA2DGraph::axisDateScaleType2String(AxisDateScaleType type)
 {
 	switch (type)
 	{
-    case SAChart2D::h_m: return QString("h:m");
-    case SAChart2D::hh_mm: return QString("hh:mm");
-    case SAChart2D::h_m_s: return QString("h:m:s");
-    case SAChart2D::hh_mm_ss: return QString("hh:mm:ss");
-    case SAChart2D::yyyy_M_d: return QString("yyyy-M-d");
-    case SAChart2D::yyyy_M_d_h_m: return QString("yyyy-M-d h:m");
-    case SAChart2D::yyyy_M_d_h_m_s: return QString("yyyy-M-d h:m:s");
-    case SAChart2D::yyyy_MM_dd: return QString("yyyy-MM-dd");
-    case SAChart2D::yyyy_MM_dd_hh_mm: return QString("yyyy-MM-dd hh:mm");
-    case SAChart2D::yyyy_MM_dd_hh_mm_ss: return QString("yyyy-MM-dd hh:mm:ss");
+    case SA2DGraph::h_m: return QString("h:m");
+    case SA2DGraph::hh_mm: return QString("hh:mm");
+    case SA2DGraph::h_m_s: return QString("h:m:s");
+    case SA2DGraph::hh_mm_ss: return QString("hh:mm:ss");
+    case SA2DGraph::yyyy_M_d: return QString("yyyy-M-d");
+    case SA2DGraph::yyyy_M_d_h_m: return QString("yyyy-M-d h:m");
+    case SA2DGraph::yyyy_M_d_h_m_s: return QString("yyyy-M-d h:m:s");
+    case SA2DGraph::yyyy_MM_dd: return QString("yyyy-MM-dd");
+    case SA2DGraph::yyyy_MM_dd_hh_mm: return QString("yyyy-MM-dd hh:mm");
+    case SA2DGraph::yyyy_MM_dd_hh_mm_ss: return QString("yyyy-MM-dd hh:mm:ss");
 	}
 	return QString("yyyy-MM-dd hh:mm:ss");
 }
@@ -2270,13 +2270,13 @@ QString SAChart2D::axisDateScaleType2String(AxisDateScaleType type)
 /// \param 时间显示的类型 
 /// \param type 类型 
 ///
-void SAChart2D::setDateAxis(AxisDateScaleType type,int axisID,QwtDate::IntervalType intType)
+void SA2DGraph::setDateAxis(AxisDateScaleType type,int axisID,QwtDate::IntervalType intType)
 {
 	QString strDateFormat = axisDateScaleType2String(type);
 	setDateAxis(strDateFormat,axisID,intType);
 }
 
-void SAChart2D::setDateAxis(QString type,int axisID ,QwtDate::IntervalType intType)
+void SA2DGraph::setDateAxis(QString type,int axisID ,QwtDate::IntervalType intType)
 {
     QwtDateScaleDraw* dateScale;
 	dateScale = new QwtDateScaleDraw;
@@ -2289,7 +2289,7 @@ void SAChart2D::setDateAxis(QString type,int axisID ,QwtDate::IntervalType intTy
 /// \param format
 /// \param intType
 ///
-void SAChart2D::setAxisDateFormat(QwtPlot::Axis axis, AxisDateScaleType format, QwtDate::IntervalType intType)
+void SA2DGraph::setAxisDateFormat(QwtPlot::Axis axis, AxisDateScaleType format, QwtDate::IntervalType intType)
 {
     QwtDateScaleDraw* dateScale = dynamic_cast<QwtDateScaleDraw*>(axisScaleDraw(axis));
     if(!dateScale)

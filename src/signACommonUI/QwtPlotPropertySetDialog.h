@@ -1,11 +1,11 @@
 #ifndef QWTCHARTSETDIALOG_H
 #define QWTCHARTSETDIALOG_H
-#include "SAChartGlobals.h"
+#include "SACommonUIGlobal.h"
 
 #include <QWidget>
 #include "qttreepropertybrowser.h"
 #include <QtWidgets/QHBoxLayout>
-#include "SAChart2D.h"
+#include "SA2DGraph.h"
 #include "qtpropertymanager.h"
 #include <QtGroupPropertyManager>
 #include <QtVariantPropertyManager>
@@ -16,13 +16,13 @@
 #include <QSizeF>
 #include "QtPropertyIDStorage.h"
 class QwtPlotItem;
-class SA_CHART_EXPORT QwtPlotPropertySetDialog : public QWidget
+class SA_COMMON_UI_EXPORT QwtPlotPropertySetDialog : public QWidget
 {
 	Q_OBJECT
 public:
-    QwtPlotPropertySetDialog(QWidget *parent,SAChart2D* plot);
+    QwtPlotPropertySetDialog(QWidget *parent,SA2DGraph* plot);
     void updateAllValue();
-    void setChartPtr(SAChart2D * chart);
+    void setChartPtr(SA2DGraph * chart);
     ~QwtPlotPropertySetDialog();
 private:
     enum ScaleDraw{
@@ -31,7 +31,7 @@ private:
     };
     void updateAxisValue(QwtPlot::Axis axis);
     void updateCurveValue(QwtPlotCurve* cur);
-	SAChart2D *m_plot;
+	SA2DGraph *m_plot;
 	QtTreePropertyBrowser *m_property;
 	QHBoxLayout *m_mainHorizontalLayout;
 	QtGroupPropertyManager* m_propertyGroup;
@@ -44,10 +44,10 @@ private:
 	void createUI();
     void buildConnect();
     void disChartConnect();
-	void addPlotSet(SAChart2D* plot);
-	void addCurveSet(SAChart2D* plot);
+	void addPlotSet(SA2DGraph* plot);
+	void addCurveSet(SA2DGraph* plot);
 	void addCurveSet(QwtPlotCurve* curve);
-    void addAxisSet(QtProperty *parentGroup,SAChart2D* plot,QwtPlot::Axis axis);
+    void addAxisSet(QtProperty *parentGroup,SA2DGraph* plot,QwtPlot::Axis axis);
     QString axisString(QwtPlot::Axis axis) const;
     int axisPropertyID(QwtPlot::Axis axis,int order) const;
     int penStyle2Order(Qt::PenStyle style) const;

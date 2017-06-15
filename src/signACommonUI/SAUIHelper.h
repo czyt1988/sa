@@ -10,6 +10,7 @@ class SA_COMMON_UI_EXPORT SAUIHelper
 {
 public:
     SAUIHelper();
+    //把当前的绘图插入到属性表中
     static QtVariantProperty* appenFigureListInPropertyDialog(SAPropertySetDialog* dlg, QList<SAFigureWindow *> *figList
                                                               , const QString& id
                                                               , const QString& propName

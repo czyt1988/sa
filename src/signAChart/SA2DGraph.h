@@ -1,5 +1,5 @@
-#ifndef SACHART2D_H
-#define SACHART2D_H
+#ifndef SA2DGRAPH_H
+#define SA2DGRAPH_H
 #include "SAChartGlobals.h"
 
 //qt
@@ -239,12 +239,12 @@ public:
 ///
 /// \brief 2d绘图 class
 ///
-class SA_CHART_EXPORT SAChart2D : public QwtPlot
+class SA_CHART_EXPORT SA2DGraph : public QwtPlot
 {
     Q_OBJECT
 public:
-    SAChart2D(QWidget *parent = nullptr);
-    virtual ~SAChart2D();
+    SA2DGraph(QWidget *parent = nullptr);
+    virtual ~SA2DGraph();
     //========================================================================================
     //画线和数据 操作
     //========================================================================================

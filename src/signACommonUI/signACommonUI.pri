@@ -1,5 +1,7 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
+INCLUDEPATH += $$PWD/Chart2D
+DEPENDPATH += $$PWD/Chart2D
 
 LIBS += -L$$PWD/../bin/libs/ -lsignACommonUI
 # user need add 

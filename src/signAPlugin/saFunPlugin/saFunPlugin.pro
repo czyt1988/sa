@@ -18,7 +18,7 @@ include($$PWD/../../signALib/signALib.pri)
 include($$PWD/../../signACoreFun/signACoreFun.pri)
 include($$PWD/../../signACommonUI/signACommonUIWith3thLib.pri)
 #sa chart support
-include($$PWD/../../signAChart/signAChart.pri)
+#include($$PWD/../../signAChart/signAChart.pri)
 
 #czy qt api support
 include($$PWD/../../czy/czy_math.pri)

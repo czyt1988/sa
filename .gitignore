@@ -23,6 +23,6 @@ build*
 /src/bin
 /src/build-*
 /src/signAPlugin/build-*
-/src/3rdParty/qwtplot3d/lib/d/qwtplot3d.lib
-/src/3rdParty/qwtplot3d/lib/r/qwtplot3d.lib
+/src/3rdParty/qwtplot3d/lib
+/src/3rdParty/qtpropertybrowser/lib
 Thumb.db
