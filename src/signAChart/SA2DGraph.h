@@ -257,14 +257,14 @@ public:
     QwtPlotCurve* addCurve(std::vector<double>& xDatas,std::vector<double>& yDatas);
     QwtPlotCurve* addCurve(const double *xData, const double *yData, int size);
     QwtPlotCurve* addCurve(const QVector< double > &xData, const QVector< double > &yData);
+    void addCurve(QwtPlotCurve* pC);
 
     static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size);
     static void setCurveLinePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
 
-    void addCurve(QwtPlotCurve* pC);
     QwtPlotMarker* addVLine(double val);
     QwtPlotMarker* addHLine(double val);
-    QwtPlotHistogram* addHistogram(const QVector< QwtIntervalSample > &sample);
+    QwtPlotHistogram* addBar(const QVector< QwtIntervalSample > &sample);
     //========================================================================================
     //网格 grid 操作
     //========================================================================================
@@ -426,6 +426,13 @@ public slots:
 
     void enableXYDataPicker(bool enable = true);
 signals:
+    ///
+    /// \brief 有曲线或图线添加\修改\触发的信号
+    /// \param plotCur 发生变更的条目
+    /// \note 只有通过此类操作的曲线添加修改会触发这个信号
+    ///
+    void plotCurveChanged(QwtPlotItem* plotCur);
+
 	void enableZoomerChanged(bool enable);
 	void enablePickerChanged(bool enable);
 	void enableGridChanged(bool enable);

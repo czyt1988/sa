@@ -10,7 +10,7 @@
 #include "SAVariantDatas.h"
 #include "SAValueManager.h"
 #include "SAFigureWindow.h"
-
+#include "SAChart2D.h"
 #include "SAVectorInterval.h"
 #include "SAGUIGlobalConfig.h"
 #include <QMdiSubWindow>
@@ -155,10 +155,10 @@ void FunNum::hist()
     {
         QMdiSubWindow* sub = saUI->createFigureWindow();
         SAFigureWindow* fig = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        fig->create2DPlot();
-        if(fig)
+        SAChart2D* chart = fig->create2DPlot();
+        if(chart)
         {
-            fig->addBar(res.get());
+            chart->addBar(res.get());
         }
         saUI->raiseMainDock();
         sub->show();

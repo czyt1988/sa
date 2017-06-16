@@ -131,44 +131,8 @@ QList<AbstractDataFeatureItem *> SAFigureWindow::getDataFeatureItemList() const
     return m_dataFeature;
 }
 
-///
-/// \brief 添加柱状图
-/// \param datas 数据
-/// \param style 柱状图的样式
-/// \return 柱状图的指针
-///
-QwtPlotHistogram *SAFigureWindow::addBar(SAVectorInterval *datas, QwtPlotHistogram::HistogramStyle style)
-{
-    GET_CHART_PTR
-    QwtPlotHistogram* hp = chart->addHistogram (datas->getValueDatas ());
-    QColor clr = SARandColorMaker::getCurveColor();
-    hp->setPen(clr,SAFigureGlobalConfig::getPlotCurWidth(datas->getSize()));
-    clr.setAlpha(125);
-    hp->setBrush(QBrush(clr));
-    hp->setTitle(datas->getName ());
-    hp->setStyle(style);
-    calcDataFeature(chart,hp);
-    rememberRelationShip(hp,QList<SAAbstractDatas*>()<<datas);
-    m_lastPlotItem = hp;
-    return hp;
 
-}
 
-///
-/// \brief 移除范围内数据
-/// \param curves 需要移除的曲线列表
-///
-void SAFigureWindow::removeDataInRang(QList<QwtPlotCurve*> curves)
-{
-    GET_CHART_PTR_RETURN_VOID
-    chart->setAutoReplot(false);
-    QRectF rang = chart->getPlottingRegionRang();
-    for(int i=0;i<curves.size();++i)
-    {
-        chart->removeDataInRang(rang,curves[i]);
-    }
-    chart->setAutoReplot(true);
-}
 ///
 /// \brief 设置窗体背景
 /// \param brush

@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+
 #include <memory>
 #include <QMainWindow>
 //#include "SAChartSupport.h"
@@ -7,7 +8,7 @@
 #include <QMap>
 #include "SAUI.h"
 
-
+#include <QScopedPointer>
 #include <QStandardItemModel>
 #include <QIcon>
 #include <QToolBar>
@@ -35,6 +36,8 @@ class MainWindow;
 
 
 class QProgressBar;
+class QLocalServer;
+class QLocalSocket;
 
 class SAInformationStatusWidget;
 class ValueDataViewer;
@@ -70,6 +73,8 @@ private:
     void initTheme();
     //初始化UIReflation
     void initUIReflection();
+    //初始化本地服务
+    void initLocalServer();
 public:
     static QColor getRandColor();
     static QIcon getIconByWndType(SA::SubWndType type);
@@ -395,6 +400,8 @@ private:
     bool setProjectInfomation();
     //变量管理器的移除控制触发的槽
     Q_SLOT void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
+    //本地服务连接的槽
+    Q_SLOT void onLocalServeNewConnection();
 private:
     Ui::MainWindow *ui;
     SAUI* uiInterface;
@@ -412,6 +419,9 @@ private:
 
     std::unique_ptr<SADrawDelegate> m_drawDelegate;///< 绘图代理
     SAFigureWindow* m_lastShowFigureWindow;///<记录最后一次显示的figure window
+
+    QScopedPointer<QLocalServer> m_localServer;///< 本地服务器
+    QLocalSocket* m_dataProcessSocket;
 };
 
 

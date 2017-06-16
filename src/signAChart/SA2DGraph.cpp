@@ -1124,6 +1124,7 @@ QwtPlotCurve* SA2DGraph::addCurve(const QVector<QPointF>& xyDatas)
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xyDatas);
     pCurve->attach(this);
+    emit plotCurveChanged(pCurve);
     return pCurve;
 }
 
@@ -1136,6 +1137,7 @@ QwtPlotCurve* SA2DGraph::addCurve(std::vector<double>& xDatas,std::vector<double
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(&xDatas[0],&yDatas[0],xDatas.size() <= yDatas.size() ? xDatas.size() : yDatas.size());
     pCurve->attach(this);
+    emit plotCurveChanged(pCurve);
     return pCurve;
 }
 
@@ -1148,6 +1150,7 @@ QwtPlotCurve* SA2DGraph::addCurve(const double *xData, const double *yData, int 
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData,size);
     pCurve->attach(this);
+    emit plotCurveChanged(pCurve);
     return pCurve;
 }
 
@@ -1161,6 +1164,7 @@ QwtPlotCurve* SA2DGraph::addCurve(const QVector< double > &xData
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData);
     pCurve->attach(this);
+    emit plotCurveChanged(pCurve);
     return pCurve;
 }
 
@@ -1182,6 +1186,7 @@ void SA2DGraph::setCurveLinePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
 void SA2DGraph::addCurve(QwtPlotCurve* pC)
 {
     pC->attach(this);
+    emit plotCurveChanged(pC);
 }
 ///
 /// \brief 添加一条竖直线
@@ -1206,7 +1211,7 @@ QwtPlotMarker* SA2DGraph::addHLine(double val)
     return marker;
 }
 
-QwtPlotHistogram*SA2DGraph::addHistogram(const QVector<QwtIntervalSample>& sample)
+QwtPlotHistogram*SA2DGraph::addBar(const QVector<QwtIntervalSample>& sample)
 {
     QwtPlotHistogram* his = new QwtPlotHistogram();
     his->setSamples (sample);
@@ -1214,6 +1219,7 @@ QwtPlotHistogram*SA2DGraph::addHistogram(const QVector<QwtIntervalSample>& sampl
     his->setXAxis(xBottom);
     his->setStyle (QwtPlotHistogram::Columns);
     his->attach (this);
+    emit plotCurveChanged(his);
     return his;
 }
 
@@ -2219,6 +2225,7 @@ size_t SA2DGraph::removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve)
         newLine.push_back(point);
     }
     curve->setSamples(newLine);
+    emit plotCurveChanged(curve);
     return newLine.size();
 }
 ///

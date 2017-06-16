@@ -30,8 +30,9 @@ bool SAXYSeries::setSamples(SAAbstractDatas *dataPoints)
     {
         return false;
     }
+    clearDataPtrLink();
+    insertData(dataPoints);
     QwtPlotCurve::setSamples(serPoints);
-    m_linkDatas.insert(dataPoints);
     return true;
 }
 ///
@@ -49,7 +50,11 @@ bool SAXYSeries::setSamples(SAAbstractDatas *x, SAAbstractDatas *y)
         return false;
     if(0 == xd.size() || 0 == yd.size())
         return false;
+    clearDataPtrLink();
+    insertData(x);
+    insertData(y);
     QwtPlotCurve::setSamples(xd.data(),yd.data(),qMin(xd.size(),yd.size()));
+    return true;
 }
 ///
 /// \brief SAXYSeries::setSamples
@@ -70,22 +75,13 @@ bool SAXYSeries::setSamples(SAAbstractDatas *y, double xStart, double xDetal)
     {
         xd.append(xStart + (i*xDetal));
     }
+    clearDataPtrLink();
+    insertData(y);
     QwtPlotCurve::setSamples(xd,yd);
+    return true;
 }
 
-QSet<SAAbstractDatas *> SAXYSeries::linkDatas() const
-{
-    return m_linkDatas;
-}
 
-bool SAXYSeries::isContainData(SAAbstractDatas *d)
-{
-    return m_linkDatas.contains(d);
-}
 
-void SAXYSeries::removeLinkDataPtr(const SAAbstractDatas *ptr)
-{
-    m_linkDatas.remove(const_cast<SAAbstractDatas *>(ptr));
-}
 
 

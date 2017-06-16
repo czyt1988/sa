@@ -35,8 +35,6 @@ public:
     QList<SAChart2D*> get2DPlots() const;
     //获取当前的2d绘图指针
     SAChart2D* current2DPlot() const;
-    //获取绘图结果中的特征属性信息
-    QList<AbstractDataFeatureItem*> getDataFeatureItemList() const;
 
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
@@ -46,14 +44,11 @@ public:
  //不满足单一职责原则
     //============
 
-
-    //绘制bar
-    QwtPlotHistogram* addBar(SAVectorInterval* datas,QwtPlotHistogram::HistogramStyle style = QwtPlotHistogram::Columns);
-    //移除范围内数据
-    void removeDataInRang(QList<QwtPlotCurve *> curves);
+    //获取绘图结果中的特征属性信息
+    QList<AbstractDataFeatureItem*> getDataFeatureItemList() const;
 signals:
     //绘图数据变更消息
-    void chartDataChanged(QWidget* plot,QwtPlotItem* item);
+    void chartDataChanged(QwtPlot* plot,QwtPlotItem* item);
     ///
     /// \brief 计算完特征参数
     /// \param plot 参与计算的窗体

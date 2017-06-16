@@ -32,7 +32,9 @@ HEADERS += \
     SAGlobalConfigDefine.h \
     SAVariantCaster.h \
     SAFigureGlobalConfig.h \
-    SAGUIGlobalConfig.h
+    SAGUIGlobalConfig.h \
+    SALocalServerDefine.h \
+    SALocalServeBaseData.h
 
 
 SOURCES += \
@@ -52,7 +54,8 @@ SOURCES += \
     SAProjectManager.cpp \
     SAVariantCaster.cpp \
     SAFigureGlobalConfig.cpp \
-    SAGUIGlobalConfig.cpp
+    SAGUIGlobalConfig.cpp \
+    SALocalServeBaseData.cpp
 
 
 include($$PWD/Private/Private.pri)

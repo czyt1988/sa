@@ -111,7 +111,7 @@ QwtPlotHistogram *SADrawDelegate::drawBar(SAAbstractDatas* barSeries)
     {
         pFigure->create2DPlot();
     }
-    QwtPlotHistogram* b = pFigure->addBar (intervalSeries);
+    QwtPlotHistogram* b = (QwtPlotHistogram*)(chart->addBar (intervalSeries));
     w->show ();
     return b;
 }

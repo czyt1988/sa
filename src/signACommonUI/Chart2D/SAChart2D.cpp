@@ -1,9 +1,10 @@
 #include "SAChart2D.h"
 #include "SAAbstractDatas.h"
-#include "SAXYSeries.h"
 #include "SARandColorMaker.h"
 #include "SAFigureGlobalConfig.h"
 #include <memory>
+#include "SAXYSeries.h"
+#include "SABarSeries.h"
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
 {
 
@@ -28,6 +29,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
     series->attach(this);
+    emit plotCurveChanged(series.get());
     return series.release();
 }
 ///
@@ -48,6 +50,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
     series->attach(this);
+    emit plotCurveChanged(series.get());
     return series.release();
 }
 ///
@@ -68,27 +71,49 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QS
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
     series->attach(this);
+    emit plotCurveChanged(series.get());
     return series.release();
 }
 
-QwtPlotCurve *SAChart2D::addCurve(const QVector<QPointF> &xyDatas)
-{
-    return SA2DGraph::addCurve(xyDatas);
-}
-
-QwtPlotCurve *SAChart2D::addCurve(const double *xData, const double *yData, int size)
-{
-    return SA2DGraph::addCurve(xData,yData,size);
-}
-
-QwtPlotCurve *SAChart2D::addCurve(const QVector<double> &xData, const QVector<double> &yData)
-{
-    return SA2DGraph::addCurve(xData,yData);
-}
 
 void SAChart2D::addCurve(QwtPlotCurve *cur)
 {
     cur->attach(this);
+}
+///
+/// \brief SAChart2D::addBar
+/// \param datas
+/// \return
+///
+SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
+{
+    std::unique_ptr<SABarSeries> series(new SABarSeries(datas,datas->getName()));
+    if(series->dataSize() <= 0)
+    {
+        return nullptr;
+    }
+    QColor clr = SARandColorMaker::getCurveColor();
+    series->setBrush(QBrush(clr));
+    series->setPen(clr,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
+    series->setStyle(QwtPlotHistogram::Columns);
+    series->attach(this);
+    emit plotCurveChanged(series.get());
+    return series.release();
+}
+
+///
+/// \brief 移除范围内数据
+/// \param curves 需要移除的曲线列表
+///
+void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
+{
+    setAutoReplot(false);
+    QRectF rang = getPlottingRegionRang();
+    for(int i=0;i<curves.size();++i)
+    {
+        removeDataInRang(rang,curves[i]);
+    }
+    setAutoReplot(true);
 }
 
 

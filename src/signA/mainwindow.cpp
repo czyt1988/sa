@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include <functional>
 
-
+#include <QElapsedTimer>
 //#include "TxtQuickImportWizDlg.h"
 //----------Qt---------------
 #include <QMessageBox>
@@ -18,6 +18,9 @@
 #include <QInputDialog>
 #include <QInputDialog>
 #include <QMdiArea>
+#include <QLocalServer>
+#include <QLocalSocket>
+#include <QProcess>
 //----------STL-------------
 #include <iostream>
 #include <algorithm>
@@ -48,6 +51,7 @@
 #include "SAUIReflection.h"//ui管理器
 #include "SAValueSelectDialog.h"
 //===signALib
+#include "SALocalServerDefine.h"
 #include "SAValueManager.h"//变量管理
 #include "SAValueManagerModel.h"//变量管理的model
 #include "SAPluginInterface.h"
@@ -153,6 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initPlugin();
     initTheme();
     saElapsed("loaded plugins and themes");
+    initLocalServer();
     showNormalMessageInfo(QStringLiteral("程序初始化完成"));
 }
 
@@ -177,6 +182,7 @@ void MainWindow::init()
     ui->statusBar->addWidget(ui_status_progress);
     ui_status_progress->setVisible(false);
 }
+
 #define Lambda_SaChartEnable(exp)\
     [&](bool check){\
     SAChart2D* chart = getCurSubWindowChart();\
@@ -469,6 +475,24 @@ void MainWindow::initTheme()
 void MainWindow::initUIReflection()
 {
     saUIRef->setupUIInterface(uiInterface);//saUI保存主窗口指针
+}
+
+///
+/// \brief 初始化本地服务器
+///
+void MainWindow::initLocalServer()
+{
+    m_localServer.reset(new QLocalServer);
+    connect(m_localServer.data(),&QLocalServer::newConnection
+            ,this,&MainWindow::onLocalServeNewConnection);
+    if(!m_localServer->listen(SA_LOCAL_SERVER_DATA_PROC_NAME))
+    {
+       showMessageInfo(tr("listern loacl server error"),SA::ErrorMessage);
+    }
+    QProcess pro;
+    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
+    QStringList args = {QString::number(qApp->applicationPid())};
+    qDebug() << "run proc:" << QProcess::startDetached(path,args);
 }
 
 
@@ -919,7 +943,10 @@ void MainWindow::onActionInRangDataRemoveTriggered()
         return;
     }
     QList<QwtPlotCurve*> curs = CurveSelectDialog::getSelCurve(chart,this);
-    wnd->removeDataInRang(curs);
+    if(curs.size() > 0)
+    {
+        chart->removeDataInRang(curs);
+    }
 }
 
 
@@ -1557,6 +1584,16 @@ bool MainWindow::setProjectInfomation()
 void MainWindow::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
     ui->tabWidget_valueViewer->removeDatas(dataBeDeletedPtr);
+}
+
+///
+/// \brief 本地服务连接的槽
+///
+void MainWindow::onLocalServeNewConnection()
+{
+    QLocalSocket* socket = m_localServer->nextPendingConnection();
+    showNormalMessageInfo(tr("connect success:%1").arg(socket->fullServerName()));
+
 }
 
 QwtPlotItemTreeModel *MainWindow::getDataViewerPlotItemTreeModel() const
