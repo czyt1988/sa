@@ -20,7 +20,7 @@
 #include <QMdiArea>
 #include <QLocalServer>
 #include <QLocalSocket>
-#include <QProcess>
+
 //----------STL-------------
 #include <iostream>
 #include <algorithm>
@@ -489,10 +489,9 @@ void MainWindow::initLocalServer()
     {
        showMessageInfo(tr("listern loacl server error"),SA::ErrorMessage);
     }
-    QProcess pro;
-    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
-    QStringList args = {QString::number(qApp->applicationPid())};
-    qDebug() << "run proc:" << QProcess::startDetached(path,args);
+    m_dataProcPro = new QProcess(this);
+    startDataProc();
+
 }
 
 
@@ -1585,6 +1584,15 @@ void MainWindow::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
     ui->tabWidget_valueViewer->removeDatas(dataBeDeletedPtr);
 }
+///
+/// \brief 启动数据处理进程
+///
+void MainWindow::startDataProc()
+{
+    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
+    QStringList args = {QString::number(qApp->applicationPid())};
+    m_dataProcPro->start(path,args);
+}
 
 ///
 /// \brief 本地服务连接的槽
@@ -1594,6 +1602,29 @@ void MainWindow::onLocalServeNewConnection()
     QLocalSocket* socket = m_localServer->nextPendingConnection();
     showNormalMessageInfo(tr("connect success:%1").arg(socket->fullServerName()));
 
+}
+///
+/// \brief 数据处理的线程终结
+/// \param exitCode 退出代码
+/// \param exitStatus
+///
+void MainWindow::onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    if(QProcess::CrashExit == exitStatus)
+    {
+        static int s_dataProcCrashCount = 0;
+        ++s_dataProcCrashCount;
+        saError("signADataProc has been crash,crash count:%d",s_dataProcCrashCount);
+        startDataProc();
+    }
+    else if(QProcess::NormalExit == exitStatus)
+    {
+        QString strInfo = tr("signADataProc has been exit");
+        saWarning(strInfo);
+        showWarningMessageInfo(strInfo);
+        startDataProc();
+        showWarningMessageInfo(tr("restart signADataProc"));
+    }
 }
 
 QwtPlotItemTreeModel *MainWindow::getDataViewerPlotItemTreeModel() const

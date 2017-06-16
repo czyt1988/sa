@@ -38,6 +38,7 @@ class MainWindow;
 class QProgressBar;
 class QLocalServer;
 class QLocalSocket;
+class QProcess;
 
 class SAInformationStatusWidget;
 class ValueDataViewer;
@@ -422,6 +423,7 @@ private:
 
     QScopedPointer<QLocalServer> m_localServer;///< 本地服务器
     QLocalSocket* m_dataProcessSocket;
+    QProcess* m_dataProcPro;///< 数据处理进程
 };
 
 
