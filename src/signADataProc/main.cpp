@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QStringList argsList = a.arguments();
-    QMessageBox::information(nullptr,"pro",argsList.join(','));
+   // QMessageBox::information(nullptr,"pro",argsList.join(','));
     //调用必须后面跟随调用者的pid
     if(argsList.size()<2)
     {

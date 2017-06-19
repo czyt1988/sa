@@ -1,6 +1,6 @@
 #include "SADataProcClient.h"
 #include "SALocalServerDefine.h"
-#include "SALocalServeBaseData.h"
+#include "SALocalServeBaseHeader.h"
 #include <QCoreApplication>
 #include <QMessageBox>
 SADataProcClient::SADataProcClient(QObject *parent):QObject(parent)
@@ -21,9 +21,9 @@ void SADataProcClient::shakeHand()
     {
         return;
     }
-    SALocalServeBaseData data;
-    data.setKey(12);
-    data.setType(1);
+    SALocalServeBaseHeader data;
+    data.setKey(13);
+    data.setType(2);
     data.setSendedPid(QCoreApplication::applicationPid());
     QDataStream out(&m_socket);
     data.write(out);

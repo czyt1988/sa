@@ -34,7 +34,8 @@ HEADERS += \
     SAFigureGlobalConfig.h \
     SAGUIGlobalConfig.h \
     SALocalServerDefine.h \
-    SALocalServeBaseData.h
+    SALocalServeBaseHeader.h \
+    SALocalServeFigureItemProcessHeader.h
 
 
 SOURCES += \
@@ -55,7 +56,8 @@ SOURCES += \
     SAVariantCaster.cpp \
     SAFigureGlobalConfig.cpp \
     SAGUIGlobalConfig.cpp \
-    SALocalServeBaseData.cpp
+    SALocalServeBaseHeader.cpp \
+    SALocalServeFigureItemProcessHeader.cpp
 
 
 include($$PWD/Private/Private.pri)

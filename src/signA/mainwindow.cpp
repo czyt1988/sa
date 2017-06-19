@@ -18,8 +18,7 @@
 #include <QInputDialog>
 #include <QInputDialog>
 #include <QMdiArea>
-#include <QLocalServer>
-#include <QLocalSocket>
+
 
 //----------STL-------------
 #include <iostream>
@@ -157,7 +156,6 @@ MainWindow::MainWindow(QWidget *parent) :
     initPlugin();
     initTheme();
     saElapsed("loaded plugins and themes");
-    initLocalServer();
     showNormalMessageInfo(QStringLiteral("程序初始化完成"));
 }
 
@@ -425,6 +423,8 @@ void MainWindow::initUI()
     //
     connect(ui->mdiArea,&QMdiArea::subWindowActivated
             ,ui->dataFeatureWidget,&DataFeatureWidget::mdiSubWindowActived);
+    connect(ui->dataFeatureWidget,&DataFeatureWidget::showMessageInfo
+            ,this,&MainWindow::showMessageInfo);
     //窗口关闭的消息在 on_subWindow_close里
 
 
@@ -476,25 +476,6 @@ void MainWindow::initUIReflection()
 {
     saUIRef->setupUIInterface(uiInterface);//saUI保存主窗口指针
 }
-
-///
-/// \brief 初始化本地服务器
-///
-void MainWindow::initLocalServer()
-{
-    m_localServer.reset(new QLocalServer);
-    connect(m_localServer.data(),&QLocalServer::newConnection
-            ,this,&MainWindow::onLocalServeNewConnection);
-    if(!m_localServer->listen(SA_LOCAL_SERVER_DATA_PROC_NAME))
-    {
-       showMessageInfo(tr("listern loacl server error"),SA::ErrorMessage);
-    }
-    m_dataProcPro = new QProcess(this);
-    startDataProc();
-
-}
-
-
 
 ///
 /// \brief 重置布局
@@ -836,6 +817,7 @@ bool MainWindow::callback_hightLightItem(QStandardItem* item,const QStringList k
 ///
 void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
 {
+
     if(nullptr == arg1)
         return;
     if(m_lastActiveWnd == arg1)
@@ -1584,48 +1566,10 @@ void MainWindow::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
     ui->tabWidget_valueViewer->removeDatas(dataBeDeletedPtr);
 }
-///
-/// \brief 启动数据处理进程
-///
-void MainWindow::startDataProc()
-{
-    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
-    QStringList args = {QString::number(qApp->applicationPid())};
-    m_dataProcPro->start(path,args);
-}
 
-///
-/// \brief 本地服务连接的槽
-///
-void MainWindow::onLocalServeNewConnection()
-{
-    QLocalSocket* socket = m_localServer->nextPendingConnection();
-    showNormalMessageInfo(tr("connect success:%1").arg(socket->fullServerName()));
 
-}
-///
-/// \brief 数据处理的线程终结
-/// \param exitCode 退出代码
-/// \param exitStatus
-///
-void MainWindow::onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus)
-{
-    if(QProcess::CrashExit == exitStatus)
-    {
-        static int s_dataProcCrashCount = 0;
-        ++s_dataProcCrashCount;
-        saError("signADataProc has been crash,crash count:%d",s_dataProcCrashCount);
-        startDataProc();
-    }
-    else if(QProcess::NormalExit == exitStatus)
-    {
-        QString strInfo = tr("signADataProc has been exit");
-        saWarning(strInfo);
-        showWarningMessageInfo(strInfo);
-        startDataProc();
-        showWarningMessageInfo(tr("restart signADataProc"));
-    }
-}
+
+
 
 QwtPlotItemTreeModel *MainWindow::getDataViewerPlotItemTreeModel() const
 {
