@@ -2,6 +2,7 @@
 #include "ui_DataFeatureWidget.h"
 #include <QMainWindow>
 #include <QMdiSubWindow>
+
 //#include <SAChartWidget.h>
 #include <DataFeatureTreeModel.h>
 #include <DataFeatureItem.h>
@@ -18,11 +19,22 @@
 #include "SALocalServeFigureItemProcessHeader.h"
 #include "SALocalServerDefine.h"
 #include "qwt_plot_curve.h"
+
+#define _DEBUG_OUTPUT
+#ifdef _DEBUG_OUTPUT
+#include <QElapsedTimer>
+#include <QDebug>
+#endif
+
 DataFeatureWidget::DataFeatureWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DataFeatureWidget)
   ,m_lastActiveSubWindow(nullptr)
-  ,m_dataProcSocket(nullptr)
+  ,m_dataProcessSocket(nullptr)
+  ,m_dataProcPro(nullptr)
+  ,m_isReadedHeader(false)
+  ,m_isStartRecData(false)
+  ,m_dataLen(0)
 {
     ui->setupUi(this);
     initLocalServer();
@@ -52,6 +64,10 @@ void DataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
     else
         getTreeModel()->clear();
 #endif
+    if(nullptr == arg1)
+    {
+        return;
+    }
     m_lastActiveSubWindow = arg1;
 
     auto modelIte = m_subWindowToDataInfo.find(arg1);
@@ -66,7 +82,14 @@ void DataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
         SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
         if(figure)
         {
+#ifdef _DEBUG_OUTPUT
+            QElapsedTimer t;
+            t.start();
+#endif
             callCalcFigureWindowFeature(figure);
+#ifdef _DEBUG_OUTPUT
+            qDebug() << "callCalcFigureWindowFeature time cost:" << t.elapsed();
+#endif
         }
     }
 }
@@ -76,6 +99,7 @@ void DataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
 ///
 void DataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
 {
+
     m_subWindowToDataInfo.remove(arg1);
     auto modelIte = m_subWindowToDataInfo.find(arg1);
     if(modelIte != m_subWindowToDataInfo.end())
@@ -106,6 +130,10 @@ SAFigureWindow *DataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *su
 ///
 void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 {
+    if(nullptr == m_dataProcessSocket)
+    {
+        return;
+    }
     SALocalServeBaseHeader header;
     header.setKey(1);
     header.setSendedPid(qApp->applicationPid());
@@ -131,6 +159,7 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
                     ys.append(cur->sample(c));
                 }
 
+
                 if(!m_dataProcessSocket->isValid())
                 {
                     QDataStream io(m_dataProcessSocket);
@@ -144,6 +173,8 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 
     }
 }
+
+
 
 ///
 /// \brief 数据特性树点击
@@ -247,6 +278,11 @@ void DataFeatureWidget::initLocalServer()
 ///
 void DataFeatureWidget::startDataProc()
 {
+    if(m_dataProcessSocket)
+    {
+        delete m_dataProcessSocket;
+        m_dataProcessSocket = nullptr;
+    }
     QString path = qApp->applicationDirPath()+"/signADataProc.exe";
     QStringList args = {QString::number(qApp->applicationPid())};
     m_dataProcPro->start(path,args);
@@ -256,12 +292,18 @@ void DataFeatureWidget::startDataProc()
 ///
 void DataFeatureWidget::onLocalServeNewConnection()
 {
-    m_dataProcSocket = m_localServer->nextPendingConnection();
-    if(nullptr == m_dataProcSocket)
+    qDebug() << "onLocalServeNewConnection";
+    if(m_dataProcessSocket)
+    {
+        delete m_dataProcessSocket;
+        m_dataProcessSocket = nullptr;
+    }
+    m_dataProcessSocket = m_localServer->nextPendingConnection();
+    if(nullptr == m_dataProcessSocket)
     {
         return;
     }
-    connect(m_dataProcSocket,&QLocalSocket::readyRead,this,&DataFeatureWidget::onProcessDataReadyRead);
+    connect(m_dataProcessSocket,&QLocalSocket::readyRead,this,&DataFeatureWidget::onProcessDataReadyRead);
 }
 ///
 /// \brief 数据处理的线程终结
@@ -275,6 +317,8 @@ void DataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStat
         static int s_dataProcCrashCount = 0;
         ++s_dataProcCrashCount;
         saError("signADataProc has been crash,crash count:%d",s_dataProcCrashCount);
+        emit showMessageInfo(tr("signADataProc has been crash")
+                             ,SA::WarningMessage);
         startDataProc();
     }
     else if(QProcess::NormalExit == exitStatus)
@@ -291,13 +335,17 @@ void DataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStat
 ///
 void DataFeatureWidget::onProcessDataReadyRead()
 {
-    if(!m_dataProcSocket->isValid())
+    if(!m_dataProcessSocket->isValid())
         return;
-    QDataStream io(m_dataProcSocket);
+    if(!m_isReadedHeader)
+        m_recData += m_dataProcessSocket->readAll();
+    dealRecDatas();
+
+    #if 0
     SALocalServeBaseHeader header;
     header.read(io);
     emit showMessageInfo(tr("connect success:fullname%1,name:%2,key:%3,send pid:%4,type:%5")
-                         .arg(m_dataProcSocket->fullServerName()).arg(m_dataProcSocket->serverName())
+                         .arg(m_dataProcessSocket->fullServerName()).arg(m_dataProcessSocket->serverName())
                          .arg(header.getKey()).arg(header.getSendedPid()).arg(header.getType())
                          ,SA::NormalMessage);
     if(header.getType() == SALocalServeBaseHeader::ShakeHand)
@@ -305,4 +353,42 @@ void DataFeatureWidget::onProcessDataReadyRead()
         //握手协议
 
     }
+    #endif
+}
+
+///
+/// \brief 处理读取的数据
+///
+void DataFeatureWidget::dealRecDatas()
+{
+    if(!m_isReadedHeader)
+    {
+        //说明还没接收主包头，开始进行主包头数据解析
+        dealMainHeaderData();
+        return;
+    }
+
+}
+
+void DataFeatureWidget::dealMainHeaderData()
+{
+    size_t mainHeaderSize = sizeof(SALocalServeBaseHeader);
+    if(m_recData.size() < mainHeaderSize)
+    {
+        //说明包头未接收完，继续等下一个
+        return;
+    }
+    else if(m_recData.size() == mainHeaderSize)
+    {
+        //说明包头接收完
+        m_recData.clear();
+        SALocalServeBaseHeader mainHeader;
+        QDataStream io(m_recData);
+        io >> mainHeader;
+
+        m_isReadedHeader = true;
+        m_isStartRecData = true;
+        m_dataLen = mainHeader.getDataSize();//接收数据的大小
+    }
+
 }

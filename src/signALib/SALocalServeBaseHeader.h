@@ -13,17 +13,15 @@ class QString;
 ///
 /// \brief 用于local serve传递的类
 ///
-class SALIB_EXPORT SALocalServeBaseHeader
+struct SALIB_EXPORT SALocalServeBaseHeader
 {
 public:
     enum Type
     {
         ShakeHand = 1///< 握手协议
         ,VectorDoubleDataProc ///< 线性数组处理协议，后面接一个QVector<double>
-
     };
 
-    SALocalServeBaseHeader();
     //创建握手字符串
     uint getSendedPid() const;
     void setSendedPid(const uint &pid);
@@ -39,17 +37,21 @@ public:
     //直接二进制操作
     friend QDataStream& operator <<(QDataStream& io,const SALocalServeBaseHeader& d);
     friend QDataStream& operator >>(QDataStream& io,SALocalServeBaseHeader& d);
-    virtual void write(QDataStream& io) const;
-    virtual void read(QDataStream& io);
+    void write(QDataStream& io) const;
+    void read(QDataStream& io);
     //初始化xml，此时xml的节点位于<root>，最后要调用xml.writeEndElement();
     void initXmlStart(QXmlStreamWriter* xml) const;
     void writeXMLHeader(QXmlStreamWriter* xml) const;
+    //标记下一个包的尺寸
+    size_t getDataSize() const;
+    void setDataSize(size_t dataSize);
 protected:
     uint m_key;
     uint m_pid;
     int m_type;
+    size_t m_dataSize;///< 标记下一个包的尺寸
 };
-QDataStream& operator <<(QDataStream& io,const SALocalServeBaseHeader& d);
-QDataStream& operator >>(QDataStream& io,SALocalServeBaseHeader& d);
+SALIB_EXPORT QDataStream& operator <<(QDataStream& io,const SALocalServeBaseHeader& d);
+SALIB_EXPORT QDataStream& operator >>(QDataStream& io,SALocalServeBaseHeader& d);
 
 #endif // SALOCALSERVEXMLDATA_H

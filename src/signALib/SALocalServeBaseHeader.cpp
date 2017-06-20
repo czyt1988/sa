@@ -1,13 +1,7 @@
 #include "SALocalServeBaseHeader.h"
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-SALocalServeBaseHeader::SALocalServeBaseHeader():
-    m_key(0)
-  ,m_pid(0)
-  ,m_type(-1)
-{
 
-}
 
 uint SALocalServeBaseHeader::getSendedPid() const
 {
@@ -66,6 +60,16 @@ bool SALocalServeBaseHeader::fromXML(QXmlStreamReader* xml)
     }
 }
 
+void SALocalServeBaseHeader::write(QDataStream &io) const
+{
+    io << (*this);
+}
+
+void SALocalServeBaseHeader::read(QDataStream &io)
+{
+    io >> (*this);
+}
+
 QString SALocalServeBaseHeader::toXML() const
 {
     QString str;
@@ -75,15 +79,7 @@ QString SALocalServeBaseHeader::toXML() const
     xml.writeEndElement();
 }
 
-void SALocalServeBaseHeader::write(QDataStream &io) const
-{
-    io << *this;
-}
 
-void SALocalServeBaseHeader::read(QDataStream &io)
-{
-    io >> *this;
-}
 ///
 /// \brief 初始化xml，此时xml的节点位于<root>，最后要调用xml.writeEndElement();
 /// \param xml
@@ -106,17 +102,37 @@ void SALocalServeBaseHeader::writeXMLHeader(QXmlStreamWriter *xml) const
     xml->writeEndElement();
 }
 
+size_t SALocalServeBaseHeader::getDataSize() const
+{
+    return m_dataSize;
+}
+
+void SALocalServeBaseHeader::setDataSize(size_t dataSize)
+{
+    m_dataSize = dataSize;
+}
+
+
+
 
 //===========================================================
 
 QDataStream &operator <<(QDataStream &io, const SALocalServeBaseHeader &d)
 {
-    io<<d.getKey()<<d.getSendedPid()<<d.getType();
+    //io<<d.getKey()<<d.getSendedPid()<<d.getType()<<d.getDataSize();
+    io.writeRawData((const char*)(&d.m_key),sizeof(uint));
+    io.writeRawData((const char*)(&d.m_pid),sizeof(uint));
+    io.writeRawData((const char*)(&d.m_type),sizeof(int));
+    io.writeRawData((const char*)(&d.m_dataSize),sizeof(size_t));
     return io;
 }
 
 QDataStream &operator >>(QDataStream &io, SALocalServeBaseHeader &d)
 {
-    io >> d.m_key >> d.m_pid >> d.m_type;
+    //io >> d.m_key >> d.m_pid >> d.m_type >> d.m_dataSize;
+    io.readRawData((char*)(&d.m_key),sizeof(qintptr));
+    io.readRawData((char*)(&d.m_pid),sizeof(qintptr));
+    io.readRawData((char*)(&d.m_type),sizeof(int));
+    io.readRawData((char*)(&d.m_dataSize),sizeof(int));
     return io;
 }

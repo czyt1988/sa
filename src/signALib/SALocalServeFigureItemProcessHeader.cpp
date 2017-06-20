@@ -1,12 +1,5 @@
 #include "SALocalServeFigureItemProcessHeader.h"
 
-SALocalServeFigureItemProcessHeader::SALocalServeFigureItemProcessHeader()
-    :m_wndPtr(0)
-    ,m_itemPtr(0)
-    ,m_dataType(0)
-{
-
-}
 
 qintptr SALocalServeFigureItemProcessHeader::getWndPtr() const
 {
@@ -50,12 +43,16 @@ void SALocalServeFigureItemProcessHeader::read(QDataStream &io)
 
 QDataStream &operator <<(QDataStream &io, const SALocalServeFigureItemProcessHeader &d)
 {
-    io << d.m_wndPtr << d.m_itemPtr << d.m_dataType;
+    io.writeRawData((const char*)(&d.m_wndPtr),sizeof(qintptr));
+    io.writeRawData((const char*)(&d.m_itemPtr),sizeof(qintptr));
+    io.writeRawData((const char*)(&d.m_dataType),sizeof(int));
     return io;
 }
 
 QDataStream &operator >>(QDataStream &io, SALocalServeFigureItemProcessHeader &d)
 {
-    io >> d.m_wndPtr >> d.m_itemPtr >> d.m_dataType;
+    io.readRawData((char*)(&d.m_wndPtr),sizeof(qintptr));
+    io.readRawData((char*)(&d.m_itemPtr),sizeof(qintptr));
+    io.readRawData((char*)(&d.m_dataType),sizeof(int));
     return io;
 }

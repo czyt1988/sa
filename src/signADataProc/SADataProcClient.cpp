@@ -26,7 +26,7 @@ void SADataProcClient::shakeHand()
     data.setType(2);
     data.setSendedPid(QCoreApplication::applicationPid());
     QDataStream out(&m_socket);
-    data.write(out);
+    out << data;
     m_socket.waitForBytesWritten();
 }
 
@@ -38,7 +38,17 @@ void SADataProcClient::errorOccurred(QLocalSocket::LocalSocketError err)
 
 void SADataProcClient::onReadyRead()
 {
+    if(!m_socket.isValid())
+    {
+        return;
+    }
+    SALocalServeBaseHeader header;
+    QDataStream io(&m_socket);
+    io >> header;
 
+    QMessageBox::information(nullptr,"SADataProcClient",QString("key:%1,type:%2,pid:%3")
+                             .arg(header.getKey()).arg(header.getType()).arg(header.getSendedPid())
+                             );
 }
 
 uint SADataProcClient::getPid() const
