@@ -22,9 +22,6 @@ public:
         ,TypeVectorDoubleDataProc ///< 线性数组处理协议，后面接一个QVector<double>
     };
     SALocalServeBaseHeader();
-    //发送端进程的pid
-    uint getSendedPid() const;
-    void setSendedPid(const uint &pid);
     //设置标识
     uint getKey() const;
     void setKey(const uint &key);
@@ -50,7 +47,6 @@ public:
     void writeXMLHeader(QXmlStreamWriter* xml) const;
 protected:
     uint m_key;
-    uint m_pid;
     int m_type;
     size_t m_dataSize;///< 标记下一个包的尺寸
 };

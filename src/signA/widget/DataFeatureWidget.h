@@ -15,7 +15,7 @@ class SAFigureWindow;
 class DataFeatureTreeModel;
 //数据接收相关
 class SALocalServeReader;
-
+class SALocalServeWriter;
 #include "SALocalServeBaseHeader.h"
 namespace Ui {
 class DataFeatureWidget;
@@ -50,8 +50,7 @@ private:
     Q_SLOT void onLocalServeNewConnection();
     //数据处理进程异常停止
     Q_SLOT void onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus);
-    //接收到数据处理进程的内容
-    Q_SLOT void onProcessDataReadyRead();
+
     SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature
     void callCalcFigureWindowFeature(SAFigureWindow* figure);
@@ -66,6 +65,7 @@ private:
     QMap<QMdiSubWindow*,QAbstractItemModel*> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
 private://数据接收相关的类型
     SALocalServeReader* m_dataReader;
+    SALocalServeWriter* m_dataWriter;
 };
 
 #endif // DATAFEATUREWIDGET_H

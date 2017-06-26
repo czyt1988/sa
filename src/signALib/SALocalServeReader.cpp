@@ -1,7 +1,17 @@
 #include "SALocalServeReader.h"
 #include "SALocalServeFigureItemProcessHeader.h"
+#include <QLocalSocket>
+SALocalServeReader::SALocalServeReader(QLocalSocket* localSocket,QObject *parent):QObject(parent)
+  ,m_socket(nullptr)
+  ,m_isReadedMainHeader(false)
+  ,m_dataLength(0)
+{
+    resetFlags();
+    setSocket(localSocket);
+}
 
 SALocalServeReader::SALocalServeReader(QObject *parent):QObject(parent)
+  ,m_socket(nullptr)
   ,m_isReadedMainHeader(false)
   ,m_dataLength(0)
 {
@@ -121,9 +131,35 @@ void SALocalServeReader::resetFlags()
     m_isReadedMainHeader = false;
     m_dataLength = 0;
 }
-
-
-const SALocalServeBaseHeader& SALocalServeReader::getMainHeader() const
+///
+/// \brief SALocalServeReader::onReadyRead
+///
+void SALocalServeReader::onReadyRead()
 {
-    return m_mainHeader;
+    QByteArray arr =  m_socket->readAll();
+    receiveData(arr);
+}
+///
+/// \brief 获取套接字
+/// \return
+///
+QLocalSocket *SALocalServeReader::getSocket() const
+{
+    return m_socket;
+}
+///
+/// \brief 设置套接字
+/// \param socket
+///
+void SALocalServeReader::setSocket(QLocalSocket *socket)
+{
+    if(m_socket)
+    {
+        disconnect(m_socket,&QLocalSocket::readyRead,this,&SALocalServeReader::onReadyRead);
+    }
+    m_socket = socket;
+    if(m_socket)
+    {
+        connect(m_socket,&QLocalSocket::readyRead,this,&SALocalServeReader::onReadyRead);
+    }
 }

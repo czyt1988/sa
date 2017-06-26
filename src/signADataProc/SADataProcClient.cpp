@@ -5,30 +5,18 @@
 #include <QMessageBox>
 SADataProcClient::SADataProcClient(QObject *parent):QObject(parent)
   ,m_pid(0)
+  ,m_writer(nullptr)
 {
-    connect(&m_socket,&QIODevice::readyRead
-            ,this,&SADataProcClient::onReadyRead);
     m_socket.connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
+    m_writer = new SALocalServeWriter(&m_socket,this);
+    m_reader = new SALocalServeReader(&m_socket,this);
+    connect(m_reader,&SALocalServeReader::receivedVectorDoubleData
+            ,this,&SADataProcClient::onReceivedVectorDoubleData);
 }
 
 void SADataProcClient::shakeHand()
 {
-    if(!m_socket.isValid())
-    {
-        return;
-    }
-    if(!m_socket.isWritable())
-    {
-        return;
-    }
-    SALocalServeBaseHeader data;
-
-    data.setKey(1);
-    data.setType((int)SALocalServeBaseHeader::TypeShakeHand);
-    data.setSendedPid(QCoreApplication::applicationPid());
-    QDataStream out(&m_socket);
-    out << data;
-    m_socket.waitForBytesWritten();
+    m_writer->sendShakeHand();
 }
 
 void SADataProcClient::errorOccurred(QLocalSocket::LocalSocketError err)
@@ -37,19 +25,15 @@ void SADataProcClient::errorOccurred(QLocalSocket::LocalSocketError err)
 }
 
 
-void SADataProcClient::onReadyRead()
-{
-    if(!m_socket.isValid())
-    {
-        return;
-    }
-    SALocalServeBaseHeader header;
-    QDataStream io(&m_socket);
-    io >> header;
 
-    QMessageBox::information(nullptr,"SADataProcClient",QString("key:%1,type:%2,pid:%3")
-                             .arg(header.getKey()).arg(header.getType()).arg(header.getSendedPid())
-                             );
+///
+/// \brief 接收到发送过来的数据
+/// \param header
+/// \param ys
+///
+void SADataProcClient::onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader &header, QVector<double> &ys)
+{
+
 }
 
 uint SADataProcClient::getPid() const

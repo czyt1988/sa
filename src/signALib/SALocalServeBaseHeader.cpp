@@ -7,24 +7,7 @@ SALocalServeBaseHeader::SALocalServeBaseHeader()
 {
     memset(this,0,sizeof(SALocalServeBaseHeader));
 }
-///
-/// \brief 获取发送端进程的pid
-/// \return
-/// \see setSendedPid
-///
-uint SALocalServeBaseHeader::getSendedPid() const
-{
-    return m_pid;
-}
-///
-/// \brief 设置发送端进程的pid
-/// \param pid
-/// \see getSendedPid
-///
-void SALocalServeBaseHeader::setSendedPid(const uint &pid)
-{
-    m_pid = pid;
-}
+
 ///
 /// \brief 标识
 /// \return 标识
@@ -104,10 +87,6 @@ bool SALocalServeBaseHeader::fromXML(QXmlStreamReader* xml)
                 {
                     m_type = xml->text().toInt();
                 }
-                else if(xml->name() == SA_XML_LOCALSERVE_HEADER_PID)
-                {
-                    m_pid = xml->text().toInt();
-                }
             }
         }
     }
@@ -163,7 +142,6 @@ void SALocalServeBaseHeader::writeXMLHeader(QXmlStreamWriter *xml) const
     xml->writeStartElement(SA_XML_LOCALSERVE_HEADER);
     xml->writeTextElement(SA_XML_LOCALSERVE_HEADER_KEY,QString::number(m_key));
     xml->writeTextElement(SA_XML_LOCALSERVE_HEADER_TYPE,QString::number(m_type));
-    xml->writeTextElement(SA_XML_LOCALSERVE_HEADER_PID,QString::number(m_pid));
     xml->writeEndElement();
 }
 
@@ -177,7 +155,6 @@ QDataStream &operator <<(QDataStream &io, const SALocalServeBaseHeader &d)
 {
     //io<<d.getKey()<<d.getSendedPid()<<d.getType()<<d.getDataSize();
     io.writeRawData((const char*)(&d.m_key),sizeof(uint));
-    io.writeRawData((const char*)(&d.m_pid),sizeof(uint));
     io.writeRawData((const char*)(&d.m_type),sizeof(int));
     io.writeRawData((const char*)(&d.m_dataSize),sizeof(size_t));
     return io;
@@ -187,7 +164,6 @@ QDataStream &operator >>(QDataStream &io, SALocalServeBaseHeader &d)
 {
     //io >> d.m_key >> d.m_pid >> d.m_type >> d.m_dataSize;
     io.readRawData((char*)(&d.m_key),sizeof(qintptr));
-    io.readRawData((char*)(&d.m_pid),sizeof(qintptr));
     io.readRawData((char*)(&d.m_type),sizeof(int));
     io.readRawData((char*)(&d.m_dataSize),sizeof(int));
     return io;

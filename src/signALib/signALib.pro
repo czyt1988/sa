@@ -5,6 +5,7 @@
 #
 #-------------------------------------------------
 QT += core gui xml
+QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signALib
 TEMPLATE = lib
@@ -36,7 +37,8 @@ HEADERS += \
     SALocalServerDefine.h \
     SALocalServeBaseHeader.h \
     SALocalServeFigureItemProcessHeader.h \
-    SALocalServeReader.h
+    SALocalServeReader.h \
+    SALocalServeWriter.h
 
 
 SOURCES += \
@@ -59,7 +61,8 @@ SOURCES += \
     SAGUIGlobalConfig.cpp \
     SALocalServeBaseHeader.cpp \
     SALocalServeFigureItemProcessHeader.cpp \
-    SALocalServeReader.cpp
+    SALocalServeReader.cpp \
+    SALocalServeWriter.cpp
 
 
 include($$PWD/Private/Private.pri)

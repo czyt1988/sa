@@ -6,14 +6,21 @@
 #include "SALibGlobal.h"
 #include <QQueue>
 #include <QVector>
+class QLocalSocket;
 class SALIB_EXPORT SALocalServeReader : public QObject
 {
     Q_OBJECT
 public:
+    SALocalServeReader(QLocalSocket* localSocket,QObject* parent = nullptr);
     SALocalServeReader(QObject* parent = nullptr);
 public:
+    //获取套接字
+    QLocalSocket *getSocket() const;
+    //设置套接字
+    void setSocket(QLocalSocket *socket);
+protected:
+    //接收的数据写入
     Q_SLOT receiveData(const QByteArray& datas);
-    const SALocalServeBaseHeader& getMainHeader() const;
 signals:
     ///
     /// \brief 接收到握手协议
@@ -37,10 +44,12 @@ private:
     void getDataFromFifo(QByteArray& data,int dataLen);
     //重置标志位
     void resetFlags();
+private slots:
+    Q_SLOT void onReadyRead();
 private:
+    QLocalSocket* m_socket;
     QQueue<char> m_fifo;///< 数据接收队列
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
-    //QByteArray m_receiveData;///< 接收的数据
     bool m_isReadedMainHeader;///< 标记是否读取了包头
     size_t m_dataLength;///< 数据长度
 };

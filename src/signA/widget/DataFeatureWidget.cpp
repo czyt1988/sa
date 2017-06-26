@@ -19,6 +19,8 @@
 #include "SALocalServeFigureItemProcessHeader.h"
 #include "SALocalServerDefine.h"
 #include "SALocalServeReader.h"
+#include "SALocalServeWriter.h"
+
 #include "qwt_plot_curve.h"
 
 #define _DEBUG_OUTPUT
@@ -36,11 +38,10 @@ DataFeatureWidget::DataFeatureWidget(QWidget *parent) :
   ,m_lastActiveSubWindow(nullptr)
   ,m_dataProcessSocket(nullptr)
   ,m_dataProcPro(nullptr)
+  ,m_dataReader(nullptr)
+  ,m_dataWriter(nullptr)
 {
     ui->setupUi(this);
-    m_dataReader = new SALocalServeReader(this);
-    connect(m_dataReader,&SALocalServeReader::receivedShakeHand
-            ,this,&DataFeatureWidget::onReceivedShakeHand);
     initLocalServer();
 }
 
@@ -139,7 +140,6 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
     }
     SALocalServeBaseHeader header;
     header.setKey(1);
-    header.setSendedPid(qApp->applicationPid());
     header.setType(SALocalServeBaseHeader::TypeVectorDoubleDataProc);
     QList<SAChart2D*> charts = figure->get2DPlots();
     for(auto i=charts.begin();i!=charts.end();++i)
@@ -292,6 +292,11 @@ void DataFeatureWidget::initLocalServer()
     m_dataProcPro = new QProcess(this);
     connect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
             ,this,&DataFeatureWidget::onProcessDataProcFinish);
+    m_dataReader = new SALocalServeReader(this);
+    m_dataWriter = new SALocalServeWriter(this);
+    connect(m_dataReader,&SALocalServeReader::receivedShakeHand
+            ,this,&DataFeatureWidget::onReceivedShakeHand);
+
     startDataProc();
 }
 ///
@@ -324,7 +329,8 @@ void DataFeatureWidget::onLocalServeNewConnection()
         saPrint() << "can not exec m_localServer->nextPendingConnection();";
         return;
     }
-    connect(m_dataProcessSocket,&QLocalSocket::readyRead,this,&DataFeatureWidget::onProcessDataReadyRead);
+    m_dataReader->setSocket(m_dataProcessSocket);
+    m_dataWriter->setSocket(m_dataProcessSocket);
 }
 ///
 /// \brief 数据处理的线程终结
@@ -351,19 +357,6 @@ void DataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStat
         emit showMessageInfo(tr("restart signADataProc"),SA::WarningMessage);
     }
 }
-///
-/// \brief 接收到数据处理进程的内容
-///
-void DataFeatureWidget::onProcessDataReadyRead()
-{
-    saPrint();
-    if(!(m_dataProcessSocket->isValid()))
-    {
-        saPrint() << "dataProcessSocket in valid!" << m_dataProcessSocket->errorString();
-        return;
-    }
-    m_dataReader->receiveData(m_dataProcessSocket->readAll());
 
-}
 
 
