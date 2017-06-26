@@ -35,4 +35,6 @@ protected:
 };
 SALIB_EXPORT QDataStream& operator <<(QDataStream& io,const SALocalServeFigureItemProcessHeader& d);
 SALIB_EXPORT QDataStream& operator >>(QDataStream& io,SALocalServeFigureItemProcessHeader& d);
+
+Q_DECLARE_METATYPE(SALocalServeFigureItemProcessHeader)
 #endif // SALOCALSERVEFIGUREITEMPROCESSDATA_H

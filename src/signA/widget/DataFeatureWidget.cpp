@@ -15,9 +15,10 @@
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include "SALog.h"
-#include "SALocalServeBaseHeader.h"
+
 #include "SALocalServeFigureItemProcessHeader.h"
 #include "SALocalServerDefine.h"
+#include "SALocalServeReader.h"
 #include "qwt_plot_curve.h"
 
 #define _DEBUG_OUTPUT
@@ -26,23 +27,28 @@
 #include <QDebug>
 #endif
 
+
+//====================================================================
+
 DataFeatureWidget::DataFeatureWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DataFeatureWidget)
   ,m_lastActiveSubWindow(nullptr)
   ,m_dataProcessSocket(nullptr)
   ,m_dataProcPro(nullptr)
-  ,m_isReadedHeader(false)
-  ,m_isStartRecData(false)
-  ,m_dataLen(0)
 {
     ui->setupUi(this);
+    m_dataReader = new SALocalServeReader(this);
+    connect(m_dataReader,&SALocalServeReader::receivedShakeHand
+            ,this,&DataFeatureWidget::onReceivedShakeHand);
     initLocalServer();
 }
 
 DataFeatureWidget::~DataFeatureWidget()
 {
-    m_dataProcPro->close();
+    disconnect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
+            ,this,&DataFeatureWidget::onProcessDataProcFinish);
+    m_dataProcPro->kill();
     delete ui;
 }
 ///
@@ -82,14 +88,7 @@ void DataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
         SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
         if(figure)
         {
-#ifdef _DEBUG_OUTPUT
-            QElapsedTimer t;
-            t.start();
-#endif
             callCalcFigureWindowFeature(figure);
-#ifdef _DEBUG_OUTPUT
-            qDebug() << "callCalcFigureWindowFeature time cost:" << t.elapsed();
-#endif
         }
     }
 }
@@ -130,6 +129,10 @@ SAFigureWindow *DataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *su
 ///
 void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 {
+#ifdef _DEBUG_OUTPUT
+    QElapsedTimer t;
+    t.start();
+#endif
     if(nullptr == m_dataProcessSocket)
     {
         return;
@@ -137,7 +140,7 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
     SALocalServeBaseHeader header;
     header.setKey(1);
     header.setSendedPid(qApp->applicationPid());
-    header.setType(SALocalServeBaseHeader::VectorDoubleDataProc);
+    header.setType(SALocalServeBaseHeader::TypeVectorDoubleDataProc);
     QList<SAChart2D*> charts = figure->get2DPlots();
     for(auto i=charts.begin();i!=charts.end();++i)
     {
@@ -162,16 +165,32 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 
                 if(!m_dataProcessSocket->isValid())
                 {
+#ifdef _DEBUG_OUTPUT
+                    QElapsedTimer t2;
+                    t2.start();
+#endif
                     QDataStream io(m_dataProcessSocket);
                     header.write(io);
                     subHeader.write(io);
                     io << ys;
                     m_dataProcessSocket->waitForBytesWritten();
+#ifdef _DEBUG_OUTPUT
+                    qDebug() << "m_dataProcessSocket->waitForBytesWritten(); time cost:" << t2.elapsed();
+#endif
                 }
             }
         }
 
     }
+#ifdef _DEBUG_OUTPUT
+    qDebug() << "callCalcFigureWindowFeature time cost:" << t.elapsed();
+#endif
+}
+
+void DataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
+{
+    Q_UNUSED(mainHeader);
+    emit showMessageInfo(tr("data process connect sucess!"),SA::NormalMessage);
 }
 
 
@@ -271,6 +290,8 @@ void DataFeatureWidget::initLocalServer()
        showMessageInfo(tr("listern loacl server error"),SA::ErrorMessage);
     }
     m_dataProcPro = new QProcess(this);
+    connect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
+            ,this,&DataFeatureWidget::onProcessDataProcFinish);
     startDataProc();
 }
 ///
@@ -292,7 +313,6 @@ void DataFeatureWidget::startDataProc()
 ///
 void DataFeatureWidget::onLocalServeNewConnection()
 {
-    qDebug() << "onLocalServeNewConnection";
     if(m_dataProcessSocket)
     {
         delete m_dataProcessSocket;
@@ -301,6 +321,7 @@ void DataFeatureWidget::onLocalServeNewConnection()
     m_dataProcessSocket = m_localServer->nextPendingConnection();
     if(nullptr == m_dataProcessSocket)
     {
+        saPrint() << "can not exec m_localServer->nextPendingConnection();";
         return;
     }
     connect(m_dataProcessSocket,&QLocalSocket::readyRead,this,&DataFeatureWidget::onProcessDataReadyRead);
@@ -316,7 +337,7 @@ void DataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStat
     {
         static int s_dataProcCrashCount = 0;
         ++s_dataProcCrashCount;
-        saError("signADataProc has been crash,crash count:%d",s_dataProcCrashCount);
+        saError("signADataProc has been crash,crash count:%d,exit code:%d",s_dataProcCrashCount,exitCode);
         emit showMessageInfo(tr("signADataProc has been crash")
                              ,SA::WarningMessage);
         startDataProc();
@@ -335,60 +356,14 @@ void DataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStat
 ///
 void DataFeatureWidget::onProcessDataReadyRead()
 {
-    if(!m_dataProcessSocket->isValid())
-        return;
-    if(!m_isReadedHeader)
-        m_recData += m_dataProcessSocket->readAll();
-    dealRecDatas();
-
-    #if 0
-    SALocalServeBaseHeader header;
-    header.read(io);
-    emit showMessageInfo(tr("connect success:fullname%1,name:%2,key:%3,send pid:%4,type:%5")
-                         .arg(m_dataProcessSocket->fullServerName()).arg(m_dataProcessSocket->serverName())
-                         .arg(header.getKey()).arg(header.getSendedPid()).arg(header.getType())
-                         ,SA::NormalMessage);
-    if(header.getType() == SALocalServeBaseHeader::ShakeHand)
+    saPrint();
+    if(!(m_dataProcessSocket->isValid()))
     {
-        //握手协议
-
-    }
-    #endif
-}
-
-///
-/// \brief 处理读取的数据
-///
-void DataFeatureWidget::dealRecDatas()
-{
-    if(!m_isReadedHeader)
-    {
-        //说明还没接收主包头，开始进行主包头数据解析
-        dealMainHeaderData();
+        saPrint() << "dataProcessSocket in valid!" << m_dataProcessSocket->errorString();
         return;
     }
+    m_dataReader->receiveData(m_dataProcessSocket->readAll());
 
 }
 
-void DataFeatureWidget::dealMainHeaderData()
-{
-    size_t mainHeaderSize = sizeof(SALocalServeBaseHeader);
-    if(m_recData.size() < mainHeaderSize)
-    {
-        //说明包头未接收完，继续等下一个
-        return;
-    }
-    else if(m_recData.size() == mainHeaderSize)
-    {
-        //说明包头接收完
-        m_recData.clear();
-        SALocalServeBaseHeader mainHeader;
-        QDataStream io(m_recData);
-        io >> mainHeader;
 
-        m_isReadedHeader = true;
-        m_isStartRecData = true;
-        m_dataLen = mainHeader.getDataSize();//接收数据的大小
-    }
-
-}

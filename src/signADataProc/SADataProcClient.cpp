@@ -22,8 +22,9 @@ void SADataProcClient::shakeHand()
         return;
     }
     SALocalServeBaseHeader data;
-    data.setKey(13);
-    data.setType(2);
+
+    data.setKey(1);
+    data.setType((int)SALocalServeBaseHeader::TypeShakeHand);
     data.setSendedPid(QCoreApplication::applicationPid());
     QDataStream out(&m_socket);
     out << data;

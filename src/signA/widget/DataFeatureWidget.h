@@ -6,12 +6,17 @@
 #include <QMap>
 #include <QBuffer>
 #include "SAGlobals.h"
+#include <memory>
 class QMdiSubWindow;
 class QLocalServer;
 class QLocalSocket;
 class QAbstractItemModel;
 class SAFigureWindow;
 class DataFeatureTreeModel;
+//数据接收相关
+class SALocalServeReader;
+
+#include "SALocalServeBaseHeader.h"
 namespace Ui {
 class DataFeatureWidget;
 }
@@ -50,23 +55,17 @@ private:
     SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature
     void callCalcFigureWindowFeature(SAFigureWindow* figure);
-    //处理读取的数据
-    void dealRecDatas();
-    //处理读取的数据
-    void dealMainHeaderData();
     //接收主包头完毕
-    void receivedMainHeader();
+    Q_SLOT void onReceivedShakeHand(const SALocalServeBaseHeader& mainHeader);
 private:
     Ui::DataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口
-    QByteArray m_recData;///< 接收的数据
-    bool m_isReadedHeader;///< 标记是否读取了包头
-    bool m_isStartRecData;///< 接收数据标记
-    size_t m_dataLen;///< 数据长度
     QScopedPointer<QLocalServer> m_localServer;///< 本地服务器
     QProcess* m_dataProcPro;///< 数据处理进程
     QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
     QMap<QMdiSubWindow*,QAbstractItemModel*> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
+private://数据接收相关的类型
+    SALocalServeReader* m_dataReader;
 };
 
 #endif // DATAFEATUREWIDGET_H

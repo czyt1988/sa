@@ -35,7 +35,8 @@ HEADERS += \
     SAGUIGlobalConfig.h \
     SALocalServerDefine.h \
     SALocalServeBaseHeader.h \
-    SALocalServeFigureItemProcessHeader.h
+    SALocalServeFigureItemProcessHeader.h \
+    SALocalServeReader.h
 
 
 SOURCES += \
@@ -57,7 +58,8 @@ SOURCES += \
     SAFigureGlobalConfig.cpp \
     SAGUIGlobalConfig.cpp \
     SALocalServeBaseHeader.cpp \
-    SALocalServeFigureItemProcessHeader.cpp
+    SALocalServeFigureItemProcessHeader.cpp \
+    SALocalServeReader.cpp
 
 
 include($$PWD/Private/Private.pri)
