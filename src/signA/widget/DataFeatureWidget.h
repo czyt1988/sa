@@ -17,6 +17,7 @@ class DataFeatureTreeModel;
 class SALocalServeReader;
 class SALocalServeWriter;
 #include "SALocalServeBaseHeader.h"
+#include "SALocalServeFigureItemProcessHeader.h"
 namespace Ui {
 class DataFeatureWidget;
 }
@@ -36,11 +37,13 @@ public slots:
 signals:
     //显示消息
     void showMessageInfo(const QString& info,SA::MeaasgeType messageType);
+
 private slots:
     void on_treeView_clicked(const QModelIndex &index);
 
     void on_toolButton_clearDataFeature_clicked();
 
+    void onShowErrorMessage(const QString& info);
 private:
     //初始化本地服务
     void initLocalServer();
@@ -56,6 +59,10 @@ private:
     void callCalcFigureWindowFeature(SAFigureWindow* figure);
     //接收主包头完毕
     Q_SLOT void onReceivedShakeHand(const SALocalServeBaseHeader& mainHeader);
+    //接收到xml字符
+    Q_SLOT void onReceivedString(const QString& xmlString);
+    //接收到xml字符
+    Q_SLOT void onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
 private:
     Ui::DataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口

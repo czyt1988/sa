@@ -2,8 +2,7 @@
 #define SALOCALSERVEWRITER_H
 
 #include <QObject>
-#include "SALocalServeBaseHeader.h"
-#include "SALocalServeFigureItemProcessHeader.h"
+#include <QPointF>
 #include "SALibGlobal.h"
 #include <QVector>
 class QLocalSocket;
@@ -16,10 +15,15 @@ public:
 
     QLocalSocket *getSocket() const;
     void setSocket(QLocalSocket *socket);
-
+    //判断是否具有可写条件
+    bool isEnableToWrite() const;
 public slots:
     //发送握手协议
     Q_SLOT void sendShakeHand();
+    //发送数组
+    Q_SLOT void sendDoubleVectorData(qintptr wndPtr,qintptr itemPtr,const QVector<QPointF>& datas);
+    //
+    Q_SLOT void sendString(const QString str);
 private:
     QLocalSocket* m_socket;
 };

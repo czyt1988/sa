@@ -1,7 +1,7 @@
 #include "SALocalServeBaseHeader.h"
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-
+#include "SACRC.h"
 
 SALocalServeBaseHeader::SALocalServeBaseHeader()
 {
@@ -15,7 +15,7 @@ SALocalServeBaseHeader::SALocalServeBaseHeader()
 ///
 uint SALocalServeBaseHeader::getKey() const
 {
-    return m_key;
+    return m_d.key;
 }
 ///
 /// \brief 设置标识
@@ -24,7 +24,7 @@ uint SALocalServeBaseHeader::getKey() const
 ///
 void SALocalServeBaseHeader::setKey(const uint &key)
 {
-    m_key = key;
+    m_d.key = key;
 }
 ///
 /// \brief 包类型，见SALocalServeBaseHeader::Type
@@ -33,7 +33,7 @@ void SALocalServeBaseHeader::setKey(const uint &key)
 ///
 int SALocalServeBaseHeader::getType() const
 {
-    return m_type;
+    return m_d.type;
 }
 ///
 /// \brief 设置包类型，见SALocalServeBaseHeader::Type
@@ -42,7 +42,7 @@ int SALocalServeBaseHeader::getType() const
 ///
 void SALocalServeBaseHeader::setType(int type)
 {
-    m_type = type;
+    m_d.type = type;
 }
 
 ///
@@ -52,7 +52,7 @@ void SALocalServeBaseHeader::setType(int type)
 ///
 size_t SALocalServeBaseHeader::getDataSize() const
 {
-    return m_dataSize;
+    return m_d.dataSize;
 }
 ///
 /// \brief 设置数据区的大小
@@ -61,7 +61,7 @@ size_t SALocalServeBaseHeader::getDataSize() const
 ///
 void SALocalServeBaseHeader::setDataSize(size_t dataSize)
 {
-    m_dataSize = dataSize;
+    m_d.dataSize = dataSize;
 }
 ///
 /// \brief 从xml中生成包数据
@@ -81,11 +81,11 @@ bool SALocalServeBaseHeader::fromXML(QXmlStreamReader* xml)
                 xml->readNext();
                 if(xml->name() == SA_XML_LOCALSERVE_HEADER_KEY)
                 {
-                    m_key = xml->text().toUInt();
+                    m_d.key = xml->text().toUInt();
                 }
                 else if(xml->name() == SA_XML_LOCALSERVE_HEADER_TYPE)
                 {
-                    m_type = xml->text().toInt();
+                    m_d.type = xml->text().toInt();
                 }
             }
         }
@@ -140,9 +140,33 @@ void SALocalServeBaseHeader::initXmlStart(QXmlStreamWriter *xml) const
 void SALocalServeBaseHeader::writeXMLHeader(QXmlStreamWriter *xml) const
 {
     xml->writeStartElement(SA_XML_LOCALSERVE_HEADER);
-    xml->writeTextElement(SA_XML_LOCALSERVE_HEADER_KEY,QString::number(m_key));
-    xml->writeTextElement(SA_XML_LOCALSERVE_HEADER_TYPE,QString::number(m_type));
+    xml->writeTextElement(SA_XML_LOCALSERVE_HEADER_KEY,QString::number(m_d.key));
+    xml->writeTextElement(SA_XML_LOCALSERVE_HEADER_TYPE,QString::number(m_d.type));
     xml->writeEndElement();
+}
+///
+/// \brief 计算内部数据的crc16值
+/// \return
+///
+unsigned short SALocalServeBaseHeader::calcCRC16() const
+{
+    return SACRC::crc16((const unsigned char*)&m_d,sizeof(SALocalServeBaseHeader::PrivateData));
+}
+
+size_t SALocalServeBaseHeader::sendSize()
+{
+    return sizeof(uint)+sizeof(int)+sizeof(size_t)+sizeof(unsigned short);
+}
+
+bool SALocalServeBaseHeader::isValid() const
+{
+    return m_isValid;
+}
+
+void SALocalServeBaseHeader::refreshCheck()
+{
+    m_isValid = true;
+    m_crc16 = calcCRC16();
 }
 
 
@@ -153,18 +177,20 @@ void SALocalServeBaseHeader::writeXMLHeader(QXmlStreamWriter *xml) const
 
 QDataStream &operator <<(QDataStream &io, const SALocalServeBaseHeader &d)
 {
-    //io<<d.getKey()<<d.getSendedPid()<<d.getType()<<d.getDataSize();
-    io.writeRawData((const char*)(&d.m_key),sizeof(uint));
-    io.writeRawData((const char*)(&d.m_type),sizeof(int));
-    io.writeRawData((const char*)(&d.m_dataSize),sizeof(size_t));
+    io.writeRawData((const char*)(&(d.m_d.key)),sizeof(uint));
+    io.writeRawData((const char*)(&(d.m_d.type)),sizeof(int));
+    io.writeRawData((const char*)(&(d.m_d.dataSize)),sizeof(size_t));
+    io.writeRawData((const char*)(&(d.m_crc16)),sizeof(unsigned short));
     return io;
 }
 
 QDataStream &operator >>(QDataStream &io, SALocalServeBaseHeader &d)
 {
-    //io >> d.m_key >> d.m_pid >> d.m_type >> d.m_dataSize;
-    io.readRawData((char*)(&d.m_key),sizeof(qintptr));
-    io.readRawData((char*)(&d.m_type),sizeof(int));
-    io.readRawData((char*)(&d.m_dataSize),sizeof(int));
+    io.readRawData((char*)(&(d.m_d.key)),sizeof(uint));
+    io.readRawData((char*)(&(d.m_d.type)),sizeof(int));
+    io.readRawData((char*)(&(d.m_d.dataSize)),sizeof(size_t));
+    io.readRawData((char*)(&(d.m_crc16)),sizeof(unsigned short));
+    unsigned short crcTmp = d.calcCRC16();
+    d.m_isValid = (crcTmp == d.m_crc16);
     return io;
 }

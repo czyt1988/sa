@@ -38,7 +38,8 @@ HEADERS += \
     SALocalServeBaseHeader.h \
     SALocalServeFigureItemProcessHeader.h \
     SALocalServeReader.h \
-    SALocalServeWriter.h
+    SALocalServeWriter.h \
+    SACRC.h
 
 
 SOURCES += \
@@ -62,7 +63,8 @@ SOURCES += \
     SALocalServeBaseHeader.cpp \
     SALocalServeFigureItemProcessHeader.cpp \
     SALocalServeReader.cpp \
-    SALocalServeWriter.cpp
+    SALocalServeWriter.cpp \
+    SACRC.cpp
 
 
 include($$PWD/Private/Private.pri)

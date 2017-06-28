@@ -6,6 +6,7 @@
 #include "SALibGlobal.h"
 #include <QQueue>
 #include <QVector>
+#include <QPointF>
 class QLocalSocket;
 class SALIB_EXPORT SALocalServeReader : public QObject
 {
@@ -23,6 +24,11 @@ protected:
     Q_SLOT receiveData(const QByteArray& datas);
 signals:
     ///
+    /// \brief 有错误发生
+    /// \param info 错误描述
+    ///
+    void errorOccure(const QString& info);
+    ///
     /// \brief 接收到握手协议
     /// \param 协议文件头
     ///
@@ -32,7 +38,12 @@ signals:
     /// \param header 文件头
     /// \param ys 数据
     ///
-    void receivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<double>& ys);
+    void receivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
+    ///
+    /// \brief 接收到xml字符
+    /// \param 字符
+    ///
+    void receivedString(const QString& info);
 private:
     //处理接收到的数据
     void dealRecDatas();
@@ -40,18 +51,22 @@ private:
     void dealMainHeaderData();
     //处理线性数组的数据
     void dealVectorDoubleDataProcData();
+    //处理线性数组的数据
+    void dealString();
     //从FIFO中取数据，FIFO取出的数据会删除
-    void getDataFromFifo(QByteArray& data,int dataLen);
+    void getDataFromBuffer(QByteArray& data,int dataLen);
     //重置标志位
     void resetFlags();
 private slots:
     Q_SLOT void onReadyRead();
 private:
     QLocalSocket* m_socket;
-    QQueue<char> m_fifo;///< 数据接收队列
+    QByteArray m_buffer;///< 接收数据的缓冲，之前用QQueue<char>，发现性能表现太差，尤其是dequeue函数的性能太差
+    int m_readedDataSize;///< 记录已经读取到的数据长度
+    int m_readPos;///< 记录已经读取的位置
+    //QQueue<char> m_fifo;///< 数据接收队列
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
     bool m_isReadedMainHeader;///< 标记是否读取了包头
-    size_t m_dataLength;///< 数据长度
 };
 Q_DECLARE_METATYPE(QVector<double>)
 #endif // SALOCALSERVEREADER_H

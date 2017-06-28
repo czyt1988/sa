@@ -27,6 +27,7 @@
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
 #include <QDebug>
+QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
 #endif
 
 
@@ -138,9 +139,6 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
     {
         return;
     }
-    SALocalServeBaseHeader header;
-    header.setKey(1);
-    header.setType(SALocalServeBaseHeader::TypeVectorDoubleDataProc);
     QList<SAChart2D*> charts = figure->get2DPlots();
     for(auto i=charts.begin();i!=charts.end();++i)
     {
@@ -149,33 +147,24 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
         {
             if(QwtPlotItem::Rtti_PlotCurve == (*j)->rtti())
             {
-                SALocalServeFigureItemProcessHeader subHeader;
-                subHeader.setWndPtr((quintptr)m_lastActiveSubWindow);
-                subHeader.setItem((quintptr)(*j));
-                subHeader.setDataType(SALocalServeFigureItemProcessHeader::CurveData);
-
                 QwtPlotCurve* cur = static_cast<QwtPlotCurve*>(*j);
                 const size_t size = cur->dataSize();
-                QVector<QPointF> ys;
+                QVector<QPointF> datas;
+                datas.reserve(cur->data()->size());
                 for(size_t c = 0;c<size;++c)
                 {
-                    ys.append(cur->sample(c));
+                    datas.append(cur->sample(c));
                 }
-
-
-                if(!m_dataProcessSocket->isValid())
+                if(m_dataWriter)
                 {
 #ifdef _DEBUG_OUTPUT
                     QElapsedTimer t2;
                     t2.start();
+                    s_vector_send_time_elaspade.start();
 #endif
-                    QDataStream io(m_dataProcessSocket);
-                    header.write(io);
-                    subHeader.write(io);
-                    io << ys;
-                    m_dataProcessSocket->waitForBytesWritten();
+                    m_dataWriter->sendDoubleVectorData((qintptr)figure,(qintptr)cur,datas);
 #ifdef _DEBUG_OUTPUT
-                    qDebug() << "m_dataProcessSocket->waitForBytesWritten(); time cost:" << t2.elapsed();
+                    qDebug() << "sendDoubleVectorData time cost:" << t2.elapsed();
 #endif
                 }
             }
@@ -190,7 +179,32 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 void DataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
 {
     Q_UNUSED(mainHeader);
+#ifdef _DEBUG_OUTPUT
+    if(m_dataWriter)
+    {
+        qDebug() << "start 1000000 points test";
+        s_vector_send_time_elaspade.restart();
+        m_dataWriter->sendString("test");//发送一个测试
+    }
+#endif
     emit showMessageInfo(tr("data process connect sucess!"),SA::NormalMessage);
+}
+
+void DataFeatureWidget::onReceivedString(const QString &xmlString)
+{
+#ifdef _DEBUG_OUTPUT
+    qDebug() << "receive data cost:"<<s_vector_send_time_elaspade.elapsed()<<"receive str:"<<xmlString;
+#endif
+}
+
+void DataFeatureWidget::onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
+{
+#ifdef _DEBUG_OUTPUT
+    qDebug() << "test time cost: " << s_vector_send_time_elaspade.elapsed()
+             << "\n ys.size:" <<ys.size()
+                ;
+
+#endif
 }
 
 
@@ -277,6 +291,11 @@ void DataFeatureWidget::on_toolButton_clearDataFeature_clicked()
     });
 
 }
+
+void DataFeatureWidget::onShowErrorMessage(const QString &info)
+{
+    emit showMessageInfo(info,SA::ErrorMessage);
+}
 ///
 /// \brief 初始化本地服务器
 ///
@@ -296,7 +315,12 @@ void DataFeatureWidget::initLocalServer()
     m_dataWriter = new SALocalServeWriter(this);
     connect(m_dataReader,&SALocalServeReader::receivedShakeHand
             ,this,&DataFeatureWidget::onReceivedShakeHand);
-
+    connect(m_dataReader,&SALocalServeReader::receivedString
+            ,this,&DataFeatureWidget::onReceivedString);
+    connect(m_dataReader,&SALocalServeReader::receivedVectorDoubleData
+            ,this,&DataFeatureWidget::onReceivedVectorDoubleData);
+    connect(m_dataReader,&SALocalServeReader::errorOccure
+            ,this,&DataFeatureWidget::onShowErrorMessage);
     startDataProc();
 }
 ///
@@ -346,6 +370,7 @@ void DataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStat
         saError("signADataProc has been crash,crash count:%d,exit code:%d",s_dataProcCrashCount,exitCode);
         emit showMessageInfo(tr("signADataProc has been crash")
                              ,SA::WarningMessage);
+        qDebug() << "s_dataProcCrashCount:"<<s_dataProcCrashCount;
         startDataProc();
     }
     else if(QProcess::NormalExit == exitStatus)

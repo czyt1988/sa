@@ -16,8 +16,12 @@ public:
 
 private:
     Q_SLOT void errorOccurred(QLocalSocket::LocalSocketError err);
+
 private slots:
-    Q_SLOT void onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<double>& ys);
+
+    Q_SLOT void onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& datas);
+
+    Q_SLOT void onReceivedString(const QString& str);
 private:
     QLocalSocket m_socket;
     uint m_pid;
