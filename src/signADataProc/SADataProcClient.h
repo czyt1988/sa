@@ -19,7 +19,7 @@ private:
 
 private slots:
 
-    Q_SLOT void onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& datas);
+    Q_SLOT void onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& datas);
 
     Q_SLOT void onReceivedString(const QString& str);
 private:

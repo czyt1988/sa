@@ -422,8 +422,8 @@ void MainWindow::initUI()
 
     //
     connect(ui->mdiArea,&QMdiArea::subWindowActivated
-            ,ui->dataFeatureWidget,&DataFeatureWidget::mdiSubWindowActived);
-    connect(ui->dataFeatureWidget,&DataFeatureWidget::showMessageInfo
+            ,ui->dataFeatureWidget,&SADataFeatureWidget::mdiSubWindowActived);
+    connect(ui->dataFeatureWidget,&SADataFeatureWidget::showMessageInfo
             ,this,&MainWindow::showMessageInfo);
     //窗口关闭的消息在 on_subWindow_close里
 

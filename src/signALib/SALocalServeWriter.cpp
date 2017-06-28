@@ -86,7 +86,7 @@ void SALocalServeWriter::sendDoubleVectorData(qintptr wndPtr, qintptr itemPtr, c
 
     SALocalServeBaseHeader mainHeader;
     mainHeader.setKey(1);
-    mainHeader.setType((int)SALocalServeBaseHeader::TypeVectorDoubleDataProc);
+    mainHeader.setType((int)SALocalServeBaseHeader::TypeVectorPointFData);
     mainHeader.setDataSize(dataTotalSize);
     mainHeader.refreshCheck();
 

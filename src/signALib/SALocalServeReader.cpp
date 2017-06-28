@@ -2,7 +2,8 @@
 #include "SALocalServeFigureItemProcessHeader.h"
 #include <QLocalSocket>
 #include <QTextCodec>
-#define _DEBUG_PRINT
+
+//#define _DEBUG_PRINT
 #ifdef _DEBUG_PRINT
 #include <QElapsedTimer>
 #include <QDebug>
@@ -72,7 +73,7 @@ void SALocalServeReader::dealRecDatas()
         //文件头接收完毕，开始接收数据
         switch(m_mainHeader.getType())
         {
-        case SALocalServeBaseHeader::TypeVectorDoubleDataProc:
+        case SALocalServeBaseHeader::TypeVectorPointFData:
             dealVectorDoubleDataProcData();
             break;
         case SALocalServeBaseHeader::TypeString:
@@ -248,7 +249,7 @@ void SALocalServeReader::dealVectorDoubleDataProcData()
 
         //数据接收完，重置标记位
         resetFlags();
-        emit receivedVectorDoubleData(header,points);
+        emit receivedVectorPointFData(header,points);
     }
 }
 

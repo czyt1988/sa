@@ -1,5 +1,5 @@
-#ifndef DATAFEATUREWIDGET_H
-#define DATAFEATUREWIDGET_H
+#ifndef SADATAFEATUREWIDGET_H
+#define SADATAFEATUREWIDGET_H
 
 #include <QWidget>
 #include <QProcess>
@@ -19,16 +19,16 @@ class SALocalServeWriter;
 #include "SALocalServeBaseHeader.h"
 #include "SALocalServeFigureItemProcessHeader.h"
 namespace Ui {
-class DataFeatureWidget;
+class SADataFeatureWidget;
 }
 
-class DataFeatureWidget : public QWidget
+class SADataFeatureWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DataFeatureWidget(QWidget *parent = 0);
-    ~DataFeatureWidget();
+    explicit SADataFeatureWidget(QWidget *parent = 0);
+    ~SADataFeatureWidget();
 public slots:
     //子窗口激活槽
     void mdiSubWindowActived(QMdiSubWindow *arg1);
@@ -64,7 +64,7 @@ private:
     //接收到xml字符
     Q_SLOT void onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
 private:
-    Ui::DataFeatureWidget *ui;
+    Ui::SADataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口
     QScopedPointer<QLocalServer> m_localServer;///< 本地服务器
     QProcess* m_dataProcPro;///< 数据处理进程

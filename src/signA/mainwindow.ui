@@ -39,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>1219</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -290,7 +290,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="DataFeatureWidget" name="dataFeatureWidget" native="true"/>
+      <widget class="SADataFeatureWidget" name="dataFeatureWidget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -1131,15 +1131,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>DataFeatureWidget</class>
-   <extends>QWidget</extends>
-   <header>DataFeatureWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SAMessageWidget</class>
    <extends>QWidget</extends>
    <header location="global">SAMessageWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SADataFeatureWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">SADataFeatureWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -20,8 +20,8 @@ SADataProcClient::SADataProcClient(QObject *parent):QObject(parent)
     m_reader = new SALocalServeReader(&m_socket,this);
     connect(&m_socket,static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error)
             ,this,&SADataProcClient::errorOccurred);
-    connect(m_reader,&SALocalServeReader::receivedVectorDoubleData
-            ,this,&SADataProcClient::onReceivedVectorDoubleData);
+    connect(m_reader,&SALocalServeReader::receivedVectorPointFData
+            ,this,&SADataProcClient::onReceivedVectorPointFData);
     connect(m_reader,&SALocalServeReader::receivedString
             ,this,&SADataProcClient::onReceivedString);
 }
@@ -50,7 +50,7 @@ void SADataProcClient::errorOccurred(QLocalSocket::LocalSocketError err)
 /// \param header
 /// \param ys
 ///
-void SADataProcClient::onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &datas)
+void SADataProcClient::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &datas)
 {
     if(nullptr == m_writer)
     {

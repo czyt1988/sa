@@ -3,20 +3,20 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
     $$PWD/ValueViewerTabPage.h \
-    $$PWD/DataFeatureWidget.h \
     widget/SAWidget.h \
-    $$PWD/SAMessageWidget.h
+    $$PWD/SAMessageWidget.h \
+    $$PWD/SADataFeatureWidget.h
 
 SOURCES += \
     $$PWD/ValueViewerTabPage.cpp \
-    $$PWD/DataFeatureWidget.cpp \
     widget/SAWidget.cpp \
-    $$PWD/SAMessageWidget.cpp
+    $$PWD/SAMessageWidget.cpp \
+    $$PWD/SADataFeatureWidget.cpp
 
 FORMS += \
     $$PWD/ValueViewerTabPage.ui \
-    $$PWD/DataFeatureWidget.ui \
-    $$PWD/SAMessageWidget.ui
+    $$PWD/SAMessageWidget.ui \
+    $$PWD/SADataFeatureWidget.ui
 
 
 

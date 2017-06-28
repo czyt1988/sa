@@ -20,7 +20,7 @@ public:
     {
         TypeShakeHand = 1///< 握手协议
         ,TypeString ///< 字符串
-        ,TypeVectorDoubleDataProc ///< 线性数组处理协议，后面接一个QVector<double>
+        ,TypeVectorPointFData ///< 线性数组处理协议，后面接一个QVector<QPointF>
     };
     SALocalServeBaseHeader();
     //设置标识

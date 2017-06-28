@@ -43,7 +43,7 @@ signals:
     /// \param header 文件头
     /// \param ys 数据
     ///
-    void receivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
+    void receivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
     ///
     /// \brief 接收到xml字符
     /// \param 字符

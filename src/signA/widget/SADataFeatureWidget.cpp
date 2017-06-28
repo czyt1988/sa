@@ -1,5 +1,5 @@
-#include "DataFeatureWidget.h"
-#include "ui_DataFeatureWidget.h"
+#include "SADataFeatureWidget.h"
+#include "ui_SADataFeatureWidget.h"
 #include <QMainWindow>
 #include <QMdiSubWindow>
 
@@ -33,9 +33,9 @@ QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
 
 //====================================================================
 
-DataFeatureWidget::DataFeatureWidget(QWidget *parent) :
+SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::DataFeatureWidget)
+    ui(new Ui::SADataFeatureWidget)
   ,m_lastActiveSubWindow(nullptr)
   ,m_dataProcessSocket(nullptr)
   ,m_dataProcPro(nullptr)
@@ -46,10 +46,10 @@ DataFeatureWidget::DataFeatureWidget(QWidget *parent) :
     initLocalServer();
 }
 
-DataFeatureWidget::~DataFeatureWidget()
+SADataFeatureWidget::~SADataFeatureWidget()
 {
     disconnect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
-            ,this,&DataFeatureWidget::onProcessDataProcFinish);
+            ,this,&SADataFeatureWidget::onProcessDataProcFinish);
     m_dataProcPro->kill();
     delete ui;
 }
@@ -57,7 +57,7 @@ DataFeatureWidget::~DataFeatureWidget()
 /// \brief 子窗口激活槽
 /// \param arg1
 ///
-void DataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
+void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
 {
 #if 0
     if(!arg1)
@@ -98,7 +98,7 @@ void DataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
 /// \brief 子窗口关闭槽
 /// \param arg1
 ///
-void DataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
+void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
 {
 
     m_subWindowToDataInfo.remove(arg1);
@@ -121,7 +121,7 @@ void DataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
 /// \param sub
 /// \return
 ///
-SAFigureWindow *DataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *sub)
+SAFigureWindow *SADataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *sub)
 {
     return qobject_cast<SAFigureWindow*>(sub->widget());
 }
@@ -129,7 +129,7 @@ SAFigureWindow *DataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *su
 /// \brief 计算绘图窗口的dataFeature
 /// \param figure 绘图窗口指针，不允许null
 ///
-void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
+void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 {
 #ifdef _DEBUG_OUTPUT
     QElapsedTimer t;
@@ -176,7 +176,7 @@ void DataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 #endif
 }
 
-void DataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
+void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
 {
     Q_UNUSED(mainHeader);
 #ifdef _DEBUG_OUTPUT
@@ -190,14 +190,14 @@ void DataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHe
     emit showMessageInfo(tr("data process connect sucess!"),SA::NormalMessage);
 }
 
-void DataFeatureWidget::onReceivedString(const QString &xmlString)
+void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 {
 #ifdef _DEBUG_OUTPUT
     qDebug() << "receive data cost:"<<s_vector_send_time_elaspade.elapsed()<<"receive str:"<<xmlString;
 #endif
 }
 
-void DataFeatureWidget::onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
+void SADataFeatureWidget::onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
 {
 #ifdef _DEBUG_OUTPUT
     qDebug() << "test time cost: " << s_vector_send_time_elaspade.elapsed()
@@ -213,7 +213,7 @@ void DataFeatureWidget::onReceivedVectorDoubleData(const SALocalServeFigureItemP
 /// \brief 数据特性树点击
 /// \param index
 ///
-void DataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
+void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
 {
     if(!index.isValid())
         return;
@@ -278,7 +278,7 @@ void DataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
 ///
 /// \brief 清除标记按钮
 ///
-void DataFeatureWidget::on_toolButton_clearDataFeature_clicked()
+void SADataFeatureWidget::on_toolButton_clearDataFeature_clicked()
 {
     if(nullptr == m_lastActiveSubWindow)
         return;
@@ -292,41 +292,41 @@ void DataFeatureWidget::on_toolButton_clearDataFeature_clicked()
 
 }
 
-void DataFeatureWidget::onShowErrorMessage(const QString &info)
+void SADataFeatureWidget::onShowErrorMessage(const QString &info)
 {
     emit showMessageInfo(info,SA::ErrorMessage);
 }
 ///
 /// \brief 初始化本地服务器
 ///
-void DataFeatureWidget::initLocalServer()
+void SADataFeatureWidget::initLocalServer()
 {
     m_localServer.reset(new QLocalServer);
     connect(m_localServer.data(),&QLocalServer::newConnection
-            ,this,&DataFeatureWidget::onLocalServeNewConnection);
+            ,this,&SADataFeatureWidget::onLocalServeNewConnection);
     if(!m_localServer->listen(SA_LOCAL_SERVER_DATA_PROC_NAME))
     {
        showMessageInfo(tr("listern loacl server error"),SA::ErrorMessage);
     }
     m_dataProcPro = new QProcess(this);
     connect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
-            ,this,&DataFeatureWidget::onProcessDataProcFinish);
+            ,this,&SADataFeatureWidget::onProcessDataProcFinish);
     m_dataReader = new SALocalServeReader(this);
     m_dataWriter = new SALocalServeWriter(this);
     connect(m_dataReader,&SALocalServeReader::receivedShakeHand
-            ,this,&DataFeatureWidget::onReceivedShakeHand);
+            ,this,&SADataFeatureWidget::onReceivedShakeHand);
     connect(m_dataReader,&SALocalServeReader::receivedString
-            ,this,&DataFeatureWidget::onReceivedString);
-    connect(m_dataReader,&SALocalServeReader::receivedVectorDoubleData
-            ,this,&DataFeatureWidget::onReceivedVectorDoubleData);
+            ,this,&SADataFeatureWidget::onReceivedString);
+    connect(m_dataReader,&SALocalServeReader::receivedVectorPointFData
+            ,this,&SADataFeatureWidget::onReceivedVectorDoubleData);
     connect(m_dataReader,&SALocalServeReader::errorOccure
-            ,this,&DataFeatureWidget::onShowErrorMessage);
+            ,this,&SADataFeatureWidget::onShowErrorMessage);
     startDataProc();
 }
 ///
 /// \brief 启动数据处理进程
 ///
-void DataFeatureWidget::startDataProc()
+void SADataFeatureWidget::startDataProc()
 {
     if(m_dataProcessSocket)
     {
@@ -340,7 +340,7 @@ void DataFeatureWidget::startDataProc()
 ///
 /// \brief 本地服务连接的槽
 ///
-void DataFeatureWidget::onLocalServeNewConnection()
+void SADataFeatureWidget::onLocalServeNewConnection()
 {
     if(m_dataProcessSocket)
     {
@@ -361,7 +361,7 @@ void DataFeatureWidget::onLocalServeNewConnection()
 /// \param exitCode 退出代码
 /// \param exitStatus
 ///
-void DataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus)
+void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if(QProcess::CrashExit == exitStatus)
     {
