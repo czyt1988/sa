@@ -4,9 +4,14 @@
 #include "SALocalServeBaseHeader.h"
 #include "SALocalServeFigureItemProcessHeader.h"
 #include "SALibGlobal.h"
-#include <QQueue>
 #include <QVector>
+
 #include <QPointF>
+
+//#define __USE_FIFO__
+#ifdef __USE_FIFO__
+#include <queue>
+#endif
 class QLocalSocket;
 class SALIB_EXPORT SALocalServeReader : public QObject
 {
@@ -61,9 +66,13 @@ private slots:
     Q_SLOT void onReadyRead();
 private:
     QLocalSocket* m_socket;
+#ifdef __USE_FIFO__
+    std::queue<char> m_fifo;///< 读取数据的fifo
+#else
     QByteArray m_buffer;///< 接收数据的缓冲，之前用QQueue<char>，发现性能表现太差，尤其是dequeue函数的性能太差
     int m_readedDataSize;///< 记录已经读取到的数据长度
     int m_readPos;///< 记录已经读取的位置
+#endif
     //QQueue<char> m_fifo;///< 数据接收队列
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
     bool m_isReadedMainHeader;///< 标记是否读取了包头
