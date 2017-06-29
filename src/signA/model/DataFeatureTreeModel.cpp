@@ -10,7 +10,7 @@ QModelIndex DataFeatureTreeModel::index(int row, int column, const QModelIndex &
     if (row < 0 || column < 0)
         return QModelIndex();
 
-    if(!parent.isValid ())//说明不是顶层
+    if(!parent.isValid ())//说明是顶层
     {
         if((row >= m_items.size())
             ||
@@ -20,7 +20,7 @@ QModelIndex DataFeatureTreeModel::index(int row, int column, const QModelIndex &
         }
         return createIndex(row, column, m_items[row]);//顶层节点
     }
-    AbstractDataFeatureItem* parItem = toItemPtr(parent);
+    SADataFeatureItem* parItem = toItemPtr(parent);
     if ((nullptr == parItem)
         || (row < 0)
         || (column < 0)
@@ -35,7 +35,7 @@ QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
 {
     if(!index.isValid())
         return QModelIndex();
-    AbstractDataFeatureItem* item =  toItemPtr(index);
+    SADataFeatureItem* item =  toItemPtr(index);
     if(!item)
         return QModelIndex();
     QStandardItem* parItem =  item->parent();
@@ -48,7 +48,7 @@ QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
     if(nullptr == grandParItem)
     {//如果祖父为0，说明它是第二层级，parent是1层，但不能用它自身的parItem->row(), parItem->column()
      //需要在QLsit里查找它的层次
-        int row = m_items.indexOf(static_cast<AbstractDataFeatureItem*>(parItem));
+        int row = m_items.indexOf(static_cast<SADataFeatureItem*>(parItem));
         if(row<0)
         {//说明没有在QList找到
             return QModelIndex();
@@ -63,7 +63,7 @@ int DataFeatureTreeModel::rowCount(const QModelIndex &parent) const
 {
     if(!parent.isValid())
         return m_items.size();
-    AbstractDataFeatureItem* parItem = toItemPtr(parent);
+    SADataFeatureItem* parItem = toItemPtr(parent);
     return parItem ? parItem->rowCount() : 0;
 }
 
@@ -71,7 +71,7 @@ int DataFeatureTreeModel::columnCount(const QModelIndex &parent) const
 {
     if(!parent.isValid())
         return 2;
-    AbstractDataFeatureItem* parItem = toItemPtr(parent);
+    SADataFeatureItem* parItem = toItemPtr(parent);
     return parItem ? parItem->columnCount() : 0;
 }
 
@@ -101,25 +101,35 @@ QVariant DataFeatureTreeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    AbstractDataFeatureItem* item = toItemPtr(index);
+    SADataFeatureItem* item = toItemPtr(index);
+    if(nullptr == item)
+        return QVariant();
     if(Qt::BackgroundRole == role)
     {
-        if(nullptr == item)
-            return QVariant();
-        if(item->rtti() == AbstractDataFeatureItem::CurveDataFeatureItem)
-        {
-            CurveDataFeatureItem* cur = static_cast<CurveDataFeatureItem*>(item);
-            QColor clr = cur->plotCurvePtr()->pen().color();
-            clr.setAlpha(30);
-            return clr;
-        }
+        return item->background();
     }
+
     if(item)
+    {
+        if(Qt::DecorationRole == role)
+        {
+            switch(item->getItemType())
+            {
+            case SADataFeatureItem::DescribeItem:
+            case SADataFeatureItem::ValueItem:// 值项目
+            case SADataFeatureItem::PointItem:// 点项目
+            case SADataFeatureItem::VectorValueItem:// 值系列项目
+            case SADataFeatureItem::VectorPointItem:// 点系列项目项目
+                return QVariant();
+            }
+            return QVariant();
+        }
         return item->data(role);
+    }
     return QVariant();
 }
 
-void DataFeatureTreeModel::appendDataFeatureItem(AbstractDataFeatureItem *item)
+void DataFeatureTreeModel::appendDataFeatureItem(SADataFeatureItem *item)
 {
     beginResetModel();
     m_items.append(item);
@@ -133,15 +143,15 @@ void DataFeatureTreeModel::clear()
     endResetModel();
 }
 
-void DataFeatureTreeModel::setDataFeatureItems(const QList<AbstractDataFeatureItem *> &items)
+void DataFeatureTreeModel::setDataFeatureItems(const QList<SADataFeatureItem *> &items)
 {
     beginResetModel();
     m_items = items;
     endResetModel();
 }
 
-AbstractDataFeatureItem *DataFeatureTreeModel::toItemPtr(const QModelIndex &index) const
+SADataFeatureItem *DataFeatureTreeModel::toItemPtr(const QModelIndex &index) const
 {
-    return static_cast<AbstractDataFeatureItem *>(index.internalPointer());
+    return static_cast<SADataFeatureItem *>(index.internalPointer());
 }
 

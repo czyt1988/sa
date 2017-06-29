@@ -26,11 +26,15 @@ CONFIG += c++11
 INCLUDEPATH += $$PWD
 
 
-SOURCES += main.cpp\
-    SADataProcClient.cpp
+SOURCES += main.cpp \
+    SADataProcServe.cpp \
+    SALocalConnection.cpp \
+    SADataProcessVectorPointF.cpp
 
 HEADERS += \
-    SADataProcClient.h
+    SADataProcServe.h \
+    SALocalConnection.h \
+    SADataProcessVectorPointF.h
     
 
 

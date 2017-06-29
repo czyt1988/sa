@@ -48,9 +48,11 @@ private:
     //初始化本地服务
     void initLocalServer();
     //
+    void connectToServer();
     void startDataProc();
-    //本地服务连接的槽
-    Q_SLOT void onLocalServeNewConnection();
+
+    Q_SLOT void onProcessStateChanged(QProcess::ProcessState newState);
+
     //数据处理进程异常停止
     Q_SLOT void onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus);
 
@@ -62,15 +64,15 @@ private:
     //接收到xml字符
     Q_SLOT void onReceivedString(const QString& xmlString);
     //接收到xml字符
-    Q_SLOT void onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
+    Q_SLOT void onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
 private:
     Ui::SADataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口
-    QScopedPointer<QLocalServer> m_localServer;///< 本地服务器
+
     QProcess* m_dataProcPro;///< 数据处理进程
-    QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
     QMap<QMdiSubWindow*,QAbstractItemModel*> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
 private://数据接收相关的类型
+    QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
     SALocalServeReader* m_dataReader;
     SALocalServeWriter* m_dataWriter;
 };

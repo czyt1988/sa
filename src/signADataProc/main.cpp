@@ -3,7 +3,7 @@
 #include <QTextCodec>
 #include <QStringList>
 #include <QScopedPointer>
-#include "SADataProcClient.h"
+#include "SADataProcServe.h"
 #include <QDebug>
 #include <QMessageBox>
 
@@ -62,8 +62,7 @@ int main(int argc, char *argv[])
     {
         return 2;
     }
-    SADataProcClient client;
+    SADataProcServe client;
     client.setPid(pid);
-    client.shakeHand();
     return a.exec();
 }

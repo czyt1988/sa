@@ -2,10 +2,10 @@
 #include "ui_SADataFeatureWidget.h"
 #include <QMainWindow>
 #include <QMdiSubWindow>
-
+#include <QTimer>
 //#include <SAChartWidget.h>
 #include <DataFeatureTreeModel.h>
-#include <DataFeatureItem.h>
+#include "SADataFeatureItem.h"
 #include <SAPlotMarker.h>
 #include <QItemSelectionModel>
 #include <QItemSelection>
@@ -20,7 +20,7 @@
 #include "SALocalServerDefine.h"
 #include "SALocalServeReader.h"
 #include "SALocalServeWriter.h"
-
+#include <QLocalServer>
 #include "qwt_plot_curve.h"
 
 #define _DEBUG_OUTPUT
@@ -29,7 +29,7 @@
 #include <QDebug>
 QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
 #endif
-
+#define __SEND_1M_POINTS_TEST__
 
 //====================================================================
 
@@ -179,12 +179,12 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
 {
     Q_UNUSED(mainHeader);
-#ifdef _DEBUG_OUTPUT
+#ifdef __SEND_1M_POINTS_TEST__
     if(m_dataWriter)
     {
         qDebug() << "start 1000000 points test";
         s_vector_send_time_elaspade.restart();
-        m_dataWriter->sendString("test");//发送一个测试
+        m_dataWriter->sendString("__test__1m");//发送一个测试
     }
 #endif
     emit showMessageInfo(tr("data process connect sucess!"),SA::NormalMessage);
@@ -197,14 +197,14 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 #endif
 }
 
-void SADataFeatureWidget::onReceivedVectorDoubleData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
+void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
 {
 #ifdef _DEBUG_OUTPUT
     qDebug() << "test time cost: " << s_vector_send_time_elaspade.elapsed()
              << "\n ys.size:" <<ys.size()
                 ;
-
 #endif
+
 }
 
 
@@ -219,6 +219,7 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
         return;
     if(nullptr == m_lastActiveSubWindow)
         return;
+#if 0
     SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
     if(nullptr == figure)
     {
@@ -232,13 +233,13 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
     for(int i=0;i<indexList.size();++i)
     {
 
-        AbstractDataFeatureItem* item = static_cast<AbstractDataFeatureItem*>(indexList[i].internalPointer());
+        SADataFeatureItem* item = static_cast<SADataFeatureItem*>(indexList[i].internalPointer());
         if(nullptr == item)
         {
             return;
         }
-        AbstractDataFeatureItem* topParent = item->topParent();
-        if(AbstractDataFeatureItem::TopPlotItem != topParent->rtti())
+        SADataFeatureItem* topParent = item->topParent();
+        if(SADataFeatureItem::TopPlotItem != topParent->rtti())
         {
             return;
         }
@@ -249,14 +250,14 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
             if(!chart)
                 return;
             int itemRtti = item->rtti();
-            if(AbstractDataFeatureItem::PointItem == itemRtti)
+            if(SADataFeatureItem::PointItem == itemRtti)
             {
                 DataFeaturePointItem* pointItem = static_cast<DataFeaturePointItem*>(item);
                 QPointF point = pointItem->getPointData();
                 chart->markPoint(point,pointItem->text());
                 chart->replot();
             }
-            else if(AbstractDataFeatureItem::ValueItem == itemRtti)
+            else if(SADataFeatureItem::ValueItem == itemRtti)
             {
                 DataFeatureValueItem* valueItem = static_cast<DataFeatureValueItem*>(item);
                 DataFeatureDescribeItem* desItem = valueItem->getDescribeItem();
@@ -272,7 +273,7 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
         }
 
     }
-
+#endif
 
 }
 ///
@@ -301,16 +302,11 @@ void SADataFeatureWidget::onShowErrorMessage(const QString &info)
 ///
 void SADataFeatureWidget::initLocalServer()
 {
-    m_localServer.reset(new QLocalServer);
-    connect(m_localServer.data(),&QLocalServer::newConnection
-            ,this,&SADataFeatureWidget::onLocalServeNewConnection);
-    if(!m_localServer->listen(SA_LOCAL_SERVER_DATA_PROC_NAME))
-    {
-       showMessageInfo(tr("listern loacl server error"),SA::ErrorMessage);
-    }
+
     m_dataProcPro = new QProcess(this);
     connect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
             ,this,&SADataFeatureWidget::onProcessDataProcFinish);
+    connect(m_dataProcPro,&QProcess::stateChanged,this,&SADataFeatureWidget::onProcessStateChanged);
     m_dataReader = new SALocalServeReader(this);
     m_dataWriter = new SALocalServeWriter(this);
     connect(m_dataReader,&SALocalServeReader::receivedShakeHand
@@ -318,10 +314,31 @@ void SADataFeatureWidget::initLocalServer()
     connect(m_dataReader,&SALocalServeReader::receivedString
             ,this,&SADataFeatureWidget::onReceivedString);
     connect(m_dataReader,&SALocalServeReader::receivedVectorPointFData
-            ,this,&SADataFeatureWidget::onReceivedVectorDoubleData);
+            ,this,&SADataFeatureWidget::onReceivedVectorPointFData);
     connect(m_dataReader,&SALocalServeReader::errorOccure
             ,this,&SADataFeatureWidget::onShowErrorMessage);
     startDataProc();
+}
+
+void SADataFeatureWidget::connectToServer()
+{
+    if(m_dataProcessSocket)
+    {
+        delete m_dataProcessSocket;m_dataProcessSocket=nullptr;
+    }
+    m_dataProcessSocket = new QLocalSocket(this);
+    m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
+    if(!m_dataProcessSocket->waitForConnected(1000))
+    {
+        QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
+        emit showMessageInfo(str,SA::ErrorMessage);
+        saDebug(str);
+        return;
+    }
+    saPrint() << "connect to dataProc serve success!";
+    m_dataReader->setSocket(m_dataProcessSocket);
+    m_dataWriter->setSocket(m_dataProcessSocket);
+    m_dataWriter->sendShakeHand();
 }
 ///
 /// \brief 启动数据处理进程
@@ -338,24 +355,16 @@ void SADataFeatureWidget::startDataProc()
     m_dataProcPro->start(path,args);
 }
 ///
-/// \brief 本地服务连接的槽
+/// \brief 进程启动成功
 ///
-void SADataFeatureWidget::onLocalServeNewConnection()
+void SADataFeatureWidget::onProcessStateChanged(QProcess::ProcessState newState)
 {
-    if(m_dataProcessSocket)
+    if(QProcess::Running == newState)
     {
-        delete m_dataProcessSocket;
-        m_dataProcessSocket = nullptr;
+        QTimer::singleShot(1000,this,&SADataFeatureWidget::connectToServer);
     }
-    m_dataProcessSocket = m_localServer->nextPendingConnection();
-    if(nullptr == m_dataProcessSocket)
-    {
-        saPrint() << "can not exec m_localServer->nextPendingConnection();";
-        return;
-    }
-    m_dataReader->setSocket(m_dataProcessSocket);
-    m_dataWriter->setSocket(m_dataProcessSocket);
 }
+
 ///
 /// \brief 数据处理的线程终结
 /// \param exitCode 退出代码

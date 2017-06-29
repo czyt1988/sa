@@ -12,7 +12,6 @@ class QwtPlotItem;
 
 class SAAbstractDatas;
 class SAVectorInterval;
-class AbstractDataFeatureItem;
 class DataFeaturePlotInfoItem;
 class SAChart2D;
 class SAFigureContainer;
@@ -44,23 +43,11 @@ public:
  //不满足单一职责原则
     //============
 
-    //获取绘图结果中的特征属性信息
-    QList<AbstractDataFeatureItem*> getDataFeatureItemList() const;
 signals:
     //绘图数据变更消息
     void chartDataChanged(QwtPlot* plot,QwtPlotItem* item);
-    ///
-    /// \brief 计算完特征参数
-    /// \param plot 参与计算的窗体
-    /// \param item 参与计算的基本item
-    ///
-    void haveBeingCalcDataFeature(QWidget *plot,const QwtPlotItem *item);
 private:
     void initUI();
-    //计算曲线的特征数据
-    void calcDataFeature(QWidget* plot,QwtPlotItem* item);
-    //根据plot指针寻找顶层item。如果没有对应的返回nullptr
-    DataFeaturePlotInfoItem *findTopItem(QWidget* plot) const;
 private:
     class RealPlotItem{
     public:
@@ -79,14 +66,9 @@ private:
 protected:
     //记忆关系
     void rememberRelationShip(QwtPlotItem* cur,const QList<SAAbstractDatas*>& datas);
-    //计算bar特征数据
-    virtual AbstractDataFeatureItem* calcBarDataFeature(QwtPlotHistogram* bar);
-    //计算曲线特征数据
-    virtual AbstractDataFeatureItem *calcCureDataFeature(QwtPlotCurve* cur);
 protected:
     RealPlotItem m_realPlotItem; ///< 记录真正绘制的图像，对于一些标记线就不会进入这个list里，且是addCurve函数调用时才会加入这个list
     QMap<QwtPlotItem*,QList<SAAbstractDatas*> > m_relationShip;
-    QList<AbstractDataFeatureItem*> m_dataFeature;///< 记录绘图的数据属性
 private:
     QScopedPointer<UI> ui;
     QwtPlotSeriesItem* m_lastPlotItem;

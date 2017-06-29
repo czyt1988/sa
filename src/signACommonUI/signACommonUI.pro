@@ -37,7 +37,6 @@ HEADERS += \
     SAPropertySetDialog.h \
     SAUIReflection.h \
     SAFigureWindow.h \
-    DataFeatureItem.h \
     SAAbstractFigure.h \
     SAValueSelectDialog.h \
     SAUIInterface.h \
@@ -50,7 +49,6 @@ SOURCES += \
     SAPropertySetDialog.cpp \
     SAUIReflection.cpp \
     SAFigureWindow.cpp \
-    DataFeatureItem.cpp \
     SAAbstractFigure.cpp \
     SAValueSelectDialog.cpp \
     SAUIInterface.cpp \

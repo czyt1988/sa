@@ -34,12 +34,8 @@ HEADERS += \
     SAVariantCaster.h \
     SAFigureGlobalConfig.h \
     SAGUIGlobalConfig.h \
-    SALocalServerDefine.h \
-    SALocalServeBaseHeader.h \
-    SALocalServeFigureItemProcessHeader.h \
-    SALocalServeReader.h \
-    SALocalServeWriter.h \
-    SACRC.h
+    SACRC.h \
+    SADataFeatureItem.h
 
 
 SOURCES += \
@@ -60,17 +56,17 @@ SOURCES += \
     SAVariantCaster.cpp \
     SAFigureGlobalConfig.cpp \
     SAGUIGlobalConfig.cpp \
-    SALocalServeBaseHeader.cpp \
-    SALocalServeFigureItemProcessHeader.cpp \
-    SALocalServeReader.cpp \
-    SALocalServeWriter.cpp \
-    SACRC.cpp
+    SACRC.cpp \
+    SADataFeatureItem.cpp
 
 
 include($$PWD/Private/Private.pri)
 include($$PWD/SABaseValueType/SABaseValueType.pri)
+include($$PWD/LocalServer/LocalServer.pri)
+
 include($$PWD/../czy/czy.pri)
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
+
 DEFINES += SALIB_MAKE #定义此宏将构建库
 #RESOURCES += \
 #    ico.qrc

@@ -3,7 +3,6 @@
 #include <QMessageBox>
 #include <QGridLayout>
 //sa chart
-#include "DataFeatureItem.h"
 #include "SAChart2D.h"
 //sa lib
 #include "SAData.h"
@@ -56,16 +55,7 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
 
 SAFigureWindow::~SAFigureWindow()
 {
-    auto i = m_dataFeature.begin();
-    auto end = m_dataFeature.end();
-    for(;i!=end;++i)
-    {
-        AbstractDataFeatureItem* ptr = *i;
-        if(nullptr != ptr)
-        {
-            delete ptr;
-        }
-    }
+
 }
 
 ///
@@ -122,14 +112,7 @@ SAChart2D *SAFigureWindow::current2DPlot() const
 {
     return m_currentPlot;
 }
-///
-/// \brief 获取绘图结果中的特征属性信息
-/// \return
-///
-QList<AbstractDataFeatureItem *> SAFigureWindow::getDataFeatureItemList() const
-{
-    return m_dataFeature;
-}
+
 
 
 
@@ -163,96 +146,12 @@ void SAFigureWindow::rememberRelationShip(QwtPlotItem *cur, const QList<SAAbstra
 {
     m_relationShip[cur] = datas;
 }
-///
-/// \brief 计算bar特征数据
-/// \param plot 顶层指针
-/// \param bar 数据线条的指针
-/// \param emitSignal 计算完成之后是否发送信号，默认为true，
-///
-AbstractDataFeatureItem *SAFigureWindow::calcBarDataFeature(QwtPlotHistogram *bar)
-{
-    //TODO
-    return nullptr;
-}
-///
-/// \brief 计算并显示特征参数
-///
-/// 用户可以通过重载此函数来实现自己的配置。此函数默认会计算常见的统计参数
-/// \param cur 曲线
-/// \return AbstractDataFeatureItem指针
-///
-AbstractDataFeatureItem* SAFigureWindow::calcCureDataFeature(QwtPlotCurve *cur)
-{
-    CurveDataFeatureItem* curItem = new CurveDataFeatureItem(cur);
-    return curItem;
-}
+
 
 
 void SAFigureWindow::initUI()
 {
 
-}
-///
-/// \brief 计算曲线的特征数据
-/// 计算完成后会发射信号haveBeingCalcDataFeature
-/// \param plot 曲线对应的窗体指针
-/// \param item 曲线的指针
-/// \see haveBeingCalcDataFeature
-///
-void SAFigureWindow::calcDataFeature(QWidget *plot,QwtPlotItem *item)
-{
-    //先查找已经创建的条目中是否包含此项
-    DataFeaturePlotInfoItem* plotItem = findTopItem(plot);
-    if(nullptr == plotItem)
-    {//没有此项说明是新建的绘图，创建一个item
-        plotItem = new DataFeaturePlotInfoItem();
-        plotItem->setChartWidget(plot);
-        m_dataFeature.append(plotItem);
-    }
-    if(item->rtti() == QwtPlotItem::Rtti_PlotCurve)
-    {
-        //如果对于的是曲线图
-        AbstractDataFeatureItem* childItem = calcCureDataFeature(static_cast<QwtPlotCurve*>(item));
-        plotItem->appendRow(childItem);
-    }
-    else if(item->rtti() == QwtPlotItem::Rtti_PlotHistogram)
-    {
-        //如果对于的是棒图
-        AbstractDataFeatureItem* childItem = calcBarDataFeature(static_cast<QwtPlotHistogram*>(item));
-        plotItem->appendRow(childItem);
-    }
-    emit haveBeingCalcDataFeature(plot,item);
-}
-///
-/// \brief 根据plot指针寻找顶层item
-/// \param plot 绘图窗体
-/// \return 如果没有对应的返回nullptr
-///
-DataFeaturePlotInfoItem *SAFigureWindow::findTopItem(QWidget *plot) const
-{
-    auto i = m_dataFeature.cbegin();
-    auto end = m_dataFeature.cend();
-    for(;i!=end;++i)
-    {
-        AbstractDataFeatureItem * top = const_cast<AbstractDataFeatureItem *>(*i);
-        if(nullptr == top)
-        {
-            continue;
-        }
-        if(top->rtti() == AbstractDataFeatureItem::TopPlotItem)
-        {
-            DataFeaturePlotInfoItem* plotItem = static_cast<DataFeaturePlotInfoItem*>(top);
-            if(nullptr == plotItem)
-            {
-                continue;
-            }
-            if(plotItem->chartWidget() == plot)
-            {
-                return plotItem;
-            }
-        }
-    }
-    return nullptr;
 }
 
 

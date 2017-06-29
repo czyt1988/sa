@@ -3,7 +3,7 @@
 
 #include <QAbstractItemModel>
 #include <QList>
-#include <DataFeatureItem.h>
+#include "SADataFeatureItem.h"
 class DataFeatureTreeModel : public QAbstractItemModel
 {
 public:
@@ -15,16 +15,16 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
-    void appendDataFeatureItem(AbstractDataFeatureItem* item);
+    void appendDataFeatureItem(SADataFeatureItem* item);
     void clear();
-    void setDataFeatureItems(const QList<AbstractDataFeatureItem*>& items);
+    void setDataFeatureItems(const QList<SADataFeatureItem*>& items);
 signals:
 
 public slots:
 private:
-    AbstractDataFeatureItem *toItemPtr(const QModelIndex &index) const;
+    SADataFeatureItem *toItemPtr(const QModelIndex &index) const;
 private:
-    QList<AbstractDataFeatureItem*> m_items;
+    QList<SADataFeatureItem*> m_items;
 };
 
 #endif // DATAFEATURETREEMODEL_H
