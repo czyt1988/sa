@@ -6,11 +6,15 @@ SADataProcessVectorPointF::SADataProcessVectorPointF(QObject *parent):QObject(pa
 {
 
 }
-
-void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points)
+///
+/// \brief 设置点并开始计算
+/// \param points 点集
+/// \param widget 标记1
+/// \param item 标记2
+///
+void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, quintptr widget, quintptr item)
 {
-    m_points = points;
-    emit result(analysisData());
+    emit result(analysisData(points),widget,item);
 }
 
 void SADataProcessVectorPointF::getVectorPointY(const QVector<QPointF> &points, QVector<double> &ys)
@@ -22,18 +26,18 @@ void SADataProcessVectorPointF::getVectorPointY(const QVector<QPointF> &points, 
     });
 }
 
-SADataFeatureItem* SADataProcessVectorPointF::analysisData()
+SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF>& orgPoints)
 {
     SADataFeatureItem* item = new SADataFeatureItem();
     QVector<double> y;
-    getVectorPointY(m_points,y);
+    getVectorPointY(orgPoints,y);
     if(m_points.size()<=0 || y.size()<=0)
     {
         emit result(item);
         return;
     }
     item.setItemType(SADataFeatureItem::DescribeItem);
-    QVector<QPointF> datas = m_points;
+    QVector<QPointF> datas = orgPoints;
     double sum;
     double mean;
     double var;
@@ -55,7 +59,7 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData()
     QPointF maxPoint = *(datas.end()-1);
     QPointF midPoint = n>1 ? *(datas.begin() + int(n/2)) : minPoint;//中位数
 
-    item->appendItem(tr("point num"),m_points.size());
+    item->appendItem(tr("point num"),orgPoints.size());
     item->appendItem(tr("y min"),min);
     item->appendItem(tr("y max"),max);
     item->appendItem(tr("y mid"),mid);

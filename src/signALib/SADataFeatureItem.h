@@ -2,6 +2,8 @@
 #define SADATAFEATUREITEM_H
 #include "SALibGlobal.h"
 #include <QStandardItem>
+class QXmlStreamWriter;
+class QXmlStreamReader;
 ///
 /// \brief DataFeatureItem接口
 ///
@@ -49,7 +51,9 @@ public:
     static QString toXml(const SADataFeatureItem* item);
     //从xml转换为item
     static void fromXml(const QString& xml,SADataFeatureItem* item);
-
+private:
+    static int getTypeInt(QStandardItem* item);
+    static void writeItem(QXmlStreamWriter* xml,QStandardItem* item);
 };
 Q_DECLARE_METATYPE(SADataFeatureItem)
 

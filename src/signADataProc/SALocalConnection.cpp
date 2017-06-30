@@ -2,6 +2,8 @@
 
 #include "SALocalServeReader.h"
 #include "SALocalServeWriter.h"
+#include <QThread>
+#include "SADataProcessVectorPointF.h"
 #define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
@@ -11,7 +13,11 @@ QElapsedTimer s_static_time_elaspade = QElapsedTimer();
 
 SALocalConnection::SALocalConnection(QLocalSocket *socket, QObject *parent):QObject(parent)
   ,m_socket(socket)
+  ,m_calcThread(nullptr)
+  ,m_pointFCalctor(nullptr)
 {
+    initThread();
+
     m_writer = new SALocalServeWriter(m_socket,this);
     m_reader = new SALocalServeReader(m_socket,this);
     connect(m_socket,static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error)
@@ -29,9 +35,29 @@ SALocalConnection::SALocalConnection(QLocalSocket *socket, QObject *parent):QObj
 
 SALocalConnection::~SALocalConnection()
 {
+    if(m_calcThread)
+    {
+        m_calcThread->quit();
+        m_calcThread->wait();
+    }
 #ifdef _DEBUG_OUTPUT
     qDebug() << "~SALocalConnection destroy";
 #endif
+}
+
+void SALocalConnection::initThread()
+{
+    m_calcThread = new QThread;
+    connect(m_calcThread,&QThread::finished,m_thread,&QThread::deleteLater);//内存释放
+    //数组处理线程
+    m_pointFCalctor = new SADataProcessVectorPointF;
+    m_pointFCalctor->moveToThread(m_calcThread);
+    connect(m_calcThread,&QThread::finished,m_pointFCalctor,&SADataProcessVectorPointF::deleteLater);//内存释放
+    connect(m_pointFCalctor,&SADataProcessVectorPointF::result
+            ,this,&SALocalConnection::onProcessVectorPointFResult);
+    connect(this,&SALocalConnection::callVectorPointFProcess
+            ,m_pointFCalctor,&SADataProcessVectorPointF::setPoints);
+    //
 }
 ///
 /// \brief 错误发生
@@ -51,6 +77,7 @@ void SALocalConnection::onReceivedVectorPointFData(const SALocalServeFigureItemP
 #ifdef _DEBUG_OUTPUT
     qDebug() << "onReceivedVectorPointFData-> data size:"<<datas.size();
 #endif
+    emit callVectorPointFProcess(datas,header.getWndPtr(),header.getItemPtr());
 }
 ///
 /// \brief 接收到发送的文字
@@ -83,5 +110,21 @@ void SALocalConnection::onRecShakeHand()
     if(m_writer)
     {
         m_writer->sendShakeHand();
+    }
+}
+///
+/// \brief 接收到点数组的计算结果
+/// \param result 计算结果指针，需要手动销毁
+/// \param widget 标记1
+/// \param item 标记2
+///
+void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget, quintptr item)
+{
+    QString xml = QString("<sa><ptr>%1</ptr><ptr>%2</ptr>%3</sa>")
+            .arg(widget).arg(item).arg(result->toXml());
+    m_writer->sendString(xml);
+    if(result)
+    {
+        delete result;
     }
 }

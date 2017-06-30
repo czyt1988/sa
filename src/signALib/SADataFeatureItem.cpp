@@ -2,7 +2,10 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #define ROLE_ITEM_TYPE (Qt::UserRole + 1234)
-
+#define _XML_STR_ROOT "dfi"
+#define _XML_STR_ITEM "item"
+#define _XML_ATT_TYPE "type"
+#define _XML_ATT_NAME "name"
 SADataFeatureItem::SADataFeatureItem():QStandardItem()
 {
 
@@ -163,7 +166,12 @@ void SADataFeatureItem::fromXml(const QString &xml)
 ///
 QString SADataFeatureItem::toXml(const SADataFeatureItem *item)
 {
-
+    QString str;
+    QXmlStreamWriter xml(&str);
+    xml.setCodec("UTF-8");
+    xml.writeStartElement(_XML_STR_ROOT);
+    writeItem(&xml,static_cast<const QStandardItem*>(item));
+    xml.writeEndElement();
 }
 ///
 /// \brief 从xml转换为item
@@ -173,4 +181,39 @@ QString SADataFeatureItem::toXml(const SADataFeatureItem *item)
 void SADataFeatureItem::fromXml(const QString &xml, SADataFeatureItem *item)
 {
 
+}
+
+int SADataFeatureItem::getTypeInt(QStandardItem *item)
+{
+    QVariant var = item->data(ROLE_ITEM_TYPE);
+    if(!var.isValid())
+    {
+        return 0;
+    }
+    bool isOK = false;
+    return var.toInt(&isOK);
+}
+
+void SADataFeatureItem::writeItem(QXmlStreamWriter *xml,const QStandardItem *item)
+{
+    if(nullptr == item)
+    {
+        return;
+    }
+    xml->writeStartElement(_XML_STR_ITEM);
+    QXmlStreamAttributes attrs;
+    attrs.append(QXmlStreamAttribute(_XML_ATT_TYPE,QString::number(getTypeInt(item))));
+    attrs.append(QXmlStreamAttribute(_XML_ATT_NAME,item->text()));
+    xml->writeAttributes(attrs);
+    //递归子节点
+    const int subItemRow = item->rowCount();
+    const int subItemColumn = item->columnCount();
+    for(int i=0;i<subItemRow;++i)
+    {
+        for(int j=0;j<subItemColumn;++j)
+        {
+            writeItem(xml,item->child(i,j));
+        }
+    }
+    xml->writeEndElement();
 }

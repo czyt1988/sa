@@ -11,7 +11,7 @@ void SALocalServeFigureItemProcessHeader::setWndPtr(const qintptr &wnd)
     m_d.wndPtr = wnd;
 }
 
-qintptr SALocalServeFigureItemProcessHeader::getItem() const
+qintptr SALocalServeFigureItemProcessHeader::getItemPtr() const
 {
     return m_d.itemPtr;
 }

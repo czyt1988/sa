@@ -17,7 +17,7 @@ public:
     qintptr getWndPtr() const;
     void setWndPtr(const qintptr &wnd);
 
-    qintptr getItem() const;
+    qintptr getItemPtr() const;
     void setItem(const qintptr &item);
 
     int getDataType() const;

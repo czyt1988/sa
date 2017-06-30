@@ -11,19 +11,23 @@ public:
     SADataProcessVectorPointF(QObject* parent);
     int getSortCount() const;
     void setSortCount(int sortCount);
-
 public slots:
     //设置需要计算的点，并开始计算
-    void setPoints(const QVector<QPointF>& points);
+    void setPoints(const QVector<QPointF>& points,quintptr widget,quintptr item);
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);
 
 private:
-    SADataFeatureItem* analysisData();
+    SADataFeatureItem* analysisData(const QVector<QPointF> &orgPoints);
 signals:
-    void result(const SADataFeatureItem* result);
+    ///
+    /// \brief 返回的结果指针如果不用必须delete
+    /// \param result
+    /// \param widget 标记1
+    /// \param item 标记2
+    ///
+    void result(SADataFeatureItem* result,quintptr widget,quintptr item);
 private:
-    QVector<QPointF>& m_points;///< 记录点集
     int m_sortCount;///< 记录要显示的排序条目
 };
 
