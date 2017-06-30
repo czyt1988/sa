@@ -52,8 +52,8 @@ public:
     //从xml转换为item
     static void fromXml(const QString& xml,SADataFeatureItem* item);
 private:
-    static int getTypeInt(QStandardItem* item);
-    static void writeItem(QXmlStreamWriter* xml,QStandardItem* item);
+    static int getTypeInt(const QStandardItem* item);
+    static void writeItem(QXmlStreamWriter* xml,const QStandardItem* item);
 };
 Q_DECLARE_METATYPE(SADataFeatureItem)
 

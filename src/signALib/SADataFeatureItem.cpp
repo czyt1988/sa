@@ -183,7 +183,7 @@ void SADataFeatureItem::fromXml(const QString &xml, SADataFeatureItem *item)
 
 }
 
-int SADataFeatureItem::getTypeInt(QStandardItem *item)
+int SADataFeatureItem::getTypeInt(const QStandardItem *item)
 {
     QVariant var = item->data(ROLE_ITEM_TYPE);
     if(!var.isValid())
