@@ -48,7 +48,7 @@ SALocalConnection::~SALocalConnection()
 void SALocalConnection::initThread()
 {
     m_calcThread = new QThread;
-    connect(m_calcThread,&QThread::finished,m_thread,&QThread::deleteLater);//内存释放
+    connect(m_calcThread,&QThread::finished,m_calcThread,&QThread::deleteLater);//内存释放
     //数组处理线程
     m_pointFCalctor = new SADataProcessVectorPointF;
     m_pointFCalctor->moveToThread(m_calcThread);

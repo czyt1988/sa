@@ -8,7 +8,7 @@ class SADataProcessVectorPointF : public QObject
 {
     Q_OBJECT
 public:
-    SADataProcessVectorPointF(QObject* parent);
+    SADataProcessVectorPointF(QObject* parent = nullptr);
     int getSortCount() const;
     void setSortCount(int sortCount);
 public slots:

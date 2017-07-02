@@ -31,12 +31,11 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF
     SADataFeatureItem* item = new SADataFeatureItem();
     QVector<double> y;
     getVectorPointY(orgPoints,y);
-    if(m_points.size()<=0 || y.size()<=0)
+    if(orgPoints.size()<=0 || y.size()<=0)
     {
-        emit result(item);
-        return;
+        return nullptr;
     }
-    item.setItemType(SADataFeatureItem::DescribeItem);
+    item->setItemType(SADataFeatureItem::DescribeItem);
     QVector<QPointF> datas = orgPoints;
     double sum;
     double mean;
@@ -80,11 +79,11 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF
         sortCount = datas.size();
     }
     tmps.reserve(sortCount);
-    std::copy(datas.begin(),datas.begin()+sortCount,std::back_insert_iterator(tmps));
+    std::copy(datas.begin(),datas.begin()+sortCount,std::back_inserter(tmps));
     item->appendItem(tr("ascending order"),tmps);//升序
     tmps.clear();
     tmps.reserve(sortCount);
-    std::copy(datas.rbegin(),datas.rbegin()+sortCount,std::back_insert_iterator(tmps));
+    std::copy(datas.rbegin(),datas.rbegin()+sortCount,std::back_inserter(tmps));
     item->appendItem(tr("descending order"),tmps);//降序
     return item;
 }
