@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QVector>
 #include <QPointF>
+
+
+
 class SADataProcessVectorPointF : public QObject
 {
     Q_OBJECT

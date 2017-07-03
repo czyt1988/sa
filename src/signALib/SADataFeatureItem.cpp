@@ -2,10 +2,10 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #define ROLE_ITEM_TYPE (Qt::UserRole + 1234)
-#define _XML_STR_ROOT "dfi"
-#define _XML_STR_ITEM "item"
-#define _XML_ATT_TYPE "type"
-#define _XML_ATT_NAME "name"
+#define XML_STR_ROOT__ "dfi"
+#define XML_STR_ITEM__ "item"
+#define XML_ATT_TYPE__ "type"
+#define XML_ATT_NAME__ "name"
 SADataFeatureItem::SADataFeatureItem():QStandardItem()
 {
 
@@ -169,17 +169,31 @@ QString SADataFeatureItem::toXml(const SADataFeatureItem *item)
     QString str;
     QXmlStreamWriter xml(&str);
     xml.setCodec("UTF-8");
-    xml.writeStartElement(_XML_STR_ROOT);
+    xml.writeStartElement(XML_STR_ROOT__);
     writeItem(&xml,static_cast<const QStandardItem*>(item));
     xml.writeEndElement();
+    return str;
 }
 ///
 /// \brief 从xml转换为item
 /// \param xml
 /// \param item
 ///
-void SADataFeatureItem::fromXml(const QString &xml, SADataFeatureItem *item)
+void SADataFeatureItem::fromXml(const QString &xmlStr, SADataFeatureItem *item)
 {
+    QXmlStreamReader xml(xmlStr);
+    while(!xml.atEnd())
+    {
+        if(xml.readNextStartElement())
+        {
+            if(xml.name()==XML_STR_ROOT__)
+            {
+                //读取到根目录
+                readItem(&xml,item);
+            }
+        }
+
+    }
 
 }
 
@@ -194,16 +208,16 @@ int SADataFeatureItem::getTypeInt(const QStandardItem *item)
     return var.toInt(&isOK);
 }
 
-void SADataFeatureItem::writeItem(QXmlStreamWriter *xml,const QStandardItem *item)
+void SADataFeatureItem::writeItem(QXmlStreamWriter *xml, const QStandardItem *item)
 {
     if(nullptr == item)
     {
         return;
     }
-    xml->writeStartElement(_XML_STR_ITEM);
+    xml->writeStartElement(XML_STR_ITEM__);
     QXmlStreamAttributes attrs;
-    attrs.append(QXmlStreamAttribute(_XML_ATT_TYPE,QString::number(getTypeInt(item))));
-    attrs.append(QXmlStreamAttribute(_XML_ATT_NAME,item->text()));
+    attrs.append(QXmlStreamAttribute(XML_ATT_TYPE__,QString::number(getTypeInt(item))));
+    attrs.append(QXmlStreamAttribute(XML_ATT_NAME__,item->text()));
     xml->writeAttributes(attrs);
     //递归子节点
     const int subItemRow = item->rowCount();
@@ -216,4 +230,37 @@ void SADataFeatureItem::writeItem(QXmlStreamWriter *xml,const QStandardItem *ite
         }
     }
     xml->writeEndElement();
+}
+
+void SADataFeatureItem::readItem(QXmlStreamReader *xml, SADataFeatureItem *item)
+{
+    while(!xml->atEnd())
+    {
+        if(xml->readNextStartElement())
+        {
+            if(xml->name()==XML_STR_ITEM__)
+            {
+                //读取到条目
+                QXmlStreamAttributes atts = xml->attributes();
+                for(int i = 0;i < atts.size();++i)
+                {
+                    if(XML_ATT_TYPE__ == atts[i].name())
+                    {
+                        bool isOK = false;
+                        int v = atts[i].value().toInt(&isOK);
+                        if(!isOK)
+                        {
+                            continue;
+                        }
+                        item->setItemType(static_cast<SADataFeatureItem::ItemType>(v));
+                    }
+                    else if(XML_ATT_NAME__ == atts[i].name())
+                    {
+                        item->setText(atts[i].value().toString());
+                    }
+                }
+            }
+        }
+
+    }
 }

@@ -52,5 +52,5 @@ private:
     SALocalServeReader* m_reader;
 
 };
-
+Q_DECLARE_METATYPE(QVector<QPointF>)
 #endif // SALOCALCONNECTION_H

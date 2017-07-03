@@ -16,6 +16,8 @@ SALocalConnection::SALocalConnection(QLocalSocket *socket, QObject *parent):QObj
   ,m_calcThread(nullptr)
   ,m_pointFCalctor(nullptr)
 {
+    qRegisterMetaType<QVector<QPointF> >("QVector<QPointF>");
+    qRegisterMetaType<quintptr>("quintptr");
     initThread();
 
     m_writer = new SALocalServeWriter(m_socket,this);
@@ -58,6 +60,7 @@ void SALocalConnection::initThread()
     connect(this,&SALocalConnection::callVectorPointFProcess
             ,m_pointFCalctor,&SADataProcessVectorPointF::setPoints);
     //
+    m_calcThread->start();
 }
 ///
 /// \brief 错误发生
@@ -120,11 +123,15 @@ void SALocalConnection::onRecShakeHand()
 ///
 void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget, quintptr item)
 {
+    if(nullptr == result)
+    {
+        return;
+    }
     QString xml = QString("<sa><ptr>%1</ptr><ptr>%2</ptr>%3</sa>")
             .arg(widget).arg(item).arg(result->toXml());
     m_writer->sendString(xml);
-    if(result)
-    {
-        delete result;
-    }
+#ifdef _DEBUG_OUTPUT
+    qDebug() << xml;
+#endif
+    delete result;
 }

@@ -50,10 +50,11 @@ public:
     //转换为xml，此转换不是标准xml文件，而是以<fi>打头</fi>结尾的xml文件
     static QString toXml(const SADataFeatureItem* item);
     //从xml转换为item
-    static void fromXml(const QString& xml,SADataFeatureItem* item);
+    static void fromXml(const QString& xmlStr, SADataFeatureItem* item);
 private:
     static int getTypeInt(const QStandardItem* item);
     static void writeItem(QXmlStreamWriter* xml,const QStandardItem* item);
+    static void readItem(QXmlStreamReader* xml, SADataFeatureItem *item);
 };
 Q_DECLARE_METATYPE(SADataFeatureItem)
 

@@ -1,6 +1,13 @@
 #include "SADataProcessVectorPointF.h"
 #include "czyMath.h"
 #include <algorithm>
+
+#define _DEBUG_OUTPUT
+#ifdef _DEBUG_OUTPUT
+#include <QElapsedTimer>
+#include <QDebug>
+#endif
+
 SADataProcessVectorPointF::SADataProcessVectorPointF(QObject *parent):QObject(parent)
   ,m_sortCount(20)
 {
@@ -28,11 +35,20 @@ void SADataProcessVectorPointF::getVectorPointY(const QVector<QPointF> &points, 
 
 SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF>& orgPoints)
 {
+#ifdef _DEBUG_OUTPUT
+        QElapsedTimer t;
+        t.start();
+#endif
     SADataFeatureItem* item = new SADataFeatureItem();
     QVector<double> y;
     getVectorPointY(orgPoints,y);
     if(orgPoints.size()<=0 || y.size()<=0)
     {
+#ifdef _DEBUG_OUTPUT
+        qDebug() << "orgPoints.size()<=0 || y.size()<=0 orgPoints.size()="<<orgPoints.size()
+                 << "y.size():" << y.size()
+                    ;
+#endif
         return nullptr;
     }
     item->setItemType(SADataFeatureItem::DescribeItem);
@@ -57,7 +73,6 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF
     QPointF minPoint = *datas.begin();
     QPointF maxPoint = *(datas.end()-1);
     QPointF midPoint = n>1 ? *(datas.begin() + int(n/2)) : minPoint;//中位数
-
     item->appendItem(tr("point num"),orgPoints.size());
     item->appendItem(tr("y min"),min);
     item->appendItem(tr("y max"),max);
@@ -72,19 +87,23 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF
     item->appendItem(tr("min Point"),minPoint);
     item->appendItem(tr("max Point"),maxPoint);
     item->appendItem(tr("mid Point"),midPoint);
-    QVector<QPointF> tmps;
     int sortCount = m_sortCount;
     if(sortCount > datas.size())
     {
         sortCount = datas.size();
     }
+    QVector<QPointF> tmps;
     tmps.reserve(sortCount);
+
     std::copy(datas.begin(),datas.begin()+sortCount,std::back_inserter(tmps));
     item->appendItem(tr("ascending order"),tmps);//升序
     tmps.clear();
     tmps.reserve(sortCount);
     std::copy(datas.rbegin(),datas.rbegin()+sortCount,std::back_inserter(tmps));
     item->appendItem(tr("descending order"),tmps);//降序
+#ifdef _DEBUG_OUTPUT
+    qDebug() << "analysisData points:" << orgPoints.size() << " cost:" << t.elapsed() << " ms";
+#endif
     return item;
 }
 
