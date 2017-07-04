@@ -13,7 +13,7 @@
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-  static QFile s_file("saDataProcDebug.txt");
+  static QFile s_log_file("saDataProcDebug.txt");
   QByteArray localMsg = msg.toLocal8Bit();
   switch (type) {
   case QtDebugMsg:
@@ -32,15 +32,15 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
       fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       abort();
   }
-  if(!s_file.isOpen())
+  if(!s_log_file.isOpen())
   {
-      s_file.open(QIODevice::WriteOnly);
+      s_log_file.open(QIODevice::WriteOnly);
   }
-  if(s_file.isOpen())
+  if(s_log_file.isOpen())
   {
-      QTextStream txt(&s_file);
-      txt << QString("%1 (%2:%3,%4)").arg(msg).arg(context.file).arg(context.line).arg(context.function)<<endl;
-
+      QTextStream txt(&s_log_file);
+      txt << QString("[%1:%2,%3]:").arg(context.file).arg(context.line).arg(context.function)<<endl;
+      txt << msg << endl;
   }
 }
 

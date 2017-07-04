@@ -22,6 +22,12 @@
 #include "SALocalServeWriter.h"
 #include <QLocalServer>
 #include "qwt_plot_curve.h"
+#include <QXmlStreamReader>
+#include "SAXMLTagDefined.h"
+#include "SAXMLReadHelper.h"
+#include "SAUIReflection.h"
+#include "SAUIInterface.h"
+#include "SAMdiSubWindow.h"
 
 #define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
@@ -162,7 +168,7 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
                     t2.start();
                     s_vector_send_time_elaspade.start();
 #endif
-                    m_dataWriter->sendDoubleVectorData((qintptr)figure,(qintptr)cur,datas);
+                    m_dataWriter->sendDoubleVectorData((qintptr)m_lastActiveSubWindow,(qintptr)figure,(qintptr)cur,datas);
 #ifdef _DEBUG_OUTPUT
                     qDebug() << "sendDoubleVectorData time cost:" << t2.elapsed();
 #endif
@@ -193,8 +199,35 @@ void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &main
 void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 {
 #ifdef _DEBUG_OUTPUT
-    qDebug() << "receive data cost:"<<s_vector_send_time_elaspade.elapsed()<<"receive str:"<<xmlString;
+    qDebug() << "receive data cost:"<<s_vector_send_time_elaspade.elapsed();
 #endif
+    SAXMLReadHelper xmlHelper(xmlString);
+    if(xmlHelper.isValid())
+    {
+        if(SAXMLReadHelper::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
+        {
+            quintptr w,fig,plotItemPtr;
+            std::unique_ptr<SADataFeatureItem> item(new SADataFeatureItem);
+            if(xmlHelper.getVectorPointFProcessResult(w,fig,plotItemPtr,item.get()))
+            {
+                QMdiSubWindow* subWind = (QMdiSubWindow*)w;
+                SAFigureWindow* figWnd = (SAFigureWindow*)fig;
+                QwtPlotItem* itemPtr = (QwtPlotItem*)plotItemPtr;
+                QList<QMdiSubWindow*> subWindList = saUI->getSubWindowList();
+                if(!subWindList.contains(subWind))
+                {
+                    return;
+                }
+                SAFigureWindow* figure = getChartWidgetFromSubWindow(subWind);
+                if(figure != figWnd)
+                {
+                    return;
+                }
+                qDebug() <<"ok!!!!!!";
+            }
+        }
+    }
+
 }
 
 void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)

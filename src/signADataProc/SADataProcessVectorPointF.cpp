@@ -19,9 +19,9 @@ SADataProcessVectorPointF::SADataProcessVectorPointF(QObject *parent):QObject(pa
 /// \param widget 标记1
 /// \param item 标记2
 ///
-void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, quintptr widget, quintptr item)
+void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, quintptr widget, quintptr fig, quintptr item)
 {
-    emit result(analysisData(points),widget,item);
+    emit result(analysisData(points),widget,fig,item);
 }
 
 void SADataProcessVectorPointF::getVectorPointY(const QVector<QPointF> &points, QVector<double> &ys)
@@ -87,11 +87,7 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF
     item->appendItem(tr("min Point"),minPoint);
     item->appendItem(tr("max Point"),maxPoint);
     item->appendItem(tr("mid Point"),midPoint);
-    int sortCount = m_sortCount;
-    if(sortCount > datas.size())
-    {
-        sortCount = datas.size();
-    }
+    int sortCount = std::min(m_sortCount,datas.size());
     QVector<QPointF> tmps;
     tmps.reserve(sortCount);
 

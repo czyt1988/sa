@@ -133,6 +133,8 @@ public:
     QList<SAChart2D *> getCurSubWindowCharts();
     //用于子窗口激活时刷新“图表设置工具栏的选中状态”
     void updateChartSetToolBar(SAFigureWindow* w);
+    //获取所有子窗口指针
+    QList<QMdiSubWindow*> getSubWindowList() const;
     //从subwindow指针中查找是否含有SAFigureWindow
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* sub);
     /// \}

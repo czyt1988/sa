@@ -1,5 +1,5 @@
 #include "DataFeatureTreeModel.h"
-
+#include "SAVariantCaster.h"
 DataFeatureTreeModel::DataFeatureTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
 
@@ -24,11 +24,11 @@ QModelIndex DataFeatureTreeModel::index(int row, int column, const QModelIndex &
     if ((nullptr == parItem)
         || (row < 0)
         || (column < 0)
-        || (row >= parItem->rowCount())
-        || (column >= parItem->columnCount())) {
+        || (row >= parItem->getChildCount())
+        || (column >= 2)) {
         return QModelIndex();//不正常情况
     }
-    return createIndex(row, column, parItem->child(row,column));
+    return createIndex(row, column, parItem->getChild(row));
 }
 
 QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
@@ -38,17 +38,17 @@ QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
     SADataFeatureItem* item =  toItemPtr(index);
     if(!item)
         return QModelIndex();
-    QStandardItem* parItem =  item->parent();
+    SADataFeatureItem* parItem =  item->getParent();
     if(nullptr == parItem)
     {
         //父指针为0，说明是顶层item
         return QModelIndex();
     }
-    QStandardItem* grandParItem = parItem->parent();//祖父指针，这个比较关键
+    SADataFeatureItem* grandParItem = parItem->getParent();//祖父指针，这个比较关键
     if(nullptr == grandParItem)
     {//如果祖父为0，说明它是第二层级，parent是1层，但不能用它自身的parItem->row(), parItem->column()
      //需要在QLsit里查找它的层次
-        int row = m_items.indexOf(static_cast<SADataFeatureItem*>(parItem));
+        int row = m_items.indexOf(parItem);
         if(row<0)
         {//说明没有在QList找到
             return QModelIndex();
@@ -56,7 +56,7 @@ QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
         return createIndex(row, 0, parItem);
     }
 
-    return createIndex(parItem->row(), parItem->column(), parItem);
+    return createIndex(parItem->getCurrentRowIndex(), 0, parItem);//挂载parent的都是只有一列的
 }
 
 int DataFeatureTreeModel::rowCount(const QModelIndex &parent) const
@@ -64,15 +64,12 @@ int DataFeatureTreeModel::rowCount(const QModelIndex &parent) const
     if(!parent.isValid())
         return m_items.size();
     SADataFeatureItem* parItem = toItemPtr(parent);
-    return parItem ? parItem->rowCount() : 0;
+    return parItem ? parItem->getCurrentRowIndex() : 0;
 }
 
 int DataFeatureTreeModel::columnCount(const QModelIndex &parent) const
 {
-    if(!parent.isValid())
-        return 2;
-    SADataFeatureItem* parItem = toItemPtr(parent);
-    return parItem ? parItem->columnCount() : 0;
+    return 2;
 }
 
 QVariant DataFeatureTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -106,25 +103,17 @@ QVariant DataFeatureTreeModel::data(const QModelIndex &index, int role) const
         return QVariant();
     if(Qt::BackgroundRole == role)
     {
-        return item->background();
+        return item->getBackground();
     }
 
     if(item)
     {
-        if(Qt::DecorationRole == role)
+        switch(index.column())
         {
-            switch(item->getItemType())
-            {
-            case SADataFeatureItem::DescribeItem:
-            case SADataFeatureItem::ValueItem:// 值项目
-            case SADataFeatureItem::PointItem:// 点项目
-            case SADataFeatureItem::VectorValueItem:// 值系列项目
-            case SADataFeatureItem::VectorPointItem:// 点系列项目项目
-                return QVariant();
-            }
-            return QVariant();
+        case 0:return item->getName();
+        case 1:
+            return SAVariantCaster::variantToString(item->getValue());
         }
-        return item->data(role);
     }
     return QVariant();
 }

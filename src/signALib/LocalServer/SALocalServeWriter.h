@@ -21,7 +21,7 @@ public slots:
     //发送握手协议
     Q_SLOT void sendShakeHand();
     //发送数组
-    Q_SLOT void sendDoubleVectorData(qintptr wndPtr,qintptr itemPtr,const QVector<QPointF>& datas);
+    Q_SLOT void sendDoubleVectorData(qintptr wndPtr,qintptr figPtr,qintptr itemPtr,const QVector<QPointF>& datas);
     //
     Q_SLOT void sendString(const QString str);
 private:

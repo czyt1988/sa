@@ -1062,6 +1062,11 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
         ui->actionLegendPanel->setChecked(c->isEnableLegendPanel());
     }
 }
+
+QList<QMdiSubWindow *> MainWindow::getSubWindowList() const
+{
+    return ui->mdiArea->subWindowList();
+}
 ///
 /// \brief 从subwindow指针中查找是否含有SAFigureWindow
 /// \param sub subwindow指针

@@ -74,7 +74,7 @@ void SALocalServeWriter::sendShakeHand()
 /// \param itemPtr 对应绘图的曲线指针，这个指针只作为标记用，无实际作用
 /// \param datas
 ///
-void SALocalServeWriter::sendDoubleVectorData(qintptr wndPtr, qintptr itemPtr, const QVector<QPointF> &datas)
+void SALocalServeWriter::sendDoubleVectorData(qintptr wndPtr,qintptr figPtr,qintptr itemPtr, const QVector<QPointF> &datas)
 {
     if(!isEnableToWrite())
     {
@@ -93,6 +93,7 @@ void SALocalServeWriter::sendDoubleVectorData(qintptr wndPtr, qintptr itemPtr, c
     SALocalServeFigureItemProcessHeader subHeader;
     subHeader.setDataType(SALocalServeFigureItemProcessHeader::CurveData);
     subHeader.setWndPtr(wndPtr);
+    subHeader.setFigPtr(figPtr);
     subHeader.setItem(itemPtr);
     subHeader.setDataLength(dataLen);
     subHeader.setDataVectorNum(datas.size());

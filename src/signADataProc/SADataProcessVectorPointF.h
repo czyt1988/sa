@@ -16,7 +16,7 @@ public:
     void setSortCount(int sortCount);
 public slots:
     //设置需要计算的点，并开始计算
-    void setPoints(const QVector<QPointF>& points,quintptr widget,quintptr item);
+    void setPoints(const QVector<QPointF>& points, quintptr widget, quintptr fig, quintptr item);
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);
 
@@ -29,7 +29,7 @@ signals:
     /// \param widget 标记1
     /// \param item 标记2
     ///
-    void result(SADataFeatureItem* result,quintptr widget,quintptr item);
+    void result(SADataFeatureItem* result,quintptr widget,quintptr fig,quintptr item);
 private:
     int m_sortCount;///< 记录要显示的排序条目
 };

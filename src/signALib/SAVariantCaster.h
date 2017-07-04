@@ -2,10 +2,11 @@
 #define SAVARIANTCASTER_H
 #include <QVariant>
 #include <QIODevice>
+#include "SALibGlobal.h"
 ///
 /// \brief 扩展QVariant的转换
 ///
-class SAVariantCaster
+class SALIB_EXPORT SAVariantCaster
 {
 public:
     SAVariantCaster();

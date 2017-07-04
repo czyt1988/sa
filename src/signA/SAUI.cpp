@@ -159,6 +159,11 @@ void SAUI::updateChartSetToolBar(SAFigureWindow *w)
     m_mainWnd->updateChartSetToolBar(w);
 }
 
+QList<QMdiSubWindow *> SAUI::getSubWindowList() const
+{
+    return m_mainWnd->getSubWindowList();
+}
+
 QMdiSubWindow *SAUI::getCurrentActiveSubWindow() const
 {
     return m_mainWnd->getCurrentActiveSubWindow();

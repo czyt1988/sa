@@ -8,6 +8,7 @@
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
 #include <QDebug>
+#include "SAXMLTagDefined.h"
 QElapsedTimer s_static_time_elaspade = QElapsedTimer();
 #endif
 
@@ -80,7 +81,7 @@ void SALocalConnection::onReceivedVectorPointFData(const SALocalServeFigureItemP
 #ifdef _DEBUG_OUTPUT
     qDebug() << "onReceivedVectorPointFData-> data size:"<<datas.size();
 #endif
-    emit callVectorPointFProcess(datas,header.getWndPtr(),header.getItemPtr());
+    emit callVectorPointFProcess(datas,header.getWndPtr(),header.getFigPtr(),header.getItemPtr());
 }
 ///
 /// \brief 接收到发送的文字
@@ -100,7 +101,7 @@ void SALocalConnection::onReceivedString(const QString &str)
         }
         if(m_writer)
         {
-            m_writer->sendDoubleVectorData(0,0,points);
+            m_writer->sendDoubleVectorData(0,0,0,points);
         }
     }
 }
@@ -121,14 +122,30 @@ void SALocalConnection::onRecShakeHand()
 /// \param widget 标记1
 /// \param item 标记2
 ///
-void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget, quintptr item)
+void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget,quintptr fig, quintptr item)
 {
     if(nullptr == result)
     {
         return;
     }
-    QString xml = QString("<sa><ptr>%1</ptr><ptr>%2</ptr>%3</sa>")
+#if 1
+    QString xml;
+    QTextStream st(&xml);
+    st << "<" << SA_XML_TAG_SA << " " << SA_XML_ATT_NAME_SA_TYPE << "=\"" <<  SA_XML_ATT_SA_TYPE_VPFR << "\">";
+    st << "<" << SA_XML_TAG_QUINTPTR << ">" << widget << "</" << SA_XML_TAG_QUINTPTR << ">";
+    st << "<" << SA_XML_TAG_QUINTPTR << ">" << fig << "</" << SA_XML_TAG_QUINTPTR << ">";
+    st << "<" << SA_XML_TAG_QUINTPTR << ">" << item << "</" << SA_XML_TAG_QUINTPTR << ">";
+    st << result->toXml();
+    st << "</" << SA_XML_TAG_SA << ">";
+    st << endl;
+#else
+    QString xml = QString("<%1 %2=\"%3\"><%4>%5</%4><%4>%6</%4>%7</%1>")
+            .arg(SA_XML_TAG_SA)
+            .arg(SA_XML_ATT_NAME_SA_TYPE)
+            .arg(SA_XML_ATT_SA_TYPE_VPFR)
+            .arg(SA_XML_TAG_UINTVAL)
             .arg(widget).arg(item).arg(result->toXml());
+#endif
     m_writer->sendString(xml);
 #ifdef _DEBUG_OUTPUT
     qDebug() << xml;

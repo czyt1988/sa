@@ -35,7 +35,9 @@ HEADERS += \
     SAFigureGlobalConfig.h \
     SAGUIGlobalConfig.h \
     SACRC.h \
-    SADataFeatureItem.h
+    SADataFeatureItem.h \
+    SAXMLTagDefined.h \
+    SAXMLReadHelper.h
 
 
 SOURCES += \
@@ -57,7 +59,8 @@ SOURCES += \
     SAFigureGlobalConfig.cpp \
     SAGUIGlobalConfig.cpp \
     SACRC.cpp \
-    SADataFeatureItem.cpp
+    SADataFeatureItem.cpp \
+    SAXMLReadHelper.cpp
 
 
 include($$PWD/Private/Private.pri)

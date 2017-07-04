@@ -11,6 +11,16 @@ void SALocalServeFigureItemProcessHeader::setWndPtr(const qintptr &wnd)
     m_d.wndPtr = wnd;
 }
 
+qintptr SALocalServeFigureItemProcessHeader::getFigPtr() const
+{
+    return m_d.figPtr;
+}
+
+void SALocalServeFigureItemProcessHeader::setFigPtr(const qintptr &p)
+{
+    m_d.figPtr = p;
+}
+
 qintptr SALocalServeFigureItemProcessHeader::getItemPtr() const
 {
     return m_d.itemPtr;
@@ -91,6 +101,7 @@ size_t SALocalServeFigureItemProcessHeader::sendSize()
 {
     return sizeof(qintptr)
             +sizeof(qintptr)
+            +sizeof(qintptr)
             +sizeof(int)
             +sizeof(size_t)
             +sizeof(size_t)
@@ -100,6 +111,7 @@ size_t SALocalServeFigureItemProcessHeader::sendSize()
 QDataStream &operator <<(QDataStream &io, const SALocalServeFigureItemProcessHeader &d)
 {
     io.writeRawData((const char*)(&(d.m_d.wndPtr)),sizeof(qintptr));
+    io.writeRawData((const char*)(&(d.m_d.figPtr)),sizeof(qintptr));
     io.writeRawData((const char*)(&(d.m_d.itemPtr)),sizeof(qintptr));
     io.writeRawData((const char*)(&(d.m_d.dataType)),sizeof(int));
     io.writeRawData((const char*)(&(d.m_d.dataLength)),sizeof(size_t));
@@ -111,6 +123,7 @@ QDataStream &operator <<(QDataStream &io, const SALocalServeFigureItemProcessHea
 QDataStream &operator >>(QDataStream &io, SALocalServeFigureItemProcessHeader &d)
 {
     io.readRawData((char*)(&(d.m_d.wndPtr)),sizeof(qintptr));
+    io.readRawData((char*)(&(d.m_d.figPtr)),sizeof(qintptr));
     io.readRawData((char*)(&(d.m_d.itemPtr)),sizeof(qintptr));
     io.readRawData((char*)(&(d.m_d.dataType)),sizeof(int));
     io.readRawData((char*)(&(d.m_d.dataLength)),sizeof(size_t));
