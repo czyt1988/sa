@@ -28,7 +28,7 @@
 #include "SAUIReflection.h"
 #include "SAUIInterface.h"
 #include "SAMdiSubWindow.h"
-
+#include "DataFeatureTreeModel.h"
 #define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
@@ -83,12 +83,10 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
         return;
     }
     m_lastActiveSubWindow = arg1;
-
-    auto modelIte = m_subWindowToDataInfo.find(arg1);
-    if(modelIte != m_subWindowToDataInfo.end())
+    QAbstractItemModel* model = m_subWindowToDataInfo.value(arg1,nullptr);
+    if(model)
     {
-        if(nullptr != modelIte.value())
-            ui->treeView->setModel(modelIte.value());
+        ui->treeView->setModel(model);
     }
     else
     {
@@ -198,9 +196,6 @@ void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &main
 
 void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 {
-#ifdef _DEBUG_OUTPUT
-    qDebug() << "receive data cost:"<<s_vector_send_time_elaspade.elapsed();
-#endif
     SAXMLReadHelper xmlHelper(xmlString);
     if(xmlHelper.isValid())
     {
@@ -216,14 +211,24 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
                 QList<QMdiSubWindow*> subWindList = saUI->getSubWindowList();
                 if(!subWindList.contains(subWind))
                 {
+                    saDebug(tr("subWind can not find subWind,subWind ptr:%1").arg((quintptr)subWind));
                     return;
                 }
                 SAFigureWindow* figure = getChartWidgetFromSubWindow(subWind);
                 if(figure != figWnd)
                 {
+                    saDebug(tr("can not find figure in cur sub window:%1").arg((quintptr)subWind));
                     return;
                 }
-                qDebug() <<"ok!!!!!!";
+                DataFeatureTreeModel* model= qobject_cast<DataFeatureTreeModel*>(m_subWindowToDataInfo.value(subWind,nullptr));
+                if(nullptr == model)
+                {
+                    model = new DataFeatureTreeModel(this);
+                    m_subWindowToDataInfo[subWind] = model;
+                    ui->treeView->setModel(model);
+                }
+                item->setName(itemPtr->title().text());
+                model->setPlotItem(figure,itemPtr,item.release());
             }
         }
     }

@@ -79,7 +79,11 @@ void SALocalConnection::errorOccurred(QLocalSocket::LocalSocketError err)
 void SALocalConnection::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &datas)
 {
 #ifdef _DEBUG_OUTPUT
-    qDebug() << "onReceivedVectorPointFData-> data size:"<<datas.size();
+    qDebug() << "onReceivedVectorPointFData-> data size:"<<datas.size()
+             << " WndPtr:"<<header.getWndPtr()
+             << " FigPtr:"<<header.getFigPtr()
+             << " ItemPtr:"<<header.getItemPtr()
+                ;
 #endif
     emit callVectorPointFProcess(datas,header.getWndPtr(),header.getFigPtr(),header.getItemPtr());
 }
@@ -128,7 +132,10 @@ void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, q
     {
         return;
     }
-#if 1
+#ifdef _DEBUG_OUTPUT
+    QElapsedTimer t;
+    t.start();
+#endif
     QString xml;
     QTextStream st(&xml);
     st << "<" << SA_XML_TAG_SA << " " << SA_XML_ATT_NAME_SA_TYPE << "=\"" <<  SA_XML_ATT_SA_TYPE_VPFR << "\">";
@@ -138,17 +145,13 @@ void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, q
     st << result->toXml();
     st << "</" << SA_XML_TAG_SA << ">";
     st << endl;
-#else
-    QString xml = QString("<%1 %2=\"%3\"><%4>%5</%4><%4>%6</%4>%7</%1>")
-            .arg(SA_XML_TAG_SA)
-            .arg(SA_XML_ATT_NAME_SA_TYPE)
-            .arg(SA_XML_ATT_SA_TYPE_VPFR)
-            .arg(SA_XML_TAG_UINTVAL)
-            .arg(widget).arg(item).arg(result->toXml());
-#endif
     m_writer->sendString(xml);
 #ifdef _DEBUG_OUTPUT
-    qDebug() << xml;
+    qDebug() << "onProcessVectorPointFResult cost:" << t.elapsed()
+             << " WndPtr:"<<widget
+             << " FigPtr:"<<fig
+             << " ItemPtr:"<<item
+                ;
 #endif
     delete result;
 }

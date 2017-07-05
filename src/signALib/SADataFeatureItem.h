@@ -6,6 +6,7 @@
 #include <QBrush>
 class QXmlStreamWriter;
 class QXmlStreamReader;
+class QDomElement;
 ///
 /// \brief DataFeatureItem接口
 ///
@@ -37,6 +38,8 @@ public:
     SADataFeatureItem *getChild(int index) const;
     //获取当前行
     int getCurrentRowIndex() const;
+    //设置子条目指针，返回旧的指针，返回的指针内存交由调用者管理
+    SADataFeatureItem* setChild(int index,SADataFeatureItem* newItemPtr);
 public:
     enum ItemType{
         UnKnow
@@ -76,7 +79,13 @@ protected:
 private:
     static int getTypeInt(const SADataFeatureItem *item);
     static void writeItem(QXmlStreamWriter* xml,const SADataFeatureItem* item);
-    static bool readItem(QXmlStreamReader* xml, SADataFeatureItem *item);
+
+
+
+
+    static bool readRootItem(QDomElement* xmlItem,SADataFeatureItem *item);
+    static bool readChildItem(QDomElement* xmlItem,SADataFeatureItem *parentItem);
+    static bool getItemInfoFromElement(QDomElement* xmlItem,SADataFeatureItem *item);
 private:
     QString m_name;
     SADataFeatureItem* m_parent;
