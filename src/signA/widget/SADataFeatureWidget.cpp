@@ -3,39 +3,44 @@
 #include <QMainWindow>
 #include <QMdiSubWindow>
 #include <QTimer>
-//#include <SAChartWidget.h>
-#include <DataFeatureTreeModel.h>
-#include "SADataFeatureItem.h"
+
 #include <SAPlotMarker.h>
 #include <QItemSelectionModel>
 #include <QItemSelection>
-#include <QLocalServer>
-#include <QLocalSocket>
+
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
+    #include <QLocalServer>
+    #include <QLocalSocket>
+    #include "SALocalServeFigureItemProcessHeader.h"
+    #include "SALocalServerDefine.h"
+    #include "SALocalServeReader.h"
+    #include "SALocalServeWriter.h"
+    #include "SAXMLReadHelper.h"
+#endif
 
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include "SALog.h"
 
-#include "SALocalServeFigureItemProcessHeader.h"
-#include "SALocalServerDefine.h"
-#include "SALocalServeReader.h"
-#include "SALocalServeWriter.h"
-#include <QLocalServer>
 #include "qwt_plot_curve.h"
-#include <QXmlStreamReader>
-#include "SAXMLTagDefined.h"
-#include "SAXMLReadHelper.h"
 #include "SAUIReflection.h"
 #include "SAUIInterface.h"
 #include "SAMdiSubWindow.h"
 #include "DataFeatureTreeModel.h"
+#include "SADataFeatureItem.h"
+
 #define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
-#include <QElapsedTimer>
-#include <QDebug>
-QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
+    #include <QElapsedTimer>
+    #include <QDebug>
+        #ifdef USE_IPC_CALC_FEATURE
+            QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
+            #define __SEND_1M_POINTS_TEST__
+        #endif
 #endif
-#define __SEND_1M_POINTS_TEST__
+
 
 //====================================================================
 
@@ -43,21 +48,34 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SADataFeatureWidget)
   ,m_lastActiveSubWindow(nullptr)
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
   ,m_dataProcessSocket(nullptr)
   ,m_dataProcPro(nullptr)
   ,m_dataReader(nullptr)
   ,m_dataWriter(nullptr)
+  ,m_connectRetryCount(50)
+#endif
 {
     ui->setupUi(this);
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
     initLocalServer();
+#endif
 }
 
 SADataFeatureWidget::~SADataFeatureWidget()
 {
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
     disconnect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
             ,this,&SADataFeatureWidget::onProcessDataProcFinish);
     m_dataProcPro->kill();
     delete ui;
+#endif
 }
 ///
 /// \brief 子窗口激活槽
@@ -65,25 +83,15 @@ SADataFeatureWidget::~SADataFeatureWidget()
 ///
 void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
 {
-#if 0
-    if(!arg1)
-        return;
-    m_plotWidget = getChartWidgetFromSubWindow(arg1);
-
-    if(m_plotWidget)
-    {
-        getTreeModel()->setDataFeatureItems(m_plotWidget->getDataFeatureItemList());
-        ui->treeView->expandAll();
-    }
-    else
-        getTreeModel()->clear();
-#endif
     if(nullptr == arg1)
     {
         return;
     }
     m_lastActiveSubWindow = arg1;
     QAbstractItemModel* model = m_subWindowToDataInfo.value(arg1,nullptr);
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
     if(model)
     {
         ui->treeView->setModel(model);
@@ -97,6 +105,7 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
             callCalcFigureWindowFeature(figure);
         }
     }
+#endif
 }
 ///
 /// \brief 子窗口关闭槽
@@ -104,7 +113,6 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
 ///
 void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
 {
-
     m_subWindowToDataInfo.remove(arg1);
     auto modelIte = m_subWindowToDataInfo.find(arg1);
     if(modelIte != m_subWindowToDataInfo.end())
@@ -115,8 +123,10 @@ void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
         {
             ui->treeView->setModel(nullptr);
         }
-        if(nullptr == model)
+        if(model)
+        {
             delete model;
+        }
         m_subWindowToDataInfo.remove(arg1);
     }
 }
@@ -135,6 +145,9 @@ SAFigureWindow *SADataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *
 ///
 void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 {
+#ifdef USE_THREAD_CALC_FEATURE//使用多线程
+
+#else //使用多进程
 #ifdef _DEBUG_OUTPUT
     QElapsedTimer t;
     t.start();
@@ -177,9 +190,11 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
     }
 #ifdef _DEBUG_OUTPUT
     qDebug() << "callCalcFigureWindowFeature time cost:" << t.elapsed();
+#endif 
 #endif
 }
 
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
 {
     Q_UNUSED(mainHeader);
@@ -193,7 +208,9 @@ void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &main
 #endif
     emit showMessageInfo(tr("data process connect sucess!"),SA::NormalMessage);
 }
+#endif
 
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 {
     SAXMLReadHelper xmlHelper(xmlString);
@@ -234,7 +251,9 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
     }
 
 }
+#endif
 
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
 {
 #ifdef _DEBUG_OUTPUT
@@ -244,7 +263,7 @@ void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureIte
 #endif
 
 }
-
+#endif
 
 
 ///
@@ -335,6 +354,7 @@ void SADataFeatureWidget::onShowErrorMessage(const QString &info)
 {
     emit showMessageInfo(info,SA::ErrorMessage);
 }
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 ///
 /// \brief 初始化本地服务器
 ///
@@ -357,7 +377,9 @@ void SADataFeatureWidget::initLocalServer()
             ,this,&SADataFeatureWidget::onShowErrorMessage);
     startDataProc();
 }
+#endif
 
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 void SADataFeatureWidget::connectToServer()
 {
     if(m_dataProcessSocket)
@@ -365,19 +387,35 @@ void SADataFeatureWidget::connectToServer()
         delete m_dataProcessSocket;m_dataProcessSocket=nullptr;
     }
     m_dataProcessSocket = new QLocalSocket(this);
-    m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
-    if(!m_dataProcessSocket->waitForConnected(1000))
-    {
-        QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
-        emit showMessageInfo(str,SA::ErrorMessage);
-        saDebug(str);
-        return;
-    }
-    saPrint() << "connect to dataProc serve success!";
-    m_dataReader->setSocket(m_dataProcessSocket);
-    m_dataWriter->setSocket(m_dataProcessSocket);
-    m_dataWriter->sendShakeHand();
+    m_connectRetryCount = 50;
+    tryToConnectServer();
 }
+#endif
+
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
+void SADataFeatureWidget::tryToConnectServer()
+{
+    m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
+    do
+    {
+        if(!m_dataProcessSocket->waitForConnected())
+        {
+            QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
+            emit showMessageInfo(str,SA::ErrorMessage);
+            saDebug(str);
+            QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
+            return;
+        }
+        saPrint() << "connect to dataProc serve success!";
+        m_dataReader->setSocket(m_dataProcessSocket);
+        m_dataWriter->setSocket(m_dataProcessSocket);
+        m_dataWriter->sendShakeHand();
+        break;
+    }while(--m_connectRetryCount);
+}
+#endif
+
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 ///
 /// \brief 启动数据处理进程
 ///
@@ -392,6 +430,9 @@ void SADataFeatureWidget::startDataProc()
     QStringList args = {QString::number(qApp->applicationPid())};
     m_dataProcPro->start(path,args);
 }
+#endif
+
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 ///
 /// \brief 进程启动成功
 ///
@@ -399,10 +440,12 @@ void SADataFeatureWidget::onProcessStateChanged(QProcess::ProcessState newState)
 {
     if(QProcess::Running == newState)
     {
-        QTimer::singleShot(1000,this,&SADataFeatureWidget::connectToServer);
+        connectToServer();
     }
 }
+#endif
 
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
 ///
 /// \brief 数据处理的线程终结
 /// \param exitCode 退出代码
@@ -429,6 +472,6 @@ void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitSt
         emit showMessageInfo(tr("restart signADataProc"),SA::WarningMessage);
     }
 }
-
+#endif
 
 

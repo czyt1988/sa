@@ -85,7 +85,7 @@ void SALocalConnection::onReceivedVectorPointFData(const SALocalServeFigureItemP
              << " ItemPtr:"<<header.getItemPtr()
                 ;
 #endif
-    emit callVectorPointFProcess(datas,header.getWndPtr(),header.getFigPtr(),header.getItemPtr());
+    emit callVectorPointFProcess(datas,header.getWndPtr(),header.getFigPtr(),header.getItemPtr(),m_reader->getSocket());
 }
 ///
 /// \brief 接收到发送的文字
@@ -126,7 +126,7 @@ void SALocalConnection::onRecShakeHand()
 /// \param widget 标记1
 /// \param item 标记2
 ///
-void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget,quintptr fig, quintptr item)
+void SALocalConnection::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget,quintptr fig, quintptr item,QLocalSocket* socket)
 {
     if(nullptr == result)
     {

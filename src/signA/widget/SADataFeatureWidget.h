@@ -4,20 +4,30 @@
 #include <QWidget>
 #include <QProcess>
 #include <QMap>
-#include <QBuffer>
 #include "SAGlobals.h"
 #include <memory>
 class QMdiSubWindow;
-class QLocalServer;
-class QLocalSocket;
 class QAbstractItemModel;
 class SAFigureWindow;
 class DataFeatureTreeModel;
+
+/// \def 使用多线程来进行数据特征的计算，否则使用多进程，
+/// 如果程序不希望使用多线程进行计算，把这个宏注释掉，会使用多进程进行计算
+//#define USE_THREAD_CALC_FEATURE
+
 //数据接收相关
-class SALocalServeReader;
-class SALocalServeWriter;
-#include "SALocalServeBaseHeader.h"
-#include "SALocalServeFigureItemProcessHeader.h"
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
+    #define USE_IPC_CALC_FEATURE //使用多进程进行计算
+    class QLocalServer;
+    class QLocalSocket;
+    class SALocalServeReader;
+    class SALocalServeWriter;
+    #include "SALocalServeBaseHeader.h"
+    #include "SALocalServeFigureItemProcessHeader.h"
+#endif
+
 namespace Ui {
 class SADataFeatureWidget;
 }
@@ -45,36 +55,44 @@ private slots:
 
     void onShowErrorMessage(const QString& info);
 private:
+    SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
+    //计算绘图窗口的dataFeature
+    void callCalcFigureWindowFeature(SAFigureWindow* figure);
+
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
+private:
     //初始化本地服务
     void initLocalServer();
     //
     void connectToServer();
+    Q_SLOT void tryToConnectServer();
     void startDataProc();
-
     Q_SLOT void onProcessStateChanged(QProcess::ProcessState newState);
-
     //数据处理进程异常停止
     Q_SLOT void onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus);
-
-    SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
-    //计算绘图窗口的dataFeature
-    void callCalcFigureWindowFeature(SAFigureWindow* figure);
     //接收主包头完毕
     Q_SLOT void onReceivedShakeHand(const SALocalServeBaseHeader& mainHeader);
     //接收到xml字符
     Q_SLOT void onReceivedString(const QString& xmlString);
     //接收到xml字符
     Q_SLOT void onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
+#endif
 private:
     Ui::SADataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口
-
-    QProcess* m_dataProcPro;///< 数据处理进程
     QMap<QMdiSubWindow*,QAbstractItemModel*> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
 private://数据接收相关的类型
+    QProcess* m_dataProcPro;///< 数据处理进程
     QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
     SALocalServeReader* m_dataReader;
     SALocalServeWriter* m_dataWriter;
+    short m_connectRetryCount;
+#endif
 };
 
 #endif // DATAFEATUREWIDGET_H

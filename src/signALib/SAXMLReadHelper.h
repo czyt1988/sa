@@ -3,7 +3,8 @@
 #include "SALibGlobal.h"
 #include <QScopedPointer>
 #include <memory>
-class QXmlStreamReader;
+#include <QXmlStreamReader>
+//class QXmlStreamReader;
 class SADataFeatureItem;
 
 ///
