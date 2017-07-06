@@ -6,7 +6,7 @@
 #include <QMap>
 #include <memory>
 #include "SADataFeatureItem.h"
-class SAFigureWindow;
+class SAChart2D;
 class QwtPlotItem;
 class DataFeatureTreeModel : public QAbstractItemModel
 {
@@ -23,14 +23,18 @@ public:
     void clear();
 public:
     //把item挂载到对应的条目上
-    void setPlotItem(SAFigureWindow* p,QwtPlotItem* itemPtr,SADataFeatureItem* items);
+    void setPlotItem(SAChart2D* chartPtr, QwtPlotItem *itemPtr, SADataFeatureItem* items);
+    //获取顶层节点
+    QList<SADataFeatureItem* > getRootItems() const;
+    //通过节点获取图形指针
+    static SAChart2D* getChartPtrFromItem(const SADataFeatureItem *item);
+    //通过节点获取对应的itemlist
+    static QList<QwtPlotItem*> getItemListFromItem(const SADataFeatureItem *item);
 protected:
     //创建一个figureitem，其他item挂载在这个figureitem下面
-    SADataFeatureItem* createFigureItem(SAFigureWindow *figure);
+    SADataFeatureItem* createChartItems(SAChart2D *chart);
     //通过figure指针查找到对应的item条目，figure指针对应以第一层item
-    SADataFeatureItem* findFigureItem(SAFigureWindow* p,bool autoCreate = false);
-    //
-
+    SADataFeatureItem* findChartItem(SAChart2D* p,bool autoCreate = false);
 signals:
 
 public slots:
@@ -38,7 +42,7 @@ private:
     SADataFeatureItem *toItemPtr(const QModelIndex &index) const;
 private:
     QList<SADataFeatureItem* > m_items;
-    QMap<SAFigureWindow *,SADataFeatureItem*> m_fig2item;
+    QMap<SAChart2D *,SADataFeatureItem*> m_fig2item;
 };
 
 #endif // DATAFEATURETREEMODEL_H

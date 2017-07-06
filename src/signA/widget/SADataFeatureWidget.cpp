@@ -36,7 +36,8 @@
     #include <QElapsedTimer>
     #include <QDebug>
         #ifdef USE_IPC_CALC_FEATURE
-            QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
+            static bool s_send_speed_test = false;
+            static QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
             #define __SEND_1M_POINTS_TEST__
         #endif
 #endif
@@ -88,12 +89,15 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
         return;
     }
     m_lastActiveSubWindow = arg1;
+
+    setWindowTitle(tr("data feature[%1]").arg(arg1->windowTitle()));
     QAbstractItemModel* model = m_subWindowToDataInfo.value(arg1,nullptr);
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
     if(model)
     {
+        checkModelItem(model,arg1);
         ui->treeView->setModel(model);
     }
     else
@@ -148,10 +152,6 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 #ifdef USE_THREAD_CALC_FEATURE//使用多线程
 
 #else //使用多进程
-#ifdef _DEBUG_OUTPUT
-    QElapsedTimer t;
-    t.start();
-#endif
     if(nullptr == m_dataProcessSocket)
     {
         return;
@@ -162,37 +162,74 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
         QwtPlotItemList itemList = (*i)->itemList();
         for(auto j=itemList.begin();j!=itemList.end();++j)
         {
-            if(QwtPlotItem::Rtti_PlotCurve == (*j)->rtti())
-            {
-                QwtPlotCurve* cur = static_cast<QwtPlotCurve*>(*j);
-                const size_t size = cur->dataSize();
-                QVector<QPointF> datas;
-                datas.reserve(cur->data()->size());
-                for(size_t c = 0;c<size;++c)
-                {
-                    datas.append(cur->sample(c));
-                }
-                if(m_dataWriter)
-                {
-#ifdef _DEBUG_OUTPUT
-                    QElapsedTimer t2;
-                    t2.start();
-                    s_vector_send_time_elaspade.start();
-#endif
-                    m_dataWriter->sendDoubleVectorData((qintptr)m_lastActiveSubWindow,(qintptr)figure,(qintptr)cur,datas);
-#ifdef _DEBUG_OUTPUT
-                    qDebug() << "sendDoubleVectorData time cost:" << t2.elapsed();
-#endif
-                }
-            }
+            calcPlotItemFeature(*j,m_lastActiveSubWindow,*i);
         }
-
     }
-#ifdef _DEBUG_OUTPUT
-    qDebug() << "callCalcFigureWindowFeature time cost:" << t.elapsed();
-#endif 
 #endif
 }
+
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
+///
+/// \brief 计算一个plot item
+/// \param plotitem
+/// \param arg1
+/// \param arg2
+///
+void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const QMdiSubWindow *arg1, const SAChart2D *arg2)
+{
+    if(QwtPlotItem::Rtti_PlotCurve == plotitem->rtti())
+    {
+        const QwtPlotCurve* cur = static_cast<const QwtPlotCurve*>(plotitem);
+        const size_t size = cur->dataSize();
+        QVector<QPointF> datas;
+        datas.reserve(cur->data()->size());
+        for(size_t c = 0;c<size;++c)
+        {
+            datas.append(cur->sample(c));
+        }
+        if(m_dataWriter)
+        {
+
+            m_dataWriter->sendDoubleVectorData((qintptr)arg1,(qintptr)arg2,(qintptr)cur,datas);
+
+        }
+    }
+}
+#endif
+
+void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubWindow *subWndPtr)
+{
+    DataFeatureTreeModel* featureModel = qobject_cast<DataFeatureTreeModel*>(baseModel);
+    if(nullptr == featureModel)
+    {
+        return;
+    }
+    SAFigureWindow * fig = SAUIInterface::getFigureWidgetFromMdiSubWindow(subWndPtr);
+    if(nullptr == fig)
+    {
+        return;
+    }
+    QList<SAChart2D *> plots = fig->get2DPlots();
+    QList<SADataFeatureItem* >  chartItems = featureModel->getRootItems();
+    //检测有没有figure被删除了
+    std::for_each(chartItems.begin(),chartItems.end(),[](SADataFeatureItem* fig){
+        SAChart2D* p = DataFeatureTreeModel::getChartPtrFromItem(fig);
+        if(p)
+        {
+
+        }
+
+    });
+    for(int i=0;i<chartItems.size();++i)
+    {
+        QList<QwtPlotItem *> itemList = featureModel->getItemListFromItem(chartItems[i]);
+
+
+    }
+
+}
+
+
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
 void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
@@ -202,6 +239,7 @@ void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &main
     if(m_dataWriter)
     {
         qDebug() << "start 1000000 points test";
+        s_send_speed_test = true;
         s_vector_send_time_elaspade.restart();
         m_dataWriter->sendString("__test__1m");//发送一个测试
     }
@@ -218,12 +256,12 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
     {
         if(SAXMLReadHelper::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
         {
-            quintptr w,fig,plotItemPtr;
+            quintptr w,chart,plotItemPtr;
             std::unique_ptr<SADataFeatureItem> item(new SADataFeatureItem);
-            if(xmlHelper.getVectorPointFProcessResult(w,fig,plotItemPtr,item.get()))
+            if(xmlHelper.getVectorPointFProcessResult(w,chart,plotItemPtr,item.get()))
             {
                 QMdiSubWindow* subWind = (QMdiSubWindow*)w;
-                SAFigureWindow* figWnd = (SAFigureWindow*)fig;
+                SAChart2D* chartWnd = (SAChart2D*)chart;
                 QwtPlotItem* itemPtr = (QwtPlotItem*)plotItemPtr;
                 QList<QMdiSubWindow*> subWindList = saUI->getSubWindowList();
                 if(!subWindList.contains(subWind))
@@ -232,7 +270,9 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
                     return;
                 }
                 SAFigureWindow* figure = getChartWidgetFromSubWindow(subWind);
-                if(figure != figWnd)
+                QList<SAChart2D*> plots = figure->get2DPlots();
+
+                if(!plots.contains(chartWnd))
                 {
                     saDebug(tr("can not find figure in cur sub window:%1").arg((quintptr)subWind));
                     return;
@@ -245,7 +285,7 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
                     ui->treeView->setModel(model);
                 }
                 item->setName(itemPtr->title().text());
-                model->setPlotItem(figure,itemPtr,item.release());
+                model->setPlotItem(chartWnd,itemPtr,item.release());
             }
         }
     }
@@ -257,9 +297,17 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
 {
 #ifdef _DEBUG_OUTPUT
-    qDebug() << "test time cost: " << s_vector_send_time_elaspade.elapsed()
-             << "\n ys.size:" <<ys.size()
-                ;
+    int costTime = s_vector_send_time_elaspade.restart();
+    if(s_send_speed_test)
+    {
+        s_send_speed_test = false;
+        saDebug(QString("test time cost:%1 \n ys.size:%2").arg(costTime).arg(ys.size()));
+        int bitSize = ys.size() * 2*sizeof(qreal) * 8;
+
+        saDebug(QString("send speed:%1 byte/ms(%2 MB/s)")
+                .arg((bitSize/8.0)/costTime)
+                .arg((bitSize/(1024.0*1024)) / (costTime/1000.0)));
+    }
 #endif
 
 }
@@ -396,13 +444,16 @@ void SADataFeatureWidget::connectToServer()
 void SADataFeatureWidget::tryToConnectServer()
 {
     m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
+    if(m_connectRetryCount <= 0)
+    {
+        QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
+        emit showMessageInfo(str,SA::ErrorMessage);
+        saDebug(str);
+    }
     do
     {
         if(!m_dataProcessSocket->waitForConnected())
         {
-            QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
-            emit showMessageInfo(str,SA::ErrorMessage);
-            saDebug(str);
             QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
             return;
         }

@@ -6,10 +6,12 @@
 #include <QMap>
 #include "SAGlobals.h"
 #include <memory>
+class QwtPlotItem;
 class QMdiSubWindow;
 class QAbstractItemModel;
 class SAFigureWindow;
 class DataFeatureTreeModel;
+class SAChart2D;
 
 /// \def 使用多线程来进行数据特征的计算，否则使用多进程，
 /// 如果程序不希望使用多线程进行计算，把这个宏注释掉，会使用多进程进行计算
@@ -47,8 +49,8 @@ public slots:
 signals:
     //显示消息
     void showMessageInfo(const QString& info,SA::MeaasgeType messageType);
-
 private slots:
+
     void on_treeView_clicked(const QModelIndex &index);
 
     void on_toolButton_clearDataFeature_clicked();
@@ -58,17 +60,24 @@ private:
     SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature
     void callCalcFigureWindowFeature(SAFigureWindow* figure);
+    //检测model是否需要重新计算datafeature
+    void checkModelItem(QAbstractItemModel* baseModel,QMdiSubWindow *subWndPtr);
 
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
 private:
+    //计算一个plot item
+    void calcPlotItemFeature(const QwtPlotItem* plotitem,const QMdiSubWindow *arg1,const SAChart2D* arg2);
     //初始化本地服务
     void initLocalServer();
-    //
+    //连接服务器
     void connectToServer();
+    //尝试连接服务器
     Q_SLOT void tryToConnectServer();
+    //启动数据处理进程
     void startDataProc();
+    //进程状态改变
     Q_SLOT void onProcessStateChanged(QProcess::ProcessState newState);
     //数据处理进程异常停止
     Q_SLOT void onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus);
