@@ -278,7 +278,6 @@ bool SADataFeatureItem::fromXml(const QString &xmlStr, SADataFeatureItem *item)
             readChildItem(&childEle,item);
         }
     }
-    qDebug() << "isOK" <<  isOK;
     return isOK;
 }
 
@@ -323,9 +322,13 @@ bool SADataFeatureItem::readChildItem(QDomElement *xmlItem, SADataFeatureItem *p
     {
         return false;
     }
-    QDomNodeList itemList = xmlItem->elementsByTagName(XML_STR_ITEM__);
+    QDomNodeList itemList = xmlItem->childNodes();//(XML_STR_ITEM__);
     for(int i = 0;i<itemList.size();++i)
     {
+        if(itemList.at(i).nodeName() != XML_STR_ITEM__)
+        {
+            continue;
+        }
         SADataFeatureItem* item = new SADataFeatureItem();
         QDomElement subItemEle = itemList.at(i).toElement();
         if(!getItemInfoFromElement(&subItemEle,item))

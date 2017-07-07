@@ -302,11 +302,11 @@ void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureIte
     {
         s_send_speed_test = false;
         saDebug(QString("test time cost:%1 \n ys.size:%2").arg(costTime).arg(ys.size()));
-        int bitSize = ys.size() * 2*sizeof(qreal) * 8;
+        int byteSize = ys.size() * 2*sizeof(qreal);
 
         saDebug(QString("send speed:%1 byte/ms(%2 MB/s)")
-                .arg((bitSize/8.0)/costTime)
-                .arg((bitSize/(1024.0*1024)) / (costTime/1000.0)));
+                .arg((byteSize)/costTime)
+                .arg((byteSize/(1024.0*1024)) / (costTime/1000.0)));
     }
 #endif
 

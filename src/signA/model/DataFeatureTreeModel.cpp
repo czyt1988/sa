@@ -22,26 +22,17 @@ DataFeatureTreeModel::DataFeatureTreeModel(QObject *parent) : QAbstractItemModel
 
 QModelIndex DataFeatureTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
-#ifdef DEBUG_OUTPUT__INDEX_
-    qDebug() << "index:("<<row<<","<<column<<"),parent.valid:" << parent.isValid();
-#endif
     if (row < 0 || column < 0)
         return QModelIndex();
 
     if(!parent.isValid ())//说明是顶层
     {
-#ifdef DEBUG_OUTPUT__INDEX_
-    qDebug() << "    root index";
-#endif
         if((row >= m_items.size())
             ||
             (column >= 2))
         {
             return QModelIndex();
         }
-#ifdef DEBUG_OUTPUT__INDEX_
-    qDebug() << "    createIndex("<<row<<","<<column<<")";
-#endif
         return createIndex(row, column, m_items[row]);//顶层节点
     }
     SADataFeatureItem* parItem = toItemPtr(parent);
@@ -53,17 +44,11 @@ QModelIndex DataFeatureTreeModel::index(int row, int column, const QModelIndex &
     {
         return QModelIndex();//不正常情况
     }
-#ifdef DEBUG_OUTPUT__INDEX_
-    qDebug() << "    createIndex("<<row<<","<<column<<"):parItem->getChild(row)";
-#endif
     return createIndex(row, column, parItem->getChild(row));
 }
 
 QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
 {
-#ifdef DEBUG_OUTPUT__PARENT_
-    qDebug() << "parent:index.isvalid:"<<index.isValid();
-#endif
     if(!index.isValid())
     {
         return QModelIndex();
@@ -71,18 +56,12 @@ QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
     SADataFeatureItem* item =  toItemPtr(index);
     if(!item)
     {
-#ifdef DEBUG_OUTPUT__PARENT_
-    qDebug() << "   toItemPtr:null";
-#endif
         return QModelIndex();
     }
     SADataFeatureItem* parItem =  item->getParent();
     if(nullptr == parItem)
     {
         //父指针为0，说明是顶层item
-#ifdef DEBUG_OUTPUT__PARENT_
-    qDebug() << "   is no root item , top parent";
-#endif
         return QModelIndex();
     }
 
@@ -91,48 +70,22 @@ QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
     {//如果祖父为0，说明它是第二层级，parent是1层，但不能用它自身的parItem->row(), parItem->column()
      //需要在QLsit里查找它的层次
         int row = m_items.indexOf(parItem);
-#ifdef DEBUG_OUTPUT__PARENT_
-    qDebug() << "   is grandParItem: row:"<<row;
-#endif
         if(row<0)
         {//说明没有在QList找到
             return QModelIndex();
         }
-#ifdef DEBUG_OUTPUT__PARENT_
-    qDebug() << "    createIndex("<<row<<",0"<<"):parItem->getChild(row)";
-#endif
         return createIndex(row, 0, parItem);
     }
-#ifdef DEBUG_OUTPUT__PARENT_
-    qDebug() << "    createIndex("<<parItem->getCurrentRowIndex()<<",0"<<"):parItem->getChild(row)";
-#endif
     return createIndex(parItem->getCurrentRowIndex(), 0, parItem);//挂载parent的都是只有一列的
 }
 
 int DataFeatureTreeModel::rowCount(const QModelIndex &parent) const
 {
-#ifdef DEBUG_OUTPUT__ROW_COUNT_
-    qDebug()<<"rowCount:parent.isvalid:"<<parent.isValid() << ",m_items.size:"<<m_items.size();
-#endif
     if(!parent.isValid())
     {
-#ifdef DEBUG_OUTPUT__ROW_COUNT_
-        qDebug()<<"  return:"<<m_items.size();
-#endif
         return m_items.size();
     }
     SADataFeatureItem* parItem = toItemPtr(parent);
-#ifdef DEBUG_OUTPUT__ROW_COUNT_
-    if(nullptr == parItem)
-    {
-        qDebug()<<"  parItem is null";
-    }
-    else
-    {
-        qDebug()<<"  parent name:" <<parItem->getName()
-               << "return:"<<parItem->getChildCount();
-    }
-#endif
     return parItem ? parItem->getChildCount() : 0;
 }
 
