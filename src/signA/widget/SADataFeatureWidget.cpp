@@ -7,7 +7,7 @@
 #include <SAPlotMarker.h>
 #include <QItemSelectionModel>
 #include <QItemSelection>
-
+#include "SAChart.h"
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -99,6 +99,7 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
     {
         checkModelItem(model,arg1);
         ui->treeView->setModel(model);
+        ui->treeView->expandToDepth(1);
     }
     else
     {
@@ -191,7 +192,6 @@ void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const
         {
 
             m_dataWriter->sendDoubleVectorData((qintptr)arg1,(qintptr)arg2,(qintptr)cur,datas);
-
         }
     }
 }
@@ -211,21 +211,43 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
     }
     QList<SAChart2D *> plots = fig->get2DPlots();
     QList<SADataFeatureItem* >  chartItems = featureModel->getRootItems();
-    //检测有没有figure被删除了
-    std::for_each(chartItems.begin(),chartItems.end(),[](SADataFeatureItem* fig){
-        SAChart2D* p = DataFeatureTreeModel::getChartPtrFromItem(fig);
+    //检测有没有chart被删除了
+    std::for_each(chartItems.begin(),chartItems.end(),[&plots,&featureModel](SADataFeatureItem* c){
+        SAChart2D* p = DataFeatureTreeModel::getChartPtrFromItem(c);
         if(p)
         {
-
+            if(!plots.contains(p))
+            {
+                if(featureModel->takeRootItem(c))
+                {
+                    if(c)
+                    {
+                        delete c;
+                    }
+                }
+            }
         }
 
     });
-    for(int i=0;i<chartItems.size();++i)
+    //检测item有没有新加或删除
+    for(int i=0;i<plots.size();++i)
     {
-        QList<QwtPlotItem *> itemList = featureModel->getItemListFromItem(chartItems[i]);
-
-
+        QwtPlotItemList itemLists = plots[i]->itemList();
+        SADataFeatureItem* ci = featureModel->findChartItem(plots[i]);
+        if(nullptr == ci)
+        {
+            continue;
+        }
+        QSet<QwtPlotItem*> itemSet = featureModel->getItemSetFromItem(ci);
+        for(int j=0;j<itemLists.size();++i)
+        {
+            if(!itemSet.contains(itemLists[j]))
+            {
+                calcPlotItemFeature(itemLists[j],subWndPtr,plots[i]);
+            }
+        }
     }
+
 
 }
 
@@ -254,6 +276,7 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
     SAXMLReadHelper xmlHelper(xmlString);
     if(xmlHelper.isValid())
     {
+        //说明这个字符串是一个点数组处理的结果
         if(SAXMLReadHelper::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
         {
             quintptr w,chart,plotItemPtr;
@@ -277,6 +300,7 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
                     saDebug(tr("can not find figure in cur sub window:%1").arg((quintptr)subWind));
                     return;
                 }
+                //查找model如果没有查找到新建一个model
                 DataFeatureTreeModel* model= qobject_cast<DataFeatureTreeModel*>(m_subWindowToDataInfo.value(subWind,nullptr));
                 if(nullptr == model)
                 {
@@ -284,8 +308,17 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
                     m_subWindowToDataInfo[subWind] = model;
                     ui->treeView->setModel(model);
                 }
+                //设置item的名字
                 item->setName(itemPtr->title().text());
+                //设置item的颜色
+                QColor clr = SAChart::getItemColor( itemPtr);
+                if(clr.isValid())
+                {
+                    clr.setAlpha(100);
+                    item->setBackgroundColor(clr);
+                }
                 model->setPlotItem(chartWnd,itemPtr,item.release());
+                ui->treeView->expandToDepth(1);
             }
         }
     }
@@ -294,6 +327,11 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 #endif
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
+///
+/// \brief 接收到到点数组
+/// \param header
+/// \param ys
+///
 void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
 {
 #ifdef _DEBUG_OUTPUT
@@ -324,62 +362,53 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
         return;
     if(nullptr == m_lastActiveSubWindow)
         return;
-#if 0
     SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
     if(nullptr == figure)
     {
         return;
     }
     on_toolButton_clearDataFeature_clicked();//先清除标记
+    QSet<SAChart2D*> chartPlots = figure->get2DPlots().toSet();
+
     QItemSelectionModel* selModel = ui->treeView->selectionModel();
-    if(!selModel)
+    DataFeatureTreeModel* curFeatureModel = static_cast<DataFeatureTreeModel*>(ui->treeView->model());
+    if(!selModel || !curFeatureModel)
         return;
     QModelIndexList indexList = selModel->selectedIndexes();
+
     for(int i=0;i<indexList.size();++i)
     {
 
         SADataFeatureItem* item = static_cast<SADataFeatureItem*>(indexList[i].internalPointer());
         if(nullptr == item)
         {
-            return;
+            continue;
         }
         SADataFeatureItem* topParent = item->topParent();
-        if(SADataFeatureItem::TopPlotItem != topParent->rtti())
+        //根据topParent找到对应的SAChart2D;
+        SAChart2D* c = DataFeatureTreeModel::getChartPtrFromItem(topParent);
+        if(!chartPlots.contains(c))
         {
-            return;
+            continue;
         }
-        DataFeaturePlotInfoItem* plotItem = static_cast<DataFeaturePlotInfoItem*>(topParent);
-        if(plotItem)
+        QVariant var = item->getValue();
+        switch(var.type())
         {
-            SAChart2D* chart = qobject_cast<SAChart2D*>(plotItem->chartWidget());
-            if(!chart)
-                return;
-            int itemRtti = item->rtti();
-            if(SADataFeatureItem::PointItem == itemRtti)
-            {
-                DataFeaturePointItem* pointItem = static_cast<DataFeaturePointItem*>(item);
-                QPointF point = pointItem->getPointData();
-                chart->markPoint(point,pointItem->text());
-                chart->replot();
-            }
-            else if(SADataFeatureItem::ValueItem == itemRtti)
-            {
-                DataFeatureValueItem* valueItem = static_cast<DataFeatureValueItem*>(item);
-                DataFeatureDescribeItem* desItem = valueItem->getDescribeItem();
-                QString name;
-                if(desItem)
-                {
-                    name = desItem->text();
-                }
-                double data = valueItem->getValueData();
-                chart->markYValue(data,name+valueItem->text());
-                chart->replot();
-            }
+        case QVariant::PointF:
+        case QVariant::Point:
+        {
+            QPointF point = var.toPointF();
+            c->markPoint(point,tr("%1(%2,%3)").arg(item->getName()).arg(point.x()).arg(point.y()));
+            c->replot();
+        }break;
+        case QVariant::Double:
+        {
+            double data = var.toDouble();
+            c->markYValue(data,tr("%1(%2)").arg(item->getName().arg(data)));
+            c->replot();
+        }break;
         }
-
     }
-#endif
-
 }
 ///
 /// \brief 清除标记按钮
@@ -428,6 +457,9 @@ void SADataFeatureWidget::initLocalServer()
 #endif
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
+///
+/// \brief 连接服务器，此函数在进程返回准备完成后调用
+///
 void SADataFeatureWidget::connectToServer()
 {
     if(m_dataProcessSocket)
@@ -441,6 +473,9 @@ void SADataFeatureWidget::connectToServer()
 #endif
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
+///
+/// \brief 尝试连接服务器,此函数在connectToServer调用
+///
 void SADataFeatureWidget::tryToConnectServer()
 {
     m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);

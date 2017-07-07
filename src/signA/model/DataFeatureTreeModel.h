@@ -3,6 +3,7 @@
 
 #include <QAbstractItemModel>
 #include <QList>
+#include <QSet>
 #include <QMap>
 #include <memory>
 #include "SADataFeatureItem.h"
@@ -22,6 +23,8 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     void clear();
 public:
+    //移除根节点
+    bool takeRootItem(SADataFeatureItem* item);
     //把item挂载到对应的条目上
     void setPlotItem(SAChart2D* chartPtr, QwtPlotItem *itemPtr, SADataFeatureItem* items);
     //获取顶层节点
@@ -30,11 +33,14 @@ public:
     static SAChart2D* getChartPtrFromItem(const SADataFeatureItem *item);
     //通过节点获取对应的itemlist
     static QList<QwtPlotItem*> getItemListFromItem(const SADataFeatureItem *item);
+    static QSet<QwtPlotItem*> getItemSetFromItem(const SADataFeatureItem *item);
+    //通过figure指针查找到对应的item条目
+    SADataFeatureItem* findChartItem(SAChart2D* p);
 protected:
     //创建一个figureitem，其他item挂载在这个figureitem下面
     SADataFeatureItem* createChartItems(SAChart2D *chart);
     //通过figure指针查找到对应的item条目，figure指针对应以第一层item
-    SADataFeatureItem* findChartItem(SAChart2D* p,bool autoCreate = false);
+    SADataFeatureItem* findChartItem(SAChart2D* p,bool autoCreate);
 signals:
 
 public slots:

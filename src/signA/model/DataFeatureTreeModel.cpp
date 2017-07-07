@@ -133,7 +133,17 @@ QVariant DataFeatureTreeModel::data(const QModelIndex &index, int role) const
         switch(index.column())
         {
         case 0:
-            return item->getName();
+        {
+            const QString& tmp = item->getName();
+            if(tmp.isEmpty())
+            {
+                if(!index.parent().isValid())
+                {
+                    return tr("chart %1").arg(index.row()+1);//如果图没有命名，默认按照顺序命名
+                }
+            }
+            return tmp;
+        }
         case 1:
             return SAVariantCaster::variantToString(item->getValue());
         }
@@ -153,6 +163,17 @@ void DataFeatureTreeModel::clear()
     beginResetModel();
     m_items.clear();
     endResetModel();
+}
+
+bool DataFeatureTreeModel::takeRootItem(SADataFeatureItem *item)
+{
+    bool ret = false;
+    beginResetModel();
+    ret = m_items.removeOne(item);
+    SAChart2D* chart = getChartPtrFromItem(item);
+    m_fig2item.remove(chart);
+    endResetModel();
+    return ret;
 }
 
 void DataFeatureTreeModel::setPlotItem(SAChart2D *chartPtr, QwtPlotItem *itemPtr, SADataFeatureItem *items)
@@ -226,7 +247,16 @@ SADataFeatureItem *DataFeatureTreeModel::findChartItem(SAChart2D *p, bool autoCr
     }
     return item;
 }
-
+///
+/// \brief 通过figure指针查找到对应的item条目，figure指针对应以第一层item
+/// \param p
+/// \return
+///
+SADataFeatureItem *DataFeatureTreeModel::findChartItem(SAChart2D *p)
+{
+    SADataFeatureItem *item = m_fig2item.value(p,nullptr);
+    return item;
+}
 ///
 /// \brief 获取顶层节点
 /// \return
@@ -255,7 +285,7 @@ SAChart2D *DataFeatureTreeModel::getChartPtrFromItem(const SADataFeatureItem *it
 }
 ///
 /// \brief 通过节点获取对应的itemlist
-/// \param item 必须是getRootItems 获取的顶层节点
+/// \param item 必须是getRootItems 获取的顶层节点或者findChartItem查找的顶层节点
 /// \return
 ///
 QList<QwtPlotItem *> DataFeatureTreeModel::getItemListFromItem(const SADataFeatureItem *item)
@@ -285,6 +315,35 @@ QList<QwtPlotItem *> DataFeatureTreeModel::getItemListFromItem(const SADataFeatu
     }
     return res;
 }
+
+QSet<QwtPlotItem *> DataFeatureTreeModel::getItemSetFromItem(const SADataFeatureItem *item)
+{
+    QSet<QwtPlotItem *> res;
+    QVariant var = item->getData(ROLE_FIGURE_PTR);
+    if(!var.isValid())
+    {
+        return res;
+    }
+    if(!var.canConvert<quintptr>())
+    {
+        return res;
+    }
+    int childCount = item->getChildCount();
+    for(int i=0;i<childCount;++i)
+    {
+        QVariant v = item->getChild(i)->getData(ROLE_PLOT_ITEM_PTR);
+        if(v.isValid())
+        {
+            if(v.canConvert<quintptr>())
+            {
+                quintptr p = v.value<quintptr>();
+                res.insert((QwtPlotItem *)p);
+            }
+        }
+    }
+    return res;
+}
+
 
 SADataFeatureItem *DataFeatureTreeModel::toItemPtr(const QModelIndex &index) const
 {

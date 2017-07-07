@@ -73,7 +73,7 @@ public:
     QVariant getBackground() const;
     QBrush getBackgroundBrush() const;
     void setBackground(const QBrush& b);
-
+    void setBackgroundColor(const QColor& c);
 protected:
     void setParent(SADataFeatureItem *parent);
 private:

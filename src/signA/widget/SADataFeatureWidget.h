@@ -85,7 +85,7 @@ private:
     Q_SLOT void onReceivedShakeHand(const SALocalServeBaseHeader& mainHeader);
     //接收到xml字符
     Q_SLOT void onReceivedString(const QString& xmlString);
-    //接收到xml字符
+    //接收到到点数组
     Q_SLOT void onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
 #endif
 private:

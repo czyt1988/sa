@@ -131,6 +131,11 @@ void SADataFeatureItem::setBackground(const QBrush &b)
     setData(b,Qt::BackgroundRole);
 }
 
+void SADataFeatureItem::setBackgroundColor(const QColor &c)
+{
+    setBackground(QBrush(c));
+}
+
 
 
 
