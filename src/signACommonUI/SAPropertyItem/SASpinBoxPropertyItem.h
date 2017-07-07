@@ -1,29 +1,25 @@
-#ifndef SACOLORSETPROPERTYITEM_H
-#define SACOLORSETPROPERTYITEM_H
+#ifndef SASPINBOXPROPERTYITEM_H
+#define SASPINBOXPROPERTYITEM_H
 
-#include <QWidget>
-class QtColorPicker;
-class SAColorSetPropertyItem : public QWidget
+#include "SAPropertyItemContainer.h"
+class QSpinBox;
+class SASpinBoxPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
 public:
-    explicit SAColorSetPropertyItem(QWidget *parent = 0);
-    ~SAColorSetPropertyItem();
+    explicit SASpinBoxPropertyItem(QWidget *parent = nullptr);
+    ~SASpinBoxPropertyItem();
     //
-    void setText(const QString& text);
+    void setValue(int v);
     //
-    QString getText() const;
+    int getValue() const;
     //
-    void setCurrentColor(const QColor& clr);
-    //
-    QColor getCurrentColor() const;
-    //
-    QtColorPicker* getColorPickerButton();
+    QSpinBox* getSpinBox() const;
 Q_SIGNALS:
-    void colorChanged(const QColor &);
+    void valueChanged(int v);
 private:
     class UI;
-    SAColorSetPropertyItem::UI *ui;
+    SASpinBoxPropertyItem::UI *ui;
 };
 
 #endif // SACOLORSETPROPERTYITEM_H

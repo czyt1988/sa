@@ -561,3 +561,13 @@ void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitSt
 #endif
 
 
+#include "SAFiugreSetWidget.h"
+void SADataFeatureWidget::on_pushButton_test_clicked()
+{
+    static SAFiugreSetWidget *s_figSet = new SAFiugreSetWidget;
+    SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
+    if(nullptr == figure)
+        return;
+    s_figSet->setFigureWidget(figure);
+    s_figSet->show();
+}

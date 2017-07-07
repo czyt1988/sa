@@ -56,6 +56,8 @@ private slots:
     void on_toolButton_clearDataFeature_clicked();
 
     void onShowErrorMessage(const QString& info);
+    void on_pushButton_test_clicked();
+
 private:
     SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature

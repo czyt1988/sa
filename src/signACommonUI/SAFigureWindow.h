@@ -38,24 +38,12 @@ public:
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
     void setBackgroundColor(const QColor& clr);
-    //
-    //============
- //不满足单一职责原则
-    //============
-
 signals:
     //绘图数据变更消息
     void chartDataChanged(QwtPlot* plot,QwtPlotItem* item);
 private:
     void initUI();
 private:
-    class RealPlotItem{
-    public:
-        void append(QwtPlotItem* item);
-    private:
-        QList<QwtPlotItem*> m_plotItem;
-    };
-
     class UI
     {
     public:
@@ -63,15 +51,9 @@ private:
         void retranslateUi(SAFigureWindow* par);
         SAFigureContainer *centralwidget;
     };
-protected:
-    //记忆关系
-    void rememberRelationShip(QwtPlotItem* cur,const QList<SAAbstractDatas*>& datas);
-protected:
-    RealPlotItem m_realPlotItem; ///< 记录真正绘制的图像，对于一些标记线就不会进入这个list里，且是addCurve函数调用时才会加入这个list
-    QMap<QwtPlotItem*,QList<SAAbstractDatas*> > m_relationShip;
+
 private:
     QScopedPointer<UI> ui;
-    QwtPlotSeriesItem* m_lastPlotItem;
     SAChart2D *m_currentPlot;
 };
 

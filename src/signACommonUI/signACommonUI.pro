@@ -22,9 +22,10 @@ include($$PWD/../3rdParty/qtpropertybrowser/src/qtpropertybrowser.pri)#propertyb
 include($$PWD/../signALib/signALib.pri)
 #QWT
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
+#color picker support
+include($$PWD/../3rdParty/qtcolorpicker/qtcolorpicker.pri)
 #sa chart support
 include($$PWD/../signAChart/signAChart.pri)
-
 
 DEFINES += SA_COMMON_UI_MAKE #make dll
 
@@ -43,7 +44,9 @@ HEADERS += \
     SAUIHelper.h \
     SAMdiSubWindow.h \
     SAFigureContainer.h \
-    QwtPlotPropertySetDialog.h
+    QwtPlotPropertySetDialog.h \
+    SAFiugreSetWidget.h \
+    SAFigureCanvasSetWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -55,10 +58,14 @@ SOURCES += \
     SAUIHelper.cpp \
     SAMdiSubWindow.cpp \
     SAFigureContainer.cpp \
-    QwtPlotPropertySetDialog.cpp
+    QwtPlotPropertySetDialog.cpp \
+    SAFiugreSetWidget.cpp \
+    SAFigureCanvasSetWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)
+#sa property item
+include($$PWD/SAPropertyItem/SAPropertyItem.pri)

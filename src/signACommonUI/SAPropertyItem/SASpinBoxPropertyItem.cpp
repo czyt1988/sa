@@ -1,4 +1,4 @@
-#include "SAColorSetPropertyItem.h"
+#include "SASpinBoxPropertyItem.h"
 #include "ui_SAColorSetPropertyItem.h"
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -8,99 +8,50 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
-#include "qtcolorpicker.h"
+#include <QSpinBox>
 
-class SAColorSetPropertyItem::UI
+class SASpinBoxPropertyItem::UI
 {
 public:
-    QHBoxLayout *horizontalLayout;
-    QLabel *labelName;
-    QtColorPicker *colorButton;
-    void setupUi(QWidget *SAColorSetPropertyItem)
+    QSpinBox *spinBox;
+    void setupUi(QWidget *par)
     {
-        if (SAColorSetPropertyItem->objectName().isEmpty())
-            SAColorSetPropertyItem->setObjectName(QStringLiteral("SAColorSetPropertyItem"));
-        SAColorSetPropertyItem->resize(221, 23);
-        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(SAColorSetPropertyItem->sizePolicy().hasHeightForWidth());
-        SAColorSetPropertyItem->setSizePolicy(sizePolicy);
-        horizontalLayout = new QHBoxLayout(SAColorSetPropertyItem);
-        horizontalLayout->setSpacing(0);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        labelName = new QLabel(SAColorSetPropertyItem);
-        labelName->setObjectName(QStringLiteral("labelName"));
-
-        horizontalLayout->addWidget(labelName);
-
-        colorButton = new QtColorPicker(SAColorSetPropertyItem);
-        colorButton->setObjectName(QStringLiteral("colorButton"));
-        colorButton->setStandardColors();
-        horizontalLayout->addWidget(colorButton);
-
-
-        retranslateUi(SAColorSetPropertyItem);
-
-        QMetaObject::connectSlotsByName(SAColorSetPropertyItem);
+        spinBox = new QSpinBox(par);
+        spinBox->setObjectName(QStringLiteral("spinBox"));
+        spinBox->setValue(0);
     } // setupUi
-
-    void retranslateUi(QWidget *SAColorSetPropertyItem)
-    {
-        SAColorSetPropertyItem->setWindowTitle(QApplication::translate("SAColorSetPropertyItem", "Form", 0));
-        labelName->setText(QString());
-        colorButton->setText(QString());
-    } // retranslateUi
 
 };
 
 
-SAColorSetPropertyItem::SAColorSetPropertyItem(QWidget *parent) :
-    QWidget(parent),
-    ui(new SAColorSetPropertyItem::UI)
+SASpinBoxPropertyItem::SASpinBoxPropertyItem(QWidget *parent) :
+    SAPropertyItemContainer(parent),
+    ui(new SASpinBoxPropertyItem::UI)
 {
     ui->setupUi(this);
-    setAutoFillBackground(true);
-    connect(ui->colorButton,&QtColorPicker::colorChanged
-            ,this,&SAColorSetPropertyItem::colorChanged);
+    setWidget(ui->spinBox);
+    connect(ui->spinBox,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
+            ,this,&SASpinBoxPropertyItem::valueChanged);
 }
 
-SAColorSetPropertyItem::~SAColorSetPropertyItem()
+SASpinBoxPropertyItem::~SASpinBoxPropertyItem()
 {
     delete ui;
 }
-///
-/// \brief SAColorSetPropertyItem::setText
-/// \param text
-///
-void SAColorSetPropertyItem::setText(const QString &text)
+
+
+void SASpinBoxPropertyItem::setValue(int v)
 {
-    ui->labelName->setText(text);
-}
-///
-/// \brief SAColorSetPropertyItem::getText
-/// \return
-///
-QString SAColorSetPropertyItem::getText() const
-{
-    return ui->labelName->text();
-}
-///
-/// \brief SAColorSetPropertyItem::setColor
-/// \param clr
-///
-void SAColorSetPropertyItem::setCurrentColor(const QColor &clr)
-{
-    ui->colorButton->setCurrentColor(clr);
+    ui->spinBox->setValue(v);
 }
 
-QColor SAColorSetPropertyItem::getCurrentColor() const
+int SASpinBoxPropertyItem::getValue() const
 {
-    return ui->colorButton->currentColor();
+    return ui->spinBox->value();
 }
 
-QtColorPicker *SAColorSetPropertyItem::getColorPickerButton()
+QSpinBox *SASpinBoxPropertyItem::getSpinBox() const
 {
-    return ui->colorButton;
+    return ui->spinBox;
 }
+

@@ -41,7 +41,6 @@ void SAFigureWindow::UI::retranslateUi(SAFigureWindow *par)
 SAFigureWindow::SAFigureWindow(QWidget *parent) :
     QMainWindow(parent)
     ,ui(new UI)
-  ,m_lastPlotItem(nullptr)
   ,m_currentPlot(nullptr)
 {
     ui->setupUI(this);
@@ -137,29 +136,10 @@ void SAFigureWindow::setBackgroundColor(const QColor &clr)
 
 
 
-///
-/// \brief 记录曲线对应的数据
-/// \param cur 曲线
-/// \param datas 数据
-///
-void SAFigureWindow::rememberRelationShip(QwtPlotItem *cur, const QList<SAAbstractDatas *> &datas)
-{
-    m_relationShip[cur] = datas;
-}
-
-
-
 void SAFigureWindow::initUI()
 {
 
 }
 
 
-///
-/// \brief SAFigureWindow::RealPlotItem::append
-/// \param item
-///
-void SAFigureWindow::RealPlotItem::append(QwtPlotItem *item)
-{
-    m_plotItem.append(item);
-}
+

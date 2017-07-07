@@ -1,22 +1,26 @@
 #ifndef SACOLORSETPROPERTYITEM_H
 #define SACOLORSETPROPERTYITEM_H
-
+#include "SAPropertyItemContainer.h"
 #include <QWidget>
-
-namespace Ui {
-class SAColorSetPropertyItem;
-}
-
-class SAColorSetPropertyItem : public QWidget
+class QtColorPicker;
+class SAColorSetPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
-
 public:
     explicit SAColorSetPropertyItem(QWidget *parent = 0);
     ~SAColorSetPropertyItem();
 
+    //
+    void setCurrentColor(const QColor& clr);
+    //
+    QColor getCurrentColor() const;
+    //
+    QtColorPicker* getColorPickerButton();
+Q_SIGNALS:
+    void colorChanged(const QColor &);
 private:
-    Ui::SAColorSetPropertyItem *ui;
+    class UI;
+    SAColorSetPropertyItem::UI *ui;
 };
 
 #endif // SACOLORSETPROPERTYITEM_H
