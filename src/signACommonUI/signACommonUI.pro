@@ -46,7 +46,8 @@ HEADERS += \
     SAFigureContainer.h \
     QwtPlotPropertySetDialog.h \
     SAFiugreSetWidget.h \
-    SAFigureCanvasSetWidget.h
+    SAFigureCanvasSetWidget.h \
+    SAPropertySetWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -60,7 +61,8 @@ SOURCES += \
     SAFigureContainer.cpp \
     QwtPlotPropertySetDialog.cpp \
     SAFiugreSetWidget.cpp \
-    SAFigureCanvasSetWidget.cpp
+    SAFigureCanvasSetWidget.cpp \
+    SAPropertySetWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui

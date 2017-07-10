@@ -8,6 +8,8 @@
 #include <QtVariantEditorFactory>
 #include <QtVariantProperty>
 
+#include "SAPropertySetWidget.h"
+
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHBoxLayout>
@@ -16,88 +18,93 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
-
-void SAPropertySetDialog::UI::setupUI(QDialog *par, BrowserType type)
+class SAPropertySetDialog::UI
 {
-    if (par->objectName().isEmpty())
-        par->setObjectName(QString("SAPropertySetDialog"));
-    par->resize(381, 360);
-    verticalLayout = new QVBoxLayout(par);
-    verticalLayout->setObjectName(QString("verticalLayout"));
-    labelTitle = new QLabel(par);
-    labelTitle->setObjectName(QString("labelTitle"));
-
-    verticalLayout->addWidget(labelTitle);
-    switch(type)
+public:
+    //
+    typedef QMap<QtProperty*,SAPropertySetDialog::PropertyChangEventPtr> EVENT_MAP;
+    typedef QMap<QtProperty*,SAPropertySetDialog::PropertyChangEventPtr>::iterator EVENT_MAP_ITE;
+    typedef QMap<QtProperty*,SAPropertySetDialog::PropertyChangEventPtr>::const_iterator EVENT_MAP_CITE;
+    EVENT_MAP m_event;///< 记录回调函数指针
+    //
+    SAPropertySetWidget* propertySetWidget;
+    QVBoxLayout* verticalLayout;
+    QHBoxLayout* horizontalLayout;
+    QSpacerItem* horizontalSpacer;
+    QLabel* labelTitle;
+    QPushButton* pushButton_ok;
+    QPushButton* pushButton_cancle;
+    void setupUI(QDialog *par, SAPropertySetDialog::BrowserType type)
     {
-    case SAPropertySetDialog::TreeType:
-    {
-        QtTreePropertyBrowser* pro = new QtTreePropertyBrowser(par);
-        propertyBrowser = pro;
-        pro->setResizeMode(QtTreePropertyBrowser::Interactive);
-        break;
+        if (par->objectName().isEmpty())
+            par->setObjectName(QString("SAPropertySetDialog"));
+        par->resize(381, 360);
+        verticalLayout = new QVBoxLayout(par);
+        verticalLayout->setObjectName(QString("verticalLayout"));
+        labelTitle = new QLabel(par);
+        labelTitle->setObjectName(QString("labelTitle"));
+
+        verticalLayout->addWidget(labelTitle);
+        propertySetWidget = new SAPropertySetWidget(par,(SAPropertySetWidget::BrowserType)type);
+
+        propertySetWidget->setObjectName(QString("SAPropertySetWidget"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(propertySetWidget->sizePolicy().hasHeightForWidth());
+        propertySetWidget->setSizePolicy(sizePolicy);
+
+
+
+        verticalLayout->addWidget(propertySetWidget);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QString("horizontalLayout"));
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer);
+
+        pushButton_ok = new QPushButton(par);
+        pushButton_ok->setObjectName(QString("pushButton_ok"));
+
+        horizontalLayout->addWidget(pushButton_ok);
+
+        pushButton_cancle = new QPushButton(par);
+        pushButton_cancle->setObjectName(QString("pushButton_cancle"));
+
+        horizontalLayout->addWidget(pushButton_cancle);
+
+
+        verticalLayout->addLayout(horizontalLayout);
+        //connect
+        QObject::connect(pushButton_ok,&QAbstractButton::clicked,[par](){par->accept();});
+        QObject::connect(pushButton_cancle,&QAbstractButton::clicked,[par](){par->reject();});
+
+        par->setWindowTitle(QApplication::translate("SAPropertySetDialog", "property set dialog", 0));
+        labelTitle->setText(QString());
+        pushButton_ok->setText(QApplication::translate("SAPropertySetDialog", "ok", 0));
+        pushButton_cancle->setText(QApplication::translate("SAPropertySetDialog", "cancle", 0));
+
     }
-    case SAPropertySetDialog::ButtonType:
-        propertyBrowser = new QtButtonPropertyBrowser(par);
-        break;
-    case SAPropertySetDialog::GroupBoxType:
-        propertyBrowser = new QtGroupBoxPropertyBrowser(par);
-        break;
-    }
-    propertyBrowser->setObjectName(QString("propertyBrowser"));
-    QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(propertyBrowser->sizePolicy().hasHeightForWidth());
-    propertyBrowser->setSizePolicy(sizePolicy);
+};
 
-
-
-    verticalLayout->addWidget(propertyBrowser);
-
-    horizontalLayout = new QHBoxLayout();
-    horizontalLayout->setObjectName(QString("horizontalLayout"));
-    horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-    horizontalLayout->addItem(horizontalSpacer);
-
-    pushButton_ok = new QPushButton(par);
-    pushButton_ok->setObjectName(QString("pushButton_ok"));
-
-    horizontalLayout->addWidget(pushButton_ok);
-
-    pushButton_cancle = new QPushButton(par);
-    pushButton_cancle->setObjectName(QString("pushButton_cancle"));
-
-    horizontalLayout->addWidget(pushButton_cancle);
-
-
-    verticalLayout->addLayout(horizontalLayout);
-    //connect
-    QObject::connect(pushButton_ok,&QAbstractButton::clicked,[par](){par->accept();});
-    QObject::connect(pushButton_cancle,&QAbstractButton::clicked,[par](){par->reject();});
-
-    par->setWindowTitle(QApplication::translate("SAPropertySetDialog", "property set dialog", 0));
-    labelTitle->setText(QString());
-    pushButton_ok->setText(QApplication::translate("SAPropertySetDialog", "ok", 0));
-    pushButton_cancle->setText(QApplication::translate("SAPropertySetDialog", "cancle", 0));
-}
 
 SAPropertySetDialog::SAPropertySetDialog(QWidget *parent,BrowserType type) :
     QDialog(parent),
     ui(new UI)
-  ,m_currentGroup(nullptr)
 {
     ui->setupUI(this,type);
-    m_varPropMgr = new QtVariantPropertyManager(ui->propertyBrowser);
-    m_varFac = new QtVariantEditorFactory(ui->propertyBrowser);
-    ui->propertyBrowser->setFactoryForManager(m_varPropMgr,m_varFac);
-    connect(m_varPropMgr,&QtVariantPropertyManager::valueChanged
-            ,this,&SAPropertySetDialog::onPropertyValuechanged);
+    connect(getVariantPropertyManager(),&QtVariantPropertyManager::valueChanged
+                    ,this,&SAPropertySetDialog::onPropertyValuechanged);
+
 }
 
 SAPropertySetDialog::~SAPropertySetDialog()
 {
+    if(ui)
+    {
+        delete ui;
+    }
 }
 ///
 /// \brief 查看当前组
@@ -105,7 +112,7 @@ SAPropertySetDialog::~SAPropertySetDialog()
 ///
 QtVariantProperty *SAPropertySetDialog::getCurrentGroup()
 {
-    return m_currentGroup;
+    return ui->propertySetWidget->getCurrentGroup();
 }
 ///
 /// \brief 获取组
@@ -114,11 +121,7 @@ QtVariantProperty *SAPropertySetDialog::getCurrentGroup()
 ///
 QtVariantProperty *SAPropertySetDialog::getGroup(int index)
 {
-    if(index < m_group.size())
-    {
-        return m_group[index];
-    }
-    return nullptr;
+    return ui->propertySetWidget->getGroup(index);
 }
 ///
 /// \brief 把当前组游标设置为对应的组
@@ -128,7 +131,7 @@ QtVariantProperty *SAPropertySetDialog::getGroup(int index)
 ///
 void SAPropertySetDialog::setCurrentGroup(QtVariantProperty *p)
 {
-    m_currentGroup = p;
+    ui->propertySetWidget->setCurrentGroup(p);
 }
 ///
 /// \brief 插入一个组,注意，组无法通过getData获取，也就是不计入索引
@@ -138,12 +141,7 @@ void SAPropertySetDialog::setCurrentGroup(QtVariantProperty *p)
 ///
 QtVariantProperty *SAPropertySetDialog::appendGroup(const QString &name)
 {
-    QtVariantProperty* p = nullptr;
-    p = m_varPropMgr->addProperty(QtVariantPropertyManager::groupTypeId(),name);
-    m_group.append(p);
-    setCurrentGroup(p);
-    ui->propertyBrowser->addProperty (p);
-    return p;
+    return ui->propertySetWidget->appendGroup(name);
 }
 ///
 /// \brief 插入一个属性内容
@@ -156,34 +154,12 @@ QtVariantProperty *SAPropertySetDialog::appendGroup(const QString &name)
 ///
 QtVariantProperty* SAPropertySetDialog::appendProperty(const QString &name, const QVariant &varDefaultData, const QString &tooltip)
 {
-    QtVariantProperty* p = nullptr;
-    if(varDefaultData.isValid())
-    {
-        p = m_varPropMgr->addProperty ((int)varDefaultData.type(),name);
-        p->setValue(varDefaultData);
-    }
-    else
-    {
-        p = m_varPropMgr->addProperty(QVariant::String,name);
-    }
-    p->setToolTip(tooltip);
-    m_prop.append (p);
-    if(nullptr != m_currentGroup)
-    {
-        m_currentGroup->addSubProperty(p);
-    }
-    else
-    {
-        ui->propertyBrowser->addProperty (p);
-    }
-    return p;
+    return ui->propertySetWidget->appendProperty(name,varDefaultData,tooltip);
 }
 
 QtVariantProperty *SAPropertySetDialog::appendProperty(const QString &id, const QString &name, const QVariant &varDefaultData, const QString &tooltip)
 {
-    QtVariantProperty * prop = appendProperty(name,varDefaultData,tooltip);
-    recorder(id,prop);
-    return prop;
+    return ui->propertySetWidget->appendProperty(id,name,varDefaultData,tooltip);
 }
 ///
 /// \brief 插入枚举类属性
@@ -195,28 +171,12 @@ QtVariantProperty *SAPropertySetDialog::appendProperty(const QString &id, const 
 ///
 QtVariantProperty *SAPropertySetDialog::appendEnumProperty(const QString &name, const QStringList &enumNameList, int defautIndex, const QString &tooltip)
 {
-    QtVariantProperty* p = nullptr;
-    p = m_varPropMgr->addProperty (QtVariantPropertyManager::enumTypeId(),name);
-    p->setAttribute(QLatin1String("enumNames"), enumNameList);
-    p->setValue(defautIndex);
-    p->setToolTip(tooltip);
-    m_prop.append (p);
-    if(nullptr != m_currentGroup)
-    {
-        m_currentGroup->addSubProperty(p);
-    }
-    else
-    {
-        ui->propertyBrowser->addProperty (p);
-    }
-    return p;
+    return ui->propertySetWidget->appendEnumProperty(name,enumNameList,defautIndex,tooltip);
 }
 
 QtVariantProperty *SAPropertySetDialog::appendEnumProperty(const QString &id, const QString &name, const QStringList &enumNameList, int defautIndex, const QString &tooltip)
 {
-    QtVariantProperty *prop = appendEnumProperty(name,enumNameList,defautIndex,tooltip);
-    recorder(id,prop);
-    return prop;
+    return ui->propertySetWidget->appendEnumProperty(id,name,enumNameList,defautIndex,tooltip);
 }
 ///
 /// \brief 插入浮点数属性
@@ -227,28 +187,12 @@ QtVariantProperty *SAPropertySetDialog::appendEnumProperty(const QString &id, co
 ///
 QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &name, double defaultData,const QString& tooltip)
 {
-    QtVariantProperty* p = nullptr;
-    p = m_varPropMgr->addProperty (QVariant::Double,name);
-    p->setValue(defaultData);
-    p->setToolTip(tooltip);
-    m_prop.append (p);
-    if(nullptr != m_currentGroup)
-    {
-        m_currentGroup->addSubProperty(p);
-    }
-    else
-    {
-        ui->propertyBrowser->addProperty (p);
-    }
-
-    return p;
+    return ui->propertySetWidget->appendDoubleProperty(name,defaultData,tooltip);
 }
 
 QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &id, const QString &name, double defaultData, const QString &tooltip)
 {
-    QtVariantProperty * p = appendDoubleProperty(name,defaultData,tooltip);
-    recorder(id,p);
-    return p;
+    return ui->propertySetWidget->appendDoubleProperty(id,name,defaultData,tooltip);
 }
 ///
 /// \brief 插入浮点数属性
@@ -261,17 +205,12 @@ QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &id, 
 ///
 QtVariantProperty* SAPropertySetDialog::appendDoubleProperty(const QString& name,double min,double max,double defaultData,const QString& tooltip)
 {
-    QtVariantProperty* p = appendDoubleProperty(name,defaultData,tooltip);
-    p->setAttribute(QLatin1String("minimum"), min);
-    p->setAttribute(QLatin1String("maximum"), max);
-    return p;
+    return ui->propertySetWidget->appendDoubleProperty(name,min,max,defaultData,tooltip);
 }
 
 QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &id, const QString &name, double min, double max, double defaultData, const QString &tooltip)
 {
-    QtVariantProperty * p = appendDoubleProperty(name,min,max,defaultData,tooltip);
-    recorder(id,p);
-    return p;
+    return ui->propertySetWidget->appendDoubleProperty(id,name,min,max,defaultData,tooltip);
 }
 ///
 /// \brief 插入int数属性
@@ -282,27 +221,12 @@ QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &id, 
 ///
 QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &name, int defaultData, const QString &tooltip)
 {
-    QtVariantProperty* p = nullptr;
-    p = m_varPropMgr->addProperty (QVariant::Int,name);
-    p->setValue(defaultData);
-    p->setToolTip(tooltip);
-    m_prop.append (p);
-    if(nullptr != m_currentGroup)
-    {
-        m_currentGroup->addSubProperty(p);
-    }
-    else
-    {
-        ui->propertyBrowser->addProperty (p);
-    }
-    return p;
+    return ui->propertySetWidget->appendIntProperty(name,defaultData,tooltip);
 }
 
 QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &id, const QString &name, int defaultData, const QString &tooltip)
 {
-    QtVariantProperty * p = appendIntProperty(name,defaultData,tooltip);
-    recorder(id,p);
-    return p;
+    return ui->propertySetWidget->appendIntProperty(id,name,defaultData,tooltip);
 }
 ///
 /// \brief 插入int数属性
@@ -315,17 +239,12 @@ QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &id, con
 ///
 QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &name, int min, int max, int defaultData, const QString &tooltip)
 {
-    QtVariantProperty* p = appendIntProperty(name,defaultData,tooltip);
-    p->setAttribute(QLatin1String("minimum"), min);
-    p->setAttribute(QLatin1String("maximum"), max);
-    return p;
+    return ui->propertySetWidget->appendIntProperty(name,min,max,defaultData,tooltip);
 }
 
 QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &id, const QString &name, int min, int max, int defaultData, const QString &tooltip)
 {
-    QtVariantProperty* p = appendIntProperty(name,min,max,defaultData,tooltip);
-    recorder(id,p);
-    return p;
+    return ui->propertySetWidget->appendIntProperty(id,name,min,max,defaultData,tooltip);
 }
 ///
 /// \brief 添加bool选项
@@ -336,27 +255,12 @@ QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &id, con
 ///
 QtVariantProperty *SAPropertySetDialog::appendBoolProperty(const QString &name, bool defaultData, const QString &tooltip)
 {
-    QtVariantProperty* p = nullptr;
-    p = m_varPropMgr->addProperty (QVariant::Bool,name);
-    p->setValue(defaultData);
-    p->setToolTip(tooltip);
-    m_prop.append (p);
-    if(nullptr != m_currentGroup)
-    {
-        m_currentGroup->addSubProperty(p);
-    }
-    else
-    {
-        ui->propertyBrowser->addProperty (p);
-    }
-    return p;
+    return ui->propertySetWidget->appendBoolProperty(name,defaultData,tooltip);
 }
 
 QtVariantProperty *SAPropertySetDialog::appendBoolProperty(const QString &id, const QString &name, bool defaultData, const QString &tooltip)
 {
-    QtVariantProperty * p = appendBoolProperty(name,defaultData,tooltip);
-    recorder(id,p);
-    return p;
+    return ui->propertySetWidget->appendBoolProperty(id,name,defaultData,tooltip);
 }
 
 ///
@@ -365,12 +269,7 @@ QtVariantProperty *SAPropertySetDialog::appendBoolProperty(const QString &id, co
 ///
 void SAPropertySetDialog::setDefaultData(const QVariantList& var)
 {
-    int count=0;
-    for(auto i=m_prop.begin ();i!=m_prop.end () && count<var.size ();++i)
-    {
-        (*i)->setValue (var[count]);
-        ++count;
-    }
+    ui->propertySetWidget->setDefaultData(var);
 }
 
 
@@ -380,13 +279,7 @@ void SAPropertySetDialog::setDefaultData(const QVariantList& var)
 ///
 QVariantList SAPropertySetDialog::getDatas() const
 {
-    QVariantList res;
-    for(int i=0;i<m_prop.size ();++i)
-    {
-        if(m_prop[i])
-            res.append (m_prop[i]->value ());
-    }
-    return res;
+    return ui->propertySetWidget->getDatas();
 }
 ///
 /// \brief 获取一个数值
@@ -395,19 +288,14 @@ QVariantList SAPropertySetDialog::getDatas() const
 ///
 QVariant SAPropertySetDialog::getData(int index) const
 {
-    if(index < m_prop.size())
-    {
-        return m_prop.at(index)->value();
-    }
-    return QVariant();
+    return ui->propertySetWidget->getData(index);
 }
 ///
 /// \brief 删除所有属性内容
 ///
 void SAPropertySetDialog::deleteAll()
 {
-    //m_propID.deleteAllProperty();
-    m_prop.clear ();
+    return ui->propertySetWidget->deleteAll();
 }
 ///
 /// \brief 获取所有设置进去的属性
@@ -415,7 +303,7 @@ void SAPropertySetDialog::deleteAll()
 ///
 const QList<QtVariantProperty *> &SAPropertySetDialog::getPropertys() const
 {
-    return m_prop;
+    return ui->propertySetWidget->getPropertys();
 }
 ///
 /// \brief 可编辑属性
@@ -424,7 +312,7 @@ const QList<QtVariantProperty *> &SAPropertySetDialog::getPropertys() const
 ///
 QList<QtVariantProperty *> &SAPropertySetDialog::getPropertys()
 {
-    return m_prop;
+    return ui->propertySetWidget->getPropertys();
 }
 ///
 /// \brief 获取属性管理器
@@ -433,7 +321,7 @@ QList<QtVariantProperty *> &SAPropertySetDialog::getPropertys()
 ///
 QtVariantPropertyManager *SAPropertySetDialog::getVariantPropertyManager() const
 {
-    return m_varPropMgr;
+    return ui->propertySetWidget->getVariantPropertyManager();
 }
 ///
 /// \brief 获取属性编辑器
@@ -441,7 +329,7 @@ QtVariantPropertyManager *SAPropertySetDialog::getVariantPropertyManager() const
 ///
 QtVariantEditorFactory *SAPropertySetDialog::getVariantEditorFactory() const
 {
-    return m_varFac;
+    return ui->propertySetWidget->getVariantEditorFactory();
 }
 ///
 /// \brief 设置属性改变的触发事件
@@ -450,7 +338,7 @@ QtVariantEditorFactory *SAPropertySetDialog::getVariantEditorFactory() const
 ///
 void SAPropertySetDialog::setPropertyChangEvent(QtProperty *prop, SAPropertySetDialog::PropertyChangEventPtr funEvent)
 {
-    m_event[prop] = funEvent;
+    ui->m_event[prop] = funEvent;
 }
 ///
 /// \brief 记录属性，可以通过getDataByID<>(id:QString)获取对应的value
@@ -459,11 +347,7 @@ void SAPropertySetDialog::setPropertyChangEvent(QtProperty *prop, SAPropertySetD
 ///
 void SAPropertySetDialog::recorder(const QString &id, QtVariantProperty *pro)
 {
-    if(nullptr == m_recordStr2Pro)
-    {
-        m_recordStr2Pro.reset(new QHash<QString,QtVariantProperty*>());
-    }
-    m_recordStr2Pro->insert(id,pro);
+    ui->propertySetWidget->recorder(id,pro);
 }
 ///
 /// \brief 通过id获取property
@@ -474,11 +358,7 @@ void SAPropertySetDialog::recorder(const QString &id, QtVariantProperty *pro)
 ///
 QtVariantProperty *SAPropertySetDialog::getPropertyByID(const QString &id)
 {
-    if(nullptr == m_recordStr2Pro)
-    {
-        return nullptr;
-    }
-    return m_recordStr2Pro->value(id,nullptr);
+    return ui->propertySetWidget->getPropertyByID(id);
 }
 ///
 /// \brief 属性改变触发的槽函数
@@ -487,12 +367,12 @@ QtVariantProperty *SAPropertySetDialog::getPropertyByID(const QString &id)
 ///
 void SAPropertySetDialog::onPropertyValuechanged(QtProperty *prop, const QVariant &var)
 {
-    EVENT_MAP_ITE ite = m_event.find(prop);
-    if(ite == m_event.end())
+    SAPropertySetDialog::UI::EVENT_MAP_ITE ite = ui->m_event.find(prop);
+    if(ite == ui->m_event.end())
     {
         return;
     }
-    PropertyChangEventPtr fun = ite.value();
+    SAPropertySetDialog::PropertyChangEventPtr fun = ite.value();
     if(nullptr != fun)
     {
         fun(this,prop,var);

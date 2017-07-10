@@ -9,7 +9,7 @@
 #include <QStringList>
 #include "SACommonUIGlobal.h"
 #include <functional>
-#include "QtPropertyIdStorage.h"
+#include "SAPropertySetWidget.h"
 class QtTreePropertyBrowser;
 class QtVariantPropertyManager;
 class QtVariantEditorFactory;
@@ -18,7 +18,7 @@ class QVBoxLayout;
 class QLabel;
 class QHBoxLayout;
 class QSpacerItem;
-
+class SAPropertySetWidget;
 ///
 /// \brief 生成一个通用Property设置对话框
 ///
@@ -27,9 +27,9 @@ class SA_COMMON_UI_EXPORT SAPropertySetDialog : public QDialog
     Q_OBJECT
 public:
     enum BrowserType{
-        TreeType
-        ,GroupBoxType
-        ,ButtonType
+        TreeType = SAPropertySetWidget::TreeType
+        ,GroupBoxType = SAPropertySetWidget::GroupBoxType
+        ,ButtonType = SAPropertySetWidget::ButtonType
     };
     typedef std::function<void(SAPropertySetDialog*,QtProperty*,const QVariant&)> PropertyChangEventPtr;
     explicit SAPropertySetDialog(QWidget *parent = 0,BrowserType type = TreeType);
@@ -113,33 +113,8 @@ public:
 private slots:
     void onPropertyValuechanged(QtProperty* prop,const QVariant& var);
 private:
-    //Ui::SAPropertySetDialog *ui;
-    QtVariantPropertyManager* m_varPropMgr;
-    QtVariantEditorFactory* m_varFac;
-    QList<QtVariantProperty*> m_prop;
-    QList<QtVariantProperty*> m_group;
-    std::unique_ptr< QHash<QString,QtVariantProperty*> > m_recordStr2Pro;
-
-    class UI
-    {
-    public:
-        QVBoxLayout *verticalLayout;
-        QLabel *labelTitle;
-        QtAbstractPropertyBrowser *propertyBrowser;
-        QHBoxLayout *horizontalLayout;
-        QSpacerItem *horizontalSpacer;
-        QPushButton *pushButton_ok;
-        QPushButton *pushButton_cancle;
-        void setupUI(QDialog *par,BrowserType type);
-    };
-    std::unique_ptr<UI> ui;
-
-    typedef QMap<QtProperty*,PropertyChangEventPtr> EVENT_MAP;
-    typedef QMap<QtProperty*,PropertyChangEventPtr>::iterator EVENT_MAP_ITE;
-    typedef QMap<QtProperty*,PropertyChangEventPtr>::const_iterator EVENT_MAP_CITE;
-    EVENT_MAP m_event;///< 记录回调函数指针
-    QtVariantProperty* m_currentGroup;///< 记录游标所处于的当前组，如果为nullptr，那么就在顶层
-    //QtPropertyIdStorage<int> m_propID;
+    class UI;
+    UI* ui;
 };
 
 #endif // SAFUNCTIONPARAMINPUTDIALOG_H

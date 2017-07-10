@@ -11,11 +11,16 @@ public:
     void setText(const QString& text);
     //
     QString getText() const;
+    //
+    QWidget* widget() const;
 protected:
     void setWidget(QWidget* w);
+    //
+
 private:
     class UI;
     SAPropertyItemContainer::UI *ui;
+    QWidget* m_w;
 };
 
 #endif // SAPROPERTYITEMCONTAINER_H

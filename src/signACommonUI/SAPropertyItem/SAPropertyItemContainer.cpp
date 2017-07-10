@@ -32,6 +32,7 @@ public:
 };
 SAPropertyItemContainer::SAPropertyItemContainer(QWidget *parent):QWidget(parent)
   ,ui(new SAPropertyItemContainer::UI)
+  ,m_w(nullptr)
 {
     ui->setupUi(this);
 }
@@ -51,9 +52,15 @@ QString SAPropertyItemContainer::getText() const
     return ui->labelName->text();
 }
 
+QWidget *SAPropertyItemContainer::widget() const
+{
+    return m_w;
+}
+
 
 
 void SAPropertyItemContainer::setWidget(QWidget *w)
 {
     ui->horizontalLayout->addWidget(w);
+    m_w = w;
 }
