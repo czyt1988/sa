@@ -26,6 +26,7 @@ public:
     typedef QMap<QtProperty*,SAPropertySetDialog::PropertyChangEventPtr>::iterator EVENT_MAP_ITE;
     typedef QMap<QtProperty*,SAPropertySetDialog::PropertyChangEventPtr>::const_iterator EVENT_MAP_CITE;
     EVENT_MAP m_event;///< 记录回调函数指针
+    std::unique_ptr< QHash<QString,QtVariantProperty*> > m_recordStr2Pro;
     //
     SAPropertySetWidget* propertySetWidget;
     QVBoxLayout* verticalLayout;
@@ -94,7 +95,7 @@ SAPropertySetDialog::SAPropertySetDialog(QWidget *parent,BrowserType type) :
     ui(new UI)
 {
     ui->setupUI(this,type);
-    connect(getVariantPropertyManager(),&QtVariantPropertyManager::valueChanged
+    connect(ui->propertySetWidget,&SAPropertySetWidget::valueChanged
                     ,this,&SAPropertySetDialog::onPropertyValuechanged);
 
 }
@@ -159,7 +160,9 @@ QtVariantProperty* SAPropertySetDialog::appendProperty(const QString &name, cons
 
 QtVariantProperty *SAPropertySetDialog::appendProperty(const QString &id, const QString &name, const QVariant &varDefaultData, const QString &tooltip)
 {
-    return ui->propertySetWidget->appendProperty(id,name,varDefaultData,tooltip);
+    QtVariantProperty * prop = appendProperty(name,varDefaultData,tooltip);
+    recorder(id,prop);
+    return prop;
 }
 ///
 /// \brief 插入枚举类属性
@@ -176,7 +179,9 @@ QtVariantProperty *SAPropertySetDialog::appendEnumProperty(const QString &name, 
 
 QtVariantProperty *SAPropertySetDialog::appendEnumProperty(const QString &id, const QString &name, const QStringList &enumNameList, int defautIndex, const QString &tooltip)
 {
-    return ui->propertySetWidget->appendEnumProperty(id,name,enumNameList,defautIndex,tooltip);
+    QtVariantProperty *prop = appendEnumProperty(name,enumNameList,defautIndex,tooltip);
+    recorder(id,prop);
+    return prop;
 }
 ///
 /// \brief 插入浮点数属性
@@ -192,7 +197,9 @@ QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &name
 
 QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &id, const QString &name, double defaultData, const QString &tooltip)
 {
-    return ui->propertySetWidget->appendDoubleProperty(id,name,defaultData,tooltip);
+    QtVariantProperty * p = appendDoubleProperty(name,defaultData,tooltip);
+    recorder(id,p);
+    return p;
 }
 ///
 /// \brief 插入浮点数属性
@@ -210,7 +217,9 @@ QtVariantProperty* SAPropertySetDialog::appendDoubleProperty(const QString& name
 
 QtVariantProperty *SAPropertySetDialog::appendDoubleProperty(const QString &id, const QString &name, double min, double max, double defaultData, const QString &tooltip)
 {
-    return ui->propertySetWidget->appendDoubleProperty(id,name,min,max,defaultData,tooltip);
+    QtVariantProperty * p = appendDoubleProperty(name,min,max,defaultData,tooltip);
+    recorder(id,p);
+    return p;
 }
 ///
 /// \brief 插入int数属性
@@ -226,7 +235,9 @@ QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &name, i
 
 QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &id, const QString &name, int defaultData, const QString &tooltip)
 {
-    return ui->propertySetWidget->appendIntProperty(id,name,defaultData,tooltip);
+    QtVariantProperty * p = appendIntProperty(name,defaultData,tooltip);
+    recorder(id,p);
+    return p;
 }
 ///
 /// \brief 插入int数属性
@@ -244,7 +255,9 @@ QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &name, i
 
 QtVariantProperty *SAPropertySetDialog::appendIntProperty(const QString &id, const QString &name, int min, int max, int defaultData, const QString &tooltip)
 {
-    return ui->propertySetWidget->appendIntProperty(id,name,min,max,defaultData,tooltip);
+    QtVariantProperty* p = appendIntProperty(name,min,max,defaultData,tooltip);
+    recorder(id,p);
+    return p;
 }
 ///
 /// \brief 添加bool选项
@@ -260,7 +273,9 @@ QtVariantProperty *SAPropertySetDialog::appendBoolProperty(const QString &name, 
 
 QtVariantProperty *SAPropertySetDialog::appendBoolProperty(const QString &id, const QString &name, bool defaultData, const QString &tooltip)
 {
-    return ui->propertySetWidget->appendBoolProperty(id,name,defaultData,tooltip);
+    QtVariantProperty * p = appendBoolProperty(name,defaultData,tooltip);
+    recorder(id,p);
+    return p;
 }
 
 ///
@@ -347,7 +362,11 @@ void SAPropertySetDialog::setPropertyChangEvent(QtProperty *prop, SAPropertySetD
 ///
 void SAPropertySetDialog::recorder(const QString &id, QtVariantProperty *pro)
 {
-    ui->propertySetWidget->recorder(id,pro);
+    if(nullptr == ui->m_recordStr2Pro)
+    {
+        ui->m_recordStr2Pro.reset(new QHash<QString,QtVariantProperty*>());
+    }
+    ui->m_recordStr2Pro->insert(id,pro);
 }
 ///
 /// \brief 通过id获取property
@@ -358,7 +377,19 @@ void SAPropertySetDialog::recorder(const QString &id, QtVariantProperty *pro)
 ///
 QtVariantProperty *SAPropertySetDialog::getPropertyByID(const QString &id)
 {
-    return ui->propertySetWidget->getPropertyByID(id);
+    if(nullptr == ui->m_recordStr2Pro)
+    {
+        return nullptr;
+    }
+    return ui->m_recordStr2Pro->value(id,nullptr);
+}
+///
+/// \brief 获取内部的SAPropertySetWidget属性widget
+/// \return
+///
+SAPropertySetWidget *SAPropertySetDialog::getPropertyWidget() const
+{
+    return ui->propertySetWidget;
 }
 ///
 /// \brief 属性改变触发的槽函数

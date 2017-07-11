@@ -58,6 +58,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
   ,m_dataWriter(nullptr)
   ,m_connectRetryCount(50)
 #endif
+  ,m_figSet(nullptr)
 {
     ui->setupUi(this);
 #ifdef USE_THREAD_CALC_FEATURE
@@ -142,6 +143,10 @@ void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
 ///
 SAFigureWindow *SADataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *sub)
 {
+    if(nullptr == sub)
+    {
+        return nullptr;
+    }
     return qobject_cast<SAFigureWindow*>(sub->widget());
 }
 ///
@@ -562,12 +567,16 @@ void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitSt
 
 
 #include "SAFiugreSetWidget.h"
+
 void SADataFeatureWidget::on_pushButton_test_clicked()
 {
-    static SAFiugreSetWidget *s_figSet = new SAFiugreSetWidget;
+    if(m_figSet == nullptr)
+    {
+        m_figSet = new SAFiugreSetWidget();
+    }
     SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
     if(nullptr == figure)
         return;
-    s_figSet->setFigureWidget(figure);
-    s_figSet->show();
+    m_figSet->setFigureWidget(figure);
+    m_figSet->show();
 }

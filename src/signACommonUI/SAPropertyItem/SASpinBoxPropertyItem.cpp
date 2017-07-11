@@ -14,11 +14,17 @@ class SASpinBoxPropertyItem::UI
 {
 public:
     QSpinBox *spinBox;
-    void setupUi(QWidget *par)
+    void setupUi(SASpinBoxPropertyItem *par)
     {
+        par->setObjectName(QStringLiteral("SASpinBoxPropertyItem"));
         spinBox = new QSpinBox(par);
         spinBox->setObjectName(QStringLiteral("spinBox"));
         spinBox->setValue(0);
+
+        par->setWidget(spinBox);
+        par->connect(spinBox,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
+                ,par,&SASpinBoxPropertyItem::valueChanged);
+
     } // setupUi
 
 };
@@ -29,9 +35,6 @@ SASpinBoxPropertyItem::SASpinBoxPropertyItem(QWidget *parent) :
     ui(new SASpinBoxPropertyItem::UI)
 {
     ui->setupUi(this);
-    setWidget(ui->spinBox);
-    connect(ui->spinBox,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
-            ,this,&SASpinBoxPropertyItem::valueChanged);
 }
 
 SASpinBoxPropertyItem::~SASpinBoxPropertyItem()

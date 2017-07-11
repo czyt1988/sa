@@ -13,11 +13,14 @@ class SAColorSetPropertyItem::UI
 {
 public:
     QtColorPicker *colorButton;
-    void setupUi(QWidget *SAColorSetPropertyItem)
+    void setupUi(SAColorSetPropertyItem *par)
     {
-        colorButton = new QtColorPicker(SAColorSetPropertyItem);
+        colorButton = new QtColorPicker(par);
         colorButton->setObjectName(QStringLiteral("colorButton"));
         colorButton->setStandardColors();
+        par->setWidget(colorButton);
+        par->connect(colorButton,&QtColorPicker::colorChanged
+                ,par,&SAColorSetPropertyItem::colorChanged);
     } // setupUi
 
 
@@ -29,10 +32,7 @@ SAColorSetPropertyItem::SAColorSetPropertyItem(QWidget *parent) :
     ui(new SAColorSetPropertyItem::UI)
 {
     ui->setupUi(this);
-    //setAutoFillBackground(true);
-    setWidget(ui->colorButton);
-    connect(ui->colorButton,&QtColorPicker::colorChanged
-            ,this,&SAColorSetPropertyItem::colorChanged);
+
 }
 
 SAColorSetPropertyItem::~SAColorSetPropertyItem()

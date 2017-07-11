@@ -1,7 +1,7 @@
 #include "SAFiugreSetWidget.h"
 #include "ui_SAFiugreSetWidget.h"
 #include "SAFigureWindow.h"
-#include "SAFigureCanvasSetWidget.h"
+#include "SAChartSetWidget.h"
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -11,33 +11,31 @@
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "SAChart2D.h"
 class SAFiugreSetWidget::UI
 {
 public:
     QVBoxLayout *verticalLayout;
     QTabWidget *tabWidget;
-    SAFigureCanvasSetWidget *canvasSetWidget;
+
 
     void setupUi(QWidget *SAFiugreSetWidget)
     {
         if (SAFiugreSetWidget->objectName().isEmpty())
             SAFiugreSetWidget->setObjectName(QStringLiteral("SAFiugreSetWidget"));
         SAFiugreSetWidget->resize(308, 464);
-        verticalLayout = new QVBoxLayout(SAFiugreSetWidget);
+
+        tabWidget = new QTabWidget(SAFiugreSetWidget);
+        tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        tabWidget->setTabPosition(QTabWidget::South);
+        //
+
+        verticalLayout = new QVBoxLayout;
         verticalLayout->setSpacing(4);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        tabWidget = new QTabWidget(SAFiugreSetWidget);
-        tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        tabWidget->setTabPosition(QTabWidget::West);
-        //
-        canvasSetWidget = new SAFigureCanvasSetWidget(SAFiugreSetWidget);
-        canvasSetWidget->setObjectName(QStringLiteral("canvasSetWidget"));
-        tabWidget->addTab(canvasSetWidget, QString());
-
         verticalLayout->addWidget(tabWidget);
-
-
+        SAFiugreSetWidget->setLayout(verticalLayout);
         retranslateUi(SAFiugreSetWidget);
 
         tabWidget->setCurrentIndex(0);
@@ -46,7 +44,6 @@ public:
     void retranslateUi(QWidget *SAFiugreSetWidget)
     {
         SAFiugreSetWidget->setWindowTitle(QApplication::translate("SAFiugreSetWidget", "Form", 0));
-        tabWidget->setTabText(tabWidget->indexOf(canvasSetWidget), QApplication::translate("SAFiugreSetWidget", "canvas", 0));
     } // retranslateUi
 };
 
@@ -66,5 +63,40 @@ SAFiugreSetWidget::~SAFiugreSetWidget()
 void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
     m_fig = fig;
-    ui->canvasSetWidget->setFigureWindow(fig);
+    QList<SAChart2D*> plots = fig->get2DPlots();
+    //删除多余的tab
+    while(ui->tabWidget->count() > plots.size())
+    {
+        int removeIndex = ui->tabWidget->count()-1;
+        QWidget* w = ui->tabWidget->widget(removeIndex);
+        ui->tabWidget->removeTab(removeIndex);
+        if(w)
+        {
+            delete w;
+        }
+    }
+    //根据chart个数来建立tab
+    for(int i=0;i<plots.size();++i)
+    {
+        QWidget* w = ui->tabWidget->widget(i);
+        SAChartSetWidget* csw = nullptr;
+        if(nullptr == w)
+        {
+            w = new SAChartSetWidget();
+            ui->tabWidget->addTab(w,QString());
+        }
+        csw = qobject_cast<SAChartSetWidget*>(w);
+        if(nullptr == csw)
+        {
+            delete w;
+            continue;
+        }
+        QString title = plots[i]->title().text();
+        if(title.isEmpty())
+        {
+            title = tr("chart %1").arg(i+1);
+        }
+        ui->tabWidget->setTabText(i,title);
+        csw->setChart(plots[i]);
+    }
 }

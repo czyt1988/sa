@@ -46,8 +46,10 @@ HEADERS += \
     SAFigureContainer.h \
     QwtPlotPropertySetDialog.h \
     SAFiugreSetWidget.h \
-    SAFigureCanvasSetWidget.h \
-    SAPropertySetWidget.h
+    SAPropertySetWidget.h \
+    SAChartSetWidget.h \
+    SAChartNormalSetWidget.h \
+    TestWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -61,11 +63,14 @@ SOURCES += \
     SAFigureContainer.cpp \
     QwtPlotPropertySetDialog.cpp \
     SAFiugreSetWidget.cpp \
-    SAFigureCanvasSetWidget.cpp \
-    SAPropertySetWidget.cpp
+    SAPropertySetWidget.cpp \
+    SAChartSetWidget.cpp \
+    SAChartNormalSetWidget.cpp \
+    TestWidget.cpp
 
 FORMS += \
-    SAValueSelectDialog.ui
+    SAValueSelectDialog.ui \
+    TestWidget.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)

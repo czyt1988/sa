@@ -25,13 +25,7 @@ public:
     QtVariantEditorFactory* m_varFac;
     QList<QtVariantProperty*> m_prop;
     QList<QtVariantProperty*> m_group;
-    std::unique_ptr< QHash<QString,QtVariantProperty*> > m_recordStr2Pro;
     //
-    typedef QMap<QtProperty*,SAPropertySetWidget::PropertyChangEventPtr> EVENT_MAP;
-    typedef QMap<QtProperty*,SAPropertySetWidget::PropertyChangEventPtr>::iterator EVENT_MAP_ITE;
-    typedef QMap<QtProperty*,SAPropertySetWidget::PropertyChangEventPtr>::const_iterator EVENT_MAP_CITE;
-    //
-    EVENT_MAP m_event;///< 记录回调函数指针
     QtVariantProperty* m_currentGroup;///< 记录游标所处于的当前组，如果为nullptr，那么就在顶层
 
     void setupUI(QWidget *par,SAPropertySetWidget::BrowserType type)
@@ -86,7 +80,7 @@ SAPropertySetWidget::SAPropertySetWidget(QWidget *par,BrowserType type)
 {
     ui->setupUI(this,type); 
     connect(ui->m_varPropMgr,&QtVariantPropertyManager::valueChanged
-                    ,this,&SAPropertySetWidget::onPropertyValuechanged);
+                    ,this,&SAPropertySetWidget::valueChanged);
 }
 
 SAPropertySetWidget::~SAPropertySetWidget()
@@ -176,12 +170,6 @@ QtVariantProperty *SAPropertySetWidget::appendProperty(const QString &name, cons
     return p;
 }
 
-QtVariantProperty *SAPropertySetWidget::appendProperty(const QString &id, const QString &name, const QVariant &varDefaultData, const QString &tooltip)
-{
-    QtVariantProperty * prop = appendProperty(name,varDefaultData,tooltip);
-    recorder(id,prop);
-    return prop;
-}
 ///
 /// \brief 插入枚举类属性
 /// \param name 属性名
@@ -209,12 +197,7 @@ QtVariantProperty *SAPropertySetWidget::appendEnumProperty(const QString &name, 
     return p;
 }
 
-QtVariantProperty *SAPropertySetWidget::appendEnumProperty(const QString &id, const QString &name, const QStringList &enumNameList, int defautIndex, const QString &tooltip)
-{
-    QtVariantProperty *prop = appendEnumProperty(name,enumNameList,defautIndex,tooltip);
-    recorder(id,prop);
-    return prop;
-}
+
 
 QtVariantProperty *SAPropertySetWidget::appendDoubleProperty(const QString &name, double defaultData, const QString &tooltip)
 {
@@ -235,12 +218,7 @@ QtVariantProperty *SAPropertySetWidget::appendDoubleProperty(const QString &name
     return p;
 }
 
-QtVariantProperty *SAPropertySetWidget::appendDoubleProperty(const QString &id, const QString &name, double defaultData, const QString &tooltip)
-{
-    QtVariantProperty * p = appendDoubleProperty(name,defaultData,tooltip);
-    recorder(id,p);
-    return p;
-}
+
 
 QtVariantProperty *SAPropertySetWidget::appendDoubleProperty(const QString &name, double min, double max, double defaultData, const QString &tooltip)
 {
@@ -250,12 +228,7 @@ QtVariantProperty *SAPropertySetWidget::appendDoubleProperty(const QString &name
     return p;
 }
 
-QtVariantProperty *SAPropertySetWidget::appendDoubleProperty(const QString &id, const QString &name, double min, double max, double defaultData, const QString &tooltip)
-{
-    QtVariantProperty * p = appendDoubleProperty(name,min,max,defaultData,tooltip);
-    recorder(id,p);
-    return p;
-}
+
 ///
 /// \brief 插入int数属性
 /// \param name 属性名
@@ -281,12 +254,7 @@ QtVariantProperty *SAPropertySetWidget::appendIntProperty(const QString &name, i
     return p;
 }
 
-QtVariantProperty *SAPropertySetWidget::appendIntProperty(const QString &id, const QString &name, int defaultData, const QString &tooltip)
-{
-    QtVariantProperty * p = appendIntProperty(name,defaultData,tooltip);
-    recorder(id,p);
-    return p;
-}
+
 
 QtVariantProperty *SAPropertySetWidget::appendIntProperty(const QString &name, int min, int max, int defaultData, const QString &tooltip)
 {
@@ -296,12 +264,7 @@ QtVariantProperty *SAPropertySetWidget::appendIntProperty(const QString &name, i
     return p;
 }
 
-QtVariantProperty *SAPropertySetWidget::appendIntProperty(const QString &id, const QString &name, int min, int max, int defaultData, const QString &tooltip)
-{
-    QtVariantProperty* p = appendIntProperty(name,min,max,defaultData,tooltip);
-    recorder(id,p);
-    return p;
-}
+
 ///
 /// \brief 添加bool选项
 /// \param name 属性名
@@ -326,13 +289,55 @@ QtVariantProperty *SAPropertySetWidget::appendBoolProperty(const QString &name, 
     }
     return p;
 }
-
-QtVariantProperty *SAPropertySetWidget::appendBoolProperty(const QString &id, const QString &name, bool defaultData, const QString &tooltip)
+///
+/// \brief 添加文字属性
+/// \param name 名称
+/// \param defaultVal 默认值
+/// \param tooltip 说明
+/// \return
+///
+QtVariantProperty *SAPropertySetWidget::appendStringProperty(const QString &name, const QString &defaultData, const QString &tooltip)
 {
-    QtVariantProperty * p = appendBoolProperty(name,defaultData,tooltip);
-    recorder(id,p);
+    QtVariantProperty* p = nullptr;
+    p = ui->m_varPropMgr->addProperty (QVariant::String,name);
+    p->setValue(defaultData);
+    p->setToolTip(tooltip);
+    ui->m_prop.append (p);
+    if(nullptr != getCurrentGroup())
+    {
+        ui->m_currentGroup->addSubProperty(p);
+    }
+    else
+    {
+        ui->propertyBrowser->addProperty (p);
+    }
     return p;
 }
+///
+/// \brief 添加颜色选项
+/// \param name 名字
+/// \param defaultData 默认值
+/// \param tooltip 说明
+/// \return
+///
+QtVariantProperty *SAPropertySetWidget::appendColorProperty(const QString &name, const QColor &defaultData, const QString &tooltip)
+{
+    QtVariantProperty* p = nullptr;
+    p = ui->m_varPropMgr->addProperty (QVariant::Color,name);
+    p->setValue(defaultData);
+    p->setToolTip(tooltip);
+    ui->m_prop.append (p);
+    if(nullptr != getCurrentGroup())
+    {
+        ui->m_currentGroup->addSubProperty(p);
+    }
+    else
+    {
+        ui->propertyBrowser->addProperty (p);
+    }
+    return p;
+}
+
 ///
 /// \brief 设置默认值
 /// \param var
@@ -415,58 +420,5 @@ QtVariantEditorFactory *SAPropertySetWidget::getVariantEditorFactory() const
 {
     return ui->m_varFac;
 }
-///
-/// \brief 设置属性改变的触发事件
-/// \param prop 属性
-/// \param funEvent 事件
-///
-void SAPropertySetWidget::setPropertyChangEvent(QtProperty *prop, SAPropertySetWidget::PropertyChangEventPtr funEvent)
-{
-    ui->m_event[prop] = funEvent;
-}
-///
-/// \brief 记录属性，可以通过getDataByID<>(id:QString)获取对应的value
-/// \param id
-/// \param pro
-///
-void SAPropertySetWidget::recorder(const QString &id, QtVariantProperty *pro)
-{
-    if(nullptr == ui->m_recordStr2Pro)
-    {
-        ui->m_recordStr2Pro.reset(new QHash<QString,QtVariantProperty*>());
-    }
-    ui->m_recordStr2Pro->insert(id,pro);
-}
-///
-/// \brief 通过id获取property
-/// \note 需要调用recorder后，此函数才能有效
-/// \param id
-/// \return
-/// \see recorder
-///
-QtVariantProperty *SAPropertySetWidget::getPropertyByID(const QString &id)
-{
-    if(nullptr == ui->m_recordStr2Pro)
-    {
-        return nullptr;
-    }
-    return ui->m_recordStr2Pro->value(id,nullptr);
-}
-///
-/// \brief 属性改变触发的槽函数
-/// \param prop
-/// \param var
-///
-void SAPropertySetWidget::onPropertyValuechanged(QtProperty *prop, const QVariant &var)
-{
-    SAPropertySetWidget::UI::EVENT_MAP_ITE ite = ui->m_event.find(prop);
-    if(ite == ui->m_event.end())
-    {
-        return;
-    }
-    PropertyChangEventPtr fun = ite.value();
-    if(nullptr != fun)
-    {
-        fun(this,prop,var);
-    }
-}
+
+

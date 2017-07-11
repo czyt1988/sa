@@ -109,7 +109,8 @@ public:
     }
     //通过id获取property
     QtVariantProperty* getPropertyByID(const QString& id);
-
+    //获取内部的SAPropertySetWidget属性widget
+    SAPropertySetWidget* getPropertyWidget() const;
 private slots:
     void onPropertyValuechanged(QtProperty* prop,const QVariant& var);
 private:
