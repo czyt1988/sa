@@ -70,6 +70,11 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 
 SADataFeatureWidget::~SADataFeatureWidget()
 {
+    if(nullptr != m_figSet)
+    {
+        delete m_figSet;
+        m_figSet = nullptr;
+    }
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -244,7 +249,7 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
             continue;
         }
         QSet<QwtPlotItem*> itemSet = featureModel->getItemSetFromItem(ci);
-        for(int j=0;j<itemLists.size();++i)
+        for(int j=0;j<itemLists.size();++j)
         {
             if(!itemSet.contains(itemLists[j]))
             {
@@ -566,7 +571,7 @@ void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitSt
 #endif
 
 
-#include "SAFiugreSetWidget.h"
+//#include "SAFiugreSetWidget.h"
 
 void SADataFeatureWidget::on_pushButton_test_clicked()
 {
