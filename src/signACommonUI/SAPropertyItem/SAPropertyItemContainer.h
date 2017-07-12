@@ -18,7 +18,7 @@ public:
     void setIcon(const QIcon &icon);
 
 protected:
-    void addWidget(QWidget* w, int stretch = 0, Qt::Alignment alignment = Qt::Alignment());
+    void setWidget(QWidget* w, int stretch = 0, Qt::Alignment alignment = Qt::Alignment());
     //
     void addLayout(QLayout *layout, int stretch = 0);
     //
