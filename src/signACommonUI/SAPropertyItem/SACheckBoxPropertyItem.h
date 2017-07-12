@@ -6,7 +6,7 @@ class SACheckBoxPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
 public:
-    SACheckBoxPropertyItem(QWidget *parent = nullptr);
+    explicit SACheckBoxPropertyItem(QWidget *parent = nullptr);
     ~SACheckBoxPropertyItem();
 
     void setCheckState(Qt::CheckState state);

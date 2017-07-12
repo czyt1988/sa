@@ -54,7 +54,6 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
 
 SAFigureWindow::~SAFigureWindow()
 {
-
 }
 
 ///

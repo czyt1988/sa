@@ -15,6 +15,10 @@ public:
     int getValue() const;
     //
     QSpinBox* getSpinBox() const;
+    //
+    void setMinimum(int v);
+
+    void setMaximum(int v);
 Q_SIGNALS:
     void valueChanged(int v);
 private:

@@ -39,7 +39,8 @@ public:
         chartNormalSetWidget = new SAChartNormalSetWidget();
         sc->setWidget(chartNormalSetWidget);
 
-
+        par->connect(chartNormalSetWidget,&SAChartNormalSetWidget::chartTitleChanged
+                     ,par,&SAChartSetWidget::chartTitleChanged);
 
 
         par->setLayout(verticalLayout);
@@ -53,7 +54,7 @@ public:
 };
 
 SAChartSetWidget::SAChartSetWidget(QWidget *parent):QWidget(parent)
-  ,ui(new UI)
+  ,ui(new SAChartSetWidget::UI)
 
 {
     ui->setupUI(this);

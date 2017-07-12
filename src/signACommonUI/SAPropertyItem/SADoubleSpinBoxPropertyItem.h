@@ -7,12 +7,16 @@ class SADoubleSpinBoxPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
 public:
-    SADoubleSpinBoxPropertyItem(QWidget *parent = nullptr);
+    explicit SADoubleSpinBoxPropertyItem(QWidget *parent = nullptr);
     ~SADoubleSpinBoxPropertyItem();
     //
     void setValue(double v);
     //
     double getValue() const;
+    //
+    void setMinimum(double v);
+
+    void setMaximum(double v);
     //
     QDoubleSpinBox* getDoubleSpinBox() const;
 Q_SIGNALS:

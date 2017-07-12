@@ -35,7 +35,6 @@ public:
 };
 SAPropertyItemContainer::SAPropertyItemContainer(QWidget *parent):QWidget(parent)
   ,ui(new SAPropertyItemContainer::UI)
-  ,m_w(nullptr)
   ,m_icon(nullptr)
   ,m_iconRect(nullptr)
 {
@@ -62,24 +61,21 @@ QString SAPropertyItemContainer::getText() const
 {
     return ui->labelName->text();
 }
-///
-/// \brief 内部对应的控件窗口
-/// \return
-///
-QWidget *SAPropertyItemContainer::widget() const
-{
-    return m_w;
-}
+
 
 
 ///
 /// \brief 设置内部对应的控件窗口
 /// \param w
 ///
-void SAPropertyItemContainer::setWidget(QWidget *w)
+void SAPropertyItemContainer::setWidget(QWidget *w, int stretch,Qt::Alignment alignment)
 {
-    ui->horizontalLayout->addWidget(w);
-    m_w = w;
+    ui->horizontalLayout->addWidget(w,stretch,alignment);
+}
+
+void SAPropertyItemContainer::addLayout(QLayout *layout, int stretch)
+{
+    ui->horizontalLayout->addWidget(layout,stretch);
 }
 
 void SAPropertyItemContainer::paintEvent(QPaintEvent *event)

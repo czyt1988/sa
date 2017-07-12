@@ -1,5 +1,4 @@
 #include "SAColorSetPropertyItem.h"
-#include "ui_SAColorSetPropertyItem.h"
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QButtonGroup>

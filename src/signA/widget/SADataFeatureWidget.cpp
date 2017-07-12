@@ -8,6 +8,7 @@
 #include <QItemSelectionModel>
 #include <QItemSelection>
 #include "SAChart.h"
+#include "SAFiugreSetWidget.h"
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -52,8 +53,8 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
-  ,m_dataProcessSocket(nullptr)
   ,m_dataProcPro(nullptr)
+  ,m_dataProcessSocket(nullptr)
   ,m_dataReader(nullptr)
   ,m_dataWriter(nullptr)
   ,m_connectRetryCount(50)
@@ -345,6 +346,7 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
 {
 #ifdef _DEBUG_OUTPUT
+    Q_UNUSED(header);
     int costTime = s_vector_send_time_elaspade.restart();
     if(s_send_speed_test)
     {
@@ -357,6 +359,8 @@ void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureIte
                 .arg((byteSize/(1024.0*1024)) / (costTime/1000.0)));
     }
 #endif
+    Q_UNUSED(header);
+    Q_UNUSED(ys);
 
 }
 #endif
@@ -417,6 +421,8 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
             c->markYValue(data,tr("%1(%2)").arg(item->getName().arg(data)));
             c->replot();
         }break;
+        default:
+            return;
         }
     }
 }
@@ -571,7 +577,7 @@ void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitSt
 #endif
 
 
-//#include "SAFiugreSetWidget.h"
+
 
 void SADataFeatureWidget::on_pushButton_test_clicked()
 {

@@ -7,7 +7,7 @@ class SAComboBoxPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
 public:
-    SAComboBoxPropertyItem(QWidget *parent = nullptr);
+    explicit SAComboBoxPropertyItem(QWidget *parent = nullptr);
     ~SAComboBoxPropertyItem();
     QComboBox* getComboBox() const;
 

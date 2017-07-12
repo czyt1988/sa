@@ -1,5 +1,4 @@
 #include "SAFiugreSetWidget.h"
-#include "ui_SAFiugreSetWidget.h"
 #include "SAFigureWindow.h"
 #include "SAChartSetWidget.h"
 
@@ -48,9 +47,9 @@ public:
 };
 
 SAFiugreSetWidget::SAFiugreSetWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new SAFiugreSetWidget::UI)
-  ,m_fig(nullptr)
+    QWidget(parent)
+    ,ui(new SAFiugreSetWidget::UI)
+    ,m_fig(nullptr)
 {
     ui->setupUi(this);
 }
@@ -83,6 +82,8 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
         if(nullptr == w)
         {
             w = new SAChartSetWidget();
+            connect((SAChartSetWidget*)w,&SAChartSetWidget::chartTitleChanged
+                    ,this,&SAFiugreSetWidget::onChartTitleChanged);
             ui->tabWidget->addTab(w,QString());
         }
         csw = qobject_cast<SAChartSetWidget*>(w);
@@ -98,5 +99,21 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
         }
         ui->tabWidget->setTabText(i,title);
         csw->setChart(plots[i]);
+    }
+}
+
+void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
+{
+    int index = ui->tabWidget->currentIndex();
+    if(index >= 0)
+    {
+        if(text.isEmpty())
+        {
+            ui->tabWidget->setTabText(index,tr("chart %1").arg(index+1));
+        }
+        else
+        {
+            ui->tabWidget->setTabText(index,text);
+        }
     }
 }

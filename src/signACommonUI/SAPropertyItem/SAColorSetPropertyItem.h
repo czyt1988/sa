@@ -7,7 +7,7 @@ class SAColorSetPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
 public:
-    explicit SAColorSetPropertyItem(QWidget *parent = 0);
+    explicit SAColorSetPropertyItem(QWidget *parent = nullptr);
     ~SAColorSetPropertyItem();
 
     //

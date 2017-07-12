@@ -11,11 +11,12 @@ class SAFigureWindow;
 class SA_COMMON_UI_EXPORT SAFiugreSetWidget : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit SAFiugreSetWidget(QWidget *parent = 0);
+    explicit SAFiugreSetWidget(QWidget *parent = nullptr);
     ~SAFiugreSetWidget();
     void setFigureWidget(SAFigureWindow* fig);
+private slots:
+    void onChartTitleChanged(const QString& text);
 private:
     class UI;
     SAFiugreSetWidget::UI * ui;

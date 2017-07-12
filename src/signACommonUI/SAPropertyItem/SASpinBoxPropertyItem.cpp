@@ -1,5 +1,4 @@
 #include "SASpinBoxPropertyItem.h"
-#include "ui_SAColorSetPropertyItem.h"
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
@@ -9,7 +8,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
 #include <QSpinBox>
-
+#include <numeric>
 class SASpinBoxPropertyItem::UI
 {
 public:
@@ -20,7 +19,8 @@ public:
         spinBox = new QSpinBox(par);
         spinBox->setObjectName(QStringLiteral("spinBox"));
         spinBox->setValue(0);
-
+        spinBox->setMinimum(std::numeric_limits<int>::min());
+        spinBox->setMaximum(std::numeric_limits<int>::max());
         par->setWidget(spinBox);
         par->connect(spinBox,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
                 ,par,&SASpinBoxPropertyItem::valueChanged);
@@ -56,5 +56,15 @@ int SASpinBoxPropertyItem::getValue() const
 QSpinBox *SASpinBoxPropertyItem::getSpinBox() const
 {
     return ui->spinBox;
+}
+
+void SASpinBoxPropertyItem::setMinimum(int v)
+{
+    ui->spinBox->setMinimum(v);
+}
+
+void SASpinBoxPropertyItem::setMaximum(int v)
+{
+    ui->spinBox->setMaximum(v);
 }
 

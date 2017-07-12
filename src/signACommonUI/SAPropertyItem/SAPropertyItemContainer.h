@@ -13,20 +13,19 @@ public:
     void setText(const QString& text);
     //获取文字描述
     QString getText() const;
-    //内部对应的控件窗口
-    QWidget* widget() const;
     //设置图标
     QIcon getIcon() const;
     void setIcon(const QIcon &icon);
 
 protected:
-    void setWidget(QWidget* w);
+    void addWidget(QWidget* w, int stretch = 0, Qt::Alignment alignment = Qt::Alignment());
+    //
+    void addLayout(QLayout *layout, int stretch = 0);
     //
     void paintEvent(QPaintEvent *event);
 private:
     class UI;
     SAPropertyItemContainer::UI *ui;
-    QWidget* m_w;
     QIcon* m_icon;
     QRect* m_iconRect;
 };

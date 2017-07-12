@@ -10,7 +10,11 @@ HEADERS += \
     $$PWD/SALineEditPropertyItem.h \
     $$PWD/SADoubleSpinBoxPropertyItem.h \
     $$PWD/SAComboBoxPropertyItem.h \
-    $$PWD/SACheckBoxPropertyItem.h
+    $$PWD/SACheckBoxPropertyItem.h \
+    $$PWD/SAGroupBoxPropertyItem.h \
+    $$PWD/SAVGroupBoxPropertyItem.h \
+    $$PWD/SAFontComboBoxPropertyItem.h \
+    $$PWD/SAAligmentPropertyItem.h
 
 SOURCES += \
     $$PWD/SAColorSetPropertyItem.cpp \
@@ -19,4 +23,8 @@ SOURCES += \
     $$PWD/SALineEditPropertyItem.cpp \
     $$PWD/SADoubleSpinBoxPropertyItem.cpp \
     $$PWD/SAComboBoxPropertyItem.cpp \
-    $$PWD/SACheckBoxPropertyItem.cpp
+    $$PWD/SACheckBoxPropertyItem.cpp \
+    $$PWD/SAGroupBoxPropertyItem.cpp \
+    $$PWD/SAVGroupBoxPropertyItem.cpp \
+    $$PWD/SAFontComboBoxPropertyItem.cpp\
+    $$PWD/SAAligmentPropertyItem.cpp

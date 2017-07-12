@@ -1,5 +1,6 @@
 #include "SADoubleSpinBoxPropertyItem.h"
 #include <QDoubleSpinBox>
+#include <numeric>
 class SADoubleSpinBoxPropertyItem::UI
 {
 public:
@@ -8,6 +9,8 @@ public:
     {
         spinBox = new QDoubleSpinBox(par);
         spinBox->setObjectName(QStringLiteral("spinBox"));
+        spinBox->setMinimum(std::numeric_limits<double>::min());
+        spinBox->setMaximum(std::numeric_limits<double>::max());
         spinBox->setValue(0);
 
         par->setWidget(spinBox);
@@ -36,6 +39,16 @@ void SADoubleSpinBoxPropertyItem::setValue(double v)
 double SADoubleSpinBoxPropertyItem::getValue() const
 {
     return ui->spinBox->value();
+}
+
+void SADoubleSpinBoxPropertyItem::setMinimum(double v)
+{
+    ui->spinBox->setMinimum(v);
+}
+
+void SADoubleSpinBoxPropertyItem::setMaximum(double v)
+{
+    ui->spinBox->setMaximum(v);
 }
 
 QDoubleSpinBox *SADoubleSpinBoxPropertyItem::getDoubleSpinBox() const

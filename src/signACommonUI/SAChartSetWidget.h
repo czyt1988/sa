@@ -14,6 +14,8 @@ public:
     SAChartSetWidget(QWidget* parent = nullptr);
     ~SAChartSetWidget();
     void setChart(QwtPlot *chart);
+signals:
+    void chartTitleChanged(const QString& text);
 private:
     class UI;
     SAChartSetWidget::UI* ui;

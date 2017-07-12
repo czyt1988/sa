@@ -66,7 +66,8 @@ SOURCES += \
     SAPropertySetWidget.cpp \
     SAChartSetWidget.cpp \
     SAChartNormalSetWidget.cpp \
-    TestWidget.cpp
+    TestWidget.cpp \
+    SAAligmentPropertyItem.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
