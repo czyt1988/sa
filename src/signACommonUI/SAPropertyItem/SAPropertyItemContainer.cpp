@@ -75,7 +75,7 @@ void SAPropertyItemContainer::setWidget(QWidget *w, int stretch,Qt::Alignment al
 
 void SAPropertyItemContainer::addLayout(QLayout *layout, int stretch)
 {
-    ui->horizontalLayout->addWidget(layout,stretch);
+    ui->horizontalLayout->addLayout(layout,stretch);
 }
 
 void SAPropertyItemContainer::paintEvent(QPaintEvent *event)
