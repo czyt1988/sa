@@ -1,40 +1,60 @@
 #include "SAAligmentPropertyItem.h"
 #include <QToolButton>
 #include <QHBoxLayout>
+#include <QButtonGroup>
 class SAAligmentPropertyItem::UI
 {
 public:
-    QToolButton* bottomScale;
-    QToolButton* topScale;
-    QToolButton* leftScale;
-    QToolButton* rightScale;
+    QButtonGroup* buttonGroup;
+    QToolButton* bottomAlignment;
+    QToolButton* topAlignment;
+    QToolButton* leftAlignment;
+    QToolButton* rightAlignment;
+    QToolButton* centerAlignment;
     QHBoxLayout* hBoxLayout;
     void setupUI(SAAligmentPropertyItem* par)
     {
         hBoxLayout = new QHBoxLayout;
+        hBoxLayout->setMargin(0);
+        hBoxLayout->setContentsMargins(0,0,0,0);
+        buttonGroup = new QButtonGroup(par);
 
-        bottomScale = new QToolButton;
-        bottomScale->setFixedSize(23,23);
-        topScale = new QToolButton;
-        topScale->setFixedSize(23,23);
-        leftScale = new QToolButton;
-        leftScale->setFixedSize(23,23);
-        rightScale = new QToolButton;
-        rightScale->setFixedSize(23,23);
+        bottomAlignment = new QToolButton;
+        bottomAlignment->setFixedSize(23,23);
+        bottomAlignment->setCheckable(true);
+
+        topAlignment = new QToolButton;
+        topAlignment->setFixedSize(23,23);
+        topAlignment->setCheckable(true);
+
+        leftAlignment = new QToolButton;
+        leftAlignment->setFixedSize(23,23);
+        leftAlignment->setCheckable(true);
+
+        rightAlignment = new QToolButton;
+        rightAlignment->setFixedSize(23,23);
+        rightAlignment->setCheckable(true);
+
+        centerAlignment = new QToolButton;
+        centerAlignment->setFixedSize(23,23);
+        centerAlignment->setCheckable(true);
+
         hBoxLayout->addStretch();
-        hBoxLayout->addWidget(leftScale);
-        hBoxLayout->addWidget(topScale);
-        hBoxLayout->addWidget(bottomScale);
-        hBoxLayout->addWidget(rightScale);
+        hBoxLayout->addWidget(leftAlignment);
+        hBoxLayout->addWidget(topAlignment);
+        hBoxLayout->addWidget(bottomAlignment);
+        hBoxLayout->addWidget(rightAlignment);
+        hBoxLayout->addWidget(centerAlignment);
+
+        buttonGroup->addButton(leftAlignment,Qt::AlignLeft);
+        buttonGroup->addButton(topAlignment,Qt::AlignTop);
+        buttonGroup->addButton(bottomAlignment,Qt::AlignBottom);
+        buttonGroup->addButton(rightAlignment,Qt::AlignRight);
+        buttonGroup->addButton(centerAlignment,Qt::AlignCenter);
+        buttonGroup->setExclusive(true);
         par->addLayout(hBoxLayout);
-        par->connect(bottomScale,&QToolButton::toggled
-                     ,par,&SAAligmentPropertyItem::onButtonBottomToggled);
-        par->connect(topScale,&QToolButton::toggled
-                     ,par,&SAAligmentPropertyItem::onButtonBottomToggled);
-        par->connect(leftScale,&QToolButton::toggled
-                     ,par,&SAAligmentPropertyItem::onButtonBottomToggled);
-        par->connect(rightScale,&QToolButton::toggled
-                     ,par,&SAAligmentPropertyItem::onButtonBottomToggled);
+        par->connect(buttonGroup,static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked)
+                     ,par,&SAAligmentPropertyItem::onButtonClicked);
     }
 };
 
@@ -50,34 +70,24 @@ SAAligmentPropertyItem::~SAAligmentPropertyItem()
     delete ui;
 }
 
-void SAAligmentPropertyItem::onButtonBottomToggled(bool checked)
+void SAAligmentPropertyItem::setAlignment(Qt::Alignment al)
 {
-    if(checked)
+    QAbstractButton * btn = ui->buttonGroup->button(int(al));
+    if(btn)
     {
-        emit stateChanged(Qt::AlignBottom);
+        btn->setChecked(true);
     }
 }
 
-void SAAligmentPropertyItem::onButtonTopToggled(bool checked)
+QSize SAAligmentPropertyItem::sizeHint() const
 {
-    if(checked)
-    {
-        emit stateChanged(Qt::AlignTop);
-    }
+    return QSize(300,25);
 }
 
-void SAAligmentPropertyItem::onButtonLeftToggled(bool checked)
+
+void SAAligmentPropertyItem::onButtonClicked(int id)
 {
-    if(checked)
-    {
-        emit stateChanged(Qt::AlignLeft);
-    }
+    Qt::Alignment al = static_cast<Qt::Alignment>(id);
+    emit stateChanged(al);
 }
 
-void SAAligmentPropertyItem::onButtonRightToggled(bool checked)
-{
-    if(checked)
-    {
-        emit stateChanged(Qt::AlignRight);
-    }
-}

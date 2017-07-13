@@ -1,5 +1,7 @@
 #include "SAVGroupBoxPropertyItem.h"
 #include <QVBoxLayout>
+#include <QStyle>
+#include <QStyleOption>
 class SAVGroupBoxPropertyItem::UI
 {
 public:
@@ -7,6 +9,8 @@ public:
     void setupUI(SAVGroupBoxPropertyItem* par)
     {
         vlayout = new QVBoxLayout;
+        vlayout->setContentsMargins(4, 4, 4, 4);
+        vlayout->setSpacing(4);
         par->setLayout(vlayout);
     }
 };
@@ -32,3 +36,5 @@ void SAVGroupBoxPropertyItem::addLayout(QLayout *layout, int stretch)
 {
     ui->vlayout->addLayout(layout,stretch);
 }
+
+

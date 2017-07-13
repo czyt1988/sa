@@ -18,16 +18,13 @@ private slots:
     Q_SLOT void onFooterTextChanged(const QString& text);
     Q_SLOT void onCanvasBackgroundColorChanged(const QColor& clr);
     Q_SLOT void onBorderRadiusChanged(double v);
-    //x axis
-    Q_SLOT void onEnableXAxisChanged(bool b);
-    Q_SLOT void onXBottomTitleChanged(const QString& text);
-    Q_SLOT void onXAxisFontChanged(const QFont &font);
-    Q_SLOT void onXAxisLabelRotationChanged(double v);
-    Q_SLOT void onXAxisScaleMinChanged(double v);
-    Q_SLOT void onXAxisScaleMaxChanged(double v);
-    Q_SLOT void onXAxisMarginChanged(int v);
-    Q_SLOT void onXAxisSpacingChanged(int v);
     //
+    Q_SLOT void onChartDestroy(QObject* o);
+    //
+    Q_SLOT void onScaleDivChangedXBottom();
+    Q_SLOT void onScaleDivChangedXTop();
+    Q_SLOT void onScaleDivChangedYLeft();
+    Q_SLOT void onScaleDivChangedYRight();
 public:
     static void setAxisEnable(QwtPlot*chart, int axisID, bool b);
     static void setAxisTitle(QwtPlot*chart,int axisID,const QString& text);
@@ -39,6 +36,7 @@ public:
     static void setAxisBorderDistEnd(QwtPlot*chart,int axisID,int v);
     static void setAxisMargin(QwtPlot*chart,int axisID,int v);
     static void setAxisSpacing(QwtPlot*chart,int axisID,int v);
+    static void setAxisLabelAlignment(QwtPlot*chart,int axisID,Qt::Alignment v);
 signals:
     void chartTitleChanged(const QString& text);
 private:

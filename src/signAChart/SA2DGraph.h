@@ -447,7 +447,7 @@ signals:
     void enableXYDataPickerChanged(bool enable);
 public:
     bool isEnableZoomer() const{return m_bEnableZoom;}
-    bool isEnableZoomerScroll() const;
+    //bool isEnableZoomerScroll() const;
     ///
     /// \brief 是否允许十字光标
     /// \return

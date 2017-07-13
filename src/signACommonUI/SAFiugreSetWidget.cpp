@@ -62,22 +62,19 @@ SAFiugreSetWidget::~SAFiugreSetWidget()
 void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
     m_fig = fig;
-    QList<SAChart2D*> plots = fig->get2DPlots();
-    //删除多余的tab
-    while(ui->tabWidget->count() > plots.size())
+    if(nullptr == fig)
     {
-        int removeIndex = ui->tabWidget->count()-1;
-        QWidget* w = ui->tabWidget->widget(removeIndex);
-        ui->tabWidget->removeTab(removeIndex);
-        if(w)
+        while(ui->tabWidget->count() > 1)
         {
-            delete w;
+            int removeIndex = ui->tabWidget->count()-1;
+            QWidget* w = ui->tabWidget->widget(removeIndex);
+            ui->tabWidget->removeTab(removeIndex);
+            if(w)
+            {
+                delete w;
+            }
         }
-    }
-    //根据chart个数来建立tab
-    for(int i=0;i<plots.size();++i)
-    {
-        QWidget* w = ui->tabWidget->widget(i);
+        QWidget* w = ui->tabWidget->widget(0);
         SAChartSetWidget* csw = nullptr;
         if(nullptr == w)
         {
@@ -90,15 +87,50 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
         if(nullptr == csw)
         {
             delete w;
-            continue;
+            return;
         }
-        QString title = plots[i]->title().text();
-        if(title.isEmpty())
+        ui->tabWidget->setTabText(0,tr("none figure"));
+    }
+    else
+    {
+        QList<SAChart2D*> plots = fig->get2DPlots();
+        //删除多余的tab
+        while(ui->tabWidget->count() > plots.size())
         {
-            title = tr("chart %1").arg(i+1);
+            int removeIndex = ui->tabWidget->count()-1;
+            QWidget* w = ui->tabWidget->widget(removeIndex);
+            ui->tabWidget->removeTab(removeIndex);
+            if(w)
+            {
+                delete w;
+            }
         }
-        ui->tabWidget->setTabText(i,title);
-        csw->setChart(plots[i]);
+        //根据chart个数来建立tab
+        for(int i=0;i<plots.size();++i)
+        {
+            QWidget* w = ui->tabWidget->widget(i);
+            SAChartSetWidget* csw = nullptr;
+            if(nullptr == w)
+            {
+                w = new SAChartSetWidget();
+                connect((SAChartSetWidget*)w,&SAChartSetWidget::chartTitleChanged
+                        ,this,&SAFiugreSetWidget::onChartTitleChanged);
+                ui->tabWidget->addTab(w,QString());
+            }
+            csw = qobject_cast<SAChartSetWidget*>(w);
+            if(nullptr == csw)
+            {
+                delete w;
+                continue;
+            }
+            QString title = plots[i]->title().text();
+            if(title.isEmpty())
+            {
+                title = tr("chart %1").arg(i+1);
+            }
+            ui->tabWidget->setTabText(i,title);
+            csw->setChart(plots[i]);
+        }
     }
 }
 

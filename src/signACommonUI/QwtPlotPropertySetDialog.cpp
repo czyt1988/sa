@@ -158,7 +158,7 @@ void QwtPlotPropertySetDialog::updateAllValue()
     m_property_id.setVarPropertyData(ID_PlotTitle,m_plot->title().text());
     m_property_id.setVarPropertyData(ID_PlotFooter,m_plot->footer().text());
     m_property_id.setVarPropertyData(ID_PlotCanvasBackground,m_plot->canvasBackground().color());
-    m_property_id.setVarPropertyData(ID_PlotEnableZoomerScroll,m_plot->isEnableZoomerScroll());
+    //m_property_id.setVarPropertyData(ID_PlotEnableZoomerScroll,m_plot->isEnableZoomerScroll());
     m_property_id.setVarPropertyData(ID_PlotAxisSet,getAxisEnable(m_plot));
     updateAxisValue(QwtPlot::xBottom);
     updateAxisValue(QwtPlot::yLeft);
@@ -215,8 +215,8 @@ void QwtPlotPropertySetDialog::addPlotSet(SA2DGraph* plot)
                                             ,groupItem,tr("figure footer"),ID_PlotFooter,m_plot->footer().text());//脚标
     m_property_id.addVariantPropertyInGroup(m_variantManager,QVariant::Color
                                             ,groupItem,tr("canvas background"),ID_PlotCanvasBackground,m_plot->canvasBackground().color());//画布背景
-    m_property_id.addVariantPropertyInGroup(m_variantManager,QVariant::Bool
-                                            ,groupItem,tr("enable zoomer scroll"),ID_PlotEnableZoomerScroll,m_plot->isEnableZoomerScroll());//缩放滚动条
+//    m_property_id.addVariantPropertyInGroup(m_variantManager,QVariant::Bool
+//                                            ,groupItem,tr("enable zoomer scroll"),ID_PlotEnableZoomerScroll,m_plot->isEnableZoomerScroll());//缩放滚动条
 
     //坐标轴设置
 

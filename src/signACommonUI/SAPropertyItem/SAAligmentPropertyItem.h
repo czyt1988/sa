@@ -7,13 +7,13 @@ class SAAligmentPropertyItem : public SAPropertyItemContainer
 public:
     SAAligmentPropertyItem(QWidget* par);
     ~SAAligmentPropertyItem();
+    void setAlignment(Qt::Alignment al);
+
+    QSize sizeHint() const;
 signals:
     void stateChanged(Qt::Alignment al);
 private slots:
-    void onButtonBottomToggled(bool checked);
-    void onButtonTopToggled(bool checked);
-    void onButtonLeftToggled(bool checked);
-    void onButtonRightToggled(bool checked);
+    void onButtonClicked(int id);
 private:
     class UI;
     SAAligmentPropertyItem::UI* ui;

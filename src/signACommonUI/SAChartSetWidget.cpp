@@ -42,7 +42,6 @@ public:
         par->connect(chartNormalSetWidget,&SAChartNormalSetWidget::chartTitleChanged
                      ,par,&SAChartSetWidget::chartTitleChanged);
 
-
         par->setLayout(verticalLayout);
         retranslateUi(par);
     }

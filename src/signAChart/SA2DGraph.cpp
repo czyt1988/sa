@@ -929,15 +929,15 @@ void SA2DGraph::resizeEvent( QResizeEvent *event )
     //updateGradient();
 }
 
-bool SA2DGraph::isEnableZoomerScroll() const
-{
-    Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
-    if(zm)
-    {
-        return zm->isEnableScrollBar();
-    }
-    return false;
-}
+//bool SA2DGraph::isEnableZoomerScroll() const
+//{
+//    Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
+//    if(zm)
+//    {
+//        return zm->isEnableScrollBar();
+//    }
+//    return false;
+//}
 
 bool SA2DGraph::isEnableGrid() const
 {
@@ -1433,21 +1433,14 @@ void SA2DGraph::enableZoomer(bool enable)
     {
         m_zoomer->setZoomBase( false );
         m_zoomer->setEnabled(enable);
-
-//        m_zoomerSecond->setZoomBase( false );
-//        m_zoomerSecond->setEnabled(enable);
-
         if(enable && isEnablePicker())//如果十指光标激活了，就关闭坐标提示
             m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
         if(enable && !isEnablePicker())
             m_zoomer->setTrackerMode( QwtPicker::AlwaysOn );
-        //m_zoomer->zoom( 0 );
     }
     else
     {
         m_zoomer->setEnabled(false);
-//        m_zoomerSecond->setEnabled(false);
-        //deleteZoomer();
     }
     m_bEnableZoom = enable;
     emit enableZoomerChanged(enable);
@@ -1462,7 +1455,9 @@ void SA2DGraph::setupZoomer(bool isHaveScroll)
         zoom->on_enable_scrollBar(isHaveScroll);
         zoom->setRubberBand( QwtPicker::RectRubberBand );
         zoom->setTrackerPen( QColor( Qt::black ) );
-
+        zoom->setKeyPattern( QwtEventPattern::KeyRedo, Qt::Key_I, Qt::ShiftModifier );
+        zoom->setKeyPattern( QwtEventPattern::KeyUndo, Qt::Key_O, Qt::ShiftModifier );
+        zoom->setKeyPattern( QwtEventPattern::KeyHome, Qt::Key_Home );
         zoom->setMousePattern( QwtEventPattern::MouseSelect2,
                 Qt::RightButton, Qt::ControlModifier );
         zoom->setMousePattern( QwtEventPattern::MouseSelect3,
@@ -1472,17 +1467,6 @@ void SA2DGraph::setupZoomer(bool isHaveScroll)
     }
     if(nullptr == m_zoomerSecond)
     {
-//        Zoomer_qwt* zoom = new Zoomer_qwt(xTop,yRight, canvas());//Zoomer_qwt( QwtPlot::xBottom, QwtPlot::yLeft,canvas() );
-//        zoom->on_enable_scrollBar(isHaveScroll);
-//        zoom->setRubberBand( QwtPicker::RectRubberBand );
-
-//        zoom->setTrackerMode( QwtPicker::AlwaysOff );
-
-//        zoom->setMousePattern( QwtEventPattern::MouseSelect2,
-//                Qt::RightButton, Qt::ControlModifier );
-//        zoom->setMousePattern( QwtEventPattern::MouseSelect3,
-//                Qt::RightButton );
-//        m_zoomerSecond = zoom;
     }
     QwtPlotMagnifier *magnifier = new QwtPlotMagnifier( canvas() );
     magnifier->setMouseButton( Qt::NoButton );
@@ -1521,6 +1505,8 @@ void SA2DGraph::setZoomReset()
 {
     setAxisAutoScale(QwtPlot::yLeft,true);
     setAxisAutoScale(QwtPlot::xBottom,true);
+    setAxisAutoScale(QwtPlot::xTop,true);
+    setAxisAutoScale(QwtPlot::yRight,true);
     replot();
     if(m_zoomer)
     {

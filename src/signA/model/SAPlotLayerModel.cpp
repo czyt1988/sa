@@ -1,4 +1,4 @@
-﻿#include "SAPlotLayerModel.h"
+#include "SAPlotLayerModel.h"
 #include <qwt_plot_curve.h>
 #include <qwt_plot_grid.h>
 #include <qwt_plot_marker.h>
@@ -24,7 +24,10 @@ void SAPlotLayerModel::setPlot(QwtPlot* plot)
 {
 	beginResetModel();
 	m_plot = plot;
-	connect(m_plot,&QwtPlot::itemAttached,this,&SAPlotLayerModel::itemAttached);
+    if(plot)
+    {
+        connect(m_plot,&QwtPlot::itemAttached,this,&SAPlotLayerModel::itemAttached);
+    }
 	endResetModel();
 }
 

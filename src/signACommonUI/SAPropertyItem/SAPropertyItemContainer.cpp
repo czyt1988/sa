@@ -39,6 +39,7 @@ SAPropertyItemContainer::SAPropertyItemContainer(QWidget *parent):QWidget(parent
   ,m_iconRect(nullptr)
 {
     ui->setupUi(this);
+    setMinimumSize(200,20);
 }
 
 SAPropertyItemContainer::~SAPropertyItemContainer()

@@ -586,8 +586,8 @@ void SADataFeatureWidget::on_pushButton_test_clicked()
         m_figSet = new SAFiugreSetWidget();
     }
     SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
-    if(nullptr == figure)
-        return;
+//    if(nullptr == figure)
+//        return;
     m_figSet->setFigureWidget(figure);
     m_figSet->show();
 }
