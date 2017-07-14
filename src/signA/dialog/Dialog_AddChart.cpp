@@ -409,9 +409,9 @@ QwtPlotCurve* Dialog_AddChart::drawChart(SAAbstractDatas* x, SAAbstractDatas* y)
         getSeries (y,ydata,isYTimeScale,QString());
     pC = ui->chart->addCurve(xdata,ydata);
     if (isXTimeScale)
-        ui->chart->setDateAxis(ui->comboBox_TX->itemData(ui->comboBox_TX->currentIndex()).toString(),QwtPlot::xBottom);
+        ui->chart->setAxisDateTimeScale(ui->comboBox_TX->itemData(ui->comboBox_TX->currentIndex()).toString(),QwtPlot::xBottom);
     if (isYTimeScale)
-        ui->chart->setDateAxis(ui->comboBox_TY->itemData(ui->comboBox_TY->currentIndex()).toString(),QwtPlot::yLeft);
+        ui->chart->setAxisDateTimeScale(ui->comboBox_TY->itemData(ui->comboBox_TY->currentIndex()).toString(),QwtPlot::yLeft);
     return pC;
 }
 

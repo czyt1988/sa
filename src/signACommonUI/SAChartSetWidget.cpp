@@ -5,14 +5,14 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QTabWidget>
 #include <QTreeWidget>
-#include "qwt_plot.h"
+#include "SAChart2D.h"
 #include "SAChartNormalSetWidget.h"
 #include "SAColorSetPropertyItem.h"
 #include <QScrollArea>
 class SAChartSetWidget::UI
 {
 public:
-    QwtPlot* chartCtrl;
+    SAChart2D* chartCtrl;
     QVBoxLayout *verticalLayout;
     QTabWidget* tabWidget;
     SAChartNormalSetWidget* chartNormalSetWidget;
@@ -64,7 +64,7 @@ SAChartSetWidget::~SAChartSetWidget()
     delete ui;
 }
 
-void SAChartSetWidget::setChart(QwtPlot *chart)
+void SAChartSetWidget::setChart(SAChart2D *chart)
 {
     ui->chartCtrl = chart;
     ui->chartNormalSetWidget->setChart(chart);

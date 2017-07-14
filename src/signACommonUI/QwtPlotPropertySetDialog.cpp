@@ -623,7 +623,7 @@ void QwtPlotPropertySetDialog::setAxisScaleDrawStyle(QwtPlot::Axis axis, const Q
         }
         if(!dateScale)
         {//说明当前不是时间坐标轴
-            m_plot->setDateAxis(st,axis,QwtDate::Second);
+            m_plot->setAxisDateTimeScale(st,axis,QwtDate::Second);
         }
     }
 }

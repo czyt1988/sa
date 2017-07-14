@@ -2,6 +2,8 @@
 #define SACHARTNORMALSETWIDGET_H
 #include <QTreeWidget>
 #include "SAPropertySetWidget.h"
+class SAChart2D;
+class SA2DGraph;
 class QwtPlot;
 ///
 /// \brief qwtPlot的常规设置窗口
@@ -12,7 +14,7 @@ class SAChartNormalSetWidget : public QWidget
 public:
     SAChartNormalSetWidget(QWidget* par=nullptr);
     ~SAChartNormalSetWidget();
-    void setChart(QwtPlot* chart);
+    void setChart(SAChart2D *chart);
     virtual void retranslateUi();
 private slots:
     Q_SLOT void onTitleTextChanged(const QString& text);
@@ -26,19 +28,9 @@ private slots:
     Q_SLOT void onScaleDivChangedXTop();
     Q_SLOT void onScaleDivChangedYLeft();
     Q_SLOT void onScaleDivChangedYRight();
+    //other slot in SAChartNormalSetWidget::UI::setupAxisSet function
 public:
-    static void setAxisEnable(QwtPlot*chart, int axisID, bool b);
-    static void setAxisTitle(QwtPlot*chart,int axisID,const QString& text);
-    static void setAxisFont(QwtPlot*chart,int axisID,const QFont &font);
-    static void setAxisLabelRotation(QwtPlot*chart,int axisID,double v);
-    static void setAxisScaleMin(QwtPlot*chart,int axisID,double v);
-    static void setAxisScaleMax(QwtPlot*chart,int axisID,double v);
-    static void setAxisBorderDistStart(QwtPlot*chart,int axisID,int v);
-    static void setAxisBorderDistEnd(QwtPlot*chart,int axisID,int v);
-    static void setAxisMargin(QwtPlot*chart,int axisID,int v);
-    static void setAxisSpacing(QwtPlot*chart,int axisID,int v);
-    static void setAxisLabelAlignment(QwtPlot*chart,int axisID,Qt::Alignment v);
-    static int otherAxis(int axisID);
+
 signals:
     void chartTitleChanged(const QString& text);
 private:

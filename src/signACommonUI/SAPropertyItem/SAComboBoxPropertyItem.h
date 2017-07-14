@@ -14,6 +14,16 @@ public:
     void addItem(const QString &text, const QVariant &userData = QVariant());
     void addItem(const QIcon &icon, const QString &text, const QVariant &userData = QVariant());
     void addItems(const QStringList &texts);
+    void setEditable(bool editable);
+
+    QString currentText() const;
+
+public slots:
+
+    void setCurrentIndex(int index);
+    void setCurrentText(const QString &text);
+    void setEditText(const QString &text);
+
 
 Q_SIGNALS:
     void currentIndexChanged(int index);

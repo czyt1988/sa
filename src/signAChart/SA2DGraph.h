@@ -37,6 +37,7 @@
 #include "SAPlotZoomer.h"
 //class ScrollBar;
 //class ScrollZoomer;
+class QwtDateScaleDraw;
 
 class ScrollData;
 class SAYDataTracker;
@@ -335,9 +336,11 @@ public:
 	};
 
 	static QString axisDateScaleType2String(AxisDateScaleType type);
+    static QStringList axisDateScaleTypes2StringList();
 
-	void setDateAxis(AxisDateScaleType type,int axisID = xBottom,QwtDate::IntervalType intType = QwtDate::Second);
-	void setDateAxis(QString type,int axisID = xBottom,QwtDate::IntervalType intType = QwtDate::Second);
+    void setAxisDateTimeScale(AxisDateScaleType type,int axisID = xBottom,QwtDate::IntervalType intType = QwtDate::Second);
+    QwtDateScaleDraw *setAxisDateTimeScale(const QString& format, int axisID, QwtDate::IntervalType intType = QwtDate::Second);
+    QwtDateScaleDraw *setAxisDateTimeScale(int axisID);
     void setAxisDateFormat(QwtPlot::Axis axis, AxisDateScaleType format,QwtDate::IntervalType intType = QwtDate::Second );
 
     ///

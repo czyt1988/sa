@@ -2,6 +2,7 @@
 #include <QToolButton>
 #include <QHBoxLayout>
 #include <QButtonGroup>
+#include <QApplication>
 class SAAligmentPropertyItem::UI
 {
 public:
@@ -55,6 +56,15 @@ public:
         par->addLayout(hBoxLayout);
         par->connect(buttonGroup,static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked)
                      ,par,&SAAligmentPropertyItem::onButtonClicked);
+        retranslateUi(par);
+    }
+    void retranslateUi(SAAligmentPropertyItem *w)
+    {
+        bottomAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Bottom Alignment", 0));
+        topAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Top Alignment", 0));
+        leftAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Left Alignment", 0));
+        rightAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Right Alignment", 0));
+        centerAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Center Alignment", 0));
     }
 };
 

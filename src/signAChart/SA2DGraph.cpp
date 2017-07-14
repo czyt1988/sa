@@ -2247,7 +2247,14 @@ QString SA2DGraph::axisDateScaleType2String(AxisDateScaleType type)
     case SA2DGraph::yyyy_MM_dd_hh_mm: return QString("yyyy-MM-dd hh:mm");
     case SA2DGraph::yyyy_MM_dd_hh_mm_ss: return QString("yyyy-MM-dd hh:mm:ss");
 	}
-	return QString("yyyy-MM-dd hh:mm:ss");
+    return QString("yyyy-MM-dd hh:mm:ss");
+}
+
+QStringList SA2DGraph::axisDateScaleTypes2StringList()
+{
+    return QStringList()<<"h:m"<<"hh:mm"<<"h:m:s"<<"hh:mm:ss"
+                       <<"yyyy-M-d"<<"yyyy-M-d h:m"<<"yyyy-M-d h:m:s"
+                      <<"yyyy-MM-dd"<<"yyyy-MM-dd hh:mm"<<"yyyy-MM-dd hh:mm:ss";
 }
 ///
 /// \brief 设置坐标轴为时间坐标轴
@@ -2255,18 +2262,25 @@ QString SA2DGraph::axisDateScaleType2String(AxisDateScaleType type)
 /// \param 时间显示的类型 
 /// \param type 类型 
 ///
-void SA2DGraph::setDateAxis(AxisDateScaleType type,int axisID,QwtDate::IntervalType intType)
+void SA2DGraph::setAxisDateTimeScale(AxisDateScaleType type,int axisID,QwtDate::IntervalType intType)
 {
 	QString strDateFormat = axisDateScaleType2String(type);
-	setDateAxis(strDateFormat,axisID,intType);
+    setAxisDateTimeScale(strDateFormat,axisID,intType);
 }
 
-void SA2DGraph::setDateAxis(QString type,int axisID ,QwtDate::IntervalType intType)
+QwtDateScaleDraw* SA2DGraph::setAxisDateTimeScale(const QString &format, int axisID , QwtDate::IntervalType intType)
+{
+    QwtDateScaleDraw* dateScale = setAxisDateTimeScale(axisID);
+    dateScale->setDateFormat(intType,format);
+    return dateScale;
+}
+
+QwtDateScaleDraw *SA2DGraph::setAxisDateTimeScale(int axisID)
 {
     QwtDateScaleDraw* dateScale;
     dateScale = new QwtDateScaleDraw;//原来的scaleDraw会再qwt自动delete
-	dateScale->setDateFormat(intType,type);
     setAxisScaleDraw(axisID,dateScale);
+    return dateScale;
 }
 ///
 /// \brief 改变时间轴的时间显示格式，如果
@@ -2279,5 +2293,5 @@ void SA2DGraph::setAxisDateFormat(QwtPlot::Axis axis, AxisDateScaleType format, 
     QwtDateScaleDraw* dateScale = dynamic_cast<QwtDateScaleDraw*>(axisScaleDraw(axis));
     if(!dateScale)
         return;
-    setDateAxis(axisDateScaleType2String(format),axis,intType);
+    setAxisDateTimeScale(axisDateScaleType2String(format),axis,intType);
 }

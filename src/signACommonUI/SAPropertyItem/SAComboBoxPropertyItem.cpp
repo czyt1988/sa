@@ -54,3 +54,28 @@ void SAComboBoxPropertyItem::addItems(const QStringList &texts)
 {
     ui->comboBox->addItems(texts);
 }
+
+void SAComboBoxPropertyItem::setEditable(bool editable)
+{
+    ui->comboBox->setEditable(editable);
+}
+
+QString SAComboBoxPropertyItem::currentText() const
+{
+    return ui->comboBox->currentText();
+}
+
+void SAComboBoxPropertyItem::setCurrentIndex(int index)
+{
+    ui->comboBox->setCurrentIndex(index);
+}
+
+void SAComboBoxPropertyItem::setCurrentText(const QString &text)
+{
+    ui->comboBox->setCurrentText(text);
+}
+
+void SAComboBoxPropertyItem::setEditText(const QString &text)
+{
+    ui->comboBox->setEditText(text);
+}

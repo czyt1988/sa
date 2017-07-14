@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QScopedPointer>
-class QwtPlot;
+class SAChart2D;
 ///
 /// \brief
 ///
@@ -13,7 +13,7 @@ class SAChartSetWidget : public QWidget
 public:
     SAChartSetWidget(QWidget* parent = nullptr);
     ~SAChartSetWidget();
-    void setChart(QwtPlot *chart);
+    void setChart(SAChart2D *chart);
 signals:
     void chartTitleChanged(const QString& text);
 private:

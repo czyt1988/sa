@@ -490,8 +490,10 @@ void MainWindow::onActionSetDefalutDockPosTriggered()
     splitDockWidget(ui->dockWidget_plotLayer,ui->dockWidget_DataFeature,Qt::Vertical);
     tabifyDockWidget(ui->dockWidget_main,ui->dockWidget_valueViewer);
     tabifyDockWidget(ui->dockWidget_chartDataViewer,ui->dockWidget_message);
+    tabifyDockWidget(ui->dockWidget_windowList,ui->dockWidget_plotSet);
     ui->dockWidget_valueManage->show();
     //ui->dockWidget_valueManage->resize(QSize(500,ui->dockWidget_valueManage->height()));
+    ui->dockWidget_plotSet->show();
     ui->dockWidget_windowList->show();
     ui->dockWidget_plotLayer->show();
     ui->dockWidget_chartDataViewer->show();
@@ -501,6 +503,7 @@ void MainWindow::onActionSetDefalutDockPosTriggered()
     ui->dockWidget_message->show();
     ui->dockWidget_chartDataViewer->raise();
     ui->dockWidget_main->raise();
+
 }
 
 void MainWindow::onActionProjectSettingTriggered()
@@ -575,7 +578,9 @@ void MainWindow::loadWindowState(const QSettings& setting)
 void MainWindow::onChartDataChanged(QWidget *widget,const QwtPlotItem *pC)
 {
     Q_UNUSED(pC)
+    Q_UNUSED(widget)
     //TODO
+
 }
 
 
@@ -585,6 +590,7 @@ void MainWindow::onChartDataChanged(QWidget *widget,const QwtPlotItem *pC)
 ///
 void MainWindow::onTreeViewValueManagerClicked(const QModelIndex &index)
 {
+    Q_UNUSED(index);
     //把选中的数据传递给saUI
     SAAbstractDatas* data = getSeletedData();
     if(data)
@@ -599,6 +605,7 @@ void MainWindow::onTreeViewValueManagerClicked(const QModelIndex &index)
 ///
 void MainWindow::onTreeViewValueManagerDoubleClicked(const QModelIndex &index)
 {
+    Q_UNUSED(index);
     QList<SAAbstractDatas*> datas=getSeletedDatas();
     if(datas.size ()<=0)
         return;
@@ -737,11 +744,11 @@ void MainWindow::onActionNewChartTriggered()
         bool isDateTime = false;
         QString tf = addChart.isAxisDateTime(&isDateTime,QwtPlot::xBottom);
         if(isDateTime)
-            pC->setDateAxis(tf,QwtPlot::xBottom);
+            pC->setAxisDateTimeScale(tf,QwtPlot::xBottom);
         isDateTime = false;
         tf = addChart.isAxisDateTime(&isDateTime,QwtPlot::yLeft);
         if(isDateTime)
-            pC->setDateAxis(tf,QwtPlot::yLeft);
+            pC->setAxisDateTimeScale(tf,QwtPlot::yLeft);
         pC->enableZoomer(false);
         pC->enablePicker(false);
         pC->enableGrid(true);
@@ -831,8 +838,6 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
         //窗口激活后，把绘图窗口的指针保存
         m_lastShowFigureWindow = fig;
 
-        //设置属性表内容
-        //setFeatureDataToTree(pc);
 
         //刷新toolbar
         updateChartSetToolBar(fig);
@@ -867,6 +872,8 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
             plotItemDataModel->clear();
         }
     }
+    //设置绘图属性窗口,空指针也接受
+    ui->figureSetWidget->setFigureWidget(fig);
 }
 
 void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
@@ -1133,7 +1140,7 @@ void MainWindow::addDataImportPluginAction(QAction *action)
 ///
 QAction *MainWindow::addDataImportPluginMenu(QMenu *menu)
 {
-    ui->menu_import->addMenu(menu);
+    return ui->menu_import->addMenu(menu);
 }
 ///
 /// \brief 把菜单添加到分析功能的菜单中
@@ -1142,7 +1149,7 @@ QAction *MainWindow::addDataImportPluginMenu(QMenu *menu)
 ///
 QAction *MainWindow::addAnalysisPluginMenu(QMenu *menu)
 {
-    ui->menu_Analysis->addMenu(menu);
+    return ui->menu_Analysis->addMenu(menu);
 }
 
 
@@ -1592,6 +1599,7 @@ QwtPlotItemDataModel *MainWindow::getDataViewerPlotItemDataModel() const
 ///
 void MainWindow::onTreeViewCurPlotItemClicked(const QModelIndex &index)
 {
+    Q_UNUSED(index);
     QItemSelectionModel* sel = ui->treeView_curPlotItem->selectionModel();
     QModelIndexList indexList = sel->selectedRows();
     QwtPlotItemTreeModel* treeModel = getDataViewerPlotItemTreeModel();
