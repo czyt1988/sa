@@ -1,7 +1,7 @@
 #ifndef SACHARTNORMALSETWIDGET_H
 #define SACHARTNORMALSETWIDGET_H
-#include <QTreeWidget>
-#include "SAPropertySetWidget.h"
+#include <QWidget>
+
 class SAChart2D;
 class SA2DGraph;
 class QwtPlot;

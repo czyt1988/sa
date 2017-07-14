@@ -49,7 +49,9 @@ HEADERS += \
     SAPropertySetWidget.h \
     SAChartSetWidget.h \
     SAChartNormalSetWidget.h \
-    TestWidget.h
+    TestWidget.h \
+    SAPlotItemSetWidget.h \
+    SAExpandedWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -66,7 +68,9 @@ SOURCES += \
     SAPropertySetWidget.cpp \
     SAChartSetWidget.cpp \
     SAChartNormalSetWidget.cpp \
-    TestWidget.cpp
+    TestWidget.cpp \
+    SAPlotItemSetWidget.cpp \
+    SAExpandedWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
@@ -76,3 +80,6 @@ FORMS += \
 include($$PWD/Chart2D/Chart2D.pri)
 #sa property item
 include($$PWD/SAPropertyItem/SAPropertyItem.pri)
+
+RESOURCES += \
+    icon.qrc

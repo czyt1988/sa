@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>icons/colled.png</file>
+        <file>icons/expand.png</file>
+    </qresource>
+</RCC>
