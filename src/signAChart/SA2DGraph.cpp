@@ -1372,12 +1372,12 @@ void SA2DGraph::enablePicker(bool enable)
     if(nullptr == m_picker)
         setupPicker();
 	m_picker->setEnabled( enable );
-    if(nullptr != m_zoomer)
+    if(m_zoomer.isNull())
     {
-        if(enable && isEnableZoomer())
-            m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
-        if(!enable && isEnableZoomer())
-            m_zoomer->setTrackerMode( QwtPicker::AlwaysOn );
+        if(isEnableZoomer())
+        {
+            m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::AlwaysOn) );
+        }
     }
     m_bEnableCrosserPicker = enable;
 	emit enablePickerChanged(enable);
@@ -1427,16 +1427,18 @@ void SA2DGraph::deletePanner()
 
 void SA2DGraph::enableZoomer(bool enable)
 {
-    if(nullptr == m_zoomer /*|| nullptr == m_zoomerSecond*/)
-        setupZoomer(false);
+    if(m_zoomer.isNull() /*|| nullptr == m_zoomerSecond*/)
+    {
+        setupZoomer();
+    }
     if(enable)
     {
-        m_zoomer->setZoomBase( false );
+        //m_zoomer->setZoomBase( false );
         m_zoomer->setEnabled(enable);
-        if(enable && isEnablePicker())//如果十指光标激活了，就关闭坐标提示
-            m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
-        if(enable && !isEnablePicker())
-            m_zoomer->setTrackerMode( QwtPicker::AlwaysOn );
+        if(isEnablePicker())
+        {
+            m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::AlwaysOn) );
+        }
     }
     else
     {
@@ -1445,11 +1447,12 @@ void SA2DGraph::enableZoomer(bool enable)
     m_bEnableZoom = enable;
     emit enableZoomerChanged(enable);
 }
-void SA2DGraph::setupZoomer(bool isHaveScroll)
+void SA2DGraph::setupZoomer()
 {
-    if(nullptr == m_zoomer)
+    if(m_zoomer.isNull())
     {
         qDebug()<<"setup zoom";
+#if 0
         Zoomer_qwt* zoom = new Zoomer_qwt(xBottom,yLeft, canvas());//Zoomer_qwt( QwtPlot::xBottom, QwtPlot::yLeft,canvas() );
 
         zoom->on_enable_scrollBar(isHaveScroll);
@@ -1464,6 +1467,18 @@ void SA2DGraph::setupZoomer(bool isHaveScroll)
                 Qt::RightButton );
         zoom->setTrackerMode( QwtPicker::AlwaysOff );
         m_zoomer = zoom;
+
+#else
+        m_zoomer.reset(new SAPlotZoomer(xBottom,yLeft,canvas()));
+        m_zoomer->setKeyPattern( QwtEventPattern::KeyRedo, Qt::Key_I, Qt::ShiftModifier );
+        m_zoomer->setKeyPattern( QwtEventPattern::KeyUndo, Qt::Key_O, Qt::ShiftModifier );
+        m_zoomer->setKeyPattern( QwtEventPattern::KeyHome, Qt::Key_Home );
+        m_zoomer->setMousePattern( QwtEventPattern::MouseSelect2,
+                Qt::RightButton, Qt::ControlModifier );
+        m_zoomer->setMousePattern( QwtEventPattern::MouseSelect3,
+                Qt::RightButton );
+        m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
+#endif
     }
     if(nullptr == m_zoomerSecond)
     {
@@ -1475,10 +1490,9 @@ void SA2DGraph::setupZoomer(bool isHaveScroll)
 
 void SA2DGraph::deleteZoomer()
 {
-    if(m_zoomer)
+    if(m_zoomer.isNull())
     {
-        delete m_zoomer;
-        m_zoomer = nullptr;
+        m_zoomer.reset();
     }
     if(m_zoomerSecond)
     {
@@ -1490,14 +1504,14 @@ void SA2DGraph::deleteZoomer()
 /// \brief 设置是否显示滚动条
 /// \param enable
 ///
-void SA2DGraph::enableZoomerScroll(bool enable)
-{
-    Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
-    if(zm)
-    {
-        zm->on_enable_scrollBar(enable);
-    }
-}
+//void SA2DGraph::enableZoomerScroll(bool enable)
+//{
+//    Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
+//    if(zm)
+//    {
+//        zm->on_enable_scrollBar(enable);
+//    }
+//}
 ///
 /// \brief 设置缩放重置
 ///
@@ -1508,18 +1522,17 @@ void SA2DGraph::setZoomReset()
     setAxisAutoScale(QwtPlot::xTop,true);
     setAxisAutoScale(QwtPlot::yRight,true);
     replot();
-    if(m_zoomer)
+    if(!m_zoomer.isNull())
     {
         m_zoomer->setZoomBase(false);
+        m_zoomer->zoom(0);
 
     }
     if(m_zoomerSecond)
     {
         m_zoomerSecond->setZoomBase(false);
     }
-    if(m_zoomer)
-        m_zoomer->zoom(0);
-//    qDebug()<<"zoomBase1:"<<m_zoomer->zoomBase()<<",zoomBase2:"<<m_zoomerSecond->zoomBase();
+
 }
 
 void SA2DGraph::setupLegend()
@@ -2251,7 +2264,7 @@ void SA2DGraph::setDateAxis(AxisDateScaleType type,int axisID,QwtDate::IntervalT
 void SA2DGraph::setDateAxis(QString type,int axisID ,QwtDate::IntervalType intType)
 {
     QwtDateScaleDraw* dateScale;
-	dateScale = new QwtDateScaleDraw;
+    dateScale = new QwtDateScaleDraw;//原来的scaleDraw会再qwt自动delete
 	dateScale->setDateFormat(intType,type);
     setAxisScaleDraw(axisID,dateScale);
 }

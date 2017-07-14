@@ -33,7 +33,8 @@ HEADERS += \
     SAXYDataTracker.h \
     SAYDataTracker.h \
     SAChart.h \
-    SA2DGraph.h
+    SA2DGraph.h \
+    SAPlotZoomer.h
 
 SOURCES += \
     QwtPlotItemDataModel.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
     SAXYDataTracker.cpp \
     SAYDataTracker.cpp \
     SAChart.cpp \
-    SA2DGraph.cpp
+    SA2DGraph.cpp \
+    SAPlotZoomer.cpp
 
 OTHER_FILES += readme.md

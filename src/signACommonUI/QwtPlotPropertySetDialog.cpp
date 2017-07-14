@@ -758,9 +758,9 @@ void QwtPlotPropertySetDialog::onPropertyValueChanged(QtProperty * property, con
             case ID_PlotCanvasBackground:
                 m_plot->setCanvasBackground(QBrush(value.value<QColor>()));
                 return;
-            case ID_PlotEnableZoomerScroll:
-                m_plot->enableZoomerScroll(value.toBool());
-                return;
+//            case ID_PlotEnableZoomerScroll:
+//                m_plot->enableZoomerScroll(value.toBool());
+//                return;
             case ID_PlotAxisSet:
                 setAxisEnable(value.toInt());
                 return;

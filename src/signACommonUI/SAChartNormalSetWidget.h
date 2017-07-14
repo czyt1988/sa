@@ -13,6 +13,7 @@ public:
     SAChartNormalSetWidget(QWidget* par=nullptr);
     ~SAChartNormalSetWidget();
     void setChart(QwtPlot* chart);
+    virtual void retranslateUi();
 private slots:
     Q_SLOT void onTitleTextChanged(const QString& text);
     Q_SLOT void onFooterTextChanged(const QString& text);
@@ -37,6 +38,7 @@ public:
     static void setAxisMargin(QwtPlot*chart,int axisID,int v);
     static void setAxisSpacing(QwtPlot*chart,int axisID,int v);
     static void setAxisLabelAlignment(QwtPlot*chart,int axisID,Qt::Alignment v);
+    static int otherAxis(int axisID);
 signals:
     void chartTitleChanged(const QString& text);
 private:

@@ -34,7 +34,7 @@
 #include <qwt_plot_histogram.h>
 
 #include <SAMarkSymbol.h>
-
+#include "SAPlotZoomer.h"
 //class ScrollBar;
 //class ScrollZoomer;
 
@@ -399,7 +399,7 @@ public slots:
     void enableZoomer(bool enable = true );
 
 
-    void enableZoomerScroll(bool enable = true);
+    //void enableZoomerScroll(bool enable = true);
     void setZoomReset();
 
     void enablePicker(bool enable = true );
@@ -466,9 +466,10 @@ public:
 protected:
     virtual void resizeEvent( QResizeEvent * );
 private:
+    QScopedPointer<SAPlotZoomer> m_zoomer;
     QwtPlotGrid *m_grid;
     QwtPlotPicker *m_picker;
-    Zoomer_qwt *m_zoomer;
+    //Zoomer_qwt *m_zoomer;
     Zoomer_qwt *m_zoomerSecond;
 	QwtPlotPanner* m_panner;
 	LegendItem* m_legend;
@@ -478,7 +479,7 @@ private:
     bool m_bEnableZoom;
     bool m_bEnableCrosserPicker;
 public:
-    QwtPlotZoomer * zoomer(){return m_zoomer;}
+    QwtPlotZoomer * zoomer(){return m_zoomer.data();}
     QwtPlotZoomer * zoomerSecond(){return m_zoomerSecond;}
 public:
 	///
@@ -509,7 +510,7 @@ private:
     ///
     /// \brief 建立缩放模式
     ///
-    void setupZoomer(bool isHaveScroll = true);
+    void setupZoomer();
     void deleteZoomer();
     ///
     /// \brief 建立一个内置的picker

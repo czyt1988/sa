@@ -62,7 +62,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
 ///
 SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QString &name)
 {
-    std::unique_ptr<SAXYSeries> series(new SAXYSeries());
+    std::unique_ptr<SAXYSeries> series(new SAXYSeries(name));
     series->setSamples(x,y);
     if(series->dataSize() <= 0)
     {

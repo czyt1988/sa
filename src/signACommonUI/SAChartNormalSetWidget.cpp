@@ -10,6 +10,8 @@
 #include "SAVGroupBoxPropertyItem.h"
 #include "SAFontComboBoxPropertyItem.h"
 #include "SAAligmentPropertyItem.h"
+#include "SACheckBoxPropertyItem.h"
+#include "SAComboBoxPropertyItem.h"
 #include <QMap>
 #include <QHash>
 #include <functional>
@@ -29,6 +31,7 @@ public:
     SASpinBoxPropertyItem* margin;
     SASpinBoxPropertyItem* spacing;
     SAAligmentPropertyItem* labelAligment;
+    SACheckBoxPropertyItem* isFollowOtherAxis;///< 是否跟随对应的坐标轴
 };
 
 class SAChartNormalSetWidget::UI
@@ -118,29 +121,18 @@ public:
 
     void setChart(QwtPlot *c,SAChartNormalSetWidget* par)
     {
+        QwtPlot* oldChart = this->chart;
         this->chart = c;
         if(nullptr == c)
         {
             return;
         }
-        par->connect(c,&QObject::destroyed,par,&SAChartNormalSetWidget::onChartDestroy);
-        QwtScaleWidget* aw = nullptr;
 
-        aw = this->chart->axisWidget(QwtPlot::xBottom);
-        if(aw)
-            par->connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedXBottom);
-
-        aw = this->chart->axisWidget(QwtPlot::xTop);
-        if(aw)
-            connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedXTop);
-
-        aw = this->chart->axisWidget(QwtPlot::yLeft);
-        if(aw)
-            connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedYLeft);
-
-        aw = this->chart->axisWidget(QwtPlot::yRight);
-        if(aw)
-            connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedYRight);
+        connect(c,par);
+        if(nullptr != oldChart)
+        {
+            disconnect(oldChart,par);
+        }
 
         titleEdit->setEditText(c->title().text());
         footerEdit->setEditText(c->footer().text());
@@ -158,6 +150,65 @@ public:
         updateChartAxisValue(QwtPlot::yRight);
     }
 
+    void connect(QwtPlot *c,SAChartNormalSetWidget* par)
+    {
+        par->connect(c,&QObject::destroyed,par,&SAChartNormalSetWidget::onChartDestroy);
+        QwtScaleWidget* aw = nullptr;
+
+        aw = this->chart->axisWidget(QwtPlot::xBottom);
+        if(aw)
+        {
+            par->connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedXBottom);
+        }
+
+        aw = this->chart->axisWidget(QwtPlot::xTop);
+        if(aw)
+        {
+            par->connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedXTop);
+        }
+
+        aw = this->chart->axisWidget(QwtPlot::yLeft);
+        if(aw)
+        {
+            par->connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedYLeft);
+        }
+
+        aw = this->chart->axisWidget(QwtPlot::yRight);
+        if(aw)
+        {
+            par->connect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedYRight);
+        }
+    }
+
+    void disconnect(QwtPlot *c,SAChartNormalSetWidget* par)
+    {
+        par->disconnect(c,&QObject::destroyed,par,&SAChartNormalSetWidget::onChartDestroy);
+        QwtScaleWidget* aw = nullptr;
+
+        aw = this->chart->axisWidget(QwtPlot::xBottom);
+        if(aw)
+        {
+            par->disconnect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedXBottom);
+        }
+
+        aw = this->chart->axisWidget(QwtPlot::xTop);
+        if(aw)
+        {
+            par->disconnect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedXTop);
+        }
+
+        aw = this->chart->axisWidget(QwtPlot::yLeft);
+        if(aw)
+        {
+            par->disconnect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedYLeft);
+        }
+
+        aw = this->chart->axisWidget(QwtPlot::yRight);
+        if(aw)
+        {
+            par->disconnect(aw,&QwtScaleWidget::scaleDivChanged,par,&SAChartNormalSetWidget::onScaleDivChangedYRight);
+        }
+    }
 
     void updateChartAxisValue(int axisID)
     {
@@ -210,6 +261,7 @@ private:
         axisSets.scaleMax->setText(QApplication::translate("SAChartNormalSetWidget", "Scale Max", 0));
         axisSets.margin->setText(QApplication::translate("SAChartNormalSetWidget", "Margin", 0));
         axisSets.spacing->setText(QApplication::translate("SAChartNormalSetWidget", "spacing", 0));
+        axisSets.isFollowOtherAxis->setText(QApplication::translate("SAChartNormalSetWidget", "Is Follow", 0));
     }
 
     void setupAxisSet(SAChartNormalSetWidget* par
@@ -234,6 +286,10 @@ private:
         axisSets.margin->setMinimum(0);
         //spacing
         axisSets.spacing = new SASpinBoxPropertyItem(axisSets.group);
+        //is follow other
+        axisSets.isFollowOtherAxis = new SACheckBoxPropertyItem(axisSets.group);
+
+
 
         axisSets.group->addWidget(axisSets.scaleMin);
         axisSets.group->addWidget(axisSets.scaleMax);
@@ -244,6 +300,9 @@ private:
 
         axisSets.group->addWidget(axisSets.margin);
         axisSets.group->addWidget(axisSets.spacing);
+
+        axisSets.group->addWidget(axisSets.isFollowOtherAxis);
+
 
         SAVGroupBoxPropertyItem* gitem = axisSets.group;
         par->connect(axisSets.group,&SAVGroupBoxPropertyItem::clicked
@@ -286,6 +345,11 @@ SAChartNormalSetWidget::~SAChartNormalSetWidget()
 void SAChartNormalSetWidget::setChart(QwtPlot *chart)
 {
     ui->setChart(chart,this);
+}
+
+void SAChartNormalSetWidget::retranslateUi()
+{
+    ui->retranslateUi(this);
 }
 
 void SAChartNormalSetWidget::onTitleTextChanged(const QString &text)
@@ -334,6 +398,7 @@ void SAChartNormalSetWidget::onBorderRadiusChanged(double v)
 
 void SAChartNormalSetWidget::onChartDestroy(QObject *o)
 {
+    Q_UNUSED(o);
     ui->setChart(nullptr,this);
 }
 
@@ -368,12 +433,14 @@ void SAChartNormalSetWidget::setAxisEnable(QwtPlot *chart, int axisID, bool b)
         {
             chart->setAxisAutoScale(axisID);
         }
-        QwtScaleWidget * ax = chart->axisWidget(axisID);
-        if(nullptr == ax)
-        {
-            return;
-        }
-        //ax->setScaleDiv(chart->d);
+//        QwtScaleWidget * ax = chart->axisWidget(axisID);
+//        if(nullptr == ax)
+//        {
+//            return;
+//        }
+//        //遍历索引plotitem并绑定新设置的坐标轴
+//        QwtPlotItemList itemList = chart->itemList();
+
     }
 }
 
@@ -482,6 +549,25 @@ void SAChartNormalSetWidget::setAxisLabelAlignment(QwtPlot *chart, int axisID, Q
     {
         ax->setLabelAlignment(v);
     }
+}
+
+
+///
+/// \brief 获取对应坐标轴的id
+/// \param axisID
+/// \return
+///
+int SAChartNormalSetWidget::otherAxis(int axisID)
+{
+    switch(axisID)
+    {
+    case QwtPlot::xBottom:return QwtPlot::xTop;
+    case QwtPlot::xTop:return QwtPlot::xBottom;
+    case QwtPlot::yLeft:return QwtPlot::yRight;
+    case QwtPlot::yRight:return QwtPlot::yLeft;
+    default:return QwtPlot::xBottom;
+    }
+    return QwtPlot::xBottom;
 }
 
 
