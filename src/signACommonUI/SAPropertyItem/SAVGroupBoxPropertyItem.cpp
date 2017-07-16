@@ -9,10 +9,10 @@ const char* sty =
         "height: 16px;"
         "}"
         "QGroupBox::indicator:unchecked {"
-              "image: url(:/icon/icons/expand.png);"
+              "image: url(:/icon/icons/colled.png);"
         "}"
         "QGroupBox::indicator:checked {"
-              "image: url(:/icon/icons/colled.png);"
+              "image: url(:/icon/icons/expand.png);"
         "}"
     ;
 
