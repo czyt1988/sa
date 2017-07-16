@@ -2,12 +2,27 @@
 #include <QVBoxLayout>
 #include <QStyle>
 #include <QStyleOption>
+
+const char* sty =
+        "QGroupBox::indicator {"
+        "width: 16px;"
+        "height: 16px;"
+        "}"
+        "QGroupBox::indicator:unchecked {"
+              "image: url(:/icon/icons/expand.png);"
+        "}"
+        "QGroupBox::indicator:checked {"
+              "image: url(:/icon/icons/colled.png);"
+        "}"
+    ;
+
 class SAVGroupBoxPropertyItem::UI
 {
 public:
     QVBoxLayout* vlayout;
     void setupUI(SAVGroupBoxPropertyItem* par)
     {
+        par->setStyleSheet(sty);
         vlayout = new QVBoxLayout;
         vlayout->setContentsMargins(4, 4, 4, 4);
         vlayout->setSpacing(4);
