@@ -5,10 +5,11 @@
 #include <QColor>
 #include <QFont>
 #include "qwt_date.h"
+#include "qwt_plot.h"
 class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
-class QwtPlot;
+
 ///
 /// \brief 这是一个辅助类，用于绘图的辅助
 ///
@@ -18,6 +19,10 @@ public:
     enum Value{
         Nan = -1
     };
+    //获取曲线相关的items
+    static QwtPlotItemList getCurveItemList(QwtPlot* chart);
+    //判断是否是关于曲线的item
+    static bool isPlotCurveItem(QwtPlotItem* item);
     //获取item的颜色,无法获取单一颜色就返回QColor()
     static QColor getItemColor(QwtPlotItem* item);
     //获取item的数据个数，-1为nan

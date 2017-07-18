@@ -20,8 +20,8 @@ public:
     SAAxisSelectComboBoxPropertyItem* yAxisItem;
     void setupUI(const QwtPlotItem* plotItem,SAQwtPlotItemVGroupBoxPropertyItem* par)
     {
-        par->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-        par->setMinimumSize(100,100);
+//        par->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+//        par->setMinimumSize(100,100);
         QLayout* vlayout = par->layout();
         //
         visibleItem = new SACheckBoxPropertyItem(par);

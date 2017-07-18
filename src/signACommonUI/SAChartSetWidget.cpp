@@ -20,7 +20,6 @@ public:
     SAChartNormalSetWidget* chartNormalSetWidget;
     QScrollArea* tabScrollArea1;
     SAPlotItemSetWidget* plotItemsSetWidget;
-    QScrollArea* tabScrollArea2;
     void setupUI(SAChartSetWidget* par)
     {
         par->setObjectName(QStringLiteral("SAChartSetWidget"));
@@ -48,14 +47,8 @@ public:
                      ,par,&SAChartSetWidget::chartTitleChanged);
 
         //Tab 2
-        tabScrollArea2 = new QScrollArea();
-        tabWidget->addTab(tabScrollArea2,QStringLiteral("2"));
-        tabScrollArea2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        tabScrollArea2->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        tabScrollArea2->setWidgetResizable(true);
-        tabScrollArea2->setBackgroundRole(QPalette::NoRole);
         plotItemsSetWidget = new SAPlotItemSetWidget();
-        tabScrollArea2->setWidget(plotItemsSetWidget);
+        tabWidget->addTab(plotItemsSetWidget,QStringLiteral("2"));
         retranslateUi(par);
     }
     void retranslateUi(QWidget *w)

@@ -1,16 +1,15 @@
 #ifndef SAGROUPBOXPROPERTYITEM_H
 #define SAGROUPBOXPROPERTYITEM_H
 #include <QGroupBox>
-
-class SAGroupBoxPropertyItem : public QGroupBox
+#include "ctkCollapsibleGroupBox.h"
+class SAGroupBoxPropertyItem : public ctkCollapsibleGroupBox
 {
     Q_OBJECT
 public:
     SAGroupBoxPropertyItem(QWidget* par = nullptr);
+    SAGroupBoxPropertyItem(const QString& title,QWidget* par = nullptr);
     ~SAGroupBoxPropertyItem();
-public slots:
-    Q_SLOT void setExpanded(bool b);
-    Q_SLOT void setCollapsed(bool b);
+    void setTreeMode(bool b = true);
 };
 
 #endif // SAGROUPBOXPROPERTYITEM_H

@@ -56,6 +56,7 @@ public:
         par->addLayout(hBoxLayout);
         par->connect(buttonGroup,static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked)
                      ,par,&SAAligmentPropertyItem::onButtonClicked);
+        par->setMinimumHeight(23);
         retranslateUi(par);
     }
     void retranslateUi(SAAligmentPropertyItem *w)

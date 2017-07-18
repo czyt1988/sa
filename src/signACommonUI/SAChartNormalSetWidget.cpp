@@ -61,7 +61,7 @@ public:
     void setupUI(SAChartNormalSetWidget* par)
     {
         par->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        par->setMinimumSize(150,500);
+        par->setMinimumSize(150,250);
         chart = nullptr;
         par->setObjectName(QStringLiteral("SAChartNormalSetWidget"));
         //Title
@@ -301,6 +301,7 @@ private:
                       ,int axisID)
     {
         axisSets.group = new SAVGroupBoxPropertyItem(par);
+        axisSets.group->setTreeMode(false);
         //scale min
         axisSets.scaleMin = new SADoubleSpinBoxPropertyItem(axisSets.group);
         //scale max

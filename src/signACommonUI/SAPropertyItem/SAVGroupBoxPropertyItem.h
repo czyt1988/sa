@@ -16,9 +16,6 @@ public:
     ~SAVGroupBoxPropertyItem();
     void addWidget(QWidget* w, int stretch = 0, Qt::Alignment alignment = Qt::Alignment());
     void addLayout(QLayout *layout, int stretch = 0);
-    void setTreeMode(bool b = true);
-public:
-    static const QString groupbox_tree_mode_style;
 private:
     class UI;
     SAVGroupBoxPropertyItem::UI* ui;

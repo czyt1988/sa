@@ -26,7 +26,8 @@ include($$PWD/../3rdParty/qwt/qwt_set.pri)
 include($$PWD/../3rdParty/qtcolorpicker/qtcolorpicker.pri)
 #sa chart support
 include($$PWD/../signAChart/signAChart.pri)
-
+#CTK
+include($$PWD/../3rdParty/ctk/ctk.pri)
 DEFINES += SA_COMMON_UI_MAKE #make dll
 
 
@@ -52,7 +53,8 @@ HEADERS += \
     TestWidget.h \
     SAPlotItemSetWidget.h \
     SAQwtPlotItemVGroupBoxPropertyItem.h \
-    SAAxisSelectComboBoxPropertyItem.h
+    SAAxisSelectComboBoxPropertyItem.h \
+    SACurvePlotItemSetWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -72,7 +74,8 @@ SOURCES += \
     TestWidget.cpp \
     SAPlotItemSetWidget.cpp \
     SAQwtPlotItemVGroupBoxPropertyItem.cpp \
-    SAAxisSelectComboBoxPropertyItem.cpp
+    SAAxisSelectComboBoxPropertyItem.cpp \
+    SACurvePlotItemSetWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
@@ -82,6 +85,8 @@ FORMS += \
 include($$PWD/Chart2D/Chart2D.pri)
 #sa property item
 include($$PWD/SAPropertyItem/SAPropertyItem.pri)
+#sa chart support
+include($$PWD/Private/Private.pri)
 
 RESOURCES += \
     icon.qrc

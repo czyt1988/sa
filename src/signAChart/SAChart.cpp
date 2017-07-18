@@ -13,6 +13,43 @@
 #include "qwt_plot_multi_barchart.h"
 #include <numeric>
 ///
+/// \brief item的类型判断，cureve bar 等绘图相关返回true
+/// \param item
+/// \return cureve bar 等绘图相关返回true
+///
+QwtPlotItemList SAChart::getCurveItemList(QwtPlot *chart)
+{
+    const QwtPlotItemList& items = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<items.size();++i)
+    {
+        if(isPlotCurveItem(items[i]))
+        {
+            res.append(items[i]);
+        }
+    }
+    return res;
+}
+
+bool SAChart::isPlotCurveItem(QwtPlotItem *item)
+{
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case QwtPlotItem::Rtti_PlotSpectrogram:
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    case QwtPlotItem::Rtti_PlotBarChart:
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+        return true;
+    default:
+        return false;
+    }
+    return false;
+}
+///
 /// \brief 获取item的颜色,无法获取单一颜色就返回QColor()
 /// \param item
 /// \return
