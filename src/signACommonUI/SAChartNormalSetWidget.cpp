@@ -433,12 +433,7 @@ void SAChartNormalSetWidget::onCanvasBackgroundColorChanged(const QColor &clr)
     if(ui->chart)
     {
         ui->chart->setCanvasBackground(clr);
-        QwtPlotCanvas* canvas = qobject_cast<QwtPlotCanvas*>(ui->chart->canvas());
-        if(canvas)
-        {
-            canvas->update();
-        }
-        ui->chart->update();
+        ui->chart->replot();//update无法刷新界面
     }
 }
 

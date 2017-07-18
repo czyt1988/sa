@@ -8,7 +8,6 @@
 #include <QItemSelectionModel>
 #include <QItemSelection>
 #include "SAChart.h"
-#include "SAFiugreSetWidget.h"
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -59,7 +58,6 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
   ,m_dataWriter(nullptr)
   ,m_connectRetryCount(50)
 #endif
-  ,m_figSet(nullptr)
 {
     ui->setupUi(this);
 #ifdef USE_THREAD_CALC_FEATURE
@@ -71,11 +69,6 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 
 SADataFeatureWidget::~SADataFeatureWidget()
 {
-    if(nullptr != m_figSet)
-    {
-        delete m_figSet;
-        m_figSet = nullptr;
-    }
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -300,7 +293,7 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
                 QList<QMdiSubWindow*> subWindList = saUI->getSubWindowList();
                 if(!subWindList.contains(subWind))
                 {
-                    saDebug(tr("subWind can not find subWind,subWind ptr:%1").arg((quintptr)subWind));
+                    saDebug(tr("sa can not find subWind,subWind ptr:%1").arg((quintptr)subWind));
                     return;
                 }
                 SAFigureWindow* figure = getChartWidgetFromSubWindow(subWind);
@@ -577,17 +570,3 @@ void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitSt
 #endif
 
 
-
-
-void SADataFeatureWidget::on_pushButton_test_clicked()
-{
-    if(m_figSet == nullptr)
-    {
-        m_figSet = new SAFiugreSetWidget();
-    }
-    SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
-//    if(nullptr == figure)
-//        return;
-    m_figSet->setFigureWidget(figure);
-    m_figSet->show();
-}

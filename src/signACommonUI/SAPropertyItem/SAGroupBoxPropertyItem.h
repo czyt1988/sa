@@ -6,7 +6,7 @@ class SAGroupBoxPropertyItem : public QGroupBox
 {
     Q_OBJECT
 public:
-    SAGroupBoxPropertyItem(QWidget* par);
+    SAGroupBoxPropertyItem(QWidget* par = nullptr);
     ~SAGroupBoxPropertyItem();
 public slots:
     Q_SLOT void setExpanded(bool b);

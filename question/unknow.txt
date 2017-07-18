@@ -1,0 +1,48 @@
+Starting D:\VMShare\sa\src\bin\signA.exe...
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+[ tryToConnectServer ]( 504 ) [ ..\signA\widget\SADataFeatureWidget.cpp ]:
+ connect to dataProc serve success!
+[ MainWindow ][ 145 ] at ( ..\signA\mainwindow.cpp )->   "start main app init"
+[ MainWindow ][ 153 ] at ( ..\signA\mainwindow.cpp )->   "init ui and menu elapsed: 581 ms"
+[ MainWindow ][ 154 ] at ( ..\signA\mainwindow.cpp )->   "start load plugin and theme"
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+[ MainWindow ][ 158 ] at ( ..\signA\mainwindow.cpp )->   "loaded plugins and themes elapsed: 235 ms"
+start 1000000 points test
+void SALocalServeReader::dealVectorDoubleDataProcData(const QByteArray &datas)
+[ onReceivedVectorPointFData ][ 347 ] at ( ..\signA\widget\SADataFeatureWidget.cpp )->   "test time cost:1160 \n ys.size:1000000"
+[ onReceivedVectorPointFData ][ 352 ] at ( ..\signA\widget\SADataFeatureWidget.cpp )->   "send speed:13793 byte/ms(13.1541 MB/s)"
+[NSE]IsNseRegister(141),signA.exe
+[NSE]IsNseRegister(141),signA.exe
+[NSE]KVirtualFolder::Initialize(2476),AssociationItemIcon(D:\)
+setup zoom
+---------------
+ setLayout before minimumSizeHint QSize(108, 216) ,SizeHint QSize(216, 288)
+setLayout after minimumSizeHint QSize(108, 216) ,SizeHint QSize(216, 288)
+setup zoom
+---------------
+ setLayout before minimumSizeHint QSize(108, 972) ,SizeHint QSize(216, 1296)
+setLayout after minimumSizeHint QSize(108, 972) ,SizeHint QSize(216, 1296)
+setup zoom
+---------------
+ setLayout before minimumSizeHint QSize(8, 8) ,SizeHint QSize(8, 8)
+setLayout after minimumSizeHint QSize(8, 8) ,SizeHint QSize(8, 8)
+setup zoom
+---------------
+ setLayout before minimumSizeHint QSize(8, 8) ,SizeHint QSize(8, 8)
+setLayout after minimumSizeHint QSize(8, 8) ,SizeHint QSize(8, 8)
+QWindowsPipeWriter: asynchronous write failed. (管道已结束。)
+QProcess: Destroyed while process ("D:\\VMShare\\sa\\src\\bin\\signADataProc.exe") is still running.
+~SAPlotItemSetWidget
+[NSE]IsNseRegister(141),signA.exe
+D:\VMShare\sa\src\bin\signA.exe exited with code 0

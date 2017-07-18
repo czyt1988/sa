@@ -37,7 +37,6 @@ class SADataFeatureWidget;
 class SADataFeatureWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit SADataFeatureWidget(QWidget *parent = 0);
     ~SADataFeatureWidget();
@@ -56,7 +55,6 @@ private slots:
     void on_toolButton_clearDataFeature_clicked();
 
     void onShowErrorMessage(const QString& info);
-    void on_pushButton_test_clicked();
 
 private:
     SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
@@ -104,7 +102,6 @@ private://数据接收相关的类型
     SALocalServeWriter* m_dataWriter;
     short m_connectRetryCount;
 #endif
-     SAFiugreSetWidget *m_figSet;
 };
 
 #endif // DATAFEATUREWIDGET_H

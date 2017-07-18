@@ -7,7 +7,7 @@ class SAFontComboBoxPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
 public:
-    explicit SAFontComboBoxPropertyItem(QWidget* par);
+    explicit SAFontComboBoxPropertyItem(QWidget* par = nullptr);
     ~SAFontComboBoxPropertyItem();
     QFontComboBox* getFontComboBox() const;
 public slots:

@@ -6,7 +6,11 @@ class SAChart2D;
 class SA2DGraph;
 class QwtPlot;
 ///
-/// \brief qwtPlot的常规设置窗口
+/// \ingroup CommonUI
+/// \brief qwtPlot的常规设置窗口,包括qwtplot的坐标系设置，以及图标题脚注的设置
+///
+/// SAChartSetWidget包含SAChartNormalSetWidget窗体。
+/// \sa SAChartSetWidget SAPlotItemSetWidget
 ///
 class SAChartNormalSetWidget : public QWidget
 {

@@ -3,16 +3,16 @@
 #include <QStyle>
 #include <QStyleOption>
 
-const char* sty =
+const QString SAVGroupBoxPropertyItem::groupbox_tree_mode_style =
         "QGroupBox::indicator {"
-        "width: 16px;"
-        "height: 16px;"
+            "width: 16px;"
+            "height: 16px;"
         "}"
         "QGroupBox::indicator:unchecked {"
-              "image: url(:/icon/icons/colled.png);"
+            "image: url(:/icon/icons/colled.png);"
         "}"
         "QGroupBox::indicator:checked {"
-              "image: url(:/icon/icons/expand.png);"
+            "image: url(:/icon/icons/expand.png);"
         "}"
     ;
 
@@ -22,7 +22,6 @@ public:
     QVBoxLayout* vlayout;
     void setupUI(SAVGroupBoxPropertyItem* par)
     {
-        par->setStyleSheet(sty);
         vlayout = new QVBoxLayout;
         vlayout->setContentsMargins(4, 4, 4, 4);
         vlayout->setSpacing(4);
@@ -50,6 +49,18 @@ void SAVGroupBoxPropertyItem::addWidget(QWidget *w, int stretch,Qt::Alignment al
 void SAVGroupBoxPropertyItem::addLayout(QLayout *layout, int stretch)
 {
     ui->vlayout->addLayout(layout,stretch);
+}
+
+void SAVGroupBoxPropertyItem::setTreeMode(bool b)
+{
+    if(b)
+    {
+        setStyleSheet(groupbox_tree_mode_style);
+    }
+    else
+    {
+        setStyleSheet("");
+    }
 }
 
 

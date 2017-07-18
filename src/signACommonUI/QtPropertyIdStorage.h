@@ -157,17 +157,7 @@ public:
 		doubleManage->setValue(prop,propertyData);
 		return true;
 	}
-	//    bool setVarPropertyData(QtVariantPropertyManager* varManage
-	//                                        , const QString& propertyIdName
-	//                                        , QVariant varData)
-	//    {
-	//        QtProperty* prop = m_id2Property[propertyIdName];
-	//        if(nullptr == prop){
-	//            return false;
-	//        }
-	//        varManage->setValue(prop,varData);
-	//        return true;
-	//    }
+
 	bool setVarPropertyData(const ID_TYPE& propertyIdName, QVariant varData)
 	{
 		QtVariantProperty* prop = static_cast<QtVariantProperty*>(m_id2Property[propertyIdName]);
@@ -178,13 +168,6 @@ public:
 		return true;
 	}
 
-	//     bool addGroupInTreeProperty(QtTreePropertyBrowser* treePro
-	//                                 ,QtVariantPropertyManager * pVar
-	//                                 ,const QString& groupName
-	//                                 ,const QString& groupIdName)
-	//     {
-	//         pVar->addProperty(QtVariantPropertyManager::groupTypeId(),groupName);
-	//     }
 
 private:
 	QMap<ID_TYPE,QtProperty*> m_id2Property;///< id对应的属性指针

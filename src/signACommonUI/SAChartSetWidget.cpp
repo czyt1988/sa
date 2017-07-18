@@ -9,6 +9,8 @@
 #include "SAChartNormalSetWidget.h"
 #include "SAColorSetPropertyItem.h"
 #include <QScrollArea>
+#include "SAPlotItemSetWidget.h"
+#define TR(str) QApplication::translate("SAChartSetWidget",str, 0)
 class SAChartSetWidget::UI
 {
 public:
@@ -16,6 +18,9 @@ public:
     QVBoxLayout *verticalLayout;
     QTabWidget* tabWidget;
     SAChartNormalSetWidget* chartNormalSetWidget;
+    QScrollArea* tabScrollArea1;
+    SAPlotItemSetWidget* plotItemsSetWidget;
+    QScrollArea* tabScrollArea2;
     void setupUI(SAChartSetWidget* par)
     {
         par->setObjectName(QStringLiteral("SAChartSetWidget"));
@@ -23,32 +28,41 @@ public:
         tabWidget = new QTabWidget(par);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
         tabWidget->setTabPosition(QTabWidget::North);
-
         verticalLayout = new QVBoxLayout;
         verticalLayout->setSpacing(5);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
         verticalLayout->addWidget(tabWidget);
+        par->setLayout(verticalLayout);
 
-        QScrollArea* sc = new QScrollArea();
-        tabWidget->addTab(sc,QStringLiteral("1"));
-        sc->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        sc->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        sc->setWidgetResizable(true);
-        sc->setBackgroundRole(QPalette::NoRole);
+        //Tab 1
+        tabScrollArea1 = new QScrollArea();
+        tabWidget->addTab(tabScrollArea1,QStringLiteral("1"));
+        tabScrollArea1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        tabScrollArea1->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        tabScrollArea1->setWidgetResizable(true);
+        tabScrollArea1->setBackgroundRole(QPalette::NoRole);
         chartNormalSetWidget = new SAChartNormalSetWidget();
-        sc->setWidget(chartNormalSetWidget);
-
+        tabScrollArea1->setWidget(chartNormalSetWidget);
         par->connect(chartNormalSetWidget,&SAChartNormalSetWidget::chartTitleChanged
                      ,par,&SAChartSetWidget::chartTitleChanged);
 
-        par->setLayout(verticalLayout);
+        //Tab 2
+        tabScrollArea2 = new QScrollArea();
+        tabWidget->addTab(tabScrollArea2,QStringLiteral("2"));
+        tabScrollArea2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        tabScrollArea2->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        tabScrollArea2->setWidgetResizable(true);
+        tabScrollArea2->setBackgroundRole(QPalette::NoRole);
+        plotItemsSetWidget = new SAPlotItemSetWidget();
+        tabScrollArea2->setWidget(plotItemsSetWidget);
         retranslateUi(par);
     }
     void retranslateUi(QWidget *w)
     {
-        w->setWindowTitle(QApplication::translate("SAChartSetWidget", "Figure Canvas Set Widget", 0));
-        tabWidget->setTabText(0,QApplication::translate("SAChartSetWidget", "normal", 0));
+        w->setWindowTitle(TR("Figure Canvas Set Widget"));
+        tabWidget->setTabText(0,TR("Chart Normal Set"));
+        tabWidget->setTabText(1,TR("Chart Item Set"));
     } // retranslateUi
 };
 
@@ -68,4 +82,5 @@ void SAChartSetWidget::setChart(SAChart2D *chart)
 {
     ui->chartCtrl = chart;
     ui->chartNormalSetWidget->setChart(chart);
+    ui->plotItemsSetWidget->setChart(chart);
 }

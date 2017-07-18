@@ -51,7 +51,8 @@ HEADERS += \
     SAChartNormalSetWidget.h \
     TestWidget.h \
     SAPlotItemSetWidget.h \
-    SAExpandedWidget.h
+    SAQwtPlotItemVGroupBoxPropertyItem.h \
+    SAAxisSelectComboBoxPropertyItem.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -70,7 +71,8 @@ SOURCES += \
     SAChartNormalSetWidget.cpp \
     TestWidget.cpp \
     SAPlotItemSetWidget.cpp \
-    SAExpandedWidget.cpp
+    SAQwtPlotItemVGroupBoxPropertyItem.cpp \
+    SAAxisSelectComboBoxPropertyItem.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

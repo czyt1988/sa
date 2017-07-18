@@ -79,8 +79,10 @@ SAPropertySetWidget::SAPropertySetWidget(QWidget *par,BrowserType type)
     ,ui(new UI)
 {
     ui->setupUI(this,type); 
-    connect(ui->m_varPropMgr,&QtVariantPropertyManager::valueChanged
-                    ,this,&SAPropertySetWidget::valueChanged);
+//    connect(ui->m_varPropMgr,&QtVariantPropertyManager::valueChanged
+//                    ,this,&SAPropertySetWidget::valueChanged);
+    connect(ui->m_varPropMgr,SIGNAL(valueChanged(QtProperty*,QVariant))
+            ,this,SIGNAL(valueChanged(QtProperty*,QVariant)));
 }
 
 SAPropertySetWidget::~SAPropertySetWidget()

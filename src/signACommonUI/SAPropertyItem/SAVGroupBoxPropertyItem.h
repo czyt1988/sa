@@ -3,14 +3,22 @@
 
 #include "SAGroupBoxPropertyItem.h"
 class QVBoxLayout;
+///
+/// \ingroup CommonUI
+/// \brief 可伸缩groupbox，伸缩状态时，
+/// groupbox的CheckBox可以设置为树形控件的箭头模式 \sa SAVGroupBoxPropertyItem::setTreeMode
+///
 class SAVGroupBoxPropertyItem : public SAGroupBoxPropertyItem
 {
     Q_OBJECT
 public:
-    SAVGroupBoxPropertyItem(QWidget* par);
+    SAVGroupBoxPropertyItem(QWidget* par = nullptr);
     ~SAVGroupBoxPropertyItem();
     void addWidget(QWidget* w, int stretch = 0, Qt::Alignment alignment = Qt::Alignment());
     void addLayout(QLayout *layout, int stretch = 0);
+    void setTreeMode(bool b = true);
+public:
+    static const QString groupbox_tree_mode_style;
 private:
     class UI;
     SAVGroupBoxPropertyItem::UI* ui;

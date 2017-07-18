@@ -5,7 +5,7 @@ class SAAligmentPropertyItem : public SAPropertyItemContainer
 {
     Q_OBJECT
 public:
-    SAAligmentPropertyItem(QWidget* par);
+    SAAligmentPropertyItem(QWidget* par = nullptr);
     ~SAAligmentPropertyItem();
     void setAlignment(Qt::Alignment al);
 
