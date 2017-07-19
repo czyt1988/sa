@@ -6,7 +6,7 @@
 #include "SAColorSetPropertyItem.h"
 #include "SADoubleSpinBoxPropertyItem.h"
 #include "SASpinBoxPropertyItem.h"
-#include "SAVGroupBoxPropertyItem.h"
+#include "SAVCollapsibleGroupBox.h"
 #include "SAFontComboBoxPropertyItem.h"
 #include "SAAligmentPropertyItem.h"
 #include "SACheckBoxPropertyItem.h"
@@ -24,7 +24,7 @@
 class AxisPropertyItems
 {
 public:
-    SAVGroupBoxPropertyItem* group;
+    SAVCollapsibleGroupBox* group;
     SACheckBoxPropertyItem* enableAxis;
     SALineEditPropertyItem* title;
     SAFontComboBoxPropertyItem* font;
@@ -35,7 +35,7 @@ public:
     SASpinBoxPropertyItem* spacing;
     SAAligmentPropertyItem* labelAligment;
     //
-    SAVGroupBoxPropertyItem* timeScaleGroup;
+    SAVCollapsibleGroupBox* timeScaleGroup;
     SACheckBoxPropertyItem* enabletimeScale;
     SAComboBoxPropertyItem* timeScaleFormat;
     //SACheckBoxPropertyItem* isFollowOtherAxis;///< 是否跟随对应的坐标轴
@@ -318,7 +318,7 @@ private:
                       ,AxisPropertyItems& axisSets
                       ,int axisID)
     {
-        axisSets.group = new SAVGroupBoxPropertyItem(par);
+        axisSets.group = new SAVCollapsibleGroupBox(par);
         //enable Axis
         axisSets.enableAxis = new SACheckBoxPropertyItem(axisSets.group);
         //scale min
@@ -339,7 +339,7 @@ private:
         //spacing
         axisSets.spacing = new SASpinBoxPropertyItem(axisSets.group);
         //
-        axisSets.timeScaleGroup = new SAVGroupBoxPropertyItem(axisSets.group);
+        axisSets.timeScaleGroup = new SAVCollapsibleGroupBox(axisSets.group);
         //
         axisSets.enabletimeScale = new SACheckBoxPropertyItem(axisSets.timeScaleGroup);
         axisSets.timeScaleGroup->addWidget(axisSets.enabletimeScale);

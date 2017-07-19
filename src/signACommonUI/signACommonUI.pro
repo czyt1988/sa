@@ -52,7 +52,7 @@ HEADERS += \
     SAChartNormalSetWidget.h \
     TestWidget.h \
     SAPlotItemSetWidget.h \
-    SAQwtPlotItemVGroupBoxPropertyItem.h \
+    SAQwtPlotItemVGroupBox.h \
     SAAxisSelectComboBoxPropertyItem.h \
     SACurvePlotItemSetWidget.h \
     SAChartAxisSetSelect.h
@@ -74,7 +74,7 @@ SOURCES += \
     SAChartNormalSetWidget.cpp \
     TestWidget.cpp \
     SAPlotItemSetWidget.cpp \
-    SAQwtPlotItemVGroupBoxPropertyItem.cpp \
+    SAQwtPlotItemVGroupBox.cpp \
     SAAxisSelectComboBoxPropertyItem.cpp \
     SACurvePlotItemSetWidget.cpp \
     SAChartAxisSetSelect.cpp

@@ -2,7 +2,7 @@
 #include <QApplication>
 
 #include <QVBoxLayout>
-#include "SAQwtPlotItemVGroupBoxPropertyItem.h"
+#include "SAQwtPlotItemVGroupBox.h"
 
 #include <functional>
 #include <QHash>
@@ -46,7 +46,7 @@ public:
             {
                 continue;
             }
-            SAQwtPlotItemVGroupBoxPropertyItem* group = new SAQwtPlotItemVGroupBoxPropertyItem(item,nullptr,SAQwtPlotItemVGroupBoxPropertyItem::ShowSimple);
+            SAQwtPlotItemVGroupBox* group = new SAQwtPlotItemVGroupBox(item,nullptr,SAQwtPlotItemVGroupBox::ShowSimple);
             vboxlayout->addWidget(group);
         }
         vboxlayout->addStretch();
