@@ -1,8 +1,8 @@
 #ifndef SAAXISSELECTCOMBOBOXPROPERTYITEM_H
 #define SAAXISSELECTCOMBOBOXPROPERTYITEM_H
 #include "SAComboBoxPropertyItem.h"
-
-class SAAxisSelectComboBoxPropertyItem : public SAComboBoxPropertyItem
+#include "SACommonUIGlobal.h"
+class SA_COMMON_UI_EXPORT SAAxisSelectComboBoxPropertyItem : public SAComboBoxPropertyItem
 {
     Q_OBJECT
 public:

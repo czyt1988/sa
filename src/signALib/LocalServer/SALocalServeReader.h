@@ -8,8 +8,8 @@
 #include <QVector>
 
 #include <QPointF>
+#include <QLocalSocket>
 
-class QLocalSocket;
 class SALIB_EXPORT SALocalServeReader : public QObject
 {
     Q_OBJECT
@@ -20,7 +20,7 @@ public:
     //获取套接字
     QLocalSocket *getSocket() const;
     //设置套接字
-    void setSocket(QLocalSocket *socket);
+    void setSocket(QLocalSocket *socket, bool autoDicConnect = false);
 protected:
     //
     bool readFromSocket(void *p,int n);
@@ -53,6 +53,8 @@ private:
     void dealString(const QByteArray& datas);
 private slots:
     Q_SLOT void onReadyRead();
+    Q_SLOT void onDisconnected();
+    Q_SLOT void onError(QLocalSocket::LocalSocketError socketError);
 private:
     QLocalSocket* m_socket;
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头

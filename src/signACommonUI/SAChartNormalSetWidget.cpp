@@ -11,6 +11,7 @@
 #include "SAAligmentPropertyItem.h"
 #include "SACheckBoxPropertyItem.h"
 #include "SAComboBoxPropertyItem.h"
+#include "SACheckBoxPropertyItem.h"
 #include <QMap>
 #include <QHash>
 #include <functional>
@@ -24,6 +25,7 @@ class AxisPropertyItems
 {
 public:
     SAVGroupBoxPropertyItem* group;
+    SACheckBoxPropertyItem* enableAxis;
     SALineEditPropertyItem* title;
     SAFontComboBoxPropertyItem* font;
     SADoubleSpinBoxPropertyItem* labelRotation;
@@ -34,8 +36,25 @@ public:
     SAAligmentPropertyItem* labelAligment;
     //
     SAVGroupBoxPropertyItem* timeScaleGroup;
+    SACheckBoxPropertyItem* enabletimeScale;
     SAComboBoxPropertyItem* timeScaleFormat;
     //SACheckBoxPropertyItem* isFollowOtherAxis;///< 是否跟随对应的坐标轴
+    void setAxisVisible(bool b)
+    {
+        title->setVisible(b);
+        font->setVisible(b);
+        labelRotation->setVisible(b);
+        scaleMin->setVisible(b);
+        scaleMax->setVisible(b);
+        margin->setVisible(b);
+        spacing->setVisible(b);
+        labelAligment->setVisible(b);
+        timeScaleGroup->setVisible(b);
+    }
+    void setAxisTimeScaleMode(bool enable)
+    {
+        timeScaleFormat->setEnabled(enable);
+    }
 };
 
 class SAChartNormalSetWidget::UI
@@ -152,8 +171,6 @@ public:
         updateChartAxisValue(QwtPlot::xTop);
         updateChartAxisValue(QwtPlot::yLeft);
         updateChartAxisValue(QwtPlot::yRight);
-        par->setMinimumSize(par->minimumSizeHint());
-        par->resize(par->sizeHint());
     }
 
     void connect(QwtPlot *c,SAChartNormalSetWidget* par)
@@ -238,7 +255,8 @@ public:
         AxisPropertyItems& axSet = axisSet.at(axisIndex);
         bool b = this->chart->axisEnabled(axisID);
 
-        axSet.group->setChecked(b);
+        axSet.enableAxis->setCheckState(b?Qt::Checked:Qt::Unchecked);
+        axSet.setAxisVisible(b);
         if(b)
         {
             axSet.title->setEditText(this->chart->axisTitle(axisID).text());
@@ -258,14 +276,12 @@ public:
                 axSet.margin->setValue(ax->margin());
                 axSet.spacing->setValue(ax->spacing());
                 QwtDateScaleDraw* dsd = dynamic_cast<QwtDateScaleDraw*>(sd);
+                axSet.enabletimeScale->setCheckState((nullptr != dsd) ? Qt::Checked : Qt::Unchecked);
+                axSet.setAxisTimeScaleMode(nullptr != dsd);
                 if(dsd)
                 {
-                    axSet.timeScaleGroup->setChecked(true);
                     axSet.timeScaleFormat->setText(dsd->dateFormat(QwtDate::Second));
-                }
-                else
-                {
-                    axSet.timeScaleGroup->setChecked(false);
+                    axSet.timeScaleGroup->setCollapsed(false);
                 }
             }
         }
@@ -283,6 +299,7 @@ private:
 
     void setAxisSetText(AxisPropertyItems& axisSets)
     {
+        axisSets.enableAxis->setText(QApplication::translate("SAChartNormalSetWidget", "Enable", 0));
         axisSets.title->setText(QApplication::translate("SAChartNormalSetWidget", "Title", 0));
         axisSets.font->setText(QApplication::translate("SAChartNormalSetWidget", "Font", 0));
         axisSets.labelAligment->setText(QApplication::translate("SAChartNormalSetWidget", "Text Aligment", 0));
@@ -292,8 +309,9 @@ private:
         axisSets.margin->setText(QApplication::translate("SAChartNormalSetWidget", "Margin", 0));
         axisSets.spacing->setText(QApplication::translate("SAChartNormalSetWidget", "spacing", 0));
         axisSets.timeScaleGroup->setTitle(QApplication::translate("SAChartNormalSetWidget", "Time Scale", 0));
+        axisSets.enabletimeScale->setText(QApplication::translate("SAChartNormalSetWidget", "Enable Time Scale", 0));
         axisSets.timeScaleFormat->setText(QApplication::translate("SAChartNormalSetWidget", "Time Format", 0));
-        //axisSets.isFollowOtherAxis->setText(QApplication::translate("SAChartNormalSetWidget", "Is Follow", 0));
+
     }
 
     void setupAxisSet(SAChartNormalSetWidget* par
@@ -301,7 +319,8 @@ private:
                       ,int axisID)
     {
         axisSets.group = new SAVGroupBoxPropertyItem(par);
-        axisSets.group->setTreeMode(false);
+        //enable Axis
+        axisSets.enableAxis = new SACheckBoxPropertyItem(axisSets.group);
         //scale min
         axisSets.scaleMin = new SADoubleSpinBoxPropertyItem(axisSets.group);
         //scale max
@@ -321,16 +340,17 @@ private:
         axisSets.spacing = new SASpinBoxPropertyItem(axisSets.group);
         //
         axisSets.timeScaleGroup = new SAVGroupBoxPropertyItem(axisSets.group);
+        //
+        axisSets.enabletimeScale = new SACheckBoxPropertyItem(axisSets.timeScaleGroup);
+        axisSets.timeScaleGroup->addWidget(axisSets.enabletimeScale);
         axisSets.timeScaleFormat = new SAComboBoxPropertyItem(axisSets.timeScaleGroup);
         axisSets.timeScaleFormat->setEditable(true);
         axisSets.timeScaleFormat->addItems(SA2DGraph::axisDateScaleTypes2StringList());
         axisSets.timeScaleFormat->setCurrentText("yyyy-M-d h:m:s");
         axisSets.timeScaleGroup->addWidget(axisSets.timeScaleFormat);
-        //is follow other
-//        axisSets.isFollowOtherAxis = new SACheckBoxPropertyItem(axisSets.group);
 
 
-
+        axisSets.group->addWidget(axisSets.enableAxis);
         axisSets.group->addWidget(axisSets.scaleMin);
         axisSets.group->addWidget(axisSets.scaleMax);
         axisSets.group->addWidget(axisSets.title);
@@ -341,14 +361,13 @@ private:
         axisSets.group->addWidget(axisSets.margin);
         axisSets.group->addWidget(axisSets.spacing);
         axisSets.group->addWidget(axisSets.timeScaleGroup);
-        //axisSets.group->addWidget(axisSets.isFollowOtherAxis);
 
 
-        par->connect(axisSets.group,&SAVGroupBoxPropertyItem::clicked
-                  ,par,[axisID,this,par](bool b){
-            SAChart::setAxisEnable(this->chart,axisID,b);
-            par->setMinimumHeight(par->minimumSizeHint().height());
-            //par->resize(par->sizeHint());
+        par->connect(axisSets.enableAxis,&SACheckBoxPropertyItem::stateChanged
+                  ,par,[axisID,this](int state){
+            bool check = Qt::Checked == state;
+            SAChart::setAxisEnable(this->chart,axisID,check);
+            this->axisSet.at(qwtAxisId2AxisIndex(axisID)).setAxisVisible(check);
         });
         par->connect(axisSets.title,&SALineEditPropertyItem::textChanged
                   ,par,[axisID,this](const QString& text){SAChart::setAxisTitle(this->chart,axisID,text);});
@@ -366,19 +385,20 @@ private:
                   ,par,[axisID,this](int v){SAChart::setAxisMargin(this->chart,axisID,v);});
         par->connect(axisSets.spacing,&SASpinBoxPropertyItem::valueChanged
                   ,par,[axisID,this](int v){SAChart::setAxisSpacing(this->chart,axisID,v);});
-        par->connect(axisSets.timeScaleGroup,&SAVGroupBoxPropertyItem::clicked
-                     ,par,[axisID,this,par](bool b){
-            if(b)
+        par->connect(axisSets.enabletimeScale,&SACheckBoxPropertyItem::stateChanged
+                  ,par,[axisID,this](int state){
+            bool check = (Qt::Checked == state);
+            AxisPropertyItems& ax = this->axisSet.at(qwtAxisId2AxisIndex(axisID));
+            ax.timeScaleFormat->setEnabled(check);
+            if(check)
             {
-                QString format = this->axisSet.at(qwtAxisId2AxisIndex(axisID)).timeScaleFormat->currentText();
+                QString format = ax.timeScaleFormat->currentText();
                 SAChart::setAxisDateTimeScale(this->chart,axisID,format);
             }
             else
             {
                 SAChart::setAxisNormalScale(this->chart,axisID);
             }
-            par->setMinimumHeight(par->minimumSizeHint().height());
-            //par->resize(par->sizeHint());
         });
         par->connect(axisSets.timeScaleFormat,&SAComboBoxPropertyItem::currentTextChanged
                      ,par,[axisID,this](const QString& str){
@@ -454,7 +474,7 @@ void SAChartNormalSetWidget::onBorderRadiusChanged(double v)
 void SAChartNormalSetWidget::onChartDestroy(QObject *o)
 {
     Q_UNUSED(o);
-    ui->setChart(nullptr,this);
+    ui->chart = nullptr;
 }
 
 void SAChartNormalSetWidget::onScaleDivChangedXBottom()

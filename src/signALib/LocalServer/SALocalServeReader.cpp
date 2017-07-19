@@ -2,7 +2,7 @@
 #include "SALocalServeFigureItemProcessHeader.h"
 #include <QLocalSocket>
 #include <QTextCodec>
-
+#include <QDebug>
 //#define _DEBUG_PRINT
 #ifdef _DEBUG_PRINT
 #include <QElapsedTimer>
@@ -176,6 +176,17 @@ void SALocalServeReader::onReadyRead()
         }
     }
 }
+
+void SALocalServeReader::onDisconnected()
+{
+
+}
+
+void SALocalServeReader::onError(QLocalSocket::LocalSocketError socketError)
+{
+    qDebug() << __FILE__<<":"<<__FUNCTION__ << "err code:"<<(int)socketError;
+    qDebug() << __FILE__<<":"<<__FUNCTION__ << m_socket->errorString();
+}
 ///
 /// \brief 获取套接字
 /// \return
@@ -188,15 +199,21 @@ QLocalSocket *SALocalServeReader::getSocket() const
 /// \brief 设置套接字
 /// \param socket
 ///
-void SALocalServeReader::setSocket(QLocalSocket *socket)
+void SALocalServeReader::setSocket(QLocalSocket *socket,bool autoDicConnect)
 {
-    if(m_socket)
+    if(autoDicConnect)
     {
-        disconnect(m_socket,&QLocalSocket::readyRead,this,&SALocalServeReader::onReadyRead);
+        if(m_socket)
+        {
+            disconnect(m_socket,&QLocalSocket::readyRead,this,&SALocalServeReader::onReadyRead);
+        }
     }
     m_socket = socket;
     if(m_socket)
     {
         connect(m_socket,&QLocalSocket::readyRead,this,&SALocalServeReader::onReadyRead);
+        connect(m_socket,&QLocalSocket::disconnected,this,&SALocalServeReader::onDisconnected);
+        connect(m_socket,static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error)
+                ,this,&SALocalServeReader::onError);
     }
 }

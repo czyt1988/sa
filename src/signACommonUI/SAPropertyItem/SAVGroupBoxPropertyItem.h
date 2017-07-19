@@ -13,6 +13,7 @@ class SAVGroupBoxPropertyItem : public SAGroupBoxPropertyItem
     Q_OBJECT
 public:
     SAVGroupBoxPropertyItem(QWidget* par = nullptr);
+    SAVGroupBoxPropertyItem(const QString& title,QWidget* par = nullptr);
     ~SAVGroupBoxPropertyItem();
     void addWidget(QWidget* w, int stretch = 0, Qt::Alignment alignment = Qt::Alignment());
     void addLayout(QLayout *layout, int stretch = 0);

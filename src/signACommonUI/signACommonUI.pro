@@ -54,7 +54,8 @@ HEADERS += \
     SAPlotItemSetWidget.h \
     SAQwtPlotItemVGroupBoxPropertyItem.h \
     SAAxisSelectComboBoxPropertyItem.h \
-    SACurvePlotItemSetWidget.h
+    SACurvePlotItemSetWidget.h \
+    SAChartAxisSetSelect.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -75,11 +76,13 @@ SOURCES += \
     SAPlotItemSetWidget.cpp \
     SAQwtPlotItemVGroupBoxPropertyItem.cpp \
     SAAxisSelectComboBoxPropertyItem.cpp \
-    SACurvePlotItemSetWidget.cpp
+    SACurvePlotItemSetWidget.cpp \
+    SAChartAxisSetSelect.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
-    TestWidget.ui
+    TestWidget.ui \
+    SAChartAxisSetSelect.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)

@@ -25,7 +25,11 @@ SAVGroupBoxPropertyItem::SAVGroupBoxPropertyItem(QWidget* par):SAGroupBoxPropert
 {
     ui->setupUI(this);
 }
-
+SAVGroupBoxPropertyItem::SAVGroupBoxPropertyItem(const QString &title, QWidget* par):SAGroupBoxPropertyItem(title,par)
+  ,ui(new SAVGroupBoxPropertyItem::UI)
+{
+    ui->setupUI(this);
+}
 SAVGroupBoxPropertyItem::~SAVGroupBoxPropertyItem()
 {
     delete ui;
