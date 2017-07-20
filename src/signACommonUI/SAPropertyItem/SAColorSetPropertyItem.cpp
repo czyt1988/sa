@@ -6,7 +6,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
-#include "qtcolorpicker.h"
+#include "SAColorPickerButton.h"
 
 class SAColorSetPropertyItem::UI
 {
@@ -14,7 +14,7 @@ public:
     QtColorPicker *colorButton;
     void setupUi(SAColorSetPropertyItem *par)
     {
-        colorButton = new QtColorPicker(par);
+        colorButton = new SAColorPickerButton(par);
         colorButton->setObjectName(QStringLiteral("colorButton"));
         colorButton->setStandardColors();
         par->setWidget(colorButton);

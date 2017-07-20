@@ -23,6 +23,7 @@ public:
 
     void setupUI(SACurvePlotItemSetWidget* par)
     {
+        parentClass = par;
         vboxlayout = new QVBoxLayout(par);
 
     }
@@ -46,7 +47,7 @@ public:
             {
                 continue;
             }
-            SAQwtPlotItemVGroupBox* group = new SAQwtPlotItemVGroupBox(item,nullptr,SAQwtPlotItemVGroupBox::ShowSimple);
+            SAQwtPlotItemVGroupBox* group = SAQwtPlotItemVGroupBox::createQwtPlotItemVGroupBox(item);
             vboxlayout->addWidget(group);
         }
         vboxlayout->addStretch();

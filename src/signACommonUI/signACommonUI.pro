@@ -28,6 +28,8 @@ include($$PWD/../3rdParty/qtcolorpicker/qtcolorpicker.pri)
 include($$PWD/../signAChart/signAChart.pri)
 #CTK
 include($$PWD/../3rdParty/ctk/ctk.pri)
+#QTI
+include($$PWD/../3rdParty/qti/qti.pri)
 DEFINES += SA_COMMON_UI_MAKE #make dll
 
 
@@ -55,7 +57,12 @@ HEADERS += \
     SAQwtPlotItemVGroupBox.h \
     SAAxisSelectComboBoxPropertyItem.h \
     SACurvePlotItemSetWidget.h \
-    SAChartAxisSetSelect.h
+    SAChartAxisSetSelect.h \
+    SAPenSetWidget.h \
+    SAColorPickerButton.h \
+    SAPenStyleComboBox.h \
+    SAQwtSymbolComboBox.h \
+    SAQwtCurveStyleComboBox.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -77,12 +84,18 @@ SOURCES += \
     SAQwtPlotItemVGroupBox.cpp \
     SAAxisSelectComboBoxPropertyItem.cpp \
     SACurvePlotItemSetWidget.cpp \
-    SAChartAxisSetSelect.cpp
+    SAChartAxisSetSelect.cpp \
+    SAPenSetWidget.cpp \
+    SAColorPickerButton.cpp \
+    SAPenStyleComboBox.cpp \
+    SAQwtSymbolComboBox.cpp \
+    SAQwtCurveStyleComboBox.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
     TestWidget.ui \
-    SAChartAxisSetSelect.ui
+    SAChartAxisSetSelect.ui \
+    SAPenSetWidget.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)
