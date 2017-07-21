@@ -4,8 +4,13 @@
 
 class SAPenStyleComboBox : public PenStyleBox
 {
+    Q_OBJECT
 public:
     SAPenStyleComboBox(QWidget *parent = 0);
+private slots:
+    Q_SLOT onComboBoxIndexChanged(int index);
+signals:
+    void penStyleChanged(Qt::PenStyle style);
 };
 
 #endif // SAPENSTYLECOMBOBOX_H

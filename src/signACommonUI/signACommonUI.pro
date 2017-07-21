@@ -61,8 +61,7 @@ HEADERS += \
     SAPenSetWidget.h \
     SAColorPickerButton.h \
     SAPenStyleComboBox.h \
-    SAQwtSymbolComboBox.h \
-    SAQwtCurveStyleComboBox.h
+    SAQwtSymbolComboBox.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -88,8 +87,7 @@ SOURCES += \
     SAPenSetWidget.cpp \
     SAColorPickerButton.cpp \
     SAPenStyleComboBox.cpp \
-    SAQwtSymbolComboBox.cpp \
-    SAQwtCurveStyleComboBox.cpp
+    SAQwtSymbolComboBox.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
@@ -103,6 +101,7 @@ include($$PWD/Chart2D/Chart2D.pri)
 include($$PWD/SAPropertyItem/SAPropertyItem.pri)
 #sa chart support
 include($$PWD/Private/Private.pri)
-
+#sa chart support
+include($$PWD/menu/menu.pri)
 RESOURCES += \
     icon.qrc

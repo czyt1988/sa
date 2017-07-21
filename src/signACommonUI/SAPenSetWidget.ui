@@ -38,6 +38,9 @@
    </item>
    <item>
     <widget class="SAColorPickerButton" name="pushButtonColor">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;set curve line color&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -55,6 +58,9 @@
    </item>
    <item>
     <widget class="QSpinBox" name="spinBoxPenWidth">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;set curve line width&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="maximum">
       <number>100</number>
      </property>
@@ -71,7 +77,11 @@
     </widget>
    </item>
    <item>
-    <widget class="SAPenStyleComboBox" name="comboBoxPenStyle"/>
+    <widget class="SAPenStyleComboBox" name="comboBoxPenStyle">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;set curve line style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

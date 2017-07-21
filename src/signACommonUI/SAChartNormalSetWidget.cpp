@@ -60,7 +60,7 @@ public:
 class SAChartNormalSetWidget::UI
 {
 public:
-
+    SAChartNormalSetWidget* parentClass;
     SAChart2D* chart;
     QVBoxLayout *verticalLayout;
     SALineEditPropertyItem* titleEdit;
@@ -79,36 +79,37 @@ public:
 
     void setupUI(SAChartNormalSetWidget* par)
     {
+        parentClass = par;
         par->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        par->setMinimumSize(150,250);
         chart = nullptr;
+        verticalLayout = new QVBoxLayout(par);
         par->setObjectName(QStringLiteral("SAChartNormalSetWidget"));
         //Title
-        titleEdit = new SALineEditPropertyItem(par);
+        titleEdit = new SALineEditPropertyItem();
         titleEdit->setObjectName("titleEdit");
         par->connect(titleEdit,&SALineEditPropertyItem::textChanged
                      ,par,&SAChartNormalSetWidget::onTitleTextChanged);
         //Footer
-        footerEdit = new SALineEditPropertyItem(par);
+        footerEdit = new SALineEditPropertyItem();
         footerEdit->setObjectName("footerEdit");
         par->connect(footerEdit,&SALineEditPropertyItem::textChanged
                      ,par,&SAChartNormalSetWidget::onFooterTextChanged);
         //Canvas
-        canvasBackgroundEdit = new SAColorSetPropertyItem(par);
+        canvasBackgroundEdit = new SAColorSetPropertyItem();
         par->connect(canvasBackgroundEdit,&SAColorSetPropertyItem::colorChanged
                      ,par,&SAChartNormalSetWidget::onCanvasBackgroundColorChanged);
         //
-        borderRadiusEdit = new SADoubleSpinBoxPropertyItem(par);
+        borderRadiusEdit = new SADoubleSpinBoxPropertyItem();
         par->connect(borderRadiusEdit,&SADoubleSpinBoxPropertyItem::valueChanged
                      ,par,&SAChartNormalSetWidget::onBorderRadiusChanged);
         //Axes
-        setupAxisSet(par,axisSet.at(xBottom),QwtPlot::xBottom);
-        setupAxisSet(par,axisSet.at(yLeft),QwtPlot::yLeft);
-        setupAxisSet(par,axisSet.at(xTop),QwtPlot::xTop);
-        setupAxisSet(par,axisSet.at(yRight),QwtPlot::yRight);
+        setupAxisSet(axisSet.at(xBottom),QwtPlot::xBottom);
+        setupAxisSet(axisSet.at(yLeft),QwtPlot::yLeft);
+        setupAxisSet(axisSet.at(xTop),QwtPlot::xTop);
+        setupAxisSet(axisSet.at(yRight),QwtPlot::yRight);
 
 
-        verticalLayout = new QVBoxLayout;
+
         verticalLayout->setSpacing(8);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(4, 4, 4, 4);
@@ -121,7 +122,6 @@ public:
         verticalLayout->addWidget(axisSet.at(xTop).group);
         verticalLayout->addWidget(axisSet.at(yRight).group);
         verticalLayout->addStretch();
-        par->setLayout(verticalLayout);
         retranslateUi(par);
     }
     void retranslateUi(SAChartNormalSetWidget *w)
@@ -314,36 +314,35 @@ private:
 
     }
 
-    void setupAxisSet(SAChartNormalSetWidget* par
-                      ,AxisPropertyItems& axisSets
+    void setupAxisSet(AxisPropertyItems& axisSets
                       ,int axisID)
     {
-        axisSets.group = new SAVCollapsibleGroupBox(par);
+        axisSets.group = new SAVCollapsibleGroupBox;
         //enable Axis
-        axisSets.enableAxis = new SACheckBoxPropertyItem(axisSets.group);
+        axisSets.enableAxis = new SACheckBoxPropertyItem();
         //scale min
-        axisSets.scaleMin = new SADoubleSpinBoxPropertyItem(axisSets.group);
+        axisSets.scaleMin = new SADoubleSpinBoxPropertyItem();
         //scale max
-        axisSets.scaleMax = new SADoubleSpinBoxPropertyItem(axisSets.group);
+        axisSets.scaleMax = new SADoubleSpinBoxPropertyItem();
         //Axis title
-        axisSets.title = new SALineEditPropertyItem(axisSets.group);
+        axisSets.title = new SALineEditPropertyItem();
         //Axis Font
-        axisSets.font = new SAFontComboBoxPropertyItem(axisSets.group);
+        axisSets.font = new SAFontComboBoxPropertyItem();
         //label Aligment
-        axisSets.labelAligment = new SAAligmentPropertyItem(axisSets.group);
+        axisSets.labelAligment = new SAAligmentPropertyItem();
         //scale min
-        axisSets.labelRotation = new SADoubleSpinBoxPropertyItem(axisSets.group);
+        axisSets.labelRotation = new SADoubleSpinBoxPropertyItem();
         //margin
-        axisSets.margin = new SASpinBoxPropertyItem(axisSets.group);
+        axisSets.margin = new SASpinBoxPropertyItem();
         axisSets.margin->setMinimum(0);
         //spacing
-        axisSets.spacing = new SASpinBoxPropertyItem(axisSets.group);
+        axisSets.spacing = new SASpinBoxPropertyItem();
         //
-        axisSets.timeScaleGroup = new SAVCollapsibleGroupBox(axisSets.group);
+        axisSets.timeScaleGroup = new SAVCollapsibleGroupBox();
         //
-        axisSets.enabletimeScale = new SACheckBoxPropertyItem(axisSets.timeScaleGroup);
+        axisSets.enabletimeScale = new SACheckBoxPropertyItem();
         axisSets.timeScaleGroup->addWidget(axisSets.enabletimeScale);
-        axisSets.timeScaleFormat = new SAComboBoxPropertyItem(axisSets.timeScaleGroup);
+        axisSets.timeScaleFormat = new SAComboBoxPropertyItem();
         axisSets.timeScaleFormat->setEditable(true);
         axisSets.timeScaleFormat->addItems(SA2DGraph::axisDateScaleTypes2StringList());
         axisSets.timeScaleFormat->setCurrentText("yyyy-M-d h:m:s");
@@ -363,30 +362,30 @@ private:
         axisSets.group->addWidget(axisSets.timeScaleGroup);
 
 
-        par->connect(axisSets.enableAxis,&SACheckBoxPropertyItem::stateChanged
-                  ,par,[axisID,this](int state){
+        this->parentClass->connect(axisSets.enableAxis,&SACheckBoxPropertyItem::stateChanged
+                  ,this->parentClass,[axisID,this](int state){
             bool check = Qt::Checked == state;
             SAChart::setAxisEnable(this->chart,axisID,check);
             this->axisSet.at(qwtAxisId2AxisIndex(axisID)).setAxisVisible(check);
         });
-        par->connect(axisSets.title,&SALineEditPropertyItem::textChanged
-                  ,par,[axisID,this](const QString& text){SAChart::setAxisTitle(this->chart,axisID,text);});
-        par->connect(axisSets.font,&SAFontComboBoxPropertyItem::currentFontChanged
-                  ,par,[axisID,this](const QFont &font){SAChart::setAxisFont(this->chart,axisID,font);});
-        par->connect(axisSets.labelAligment,&SAAligmentPropertyItem::stateChanged
-                  ,par,[axisID,this](Qt::Alignment v){SAChart::setAxisLabelAlignment(this->chart,axisID,v);});
-        par->connect(axisSets.labelRotation,&SADoubleSpinBoxPropertyItem::valueChanged
-                  ,par,[axisID,this](double v){SAChart::setAxisLabelRotation(this->chart,axisID,v);});
-        par->connect(axisSets.scaleMin,&SADoubleSpinBoxPropertyItem::valueChanged
-                  ,par,[axisID,this](double v){SAChart::setAxisScaleMin(this->chart,axisID,v);});
-        par->connect(axisSets.scaleMax,&SADoubleSpinBoxPropertyItem::valueChanged
-                  ,par,[axisID,this](double v){SAChart::setAxisScaleMax(this->chart,axisID,v);});
-        par->connect(axisSets.margin,&SASpinBoxPropertyItem::valueChanged
-                  ,par,[axisID,this](int v){SAChart::setAxisMargin(this->chart,axisID,v);});
-        par->connect(axisSets.spacing,&SASpinBoxPropertyItem::valueChanged
-                  ,par,[axisID,this](int v){SAChart::setAxisSpacing(this->chart,axisID,v);});
-        par->connect(axisSets.enabletimeScale,&SACheckBoxPropertyItem::stateChanged
-                  ,par,[axisID,this](int state){
+        this->parentClass->connect(axisSets.title,&SALineEditPropertyItem::textChanged
+                  ,this->parentClass,[axisID,this](const QString& text){SAChart::setAxisTitle(this->chart,axisID,text);});
+        this->parentClass->connect(axisSets.font,&SAFontComboBoxPropertyItem::currentFontChanged
+                  ,this->parentClass,[axisID,this](const QFont &font){SAChart::setAxisFont(this->chart,axisID,font);});
+        this->parentClass->connect(axisSets.labelAligment,&SAAligmentPropertyItem::stateChanged
+                  ,this->parentClass,[axisID,this](Qt::Alignment v){SAChart::setAxisLabelAlignment(this->chart,axisID,v);});
+        this->parentClass->connect(axisSets.labelRotation,&SADoubleSpinBoxPropertyItem::valueChanged
+                  ,this->parentClass,[axisID,this](double v){SAChart::setAxisLabelRotation(this->chart,axisID,v);});
+        this->parentClass->connect(axisSets.scaleMin,&SADoubleSpinBoxPropertyItem::valueChanged
+                  ,this->parentClass,[axisID,this](double v){SAChart::setAxisScaleMin(this->chart,axisID,v);});
+        this->parentClass->connect(axisSets.scaleMax,&SADoubleSpinBoxPropertyItem::valueChanged
+                  ,this->parentClass,[axisID,this](double v){SAChart::setAxisScaleMax(this->chart,axisID,v);});
+        this->parentClass->connect(axisSets.margin,&SASpinBoxPropertyItem::valueChanged
+                  ,this->parentClass,[axisID,this](int v){SAChart::setAxisMargin(this->chart,axisID,v);});
+        this->parentClass->connect(axisSets.spacing,&SASpinBoxPropertyItem::valueChanged
+                  ,this->parentClass,[axisID,this](int v){SAChart::setAxisSpacing(this->chart,axisID,v);});
+        this->parentClass->connect(axisSets.enabletimeScale,&SACheckBoxPropertyItem::stateChanged
+                  ,this->parentClass,[axisID,this](int state){
             bool check = (Qt::Checked == state);
             AxisPropertyItems& ax = this->axisSet.at(qwtAxisId2AxisIndex(axisID));
             ax.timeScaleFormat->setEnabled(check);
@@ -400,8 +399,8 @@ private:
                 SAChart::setAxisNormalScale(this->chart,axisID);
             }
         });
-        par->connect(axisSets.timeScaleFormat,&SAComboBoxPropertyItem::currentTextChanged
-                     ,par,[axisID,this](const QString& str){
+        this->parentClass->connect(axisSets.timeScaleFormat,&SAComboBoxPropertyItem::currentTextChanged
+                     ,this->parentClass,[axisID,this](const QString& str){
             SAChart::setAxisDateTimeScale(this->chart,axisID,str);
 
         });
@@ -413,8 +412,6 @@ SAChartNormalSetWidget::SAChartNormalSetWidget(QWidget *par):QWidget(par)
   ,ui(new SAChartNormalSetWidget::UI)
 {
     ui->setupUI(this);
-    setMinimumSize(minimumSizeHint());
-    //resize(sizeHint());
 }
 
 SAChartNormalSetWidget::~SAChartNormalSetWidget()

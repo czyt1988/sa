@@ -16,8 +16,16 @@ public:
     ~SAPenSetWidget();
     QPen getPen() const;
     void setPen(const QPen& pen);
+signals:
+    void penChanged(const QPen& newPen);
+private slots:
+    Q_SLOT void onCurrentColorChanged(const QColor& clr);
+    Q_SLOT void onCurrentPenWidthChanged(int v);
+    Q_SLOT void onCurrentPenStyleChanged(Qt::PenStyle style);
 private:
     Ui::SAPenSetWidget *ui;
+    QPen m_curPen;
+    bool m_enableEmit;
 };
 
 #endif // SAPENSETWIDGET_H

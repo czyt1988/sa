@@ -25,7 +25,7 @@ public:
         this->parentClass = par;
         this->chartWidget = nullptr;
         par->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        par->setMinimumSize(150,500);
+        par->setMinimumSize(150,200);
         par->setObjectName(QStringLiteral("SAPlotItemSetWidget"));
         verticalLayout = new QVBoxLayout(par);
         verticalLayout->setSpacing(0);

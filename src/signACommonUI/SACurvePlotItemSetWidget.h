@@ -2,7 +2,9 @@
 #define SACURVEPLOTITEMSETWIDGET_H
 #include "qwt_plot.h"
 #include <QWidget>
-
+///
+/// \brief 设置plotCurveItem的窗体
+///
 class SACurvePlotItemSetWidget : public QWidget
 {
 public:
