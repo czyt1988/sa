@@ -75,18 +75,16 @@ private:
     void connectToServer();
     //尝试连接服务器
     Q_SLOT void tryToConnectServer();
-    //启动数据处理进程
-    void startDataProc();
-    //进程状态改变
-    Q_SLOT void onProcessStateChanged(QProcess::ProcessState newState);
-    //数据处理进程异常停止
-    Q_SLOT void onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus);
     //接收主包头完毕
     Q_SLOT void onReceivedShakeHand(const SALocalServeBaseHeader& mainHeader);
     //接收到xml字符
     Q_SLOT void onReceivedString(const QString& xmlString);
     //接收到到点数组
     Q_SLOT void onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
+    //
+    Q_SLOT void onLocalSocketDisconnect();
+    //
+    Q_SLOT void tryToStartDataProc();
 #endif
 private:
     Ui::SADataFeatureWidget *ui;
@@ -96,7 +94,6 @@ private:
 
 #else
 private://数据接收相关的类型
-    QProcess* m_dataProcPro;///< 数据处理进程
     QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
     SALocalServeReader* m_dataReader;
     SALocalServeWriter* m_dataWriter;

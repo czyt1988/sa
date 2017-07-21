@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QTextCodec>
+
 //==图层的选中状态无法看到颜色，用qss改为外框
 //==添加主题管理的类SAThemeManager
 

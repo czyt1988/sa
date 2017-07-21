@@ -52,7 +52,6 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
-  ,m_dataProcPro(nullptr)
   ,m_dataProcessSocket(nullptr)
   ,m_dataReader(nullptr)
   ,m_dataWriter(nullptr)
@@ -69,14 +68,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 
 SADataFeatureWidget::~SADataFeatureWidget()
 {
-#ifdef USE_THREAD_CALC_FEATURE
-
-#else
-    disconnect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
-            ,this,&SADataFeatureWidget::onProcessDataProcFinish);
-    m_dataProcPro->kill();
     delete ui;
-#endif
 }
 ///
 /// \brief 子窗口激活槽
@@ -358,6 +350,23 @@ void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureIte
     Q_UNUSED(ys);
 
 }
+
+void SADataFeatureWidget::onLocalSocketDisconnect()
+{
+    saPrint() << "signADataProc local socket disconnect!";
+    QTimer::singleShot(100,this,&SADataFeatureWidget::tryToStartDataProc);
+}
+
+void SADataFeatureWidget::tryToStartDataProc()
+{
+    saPrint() << "Try To Start Data Proc";
+    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
+    QStringList args = {QString::number(qApp->applicationPid())};
+    QProcess::startDetached(path,args);//signADataProc是一个单例进程，多个软件不会打开多个
+    m_connectRetryCount = 50;
+    saPrint() << "Start Try To Connect Server";
+    tryToConnectServer();
+}
 #endif
 
 
@@ -448,12 +457,6 @@ void SADataFeatureWidget::onShowErrorMessage(const QString &info)
 ///
 void SADataFeatureWidget::initLocalServer()
 {
-
-    m_dataProcPro = new QProcess(this);
-    connect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
-            ,this,&SADataFeatureWidget::onProcessDataProcFinish);
-    connect(m_dataProcPro,&QProcess::stateChanged,this,&SADataFeatureWidget::onProcessStateChanged);
-
     m_dataReader = new SALocalServeReader(this);
     m_dataWriter = new SALocalServeWriter(this);
     connect(m_dataReader,&SALocalServeReader::receivedShakeHand
@@ -464,7 +467,7 @@ void SADataFeatureWidget::initLocalServer()
             ,this,&SADataFeatureWidget::onReceivedVectorPointFData);
     connect(m_dataReader,&SALocalServeReader::errorOccure
             ,this,&SADataFeatureWidget::onShowErrorMessage);
-    startDataProc();
+    connectToServer();
 }
 #endif
 
@@ -479,6 +482,8 @@ void SADataFeatureWidget::connectToServer()
         delete m_dataProcessSocket;m_dataProcessSocket=nullptr;
     }
     m_dataProcessSocket = new QLocalSocket(this);
+    connect(m_dataProcessSocket,&QLocalSocket::disconnected
+            ,this,&SADataFeatureWidget::onLocalSocketDisconnect);
     m_connectRetryCount = 50;
     tryToConnectServer();
 }
@@ -490,87 +495,49 @@ void SADataFeatureWidget::connectToServer()
 ///
 void SADataFeatureWidget::tryToConnectServer()
 {
+#ifdef _DEBUG_OUTPUT
+    QElapsedTimer t;
+    t.start();
+    saPrint() << "start connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME)";
+#endif
     m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
+#ifdef _DEBUG_OUTPUT
+    saPrint() << "start connectToServer cost:"<<t.elapsed();
+#endif
     if(m_connectRetryCount <= 0)
     {
         QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
         emit showMessageInfo(str,SA::ErrorMessage);
         saDebug(str);
+        return;
     }
-    do
+#ifdef _DEBUG_OUTPUT
+    t.restart();
+    saPrint() << "start waitForConnected:"<<t.elapsed();
+#endif
+    if(!m_dataProcessSocket->waitForConnected(100))
     {
-        if(!m_dataProcessSocket->waitForConnected())
-        {
-            QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
-            --m_connectRetryCount;
-            return;
-        }
-        saPrint() << "connect to dataProc serve success!";
-        m_dataReader->setSocket(m_dataProcessSocket);
-        m_dataWriter->setSocket(m_dataProcessSocket);
-        m_dataWriter->sendShakeHand();
-        break;
-    }while(m_connectRetryCount>0);
+
+        QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
+        --m_connectRetryCount;
+#ifdef _DEBUG_OUTPUT
+    saPrint() << "can not connected,will reconnect(wait cost:"<<t.elapsed()<<")";
+#endif
+        return;
+    }
+
+    saPrint() << "connect to dataProc serve success!";
+    m_dataReader->setSocket(m_dataProcessSocket);
+    m_dataWriter->setSocket(m_dataProcessSocket);
+    m_dataWriter->sendShakeHand();
+
 }
 #endif
 
-#ifdef USE_IPC_CALC_FEATURE//使用多进程
-///
-/// \brief 启动数据处理进程
-///
-void SADataFeatureWidget::startDataProc()
-{
-    if(m_dataProcessSocket)
-    {
-        delete m_dataProcessSocket;
-        m_dataProcessSocket = nullptr;
-    }
-    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
-    QStringList args = {QString::number(qApp->applicationPid())};
-    m_dataProcPro->start(path,args);
-}
-#endif
 
-#ifdef USE_IPC_CALC_FEATURE//使用多进程
-///
-/// \brief 进程启动成功
-///
-void SADataFeatureWidget::onProcessStateChanged(QProcess::ProcessState newState)
-{
-    if(QProcess::Running == newState)
-    {
-        connectToServer();
-    }
-}
-#endif
 
-#ifdef USE_IPC_CALC_FEATURE//使用多进程
-///
-/// \brief 数据处理的线程终结
-/// \param exitCode 退出代码
-/// \param exitStatus
-///
-void SADataFeatureWidget::onProcessDataProcFinish(int exitCode, QProcess::ExitStatus exitStatus)
-{
-    if(QProcess::CrashExit == exitStatus)
-    {
-        static int s_dataProcCrashCount = 0;
-        ++s_dataProcCrashCount;
-        saError("signADataProc has been crash,crash count:%d,exit code:%d",s_dataProcCrashCount,exitCode);
-        emit showMessageInfo(tr("signADataProc has been crash")
-                             ,SA::WarningMessage);
-        qDebug() << "s_dataProcCrashCount:"<<s_dataProcCrashCount;
-        startDataProc();
-    }
-    else if(QProcess::NormalExit == exitStatus)
-    {
-        QString strInfo = tr("signADataProc has been exit");
-        saWarning(strInfo);
-        emit showMessageInfo(strInfo,SA::WarningMessage);
-        startDataProc();
-        emit showMessageInfo(tr("restart signADataProc"),SA::WarningMessage);
-    }
-}
-#endif
+
+
+
 
 

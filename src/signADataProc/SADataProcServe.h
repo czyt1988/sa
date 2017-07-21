@@ -6,6 +6,7 @@
 #include "SALocalServeWriter.h"
 #include "SALocalServeFigureItemProcessHeader.h"
 #include <QSet>
+#include <QTimer>
 class SADataProcessVectorPointF;
 class SADataFeatureItem;
 class QThread;
@@ -54,6 +55,8 @@ private slots:
                                             , quintptr client);
 
     Q_SLOT void onDisconnected();
+    //
+    Q_SLOT void onLifeCheckTimeOut();
 private:
     QSet<QLocalSocket*> m_connectList;///< 连接的列表
     QMap<QLocalSocket*,SALocalServeWriter*> m_writerDict;
@@ -63,6 +66,8 @@ private:
     SADataProcessVectorPointF* m_pointFCalctor;///< 点集计算处理
     uint m_pid;
     QLocalServer* m_localServer;///< 本地服务器
+    QTimer m_liveCheck;
+    bool m_willBeQuit;
 };
 Q_DECLARE_METATYPE(QVector<QPointF>)
 #endif // SADATAPROCCLIENT_H

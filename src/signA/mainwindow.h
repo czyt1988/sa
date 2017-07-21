@@ -74,6 +74,8 @@ private:
     void initTheme();
     //初始化UIReflation
     void initUIReflection();
+    //初始化其它进程
+    void initProcess();
 
 public:
     static QColor getRandColor();
@@ -421,8 +423,6 @@ private:
 
     std::unique_ptr<SADrawDelegate> m_drawDelegate;///< 绘图代理
     SAFigureWindow* m_lastShowFigureWindow;///<记录最后一次显示的figure window
-
-
 };
 
 

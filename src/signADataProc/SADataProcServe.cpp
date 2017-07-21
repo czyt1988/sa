@@ -5,12 +5,13 @@
 #include <QMessageBox>
 #include <QLocalServer>
 #include <QThread>
-
+#include <QApplication>
 #include "SADataProcessVectorPointF.h"
 #include "SAXMLTagDefined.h"
 SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
   ,m_pid(0)
   ,m_localServer(new QLocalServer(this))
+  ,m_willBeQuit(false)
 {
     qRegisterMetaType<QVector<QPointF> >("QVector<QPointF>");
     qRegisterMetaType<quintptr>("quintptr");
@@ -22,8 +23,9 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
        qDebug() << tr("listern loacl server error");
     }
     qDebug() << "start DataProc Serve";
-
-
+    connect(&m_liveCheck,&QTimer::timeout
+            ,this,&SADataProcServe::onLifeCheckTimeOut);
+    m_liveCheck.start(5000);
 }
 
 
@@ -48,7 +50,7 @@ void SADataProcServe::onLocalServeNewConnection()
             ,this,&SADataProcServe::onReceivedString);
     connect(reader,&SALocalServeReader::receivedShakeHand
             ,this,&SADataProcServe::onRecShakeHand);
-    connect(socket,SIGNAL(disconnected()),this,SIGNAL(onDisconnected()));
+    connect(socket,&QLocalSocket::disconnected,this,&SADataProcServe::onDisconnected);
 
 
 
@@ -156,11 +158,33 @@ void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, qui
 void SADataProcServe::onDisconnected()
 {
     QLocalSocket* socket  = qobject_cast<QLocalSocket*>(sender());
+    qDebug() << "LocalSocket disconnect";
     if(socket)
     {
+        qDebug() <<"remove socket";
         m_connectList.remove(socket);
         m_writerDict.remove(socket);
         m_readerDict.remove(socket);
+    }
+}
+
+void SADataProcServe::onLifeCheckTimeOut()
+{
+    if(m_connectList.size() <= 0)
+    {
+        if(m_willBeQuit)
+        {
+            qDebug() << "signADataProc Auto Quit!";
+            qApp->quit();
+        }
+        else
+        {
+            m_willBeQuit = true;
+        }
+    }
+    else
+    {
+        m_willBeQuit = false;
     }
 }
 

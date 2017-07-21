@@ -18,7 +18,7 @@
 #include <QInputDialog>
 #include <QInputDialog>
 #include <QMdiArea>
-
+#include <QProcess>
 
 //----------STL-------------
 #include <iostream>
@@ -150,6 +150,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initUI();
     initMenu();
     initUIReflection();
+    initProcess();
     saElapsed("init ui and menu");
     saStartElapsed("start load plugin and theme");
     ui->toolBar_chartSet->setEnabled(false);
@@ -475,6 +476,15 @@ void MainWindow::initTheme()
 void MainWindow::initUIReflection()
 {
     saUIRef->setupUIInterface(uiInterface);//saUI保存主窗口指针
+}
+///
+/// \brief 打开用户界面支持的其它进程
+///
+void MainWindow::initProcess()
+{
+    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
+    QStringList args = {QString::number(qApp->applicationPid())};
+    QProcess::startDetached(path,args);//signADataProc是一个单例进程，多个软件不会打开多个
 }
 
 ///
