@@ -4,10 +4,10 @@
 #include <QObject>
 #include <QVector>
 #include <QPointF>
-
+#include "SALibGlobal.h"
 class QLocalSocket;
 
-class SADataProcessVectorPointF : public QObject
+class SALIB_EXPORT SADataProcessVectorPointF : public QObject
 {
     Q_OBJECT
 public:
@@ -20,7 +20,7 @@ public slots:
                    , quintptr widget
                    , quintptr fig
                    , quintptr item
-                   ,QLocalSocket* client);
+                   ,quintptr client);
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);
 
@@ -34,7 +34,7 @@ signals:
     /// \param item 标记2
     ///
     void result(SADataFeatureItem* result,quintptr widget,quintptr fig,quintptr item
-                ,QLocalSocket* client);
+                ,quintptr client);
 private:
     int m_sortCount;///< 记录要显示的排序条目
 };

@@ -37,7 +37,8 @@ HEADERS += \
     SACRC.h \
     SADataFeatureItem.h \
     SAXMLTagDefined.h \
-    SAXMLReadHelper.h
+    SAXMLReadHelper.h \
+    SADataProcessVectorPointF.h
 
 
 SOURCES += \
@@ -60,7 +61,8 @@ SOURCES += \
     SAGUIGlobalConfig.cpp \
     SACRC.cpp \
     SADataFeatureItem.cpp \
-    SAXMLReadHelper.cpp
+    SAXMLReadHelper.cpp \
+    SADataProcessVectorPointF.cpp
 
 
 include($$PWD/Private/Private.pri)

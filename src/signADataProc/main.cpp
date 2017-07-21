@@ -6,7 +6,7 @@
 #include "SADataProcServe.h"
 #include <QDebug>
 #include <QMessageBox>
-
+#include <QSharedMemory>
 #include <stdio.h>
 #include <stdlib.h>
 #include <QFile>
@@ -47,11 +47,19 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
+    QSharedMemory share("signaDataProc.Main");
+    if(share.attach())
+    {
+        return 0;
+    }
+    share.create(1);
     qInstallMessageHandler(myMessageOutput);
     QApplication a(argc, argv);
     QStringList argsList = a.arguments();
    // QMessageBox::information(nullptr,"pro",argsList.join(','));
     //调用必须后面跟随调用者的pid
+    qDebug() << argsList;
+
     if(argsList.size()<2)
     {
         return 1;

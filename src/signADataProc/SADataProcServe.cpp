@@ -76,7 +76,7 @@ void SADataProcServe::onReceivedVectorPointFData(const SALocalServeFigureItemPro
              << " ItemPtr:"<<header.getItemPtr()
                 ;
 #endif
-        emit callVectorPointFProcess(datas,header.getWndPtr(),header.getFigPtr(),header.getItemPtr(),reader->getSocket());
+        emit callVectorPointFProcess(datas,header.getWndPtr(),header.getFigPtr(),header.getItemPtr(),(qintptr)reader->getSocket());
     }
 }
 
@@ -115,7 +115,7 @@ void SADataProcServe::onRecShakeHand()
     writer->sendShakeHand();
 }
 
-void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget, quintptr fig, quintptr item, QLocalSocket *client)
+void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget, quintptr fig, quintptr item, quintptr client)
 {
     if(nullptr == result)
     {
@@ -134,9 +134,10 @@ void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, qui
     st << result->toXml();
     st << "</" << SA_XML_TAG_SA << ">";
     st << endl;
-    if(client)
+    QLocalSocket * clientPtr = (QLocalSocket *)client;
+    if(clientPtr)
     {
-        SALocalServeWriter* writer = m_writerDict.value(client,nullptr);
+        SALocalServeWriter* writer = m_writerDict.value(clientPtr,nullptr);
         if(writer)
         {
             writer->sendString(xml);

@@ -247,7 +247,9 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
         {
             if(!itemSet.contains(itemLists[j]))
             {
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
                 calcPlotItemFeature(itemLists[j],subWndPtr,plots[i]);
+#endif
             }
         }
     }
@@ -451,6 +453,7 @@ void SADataFeatureWidget::initLocalServer()
     connect(m_dataProcPro,static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished)
             ,this,&SADataFeatureWidget::onProcessDataProcFinish);
     connect(m_dataProcPro,&QProcess::stateChanged,this,&SADataFeatureWidget::onProcessStateChanged);
+
     m_dataReader = new SALocalServeReader(this);
     m_dataWriter = new SALocalServeWriter(this);
     connect(m_dataReader,&SALocalServeReader::receivedShakeHand
@@ -499,6 +502,7 @@ void SADataFeatureWidget::tryToConnectServer()
         if(!m_dataProcessSocket->waitForConnected())
         {
             QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
+            --m_connectRetryCount;
             return;
         }
         saPrint() << "connect to dataProc serve success!";
@@ -506,7 +510,7 @@ void SADataFeatureWidget::tryToConnectServer()
         m_dataWriter->setSocket(m_dataProcessSocket);
         m_dataWriter->sendShakeHand();
         break;
-    }while(--m_connectRetryCount);
+    }while(m_connectRetryCount>0);
 }
 #endif
 

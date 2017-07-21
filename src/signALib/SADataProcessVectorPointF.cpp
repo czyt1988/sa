@@ -19,7 +19,7 @@ SADataProcessVectorPointF::SADataProcessVectorPointF(QObject *parent):QObject(pa
 /// \param widget 标记1
 /// \param item 标记2
 ///
-void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, quintptr widget, quintptr fig, quintptr item, QLocalSocket *client)
+void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, quintptr widget, quintptr fig, quintptr item, quintptr client)
 {
     emit result(analysisData(points),widget,fig,item,client);
 }

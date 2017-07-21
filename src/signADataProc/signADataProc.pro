@@ -27,14 +27,10 @@ INCLUDEPATH += $$PWD
 
 
 SOURCES += main.cpp \
-    SADataProcServe.cpp \
-    SALocalConnection.cpp \
-    SADataProcessVectorPointF.cpp
+    SADataProcServe.cpp
 
 HEADERS += \
-    SADataProcServe.h \
-    SALocalConnection.h \
-    SADataProcessVectorPointF.h
+    SADataProcServe.h
     
 
 

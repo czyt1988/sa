@@ -30,7 +30,7 @@ private:
                                           ,quintptr widget
                                           ,quintptr fig
                                           ,quintptr item
-                                          ,QLocalSocket* client);
+                                          ,quintptr client);
 
     void initCalcThread();
 
@@ -48,10 +48,10 @@ private slots:
 
     //接收到点数组的计算结果
     Q_SLOT void onProcessVectorPointFResult(SADataFeatureItem* result
-                                            ,quintptr widget
-                                            ,quintptr fig
-                                            ,quintptr item
-                                            ,QLocalSocket* client);
+                                            , quintptr widget
+                                            , quintptr fig
+                                            , quintptr item
+                                            , quintptr client);
 
     Q_SLOT void onDisconnected();
 private:
