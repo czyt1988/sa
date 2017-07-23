@@ -3,6 +3,11 @@
 #include <QHBoxLayout>
 #include <QButtonGroup>
 #include <QApplication>
+#define ICON_AligmentTop QIcon(":/icon/icons/aligmentTop.png")
+#define ICON_AligmentLeft QIcon(":/icon/icons/aligmentLeft.png")
+#define ICON_AligmentRight QIcon(":/icon/icons/aligmentRight.png")
+#define ICON_AligmentDown QIcon(":/icon/icons/aligmentDown.png")
+#define ICON_AligmentCenter QIcon(":/icon/icons/aligmentCenter.png")
 class SAAligmentPropertyItem::UI
 {
 public:
@@ -23,22 +28,27 @@ public:
         bottomAlignment = new QToolButton;
         bottomAlignment->setFixedSize(23,23);
         bottomAlignment->setCheckable(true);
+        bottomAlignment->setIcon(ICON_AligmentCenter);
 
         topAlignment = new QToolButton;
         topAlignment->setFixedSize(23,23);
         topAlignment->setCheckable(true);
+        topAlignment->setIcon(ICON_AligmentTop);
 
         leftAlignment = new QToolButton;
         leftAlignment->setFixedSize(23,23);
         leftAlignment->setCheckable(true);
+        leftAlignment->setIcon(ICON_AligmentLeft);
 
         rightAlignment = new QToolButton;
         rightAlignment->setFixedSize(23,23);
         rightAlignment->setCheckable(true);
+        rightAlignment->setIcon(ICON_AligmentRight);
 
         centerAlignment = new QToolButton;
         centerAlignment->setFixedSize(23,23);
         centerAlignment->setCheckable(true);
+        centerAlignment->setIcon(ICON_AligmentCenter);
 
         hBoxLayout->addStretch();
         hBoxLayout->addWidget(leftAlignment);

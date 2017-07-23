@@ -2,5 +2,10 @@
     <qresource prefix="/icon">
         <file>icons/colled.png</file>
         <file>icons/expand.png</file>
+        <file>icons/aligmentCenter.png</file>
+        <file>icons/aligmentDown.png</file>
+        <file>icons/aligmentLeft.png</file>
+        <file>icons/aligmentRight.png</file>
+        <file>icons/aligmentTop.png</file>
     </qresource>
 </RCC>
