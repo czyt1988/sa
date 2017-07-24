@@ -25,30 +25,11 @@ public:
         hBoxLayout->setContentsMargins(0,0,0,0);
         buttonGroup = new QButtonGroup(par);
 
-        bottomAlignment = new QToolButton;
-        bottomAlignment->setFixedSize(23,23);
-        bottomAlignment->setCheckable(true);
-        bottomAlignment->setIcon(ICON_AligmentCenter);
-
-        topAlignment = new QToolButton;
-        topAlignment->setFixedSize(23,23);
-        topAlignment->setCheckable(true);
-        topAlignment->setIcon(ICON_AligmentTop);
-
-        leftAlignment = new QToolButton;
-        leftAlignment->setFixedSize(23,23);
-        leftAlignment->setCheckable(true);
-        leftAlignment->setIcon(ICON_AligmentLeft);
-
-        rightAlignment = new QToolButton;
-        rightAlignment->setFixedSize(23,23);
-        rightAlignment->setCheckable(true);
-        rightAlignment->setIcon(ICON_AligmentRight);
-
-        centerAlignment = new QToolButton;
-        centerAlignment->setFixedSize(23,23);
-        centerAlignment->setCheckable(true);
-        centerAlignment->setIcon(ICON_AligmentCenter);
+        bottomAlignment = createToolButton(ICON_AligmentCenter);
+        topAlignment = createToolButton(ICON_AligmentTop);
+        leftAlignment = createToolButton(ICON_AligmentLeft);
+        rightAlignment = createToolButton(ICON_AligmentRight);
+        centerAlignment = createToolButton(ICON_AligmentCenter);
 
         hBoxLayout->addStretch();
         hBoxLayout->addWidget(leftAlignment);
@@ -76,6 +57,17 @@ public:
         leftAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Left Alignment", 0));
         rightAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Right Alignment", 0));
         centerAlignment->setToolTip(QApplication::translate("SAAligmentPropertyItem", "Center Alignment", 0));
+    }
+private:
+    QToolButton* createToolButton(const QIcon& icon)
+    {
+        QToolButton* btn = new QToolButton;
+        btn->setFixedSize(23,23);
+        btn->setCheckable(true);
+        btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        btn->setAutoRaise(true);
+        btn->setIcon(icon);
+        return btn;
     }
 };
 
