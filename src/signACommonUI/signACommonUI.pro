@@ -75,8 +75,7 @@ SOURCES += \
 
 FORMS += \
     SAValueSelectDialog.ui \
-    TestWidget.ui \
-    SAPenSetWidget.ui
+    TestWidget.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)

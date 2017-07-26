@@ -7,10 +7,16 @@
 #include "SADoubleSpinBoxPropertyItem.h"
 #include "SAQwtSymbolComboBox.h"
 #include <QHBoxLayout>
-
+#include <QMenu>
+#include <QWidgetAction>
+#include "SAQwtSymbolSetWidget.h"
+#include <QScopedPointer>
+#include <QCursor>
 SAQwtPlotCurveItemSetWidget::SAQwtPlotCurveItemSetWidget(QwtPlotCurve *plotItem, QWidget *par)
     :SAQwtPlotItemSetWidget(plotItem,par)
     ,m_showAll(false)
+    ,m_symbolSetMenu(nullptr)
+    ,m_symbolSetWidget(nullptr)
 {
     m_curveItem = plotItem;
     m_isSPlineCheckBox = nullptr;
@@ -37,7 +43,12 @@ SAQwtPlotCurveItemSetWidget::SAQwtPlotCurveItemSetWidget(QwtPlotCurve *plotItem,
     connect(m_symbolComboBox,&SAQwtSymbolComboBox::symbolSelectChanged
             ,this,&SAQwtPlotCurveItemSetWidget::onSymbolComboBoxChanged);
     connect(m_symbolSetButton,&QPushButton::clicked
-            ,this,&SAQwtPlotCurveItemSetWidget::onBaseLineSpinBoxValueChanged);
+            ,this,&SAQwtPlotCurveItemSetWidget::onSymbolSetButtonClicked);
+
+}
+
+SAQwtPlotCurveItemSetWidget::~SAQwtPlotCurveItemSetWidget()
+{
 
 }
 
@@ -132,5 +143,27 @@ void SAQwtPlotCurveItemSetWidget::onSymbolComboBoxChanged(QwtSymbol::Style style
 
 void SAQwtPlotCurveItemSetWidget::onSymbolSetButtonClicked()
 {
+    if(nullptr == m_symbolSetMenu)
+    {
+        m_symbolSetMenu = new QMenu(this);
+        QWidgetAction* act = new QWidgetAction(m_symbolSetMenu);
+        QScopedPointer<QwtSymbol> symbol(new QwtSymbol(m_symbolComboBox->selectedSymbol()));
+        m_symbolSetWidget = new SAQwtSymbolSetWidget(symbol.data());
+        act->setDefaultWidget(m_symbolSetWidget);
+        m_symbolSetMenu->addAction(act);
+        connect(m_symbolSetMenu,&QMenu::aboutToHide
+                ,this,&SAQwtPlotCurveItemSetWidget::onSymbolSetMenuHide);
+    }
+    m_symbolSetMenu->exec(QCursor::pos());
+}
 
+void SAQwtPlotCurveItemSetWidget::onSymbolSetMenuHide()
+{
+    if(m_symbolSetWidget)
+    {
+        const QwtSymbol& s = m_symbolSetWidget->getSymbol();
+        QwtSymbol* symbol = new QwtSymbol(s.style(),s.brush(),s.pen(),s.size());
+        m_curveItem->setSymbol(symbol);
+        m_symbolComboBox->setStyle(symbol->style());
+    }
 }

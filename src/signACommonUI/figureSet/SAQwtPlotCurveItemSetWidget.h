@@ -8,11 +8,14 @@ class QCheckBox;
 class SAQwtSymbolComboBox;
 class QPushButton;
 class QLabel;
+class QMenu;
+class SAQwtSymbolSetWidget;
 class SAQwtPlotCurveItemSetWidget : public SAQwtPlotItemSetWidget
 {
     Q_OBJECT
 public:
     SAQwtPlotCurveItemSetWidget(QwtPlotCurve *plotItem, QWidget* par = nullptr);
+    ~SAQwtPlotCurveItemSetWidget();
     virtual void retranslateUi();
     virtual void upDateData(bool downLoad = true);
     void showAll(bool enable=true);
@@ -22,6 +25,7 @@ private slots:
     Q_SLOT void onBaseLineSpinBoxValueChanged(double v);
     Q_SLOT void onSymbolComboBoxChanged(QwtSymbol::Style style);
     Q_SLOT void onSymbolSetButtonClicked();
+    Q_SLOT void onSymbolSetMenuHide();
 private:
     bool m_showAll;
     QwtPlotCurve *m_curveItem;
@@ -31,6 +35,8 @@ private:
     SAQwtSymbolComboBox* m_symbolComboBox;///< 符号选择复选框
     QPushButton* m_symbolSetButton;///< 符号的详细设置按钮
     QLabel* m_labelSymbolSet;///<
+    QMenu* m_symbolSetMenu;
+    SAQwtSymbolSetWidget* m_symbolSetWidget;
 };
 
 #endif // SAQWTPLOTCURVEITEMSETWIDGET_H

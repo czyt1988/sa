@@ -21,6 +21,7 @@ public:
     QwtPlotItemList plotItemList;
     QVBoxLayout* vboxlayout;
     QMap<QwtPlotItem*,QWidget*> plotItem2Widget;///< 记录item对应的widget
+    QMap<QWidget*,QwtPlotItem*> widget2PlotItem;
     void setupUI(SACurvePlotItemSetWidget* par)
     {
         parentClass = par;
@@ -36,9 +37,17 @@ public:
             this->vboxlayout->removeItem(i);
             QWidget* w = i->widget();
             if(w)
+            {
+                QwtPlotItem* item = this->widget2PlotItem[w];
+                this->widget2PlotItem.remove(w);
+                this->plotItem2Widget.remove(item);
                 delete w;
+            }
             if(i)
+            {
                 delete i;
+            }
+
         }
         for(int i=0;i<itemList.size();++i)
         {
@@ -65,6 +74,7 @@ public:
         SAQwtPlotItemVGroupBox* group = new SAQwtPlotItemVGroupBox(item);
         this->vboxlayout->addWidget(group);
         this->plotItem2Widget[item] = group;
+        this->widget2PlotItem[group] = item;
     }
 };
 
