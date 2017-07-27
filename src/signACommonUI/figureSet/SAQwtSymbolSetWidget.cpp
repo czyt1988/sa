@@ -74,6 +74,7 @@ void SAQwtSymbolSetWidget::onSymbolSelectChanged(QwtSymbol::Style style)
 {
     m_symbol.setStyle(style);
     updateSymbol();
+    emit symbolSetChanged(m_symbol);
 }
 
 void SAQwtSymbolSetWidget::onSpinBoxSizeXValueChanged(int v)
@@ -98,6 +99,7 @@ void SAQwtSymbolSetWidget::onSpinBoxSizeXValueChanged(int v)
     }
     m_symbol.setSize(symbolSize);
     updateSymbol();
+    emit symbolSetChanged(m_symbol);
 }
 
 void SAQwtSymbolSetWidget::onSpinBoxSizeYValueChanged(int v)
@@ -120,13 +122,16 @@ void SAQwtSymbolSetWidget::onSpinBoxSizeYValueChanged(int v)
         symbolSize.setWidth(ui->spinBoxSizeX->value());
         symbolSize.setHeight(ui->spinBoxSizeY->value());
     }
+    m_symbol.setSize(symbolSize);
     updateSymbol();
+    emit symbolSetChanged(m_symbol);
 }
 
 void SAQwtSymbolSetWidget::onEdgePenChanged(const QPen &pen)
 {
     m_symbol.setPen(pen);
     updateSymbol();
+    emit symbolSetChanged(m_symbol);
 }
 
 
@@ -136,6 +141,7 @@ void SAQwtSymbolSetWidget::onBrushColorChanged(const QColor &clr)
     symbolBrush.setColor(clr);
     m_symbol.setBrush(symbolBrush);
     updateSymbol();
+    emit symbolSetChanged(m_symbol);
 }
 
 
@@ -147,7 +153,7 @@ void SAQwtSymbolSetWidget::onBrushAlphaSliderValueChanged(int v)
     symbolBrush.setColor(clr);
     m_symbol.setBrush(symbolBrush);
     updateSymbol();
-
+    emit symbolSetChanged(m_symbol);
 }
 
 

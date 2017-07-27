@@ -20,6 +20,8 @@ public:
     explicit SAQwtSymbolSetWidget(const QwtSymbol* symbol,QWidget *parent = 0);
     ~SAQwtSymbolSetWidget();
     const QwtSymbol& getSymbol();
+signals:
+    void symbolSetChanged(const QwtSymbol& symbol);
 private slots:
     Q_SLOT void onSymbolSelectChanged(QwtSymbol::Style style);
     Q_SLOT void onSpinBoxSizeXValueChanged(int v);
