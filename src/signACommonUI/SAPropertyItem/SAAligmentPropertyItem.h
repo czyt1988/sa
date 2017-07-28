@@ -8,12 +8,8 @@ public:
     SAAligmentPropertyItem(QWidget* par = nullptr);
     ~SAAligmentPropertyItem();
     void setAlignment(Qt::Alignment al);
-
-    QSize sizeHint() const;
 signals:
     void stateChanged(Qt::Alignment al);
-private slots:
-    void onButtonClicked(int id);
 private:
     class UI;
     SAAligmentPropertyItem::UI* ui;

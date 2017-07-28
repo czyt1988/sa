@@ -57,6 +57,8 @@ public:
     }
 };
 
+
+
 class SAChartNormalSetWidget::UI
 {
 public:
@@ -94,11 +96,11 @@ public:
         footerEdit->setObjectName("footerEdit");
         par->connect(footerEdit,&SALineEditPropertyItem::textChanged
                      ,par,&SAChartNormalSetWidget::onFooterTextChanged);
-        //Canvas
+        //Canvas Background
         canvasBackgroundEdit = new SAColorSetPropertyItem();
         par->connect(canvasBackgroundEdit,&SAColorSetPropertyItem::colorChanged
                      ,par,&SAChartNormalSetWidget::onCanvasBackgroundColorChanged);
-        //
+        //borderRadius
         borderRadiusEdit = new SADoubleSpinBoxPropertyItem();
         par->connect(borderRadiusEdit,&SADoubleSpinBoxPropertyItem::valueChanged
                      ,par,&SAChartNormalSetWidget::onBorderRadiusChanged);

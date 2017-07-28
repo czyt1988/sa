@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SAChartAxesSetWidget</class>
+ <widget class="QWidget" name="SAChartAxesSetWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>218</width>
+    <height>398</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="SACollapsibleGroupBox" name="groupBoxXBottom">
+     <property name="title">
+      <string>X Bottom</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="SACollapsibleGroupBox" name="groupBoxYLeft">
+     <property name="title">
+      <string>Y Left</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="SACollapsibleGroupBox" name="groupBoxXTop">
+     <property name="title">
+      <string>X Top</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="SACollapsibleGroupBox" name="groupBoxYRight">
+     <property name="title">
+      <string>Y Right</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SACollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>SACollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

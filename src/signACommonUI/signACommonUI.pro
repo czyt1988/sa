@@ -53,7 +53,9 @@ HEADERS += \
     TestWidget.h \
     SAPenSetWidget.h \
     SAColorPickerButton.h \
-    SAPenStyleComboBox.h
+    SAPenStyleComboBox.h \
+    SAFontSetWidget.h \
+    SAAligmentSetWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -71,11 +73,15 @@ SOURCES += \
     TestWidget.cpp \
     SAPenSetWidget.cpp \
     SAColorPickerButton.cpp \
-    SAPenStyleComboBox.cpp
+    SAPenStyleComboBox.cpp \
+    SAFontSetWidget.cpp \
+    SAAligmentSetWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
-    TestWidget.ui
+    TestWidget.ui \
+    SAFontSetWidget.ui \
+    SAAligmentSetWidget.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)

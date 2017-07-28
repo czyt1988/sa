@@ -7,5 +7,6 @@
         <file>icons/aligmentLeft.png</file>
         <file>icons/aligmentRight.png</file>
         <file>icons/aligmentTop.png</file>
+        <file>icons/link.png</file>
     </qresource>
 </RCC>

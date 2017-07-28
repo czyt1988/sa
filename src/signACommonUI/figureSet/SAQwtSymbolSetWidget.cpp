@@ -3,6 +3,7 @@
 #include <QPen>
 #include <QPainter>
 #include <QDebug>
+
 SAQwtSymbolSetWidget::SAQwtSymbolSetWidget(QWidget *parent) :
     QWidget(parent)
     ,ui(new Ui::SAQwtSymbolSetWidget)
