@@ -199,6 +199,7 @@ void SAQwtAxisSetWidget::updateAxisValue()
     }
     bool b = m_chart->axisEnabled(m_axisID);
     ui->checkBoxEnable->setChecked(b);
+    onEnableCheckBoxClicked(b?Qt::Checked:Qt::Unchecked);
     ui->lineEditTitle->setText(m_chart->axisTitle(m_axisID).text());
     ui->fontSetWidget->setCurrentFont(m_chart->axisFont(m_axisID));
     QwtInterval inv = m_chart->axisInterval(m_axisID);
@@ -218,6 +219,7 @@ void SAQwtAxisSetWidget::updateAxisValue()
     }
     ui->spinBoxMargin->setValue(ax->margin());
     QwtDateScaleDraw* dsd = dynamic_cast<QwtDateScaleDraw*>(sd);
+
     if(dsd)
     {
         ui->radioButtonTimeScale->setChecked(true);
@@ -228,6 +230,9 @@ void SAQwtAxisSetWidget::updateAxisValue()
 //        ui->stackedWidget->setCurrentWidget(ui->dateTimeScaleSetWidget);
         ui->dateTimeScaleSetWidget->setText(dsd->dateFormat(QwtDate::Second));
     }
-
+    else
+    {
+        ui->radioButtonNormal->setChecked(true);
+    }
 
 }
