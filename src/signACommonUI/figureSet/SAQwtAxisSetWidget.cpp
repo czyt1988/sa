@@ -188,6 +188,7 @@ void SAQwtAxisSetWidget::setChart(QwtPlot *chart, int axisID)
     m_chart = chart;
     m_axisID = axisID;
     connectChartAxis();
+    updateAxisValue();
 }
 
 void SAQwtAxisSetWidget::updateAxisValue()
