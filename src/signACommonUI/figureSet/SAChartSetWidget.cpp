@@ -10,6 +10,7 @@
 #include "SAColorSetPropertyItem.h"
 #include <QScrollArea>
 #include "SAPlotItemSetWidget.h"
+#include "SAChartAxesSetWidget.h"
 #define TR(str) QApplication::translate("SAChartSetWidget",str, 0)
 class SAChartSetWidget::UI
 {
@@ -19,7 +20,9 @@ public:
     QTabWidget* tabWidget;
     SAChartNormalSetWidget* chartNormalSetWidget;
     QScrollArea* tabScrollArea1;
+    QScrollArea* tabScrollArea2;
     SAPlotItemSetWidget* plotItemsSetWidget;
+    SAChartAxesSetWidget* plotAxesSetWidget;
     void setupUI(SAChartSetWidget* par)
     {
         par->setObjectName(QStringLiteral("SAChartSetWidget"));
@@ -34,7 +37,7 @@ public:
         verticalLayout->addWidget(tabWidget);
         par->setLayout(verticalLayout);
 
-        //Tab 1
+        //Tab 1 -- SAChartNormalSetWidget
         tabScrollArea1 = new QScrollArea();
         tabWidget->addTab(tabScrollArea1,QStringLiteral("1"));
         tabScrollArea1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -46,16 +49,26 @@ public:
         par->connect(chartNormalSetWidget,&SAChartNormalSetWidget::chartTitleChanged
                      ,par,&SAChartSetWidget::chartTitleChanged);
 
-        //Tab 2
+        //Tab 2 -- SAChartAxesSetWidget
+        tabScrollArea2 = new QScrollArea();
+        tabWidget->addTab(tabScrollArea2,QStringLiteral("2"));
+        tabScrollArea2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        tabScrollArea2->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        tabScrollArea2->setWidgetResizable(true);
+        tabScrollArea2->setBackgroundRole(QPalette::NoRole);
+        plotAxesSetWidget = new SAChartAxesSetWidget();
+        tabScrollArea2->setWidget(plotAxesSetWidget);
+        //Tab 2 -- SAPlotItemSetWidget
         plotItemsSetWidget = new SAPlotItemSetWidget();
-        tabWidget->addTab(plotItemsSetWidget,QStringLiteral("2"));
+        tabWidget->addTab(plotItemsSetWidget,QStringLiteral("3"));
         retranslateUi(par);
     }
     void retranslateUi(QWidget *w)
     {
         w->setWindowTitle(TR("Figure Canvas Set Widget"));
         tabWidget->setTabText(0,TR("Chart Normal Set"));
-        tabWidget->setTabText(1,TR("Chart Item Set"));
+        tabWidget->setTabText(1,TR("Chart Axes Set"));
+        tabWidget->setTabText(2,TR("Chart Item Set"));
     } // retranslateUi
 };
 
@@ -75,5 +88,6 @@ void SAChartSetWidget::setChart(SAChart2D *chart)
 {
     ui->chartCtrl = chart;
     ui->chartNormalSetWidget->setChart(chart);
+    ui->plotAxesSetWidget->setChart(chart);
     ui->plotItemsSetWidget->setChart(chart);
 }

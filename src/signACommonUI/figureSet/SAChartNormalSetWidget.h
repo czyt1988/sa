@@ -27,12 +27,7 @@ private slots:
     Q_SLOT void onBorderRadiusChanged(double v);
     //
     Q_SLOT void onChartDestroy(QObject* o);
-    //
-    Q_SLOT void onScaleDivChangedXBottom();
-    Q_SLOT void onScaleDivChangedXTop();
-    Q_SLOT void onScaleDivChangedYLeft();
-    Q_SLOT void onScaleDivChangedYRight();
-    //other slot in SAChartNormalSetWidget::UI::setupAxisSet function
+
 public:
 
 signals:
