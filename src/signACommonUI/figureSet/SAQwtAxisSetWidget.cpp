@@ -16,6 +16,9 @@ SAQwtAxisSetWidget::SAQwtAxisSetWidget(QWidget *parent) :
     m_buttonGroup = new QButtonGroup(this);
     m_buttonGroup->addButton(ui->radioButtonNormal,NormalScale);
     m_buttonGroup->addButton(ui->radioButtonTimeScale,DateTimeScale);
+    ui->radioButtonNormal->setChecked(true);
+    ui->stackedWidget->hide();
+
     connect(ui->checkBoxEnable,&QCheckBox::stateChanged
             ,this,&SAQwtAxisSetWidget::onEnableCheckBoxClicked);
     connect(ui->lineEditTitle,&QLineEdit::textChanged
@@ -147,6 +150,27 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
             }
         }
         ui->stackedWidget->show();
+    }
+}
+
+void SAQwtAxisSetWidget::updateUI()
+{
+    bool enable = (Qt::Checked == state);
+    foreach (QObject* obj, children())
+    {
+        if(obj->isWidgetType())
+        {
+            qobject_cast<QWidget*>(obj)->setEnabled(enable);
+        }
+    }
+    ui->checkBoxEnable->setEnabled(true);
+    if(ui->radioButtonNormal->isChecked())
+    {
+        ui->stackedWidget->hide();
+    }
+    else
+    {
+        ==
     }
 }
 
