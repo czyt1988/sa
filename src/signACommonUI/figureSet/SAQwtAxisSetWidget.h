@@ -31,6 +31,8 @@ private slots:
     Q_SLOT void onScaleDivChanged();
     Q_SLOT void onScaleStyleChanged(int id);
 private:
+    void updateUI();
+private:
     enum ScaleStyle
     {
         NormalScale
