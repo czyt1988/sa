@@ -30,8 +30,11 @@ private slots:
     Q_SLOT void onCharDestroy(QObject* obj);
     Q_SLOT void onScaleDivChanged();
     Q_SLOT void onScaleStyleChanged(int id);
+
 private:
     void updateUI();
+    void updateAxisScaleUI();
+    void updateAxisValue(QwtPlot *chart,int axisID);
 private:
     enum ScaleStyle
     {

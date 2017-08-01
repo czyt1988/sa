@@ -71,7 +71,8 @@ FORMS    += mainwindow.ui \
 
 
 RESOURCES += \
-    icons.qrc
+    icons.qrc \
+    theme.qrc
 RC_FILE += logo.rc
 
 #3thparty

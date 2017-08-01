@@ -9,7 +9,6 @@ SAChartAxesSetWidget::SAChartAxesSetWidget(QWidget *parent) :
     ui(new Ui::SAChartAxesSetWidget)
 {
     ui->setupUi(this);
-
     m_layoutXBottom = new QVBoxLayout();
     m_layoutXTop = new QVBoxLayout();
     m_layoutYLeft = new QVBoxLayout();

@@ -130,7 +130,17 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBoxMin"/>
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxMin">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="minimum">
+        <double>-10000000000000000735758738477112498397576062152177456799245857901351759143802190202050679656153088.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>100000000000000001463069523067487303097004298786465505927861078716979636425114821591040.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="labelMaxScale">
@@ -140,7 +150,17 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBoxMax"/>
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxMax">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="minimum">
+        <double>-100000000000000004188152556421145795899143386664033828314342771180699648.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>999999999999999949387135297074018866963645011013410073083904.000000000000000</double>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

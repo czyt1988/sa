@@ -7,6 +7,7 @@
 #include "qwt_date_scale_draw.h"
 #include <QButtonGroup>
 #include "SAChart.h"
+#include <QDebug>
 SAQwtAxisSetWidget::SAQwtAxisSetWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SAQwtAxisSetWidget)
@@ -125,7 +126,13 @@ void SAQwtAxisSetWidget::onCharDestroy(QObject *obj)
 
 void SAQwtAxisSetWidget::onScaleDivChanged()
 {
-
+    if(nullptr == m_chart)
+    {
+        return;
+    }
+    QwtInterval inv = m_chart->axisInterval(m_axisID);
+    ui->doubleSpinBoxMin->setValue(inv.minValue());
+    ui->doubleSpinBoxMax->setValue(inv.maxValue());
 }
 
 void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
@@ -150,12 +157,13 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
             }
         }
         ui->stackedWidget->show();
+
     }
 }
 
 void SAQwtAxisSetWidget::updateUI()
 {
-    bool enable = (Qt::Checked == state);
+    bool enable = ui->checkBoxEnable->isChecked();
     foreach (QObject* obj, children())
     {
         if(obj->isWidgetType())
@@ -164,13 +172,67 @@ void SAQwtAxisSetWidget::updateUI()
         }
     }
     ui->checkBoxEnable->setEnabled(true);
+    updateAxisScaleUI();
+}
+
+void SAQwtAxisSetWidget::updateAxisScaleUI()
+{
+
     if(ui->radioButtonNormal->isChecked())
     {
         ui->stackedWidget->hide();
     }
     else
     {
-        ==
+        ui->stackedWidget->show();
+        if(ui->radioButtonTimeScale->isChecked())
+        {
+            ui->stackedWidget->setCurrentWidget(ui->dateTimeScaleSetWidget);
+        }
+    }
+}
+
+void SAQwtAxisSetWidget::updateAxisValue(QwtPlot *chart,int axisID)
+{
+    if(nullptr == chart)
+    {
+        return;
+    }
+    bool b = chart->axisEnabled(axisID);
+    ui->checkBoxEnable->setChecked(b);
+    onEnableCheckBoxClicked(b?Qt::Checked:Qt::Unchecked);
+    ui->lineEditTitle->setText(chart->axisTitle(axisID).text());
+    ui->fontSetWidget->setCurrentFont(chart->axisFont(axisID));
+
+    QwtInterval inv = chart->axisInterval(axisID);
+    ui->doubleSpinBoxMin->setValue(inv.minValue());
+    ui->doubleSpinBoxMax->setValue(inv.maxValue());
+    ui->doubleSpinBoxMin->setDecimals(inv.minValue()<0.01?5:2);//显示小数点的位数调整
+    ui->doubleSpinBoxMax->setDecimals(inv.minValue()<0.01?5:2);
+
+    QwtScaleWidget * ax = chart->axisWidget(axisID);
+    if(nullptr == ax)
+    {
+        ui->radioButtonNormal->setChecked(true);
+        return;
+    }
+    QwtScaleDraw * sd = ax->scaleDraw();
+    if(sd)
+    {
+        ui->doubleSpinBoxRotation->setValue(sd->labelRotation());
+        ui->labelAligment->setAlignment(sd->labelAlignment());
+    }
+    ui->spinBoxMargin->setValue(ax->margin());
+    QwtDateScaleDraw* dsd = dynamic_cast<QwtDateScaleDraw*>(sd);
+
+    if(dsd)
+    {
+        ui->radioButtonTimeScale->setChecked(true);
+        ui->dateTimeScaleSetWidget->setText(dsd->dateFormat(QwtDate::Second));
+    }
+    else
+    {
+        ui->radioButtonNormal->setChecked(true);
     }
 }
 
@@ -209,54 +271,15 @@ void SAQwtAxisSetWidget::setChart(QwtPlot *chart, int axisID)
     {
         disconnectChartAxis();
     }
+    m_chart = nullptr;//先设置为null，使得槽函数不动作
+    updateAxisValue(chart,axisID);
     m_chart = chart;
     m_axisID = axisID;
     connectChartAxis();
-    updateAxisValue();
 }
 
 void SAQwtAxisSetWidget::updateAxisValue()
 {
-    if(nullptr == m_chart)
-    {
-        return;
-    }
-    bool b = m_chart->axisEnabled(m_axisID);
-    ui->checkBoxEnable->setChecked(b);
-    onEnableCheckBoxClicked(b?Qt::Checked:Qt::Unchecked);
-    ui->lineEditTitle->setText(m_chart->axisTitle(m_axisID).text());
-    ui->fontSetWidget->setCurrentFont(m_chart->axisFont(m_axisID));
-    QwtInterval inv = m_chart->axisInterval(m_axisID);
-    ui->doubleSpinBoxMin->setValue(inv.minValue());
-    ui->doubleSpinBoxMax->setValue(inv.maxValue());
-    QwtScaleWidget * ax = m_chart->axisWidget(m_axisID);
-    if(nullptr == ax)
-    {
-        ui->radioButtonNormal->setChecked(true);
-        return;
-    }
-    QwtScaleDraw * sd = ax->scaleDraw();
-    if(sd)
-    {
-        ui->doubleSpinBoxRotation->setValue(sd->labelRotation());
-        ui->labelAligment->setAlignment(sd->labelAlignment());
-    }
-    ui->spinBoxMargin->setValue(ax->margin());
-    QwtDateScaleDraw* dsd = dynamic_cast<QwtDateScaleDraw*>(sd);
-
-    if(dsd)
-    {
-        ui->radioButtonTimeScale->setChecked(true);
-//        if(!ui->stackedWidget->isVisible())
-//        {
-//            ui->stackedWidget->setVisible(true);
-//        }
-//        ui->stackedWidget->setCurrentWidget(ui->dateTimeScaleSetWidget);
-        ui->dateTimeScaleSetWidget->setText(dsd->dateFormat(QwtDate::Second));
-    }
-    else
-    {
-        ui->radioButtonNormal->setChecked(true);
-    }
+    updateAxisValue(m_chart,m_axisID);
 
 }
