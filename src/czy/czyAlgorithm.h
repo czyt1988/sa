@@ -110,7 +110,6 @@ void split_with_indexs(_IT input_begin,_IT input_end,_IT_Index index_begin,_IT_I
         std::copy(input_begin,input_end,outputOutOfIndex_begin);
         return;
     }
-    size_t indexSize = std::distance(index_begin,index_end);
     while (input_begin != input_end)
     {
       if (inputIndexStart == (size_t)(*index_begin))
