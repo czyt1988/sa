@@ -20,7 +20,8 @@ public:
     SACurvePlotItemSetWidget* parentClass;
     QwtPlotItemList plotItemList;
     QVBoxLayout* vboxlayout;
-
+    QMap<QwtPlotItem*,QWidget*> plotItem2Widget;///< 记录item对应的widget
+    QMap<QWidget*,QwtPlotItem*> widget2PlotItem;
     void setupUI(SACurvePlotItemSetWidget* par)
     {
         parentClass = par;
@@ -32,27 +33,49 @@ public:
     {
         while(vboxlayout->count())
         {
-            QLayoutItem * i = vboxlayout->itemAt(0);
-            vboxlayout->removeItem(i);
+            QLayoutItem * i = this->vboxlayout->itemAt(0);
+            this->vboxlayout->removeItem(i);
             QWidget* w = i->widget();
             if(w)
+            {
+                QwtPlotItem* item = this->widget2PlotItem[w];
+                this->widget2PlotItem.remove(w);
+                this->plotItem2Widget.remove(item);
                 delete w;
+            }
             if(i)
+            {
                 delete i;
+            }
+
         }
         for(int i=0;i<itemList.size();++i)
         {
             QwtPlotItem* item = itemList[i];
-            if(!SAChart::isPlotCurveItem(item))
-            {
-                continue;
-            }
-            SAQwtPlotItemVGroupBox* group = SAQwtPlotItemVGroupBox::createQwtPlotItemVGroupBox(item);
-            vboxlayout->addWidget(group);
+            this->addPlotItem(item);
         }
-        vboxlayout->addStretch();
+        this->vboxlayout->addStretch();
     }
 
+    void removePlotItem(QwtPlotItem *item)
+    {
+        QWidget* itemWidget = plotItem2Widget.value(item,nullptr);
+        if(itemWidget)
+        {
+            delete itemWidget;
+        }
+    }
+    void addPlotItem(QwtPlotItem *item)
+    {
+        if(!SAChart::isPlotCurveItem(item))
+        {
+            return;
+        }
+        SAQwtPlotItemVGroupBox* group = new SAQwtPlotItemVGroupBox(item);
+        this->vboxlayout->addWidget(group);
+        this->plotItem2Widget[item] = group;
+        this->widget2PlotItem[group] = item;
+    }
 };
 
 
@@ -77,7 +100,14 @@ void SACurvePlotItemSetWidget::setPlotItems(const QwtPlotItemList &items)
 
 void SACurvePlotItemSetWidget::plotItemAttached(QwtPlotItem *item, bool on)
 {
-
+    if(!on)
+    {
+        ui->removePlotItem(item);
+    }
+    else
+    {
+        ui->addPlotItem(item);
+    }
 }
 
 

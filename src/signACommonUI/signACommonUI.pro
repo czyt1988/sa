@@ -50,18 +50,12 @@ HEADERS += \
     QwtPlotPropertySetDialog.h \
     SAFiugreSetWidget.h \
     SAPropertySetWidget.h \
-    SAChartSetWidget.h \
-    SAChartNormalSetWidget.h \
     TestWidget.h \
-    SAPlotItemSetWidget.h \
-    SAQwtPlotItemVGroupBox.h \
-    SAAxisSelectComboBoxPropertyItem.h \
-    SACurvePlotItemSetWidget.h \
-    SAChartAxisSetSelect.h \
     SAPenSetWidget.h \
     SAColorPickerButton.h \
     SAPenStyleComboBox.h \
-    SAQwtSymbolComboBox.h
+    SAFontSetWidget.h \
+    SAAligmentSetWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -76,24 +70,18 @@ SOURCES += \
     QwtPlotPropertySetDialog.cpp \
     SAFiugreSetWidget.cpp \
     SAPropertySetWidget.cpp \
-    SAChartSetWidget.cpp \
-    SAChartNormalSetWidget.cpp \
     TestWidget.cpp \
-    SAPlotItemSetWidget.cpp \
-    SAQwtPlotItemVGroupBox.cpp \
-    SAAxisSelectComboBoxPropertyItem.cpp \
-    SACurvePlotItemSetWidget.cpp \
-    SAChartAxisSetSelect.cpp \
     SAPenSetWidget.cpp \
     SAColorPickerButton.cpp \
     SAPenStyleComboBox.cpp \
-    SAQwtSymbolComboBox.cpp
+    SAFontSetWidget.cpp \
+    SAAligmentSetWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
     TestWidget.ui \
-    SAChartAxisSetSelect.ui \
-    SAPenSetWidget.ui
+    SAFontSetWidget.ui \
+    SAAligmentSetWidget.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)
@@ -101,7 +89,9 @@ include($$PWD/Chart2D/Chart2D.pri)
 include($$PWD/SAPropertyItem/SAPropertyItem.pri)
 #sa chart support
 include($$PWD/Private/Private.pri)
-#sa chart support
+#menu
 include($$PWD/menu/menu.pri)
+#figure set
+include($$PWD/figureSet/figureSet.pri)
 RESOURCES += \
     icon.qrc

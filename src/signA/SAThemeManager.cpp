@@ -1,40 +1,39 @@
-﻿#include "SAThemeManager.h"
+#include "SAThemeManager.h"
+#include <QFile>
+#include <QApplication>
+#include <QDir>
 
-SAThemeManager::SAThemeManager(QWidget* wind):m_mainWindow(wind)
+
+
+
+
+SAThemeManager::SAThemeManager()
 {
 
 }
-///
-/// \brief 设置图层表格的样式
-/// \param wind 表格窗体指针
-/// \param qss qss样式，如果没有定义，设置为默认
-///
-void SAThemeManager::setTableViewLayout(QWidget* wind, const QString& qss)
+
+void SAThemeManager::setStyle(const QString &styleName)
 {
-    if(qss.isNull () || qss.isEmpty ())
+    QFile file(QApplication::applicationDirPath()+QDir::separator()+"theme"+QDir::separator()+styleName);
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
-        wind->setStyleSheet(getDefaultTableViewLayoutQss());
+        SAThemeManager tmp;
+        tmp.setDefault();
         return;
     }
-    wind->setStyleSheet (qss);
+    QString ss = file.readAll();
+    qApp->setStyleSheet(ss);
 }
-///
-/// \brief 获取默认的图层表格样式
-/// \return
-///
-QString SAThemeManager::getDefaultTableViewLayoutQss()
+
+bool SAThemeManager::setDefault()
 {
-    QString qss;
-//    qss = QString(""
-//                  "QTableView:{selection-background-color:transparent;selection-color:transparent;}"
-//                  "");
-//    qss = QString(""
-//                  //无效"QTableView{show-decoration-selected: 1}"
-//                  //设置隔行色"QTableView{alternate-background-color: blue;}"
-//                  //"QTableView::item:selected{selection-background-color:transparent;}"
-//                  "QTableView::item:selected{selection-background-color:rgba(15,152,95,50%);}"
-//                  "QTableView::item:selected{selection-color:rgb(0,0,0);}"
-//                  "");
-    return qss;
+    QFile file(":/default/theme/default.qss");
+    if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        return false;
+    }
+    qApp->setStyleSheet(file.readAll());
+    return true;
 }
+
 

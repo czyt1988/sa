@@ -1,9 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QTextCodec>
-
-//==图层的选中状态无法看到颜色，用qss改为外框
-//==添加主题管理的类SAThemeManager
+#include "SAThemeManager.h"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 #pragma execution_character_set("utf-8")
@@ -19,7 +17,9 @@ int main(int argc, char *argv[])
 #endif
 #endif
     QApplication a(argc, argv);
+    //样式设置
     MainWindow w;
+    SAThemeManager::setStyle("default.qss");
     w.show();
     
     return a.exec();

@@ -1,4 +1,4 @@
-﻿#ifndef SATHEMEMANAGER_H
+#ifndef SATHEMEMANAGER_H
 #define SATHEMEMANAGER_H
 #include <QMainWindow>
 ///
@@ -7,13 +7,10 @@
 class SAThemeManager
 {
 public:
-    SAThemeManager(QWidget* wind);
-    void setTableViewLayout(QWidget* wind,const QString& qss=QString());
+    SAThemeManager();
+    static void setStyle(const QString &styleName);
+    bool setDefault();
 private:
-    void setDefault();
-    QString getDefaultTableViewLayoutQss();
-private:
-    QWidget* m_mainWindow;
 };
 
 #endif // SATHEMEMANAGER_H

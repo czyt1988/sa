@@ -31,7 +31,7 @@
 #include "DataFeatureTreeModel.h"
 #include "SADataFeatureItem.h"
 
-#define _DEBUG_OUTPUT
+//#define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
     #include <QElapsedTimer>
     #include <QDebug>
@@ -501,8 +501,10 @@ void SADataFeatureWidget::tryToConnectServer()
     saPrint() << "start connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME)";
 #endif
     m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
+
 #ifdef _DEBUG_OUTPUT
     saPrint() << "start connectToServer cost:"<<t.elapsed();
+    t.restart();
 #endif
     if(m_connectRetryCount <= 0)
     {
@@ -511,18 +513,11 @@ void SADataFeatureWidget::tryToConnectServer()
         saDebug(str);
         return;
     }
-#ifdef _DEBUG_OUTPUT
-    t.restart();
-    saPrint() << "start waitForConnected:"<<t.elapsed();
-#endif
     if(!m_dataProcessSocket->waitForConnected(100))
     {
 
         QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
         --m_connectRetryCount;
-#ifdef _DEBUG_OUTPUT
-    saPrint() << "can not connected,will reconnect(wait cost:"<<t.elapsed()<<")";
-#endif
         return;
     }
 

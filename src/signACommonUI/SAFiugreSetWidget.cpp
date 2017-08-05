@@ -25,8 +25,9 @@ public:
         SAFiugreSetWidget->resize(308, 464);
 
         tabWidget = new QTabWidget(SAFiugreSetWidget);
-        tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        tabWidget->setObjectName(QStringLiteral("SAFiugreSetWidgetTabWidget"));
         tabWidget->setTabPosition(QTabWidget::South);
+        tabWidget->tabBar()->setObjectName(QStringLiteral("SAFiugreSetWidgetTabBar"));
         //
 
         verticalLayout = new QVBoxLayout;

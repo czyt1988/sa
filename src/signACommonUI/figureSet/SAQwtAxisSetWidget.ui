@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SAQwtAxisSetWidget</class>
+ <widget class="QWidget" name="SAQwtAxisSetWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>245</width>
+    <height>325</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>1</number>
+   </property>
+   <item>
+    <widget class="QCheckBox" name="checkBoxEnable">
+     <property name="text">
+      <string>enable</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutTitle">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="labelTitle">
+       <property name="text">
+        <string>title</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditTitle"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutFont">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="labelFont">
+       <property name="text">
+        <string>font</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="SAFontSetWidget" name="fontSetWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>16</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutAligment">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="labelAligment">
+       <property name="text">
+        <string>label Aligment</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="SAAligmentSetWidget" name="aligmentSetWidget" native="true"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelRotation">
+       <property name="text">
+        <string>label Rotation</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxRotation"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelMargin">
+       <property name="text">
+        <string>margin</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spinBoxMargin"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelMinScale">
+       <property name="text">
+        <string>min scale</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxMin">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="minimum">
+        <double>-10000000000000000735758738477112498397576062152177456799245857901351759143802190202050679656153088.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>100000000000000001463069523067487303097004298786465505927861078716979636425114821591040.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="labelMaxScale">
+       <property name="text">
+        <string>max scale</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxMax">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+       <property name="minimum">
+        <double>-100000000000000004188152556421145795899143386664033828314342771180699648.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>999999999999999949387135297074018866963645011013410073083904.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="radioButtonNormal">
+     <property name="text">
+      <string>normal</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="radioButtonTimeScale">
+     <property name="text">
+      <string>Time Scale</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <widget class="SAQwtDateScaleSeWidget" name="dateTimeScaleSetWidget"/>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SAFontSetWidget</class>
+   <extends>QWidget</extends>
+   <header>SAFontSetWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAAligmentSetWidget</class>
+   <extends>QWidget</extends>
+   <header>SAAligmentSetWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAQwtDateScaleSeWidget</class>
+   <extends>QWidget</extends>
+   <header>SAQwtDateScaleSeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

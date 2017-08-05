@@ -59,7 +59,7 @@ SymbolBox::SymbolBox(bool showNoSymbol, QWidget *parent) : QComboBox(parent)
 void SymbolBox::init(bool showNoSymbol)
 {
 	QPixmap icon = QPixmap(15, 15);
-	QColor c = QColor (Qt::gray);
+    QColor c = QColor (Qt::transparent);
 	icon.fill(c);
 	const QRect r = QRect(1, 1, 14, 14);
 	QPainter p(&icon);
