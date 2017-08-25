@@ -44,7 +44,7 @@ SAQwtPlotCurveItemSetWidget::SAQwtPlotCurveItemSetWidget(QwtPlotCurve *plotItem,
             ,this,&SAQwtPlotCurveItemSetWidget::onSymbolComboBoxChanged);
     connect(m_symbolSetButton,&QPushButton::clicked
             ,this,&SAQwtPlotCurveItemSetWidget::onSymbolSetButtonClicked);
-
+    retranslateUi();
 }
 
 SAQwtPlotCurveItemSetWidget::~SAQwtPlotCurveItemSetWidget()

@@ -175,7 +175,7 @@ Qt::ItemFlags SAValueManagerModel::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
         return Qt::NoItemFlags;
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
 QVariant SAValueManagerModel::data(const QModelIndex &index, int role) const
@@ -268,6 +268,11 @@ bool SAValueManagerModel::setData(const QModelIndex &index, const QVariant &valu
     return false;
 }
 
+//Qt::DropActions SAValueManagerModel::supportedDropActions() const
+//{
+//    return Qt::CopyAction | Qt::MoveAction;
+//}
+
 SAAbstractDatas *SAValueManagerModel::castToDataPtr(const QModelIndex &index) const
 {
     if(index.column() == 0)
@@ -330,28 +335,28 @@ void SAValueManagerModel::registerDataTypeIcon(int type, const QIcon &ico)
 void SAValueManagerModel::onDataAdded(const QList<SAAbstractDatas *> &datas)
 {
     Q_UNUSED(datas);
-    reRsetModel();
+    resetModel();
 }
 
 void SAValueManagerModel::onDataDeleted(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
     Q_UNUSED(dataBeDeletedPtr);
-    reRsetModel();
+    resetModel();
 }
 
 void SAValueManagerModel::onDataClear()
 {
-    reRsetModel();
+    resetModel();
 }
 
 void SAValueManagerModel::onDataNameChanged(SAAbstractDatas *data, const QString &oldName)
 {
     Q_UNUSED(data);
     Q_UNUSED(oldName);
-    reRsetModel();
+    resetModel();
 }
 
-void SAValueManagerModel::reRsetModel()
+void SAValueManagerModel::resetModel()
 {
     beginResetModel();
     endResetModel();

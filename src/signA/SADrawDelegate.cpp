@@ -27,7 +27,11 @@ void SADrawDelegate::drawTrend()
 {
     MainWindow* m = getMainWindow ();
     QList<SAAbstractDatas*> datas = m->getSeletedDatas();
-    //验证是否可以绘图
+    drawTrend(datas);
+}
+
+void SADrawDelegate::drawTrend(const QList<SAAbstractDatas *> &datas)
+{
     if(datas.size()<=0)
     {
         return;

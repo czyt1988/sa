@@ -34,7 +34,6 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     progressStateWidget.cpp \
     AboutDialog.cpp \   
-    SAMimeData.cpp \
     SAThemeManager.cpp \
     SATabValueViewerWidget.cpp \
     SADrawDelegate.cpp \
@@ -48,7 +47,6 @@ HEADERS  += mainwindow.h \
     DebugInfo.h \
     progressStateWidget.h \
     AboutDialog.h \
-    SAMimeData.h \
     SAThemeManager.h \
     SATabValueViewerWidget.h \
     SADrawDelegate.h \

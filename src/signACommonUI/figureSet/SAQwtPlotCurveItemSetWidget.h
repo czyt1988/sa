@@ -10,6 +10,10 @@ class QPushButton;
 class QLabel;
 class QMenu;
 class SAQwtSymbolSetWidget;
+
+///
+/// \brief 对应QwtPlotCurveItem的设置窗口
+///
 class SAQwtPlotCurveItemSetWidget : public SAQwtPlotItemSetWidget
 {
     Q_OBJECT

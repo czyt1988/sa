@@ -318,6 +318,8 @@ private slots:
     // 项目属性设置
     void onActionProjectSettingTriggered();
     /// \}
+
+
 public slots:
     void onChartDataChanged(QWidget* widget,const QwtPlotItem* pC);
 public:
@@ -362,21 +364,6 @@ public:
 
 
 
-
-
-
-
-
-    //////////////////////////////////////////////////////////////////////////
-
-    bool callback_hightLightItem(QStandardItem* item,const QStringList keys);
-
-    //////////////////////////////////////////////////////////////////////////
-
-
-
-
-
     void pickCurData(const QString& name, QwtPlotCurve* cur, SA::PickDataMode pickMode, const QRectF& rang);
 
     //-------dock-图层表格相关---------------------
@@ -391,6 +378,10 @@ public:
     SAValueManagerModel *getValueManagerModel() const;
     //
     SADrawDelegate* getDrawDelegate() const;
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
     //配置信息加载
     void saveSetting();

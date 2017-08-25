@@ -44,6 +44,7 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
   ,m_currentPlot(nullptr)
 {
     ui->setupUI(this);
+    setAcceptDrops(true);
     setAutoFillBackground(true);
     setBackgroundColor(QColor(255,255,255));
     static int s_figure_count=0;

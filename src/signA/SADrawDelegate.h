@@ -17,6 +17,7 @@ public:
     SADrawDelegate(MainWindow* wnd);
     virtual ~SADrawDelegate();
     virtual void drawTrend();
+    virtual void drawTrend(const QList<SAAbstractDatas*>& datas);
     //绘图
     QwtPlotCurve* draw(SAAbstractDatas* data);
     QwtPlotCurve* draw(SAAbstractDatas* x,SAAbstractDatas* y,QString name);

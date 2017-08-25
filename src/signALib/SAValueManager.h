@@ -67,6 +67,7 @@ public:
     void clear();
     //根据id查找
     SAAbstractDatas* findData(int id) const;
+    QList<SAAbstractDatas*> findDatas(const QList<int>& ids) const;
     //根据名字查找
     SAAbstractDatas* findData(const QString& name) const;
     //根据名字查找

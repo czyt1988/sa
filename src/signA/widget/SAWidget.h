@@ -8,13 +8,6 @@ class SAWidget : public czy::QtUI::QWidgetEx
 public:
     SAWidget(QWidget *parent = 0);
     ~SAWidget(){}
-//    enum InfoType{
-//        NormalInfo,
-//        WarningInfo,
-//        QuessionInfo,
-//        ErrorInfo
-//    };
-
 signals:
     ///
     /// \brief 抛出的信息，sawidget可以通过此消息发送信息，让message给主窗口
@@ -24,7 +17,7 @@ signals:
     /// \param interval 消息需要显示的时间间隔 ms
     /// \see SAWidget::InfoType
     ///
-    void postInfoMessage(const QString& info,QWidget *widget,SA::MeaasgeType messageType,int interval);
+    void postInfoMessage(const QString& info,QWidget *widget,int messageType,int interval);
 };
 
 #endif // SAWIDGET_H

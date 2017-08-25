@@ -232,6 +232,7 @@ void SAPenSetWidget::setPen(const QPen &pen)
     ui->pushButtonColor->setCurrentColor(pen.color());
     ui->comboBoxPenStyle->setStyle(pen.style());
     ui->spinBoxPenWidth->setValue(pen.width());
+    ui->horizontalSliderColorAlpha->setValue(pen.color().alpha());
     m_enableEmit = true;
 }
 

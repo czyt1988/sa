@@ -142,6 +142,23 @@ SAAbstractDatas *SAValueManager::findData(int id) const
     return m_ptrContainer->findData(id);
 }
 ///
+/// \brief 根据id查找变量，所有变量都只有唯一id
+/// \param ids id数组
+/// \return
+///
+QList<SAAbstractDatas*> SAValueManager::findDatas(const QList<int> &ids) const
+{
+    QList<SAAbstractDatas*> res;
+    std::for_each(ids.begin(),ids.end(),[&res,this](int id){
+        SAAbstractDatas* d = this->findData(id);
+        if(d)
+        {
+            res.append(d);
+        }
+    });
+    return res;
+}
+///
 /// \brief 根据名字查找变量，所有变量管理器管理的变量都只有唯一名字
 /// \param name 变量名
 /// \return 未能获取放回nullptr

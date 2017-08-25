@@ -19,7 +19,6 @@
 #include <QInputDialog>
 #include <QMdiArea>
 #include <QProcess>
-
 //----------STL-------------
 #include <iostream>
 #include <algorithm>
@@ -56,6 +55,7 @@
 #include "SAPluginInterface.h"
 #include "SALog.h"
 #include "SAProjectManager.h"
+#include "SAValueManagerMimeData.h"
 //
 
 
@@ -212,14 +212,6 @@ void MainWindow::initUI()
     m_mdiManager.setMdi(ui->mdiArea);
     //项目结构树
     m_drawDelegate.reset (new SADrawDelegate(this));
-
-    //变量管理树
-    SAValueManagerModel* modelValueMgr = new SAValueManagerModel(this);
-    ui->treeView_valueManager->setDragEnabled(true);
-    ui->treeView_valueManager->setDragDropMode(QAbstractItemView::DragOnly);
-    ui->treeView_valueManager->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    ui->treeView_valueManager->setModel(modelValueMgr);
-
 
 	//////////////////////////////////////////////////////////////////////////
 	//model
@@ -521,6 +513,9 @@ void MainWindow::onActionProjectSettingTriggered()
     setProjectInfomation();
 }
 
+
+
+
 MainWindow::~MainWindow()
 {
     saveSetting();
@@ -637,13 +632,52 @@ void MainWindow::onTreeViewValueManagerCustomContextMenuRequested(const QPoint &
 
 SAValueManagerModel*MainWindow::getValueManagerModel() const
 {
-    return static_cast<SAValueManagerModel*>(ui->treeView_valueManager->model ());
+    return ui->treeView_valueManager->getValueManagerModel();
 }
 
 
 SADrawDelegate*MainWindow::getDrawDelegate() const
 {
     return m_drawDelegate.get ();
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+    {
+        saPrint() << "dragEnterEvent SAValueManagerMimeData::valueIDMimeType()";
+       event->accept();
+    }
+    else
+    {
+        event->ignore();
+    }
+}
+
+void MainWindow::dragMoveEvent(QDragMoveEvent *event)
+{
+    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+    {
+        saPrint() << "dragMoveEvent SAValueManagerMimeData::valueIDMimeType()";
+        event->accept();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+    {
+        QList<int> ids;
+        if(SAValueManagerMimeData::getValueIDsFromMimeData(event->mimeData(),ids))
+        {
+            saPrint() << "dropEvent SAValueManagerMimeData::valueIDMimeType()";
+            QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
+            if(datas.size() > 0)
+            {
+                m_drawDelegate->drawTrend(datas);
+            }
+        }
+    }
 }
 
 ///
@@ -806,25 +840,6 @@ void MainWindow::onActionClearProjectTriggered()
 }
 
 
-///
-/// \brief 搜索回调函数
-/// \param item
-/// \param keys
-/// \return
-///
-bool MainWindow::callback_hightLightItem(QStandardItem* item,const QStringList keys)
-{
-    QString str = item->text();
-    if (czy::QtApp::StringEx::is_match_string(str,keys))
-    {
-        item->setData(QVariant(QColor(247,247,72,180)),Qt::BackgroundRole);
-    }
-    else
-    {
-        item->setData(QVariant(),Qt::BackgroundRole);
-    }
-    return true;
-}
 
 
 
@@ -1371,13 +1386,7 @@ void MainWindow::onActionRenameValueTriggered()
 ///
 SAAbstractDatas* MainWindow::getSeletedData() const
 {
-    ui->treeView_valueManager->currentIndex();
-    QModelIndex index = ui->treeView_valueManager->currentIndex ();
-    if(!index.isValid())
-    {
-        return nullptr;
-    }
-    return getValueManagerModel()->castToDataPtr(index);
+    return ui->treeView_valueManager->getSeletedData();
 }
 ///
 /// \brief 获取选中的数据条目，如果没有选中，将弹出数据选择窗口让用户进行选择
@@ -1423,18 +1432,7 @@ SAAbstractDatas *MainWindow::getSelectSingleData(bool isAutoSelect)
 ///
 QList<SAAbstractDatas*> MainWindow::getSeletedDatas() const
 {
-    QItemSelectionModel *sel = ui->treeView_valueManager->selectionModel();
-    QModelIndexList indexList = sel->selectedRows();
-    QList<SAAbstractDatas*> datas;
-    for(int i=0;i<indexList.size ();++i)
-    {
-        SAAbstractDatas* data = getValueManagerModel()->castToDataPtr(indexList[i]);
-        if(nullptr != data)
-        {
-            datas.append(data);
-        }
-    }
-    return datas;
+    return ui->treeView_valueManager->getSeletedDatas();
 }
 
 

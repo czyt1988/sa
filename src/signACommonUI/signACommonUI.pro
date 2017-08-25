@@ -55,7 +55,8 @@ HEADERS += \
     SAColorPickerButton.h \
     SAPenStyleComboBox.h \
     SAFontSetWidget.h \
-    SAAligmentSetWidget.h
+    SAAligmentSetWidget.h \
+    SAValueManagerTreeView.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -75,7 +76,8 @@ SOURCES += \
     SAColorPickerButton.cpp \
     SAPenStyleComboBox.cpp \
     SAFontSetWidget.cpp \
-    SAAligmentSetWidget.cpp
+    SAAligmentSetWidget.cpp \
+    SAValueManagerTreeView.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
