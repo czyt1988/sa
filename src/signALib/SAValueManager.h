@@ -9,8 +9,7 @@
 #include <QObject>
 #include <QList>
 #include <QSet>
-#include <QUndoStack>
-
+#include <QtWidgets/QUndoStack>
 class QFile;
 class PointerContainerPrivate;
 ///
