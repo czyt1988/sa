@@ -10,6 +10,7 @@ SAQwtSymbolSetWidget::SAQwtSymbolSetWidget(QWidget *parent) :
   ,m_signalLock(false)
 {
     ui->setupUi(this);
+    ui->toolButtonFixWidthHeight->setChecked(true);
     QPalette pl = palette();
     pl.setBrush(QPalette::Window,pl.window());
     pl.setColor(QPalette::Window,pl.window().color());
@@ -23,11 +24,9 @@ SAQwtSymbolSetWidget::SAQwtSymbolSetWidget(const QwtSymbol *symbol, QWidget *par
     ,m_signalLock(false)
 {
     ui->setupUi(this);
-    m_symbol.setStyle(symbol->style());
-    m_symbol.setPen(symbol->pen());
-    m_symbol.setBrush(symbol->brush());
-    m_symbol.setSize(symbol->size());
+    ui->toolButtonFixWidthHeight->setChecked(true);
     init();
+    setSymbol(symbol);
 }
 
 SAQwtSymbolSetWidget::~SAQwtSymbolSetWidget()
@@ -38,6 +37,22 @@ SAQwtSymbolSetWidget::~SAQwtSymbolSetWidget()
 const QwtSymbol &SAQwtSymbolSetWidget::getSymbol()
 {
     return m_symbol;
+}
+
+void SAQwtSymbolSetWidget::setSymbol(const QwtSymbol *symbol)
+{
+    m_symbol.setStyle(symbol->style());
+    m_symbol.setPen(symbol->pen());
+    m_symbol.setBrush(symbol->brush());
+    m_symbol.setSize(symbol->size());
+    ui->comboBoxSymbolStyle->setStyle(symbol->style());
+    ui->spinBoxSizeX->setValue(symbol->size().width());
+    ui->spinBoxSizeY->setValue(symbol->size().height());
+    ui->edgetPenSet->setPen(symbol->pen());
+    ui->colorPushButtonBrush->setCurrentColor(symbol->brush().color());
+    ui->horizontalSliderBrushAlpha->setValue(symbol->brush().color().alpha());
+
+    updateSymbol();
 }
 
 

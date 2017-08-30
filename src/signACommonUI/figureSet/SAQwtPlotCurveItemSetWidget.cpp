@@ -137,8 +137,7 @@ void SAQwtPlotCurveItemSetWidget::onBaseLineSpinBoxValueChanged(double v)
 
 void SAQwtPlotCurveItemSetWidget::onSymbolComboBoxChanged(QwtSymbol::Style style)
 {
-    m_symbolSetButton->setEnabled(QwtSymbol::NoSymbol != style);
-    m_curveItem->setSymbol(new QwtSymbol(style));
+    setSymbol(style);
 }
 
 void SAQwtPlotCurveItemSetWidget::onSymbolSetButtonClicked()
@@ -147,12 +146,39 @@ void SAQwtPlotCurveItemSetWidget::onSymbolSetButtonClicked()
     {
         m_symbolSetMenu = new QMenu(this);
         QWidgetAction* act = new QWidgetAction(m_symbolSetMenu);
-        QScopedPointer<QwtSymbol> symbol(new QwtSymbol(m_symbolComboBox->selectedSymbol()));
+        const QwtSymbol* oldSymbol = m_curveItem->symbol();
+        QScopedPointer<QwtSymbol> symbol;
+        if(oldSymbol)
+        {
+            symbol.reset(new QwtSymbol(m_symbolComboBox->selectedSymbol()
+                                       ,oldSymbol->brush()
+                                       ,oldSymbol->pen()
+                                       ,oldSymbol->size()));
+        }
+        else
+        {
+            QColor penColor = m_curveItem->pen().color();
+            QPen pen = QPen(penColor);
+            penColor.setAlpha(150);
+            QBrush brush = QBrush(penColor);
+            symbol.reset(new QwtSymbol(m_symbolComboBox->selectedSymbol()
+                                       ,brush
+                                       ,pen
+                                       ,QSize(6,6)));
+        }
         m_symbolSetWidget = new SAQwtSymbolSetWidget(symbol.data());
         act->setDefaultWidget(m_symbolSetWidget);
         m_symbolSetMenu->addAction(act);
         connect(m_symbolSetMenu,&QMenu::aboutToHide
                 ,this,&SAQwtPlotCurveItemSetWidget::onSymbolSetMenuHide);
+    }
+    else
+    {
+        if(m_symbolSetWidget)
+        {
+            QScopedPointer<QwtSymbol> symbol(new QwtSymbol(m_symbolComboBox->selectedSymbol()));
+            m_symbolSetWidget->setSymbol(symbol.data());
+        }
     }
     m_symbolSetMenu->exec(QCursor::pos());
 }
@@ -166,4 +192,35 @@ void SAQwtPlotCurveItemSetWidget::onSymbolSetMenuHide()
         m_curveItem->setSymbol(symbol);
         m_symbolComboBox->setStyle(symbol->style());
     }
+}
+
+void SAQwtPlotCurveItemSetWidget::setSymbol(QwtSymbol::Style style)
+{
+    if(nullptr == m_curveItem)
+    {
+        return;
+    }
+    const QwtSymbol* oldSymbol = m_curveItem->symbol();
+    QwtSymbol* newSymbol = nullptr;
+    if(QwtSymbol::NoSymbol != style)
+    {
+        newSymbol = new QwtSymbol(style);
+        if(nullptr == oldSymbol)
+        {
+            //初始没有符号，第一次设置
+            QColor penColor = m_curveItem->pen().color();
+            newSymbol->setPen(penColor);
+            penColor.setAlpha(150);
+            newSymbol->setBrush(QBrush(penColor));
+            newSymbol->setSize(6,6);
+        }
+        else
+        {
+            newSymbol->setPen(oldSymbol->pen());
+            newSymbol->setBrush(oldSymbol->brush());
+            newSymbol->setSize(oldSymbol->size());
+        }
+    }
+    m_symbolSetButton->setEnabled(nullptr != newSymbol);
+    m_curveItem->setSymbol(newSymbol);
 }

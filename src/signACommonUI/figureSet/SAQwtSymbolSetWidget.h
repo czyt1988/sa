@@ -20,6 +20,7 @@ public:
     explicit SAQwtSymbolSetWidget(const QwtSymbol* symbol,QWidget *parent = 0);
     ~SAQwtSymbolSetWidget();
     const QwtSymbol& getSymbol();
+    void setSymbol(const QwtSymbol *symbol);
 signals:
     void symbolSetChanged(const QwtSymbol& symbol);
 private slots:

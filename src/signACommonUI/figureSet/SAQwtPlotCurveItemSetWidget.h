@@ -31,6 +31,8 @@ private slots:
     Q_SLOT void onSymbolSetButtonClicked();
     Q_SLOT void onSymbolSetMenuHide();
 private:
+    void setSymbol(QwtSymbol::Style style);
+private:
     bool m_showAll;
     QwtPlotCurve *m_curveItem;
     SAPenSetWidget* m_PenStyle;
