@@ -1,5 +1,5 @@
-#include "TendencyChartDataModeSel.h"
-#include "ui_TendencyChartDataModeSel.h"
+#include "SATendencyChartDataSelectDialog.h"
+#include "ui_SATendencyChartDataSelectDialog.h"
 #include <QStringList>
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
@@ -7,9 +7,9 @@
 #include "SAChart2D.h"
 #include "qwt_plot_curve.h"
 #define ROLE_CUR_PTR Qt::UserRole+1
-TendencyChartDataModeSel::TendencyChartDataModeSel(SAChart2D* chart, QWidget *parent) :
+SATendencyChartDataSelectDialog::SATendencyChartDataSelectDialog(SAChart2D* chart, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::TendencyChartDataModeSel)
+    ui(new Ui::SATendencyChartDataSelectDialog)
   ,m_chart(chart)
 {
     ui->setupUi(this);
@@ -26,22 +26,22 @@ TendencyChartDataModeSel::TendencyChartDataModeSel(SAChart2D* chart, QWidget *pa
     ui->listView_curs->setCurrentIndex(model->index(0,0));
 }
 
-TendencyChartDataModeSel::~TendencyChartDataModeSel()
+SATendencyChartDataSelectDialog::~SATendencyChartDataSelectDialog()
 {
     delete ui;
 }
 
-bool TendencyChartDataModeSel::isFollow() const
+bool SATendencyChartDataSelectDialog::isFollow() const
 {
     return ui->radioButton_follow->isChecked();
 }
 
-bool TendencyChartDataModeSel::isSelDef() const
+bool SATendencyChartDataSelectDialog::isSelDef() const
 {
     return ui->radioButton_selDef->isChecked();
 }
 
-void TendencyChartDataModeSel::getSelDefData(double& start, double& added) const
+void SATendencyChartDataSelectDialog::getSelDefData(double& start, double& added) const
 {
     start = ui->lineEdit_start->text().toDouble();
     added = ui->lineEdit_added->text().toDouble();
@@ -50,7 +50,7 @@ void TendencyChartDataModeSel::getSelDefData(double& start, double& added) const
 /// \brief 获取需要选择跟随的曲线
 /// \return
 ///
-QwtPlotCurve*TendencyChartDataModeSel::getSelFollowCurs() const
+QwtPlotCurve*SATendencyChartDataSelectDialog::getSelFollowCurs() const
 {
     QModelIndexList sel = ui->listView_curs->selectionModel()->selectedIndexes();
     if(sel.size()!=1)
@@ -59,7 +59,7 @@ QwtPlotCurve*TendencyChartDataModeSel::getSelFollowCurs() const
     return reinterpret_cast<QwtPlotCurve*>(curuint);
 }
 
-void TendencyChartDataModeSel::on_buttonBox_accepted()
+void SATendencyChartDataSelectDialog::on_buttonBox_accepted()
 {
     if(!(isFollow() | isSelDef()))
     {

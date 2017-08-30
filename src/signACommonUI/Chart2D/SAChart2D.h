@@ -5,6 +5,9 @@
 class SAAbstractDatas;
 class SAXYSeries;
 class SABarSeries;
+///
+/// \brief sa 2d 曲线绘图的基本窗口封装，包括支持SAAbstractDatas的处理
+///
 class SA_COMMON_UI_EXPORT SAChart2D : public SA2DGraph
 {
     Q_OBJECT
@@ -23,6 +26,12 @@ public:
     //移除范围内数据
     using SA2DGraph::removeDataInRang;
     void removeDataInRang(QList<QwtPlotCurve *> curves);
+private:
+    void addDatas(const QList<SAAbstractDatas*>& datas);
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // SACHART2D_H

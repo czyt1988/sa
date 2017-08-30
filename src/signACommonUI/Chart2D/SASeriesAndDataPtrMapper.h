@@ -2,6 +2,10 @@
 #define SASERIESANDDATAPTRMAPPER_H
 #include <QSet>
 class SAAbstractDatas;
+///
+/// \brief 曲线和数据的记录器
+/// 一个曲线可能和1个数据关联，也可能是两个数据关联，也可能是多个数据关联
+///
 class SASeriesAndDataPtrMapper
 {
 public:

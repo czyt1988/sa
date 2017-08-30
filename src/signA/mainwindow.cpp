@@ -646,7 +646,8 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
     if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
     {
         saPrint() << "dragEnterEvent SAValueManagerMimeData::valueIDMimeType()";
-       event->accept();
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
     }
     else
     {
@@ -659,6 +660,7 @@ void MainWindow::dragMoveEvent(QDragMoveEvent *event)
     if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
     {
         saPrint() << "dragMoveEvent SAValueManagerMimeData::valueIDMimeType()";
+        event->setDropAction(Qt::MoveAction);
         event->accept();
     }
 }

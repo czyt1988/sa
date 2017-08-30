@@ -53,25 +53,21 @@ SAAbstractDatas *SAValueManagerTreeView::getSeletedData() const
 void SAValueManagerTreeView::dragEnterEvent(QDragEnterEvent *event)
 {
     QTreeView::dragEnterEvent(event);
-    qDebug() <<" SAValueManagerTreeView::dragEnterEvent";
 }
 
 void SAValueManagerTreeView::dragMoveEvent(QDragMoveEvent *event)
 {
     QTreeView::dragMoveEvent(event);
-    qDebug() <<" SAValueManagerTreeView::dragMoveEvent";
 }
 
 void SAValueManagerTreeView::dropEvent(QDropEvent *event)
 {
     QTreeView::dropEvent(event);
-    qDebug() <<" SAValueManagerTreeView::dropEvent";
 }
 
 void SAValueManagerTreeView::startDrag(Qt::DropActions supportedActions)
 {
     QTreeView::startDrag(supportedActions);
-    qDebug() <<" SAValueManagerTreeView::startDrag";
 
     QList<SAAbstractDatas *> datas = getSeletedDatas();
     SAValueManagerMimeData *mimeData = new SAValueManagerMimeData;

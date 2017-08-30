@@ -1,20 +1,19 @@
-﻿#ifndef TENDENCYCHARTDATAMODESEL_H
+#ifndef TENDENCYCHARTDATAMODESEL_H
 #define TENDENCYCHARTDATAMODESEL_H
-
+#include "SACommonUIGlobal.h"
 #include <QDialog>
 class SAChart2D;
 class QwtPlotCurve;
 namespace Ui {
-class TendencyChartDataModeSel;
+class SATendencyChartDataSelectDialog;
 }
 
-class TendencyChartDataModeSel : public QDialog
+class SA_COMMON_UI_EXPORT SATendencyChartDataSelectDialog : public QDialog
 {
     Q_OBJECT
-
 public:
-    explicit TendencyChartDataModeSel(SAChart2D* chart,QWidget *parent = 0);
-    ~TendencyChartDataModeSel();
+    explicit SATendencyChartDataSelectDialog(SAChart2D* chart,QWidget *parent = 0);
+    ~SATendencyChartDataSelectDialog();
     bool isFollow() const;
     bool isSelDef() const;
     void getSelDefData(double& start,double& added) const;
@@ -23,7 +22,7 @@ private slots:
     void on_buttonBox_accepted();
 
 private:
-    Ui::TendencyChartDataModeSel *ui;
+    Ui::SATendencyChartDataSelectDialog *ui;
     SAChart2D* m_chart;
 };
 

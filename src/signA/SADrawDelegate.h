@@ -22,9 +22,6 @@ public:
     QwtPlotCurve* draw(SAAbstractDatas* data);
     QwtPlotCurve* draw(SAAbstractDatas* x,SAAbstractDatas* y,QString name);
     QwtPlotHistogram* drawBar(SAAbstractDatas* barSeries);
-    //标记
-    //最小二乘回归分析
-    //void markLeastSquarePolyfit(int n);
     //创建绘图窗口
     SAMdiSubWindow* createFigureMdiSubWidget(const QString& title);
     //把QMdiSubWindow的内部SAFigureWidget获取

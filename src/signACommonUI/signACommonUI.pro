@@ -56,7 +56,8 @@ HEADERS += \
     SAPenStyleComboBox.h \
     SAFontSetWidget.h \
     SAAligmentSetWidget.h \
-    SAValueManagerTreeView.h
+    SAValueManagerTreeView.h \
+    SATendencyChartDataSelectDialog.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -77,13 +78,15 @@ SOURCES += \
     SAPenStyleComboBox.cpp \
     SAFontSetWidget.cpp \
     SAAligmentSetWidget.cpp \
-    SAValueManagerTreeView.cpp
+    SAValueManagerTreeView.cpp \
+    SATendencyChartDataSelectDialog.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
     TestWidget.ui \
     SAFontSetWidget.ui \
-    SAAligmentSetWidget.ui
+    SAAligmentSetWidget.ui \
+    SATendencyChartDataSelectDialog.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)

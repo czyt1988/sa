@@ -6,7 +6,6 @@ SOURCES += \
     $$PWD/Dialog_SelDefSeries.cpp \
     $$PWD/Dialog_ChooseCurve.cpp \
     $$PWD/dialog_renameproject.cpp \
-    $$PWD/TendencyChartDataModeSel.cpp \
     $$PWD/PickCurveDataModeSetDialog.cpp \
     $$PWD/SAProjectInfomationSetDialog.cpp
 HEADERS  +=\
@@ -14,7 +13,6 @@ HEADERS  +=\
     $$PWD/Dialog_SelDefSeries.h \
     $$PWD/Dialog_ChooseCurve.h \
     $$PWD/dialog_renameproject.h\
-    $$PWD/TendencyChartDataModeSel.h \
     $$PWD/PickCurveDataModeSetDialog.h \
     $$PWD/SAProjectInfomationSetDialog.h
 FORMS    +=\
@@ -22,7 +20,6 @@ FORMS    +=\
     $$PWD/Dialog_AddChart.ui \
     $$PWD/Dialog_SelDefSeries.ui \
     $$PWD/Dialog_ChooseCurve.ui \
-    $$PWD/TendencyChartDataModeSel.ui \
     $$PWD/PickCurveDataModeSetDialog.ui \
     $$PWD/SAProjectInfomationSetDialog.ui
 
