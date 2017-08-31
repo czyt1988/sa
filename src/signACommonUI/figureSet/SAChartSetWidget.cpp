@@ -40,6 +40,7 @@ public:
         //Tab 1 -- SAChartNormalSetWidget
         tabScrollArea1 = new QScrollArea();
         tabWidget->addTab(tabScrollArea1,QStringLiteral("1"));
+        tabWidget->setTabIcon(0,QIcon(":/icon/icons/normalSet.png"));
         tabScrollArea1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tabScrollArea1->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         tabScrollArea1->setWidgetResizable(true);
@@ -52,15 +53,17 @@ public:
         //Tab 2 -- SAChartAxesSetWidget
         tabScrollArea2 = new QScrollArea();
         tabWidget->addTab(tabScrollArea2,QStringLiteral("2"));
+        tabWidget->setTabIcon(1,QIcon(":/icon/icons/axesSet.png"));
         tabScrollArea2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tabScrollArea2->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         tabScrollArea2->setWidgetResizable(true);
         tabScrollArea2->setBackgroundRole(QPalette::NoRole);
         plotAxesSetWidget = new SAChartAxesSetWidget();
         tabScrollArea2->setWidget(plotAxesSetWidget);
-        //Tab 2 -- SAPlotItemSetWidget
+        //Tab 3 -- SAPlotItemSetWidget
         plotItemsSetWidget = new SAPlotItemSetWidget();
         tabWidget->addTab(plotItemsSetWidget,QStringLiteral("3"));
+        tabWidget->setTabIcon(2,QIcon(":/icon/icons/itemSet.png"));
         retranslateUi(par);
     }
     void retranslateUi(QWidget *w)
