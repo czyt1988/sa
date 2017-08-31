@@ -144,6 +144,12 @@ int SAChart::getItemDataSize(QwtPlotItem *item)
     return -1;
 }
 
+///
+/// \brief 是否允许显示坐标轴
+/// \param chart
+/// \param axisID
+/// \param b
+///
 void SAChart::setAxisEnable(QwtPlot *chart, int axisID, bool b)
 {
     if(chart)
@@ -155,7 +161,12 @@ void SAChart::setAxisEnable(QwtPlot *chart, int axisID, bool b)
         }
     }
 }
-
+///
+/// \brief 设置坐标轴的标题
+/// \param chart
+/// \param axisID
+/// \param text
+///
 void SAChart::setAxisTitle(QwtPlot *chart, int axisID, const QString &text)
 {
     if(chart)
@@ -165,7 +176,12 @@ void SAChart::setAxisTitle(QwtPlot *chart, int axisID, const QString &text)
 }
 
 
-
+///
+/// \brief 设置坐标轴文字的字体
+/// \param chart
+/// \param axisID
+/// \param font
+///
 void SAChart::setAxisFont(QwtPlot*chart,int axisID, const QFont &font)
 {
     if(chart)
@@ -173,7 +189,12 @@ void SAChart::setAxisFont(QwtPlot*chart,int axisID, const QFont &font)
         chart->setAxisFont(axisID,font);
     }
 }
-
+///
+/// \brief 设置坐标轴文字的旋转
+/// \param chart
+/// \param axisID
+/// \param v
+///
 void SAChart::setAxisLabelRotation(QwtPlot *chart, int axisID, double v)
 {
     if(chart)
@@ -181,7 +202,12 @@ void SAChart::setAxisLabelRotation(QwtPlot *chart, int axisID, double v)
         chart->setAxisLabelRotation(axisID,v);
     }
 }
-
+///
+/// \brief 设置坐标轴最小刻度
+/// \param chart
+/// \param axisID
+/// \param v
+///
 void SAChart::setAxisScaleMin(QwtPlot *chart, int axisID, double v)
 {
     if(chart)
@@ -190,7 +216,12 @@ void SAChart::setAxisScaleMin(QwtPlot *chart, int axisID, double v)
         chart->setAxisScale(axisID,v,inv.maxValue());
     }
 }
-
+///
+/// \brief 设置坐标轴最大刻度
+/// \param chart
+/// \param axisID
+/// \param v
+///
 void SAChart::setAxisScaleMax(QwtPlot *chart, int axisID, double v)
 {
     if(chart)
@@ -199,7 +230,12 @@ void SAChart::setAxisScaleMax(QwtPlot *chart, int axisID, double v)
         chart->setAxisScale(axisID,inv.minValue(),v);
     }
 }
-
+///
+/// \brief 指定坐标轴端点到窗体的距离-影响坐标轴标题的显示
+/// \param chart
+/// \param axisID
+/// \param v
+///
 void SAChart::setAxisBorderDistStart(QwtPlot *chart, int axisID, int v)
 {
     if(nullptr == chart)
@@ -212,7 +248,12 @@ void SAChart::setAxisBorderDistStart(QwtPlot *chart, int axisID, int v)
         ax->setBorderDist(v,ax->endBorderDist());
     }
 }
-
+///
+/// \brief 指定坐标轴端点到窗体的距离-影响坐标轴标题的显示
+/// \param chart
+/// \param axisID
+/// \param v
+///
 void SAChart::setAxisBorderDistEnd(QwtPlot *chart, int axisID, int v)
 {
     if(nullptr == chart)
@@ -225,7 +266,12 @@ void SAChart::setAxisBorderDistEnd(QwtPlot *chart, int axisID, int v)
         ax->setBorderDist(ax->startBorderDist(),v);
     }
 }
-
+///
+/// \brief 设置坐标轴和画板的偏移距离
+/// \param chart
+/// \param axisID 坐标轴
+/// \param v 偏移距离
+///
 void SAChart::setAxisMargin(QwtPlot *chart, int axisID, int v)
 {
     if(nullptr == chart)
@@ -238,7 +284,12 @@ void SAChart::setAxisMargin(QwtPlot *chart, int axisID, int v)
         ax->setMargin(v);
     }
 }
-
+///
+/// \brief 设置坐标轴的间隔
+/// \param chart
+/// \param axisID 坐标轴
+/// \param v 间隔
+///
 void SAChart::setAxisSpacing(QwtPlot *chart, int axisID, int v)
 {
     if(nullptr == chart)
@@ -251,7 +302,12 @@ void SAChart::setAxisSpacing(QwtPlot *chart, int axisID, int v)
         ax->setSpacing(v);
     }
 }
-
+///
+/// \brief 设置坐标轴文字的对齐方式
+/// \param chart
+/// \param axisID 坐标轴
+/// \param v 对齐方式
+///
 void SAChart::setAxisLabelAlignment(QwtPlot *chart, int axisID, Qt::Alignment v)
 {
     if(nullptr == chart)
@@ -264,7 +320,14 @@ void SAChart::setAxisLabelAlignment(QwtPlot *chart, int axisID, Qt::Alignment v)
         ax->setLabelAlignment(v);
     }
 }
-
+///
+/// \brief 设置坐标轴为时间坐标
+/// \param chart
+/// \param axisID 坐标轴id
+/// \param format 时间格式
+/// \param type 间隔类型
+/// \return
+///
 QwtDateScaleDraw* SAChart::setAxisDateTimeScale(QwtPlot *chart, int axisID, const QString &format, QwtDate::IntervalType type)
 {
     if(nullptr == chart)
@@ -284,7 +347,12 @@ QwtDateScaleDraw* SAChart::setAxisDateTimeScale(QwtPlot *chart, int axisID, cons
     }
     return dateScale;
 }
-
+///
+/// \brief 获取时间坐标轴，若当前不是时间坐标轴，返回nullptr,可以用来判断是否为时间坐标轴
+/// \param chart
+/// \param axisID
+/// \return 若当前不是时间坐标轴，返回nullptr
+///
 QwtDateScaleDraw *SAChart::getAxisDateTimeScale(QwtPlot *chart, int axisID)
 {
     if(nullptr == chart)
@@ -294,7 +362,12 @@ QwtDateScaleDraw *SAChart::getAxisDateTimeScale(QwtPlot *chart, int axisID)
     QwtScaleDraw* scale = chart->axisScaleDraw(axisID);
     return dynamic_cast<QwtDateScaleDraw*>(scale);
 }
-
+///
+/// \brief 设置为普通线性坐标轴
+/// \param chart
+/// \param axisID
+/// \return
+///
 QwtScaleDraw *SAChart::setAxisNormalScale(QwtPlot *chart, int axisID)
 {
     if(nullptr == chart)
@@ -316,6 +389,7 @@ QwtScaleDraw *SAChart::setAxisNormalScale(QwtPlot *chart, int axisID)
 
 ///
 /// \brief 获取对应坐标轴的id
+/// 如 xTop会返回xBottom
 /// \param axisID
 /// \return
 ///
@@ -331,4 +405,200 @@ int SAChart::otherAxis(int axisID)
     default:return QwtPlot::xBottom;
     }
     return QwtPlot::xBottom;
+}
+
+///
+/// \brief 获取vector point的y
+/// \param xys vector point
+/// \param ys vector double y
+/// \return 获取的尺寸
+///
+size_t SAChart::getYDatas(const QVector<QPointF> &xys, QVector<double> &ys)
+{
+    auto e = xys.cend();
+    auto s = 0;
+    for(auto i=xys.cbegin();i!=e;++i,++s)
+    {
+        ys.push_back((*i).y());
+    }
+    return s;
+}
+///
+/// \brief 获取vector point的x
+/// \param xys vector point
+/// \param xs vector double x
+/// \return 获取的尺寸
+///
+size_t SAChart::getXDatas(const QVector<QPointF> &xys, QVector<double> &xs)
+{
+    auto e = xys.cend();
+    auto s = 0;
+    for(auto i=xys.cbegin();i!=e;++i,++s)
+    {
+        xs.push_back((*i).x());
+    }
+    return s;
+}
+///
+/// \brief 获取一个曲线的y值
+/// \param ys 结果
+/// \param cur 曲线
+/// \param rang 指定范围
+/// \return
+///
+size_t SAChart::getYDatas(QVector<double> &ys,const QwtPlotCurve *cur, const QRectF &rang)
+{
+    const QwtSeriesData<QPointF>* datas = cur->data();
+    size_t size = datas->size();
+    size_t realSize = 0;
+    if(!rang.isNull() && rang.isValid())
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            if(rang.contains(datas->sample(i)))
+            {
+                ys.push_back(datas->sample(i).y());
+                ++realSize;
+            }
+        }
+    }
+    else
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            ys.push_back(datas->sample(i).y());
+        }
+        realSize = size;
+    }
+    return realSize;
+}
+///
+/// \brief 获取一个曲线的x值
+/// \param xs 结果
+/// \param cur 曲线
+/// \param rang 指定范围
+/// \return
+///
+size_t SAChart::getXDatas(QVector<double> &xs,const QwtPlotCurve *cur, const QRectF &rang)
+{
+    const QwtSeriesData<QPointF>* datas = cur->data();
+    size_t size = datas->size();
+    size_t realSize = 0;
+    if(!rang.isNull() && rang.isValid())
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            if(rang.contains(datas->sample(i)))
+            {
+                xs.push_back(datas->sample(i).x());
+                ++realSize;
+            }
+        }
+    }
+    else
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            xs.push_back(datas->sample(i).x());
+        }
+        realSize = size;
+    }
+    return realSize;
+}
+///
+/// \brief 获取一个曲线的xy值
+/// \param xys
+/// \param cur
+/// \param rang
+/// \return
+///
+size_t SAChart::getXYDatas(QVector<QPointF> &xys, const QwtPlotCurve *cur, const QRectF &rang)
+{
+    const QwtSeriesData<QPointF>* datas = cur->data();
+    size_t size = datas->size();
+    size_t realSize = 0;
+    if(!rang.isNull() && rang.isValid())
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            if(rang.contains(datas->sample(i)))
+            {
+                xys.push_back(datas->sample(i));
+                ++realSize;
+            }
+        }
+    }
+    else
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            xys.push_back(datas->sample(i));
+        }
+        realSize = size;
+    }
+    return realSize;
+}
+
+size_t SAChart::getXYDatas(QVector<double> &xs, QVector<double> &ys, const QwtPlotCurve *cur, const QRectF &rang)
+{
+    const QwtSeriesData<QPointF>* datas = cur->data();
+    size_t size = datas->size();
+    size_t realSize = 0;
+    if(!rang.isNull() && rang.isValid())
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            QPointF p = datas->sample(i);
+            if(rang.contains(p))
+            {
+                ys.push_back(p.y());
+                xs.push_back(p.x());
+                ++realSize;
+            }
+        }
+    }
+    else
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            QPointF p = datas->sample(i);
+            ys.push_back(p.y());
+            xs.push_back(p.x());
+        }
+        realSize = size;
+    }
+    return realSize;
+}
+
+size_t SAChart::getXYDatas(QVector<QPointF> &xys, QVector<double> &xs, QVector<double> &ys, const QwtPlotCurve *cur, const QRectF &rang)
+{
+    const QwtSeriesData<QPointF>* datas = cur->data();
+    size_t size = datas->size();
+    size_t realSize = 0;
+    if(!rang.isNull() && rang.isValid())
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            QPointF p = datas->sample(i);
+            if(rang.contains(p))
+            {
+                xys.push_back(p);
+                ys.push_back(p.y());
+                xs.push_back(p.x());
+                ++realSize;
+            }
+        }
+    }
+    else
+    {
+        for(size_t i=0;i<size;++i)
+        {
+            QPointF p = datas->sample(i);
+            xys.push_back(p);
+            ys.push_back(p.y());
+            xs.push_back(p.x());
+        }
+        realSize = size;
+    }
+    return realSize;
 }

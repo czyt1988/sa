@@ -8,7 +8,7 @@ class QXmlStreamWriter;
 class QXmlStreamReader;
 class QDomElement;
 ///
-/// \brief DataFeatureItem接口
+/// \brief SADataFeatureItem接口,类似QStandardItem
 ///
 class SALIB_EXPORT SADataFeatureItem
 {
@@ -79,10 +79,6 @@ protected:
 private:
     static int getTypeInt(const SADataFeatureItem *item);
     static void writeItem(QXmlStreamWriter* xml,const SADataFeatureItem* item);
-
-
-
-
     static bool readRootItem(QDomElement* xmlItem,SADataFeatureItem *item);
     static bool readChildItem(QDomElement* xmlItem,SADataFeatureItem *parentItem);
     static bool getItemInfoFromElement(QDomElement* xmlItem,SADataFeatureItem *item);

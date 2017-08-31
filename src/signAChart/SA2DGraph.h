@@ -303,15 +303,8 @@ public:
     void getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur);
     void getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString& strCurName);
 
-    static size_t getYDatas(const QVector<QPointF>& xys,QVector<double>& ys);
-    static size_t getXDatas(const QVector<QPointF>& xys,QVector<double>& xs);
 
-    static size_t getYDatas(QVector<double>& ys,QwtPlotCurve* cur,const QRectF& rang = QRectF());
-    static size_t getXDatas(QVector<double>& xs,QwtPlotCurve* cur,const QRectF& rang = QRectF());
 
-    static size_t getXYDatas(QVector<QPointF>& xys, const QwtPlotCurve* cur, const QRectF& rang = QRectF());
-    static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys,const QwtPlotCurve* cur, const QRectF& rang = QRectF());
-    static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtPlotCurve* cur, const QRectF& rang = QRectF());
     QRectF getPlottingRegionRang() const;
     QPoint getPlottingRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const;
 	QPoint getPlottingRegionDatas(std::vector<double>& out_xs
@@ -323,16 +316,16 @@ public:
     size_t removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve);
 //	QPoint getPlottingRegionDatasX_s(QwtPlotCurve* curve,QwtInterval xInter,QVector<QPointF>& out_xys);
 	enum AxisDateScaleType{
-    h_m=0,
-    hh_mm=1,
-    h_m_s=2,
-    hh_mm_ss=3,
-    yyyy_M_d=4,
-    yyyy_M_d_h_m=5,
-    yyyy_M_d_h_m_s=6,
-    yyyy_MM_dd=7,
-    yyyy_MM_dd_hh_mm=8,
-    yyyy_MM_dd_hh_mm_ss=9
+        h_m=0,
+        hh_mm=1,
+        h_m_s=2,
+        hh_mm_ss=3,
+        yyyy_M_d=4,
+        yyyy_M_d_h_m=5,
+        yyyy_M_d_h_m_s=6,
+        yyyy_MM_dd=7,
+        yyyy_MM_dd_hh_mm=8,
+        yyyy_MM_dd_hh_mm_ss=9
 	};
 
 	static QString axisDateScaleType2String(AxisDateScaleType type);

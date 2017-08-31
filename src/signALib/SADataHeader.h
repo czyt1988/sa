@@ -63,7 +63,10 @@ public:
     ///
     bool isValid() const;
     void setInValid();
-
+    ///
+    /// \brief 数据的维度
+    /// \return
+    ///
     int getDataDim() const;
     void setDataDim(int dataDim);
 

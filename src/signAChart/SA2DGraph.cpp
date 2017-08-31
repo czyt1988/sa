@@ -1,4 +1,5 @@
 #include "SA2DGraph.h"
+#include "SAChart.h"
 #include <qstyle.h>
 #include <qstyleoption.h>
 
@@ -1720,12 +1721,7 @@ void SA2DGraph::getYDatas(QVector<double>& ys,int nCur)
     if(nullptr == cur){
         return;
     }
-    getYDatas(ys,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    ys = datas->yData();
+    SAChart::getYDatas(ys,cur);
 }
 
 void SA2DGraph::getYDatas(QVector<double>& ys,const QString& strCurName)
@@ -1734,12 +1730,7 @@ void SA2DGraph::getYDatas(QVector<double>& ys,const QString& strCurName)
     if(nullptr == cur){
         return;
     }
-    getYDatas(ys,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    ys = datas->yData();
+    SAChart::getYDatas(ys,cur);
 }
 
 void SA2DGraph::getXDatas(QVector<double>& xs,int nCur)
@@ -1748,12 +1739,7 @@ void SA2DGraph::getXDatas(QVector<double>& xs,int nCur)
     if(nullptr == cur){
         return;
     }
-    getXDatas(xs,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    xs = datas->xData();
+    SAChart::getXDatas(xs,cur);
 }
 
 void SA2DGraph::getXDatas(QVector<double>& xs,const QString& strCurName)
@@ -1762,12 +1748,7 @@ void SA2DGraph::getXDatas(QVector<double>& xs,const QString& strCurName)
     if(nullptr == cur){
         return;
     }
-    getXDatas(xs,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    xs = datas->xData();
+    SAChart::getXDatas(xs,cur);
 }
 
 void SA2DGraph::getXYDatas(QVector<QPointF>& xys,int nCur)
@@ -1776,16 +1757,8 @@ void SA2DGraph::getXYDatas(QVector<QPointF>& xys,int nCur)
     if(nullptr == cur){
         return;
     }
-    getXYDatas(xys,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    xys.reserve(datas->size());
-//    for(unsigned int i=0;i< datas->size();++i)
-//    {
-//        xys.append(datas->sample(i));
-//    }
+    SAChart::getXYDatas(xys,cur);
+
 }
 
 void SA2DGraph::getXYDatas(QVector<QPointF>& xys,const QString& strCurName)
@@ -1794,16 +1767,7 @@ void SA2DGraph::getXYDatas(QVector<QPointF>& xys,const QString& strCurName)
     if(nullptr == cur){
         return;
     }
-    getXYDatas(xys,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    xys.reserve(datas->size());
-//    for(unsigned int i=0;i< datas->size();++i)
-//    {
-//        xys.append(datas->sample(i));
-//    }
+    SAChart::getXYDatas(xys,cur);
 }
 
 void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur)
@@ -1812,14 +1776,8 @@ void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur)
     if(nullptr == cur){
         return;
     }
-    getYDatas(ys,cur);
-    getXDatas(xs,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    xs = datas->xData();
-//    ys = datas->yData();
+    SAChart::getYDatas(ys,cur);
+    SAChart::getXDatas(xs,cur);
 }
 
 void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString& strCurName)
@@ -1828,192 +1786,16 @@ void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString
     if(nullptr == cur){
         return;
     }
-    getYDatas(ys,cur);
-    getXDatas(xs,cur);
-//    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-//    if(nullptr == datas){
-//        return;
-//    }
-//    xs = datas->xData();
-    //    ys = datas->yData();
-}
-///
-/// \brief 获取vector point的y
-/// \param xys vector point
-/// \param ys vector double y
-/// \return 获取的尺寸
-///
-size_t SA2DGraph::getYDatas(const QVector<QPointF>& xys, QVector<double>& ys)
-{
-    auto e = xys.end();
-    auto s = 0;
-    for(auto i=xys.begin();i!=e;++i,++s)
-    {
-        ys.push_back((*i).y());
-    }
-    return s;
-}
-///
-/// \brief 获取vector point的x
-/// \param xys vector point
-/// \param xs vector double x
-/// \return 获取的尺寸
-///
-size_t SA2DGraph::getXDatas(const QVector<QPointF>& xys, QVector<double>& xs)
-{
-    auto e = xys.end();
-    auto s = 0;
-    for(auto i=xys.begin();i!=e;++i,++s)
-    {
-        xs.push_back((*i).x());
-    }
-    return s;
+    SAChart::getYDatas(ys,cur);
+    SAChart::getXDatas(xs,cur);
 }
 
-size_t SA2DGraph::getYDatas(QVector<double>& ys, QwtPlotCurve* cur, const QRectF &rang)
-{
-    QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            if(rang.contains(datas->sample(i)))
-            {
-                ys.push_back(datas->sample(i).y());
-                ++realSize;
-            }
-        }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            ys.push_back(datas->sample(i).y());
-        }
-        realSize = size;
-    }
-    return realSize;
-}
 
-size_t SA2DGraph::getXDatas(QVector<double>& xs, QwtPlotCurve* cur, const QRectF &rang)
-{
-    QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            if(rang.contains(datas->sample(i)))
-            {
-                xs.push_back(datas->sample(i).x());
-                ++realSize;
-            }
-        }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            xs.push_back(datas->sample(i).x());
-        }
-        realSize = size;
-    }
-    return realSize;
-}
 
-size_t SA2DGraph::getXYDatas(QVector<QPointF>& xys,const QwtPlotCurve* cur,const QRectF& rang)
-{
-    const QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            if(rang.contains(datas->sample(i)))
-            {
-                xys.push_back(datas->sample(i));
-                ++realSize;
-            }
-        }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            xys.push_back(datas->sample(i));
-        }
-        realSize = size;
-    }
-    return realSize;
-}
 
-size_t SA2DGraph::getXYDatas(QVector<double>& xs, QVector<double>& ys, const QwtPlotCurve* cur, const QRectF& rang)
-{
-    const QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            QPointF p = datas->sample(i);
-            if(rang.contains(p))
-            {
-                ys.push_back(p.y());
-                xs.push_back(p.x());
-                ++realSize;
-            }
-        }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            QPointF p = datas->sample(i);
-            ys.push_back(p.y());
-            xs.push_back(p.x());
-        }
-        realSize = size;
-    }
-    return realSize;
-}
 
-size_t SA2DGraph::getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys, const QwtPlotCurve* cur, const QRectF& rang)
-{
-    const QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            QPointF p = datas->sample(i);
-            if(rang.contains(p))
-            {
-                xys.push_back(p);
-                ys.push_back(p.y());
-                xs.push_back(p.x());
-                ++realSize;
-            }
-        }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            QPointF p = datas->sample(i);
-            xys.push_back(p);
-            ys.push_back(p.y());
-            xs.push_back(p.x());
-        }
-        realSize = size;
-    }
-    return realSize;
-}
+
+
 
 void SA2DGraph::getSharpPeakPoint(QVector<QPointF>& sharpPoints,QwtPlotCurve* cur,bool getMax)
 {

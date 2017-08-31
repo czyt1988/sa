@@ -159,7 +159,7 @@ void SAQwtPlotCurveItemSetWidget::onSymbolSetButtonClicked()
         {
             QColor penColor = m_curveItem->pen().color();
             QPen pen = QPen(penColor);
-            penColor.setAlpha(150);
+            penColor.setAlpha(80);
             QBrush brush = QBrush(penColor);
             symbol.reset(new QwtSymbol(m_symbolComboBox->selectedSymbol()
                                        ,brush
@@ -210,7 +210,7 @@ void SAQwtPlotCurveItemSetWidget::setSymbol(QwtSymbol::Style style)
             //初始没有符号，第一次设置
             QColor penColor = m_curveItem->pen().color();
             newSymbol->setPen(penColor);
-            penColor.setAlpha(150);
+            penColor.setAlpha(80);
             newSymbol->setBrush(QBrush(penColor));
             newSymbol->setSize(6,6);
         }

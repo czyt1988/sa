@@ -6,7 +6,9 @@
 #include <QPointF>
 #include "SALibGlobal.h"
 class QLocalSocket;
-
+///
+/// \brief 处理一维数组的处理类
+///
 class SALIB_EXPORT SADataProcessVectorPointF : public QObject
 {
     Q_OBJECT
