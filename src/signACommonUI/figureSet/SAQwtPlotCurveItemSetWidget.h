@@ -32,6 +32,8 @@ private slots:
     Q_SLOT void onSymbolSetMenuHide();
 private:
     void setSymbol(QwtSymbol::Style style);
+    QwtSymbol* makeSymbol(QwtSymbol::Style style);
+    void createSymbolSetWidget();
 private:
     bool m_showAll;
     QwtPlotCurve *m_curveItem;
