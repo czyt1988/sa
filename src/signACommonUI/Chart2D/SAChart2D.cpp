@@ -1,4 +1,5 @@
 #include "SAChart2D.h"
+#include "SAChart.h"
 #include "SAAbstractDatas.h"
 #include "SARandColorMaker.h"
 #include "SAFigureGlobalConfig.h"
@@ -148,7 +149,7 @@ void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
                 {
                     return;
                 }
-                SA2DGraph::getXDatas(x,cur);
+                SAChart::getXDatas(x,cur);
                 if(x.size() < y.size())
                 {
                     y.resize(x.size());

@@ -85,7 +85,7 @@ public:
         borderRadiusEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Border Radius", 0));
     } // retranslateUi
 
-    void setChart(SAChart2D *c,SAChartNormalSetWidget* par)
+    void setChart(SAChart2D *c)
     {
         this->chart = c;
         if(nullptr == c)
@@ -120,7 +120,7 @@ SAChartNormalSetWidget::~SAChartNormalSetWidget()
 
 void SAChartNormalSetWidget::setChart(SAChart2D *chart)
 {
-    ui->setChart(chart,this);
+    ui->setChart(chart);
 }
 
 void SAChartNormalSetWidget::retranslateUi()
