@@ -78,7 +78,12 @@ void SADataProcServe::onReceivedVectorPointFData(const SALocalServeFigureItemPro
              << " ItemPtr:"<<header.getItemPtr()
                 ;
 #endif
-        emit callVectorPointFProcess(datas,header.getWndPtr(),header.getFigPtr(),header.getItemPtr(),(qintptr)reader->getSocket());
+        QList<QVariant> args;
+        args.append(QVariant::fromValue(header.getWndPtr()));
+        args.append(QVariant::fromValue(header.getFigPtr()));
+        args.append(QVariant::fromValue(header.getItemPtr()));
+        args.append(QVariant::fromValue((qintptr)reader->getSocket()));
+        emit callVectorPointFProcess(datas,QVariant(args));
     }
 }
 
@@ -117,12 +122,22 @@ void SADataProcServe::onRecShakeHand()
     writer->sendShakeHand();
 }
 
-void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, quintptr widget, quintptr fig, quintptr item, quintptr client)
+void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, QVariant args)
 {
     if(nullptr == result)
     {
         return;
     }
+    QList<QVariant> argList = args.toList();
+    if(4 != argList.size())
+    {
+        return;
+    }
+    quintptr widget,fig,item,client;
+    widget = argList[0].value<quintptr>();
+    fig = argList[1].value<quintptr>();
+    item = argList[2].value<quintptr>();
+    client = argList[3].value<quintptr>();
 #ifdef _DEBUG_OUTPUT
     QElapsedTimer t;
     t.start();

@@ -28,10 +28,7 @@ private:
     /// \brief 私有信号，用于调用数据处理线程
     ///
     Q_SIGNAL void callVectorPointFProcess(const QVector<QPointF>& points
-                                          ,quintptr widget
-                                          ,quintptr fig
-                                          ,quintptr item
-                                          ,quintptr client);
+                                          ,QVariant args);
 
     void initCalcThread();
 
@@ -49,10 +46,7 @@ private slots:
 
     //接收到点数组的计算结果
     Q_SLOT void onProcessVectorPointFResult(SADataFeatureItem* result
-                                            , quintptr widget
-                                            , quintptr fig
-                                            , quintptr item
-                                            , quintptr client);
+                                            , QVariant args);
 
     Q_SLOT void onDisconnected();
     //

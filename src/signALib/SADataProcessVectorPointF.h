@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QPointF>
+#include <QVariant>
 #include "SALibGlobal.h"
 class QLocalSocket;
 ///
@@ -19,10 +20,7 @@ public:
 public slots:
     //设置需要计算的点，并开始计算
     void setPoints(const QVector<QPointF>& points
-                   , quintptr widget
-                   , quintptr fig
-                   , quintptr item
-                   ,quintptr client);
+                   , QVariant args);
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);
 
@@ -35,8 +33,7 @@ signals:
     /// \param widget 标记1
     /// \param item 标记2
     ///
-    void result(SADataFeatureItem* result,quintptr widget,quintptr fig,quintptr item
-                ,quintptr client);
+    void result(SADataFeatureItem* result, QVariant args);
 private:
     int m_sortCount;///< 记录要显示的排序条目
 };
