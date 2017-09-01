@@ -29,7 +29,6 @@
 //----------SA--------------
 
 // |------Dialog------------
-#include <dialog_renameproject.h>
 #include <Dialog_AddChart.h>
 #include "CurveSelectDialog.h"
 #include "SAProjectInfomationSetDialog.h"
@@ -56,7 +55,8 @@
 #include "SALog.h"
 #include "SAProjectManager.h"
 #include "SAValueManagerMimeData.h"
-//
+//===SAChart
+#include "SAChart.h"
 
 
 #include <SAThemeManager.h>
@@ -1455,20 +1455,20 @@ void MainWindow::pickCurData(const QString& name, QwtPlotCurve *cur, SA::PickDat
     if(SA::XOnly == pickMode)
     {
         QVector<double> x;
-        SAChart2D::getXDatas(x,cur,rang);
+        SAChart::getXDatas(x,cur,rang);
         p = SAValueManager::makeData<SAVectorDouble>(name,x);//new SAVectorDouble(name,x);
 
     }
     else if(SA::YOnly == pickMode)
     {
         QVector<double> y;
-        SAChart2D::getYDatas(y,cur,rang);
+        SAChart::getYDatas(y,cur,rang);
         p = SAValueManager::makeData<SAVectorDouble>(name,y);//new SAVectorDouble(name,y);
     }
     else if(SA::XYPoint == pickMode)
     {
         QVector<QPointF> xy;
-        SAChart2D::getXYDatas(xy,cur,rang);
+        SAChart::getXYDatas(xy,cur,rang);
         p = SAValueManager::makeData<SAVectorPointF>(name,xy);//new SAVectorPointF(name,xy);
     }
     saValueManager->addData(p);

@@ -23,9 +23,16 @@ public slots:
                    , QVariant args);
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);
+    //获取尖峰的点 - 所谓尖峰是指三点a,b,c b>a && b>c 就说明b是尖峰
+    static void getSharpPeakPoint(QVector<QPointF>& sharpPoints,const QVector<QPointF>& Points,bool isUpperPeak = true);
+    //比较点的y值
+    static int comparePointY(const QPointF& a,const QPointF& b)
+    {
+        return int( a.y() < b.y() );
+    }
+    //峰值排序
+    static void sortPeak(QVector<QPointF>& sharpPointsSorted,const QVector<QPointF>& Points,bool isUpperPeak = true);
 
-private:
-    SADataFeatureItem* analysisData(const QVector<QPointF> &orgPoints);
 signals:
     ///
     /// \brief 返回的结果指针如果不用必须delete
@@ -34,6 +41,8 @@ signals:
     /// \param item 标记2
     ///
     void result(SADataFeatureItem* result, QVariant args);
+private:
+    SADataFeatureItem* analysisData(const QVector<QPointF> &orgPoints);
 private:
     int m_sortCount;///< 记录要显示的排序条目
 };

@@ -260,11 +260,10 @@ public:
     QwtPlotCurve* addCurve(const QVector< double > &xData, const QVector< double > &yData);
     void addCurve(QwtPlotCurve* pC);
 
-    static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size);
-    static void setCurveLinePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
-
+    //添加样条线
     QwtPlotMarker* addVLine(double val);
     QwtPlotMarker* addHLine(double val);
+    //添加bar
     QwtPlotHistogram* addBar(const QVector< QwtIntervalSample > &sample);
     //========================================================================================
     //网格 grid 操作
@@ -314,7 +313,6 @@ public:
         ,QVector<double>& out_ys
         ,QwtPlotCurve* curve) const;
     size_t removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve);
-//	QPoint getPlottingRegionDatasX_s(QwtPlotCurve* curve,QwtInterval xInter,QVector<QPointF>& out_xys);
 	enum AxisDateScaleType{
         h_m=0,
         hh_mm=1,
@@ -336,55 +334,7 @@ public:
     QwtDateScaleDraw *setAxisDateTimeScale(int axisID);
     void setAxisDateFormat(QwtPlot::Axis axis, AxisDateScaleType format,QwtDate::IntervalType intType = QwtDate::Second );
 
-    ///
-    /// \brief 获取尖峰的点 - 所谓尖峰是指三点a,b,c b>a && b>c 就说明b是尖峰
-    /// \param sharpPoints 尖峰值引用
-    /// \param cur 需要获得数据的曲线
-    /// \param getMax 获取的是上峰值
-    ///
-    static void getSharpPeakPoint(QVector<QPointF>& sharpPoints,QwtPlotCurve* cur,bool getMax = true);
-    static void getSharpPeakPoint(QVector<QPointF>& sharpPoints,const QVector<QPointF>& Points,bool getMax = true);
-    static int cmpPointF_Y(const QPointF& a,const QPointF& b)
-    {
-        return int( a.y() < b.y() );
-    }
-    ///
-    /// \brief 尖峰排序
-    /// \param sharpPoints
-    /// \param cur
-    /// \param getMax
-    ///
-    static void sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,QwtPlotCurve* cur,bool getMax = true);
-    static void sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,const QVector<QPointF>& Points,bool getMax = true);
 
-    template<typename IT_X,typename IT_Y>
-    static void makeVectorPointF(IT_X x_begin,IT_X x_end,IT_Y y_begin,IT_Y y_end,QVector<QPointF>& points)
-    {
-        auto i = x_begin;
-        auto j = y_begin;
-        points.clear();
-        points.reserve(
-                    std::min(
-                        std::distance(x_begin,x_end)
-                        ,std::distance(y_begin,y_end)
-                        )
-                    );
-        for(;i!=x_end && j!=y_end;++i,++j)
-        {
-            points.push_back(QPointF(*i,*j));
-        }
-    }
-    template<typename IT_X,typename IT_Y,typename IT_Point>
-    static void makeVectorPointF(IT_X x_begin,IT_X x_end,IT_Y y_begin,IT_Y y_end,IT_Point p_begin)
-    {
-        auto i = x_begin;
-        auto j = y_begin;
-        auto k = p_begin;
-        for(;i!=x_end && j!=y_end;++i,++j,++k)
-        {
-            (*k) = (QPointF(*i,*j));
-        }
-    }
     void deleteItems(const QList<int> markRtti);
     double axisXmin(int axisId = QwtPlot::xBottom) const;
     double axisXmax(int axisId = QwtPlot::xBottom) const;
@@ -463,10 +413,9 @@ protected:
     virtual void resizeEvent( QResizeEvent * );
 private:
     QScopedPointer<SAPlotZoomer> m_zoomer;
+    QScopedPointer<SAPlotZoomer> m_zoomerSecond;
     QwtPlotGrid *m_grid;
     QwtPlotPicker *m_picker;
-    //Zoomer_qwt *m_zoomer;
-    Zoomer_qwt *m_zoomerSecond;
 	QwtPlotPanner* m_panner;
 	LegendItem* m_legend;
 	QwtLegend* m_legendPanel;
@@ -476,7 +425,7 @@ private:
     bool m_bEnableCrosserPicker;
 public:
     QwtPlotZoomer * zoomer(){return m_zoomer.data();}
-    QwtPlotZoomer * zoomerSecond(){return m_zoomerSecond;}
+    QwtPlotZoomer * zoomerSecond(){return m_zoomerSecond.data();}
 public:
 	///
 	/// \brief 返回网格指针

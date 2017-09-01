@@ -1169,20 +1169,6 @@ QwtPlotCurve* SA2DGraph::addCurve(const QVector< double > &xData
     return pCurve;
 }
 
-void SA2DGraph::setCurveSymbol(QwtPlotCurve *cur, QwtSymbol::Style style, const QSize &size)
-{
-    QBrush brush = cur->brush();
-    QPen pen = cur->pen();
-    QwtSymbol* symbol = new QwtSymbol(style,brush,pen,size);
-    cur->setSymbol(symbol);
-}
-
-void SA2DGraph::setCurveLinePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
-{
-    QPen pen = cur->pen();
-    pen.setStyle(style);
-    cur->setPen(pen);
-}
 
 void SA2DGraph::addCurve(QwtPlotCurve* pC)
 {
@@ -1425,7 +1411,10 @@ void SA2DGraph::deletePanner()
 		m_panner = nullptr;
 	}
 }
-
+///
+/// \brief 允许缩放
+/// \param enable
+///
 void SA2DGraph::enableZoomer(bool enable)
 {
     if(m_zoomer.isNull() /*|| nullptr == m_zoomerSecond*/)
@@ -1434,8 +1423,8 @@ void SA2DGraph::enableZoomer(bool enable)
     }
     if(enable)
     {
-        //m_zoomer->setZoomBase( false );
-        m_zoomer->setEnabled(enable);
+        m_zoomer->setEnabled(true);
+        m_zoomer->setZoomBase(true);
         if(isEnablePicker())
         {
             m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::AlwaysOn) );
@@ -1448,6 +1437,7 @@ void SA2DGraph::enableZoomer(bool enable)
     m_bEnableZoom = enable;
     emit enableZoomerChanged(enable);
 }
+
 void SA2DGraph::setupZoomer()
 {
     if(m_zoomer.isNull())
@@ -1483,6 +1473,15 @@ void SA2DGraph::setupZoomer()
     }
     if(nullptr == m_zoomerSecond)
     {
+        m_zoomerSecond.reset(new SAPlotZoomer(xTop,yRight,canvas()));
+        m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyRedo, Qt::Key_I, Qt::ShiftModifier );
+        m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyUndo, Qt::Key_O, Qt::ShiftModifier );
+        m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyHome, Qt::Key_Home );
+        m_zoomerSecond->setMousePattern( QwtEventPattern::MouseSelect2,
+                Qt::RightButton, Qt::ControlModifier );
+        m_zoomerSecond->setMousePattern( QwtEventPattern::MouseSelect3,
+                Qt::RightButton );
+        m_zoomerSecond->setTrackerMode( QwtPicker::AlwaysOff );
     }
     QwtPlotMagnifier *magnifier = new QwtPlotMagnifier( canvas() );
     magnifier->setMouseButton( Qt::NoButton );
@@ -1491,14 +1490,13 @@ void SA2DGraph::setupZoomer()
 
 void SA2DGraph::deleteZoomer()
 {
-    if(m_zoomer.isNull())
+    if(!m_zoomer.isNull())
     {
         m_zoomer.reset();
     }
-    if(m_zoomerSecond)
+    if(!m_zoomerSecond.isNull())
     {
-        delete m_zoomerSecond;
-        m_zoomerSecond = nullptr;
+        m_zoomerSecond.reset();
     }
 }
 ///
@@ -1790,68 +1788,6 @@ void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString
     SAChart::getXDatas(xs,cur);
 }
 
-
-
-
-
-
-
-
-void SA2DGraph::getSharpPeakPoint(QVector<QPointF>& sharpPoints,QwtPlotCurve* cur,bool getMax)
-{
-    QwtPointArrayData* datas = static_cast<QwtPointArrayData*>(cur->data());
-    if(nullptr == datas)
-        return;
-    QVector<QPointF> points;
-    points.reserve(datas->size());
-    for(unsigned int i(0);i<datas->size();++i)
-    {
-        points.append(datas->sample(i));
-    }
-    getSharpPeakPoint(sharpPoints,points,getMax);
-}
-
-void SA2DGraph::getSharpPeakPoint(QVector<QPointF>& sharpPoints,const QVector<QPointF>& Points,bool getMax)
-{
-    sharpPoints.clear();
-    sharpPoints.reserve(int(Points.size()/2));
-    int maxLoop = Points.size()-1;
-
-    if(getMax)
-    {
-        for(int i=1;i<maxLoop;++i)
-        {
-            if((Points[i].y() > Points[i-1].y()) && (Points[i].y() > Points[i+1].y()))
-            {
-                sharpPoints.append(Points[i]);
-            }
-        }
-    }
-    else
-    {
-        for(int i=1;i<maxLoop;++i)
-        {
-            if((Points[i].y() < Points[i-1].y()) && (Points[i].y() < Points[i+1].y()))
-            {
-                sharpPoints.append(Points[i]);
-            }
-        }
-    }
-}
-
-
-void SA2DGraph::sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,QwtPlotCurve* cur,bool getMax )
-{
-    getSharpPeakPoint(sharpPointsSorted,cur,getMax);
-    std::sort(sharpPointsSorted.begin(),sharpPointsSorted.end(),cmpPointF_Y);
-    std::reverse(sharpPointsSorted.begin(),sharpPointsSorted.end());//最大值需要进行一次翻转
-}
-
-void SA2DGraph::sort_sharpPeak(QVector<QPointF>& sharpPointsSorted,const QVector<QPointF>& Points,bool getMax )
-{
-    getSharpPeakPoint(sharpPointsSorted,Points,getMax);
-    std::sort(sharpPointsSorted.begin(),sharpPointsSorted.end(),cmpPointF_Y);
-}
 ///
 /// \brief 获取当前显示区域的数据
 /// \param out_xys

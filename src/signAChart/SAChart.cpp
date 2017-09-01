@@ -602,3 +602,30 @@ size_t SAChart::getXYDatas(QVector<QPointF> &xys, QVector<double> &xs, QVector<d
     }
     return realSize;
 }
+///
+/// \brief 设置曲线标识符
+/// \param cur 曲线
+/// \param style 符号类型
+/// \param size 符号尺寸
+///
+void SAChart::setCurveSymbol(QwtPlotCurve *cur, QwtSymbol::Style style, const QSize &size)
+{
+    QBrush brush = cur->brush();
+    QColor brushColor = brush.color();
+    brushColor.setAlpha(80);
+    brush.setColor(brushColor);
+    QPen pen = cur->pen();
+    QwtSymbol* symbol = new QwtSymbol(style,brush,pen,size);
+    cur->setSymbol(symbol);
+}
+///
+/// \brief 设置曲线的线形
+/// \param cur 曲线
+/// \param style
+///
+void SAChart::setCurvePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
+{
+    QPen pen = cur->pen();
+    pen.setStyle(style);
+    cur->setPen(pen);
+}

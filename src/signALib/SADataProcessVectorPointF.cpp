@@ -32,6 +32,50 @@ void SADataProcessVectorPointF::getVectorPointY(const QVector<QPointF> &points, 
         return f.y();
     });
 }
+///
+/// \brief 获取尖峰的点 - 所谓尖峰是指三点a,b,c b>a && b>c 就说明b是尖峰
+/// \param sharpPoints 尖峰值引用
+/// \param Points 需要获得的数据
+/// \param isUpperPeak 获取的是上峰值
+///
+void SADataProcessVectorPointF::getSharpPeakPoint(QVector<QPointF> &sharpPoints, const QVector<QPointF> &points, bool isUpperPeak)
+{
+    sharpPoints.clear();
+    sharpPoints.reserve(int(points.size()/2));
+    int maxLoop = points.size()-1;
+
+    if(isUpperPeak)
+    {
+        for(int i=1;i<maxLoop;++i)
+        {
+            if((points[i].y() > points[i-1].y()) && (points[i].y() > points[i+1].y()))
+            {
+                sharpPoints.append(points[i]);
+            }
+        }
+    }
+    else
+    {
+        for(int i=1;i<maxLoop;++i)
+        {
+            if((points[i].y() < points[i-1].y()) && (points[i].y() < points[i+1].y()))
+            {
+                sharpPoints.append(points[i]);
+            }
+        }
+    }
+}
+///
+/// \brief 尖峰排序
+/// \param sharpPointsSorted
+/// \param Points
+/// \param isUpperPeak
+///
+void SADataProcessVectorPointF::sortPeak(QVector<QPointF> &sharpPointsSorted, const QVector<QPointF> &Points, bool isUpperPeak)
+{
+    getSharpPeakPoint(sharpPointsSorted,Points,isUpperPeak);
+    std::sort(sharpPointsSorted.begin(),sharpPointsSorted.end(),comparePointY);
+}
 
 SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF>& orgPoints)
 {

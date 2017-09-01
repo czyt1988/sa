@@ -8,6 +8,7 @@
 #include <QRectF>
 #include "qwt_date.h"
 #include "qwt_plot.h"
+#include "qwt_symbol.h"
 class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
@@ -77,7 +78,10 @@ public:
     static size_t getXYDatas(QVector<QPointF>& xys, const QwtPlotCurve* cur, const QRectF& rang = QRectF());
     static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys,const QwtPlotCurve* cur, const QRectF& rang = QRectF());
     static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtPlotCurve* cur, const QRectF& rang = QRectF());
-
+    //设置符号
+    static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size = QSize(8,8));
+    //设置曲线的样式
+    static void setCurvePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
 };
 
 #endif // SACHART_H

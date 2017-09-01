@@ -90,6 +90,9 @@ public:
         this->chart = c;
         if(nullptr == c)
         {
+            titleEdit->setEditText("");
+            footerEdit->setEditText("");
+            borderRadiusEdit->setValue(0);
             return;
         }
         titleEdit->setEditText(c->title().text());
@@ -121,6 +124,14 @@ SAChartNormalSetWidget::~SAChartNormalSetWidget()
 void SAChartNormalSetWidget::setChart(SAChart2D *chart)
 {
     ui->setChart(chart);
+    if(ui->chart)
+    {
+        disconnect(ui->chart,&QObject::destroyed
+                   ,this,&SAChartNormalSetWidget::onChartDestroy);
+    }
+    connect(ui->chart,&QObject::destroyed
+                       ,this,&SAChartNormalSetWidget::onChartDestroy);
+    setEnabled(true);
 }
 
 void SAChartNormalSetWidget::retranslateUi()
@@ -170,7 +181,8 @@ void SAChartNormalSetWidget::onBorderRadiusChanged(double v)
 void SAChartNormalSetWidget::onChartDestroy(QObject *o)
 {
     Q_UNUSED(o);
-    ui->chart = nullptr;
+    ui->setChart(nullptr);
+    setEnabled(false);
 }
 
 
