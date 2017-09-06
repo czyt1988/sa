@@ -189,6 +189,9 @@
      </property>
      <addaction name="actionZoomChart"/>
      <addaction name="actionZoomChartReset"/>
+     <addaction name="actionZoomBase"/>
+     <addaction name="actionZoomIn"/>
+     <addaction name="actionZoomOut"/>
     </widget>
     <widget class="QMenu" name="menu_dataPickMenu">
      <property name="title">
@@ -1170,6 +1173,27 @@
    </property>
    <property name="text">
     <string>Project Setting</string>
+   </property>
+  </action>
+  <action name="actionZoomBase">
+   <property name="text">
+    <string>ZoomBase</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="text">
+    <string>ZoomIn</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+=</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="text">
+    <string>ZoomOut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
    </property>
   </action>
  </widget>

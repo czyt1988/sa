@@ -353,15 +353,36 @@ void MainWindow::initUI()
     if(toolbtn)
     {
         QMenu* m1 = new QMenu(toolbtn);
+        m1->addAction(ui->actionZoomIn);
+        m1->addAction(ui->actionZoomOut);
+        m1->addAction(ui->actionZoomBase);
         m1->addAction(ui->actionZoomChartReset);
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m1);
     }
+    connect(ui->actionZoomBase,&QAction::triggered,this,[this](bool a){
+        Q_UNUSED(a);
+        SAChart2D* chart = this->getCurSubWindowChart();
+        if(chart)
+            chart->setZoomBase();
+    });
     connect(ui->actionZoomChartReset,&QAction::triggered,this,[this](bool a){
         Q_UNUSED(a);
         SAChart2D* chart = this->getCurSubWindowChart();
         if(chart)
             chart->setZoomReset();
+    });
+    connect(ui->actionZoomIn,&QAction::triggered,this,[this](bool a){
+        Q_UNUSED(a);
+        SAChart2D* chart = this->getCurSubWindowChart();
+        if(chart)
+            chart->zoomIn();
+    });
+    connect(ui->actionZoomOut,&QAction::triggered,this,[this](bool a){
+        Q_UNUSED(a);
+        SAChart2D* chart = this->getCurSubWindowChart();
+        if(chart)
+            chart->zoomOut();
     });
     //数据显示
     ui->actionYDataPicker->setCheckable(true);

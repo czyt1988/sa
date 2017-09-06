@@ -1437,6 +1437,20 @@ void SA2DGraph::enableZoomer(bool enable)
     m_bEnableZoom = enable;
     emit enableZoomerChanged(enable);
 }
+///
+/// \brief 回到放大的最底栈
+///
+void SA2DGraph::setZoomBase()
+{
+    if(!m_zoomer.isNull())
+    {
+        m_zoomer->setZoomBase(true);
+    }
+    if(!m_zoomerSecond.isNull())
+    {
+        m_zoomerSecond->setZoomBase(true);
+    }
+}
 
 void SA2DGraph::setupZoomer()
 {
@@ -1469,6 +1483,7 @@ void SA2DGraph::setupZoomer()
         m_zoomer->setMousePattern( QwtEventPattern::MouseSelect3,
                 Qt::RightButton );
         m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
+        m_zoomer->setZoomBase(false);
 #endif
     }
     if(nullptr == m_zoomerSecond)
@@ -1482,6 +1497,7 @@ void SA2DGraph::setupZoomer()
         m_zoomerSecond->setMousePattern( QwtEventPattern::MouseSelect3,
                 Qt::RightButton );
         m_zoomerSecond->setTrackerMode( QwtPicker::AlwaysOff );
+        m_zoomerSecond->setZoomBase(false);
     }
     QwtPlotMagnifier *magnifier = new QwtPlotMagnifier( canvas() );
     magnifier->setMouseButton( Qt::NoButton );
@@ -1499,28 +1515,17 @@ void SA2DGraph::deleteZoomer()
         m_zoomerSecond.reset();
     }
 }
-///
-/// \brief 设置是否显示滚动条
-/// \param enable
-///
-//void SA2DGraph::enableZoomerScroll(bool enable)
-//{
-//    Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
-//    if(zm)
-//    {
-//        zm->on_enable_scrollBar(enable);
-//    }
-//}
+
 ///
 /// \brief 设置缩放重置
 ///
 void SA2DGraph::setZoomReset()
 {
-    setAxisAutoScale(QwtPlot::yLeft,true);
-    setAxisAutoScale(QwtPlot::xBottom,true);
-    setAxisAutoScale(QwtPlot::xTop,true);
-    setAxisAutoScale(QwtPlot::yRight,true);
-    replot();
+//    setAxisAutoScale(QwtPlot::yLeft,true);
+//    setAxisAutoScale(QwtPlot::xBottom,true);
+//    setAxisAutoScale(QwtPlot::xTop,true);
+//    setAxisAutoScale(QwtPlot::yRight,true);
+//    replot();
     if(!m_zoomer.isNull())
     {
         m_zoomer->setZoomBase(false);
@@ -1530,8 +1535,54 @@ void SA2DGraph::setZoomReset()
     if(m_zoomerSecond)
     {
         m_zoomerSecond->setZoomBase(false);
+        m_zoomerSecond->zoom(0);
     }
 
+}
+
+void SA2DGraph::zoomIn()
+{
+    if(m_zoomer.isNull())
+    {
+        setupZoomer();
+    }
+    QRectF rect = m_zoomer->zoomRect();
+
+    double w = rect.width()*0.625;
+    double h = rect.height()*0.625;
+    double x = rect.x() + (rect.width()-w)/2.0;
+    double y = rect.y() + (rect.height()-h)/2.0;
+    rect.setX(x);
+    rect.setY(y);
+    rect.setWidth(w);
+    rect.setHeight(h);
+
+    m_zoomer->zoom(rect);
+}
+
+void SA2DGraph::zoomOut()
+{
+    if(m_zoomer.isNull())
+    {
+        setupZoomer();
+    }
+    if(m_zoomer->zoomRectIndex() > 0)
+    {
+        m_zoomer->zoom(-1);
+    }
+    else
+    {
+        QRectF rect = m_zoomer->zoomRect();
+        double w = rect.width()*1.6;
+        double h = rect.height()*1.6;
+        double x = rect.x() - (w - rect.width())/2.0;
+        double y = rect.y() - (h - rect.height())/2.0;
+        rect.setX(x);
+        rect.setY(y);
+        rect.setWidth(w);
+        rect.setHeight(h);
+        m_zoomer->zoom(rect);
+    }
 }
 
 void SA2DGraph::setupLegend()
@@ -1671,6 +1722,16 @@ void SA2DGraph::enableXYDataPicker(bool enable)
         deleteXYDataPicker();
     }
     emit enableXYDataPickerChanged(enable);
+}
+///
+/// \brief 是否允许十字光标
+/// \return
+///
+bool SA2DGraph::isEnablePicker() const
+{
+    if(m_picker)
+        return m_picker->isEnabled();
+    return false;
 }
 void SA2DGraph::showItem( const QVariant &itemInfo, bool on )
 {

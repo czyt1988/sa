@@ -343,10 +343,14 @@ public:
 public slots:
 	//功能性语句
     void enableZoomer(bool enable = true );
-
-
-    //void enableZoomerScroll(bool enable = true);
+    //回到放大的最底栈
+    void setZoomBase();
+    //重置放大的基准
     void setZoomReset();
+    //放大1.6 相当于乘以0.625
+    void zoomIn();
+    //缩小1.6 相当于乘以1.6
+    void zoomOut();
 
     void enablePicker(bool enable = true );
 	void enableGrid(bool isShow = true);
@@ -393,12 +397,8 @@ signals:
     void enableXYDataPickerChanged(bool enable);
 public:
     bool isEnableZoomer() const{return m_bEnableZoom;}
-    //bool isEnableZoomerScroll() const;
-    ///
-    /// \brief 是否允许十字光标
-    /// \return
-    ///
-    bool isEnablePicker() const{return m_bEnableCrosserPicker;}
+    //是否允许十字光标
+    bool isEnablePicker() const;
     bool isEnableGrid() const;
     bool isEnableGridX() const;
     bool isEnableGridY() const;
