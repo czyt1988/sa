@@ -34,7 +34,8 @@ HEADERS += \
     SAYDataTracker.h \
     SAChart.h \
     SA2DGraph.h \
-    SAPlotZoomer.h
+    SAPlotZoomer.h \
+    SARectSelectEditor.h
 
 SOURCES += \
     QwtPlotItemDataModel.cpp \
@@ -46,6 +47,7 @@ SOURCES += \
     SAYDataTracker.cpp \
     SAChart.cpp \
     SA2DGraph.cpp \
-    SAPlotZoomer.cpp
+    SAPlotZoomer.cpp \
+    SARectSelectEditor.cpp
 
 OTHER_FILES += readme.md

@@ -1484,6 +1484,7 @@ void SA2DGraph::setupZoomer()
                 Qt::RightButton );
         m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
         m_zoomer->setZoomBase(false);
+        m_zoomer->setMaxStackDepth(20);
 #endif
     }
     if(nullptr == m_zoomerSecond)
@@ -1498,6 +1499,7 @@ void SA2DGraph::setupZoomer()
                 Qt::RightButton );
         m_zoomerSecond->setTrackerMode( QwtPicker::AlwaysOff );
         m_zoomerSecond->setZoomBase(false);
+        m_zoomerSecond->setMaxStackDepth(20);
     }
     QwtPlotMagnifier *magnifier = new QwtPlotMagnifier( canvas() );
     magnifier->setMouseButton( Qt::NoButton );
@@ -1546,8 +1548,8 @@ void SA2DGraph::zoomIn()
     {
         setupZoomer();
     }
-    QRectF rect = m_zoomer->zoomRect();
 
+    QRectF rect = m_zoomer->zoomRect();
     double w = rect.width()*0.625;
     double h = rect.height()*0.625;
     double x = rect.x() + (rect.width()-w)/2.0;
@@ -1566,23 +1568,18 @@ void SA2DGraph::zoomOut()
     {
         setupZoomer();
     }
-    if(m_zoomer->zoomRectIndex() > 0)
-    {
-        m_zoomer->zoom(-1);
-    }
-    else
-    {
-        QRectF rect = m_zoomer->zoomRect();
-        double w = rect.width()*1.6;
-        double h = rect.height()*1.6;
-        double x = rect.x() - (w - rect.width())/2.0;
-        double y = rect.y() - (h - rect.height())/2.0;
-        rect.setX(x);
-        rect.setY(y);
-        rect.setWidth(w);
-        rect.setHeight(h);
-        m_zoomer->zoom(rect);
-    }
+
+    QRectF rect = m_zoomer->zoomRect();
+    double w = rect.width()*1.6;
+    double h = rect.height()*1.6;
+    double x = rect.x() - (w - rect.width())/2.0;
+    double y = rect.y() - (h - rect.height())/2.0;
+    rect.setX(x);
+    rect.setY(y);
+    rect.setWidth(w);
+    rect.setHeight(h);
+    m_zoomer->zoom(rect);
+
 }
 
 void SA2DGraph::setupLegend()

@@ -200,6 +200,12 @@
      <addaction name="actionYDataPicker"/>
      <addaction name="actionXYDataPicker"/>
     </widget>
+    <widget class="QMenu" name="menuRegionSelect">
+     <property name="title">
+      <string>regionSelect</string>
+     </property>
+     <addaction name="actionRectSelect"/>
+    </widget>
     <addaction name="actionCrossCursor"/>
     <addaction name="actionPannerChart"/>
     <addaction name="menu_grid"/>
@@ -207,6 +213,7 @@
     <addaction name="menuZoomSet"/>
     <addaction name="actionChartSet"/>
     <addaction name="menu_dataPickMenu"/>
+    <addaction name="menuRegionSelect"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1194,6 +1201,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionRectSelect">
+   <property name="text">
+    <string>rectSelect</string>
    </property>
   </action>
  </widget>

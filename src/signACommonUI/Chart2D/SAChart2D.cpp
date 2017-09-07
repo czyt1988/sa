@@ -124,6 +124,11 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
     }
     setAutoReplot(true);
 }
+
+void SAChart2D::startSelectMode()
+{
+
+}
 ///
 /// \brief 向chart添加一组数据
 /// \param datas
