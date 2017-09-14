@@ -2,6 +2,8 @@
 #define SACHART2D_H
 #include "SA2DGraph.h"
 #include "SACommonUIGlobal.h"
+#include <memory>
+class SARectSelectEditor;
 class SAAbstractDatas;
 class SAXYSeries;
 class SABarSeries;
@@ -30,7 +32,8 @@ public:
     void removeDataInRang(QList<QwtPlotCurve *> curves);
 
     //开始选择模式
-    void startSelectMode(SelectionMode selectMode = SingleSelection);
+    void startSelectMode();
+    void stopSelectMode();
 private:
     void addDatas(const QList<SAAbstractDatas*>& datas);
 protected:
@@ -40,7 +43,7 @@ protected:
 private:
 
     bool m_isSelectionMode; ///< 是否在选框模式
-
+    std::unique_ptr<SARectSelectEditor> m_chartRectEditor;
 };
 
 #endif // SACHART2D_H

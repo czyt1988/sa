@@ -14,6 +14,7 @@
 #include "SAValueManager.h"
 #include "SATendencyChartDataSelectDialog.h"
 #include "SALog.h"
+#include "SARectSelectEditor.h"
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
 {
     setAcceptDrops(true);
@@ -21,7 +22,6 @@ SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
 
 SAChart2D::~SAChart2D()
 {
-
 }
 ///
 /// \brief 添加曲线
@@ -127,7 +127,20 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
 
 void SAChart2D::startSelectMode()
 {
+    if(nullptr == m_chartRectEditor)
+    {
+        m_chartRectEditor.reset(new SARectSelectEditor(this));
+    }
+    m_chartRectEditor->setEnable(true);
+}
 
+void SAChart2D::stopSelectMode()
+{
+    if(nullptr == m_chartRectEditor)
+    {
+        return;
+    }
+    m_chartRectEditor->setEnable(false);
 }
 ///
 /// \brief 向chart添加一组数据

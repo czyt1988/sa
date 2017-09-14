@@ -53,7 +53,7 @@ class SAChart2D;
 class QwtPlotItem;
 
 class SAAbstractDataImportInterface;
-
+class SARectSelectEditor;
 ///
 /// \brief The MainWindow class
 /// \todo 更改project model
@@ -270,7 +270,11 @@ private slots:
     void onActionNewChartTriggered();
     //趋势图
     void onActionNewTrendTriggered();
+    //开始矩形选框工具
+    void onActionStartRectSelectTriggered(bool b);
     /// \}
+
+
 
 
     ///
@@ -414,6 +418,7 @@ private:
 
     std::unique_ptr<SADrawDelegate> m_drawDelegate;///< 绘图代理
     SAFigureWindow* m_lastShowFigureWindow;///<记录最后一次显示的figure window
+
 };
 
 

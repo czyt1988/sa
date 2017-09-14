@@ -915,6 +915,7 @@ SA2DGraph::SA2DGraph(QWidget *parent):QwtPlot(parent)
     setCanvas( pCanvas );
 	setPalette( Qt::white );
     setAutoReplot( true );
+    canvas()->setCursor(Qt::ArrowCursor);
 }
 
 SA2DGraph::~SA2DGraph()

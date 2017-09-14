@@ -9,6 +9,7 @@
 #include "qwt_date.h"
 #include "qwt_plot.h"
 #include "qwt_symbol.h"
+#include "qwt_plot_item.h"
 class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
@@ -19,6 +20,11 @@ class QwtPlotCurve;
 class SA_CHART_EXPORT SAChart
 {
 public:
+    enum RTTI
+    {
+        RTTI_SA_SELECT_REGION_SHAPE = QwtPlotItem::Rtti_PlotUserItem + 100 ///< 区域选择
+    };
+
     enum Value{
         Nan = -1
     };

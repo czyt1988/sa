@@ -384,6 +384,8 @@ void MainWindow::initUI()
         if(chart)
             chart->zoomOut();
     });
+    connect(ui->actionRectSelect,&QAction::triggered
+            ,this,&MainWindow::onActionStartRectSelectTriggered);
     //数据显示
     ui->actionYDataPicker->setCheckable(true);
     connect(ui->actionYDataPicker,&QAction::triggered,Lambda_SaChartEnable(YDataPicker));
@@ -833,6 +835,21 @@ void MainWindow::onActionNewTrendTriggered()
 {
     raiseMainDock();
     m_drawDelegate->drawTrend ();
+}
+
+///
+/// \brief 图表开始矩形选框工具
+/// \param b
+///
+void MainWindow::onActionStartRectSelectTriggered(bool b)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+        qDebug() << "b"<<b;
+        b ? chart->startSelectMode()
+          : chart->stopSelectMode();
+    }
 }
 
 

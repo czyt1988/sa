@@ -202,7 +202,7 @@
     </widget>
     <widget class="QMenu" name="menuRegionSelect">
      <property name="title">
-      <string>regionSelect</string>
+      <string>选择</string>
      </property>
      <addaction name="actionRectSelect"/>
     </widget>
@@ -368,6 +368,7 @@
    </attribute>
    <addaction name="actionNewChart"/>
    <addaction name="actionNewTrend"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_windowList">
    <property name="windowTitle">
@@ -711,6 +712,17 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBarChartTools">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -1204,6 +1216,9 @@
    </property>
   </action>
   <action name="actionRectSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>rectSelect</string>
    </property>
