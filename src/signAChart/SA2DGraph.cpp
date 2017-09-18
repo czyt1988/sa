@@ -897,8 +897,6 @@ SA2DGraph::SA2DGraph(QWidget *parent):QwtPlot(parent)
   ,m_legendPanel(nullptr)
   ,m_yDataPicker(nullptr)
   ,m_xyDataPicker(nullptr)
-  ,m_bEnableZoom(false)
-  ,m_bEnableCrosserPicker(false)
 {
     setAutoReplot( false );
     setAutoFillBackground(true);
@@ -1357,6 +1355,8 @@ void SA2DGraph::setupPicker()
 
 void SA2DGraph::enablePicker(bool enable)
 {
+    if(!enable && nullptr == m_picker)
+        return;
     if(nullptr == m_picker)
         setupPicker();
 	m_picker->setEnabled( enable );
@@ -1367,7 +1367,6 @@ void SA2DGraph::enablePicker(bool enable)
             m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::AlwaysOn) );
         }
     }
-    m_bEnableCrosserPicker = enable;
 	emit enablePickerChanged(enable);
 }
 
@@ -1435,7 +1434,6 @@ void SA2DGraph::enableZoomer(bool enable)
     {
         m_zoomer->setEnabled(false);
     }
-    m_bEnableZoom = enable;
     emit enableZoomerChanged(enable);
 }
 ///
@@ -1720,6 +1718,18 @@ void SA2DGraph::enableXYDataPicker(bool enable)
         deleteXYDataPicker();
     }
     emit enableXYDataPickerChanged(enable);
+}
+///
+/// \brief 是否允许缩放
+/// \return
+///
+bool SA2DGraph::isEnableZoomer() const
+{
+    if(m_zoomer)
+        return m_zoomer->isEnabled();
+    if(m_zoomerSecond)
+        return m_zoomerSecond->isEnabled();
+    return false;
 }
 ///
 /// \brief 是否允许十字光标

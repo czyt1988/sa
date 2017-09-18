@@ -330,6 +330,7 @@ void MainWindow::initUI()
             ui->mdiArea->tileSubWindows();
         }
     });
+
     //显示隐藏dock窗口
     connect(ui->actionDataFeatureDock,&QAction::triggered,[&](){ui->dockWidget_DataFeature->show();});
     connect(ui->actionSubWindowListDock,&QAction::triggered,[&](){ui->dockWidget_windowList->show();});
@@ -337,53 +338,45 @@ void MainWindow::initUI()
     connect(ui->actionLayerOutDock,&QAction::triggered,[&](){ui->dockWidget_plotLayer->show();});
     connect(ui->actionValueViewerDock,&QAction::triggered,[&](){ui->dockWidget_valueViewer->show();});
     connect(ui->actionFigureViewer,&QAction::triggered,[&](){ui->dockWidget_main->show();});
-
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
-    ui->actionCrossCursor->setCheckable(true);
-    connect(ui->actionCrossCursor,&QAction::triggered,Lambda_SaChartEnable(Picker));
+    ui->actionEnableChartPicker->setCheckable(true);
+    connect(ui->actionEnableChartPicker,&QAction::triggered
+            ,this,&MainWindow::onActionEnableChartPicker);
+
     //拖动
-    ui->actionPannerChart->setCheckable(true);
-    connect(ui->actionPannerChart,&QAction::triggered,Lambda_SaChartEnable(Panner));
+    ui->actionEnableChartPanner->setCheckable(true);
+    connect(ui->actionEnableChartPanner,&QAction::triggered
+            ,this,&MainWindow::onActionEnableChartPanner);
     //区间缩放
-    ui->actionZoomChart->setCheckable(true);
-    connect(ui->actionZoomChart,&QAction::triggered,Lambda_SaChartEnable(Zoomer));
-    QToolButton* toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionZoomChart));
+    ui->actionEnableChartZoom->setCheckable(true);
+    connect(ui->actionEnableChartZoom,&QAction::triggered
+            ,this,&MainWindow::onActionEnableChartZoom);
+
+
+    QToolButton* toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionEnableChartZoom));
     if(toolbtn)
     {
         QMenu* m1 = new QMenu(toolbtn);
         m1->addAction(ui->actionZoomIn);
         m1->addAction(ui->actionZoomOut);
         m1->addAction(ui->actionZoomBase);
-        m1->addAction(ui->actionZoomChartReset);
+        m1->addAction(ui->actionChartZoomReset);
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m1);
     }
-    connect(ui->actionZoomBase,&QAction::triggered,this,[this](bool a){
-        Q_UNUSED(a);
-        SAChart2D* chart = this->getCurSubWindowChart();
-        if(chart)
-            chart->setZoomBase();
-    });
-    connect(ui->actionZoomChartReset,&QAction::triggered,this,[this](bool a){
-        Q_UNUSED(a);
-        SAChart2D* chart = this->getCurSubWindowChart();
-        if(chart)
-            chart->setZoomReset();
-    });
-    connect(ui->actionZoomIn,&QAction::triggered,this,[this](bool a){
-        Q_UNUSED(a);
-        SAChart2D* chart = this->getCurSubWindowChart();
-        if(chart)
-            chart->zoomIn();
-    });
-    connect(ui->actionZoomOut,&QAction::triggered,this,[this](bool a){
-        Q_UNUSED(a);
-        SAChart2D* chart = this->getCurSubWindowChart();
-        if(chart)
-            chart->zoomOut();
-    });
+    connect(ui->actionZoomBase,&QAction::triggered
+            ,this,&MainWindow::onActionChartZoomToBase);
+    connect(ui->actionChartZoomReset,&QAction::triggered
+            ,this,&MainWindow::onActionChartZoomReset);
+    connect(ui->actionZoomIn,&QAction::triggered
+            ,this,&MainWindow::onActionChartZoomIn);
+    connect(ui->actionZoomOut,&QAction::triggered
+            ,this,&MainWindow::onActionChartZoomOut);
+
+    //矩形选框
+    ui->actionRectSelect->setCheckable(true);
     connect(ui->actionRectSelect,&QAction::triggered
             ,this,&MainWindow::onActionStartRectSelectTriggered);
     //数据显示
@@ -452,6 +445,7 @@ void MainWindow::initUI()
     //SAProjectManager和saUI的关联
     connect(saProjectManager,&SAProjectManager::messageInformation
             ,this,&MainWindow::showMessageInfo);
+
     showMaximized();
 }
 
@@ -846,7 +840,6 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
     {
-        qDebug() << "b"<<b;
         b ? chart->startSelectMode()
           : chart->stopSelectMode();
     }
@@ -854,6 +847,107 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
     {
         ui->actionRectSelect->setChecked(false);
     }
+}
+
+///
+/// \brief 开启当前绘图的十字光标
+///
+void MainWindow::onActionEnableChartPicker(bool check)
+{
+    SAFigureWindow* fig = getCurrentFigureWindow();
+    if(fig)
+    {
+        QList<SAChart2D*> charts = fig->get2DPlots();
+        std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
+            c->enablePicker(check);
+        });
+    }
+    else
+    {
+        ui->actionEnableChartPicker->setChecked(false);
+    }
+}
+///
+/// \brief 开启当前绘图的拖动
+/// \param check
+///
+void MainWindow::onActionEnableChartPanner(bool check)
+{
+    SAFigureWindow* fig = getCurrentFigureWindow();
+    if(fig)
+    {
+        QList<SAChart2D*> charts = fig->get2DPlots();
+        std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
+            c->enablePanner(check);
+        });
+    }
+    else
+    {
+        ui->actionEnableChartPanner->setChecked(false);
+    }
+}
+///
+/// \brief 开启当前绘图的区间缩放
+/// \param check
+///
+void MainWindow::onActionEnableChartZoom(bool check)
+{
+    SAFigureWindow* fig = getCurrentFigureWindow();
+    if(fig)
+    {
+        QList<SAChart2D*> charts = fig->get2DPlots();
+        std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
+            c->enableZoomer(check);
+        });
+    }
+    else
+    {
+        ui->actionEnableChartZoom->setChecked(false);
+    }
+}
+///
+/// \brief 当前绘图的缩放还原
+/// \param check
+///
+void MainWindow::onActionChartZoomToBase(bool check)
+{
+    Q_UNUSED(check);
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+        chart->setZoomBase();
+}
+///
+/// \brief 当前绘图放大
+/// \param check
+///
+void MainWindow::onActionChartZoomIn(bool check)
+{
+    Q_UNUSED(check);
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+        chart->zoomIn();
+}
+///
+/// \brief 当前绘图缩小
+/// \param check
+///
+void MainWindow::onActionChartZoomOut(bool check)
+{
+    Q_UNUSED(check);
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+        chart->zoomOut();
+}
+///
+/// \brief 当前绘图重置
+/// \param check
+///
+void MainWindow::onActionChartZoomReset(bool check)
+{
+    Q_UNUSED(check);
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+        chart->setZoomReset();
 }
 
 
@@ -1123,9 +1217,9 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
     auto c = w->current2DPlot();
     if(c)
     {
-        ui->actionCrossCursor->setChecked( c->isEnablePicker() );
-        ui->actionPannerChart->setChecked( c->isEnablePanner() );
-        ui->actionZoomChart->setChecked(c->isEnableZoomer());
+        ui->actionEnableChartPicker->setChecked( c->isEnablePicker() );
+        ui->actionEnableChartPanner->setChecked( c->isEnablePanner() );
+        ui->actionEnableChartZoom->setChecked(c->isEnableZoomer());
         ui->actionYDataPicker->setChecked(c->isEnableYDataPicker());
         ui->actionXYDataPicker->setChecked(c->isEnableXYDataPicker());
         ui->actionShowGrid->setChecked(c->isEnableGrid());

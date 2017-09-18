@@ -395,7 +395,7 @@ signals:
     void enableYDataPickerChanged(bool enable);
     void enableXYDataPickerChanged(bool enable);
 public:
-    bool isEnableZoomer() const{return m_bEnableZoom;}
+    bool isEnableZoomer() const;
     //是否允许十字光标
     bool isEnablePicker() const;
     bool isEnableGrid() const;
@@ -420,8 +420,6 @@ private:
 	QwtLegend* m_legendPanel;
     SAYDataTracker* m_yDataPicker;
     SAXYDataTracker* m_xyDataPicker;
-    bool m_bEnableZoom;
-    bool m_bEnableCrosserPicker;
 public:
     QwtPlotZoomer * zoomer(){return m_zoomer.data();}
     QwtPlotZoomer * zoomerSecond(){return m_zoomerSecond.data();}

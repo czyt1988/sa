@@ -187,8 +187,8 @@
       <iconset resource="icons.qrc">
        <normaloff>:/figureSet/icons/figureSet/zoomChart.png</normaloff>:/figureSet/icons/figureSet/zoomChart.png</iconset>
      </property>
-     <addaction name="actionZoomChart"/>
-     <addaction name="actionZoomChartReset"/>
+     <addaction name="actionEnableChartZoom"/>
+     <addaction name="actionChartZoomReset"/>
      <addaction name="actionZoomBase"/>
      <addaction name="actionZoomIn"/>
      <addaction name="actionZoomOut"/>
@@ -206,8 +206,8 @@
      </property>
      <addaction name="actionRectSelect"/>
     </widget>
-    <addaction name="actionCrossCursor"/>
-    <addaction name="actionPannerChart"/>
+    <addaction name="actionEnableChartPicker"/>
+    <addaction name="actionEnableChartPanner"/>
     <addaction name="menu_grid"/>
     <addaction name="menu_legend"/>
     <addaction name="menuZoomSet"/>
@@ -344,9 +344,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionCrossCursor"/>
-   <addaction name="actionPannerChart"/>
-   <addaction name="actionZoomChart"/>
+   <addaction name="actionEnableChartPicker"/>
+   <addaction name="actionEnableChartPanner"/>
+   <addaction name="actionEnableChartZoom"/>
    <addaction name="actionXYDataPicker"/>
    <addaction name="actionShowGrid"/>
    <addaction name="actionShowLegend"/>
@@ -876,7 +876,7 @@
     <string>子窗口列表</string>
    </property>
   </action>
-  <action name="actionCrossCursor">
+  <action name="actionEnableChartPicker">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/figureSet/icons/figureSet/crossCursor.svg</normaloff>:/figureSet/icons/figureSet/crossCursor.svg</iconset>
@@ -885,7 +885,7 @@
     <string>十字光标</string>
    </property>
   </action>
-  <action name="actionPannerChart">
+  <action name="actionEnableChartPanner">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/figureSet/icons/figureSet/pannerChart.png</normaloff>:/figureSet/icons/figureSet/pannerChart.png</iconset>
@@ -894,7 +894,7 @@
     <string>移动</string>
    </property>
   </action>
-  <action name="actionZoomChart">
+  <action name="actionEnableChartZoom">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/figureSet/icons/figureSet/zoomChart.png</normaloff>:/figureSet/icons/figureSet/zoomChart.png</iconset>
@@ -1020,7 +1020,7 @@
     <string>图表设置</string>
    </property>
   </action>
-  <action name="actionZoomChartReset">
+  <action name="actionChartZoomReset">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/figureSet/icons/figureSet/zoomChartReset.png</normaloff>:/figureSet/icons/figureSet/zoomChartReset.png</iconset>

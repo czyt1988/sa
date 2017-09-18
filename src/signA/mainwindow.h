@@ -240,15 +240,7 @@ private slots:
     void onSubWindowClosed(QMdiSubWindow *arg1);
     /// \}
 
-    ///
-    /// \group chartDataManager menu slots(数据操作)
-    /// \{
-    ///
-    // 剔除选定范围内数据
-    void onActionInRangDataRemoveTriggered();
-    // 把曲线转换为数据
-    void onActionPickCurveToDataTriggered();
-    /// \}
+
 
     ///
     /// \group dataManager menu slots(变量操作)
@@ -272,8 +264,31 @@ private slots:
     void onActionNewTrendTriggered();
     //开始矩形选框工具
     void onActionStartRectSelectTriggered(bool b);
+    //开启当前绘图的十字光标
+    void onActionEnableChartPicker(bool check);
+    //开启当前绘图的拖动
+    void onActionEnableChartPanner(bool check);
+    //开启当前绘图的区间缩放
+    void onActionEnableChartZoom(bool check);
+    //当前绘图的缩放还原
+    void onActionChartZoomToBase(bool check);
+    //当前绘图放大
+    void onActionChartZoomIn(bool check);
+    //当前绘图缩小
+    void onActionChartZoomOut(bool check);
+    //当前绘图重置
+    void onActionChartZoomReset(bool check);
     /// \}
 
+    ///
+    /// \group chartDataManager menu slots(数据操作)
+    /// \{
+    ///
+    // 剔除选定范围内数据
+    void onActionInRangDataRemoveTriggered();
+    // 把曲线转换为数据
+    void onActionPickCurveToDataTriggered();
+    /// \}
 
 
 
