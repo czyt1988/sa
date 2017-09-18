@@ -1,49 +1,51 @@
 #ifndef SARECTSELECTEDITOR_H
 #define SARECTSELECTEDITOR_H
 #include "SAChartGlobals.h"
-#include <QObject>
+#include "SAAbstractRegionSelectEditor.h"
 #include "qwt_plot.h"
 #include "SASelectRegionShapeItem.h"
 ///
 /// \brief 用于给图标添加矩形选框的事件过滤器
 ///
-class SA_CHART_EXPORT SARectSelectEditor : public QObject
+class SA_CHART_EXPORT SARectSelectEditor : public SAAbstractRegionSelectEditor
 {
     Q_OBJECT
     Q_ENUMS(SelectionMode)
 public:
-    enum SelectionMode
-    {
-        SingleSelection ///< 当选
-        ,AndSelection ///< 布尔与运算选择
-        ,OrSelection ///< 布尔或运算选择
-    };
     SARectSelectEditor(QwtPlot* parent = 0);
     virtual ~SARectSelectEditor();
 
-    const QwtPlot *plot() const;
-    QwtPlot *plot();
 
     virtual bool eventFilter(QObject *object, QEvent *event);
-
-    SelectionMode selectionMode() const;
-    void setSelectionMode(const SelectionMode &selectionMode);
-
     virtual void setEnabled( bool on );
-    bool isEnabled() const;
+    virtual bool isEnabled() const;
+    //判断是否显示选区
+    virtual bool isRegionVisible() const;
+    //获取选择的数据区域
+    virtual QPainterPath getSelectRegion() const;
+    //判断点是否在区域里 此算法频繁调用会耗时
+    virtual bool isContains(const QPointF& p) const;
+    //屏幕坐标转换为数据坐标
     QPointF invTransform( const QPoint &pos ) const;
-    //
+    //设置关联的坐标轴
     void setAxis(int xAxis,int yAxis);
+    //获取选框区域的item
+    const QwtPlotShapeItem* getShapeItem() const;
+    QwtPlotShapeItem* getShapeItem();
+    //清理数据
+    void clear();
+private slots:
+    void onItemAttached(QwtPlotItem* item,bool on);
 private:
     bool pressed( const QPoint & p);
     bool moved( const QPoint & p);
     void released( const QPoint & p);
 private:
-    SelectionMode m_selectionMode; ///< 选框类型
     bool m_isEnable;///< 是否生效
     bool m_isStartDrawRegion;
     SASelectRegionShapeItem* m_shapeItem;
     QPointF m_pressedPoint;
+    QRectF m_selectedRect;
     int m_xAxis;
     int m_yAxis;
 };

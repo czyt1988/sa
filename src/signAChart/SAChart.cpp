@@ -629,3 +629,42 @@ void SAChart::setCurvePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
     pen.setStyle(style);
     cur->setPen(pen);
 }
+///
+/// \brief 把范围内的数据移除
+/// \param removeRang 需要移除的数据范围
+/// \param curve 需要移除数据的曲线
+/// \return
+///
+int SAChart::removeDataInRang(const QRectF &removeRang, QwtPlotCurve *curve)
+{
+    size_t length = curve->data()->size();
+    QVector<QPointF> newLine;
+    newLine.reserve(length);
+    QPointF point;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = curve->data()->sample(i);
+        if(removeRang.contains(point))
+            continue;
+        newLine.push_back(point);
+    }
+    curve->setSamples(newLine);
+    return newLine.size();
+}
+
+int SAChart::removeDataInRang(const QPainterPath &removeRang, QwtPlotCurve *curve)
+{
+    size_t length = curve->data()->size();
+    QVector<QPointF> newLine;
+    newLine.reserve(length);
+    QPointF point;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = curve->data()->sample(i);
+        if(removeRang.contains(point))
+            continue;
+        newLine.push_back(point);
+    }
+    curve->setSamples(newLine);
+    return newLine.size();
+}

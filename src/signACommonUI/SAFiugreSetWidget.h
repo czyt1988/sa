@@ -17,6 +17,9 @@ public:
     void setFigureWidget(SAFigureWindow* fig);
 private slots:
     void onChartTitleChanged(const QString& text);
+    void onPlotDestroy(QObject* obj);
+private:
+    void disconnectOldFigure();
 private:
     class UI;
     SAFiugreSetWidget::UI * ui;

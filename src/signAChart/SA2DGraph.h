@@ -312,7 +312,6 @@ public:
     QPoint getPlottingRegionDatas(QVector<double>& out_xs
         ,QVector<double>& out_ys
         ,QwtPlotCurve* curve) const;
-    size_t removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve);
 	enum AxisDateScaleType{
         h_m=0,
         hh_mm=1,

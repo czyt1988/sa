@@ -1980,30 +1980,7 @@ QRectF SA2DGraph::getPlottingRegionRang() const
     double ymax = inter.maxValue();
     return QRectF(xmin,ymin,xmax-xmin,ymax-ymin);
 }
-///
-/// \brief 把范围内的数据移除
-/// \param removeRang 需要移除的数据范围
-/// \param curve 需要移除数据的曲线
-/// \return
-///
-size_t SA2DGraph::removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve)
-{
-    //由于vector不善于删除，因此此处为了提高效率，先进行一份拷贝，再进行替换
-    size_t length = curve->data()->size();
-    QVector<QPointF> newLine;
-    newLine.reserve(length);
-    QPointF point;
-    for(size_t i = 0;i<length;++i)
-    {
-        point = curve->data()->sample(i);
-        if(removeRang.contains(point))
-            continue;
-        newLine.push_back(point);
-    }
-    curve->setSamples(newLine);
-    emit plotCurveChanged(curve);
-    return newLine.size();
-}
+
 ///
 /// \brief 把AxisDateScaleType转换为字符
 /// \param type 类型

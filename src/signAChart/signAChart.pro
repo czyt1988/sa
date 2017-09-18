@@ -36,7 +36,9 @@ HEADERS += \
     SA2DGraph.h \
     SAPlotZoomer.h \
     SARectSelectEditor.h \
-    SASelectRegionShapeItem.h
+    SASelectRegionShapeItem.h \
+    SAAbstractPlotEditor.h \
+    SAAbstractRegionSelectEditor.h
 
 SOURCES += \
     QwtPlotItemDataModel.cpp \
@@ -50,6 +52,8 @@ SOURCES += \
     SA2DGraph.cpp \
     SAPlotZoomer.cpp \
     SARectSelectEditor.cpp \
-    SASelectRegionShapeItem.cpp
+    SASelectRegionShapeItem.cpp \
+    SAAbstractPlotEditor.cpp \
+    SAAbstractRegionSelectEditor.cpp
 
 OTHER_FILES += readme.md

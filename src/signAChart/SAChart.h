@@ -10,6 +10,7 @@
 #include "qwt_plot.h"
 #include "qwt_symbol.h"
 #include "qwt_plot_item.h"
+#include <QPainterPath>
 class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
@@ -88,6 +89,9 @@ public:
     static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size = QSize(8,8));
     //设置曲线的样式
     static void setCurvePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
+    //把范围内的数据移除 返回移除的个数
+    static int removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve);
+    static int removeDataInRang(const QPainterPath& removeRang,QwtPlotCurve* curve);
 };
 
 #endif // SACHART_H

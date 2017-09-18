@@ -16,7 +16,7 @@ class SAFiugreSetWidget::UI
 public:
     QVBoxLayout *verticalLayout;
     QTabWidget *tabWidget;
-
+    QMap<QwtPlot*,SAChartSetWidget*> plotMapToWidget;
 
     void setupUi(QWidget *SAFiugreSetWidget)
     {
@@ -62,6 +62,7 @@ SAFiugreSetWidget::~SAFiugreSetWidget()
 
 void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
+    disconnectOldFigure();
     m_fig = fig;
     if(nullptr == fig)
     {
@@ -107,6 +108,7 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
             }
         }
         //根据chart个数来建立tab
+        ui->plotMapToWidget.clear();
         for(int i=0;i<plots.size();++i)
         {
             QWidget* w = ui->tabWidget->widget(i);
@@ -118,6 +120,7 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
                         ,this,&SAFiugreSetWidget::onChartTitleChanged);
                 ui->tabWidget->addTab(w,QString());
             }
+
             csw = qobject_cast<SAChartSetWidget*>(w);
             if(nullptr == csw)
             {
@@ -131,13 +134,21 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
             }
             ui->tabWidget->setTabText(i,title);
             csw->setChart(plots[i]);
+            ui->plotMapToWidget[plots[i]] = csw;
+            connect(plots[i],&QObject::destroyed,this,&SAFiugreSetWidget::onPlotDestroy);
         }
     }
 }
 
 void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
 {
-    int index = ui->tabWidget->currentIndex();
+    QObject* obj = sender();
+    SAChartSetWidget* w = qobject_cast<SAChartSetWidget*>(obj);
+    if(nullptr == w)
+    {
+        return;
+    }
+    int index = ui->tabWidget->indexOf(w);
     if(index >= 0)
     {
         if(text.isEmpty())
@@ -149,4 +160,43 @@ void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
             ui->tabWidget->setTabText(index,text);
         }
     }
+}
+
+void SAFiugreSetWidget::onPlotDestroy(QObject *obj)
+{
+    QwtPlot* plot = (QwtPlot*)obj;
+    SAChartSetWidget* w = ui->plotMapToWidget.value(plot,nullptr);
+    if(w)
+    {
+        int index = ui->tabWidget->indexOf(w);
+        if(index >= 0)
+        {
+            if(ui->tabWidget->count()>1)
+            {
+                //如果有多个tab，就移除
+                ui->tabWidget->removeTab(index);
+                delete w;
+            }
+            else
+            {
+                //如果tab不只有一个，就保留这个tab
+                w->setChart(nullptr);
+            }
+        }
+        ui->plotMapToWidget.remove(plot);
+    }
+}
+
+void SAFiugreSetWidget::disconnectOldFigure()
+{
+    if(nullptr == m_fig)
+    {
+        return;
+    }
+    for(auto i=ui->plotMapToWidget.begin();i!=ui->plotMapToWidget.end();++i)
+    {
+        QwtPlot* plot = i.key();
+        disconnect(plot,&QObject::destroyed,this,&SAFiugreSetWidget::onPlotDestroy);
+    }
+    ui->plotMapToWidget.clear();
 }

@@ -16,6 +16,7 @@
 #include "SALog.h"
 #include "SARectSelectEditor.h"
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
+  ,m_chartRectEditor(nullptr)
 {
     setAcceptDrops(true);
 }
@@ -117,30 +118,122 @@ SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
 void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
 {
     setAutoReplot(false);
-    QRectF rang = getPlottingRegionRang();
+    QPainterPath region = getVisibleRegion();
+    if(region.isEmpty())
+    {
+        return;
+    }
     for(int i=0;i<curves.size();++i)
     {
-        removeDataInRang(rang,curves[i]);
+        SAChart::removeDataInRang(region,curves[i]);
     }
     setAutoReplot(true);
 }
-
-void SAChart2D::startSelectMode()
+///
+/// \brief 开始选择模式
+/// 选择模式可分为矩形，圆形等，具体见\sa SelectionMode
+/// \param mode 选择模式
+/// \see SelectionMode
+///
+void SAChart2D::startSelectMode(SelectionMode mode)
+{
+    if(NoneSelection == mode)
+    {
+        return;
+    }
+    stopSelectMode();
+    m_selectMode = mode;
+    switch(m_selectMode)
+    {
+    case RectSelection:startRectSelectMode();break;
+    }
+}
+///
+/// \brief 结束当前的选择模式
+///
+void SAChart2D::stopSelectMode()
+{
+    switch(m_selectMode)
+    {
+    case RectSelection:stopRectSelectMode();break;
+    }
+    //m_selectMode = NoneSelection;
+}
+///
+/// \brief 判断是否有选区
+/// \return
+///
+bool SAChart2D::isRegionVisible() const
 {
     if(nullptr == m_chartRectEditor)
     {
-        m_chartRectEditor.reset(new SARectSelectEditor(this));
+        //TODO 判断别的选择模式
+        return false;
     }
-    m_chartRectEditor->setEnable(true);
+    return m_chartRectEditor->isRegionVisible();
+}
+///
+/// \brief 获取当前正在显示的选择区域
+/// \return
+///
+SAChart2D::SelectionMode SAChart2D::currentSelectRegionMode() const
+{
+    return m_selectMode;
+}
+///
+/// \brief 获取矩形选择编辑器
+/// \return 如果没有设置编辑器，返回nullptr
+///
+SARectSelectEditor *SAChart2D::getRectSelectEditor()
+{
+    return m_chartRectEditor;
 }
 
-void SAChart2D::stopSelectMode()
+const SARectSelectEditor *SAChart2D::getRectSelectEditor() const
+{
+    return m_chartRectEditor;
+}
+///
+/// \brief 获取当前可见的选区的范围
+/// \return
+///
+QPainterPath SAChart2D::getVisibleRegion() const
+{
+    switch(m_selectMode)
+    {
+    case RectSelection:
+    {
+        const SARectSelectEditor* editor = getRectSelectEditor();
+        if(editor)
+        {
+            if(editor->isRegionVisible())
+            {
+                return editor->getSelectRegion();
+            }
+        }
+    }
+    }
+    return QPainterPath();
+}
+///
+/// \brief 开始矩形选框模式
+///
+void SAChart2D::startRectSelectMode()
+{
+    if(nullptr == m_chartRectEditor)
+    {
+        m_chartRectEditor = new SARectSelectEditor(this);
+    }
+    m_chartRectEditor->setEnabled(true);
+}
+
+void SAChart2D::stopRectSelectMode()
 {
     if(nullptr == m_chartRectEditor)
     {
         return;
     }
-    m_chartRectEditor->setEnable(false);
+    m_chartRectEditor->setEnabled(false);
 }
 ///
 /// \brief 向chart添加一组数据

@@ -850,6 +850,10 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
         b ? chart->startSelectMode()
           : chart->stopSelectMode();
     }
+    else
+    {
+        ui->actionRectSelect->setChecked(false);
+    }
 }
 
 
@@ -966,7 +970,6 @@ void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
             plotItemDataModel->clear();
         }
     }
-
 
     ui->dataFeatureWidget->mdiSubWindowClosed(arg1);
 }

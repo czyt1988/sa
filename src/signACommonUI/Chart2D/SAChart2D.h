@@ -16,7 +16,10 @@ class SA_COMMON_UI_EXPORT SAChart2D : public SA2DGraph
 public:
     SAChart2D(QWidget *parent = nullptr);
     ~SAChart2D();
-
+    enum SelectionMode{
+        NoneSelection ///< 无选择
+        ,RectSelection ///< 矩形选框
+    };
 
     //添加曲线
     using SA2DGraph::addCurve;
@@ -28,12 +31,23 @@ public:
     using SA2DGraph::addBar;
     SABarSeries *addBar(SAAbstractDatas* datas);
     //移除范围内数据
-    using SA2DGraph::removeDataInRang;
     void removeDataInRang(QList<QwtPlotCurve *> curves);
 
     //开始选择模式
-    void startSelectMode();
+    void startSelectMode(SelectionMode mode = RectSelection);
     void stopSelectMode();
+    //判断是否有选区
+    bool isRegionVisible() const;
+    //获取当前正在显示的选择区域
+    SelectionMode currentSelectRegionMode() const;
+    //获取矩形选择编辑器
+    SARectSelectEditor* getRectSelectEditor();
+    const SARectSelectEditor* getRectSelectEditor() const;
+    //获取当前可见的选区的范围
+    QPainterPath getVisibleRegion() const;
+protected:
+    void startRectSelectMode();
+    void stopRectSelectMode();
 private:
     void addDatas(const QList<SAAbstractDatas*>& datas);
 protected:
@@ -41,9 +55,8 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
-
-    bool m_isSelectionMode; ///< 是否在选框模式
-    std::unique_ptr<SARectSelectEditor> m_chartRectEditor;
+    SelectionMode m_selectMode;///< 选择模式
+    SARectSelectEditor* m_chartRectEditor;///< 矩形选择编辑器
 };
 
 #endif // SACHART2D_H

@@ -124,14 +124,7 @@ SAChartNormalSetWidget::~SAChartNormalSetWidget()
 void SAChartNormalSetWidget::setChart(SAChart2D *chart)
 {
     ui->setChart(chart);
-    if(ui->chart)
-    {
-        disconnect(ui->chart,&QObject::destroyed
-                   ,this,&SAChartNormalSetWidget::onChartDestroy);
-    }
-    connect(ui->chart,&QObject::destroyed
-                       ,this,&SAChartNormalSetWidget::onChartDestroy);
-    setEnabled(true);
+    setEnabled(nullptr != chart);
 }
 
 void SAChartNormalSetWidget::retranslateUi()
@@ -178,12 +171,6 @@ void SAChartNormalSetWidget::onBorderRadiusChanged(double v)
     }
 }
 
-void SAChartNormalSetWidget::onChartDestroy(QObject *o)
-{
-    Q_UNUSED(o);
-    ui->setChart(nullptr);
-    setEnabled(false);
-}
 
 
 

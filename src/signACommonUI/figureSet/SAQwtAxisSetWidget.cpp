@@ -118,11 +118,6 @@ void SAQwtAxisSetWidget::onAxisMinScaleChanged(double v)
     }
 }
 
-void SAQwtAxisSetWidget::onCharDestroy(QObject *obj)
-{
-    Q_UNUSED(obj);
-    m_chart = nullptr;
-}
 
 void SAQwtAxisSetWidget::onScaleDivChanged()
 {
@@ -196,6 +191,7 @@ void SAQwtAxisSetWidget::updateAxisValue(QwtPlot *chart,int axisID)
 {
     if(nullptr == chart)
     {
+        resetAxisValue();
         return;
     }
     bool b = chart->axisEnabled(axisID);
@@ -236,10 +232,27 @@ void SAQwtAxisSetWidget::updateAxisValue(QwtPlot *chart,int axisID)
     }
 }
 
+void SAQwtAxisSetWidget::resetAxisValue()
+{
+    ui->checkBoxEnable->setChecked(false);
+    ui->lineEditTitle->setText("");
+    ui->fontSetWidget->setCurrentFont(QFont());
+    ui->doubleSpinBoxMin->setValue(0);
+    ui->doubleSpinBoxMax->setValue(0);
+    ui->radioButtonNormal->setChecked(true);
+    ui->doubleSpinBoxRotation->setValue(0);
+    ui->labelAligment->setAlignment(Qt::AlignLeft);
+    ui->spinBoxMargin->setValue(0);
+    ui->radioButtonTimeScale->setChecked(false);
+    ui->dateTimeScaleSetWidget->setText("");
+}
+
 void SAQwtAxisSetWidget::connectChartAxis()
 {
-    connect(m_chart,&QObject::destroyed
-               ,this,&SAQwtAxisSetWidget::onCharDestroy);
+    if(nullptr == m_chart)
+    {
+        return;
+    }
     QwtScaleWidget* aw  = m_chart->axisWidget(m_axisID);
     if(aw)
     {
@@ -250,8 +263,6 @@ void SAQwtAxisSetWidget::connectChartAxis()
 
 void SAQwtAxisSetWidget::disconnectChartAxis()
 {
-    disconnect(m_chart,&QObject::destroyed
-               ,this,&SAQwtAxisSetWidget::onCharDestroy);
     QwtScaleWidget* aw  = m_chart->axisWidget(m_axisID);
     if(aw)
     {
@@ -271,6 +282,12 @@ void SAQwtAxisSetWidget::setChart(QwtPlot *chart, int axisID)
     {
         disconnectChartAxis();
     }
+    else
+    {
+        resetAxisValue();
+        m_chart = nullptr;
+        return;
+    }
     m_chart = nullptr;//先设置为null，使得槽函数不动作
     updateAxisValue(chart,axisID);
     m_chart = chart;
@@ -283,3 +300,5 @@ void SAQwtAxisSetWidget::updateAxisValue()
     updateAxisValue(m_chart,m_axisID);
 
 }
+
+

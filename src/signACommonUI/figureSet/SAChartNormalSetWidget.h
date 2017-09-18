@@ -25,9 +25,6 @@ private slots:
     Q_SLOT void onFooterTextChanged(const QString& text);
     Q_SLOT void onCanvasBackgroundColorChanged(const QColor& clr);
     Q_SLOT void onBorderRadiusChanged(double v);
-    //
-    Q_SLOT void onChartDestroy(QObject* o);
-
 public:
 
 signals:

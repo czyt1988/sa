@@ -18,6 +18,7 @@ public:
     QwtPlot *getChart() const;
     void setChart(QwtPlot *chart,int axisID);
     void updateAxisValue();
+    void resetAxisValue();
 private slots:
     Q_SLOT void onEnableCheckBoxClicked(int state);
     Q_SLOT void onLineEditTextChanged(const QString& text);
@@ -27,7 +28,6 @@ private slots:
     Q_SLOT void onAxisMarginValueChanged(int v);
     Q_SLOT void onAxisMaxScaleChanged(double v);
     Q_SLOT void onAxisMinScaleChanged(double v);
-    Q_SLOT void onCharDestroy(QObject* obj);
     Q_SLOT void onScaleDivChanged();
     Q_SLOT void onScaleStyleChanged(int id);
 

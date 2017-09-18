@@ -110,7 +110,6 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
 ///
 void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
 {
-    m_subWindowToDataInfo.remove(arg1);
     auto modelIte = m_subWindowToDataInfo.find(arg1);
     if(modelIte != m_subWindowToDataInfo.end())
     {
@@ -124,8 +123,8 @@ void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
         {
             delete model;
         }
-        m_subWindowToDataInfo.remove(arg1);
     }
+    m_subWindowToDataInfo.remove(arg1);
 }
 ///
 /// \brief 从子窗口获取绘图窗口
