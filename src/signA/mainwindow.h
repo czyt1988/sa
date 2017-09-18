@@ -53,7 +53,7 @@ class SAChart2D;
 class QwtPlotItem;
 
 class SAAbstractDataImportInterface;
-class SARectSelectEditor;
+class SARectRegionSelectEditor;
 ///
 /// \brief The MainWindow class
 /// \todo 更改project model

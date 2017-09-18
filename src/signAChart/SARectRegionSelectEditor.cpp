@@ -1,8 +1,8 @@
-#include "SARectSelectEditor.h"
+#include "SARectRegionSelectEditor.h"
 #include <QEvent>
 #include <QMouseEvent>
 #include <QDebug>
-SARectSelectEditor::SARectSelectEditor(QwtPlot *parent):SAAbstractRegionSelectEditor(parent)
+SARectRegionSelectEditor::SARectRegionSelectEditor(QwtPlot *parent):SAAbstractRegionSelectEditor(parent)
   ,m_isEnable(false)
   ,m_isStartDrawRegion(false)
   ,m_shapeItem(nullptr)
@@ -11,10 +11,10 @@ SARectSelectEditor::SARectSelectEditor(QwtPlot *parent):SAAbstractRegionSelectEd
   ,m_yAxis(QwtPlot::yLeft)
 {
     setEnabled(true);
-    connect(parent,&QwtPlot::itemAttached,this,&SARectSelectEditor::onItemAttached);
+    connect(parent,&QwtPlot::itemAttached,this,&SARectRegionSelectEditor::onItemAttached);
 }
 
-SARectSelectEditor::~SARectSelectEditor()
+SARectRegionSelectEditor::~SARectRegionSelectEditor()
 {
     if(m_shapeItem)
     {
@@ -25,7 +25,7 @@ SARectSelectEditor::~SARectSelectEditor()
 }
 
 
-bool SARectSelectEditor::eventFilter(QObject *object, QEvent *event)
+bool SARectRegionSelectEditor::eventFilter(QObject *object, QEvent *event)
 {
     QwtPlot *plot = qobject_cast<QwtPlot *>( parent() );
     if ( plot && object == plot->canvas() )
@@ -61,7 +61,7 @@ bool SARectSelectEditor::eventFilter(QObject *object, QEvent *event)
     return QObject::eventFilter( object, event );
 }
 
-bool SARectSelectEditor::pressed(const QPoint &p)
+bool SARectRegionSelectEditor::pressed(const QPoint &p)
 {
     m_isStartDrawRegion = true;
     if(nullptr == m_shapeItem)
@@ -73,7 +73,7 @@ bool SARectSelectEditor::pressed(const QPoint &p)
     return true;
 }
 
-bool SARectSelectEditor::moved(const QPoint &p)
+bool SARectRegionSelectEditor::moved(const QPoint &p)
 {
     if(m_isStartDrawRegion)
     {
@@ -90,7 +90,7 @@ bool SARectSelectEditor::moved(const QPoint &p)
     return true;
 }
 
-void SARectSelectEditor::released(const QPoint &p)
+void SARectRegionSelectEditor::released(const QPoint &p)
 {
     if(m_isStartDrawRegion)
     {
@@ -115,7 +115,7 @@ void SARectSelectEditor::released(const QPoint &p)
 }
 
 
-void SARectSelectEditor::setEnabled(bool on)
+void SARectRegionSelectEditor::setEnabled(bool on)
 {
     if ( on == m_isEnable )
         return;
@@ -136,7 +136,7 @@ void SARectSelectEditor::setEnabled(bool on)
     }
 }
 
-bool SARectSelectEditor::isEnabled() const
+bool SARectRegionSelectEditor::isEnabled() const
 {
     return m_isEnable;
 }
@@ -144,7 +144,7 @@ bool SARectSelectEditor::isEnabled() const
 /// \brief 判断当前的选择区域是否显示
 /// \return
 ///
-bool SARectSelectEditor::isRegionVisible() const
+bool SARectRegionSelectEditor::isRegionVisible() const
 {
     if(m_shapeItem)
     {
@@ -160,7 +160,7 @@ bool SARectSelectEditor::isRegionVisible() const
 /// \param pos
 /// \return
 ///
-QPointF SARectSelectEditor::invTransform( const QPoint &pos ) const
+QPointF SARectRegionSelectEditor::invTransform( const QPoint &pos ) const
 {
     QwtScaleMap xMap = plot()->canvasMap( m_xAxis );
     QwtScaleMap yMap = plot()->canvasMap( m_yAxis );
@@ -176,7 +176,7 @@ QPointF SARectSelectEditor::invTransform( const QPoint &pos ) const
 /// \param xAxis
 /// \param yAxis
 ///
-void SARectSelectEditor::setAxis(int xAxis, int yAxis)
+void SARectRegionSelectEditor::setAxis(int xAxis, int yAxis)
 {
     m_xAxis = xAxis;
     m_yAxis = yAxis;
@@ -185,7 +185,7 @@ void SARectSelectEditor::setAxis(int xAxis, int yAxis)
 /// \brief 获取选框区域的item
 /// \return
 ///
-const QwtPlotShapeItem *SARectSelectEditor::getShapeItem() const
+const QwtPlotShapeItem *SARectRegionSelectEditor::getShapeItem() const
 {
     return m_shapeItem;
 }
@@ -193,7 +193,7 @@ const QwtPlotShapeItem *SARectSelectEditor::getShapeItem() const
 /// \brief 获取选框区域的item
 /// \return
 ///
-QwtPlotShapeItem *SARectSelectEditor::getShapeItem()
+QwtPlotShapeItem *SARectRegionSelectEditor::getShapeItem()
 {
     return m_shapeItem;
 }
@@ -201,7 +201,7 @@ QwtPlotShapeItem *SARectSelectEditor::getShapeItem()
 /// \brief 获取选择的数据区域
 /// \return
 ///
-QPainterPath SARectSelectEditor::getSelectRegion() const
+QPainterPath SARectRegionSelectEditor::getSelectRegion() const
 {
     if(nullptr == m_shapeItem)
     {
@@ -214,7 +214,7 @@ QPainterPath SARectSelectEditor::getSelectRegion() const
 /// \param p
 /// \return
 ///
-bool SARectSelectEditor::isContains(const QPointF &p) const
+bool SARectRegionSelectEditor::isContains(const QPointF &p) const
 {
     return getSelectRegion().contains(p);
 }
@@ -222,7 +222,7 @@ bool SARectSelectEditor::isContains(const QPointF &p) const
 ///
 /// \brief 清理数据
 ///
-void SARectSelectEditor::clear()
+void SARectRegionSelectEditor::clear()
 {
     if(m_shapeItem)
     {
@@ -233,7 +233,7 @@ void SARectSelectEditor::clear()
     m_selectedRect = QRectF();
 }
 
-void SARectSelectEditor::onItemAttached(QwtPlotItem *item, bool on)
+void SARectRegionSelectEditor::onItemAttached(QwtPlotItem *item, bool on)
 {
     if(!on)
     {

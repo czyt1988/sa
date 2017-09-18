@@ -14,7 +14,7 @@
 #include "SAValueManager.h"
 #include "SATendencyChartDataSelectDialog.h"
 #include "SALog.h"
-#include "SARectSelectEditor.h"
+#include "SARectRegionSelectEditor.h"
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
   ,m_chartRectEditor(nullptr)
 {
@@ -184,12 +184,12 @@ SAChart2D::SelectionMode SAChart2D::currentSelectRegionMode() const
 /// \brief 获取矩形选择编辑器
 /// \return 如果没有设置编辑器，返回nullptr
 ///
-SARectSelectEditor *SAChart2D::getRectSelectEditor()
+SARectRegionSelectEditor *SAChart2D::getRectSelectEditor()
 {
     return m_chartRectEditor;
 }
 
-const SARectSelectEditor *SAChart2D::getRectSelectEditor() const
+const SARectRegionSelectEditor *SAChart2D::getRectSelectEditor() const
 {
     return m_chartRectEditor;
 }
@@ -203,7 +203,7 @@ QPainterPath SAChart2D::getVisibleRegion() const
     {
     case RectSelection:
     {
-        const SARectSelectEditor* editor = getRectSelectEditor();
+        const SARectRegionSelectEditor* editor = getRectSelectEditor();
         if(editor)
         {
             if(editor->isRegionVisible())
@@ -222,7 +222,7 @@ void SAChart2D::startRectSelectMode()
 {
     if(nullptr == m_chartRectEditor)
     {
-        m_chartRectEditor = new SARectSelectEditor(this);
+        m_chartRectEditor = new SARectRegionSelectEditor(this);
     }
     m_chartRectEditor->setEnabled(true);
 }

@@ -7,13 +7,13 @@
 ///
 /// \brief 用于给图标添加矩形选框的事件过滤器
 ///
-class SA_CHART_EXPORT SARectSelectEditor : public SAAbstractRegionSelectEditor
+class SA_CHART_EXPORT SARectRegionSelectEditor : public SAAbstractRegionSelectEditor
 {
     Q_OBJECT
     Q_ENUMS(SelectionMode)
 public:
-    SARectSelectEditor(QwtPlot* parent = 0);
-    virtual ~SARectSelectEditor();
+    SARectRegionSelectEditor(QwtPlot* parent = 0);
+    virtual ~SARectRegionSelectEditor();
 
 
     virtual bool eventFilter(QObject *object, QEvent *event);

@@ -3,7 +3,7 @@
 #include "SA2DGraph.h"
 #include "SACommonUIGlobal.h"
 #include <memory>
-class SARectSelectEditor;
+class SARectRegionSelectEditor;
 class SAAbstractDatas;
 class SAXYSeries;
 class SABarSeries;
@@ -41,8 +41,8 @@ public:
     //获取当前正在显示的选择区域
     SelectionMode currentSelectRegionMode() const;
     //获取矩形选择编辑器
-    SARectSelectEditor* getRectSelectEditor();
-    const SARectSelectEditor* getRectSelectEditor() const;
+    SARectRegionSelectEditor* getRectSelectEditor();
+    const SARectRegionSelectEditor* getRectSelectEditor() const;
     //获取当前可见的选区的范围
     QPainterPath getVisibleRegion() const;
 protected:
@@ -56,7 +56,7 @@ protected:
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
     SelectionMode m_selectMode;///< 选择模式
-    SARectSelectEditor* m_chartRectEditor;///< 矩形选择编辑器
+    SARectRegionSelectEditor* m_chartRectEditor;///< 矩形选择编辑器
 };
 
 #endif // SACHART2D_H
