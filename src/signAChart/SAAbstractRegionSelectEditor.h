@@ -14,13 +14,15 @@ public:
     enum SelectionMode
     {
         SingleSelection ///< 单选
-        ,AndSelection ///< 布尔与运算选择
-        ,OrSelection ///< 布尔或运算选择
+        ,AdditionalSelection ///< 合并选区
+        ,SubtractionSelection ///< 减去选区
+        ,IntersectionSelection ///<  交集选区
     };
-    SelectionMode getSelectionMode() const;
-    void setSelectionMode(const SelectionMode &selectionMode);
+    virtual SelectionMode getSelectionMode() const;
+    virtual void setSelectionMode(const SelectionMode &selectionMode);
     //获取选择的数据区域
     virtual QPainterPath getSelectRegion() const = 0;
+    virtual void setSelectRegion(const QPainterPath& shape) = 0;
     //判断点是否在区域里 此算法频繁调用会耗时
     virtual bool isContains(const QPointF& p) const = 0;
     //判断是否显示选区

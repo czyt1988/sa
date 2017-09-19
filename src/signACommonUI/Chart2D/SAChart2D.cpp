@@ -16,7 +16,7 @@
 #include "SALog.h"
 #include "SARectRegionSelectEditor.h"
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
-  ,m_chartRectEditor(nullptr)
+  ,m_chartSelectRigionEditor(nullptr)
 {
     setAcceptDrops(true);
 }
@@ -165,12 +165,12 @@ void SAChart2D::stopSelectMode()
 ///
 bool SAChart2D::isRegionVisible() const
 {
-    if(nullptr == m_chartRectEditor)
+    if(nullptr == m_chartSelectRigionEditor)
     {
         //TODO 判断别的选择模式
         return false;
     }
-    return m_chartRectEditor->isRegionVisible();
+    return m_chartSelectRigionEditor->isRegionVisible();
 }
 ///
 /// \brief 获取当前正在显示的选择区域
@@ -184,14 +184,14 @@ SAChart2D::SelectionMode SAChart2D::currentSelectRegionMode() const
 /// \brief 获取矩形选择编辑器
 /// \return 如果没有设置编辑器，返回nullptr
 ///
-SARectRegionSelectEditor *SAChart2D::getRectSelectEditor()
+SAAbstractRegionSelectEditor *SAChart2D::getRegionSelectEditor()
 {
-    return m_chartRectEditor;
+    return m_chartSelectRigionEditor;
 }
 
-const SARectRegionSelectEditor *SAChart2D::getRectSelectEditor() const
+const SAAbstractRegionSelectEditor *SAChart2D::getRegionSelectEditor() const
 {
-    return m_chartRectEditor;
+    return m_chartSelectRigionEditor;
 }
 ///
 /// \brief 获取当前可见的选区的范围
@@ -199,19 +199,13 @@ const SARectRegionSelectEditor *SAChart2D::getRectSelectEditor() const
 ///
 QPainterPath SAChart2D::getVisibleRegion() const
 {
-    switch(m_selectMode)
+    const SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
+    if(editor)
     {
-    case RectSelection:
-    {
-        const SARectRegionSelectEditor* editor = getRectSelectEditor();
-        if(editor)
+        if(editor->isRegionVisible())
         {
-            if(editor->isRegionVisible())
-            {
-                return editor->getSelectRegion();
-            }
+            return editor->getSelectRegion();
         }
-    }
     }
     return QPainterPath();
 }
@@ -220,20 +214,31 @@ QPainterPath SAChart2D::getVisibleRegion() const
 ///
 void SAChart2D::startRectSelectMode()
 {
-    if(nullptr == m_chartRectEditor)
+    QPainterPath tmp;
+    if(m_chartSelectRigionEditor)
     {
-        m_chartRectEditor = new SARectRegionSelectEditor(this);
+        tmp = m_chartSelectRigionEditor->getSelectRegion();
+        delete m_chartSelectRigionEditor;
+        m_chartSelectRigionEditor = nullptr;
     }
-    m_chartRectEditor->setEnabled(true);
+    if(nullptr == m_chartSelectRigionEditor)
+    {
+        m_chartSelectRigionEditor = new SARectRegionSelectEditor(this);
+        if(!tmp.isEmpty())
+        {
+            m_chartSelectRigionEditor->setSelectRegion(tmp);
+        }
+    }
+    m_chartSelectRigionEditor->setEnabled(true);
 }
 
 void SAChart2D::stopRectSelectMode()
 {
-    if(nullptr == m_chartRectEditor)
+    if(nullptr == m_chartSelectRigionEditor)
     {
         return;
     }
-    m_chartRectEditor->setEnabled(false);
+    m_chartSelectRigionEditor->setEnabled(false);
 }
 ///
 /// \brief 向chart添加一组数据

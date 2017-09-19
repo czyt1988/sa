@@ -11,7 +11,6 @@ class QKeyEvent;
 class SA_CHART_EXPORT SARectRegionSelectEditor : public SAAbstractRegionSelectEditor
 {
     Q_OBJECT
-    Q_ENUMS(SelectionMode)
 public:
     SARectRegionSelectEditor(QwtPlot* parent = 0);
     virtual ~SARectRegionSelectEditor();
@@ -24,8 +23,12 @@ public:
     virtual bool isRegionVisible() const;
     //获取选择的数据区域
     virtual QPainterPath getSelectRegion() const;
+    //设置选区
+    virtual void setSelectRegion(const QPainterPath& shape);
     //判断点是否在区域里 此算法频繁调用会耗时
     virtual bool isContains(const QPointF& p) const;
+    //设置选择模式
+    virtual void setSelectionMode(const SelectionMode &selectionMode);
     //屏幕坐标转换为数据坐标
     QPointF invTransform( const QPointF &pos ) const;
     //数据坐标转换为屏幕坐标
@@ -50,6 +53,7 @@ private:
     bool moved( const QPoint & p);
     void released( const QPoint & p);
     void keyPressed(const QKeyEvent *e);
+    void keyRelease(const QKeyEvent *e);
 private:
     bool m_isEnable;///< 是否生效
     bool m_isStartDrawRegion;

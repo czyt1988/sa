@@ -3,7 +3,7 @@
 
 SAAbstractRegionSelectEditor::SAAbstractRegionSelectEditor(QwtPlot *parent)
     :SAAbstractPlotEditor(parent)
-    ,m_selectionMode(AndSelection)//SingleSelection
+    ,m_selectionMode(AdditionalSelection)//SingleSelection
 {
 
 }
