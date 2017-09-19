@@ -2,10 +2,13 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QKeyEvent>
+
 SARectRegionSelectEditor::SARectRegionSelectEditor(QwtPlot *parent):SAAbstractRegionSelectEditor(parent)
   ,m_isEnable(false)
   ,m_isStartDrawRegion(false)
   ,m_shapeItem(nullptr)
+  ,m_tmpItem(nullptr)
   ,m_selectedRect(QRectF())
   ,m_xAxis(QwtPlot::xBottom)
   ,m_yAxis(QwtPlot::yLeft)
@@ -36,21 +39,40 @@ bool SARectRegionSelectEditor::eventFilter(QObject *object, QEvent *event)
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast<QMouseEvent* >( event );
-                const bool accepted = pressed( mouseEvent->pos() );
+                if(mouseEvent)
+                {
+                    const bool accepted = pressed( mouseEvent->pos() );
+                }
                 break;
             }
             case QEvent::MouseMove:
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast< QMouseEvent* >( event );
-                const bool accepted = moved( mouseEvent->pos() );
+                if(mouseEvent)
+                {
+                    const bool accepted = moved( mouseEvent->pos() );
+                }
                 break;
             }
             case QEvent::MouseButtonRelease:
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast<QMouseEvent* >( event );
-                released( mouseEvent->pos() );
+                if(mouseEvent)
+                {
+                    released( mouseEvent->pos() );
+                }
+                break;
+            }
+            case QEvent::KeyPress:
+            {
+                const QKeyEvent* keyEvent =
+                    dynamic_cast<QKeyEvent* >( event );
+                if(keyEvent)
+                {
+                    keyPressed(keyEvent);
+                }
                 break;
             }
             default:
@@ -63,58 +85,196 @@ bool SARectRegionSelectEditor::eventFilter(QObject *object, QEvent *event)
 
 bool SARectRegionSelectEditor::pressed(const QPoint &p)
 {
-    m_isStartDrawRegion = true;
     if(nullptr == m_shapeItem)
     {
         m_shapeItem = new SASelectRegionShapeItem("select region");
         m_shapeItem->attach(plot());
     }
-    m_pressedPoint = invTransform(p);
+    switch(getSelectionMode())
+    {
+    case SingleSelection://单一选择
+    {
+        m_isStartDrawRegion = true;
+        m_pressedPoint = invTransform(p);
+        break;
+    }
+    case AndSelection://或运算
+    {
+        if(nullptr == m_tmpItem)
+        {
+            m_tmpItem = new SASelectRegionShapeItem("temp region");
+            m_tmpItem->attach(plot());
+        }
+        m_isStartDrawRegion = true;
+        m_pressedPoint = invTransform(p);
+        break;
+    }
+    default:
+        break;
+    }
     return true;
 }
 
 bool SARectRegionSelectEditor::moved(const QPoint &p)
 {
-    if(m_isStartDrawRegion)
+    switch(getSelectionMode())
     {
-        QPointF pf = invTransform(p);
-        m_selectedRect.setX(m_pressedPoint.x());
-        m_selectedRect.setY(m_pressedPoint.y());
-        m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-        m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-        if(m_shapeItem)
+    case SingleSelection:
+    {
+        if(m_isStartDrawRegion)
         {
-            m_shapeItem->setRect(m_selectedRect);
+            QPointF pf = invTransform(p);
+            m_selectedRect.setX(m_pressedPoint.x());
+            m_selectedRect.setY(m_pressedPoint.y());
+            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
+            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
+            if(m_shapeItem)
+            {
+                m_shapeItem->setRect(m_selectedRect);
+            }
         }
+        break;
+    }
+    case AndSelection:
+    {
+        if(m_isStartDrawRegion)
+        {
+            QPointF pf = invTransform(p);
+            m_selectedRect.setX(m_pressedPoint.x());
+            m_selectedRect.setY(m_pressedPoint.y());
+            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
+            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
+            if(m_tmpItem)
+            {
+                m_tmpItem->setRect(m_selectedRect);
+            }
+        }
+        break;
+    }
     }
     return true;
 }
 
 void SARectRegionSelectEditor::released(const QPoint &p)
 {
-    if(m_isStartDrawRegion)
+    switch(getSelectionMode())
     {
-        QPointF pf = invTransform(p);
-        if(pf == m_pressedPoint)
+    case SingleSelection:
+    {
+        if(m_isStartDrawRegion)
         {
-            //如果点击和松开是一个点，就取消当前的选区
-            m_shapeItem->setRect(QRectF());
-            m_isStartDrawRegion = false;
-            return;
+            QPointF pf = invTransform(p);
+            if(pf == m_pressedPoint)
+            {
+                //如果点击和松开是一个点，就取消当前的选区
+                if(m_shapeItem)
+                    m_shapeItem->setRect(QRectF());
+
+                m_isStartDrawRegion = false;
+                return;
+            }
+            m_selectedRect.setX(m_pressedPoint.x());
+            m_selectedRect.setY(m_pressedPoint.y());
+            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
+            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
+            if(m_shapeItem)
+            {
+                m_shapeItem->setRect(m_selectedRect);
+            }
         }
-        m_selectedRect.setX(m_pressedPoint.x());
-        m_selectedRect.setY(m_pressedPoint.y());
-        m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-        m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-        if(m_shapeItem)
-        {
-            m_shapeItem->setRect(m_selectedRect);
-        }
+        m_isStartDrawRegion = false;
+        break;
     }
-    m_isStartDrawRegion = false;
+    case AndSelection:
+    {
+        if(m_isStartDrawRegion)
+        {
+            QPointF pf = invTransform(p);
+            if(pf == m_pressedPoint)
+            {
+                //如果点击和松开是一个点，就取消当前的选区
+                if(m_tmpItem)
+                {
+                    m_tmpItem->detach();
+                    delete m_tmpItem;
+                    m_tmpItem = nullptr;
+                }
+                m_isStartDrawRegion = false;
+                return;
+            }
+            m_selectedRect.setX(m_pressedPoint.x());
+            m_selectedRect.setY(m_pressedPoint.y());
+            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
+            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
+            if(m_shapeItem)
+            {
+                QPainterPath shape = m_shapeItem->shape();
+                QPainterPath addtion;
+                addtion.addRect(m_selectedRect);
+                shape = shape.united(addtion);
+
+                m_shapeItem->setShape(shape);
+            }
+            if(m_tmpItem)
+            {
+                m_tmpItem->detach();
+                delete m_tmpItem;
+                m_tmpItem = nullptr;
+            }
+        }
+        m_isStartDrawRegion = false;
+        break;
+    }
+    }
+}
+///
+/// \brief 处理按钮事件
+/// \param e
+///
+void SARectRegionSelectEditor::keyPressed(const QKeyEvent *e)
+{
+
 }
 
 
+///
+/// \brief 获取绑定的x轴
+/// \return
+///
+int SARectRegionSelectEditor::getXAxis() const
+{
+    return m_xAxis;
+}
+
+///
+/// \brief 获取绑定的y轴
+/// \return
+///
+int SARectRegionSelectEditor::getYAxis() const
+{
+    return m_yAxis;
+}
+///
+/// \brief 把当前区域转换为其它轴系
+/// \param axisX
+/// \param axisY
+/// \return
+///
+QPainterPath SARectRegionSelectEditor::transformToOtherAxis(int axisX, int axisY)
+{
+    QPainterPath shape = getSelectRegion();
+    QwtScaleMap xMap = plot()->canvasMap( axisX );
+    QwtScaleMap yMap = plot()->canvasMap( axisY );
+    const int eleCount = shape.elementCount();
+    for(int i=0;i<eleCount;++i)
+    {
+        const QPainterPath::Element &el = shape.elementAt( i );
+        QPointF tmp = transform(QPointF(el.x,el.y));
+        tmp = QwtScaleMap::invTransform(xMap,yMap,tmp);
+        shape.setElementPositionAt( i, tmp.x(), tmp.y() );
+    }
+    return shape;
+}
 void SARectRegionSelectEditor::setEnabled(bool on)
 {
     if ( on == m_isEnable )
@@ -160,7 +320,7 @@ bool SARectRegionSelectEditor::isRegionVisible() const
 /// \param pos
 /// \return
 ///
-QPointF SARectRegionSelectEditor::invTransform( const QPoint &pos ) const
+QPointF SARectRegionSelectEditor::invTransform(const QPointF &pos ) const
 {
     QwtScaleMap xMap = plot()->canvasMap( m_xAxis );
     QwtScaleMap yMap = plot()->canvasMap( m_yAxis );
@@ -169,6 +329,17 @@ QPointF SARectRegionSelectEditor::invTransform( const QPoint &pos ) const
         xMap.invTransform( pos.x() ),
         yMap.invTransform( pos.y() )
                 );
+}
+///
+/// \brief 数据坐标转换为屏幕坐标
+/// \param pos
+/// \return
+///
+QPointF SARectRegionSelectEditor::transform(const QPointF &pos) const
+{
+    QwtScaleMap xMap = plot()->canvasMap( m_xAxis );
+    QwtScaleMap yMap = plot()->canvasMap( m_yAxis );
+    return QwtScaleMap::transform(xMap,yMap,pos);
 }
 ///
 /// \brief 设置关联的坐标轴
