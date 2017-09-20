@@ -10,8 +10,6 @@ SARectRegionSelectEditor::SARectRegionSelectEditor(QwtPlot *parent):SAAbstractRe
   ,m_shapeItem(nullptr)
   ,m_tmpItem(nullptr)
   ,m_selectedRect(QRectF())
-  ,m_xAxis(QwtPlot::xBottom)
-  ,m_yAxis(QwtPlot::yLeft)
 {
     setEnabled(true);
     connect(parent,&QwtPlot::itemAttached,this,&SARectRegionSelectEditor::onItemAttached);
@@ -274,44 +272,6 @@ void SARectRegionSelectEditor::keyRelease(const QKeyEvent *e)
 
 }
 
-///
-/// \brief 获取绑定的x轴
-/// \return
-///
-int SARectRegionSelectEditor::getXAxis() const
-{
-    return m_xAxis;
-}
-
-///
-/// \brief 获取绑定的y轴
-/// \return
-///
-int SARectRegionSelectEditor::getYAxis() const
-{
-    return m_yAxis;
-}
-///
-/// \brief 把当前区域转换为其它轴系
-/// \param axisX
-/// \param axisY
-/// \return
-///
-QPainterPath SARectRegionSelectEditor::transformToOtherAxis(int axisX, int axisY)
-{
-    QPainterPath shape = getSelectRegion();
-    QwtScaleMap xMap = plot()->canvasMap( axisX );
-    QwtScaleMap yMap = plot()->canvasMap( axisY );
-    const int eleCount = shape.elementCount();
-    for(int i=0;i<eleCount;++i)
-    {
-        const QPainterPath::Element &el = shape.elementAt( i );
-        QPointF tmp = transform(QPointF(el.x,el.y));
-        tmp = QwtScaleMap::invTransform(xMap,yMap,tmp);
-        shape.setElementPositionAt( i, tmp.x(), tmp.y() );
-    }
-    return shape;
-}
 void SARectRegionSelectEditor::setEnabled(bool on)
 {
     if ( on == m_isEnable )
@@ -352,43 +312,8 @@ bool SARectRegionSelectEditor::isRegionVisible() const
     }
     return false;
 }
-///
-/// \brief 屏幕坐标转换为数据坐标
-/// \param pos
-/// \return
-///
-QPointF SARectRegionSelectEditor::invTransform(const QPointF &pos ) const
-{
-    QwtScaleMap xMap = plot()->canvasMap( m_xAxis );
-    QwtScaleMap yMap = plot()->canvasMap( m_yAxis );
 
-    return QPointF(
-        xMap.invTransform( pos.x() ),
-        yMap.invTransform( pos.y() )
-                );
-}
-///
-/// \brief 数据坐标转换为屏幕坐标
-/// \param pos
-/// \return
-///
-QPointF SARectRegionSelectEditor::transform(const QPointF &pos) const
-{
-    QwtScaleMap xMap = plot()->canvasMap( m_xAxis );
-    QwtScaleMap yMap = plot()->canvasMap( m_yAxis );
-    return QwtScaleMap::transform(xMap,yMap,pos);
-}
-///
-/// \brief 设置关联的坐标轴
-/// \note 默认是xbottom，yLeft
-/// \param xAxis
-/// \param yAxis
-///
-void SARectRegionSelectEditor::setAxis(int xAxis, int yAxis)
-{
-    m_xAxis = xAxis;
-    m_yAxis = yAxis;
-}
+
 ///
 /// \brief 获取选框区域的item
 /// \return

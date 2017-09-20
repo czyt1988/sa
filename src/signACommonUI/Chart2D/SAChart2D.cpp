@@ -123,9 +123,31 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
     {
         return;
     }
+    SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
+    if(nullptr == editor)
+    {
+        return;
+    }
+    QHash<QPair<int,int>,QPainterPath> otherScaleMap;
     for(int i=0;i<curves.size();++i)
     {
-        SAChart::removeDataInRang(region,curves[i]);
+        int xa = curves[i]->xAxis();
+        int ya = curves[i]->yAxis();
+        if(xa == editor->getXAxis() && ya == editor->getYAxis())
+        {
+            SAChart::removeDataInRang(region,curves[i]);
+        }
+        else
+        {
+            QPair<int,int> axiss=qMakePair(xa,ya);
+            if(!otherScaleMap.contains(axiss))
+            {
+                otherScaleMap[axiss] = editor->transformToOtherAxis(xa,ya);
+
+            }
+            SAChart::removeDataInRang(otherScaleMap.value(axiss)
+                                      ,curves[i]);
+        }
     }
     setAutoReplot(true);
 }
@@ -153,11 +175,11 @@ void SAChart2D::startSelectMode(SelectionMode mode)
 ///
 void SAChart2D::stopSelectMode()
 {
-    switch(m_selectMode)
+    if(nullptr == m_chartSelectRigionEditor)
     {
-    case RectSelection:stopRectSelectMode();break;
+        return;
     }
-    //m_selectMode = NoneSelection;
+    m_chartSelectRigionEditor->setEnabled(false);
 }
 ///
 /// \brief 判断是否有选区
@@ -232,14 +254,6 @@ void SAChart2D::startRectSelectMode()
     m_chartSelectRigionEditor->setEnabled(true);
 }
 
-void SAChart2D::stopRectSelectMode()
-{
-    if(nullptr == m_chartSelectRigionEditor)
-    {
-        return;
-    }
-    m_chartSelectRigionEditor->setEnabled(false);
-}
 ///
 /// \brief 向chart添加一组数据
 /// \param datas

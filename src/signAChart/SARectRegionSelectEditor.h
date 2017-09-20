@@ -29,23 +29,12 @@ public:
     virtual bool isContains(const QPointF& p) const;
     //设置选择模式
     virtual void setSelectionMode(const SelectionMode &selectionMode);
-    //屏幕坐标转换为数据坐标
-    QPointF invTransform( const QPointF &pos ) const;
-    //数据坐标转换为屏幕坐标
-    QPointF transform( const QPointF &pos ) const;
-    //设置关联的坐标轴
-    void setAxis(int xAxis,int yAxis);
     //获取选框区域的item
     const QwtPlotShapeItem* getShapeItem() const;
     QwtPlotShapeItem* getShapeItem();
     //清理数据
     void clear();
-    //获取绑定的x轴
-    int getXAxis() const;
-    //获取绑定的y轴
-    int getYAxis() const;
-    //把当前区域转换为其它轴系
-    QPainterPath transformToOtherAxis(int axisX,int axisY);
+
 private slots:
     void onItemAttached(QwtPlotItem* item,bool on);
 private:
@@ -61,8 +50,7 @@ private:
     SASelectRegionShapeItem* m_tmpItem;
     QPointF m_pressedPoint;
     QRectF m_selectedRect;
-    int m_xAxis;
-    int m_yAxis;
+
 };
 
 #endif // SARECTSELECTEDITOR_H

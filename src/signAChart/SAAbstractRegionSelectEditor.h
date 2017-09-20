@@ -4,7 +4,7 @@
 #include "SAAbstractPlotEditor.h"
 #include <QPainterPath>
 class QwtPlotShapeItem;
-class SAAbstractRegionSelectEditor : public SAAbstractPlotEditor
+class SA_CHART_EXPORT SAAbstractRegionSelectEditor : public SAAbstractPlotEditor
 {
     Q_OBJECT
     Q_ENUMS(SelectionMode)
@@ -27,8 +27,22 @@ public:
     virtual bool isContains(const QPointF& p) const = 0;
     //判断是否显示选区
     virtual bool isRegionVisible() const = 0;
+    //获取绑定的x轴
+    int getXAxis() const;
+    //获取绑定的y轴
+    int getYAxis() const;
+    //设置关联的坐标轴
+    void setAxis(int xAxis,int yAxis);
+    //屏幕坐标转换为数据坐标
+    QPointF invTransform( const QPointF &pos ) const;
+    //数据坐标转换为屏幕坐标
+    QPointF transform( const QPointF &pos ) const;
+    //把当前区域转换为其它轴系
+    QPainterPath transformToOtherAxis(int axisX,int axisY);
 private:
     SelectionMode m_selectionMode; ///< 选框类型
+    int m_xAxis;
+    int m_yAxis;
 };
 
 #endif // SAABSTRACTREGIONSELECTEDITOR_H

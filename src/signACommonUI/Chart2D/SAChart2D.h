@@ -47,7 +47,6 @@ public:
     QPainterPath getVisibleRegion() const;
 protected:
     void startRectSelectMode();
-    void stopRectSelectMode();
 private:
     void addDatas(const QList<SAAbstractDatas*>& datas);
 protected:
