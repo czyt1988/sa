@@ -23,78 +23,23 @@ SARectRegionSelectEditor::~SARectRegionSelectEditor()
         delete m_shapeItem;
         m_shapeItem = nullptr;
     }
+    if(m_tmpItem)
+    {
+        m_tmpItem->detach();
+        delete m_tmpItem;
+        m_tmpItem = nullptr;
+    }
 }
 
 
-bool SARectRegionSelectEditor::eventFilter(QObject *object, QEvent *event)
+
+bool SARectRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
 {
-    QwtPlot *plot = qobject_cast<QwtPlot *>( parent() );
-    if ( plot && object == plot->canvas() )
+    if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
     {
-        switch( event->type() )
-        {
-            case QEvent::MouseButtonPress:
-            {
-                const QMouseEvent* mouseEvent =
-                        dynamic_cast<QMouseEvent* >( event );
-                if(mouseEvent)
-                {
-                    const bool accepted = pressed( mouseEvent->pos() );
-                }
-                break;
-            }
-            case QEvent::MouseMove:
-            {
-                const QMouseEvent* mouseEvent =
-                        dynamic_cast< QMouseEvent* >( event );
-                if(mouseEvent)
-                {
-                    const bool accepted = moved( mouseEvent->pos() );
-                }
-                break;
-            }
-            case QEvent::MouseButtonRelease:
-            {
-                const QMouseEvent* mouseEvent =
-                        dynamic_cast<QMouseEvent* >( event );
-                if(mouseEvent)
-                {
-                    released( mouseEvent->pos() );
-                }
-                break;
-            }
-            case QEvent::KeyPress:
-            {
-                const QKeyEvent* keyEvent =
-                    dynamic_cast<QKeyEvent* >( event );
-                if(keyEvent)
-                {
-                    keyPressed(keyEvent);
-                }
-                break;
-            }
-            case QEvent::KeyRelease:
-            {
-                const QKeyEvent* keyEvent =
-                    dynamic_cast<QKeyEvent* >( event );
-                if(keyEvent)
-                {
-                    keyRelease(keyEvent);
-                }
-                break;
-            }
-
-
-            default:
-                break;
-        }
         return false;
     }
-    return QObject::eventFilter( object, event );
-}
-
-bool SARectRegionSelectEditor::pressed(const QPoint &p)
-{
+    QPoint p = e->pos();
     if(nullptr == m_shapeItem)
     {
         m_shapeItem = new SASelectRegionShapeItem("select region");
@@ -122,17 +67,22 @@ bool SARectRegionSelectEditor::pressed(const QPoint &p)
         break;
     }
     default:
-        break;
+        return false;
     }
     return true;
 }
 
-bool SARectRegionSelectEditor::moved(const QPoint &p)
+bool SARectRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
 {
     if(!m_isStartDrawRegion)
     {
-        return true;
+        return false;
     }
+    if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
+    {
+        return false;
+    }
+    QPoint p = e->pos();
     switch(getSelectionMode())
     {
     case SingleSelection:
@@ -163,12 +113,19 @@ bool SARectRegionSelectEditor::moved(const QPoint &p)
         }
         break;
     }
+    default:
+        return false;
     }
     return true;
 }
 
-void SARectRegionSelectEditor::released(const QPoint &p)
+bool SARectRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
 {
+    if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
+    {
+        return false;
+    }
+    QPoint p = e->pos();
     switch(getSelectionMode())
     {
     case SingleSelection:
@@ -183,7 +140,7 @@ void SARectRegionSelectEditor::released(const QPoint &p)
                     m_shapeItem->setRect(QRectF());
 
                 m_isStartDrawRegion = false;
-                return;
+                return true;
             }
             m_selectedRect.setX(m_pressedPoint.x());
             m_selectedRect.setY(m_pressedPoint.y());
@@ -214,7 +171,7 @@ void SARectRegionSelectEditor::released(const QPoint &p)
                     m_tmpItem = nullptr;
                 }
                 m_isStartDrawRegion = false;
-                return;
+                return true;
             }
             m_selectedRect.setX(m_pressedPoint.x());
             m_selectedRect.setY(m_pressedPoint.y());
@@ -257,46 +214,24 @@ void SARectRegionSelectEditor::released(const QPoint &p)
         m_isStartDrawRegion = false;
         break;
     }
+    default:
+        return false;
     }
+    return true;
 }
 ///
 /// \brief 处理按钮事件
 /// \param e
 ///
-void SARectRegionSelectEditor::keyPressed(const QKeyEvent *e)
+bool SARectRegionSelectEditor::keyPressEvent(const QKeyEvent *e)
 {
-
+    return SAAbstractRegionSelectEditor::keyPressEvent(e);
 }
-void SARectRegionSelectEditor::keyRelease(const QKeyEvent *e)
+bool SARectRegionSelectEditor::keyReleaseEvent(const QKeyEvent *e)
 {
-
-}
-
-void SARectRegionSelectEditor::setEnabled(bool on)
-{
-    if ( on == m_isEnable )
-        return;
-
-    QwtPlot *plot = qobject_cast<QwtPlot *>( parent() );
-    if ( plot )
-    {
-        m_isEnable = on;
-
-        if ( on )
-        {
-            plot->canvas()->installEventFilter( this );
-        }
-        else
-        {
-            plot->canvas()->removeEventFilter( this );
-        }
-    }
+    return SAAbstractRegionSelectEditor::keyReleaseEvent(e);
 }
 
-bool SARectRegionSelectEditor::isEnabled() const
-{
-    return m_isEnable;
-}
 ///
 /// \brief 判断当前的选择区域是否显示
 /// \return
@@ -342,24 +277,20 @@ QPainterPath SARectRegionSelectEditor::getSelectRegion() const
     }
     return m_shapeItem->shape();
 }
-
+///
+/// \brief SARectRegionSelectEditor::setSelectRegion
+/// \param shape
+///
 void SARectRegionSelectEditor::setSelectRegion(const QPainterPath &shape)
 {
     if(nullptr == m_shapeItem)
     {
         m_shapeItem = new SASelectRegionShapeItem("select region");
+        m_shapeItem->setShape(shape);
         m_shapeItem->attach(plot());
     }
 }
-///
-/// \brief 判断点是否在区域里
-/// \param p
-/// \return
-///
-bool SARectRegionSelectEditor::isContains(const QPointF &p) const
-{
-    return getSelectRegion().contains(p);
-}
+
 ///
 /// \brief 设置选择模式
 /// \param selectionMode
@@ -394,6 +325,12 @@ void SARectRegionSelectEditor::clear()
         m_shapeItem->detach();
         delete m_shapeItem;
         m_shapeItem = nullptr;
+    }
+    if(m_tmpItem)
+    {
+        m_tmpItem->detach();
+        delete m_tmpItem;
+        m_tmpItem = nullptr;
     }
     m_selectedRect = QRectF();
 }

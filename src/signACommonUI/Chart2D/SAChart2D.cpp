@@ -10,11 +10,13 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QDebug>
 #include "SAValueManagerMimeData.h"
 #include "SAValueManager.h"
 #include "SATendencyChartDataSelectDialog.h"
 #include "SALog.h"
 #include "SARectRegionSelectEditor.h"
+#include "SAEllipseRegionSelectEditor.h"
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
   ,m_chartSelectRigionEditor(nullptr)
 {
@@ -150,6 +152,7 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
         }
     }
     setAutoReplot(true);
+    replot();
 }
 ///
 /// \brief 开始选择模式
@@ -167,7 +170,8 @@ void SAChart2D::startSelectMode(SelectionMode mode)
     m_selectMode = mode;
     switch(m_selectMode)
     {
-    case RectSelection:startRectSelectMode();break;
+        case RectSelection:startRectSelectMode();break;
+        case EllipseSelection:startEllipseSelectMode();break;
     }
 }
 ///
@@ -180,6 +184,19 @@ void SAChart2D::stopSelectMode()
         return;
     }
     m_chartSelectRigionEditor->setEnabled(false);
+    m_selectMode = NoneSelection;
+}
+///
+/// \brief 清除所有选区
+///
+void SAChart2D::clearAllSelectedRegion()
+{
+    if(nullptr == m_chartSelectRigionEditor)
+    {
+        return;
+    }
+    delete m_chartSelectRigionEditor;
+    m_chartSelectRigionEditor = nullptr;
 }
 ///
 /// \brief 判断是否有选区
@@ -189,7 +206,6 @@ bool SAChart2D::isRegionVisible() const
 {
     if(nullptr == m_chartSelectRigionEditor)
     {
-        //TODO 判断别的选择模式
         return false;
     }
     return m_chartSelectRigionEditor->isRegionVisible();
@@ -246,6 +262,28 @@ void SAChart2D::startRectSelectMode()
     if(nullptr == m_chartSelectRigionEditor)
     {
         m_chartSelectRigionEditor = new SARectRegionSelectEditor(this);
+        if(!tmp.isEmpty())
+        {
+            m_chartSelectRigionEditor->setSelectRegion(tmp);
+        }
+    }
+    m_chartSelectRigionEditor->setEnabled(true);
+}
+///
+/// \brief 开始椭圆选框模式
+///
+void SAChart2D::startEllipseSelectMode()
+{
+    QPainterPath tmp;
+    if(m_chartSelectRigionEditor)
+    {
+        tmp = m_chartSelectRigionEditor->getSelectRegion();
+        delete m_chartSelectRigionEditor;
+        m_chartSelectRigionEditor = nullptr;
+    }
+    if(nullptr == m_chartSelectRigionEditor)
+    {
+        m_chartSelectRigionEditor = new SAEllipseRegionSelectEditor(this);
         if(!tmp.isEmpty())
         {
             m_chartSelectRigionEditor->setSelectRegion(tmp);

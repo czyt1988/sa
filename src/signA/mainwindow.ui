@@ -204,7 +204,10 @@
      <property name="title">
       <string>选择</string>
      </property>
-     <addaction name="actionRectSelect"/>
+     <addaction name="actionStartRectSelect"/>
+     <addaction name="actionStartEllipseSelect"/>
+     <addaction name="actionStartPolygonSelect"/>
+     <addaction name="actionClearAllSelectiedRegion"/>
     </widget>
     <addaction name="actionEnableChartPicker"/>
     <addaction name="actionEnableChartPanner"/>
@@ -1215,12 +1218,27 @@
     <string>Ctrl+-</string>
    </property>
   </action>
-  <action name="actionRectSelect">
+  <action name="actionStartRectSelect">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>rectSelect</string>
+   </property>
+  </action>
+  <action name="actionStartEllipseSelect">
+   <property name="text">
+    <string>ellipseSelect</string>
+   </property>
+  </action>
+  <action name="actionStartPolygonSelect">
+   <property name="text">
+    <string>polygonSelect</string>
+   </property>
+  </action>
+  <action name="actionClearAllSelectiedRegion">
+   <property name="text">
+    <string>clearAllSelect</string>
    </property>
   </action>
  </widget>

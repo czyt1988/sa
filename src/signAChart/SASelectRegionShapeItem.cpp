@@ -25,3 +25,10 @@ void SASelectRegionShapeItem::draw(QPainter *p, const QwtScaleMap &xMap, const Q
 {
     QwtPlotShapeItem::draw(p,xMap,yMap,rect);
 }
+
+void SASelectRegionShapeItem::setEllipse(const QRectF &rect)
+{
+    QPainterPath path;
+    path.addEllipse(rect);
+    setShape( path );
+}

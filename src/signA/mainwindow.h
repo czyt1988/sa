@@ -134,7 +134,7 @@ public:
     //获取当前正在显示的Chart指针,如果是一个subplot，返回多个指针
     QList<SAChart2D *> getCurSubWindowCharts();
     //用于子窗口激活时刷新“图表设置工具栏的选中状态”
-    void updateChartSetToolBar(SAFigureWindow* w);
+    void updateChartSetToolBar(SAFigureWindow* w=nullptr);
     //获取所有子窗口指针
     QList<QMdiSubWindow*> getSubWindowList() const;
     //从subwindow指针中查找是否含有SAFigureWindow
@@ -264,6 +264,12 @@ private slots:
     void onActionNewTrendTriggered();
     //开始矩形选框工具
     void onActionStartRectSelectTriggered(bool b);
+    //开始圆形选框工具
+    void onActionStartEllipseSelectTriggered(bool b);
+    //开始多边形选框工具
+    void onActionStartPolygonSelectTriggered(bool b);
+    //清除所有选区
+    void onActionClearAllSelectiedRegion(bool b);
     //开启当前绘图的十字光标
     void onActionEnableChartPicker(bool check);
     //开启当前绘图的拖动

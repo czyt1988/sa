@@ -10,6 +10,7 @@ public:
     virtual void draw( QPainter *p,
         const QwtScaleMap &xMap, const QwtScaleMap &yMap,
         const QRectF &rect ) const;
+    void setEllipse(const QRectF &rect);
 };
 
 #endif // SASELECTREGIONSHAPEITEM_H

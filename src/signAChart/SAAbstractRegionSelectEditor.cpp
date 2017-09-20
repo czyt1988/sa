@@ -1,6 +1,6 @@
 #include "SAAbstractRegionSelectEditor.h"
-
-
+#include <QEvent>
+#include <QMouseEvent>
 SAAbstractRegionSelectEditor::SAAbstractRegionSelectEditor(QwtPlot *parent)
     :SAAbstractPlotEditor(parent)
     ,m_selectionMode(AdditionalSelection)//SingleSelection
@@ -23,6 +23,15 @@ SAAbstractRegionSelectEditor::SelectionMode SAAbstractRegionSelectEditor::getSel
 void SAAbstractRegionSelectEditor::setSelectionMode(const SelectionMode &selectionMode)
 {
     m_selectionMode = selectionMode;
+}
+///
+/// \brief 判断点是否在区域里
+/// \param p
+/// \return
+///
+bool SAAbstractRegionSelectEditor::isContains(const QPointF &p) const
+{
+    return getSelectRegion().contains(p);
 }
 
 ///
@@ -101,4 +110,98 @@ QPainterPath SAAbstractRegionSelectEditor::transformToOtherAxis(int axisX, int a
         shape.setElementPositionAt( i, tmp.x(), tmp.y() );
     }
     return shape;
+}
+bool SAAbstractRegionSelectEditor::eventFilter(QObject *object, QEvent *event)
+{
+    QwtPlot *plot = qobject_cast<QwtPlot *>( parent() );
+    if ( plot && object == plot->canvas() )
+    {
+        switch( event->type() )
+        {
+            case QEvent::MouseButtonPress:
+            {
+                const QMouseEvent* mouseEvent =
+                        dynamic_cast<QMouseEvent* >( event );
+                if(mouseEvent)
+                {
+                    return mousePressEvent( mouseEvent);
+                }
+                break;
+            }
+            case QEvent::MouseMove:
+            {
+                const QMouseEvent* mouseEvent =
+                        dynamic_cast< QMouseEvent* >( event );
+                if(mouseEvent)
+                {
+                    return mouseMovedEvent( mouseEvent );
+                }
+                break;
+            }
+            case QEvent::MouseButtonRelease:
+            {
+                const QMouseEvent* mouseEvent =
+                        dynamic_cast<QMouseEvent* >( event );
+                if(mouseEvent)
+                {
+                    return mouseReleasedEvent( mouseEvent );
+                }
+                break;
+            }
+            case QEvent::KeyPress:
+            {
+                const QKeyEvent* keyEvent =
+                    dynamic_cast<QKeyEvent* >( event );
+                if(keyEvent)
+                {
+                    return keyPressEvent(keyEvent);
+                }
+                break;
+            }
+            case QEvent::KeyRelease:
+            {
+                const QKeyEvent* keyEvent =
+                    dynamic_cast<QKeyEvent* >( event );
+                if(keyEvent)
+                {
+                    return keyReleaseEvent(keyEvent);
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        return false;
+    }
+    return QObject::eventFilter( object, event );
+}
+
+bool SAAbstractRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
+{
+    Q_UNUSED(e);
+    return false;
+}
+
+bool SAAbstractRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
+{
+    Q_UNUSED(e);
+    return false;
+}
+
+bool SAAbstractRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
+{
+    Q_UNUSED(e);
+    return false;
+}
+
+bool SAAbstractRegionSelectEditor::keyPressEvent(const QKeyEvent *e)
+{
+    Q_UNUSED(e);
+    return false;
+}
+
+bool SAAbstractRegionSelectEditor::keyReleaseEvent(const QKeyEvent *e)
+{
+    Q_UNUSED(e);
+    return false;
 }

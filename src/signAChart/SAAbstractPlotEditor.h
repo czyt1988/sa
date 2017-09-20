@@ -15,8 +15,10 @@ public:
     const QwtPlot *plot() const;
     QwtPlot *plot();
     //是否启用编辑器
-    virtual void setEnabled( bool on ) = 0;
-    virtual bool isEnabled() const = 0;
+    virtual void setEnabled( bool on );
+    virtual bool isEnabled() const;
+private:
+    bool m_isEnable;///< 是否生效
 };
 
 #endif // SAABSTRACTPLOTEDITOR_H

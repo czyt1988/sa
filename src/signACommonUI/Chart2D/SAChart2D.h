@@ -19,6 +19,8 @@ public:
     enum SelectionMode{
         NoneSelection ///< 无选择
         ,RectSelection ///< 矩形选框
+        ,EllipseSelection ///< 椭圆选框
+        ,PolygonSelection ///< 多边形选框
     };
 
     //添加曲线
@@ -36,6 +38,8 @@ public:
     //开始选择模式
     void startSelectMode(SelectionMode mode = RectSelection);
     void stopSelectMode();
+    //清除所有选区
+    void clearAllSelectedRegion();
     //判断是否有选区
     bool isRegionVisible() const;
     //获取当前正在显示的选择区域
@@ -46,7 +50,10 @@ public:
     //获取当前可见的选区的范围
     QPainterPath getVisibleRegion() const;
 protected:
+    //开始矩形选框模式
     void startRectSelectMode();
+    //开始椭圆选框模式
+    void startEllipseSelectMode();
 private:
     void addDatas(const QList<SAAbstractDatas*>& datas);
 protected:

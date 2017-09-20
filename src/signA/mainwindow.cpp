@@ -376,9 +376,21 @@ void MainWindow::initUI()
             ,this,&MainWindow::onActionChartZoomOut);
 
     //矩形选框
-    ui->actionRectSelect->setCheckable(true);
-    connect(ui->actionRectSelect,&QAction::triggered
+    ui->actionStartRectSelect->setCheckable(true);
+    connect(ui->actionStartRectSelect,&QAction::triggered
             ,this,&MainWindow::onActionStartRectSelectTriggered);
+    //椭圆选框
+    ui->actionStartEllipseSelect->setCheckable(true);
+    connect(ui->actionStartEllipseSelect,&QAction::triggered
+            ,this,&MainWindow::onActionStartEllipseSelectTriggered);
+    //多边形选框
+    ui->actionStartPolygonSelect->setCheckable(true);
+    connect(ui->actionStartPolygonSelect,&QAction::triggered
+            ,this,&MainWindow::onActionStartPolygonSelectTriggered);
+    //清除所有选区
+    connect(ui->actionClearAllSelectiedRegion,&QAction::triggered
+            ,this,&MainWindow::onActionClearAllSelectiedRegion);
+
     //数据显示
     ui->actionYDataPicker->setCheckable(true);
     connect(ui->actionYDataPicker,&QAction::triggered,Lambda_SaChartEnable(YDataPicker));
@@ -840,13 +852,73 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
     {
-        b ? chart->startSelectMode()
-          : chart->stopSelectMode();
+        if(b)
+        {
+            chart->startSelectMode(SAChart2D::RectSelection);
+            chart->enableZoomer(false);
+        }
+        else
+        {
+            chart->stopSelectMode();
+        }
     }
-    else
+    updateChartSetToolBar();
+}
+///
+/// \brief 开始圆形选框工具
+/// \param b
+///
+void MainWindow::onActionStartEllipseSelectTriggered(bool b)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
     {
-        ui->actionRectSelect->setChecked(false);
+        if(b)
+        {
+            chart->startSelectMode(SAChart2D::EllipseSelection);
+            chart->enableZoomer(false);
+        }
+        else
+        {
+            chart->stopSelectMode();
+        }
     }
+    updateChartSetToolBar();
+}
+///
+/// \brief 开始多边形选框工具
+/// \param b
+///
+void MainWindow::onActionStartPolygonSelectTriggered(bool b)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+        if(b)
+        {
+            chart->startSelectMode(SAChart2D::PolygonSelection);
+            chart->enableZoomer(false);
+        }
+        else
+        {
+            chart->stopSelectMode();
+        }
+    }
+    updateChartSetToolBar();
+}
+///
+/// \brief 清除所有选区
+/// \param b
+///
+void MainWindow::onActionClearAllSelectiedRegion(bool b)
+{
+    Q_UNUSED(b);
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+        chart->clearAllSelectedRegion();
+    }
+    updateChartSetToolBar();
 }
 
 ///
@@ -897,13 +969,16 @@ void MainWindow::onActionEnableChartZoom(bool check)
     {
         QList<SAChart2D*> charts = fig->get2DPlots();
         std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
+            if(check)
+            {
+                //选框模式和放大模式是有冲突的。
+                c->stopSelectMode();
+            }
             c->enableZoomer(check);
         });
+
     }
-    else
-    {
-        ui->actionEnableChartZoom->setChecked(false);
-    }
+    updateChartSetToolBar();
 }
 ///
 /// \brief 当前绘图的缩放还原
@@ -1214,6 +1289,14 @@ QList<SAChart2D*> MainWindow::getCurSubWindowCharts()
 ///
 void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
 {
+    if(nullptr == w)
+    {
+        w = this->getCurrentFigureWindow();
+    }
+    if(nullptr == w)
+    {
+        return;
+    }
     auto c = w->current2DPlot();
     if(c)
     {
@@ -1229,6 +1312,10 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
         ui->actionShowCrowdedVGrid->setChecked(c->isEnableGridXMin());
         ui->actionShowLegend->setChecked(c->isEnableLegend());
         ui->actionLegendPanel->setChecked(c->isEnableLegendPanel());
+        SAChart2D::SelectionMode selMode = c->currentSelectRegionMode();
+        ui->actionStartRectSelect->setChecked(SAChart2D::RectSelection == selMode);
+        ui->actionStartEllipseSelect->setChecked(SAChart2D::EllipseSelection == selMode);
+        ui->actionStartPolygonSelect->setChecked(SAChart2D::PolygonSelection == selMode);
     }
 }
 

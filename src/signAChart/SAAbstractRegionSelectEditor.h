@@ -10,7 +10,7 @@ class SA_CHART_EXPORT SAAbstractRegionSelectEditor : public SAAbstractPlotEditor
     Q_ENUMS(SelectionMode)
 public:
     SAAbstractRegionSelectEditor(QwtPlot* parent);
-    ~SAAbstractRegionSelectEditor();
+    virtual ~SAAbstractRegionSelectEditor();
     enum SelectionMode
     {
         SingleSelection ///< 单选
@@ -22,11 +22,12 @@ public:
     virtual void setSelectionMode(const SelectionMode &selectionMode);
     //获取选择的数据区域
     virtual QPainterPath getSelectRegion() const = 0;
+    //设置选区
     virtual void setSelectRegion(const QPainterPath& shape) = 0;
-    //判断点是否在区域里 此算法频繁调用会耗时
-    virtual bool isContains(const QPointF& p) const = 0;
     //判断是否显示选区
     virtual bool isRegionVisible() const = 0;
+    //判断点是否在区域里 此算法频繁调用会耗时
+    virtual bool isContains(const QPointF& p) const;
     //获取绑定的x轴
     int getXAxis() const;
     //获取绑定的y轴
@@ -39,6 +40,13 @@ public:
     QPointF transform( const QPointF &pos ) const;
     //把当前区域转换为其它轴系
     QPainterPath transformToOtherAxis(int axisX,int axisY);
+protected:
+    virtual bool eventFilter(QObject *object, QEvent *event);
+    virtual bool mousePressEvent( const QMouseEvent* e);
+    virtual bool mouseMovedEvent( const QMouseEvent* e);
+    virtual bool mouseReleasedEvent( const QMouseEvent* e);
+    virtual bool keyPressEvent(const QKeyEvent *e);
+    virtual bool keyReleaseEvent(const QKeyEvent *e);
 private:
     SelectionMode m_selectionMode; ///< 选框类型
     int m_xAxis;

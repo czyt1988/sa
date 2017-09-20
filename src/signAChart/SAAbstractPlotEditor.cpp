@@ -2,6 +2,7 @@
 
 SAAbstractPlotEditor::SAAbstractPlotEditor(QwtPlot *parent)
     :QObject(parent)
+    ,m_isEnable(false)
 {
 
 }
@@ -19,4 +20,33 @@ const QwtPlot *SAAbstractPlotEditor::plot() const
 QwtPlot *SAAbstractPlotEditor::plot()
 {
     return qobject_cast<QwtPlot *>( parent() );
+}
+
+void SAAbstractPlotEditor::setEnabled(bool on)
+{
+    if ( on == m_isEnable )
+        return;
+
+    QwtPlot *plot = qobject_cast<QwtPlot *>( parent() );
+    if ( plot )
+    {
+        m_isEnable = on;
+
+        if(plot->canvas())
+        {
+            if ( on )
+            {
+                plot->canvas()->installEventFilter( this );
+            }
+            else
+            {
+                plot->canvas()->removeEventFilter( this );
+            }
+        }
+    }
+}
+
+bool SAAbstractPlotEditor::isEnabled() const
+{
+    return m_isEnable;
 }
