@@ -454,6 +454,7 @@ private:
     ///
     void setupZoomer();
     void deleteZoomer();
+    void enableZoomer(QwtPlotZoomer* zoomer, bool enable);
     ///
     /// \brief 建立一个内置的picker
     ///

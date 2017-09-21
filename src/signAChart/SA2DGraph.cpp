@@ -9,9 +9,10 @@
 #include <qwt_legend_label.h>
 #include <qwt_date_scale_draw.h>
 
-#include <SAPlotMarker.h>
-#include <SAYDataTracker.h>
-#include <SAXYDataTracker.h>
+#include "SAPlotMarker.h"
+#include "SAYDataTracker.h"
+#include "SAXYDataTracker.h"
+#include "SAPlotPicker.h"
 //unsigned int ChartWave_qwt::staticValue_nAutoLineID = 0;//静态变量初始化
 
 
@@ -1346,8 +1347,13 @@ void SA2DGraph::setupPicker()
         //    QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,canvas() );
 // 		m_picker = new Picker_qwt( QwtPlot::xBottom, QwtPlot::yLeft,
 //             QwtPlotPicker::CrossRubberBand,QwtPlotPicker::ActiveOnly /*QwtPicker::AlwaysOn*/,canvas() );
-		m_picker = new Picker_qwt( this->canvas() );
-        m_picker->setRubberBandPen(  QPen( QColor(186,85,211) ) );//QPen( "MediumOrchid" )
+        //m_picker = new Picker_qwt( this->canvas() );
+        //m_picker->setRubberBandPen(  QPen( QColor(186,85,211) ) );//QPen( "MediumOrchid" )
+        m_picker = new SAPlotPicker(this->canvas());
+        //m_picker->setTrackerPen(Qt::NoPen);
+
+        //m_picker->setTrackerMode(QwtPicker::AlwaysOn);
+
 
     }
 
@@ -1417,24 +1423,53 @@ void SA2DGraph::deletePanner()
 ///
 void SA2DGraph::enableZoomer(bool enable)
 {
+    if(!enable)
+    {
+        if(m_zoomer.isNull())
+        {
+            return;
+        }
+    }
     if(m_zoomer.isNull() /*|| nullptr == m_zoomerSecond*/)
     {
         setupZoomer();
     }
+    enableZoomer(m_zoomer.data(),enable);
+    enableZoomer(m_zoomerSecond.data(),enable);
+    if(isEnablePicker())
+    {
+        m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::ActiveOnly) );
+    }
+    emit enableZoomerChanged(enable);
+}
+
+void SA2DGraph::enableZoomer(QwtPlotZoomer *zoomer,bool enable)
+{
+    if(nullptr == zoomer)
+    {
+        return;
+    }
     if(enable)
     {
-        m_zoomer->setEnabled(true);
-        m_zoomer->setZoomBase(true);
-        if(isEnablePicker())
-        {
-            m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::AlwaysOn) );
-        }
+        zoomer->setEnabled(true);
+        zoomer->setZoomBase(true);
+        zoomer->setRubberBand(QwtPicker::RectRubberBand);
+        //zoomer->setStateMachine( new QwtPickerDragRectMachine() );
+        zoomer->setTrackerMode( (isEnablePicker() ? QwtPicker::AlwaysOff : QwtPicker::ActiveOnly) );
+
     }
     else
     {
-        m_zoomer->setEnabled(false);
+        zoomer->setEnabled(false);
+        zoomer->setRubberBand(QwtPicker::NoRubberBand);
+        zoomer->setTrackerMode(QwtPicker::AlwaysOff);
+        //zoomer->setStateMachine( new QwtPickerTrackerMachine() );
+        //zoomer->setStateMachine( new QwtPickerDragPointMachine() );
     }
-    emit enableZoomerChanged(enable);
+    if(isEnablePicker())
+    {
+        zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::ActiveOnly) );
+    }
 }
 ///
 /// \brief 回到放大的最底栈
@@ -1516,6 +1551,8 @@ void SA2DGraph::deleteZoomer()
         m_zoomerSecond.reset();
     }
 }
+
+
 
 ///
 /// \brief 设置缩放重置

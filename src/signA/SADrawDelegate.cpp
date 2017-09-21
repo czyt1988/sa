@@ -50,10 +50,10 @@ void SADrawDelegate::drawTrend(const QList<SAAbstractDatas *> &datas)
     });
 
     chart->setAutoReplot(false);
-    chart->setAutoReplot(true);
     chart->enablePicker(true);
     chart->enableZoomer(false);
     chart->enableGrid(true);
+    chart->setAutoReplot(true);
     pSubWnd->show();
 }
 ///
