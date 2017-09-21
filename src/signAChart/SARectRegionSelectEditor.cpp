@@ -4,8 +4,8 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-SARectRegionSelectEditor::SARectRegionSelectEditor(QwtPlot *parent):SAAbstractRegionSelectEditor(parent)
-  ,m_isEnable(false)
+SARectRegionSelectEditor::SARectRegionSelectEditor(QwtPlot *parent)
+    :SAAbstractRegionSelectEditor(parent)
   ,m_isStartDrawRegion(false)
   ,m_shapeItem(nullptr)
   ,m_tmpItem(nullptr)

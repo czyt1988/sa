@@ -39,7 +39,8 @@ HEADERS += \
     SAAbstractPlotEditor.h \
     SAAbstractRegionSelectEditor.h \
     SARectRegionSelectEditor.h \
-    SAEllipseRegionSelectEditor.h
+    SAEllipseRegionSelectEditor.h \
+    SAPolygonRegionSelectEditor.h
 
 SOURCES += \
     QwtPlotItemDataModel.cpp \
@@ -56,6 +57,7 @@ SOURCES += \
     SAAbstractPlotEditor.cpp \
     SAAbstractRegionSelectEditor.cpp \
     SARectRegionSelectEditor.cpp \
-    SAEllipseRegionSelectEditor.cpp
+    SAEllipseRegionSelectEditor.cpp \
+    SAPolygonRegionSelectEditor.cpp
 
 OTHER_FILES += readme.md

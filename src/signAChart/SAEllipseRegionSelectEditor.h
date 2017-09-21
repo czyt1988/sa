@@ -2,7 +2,6 @@
 #define SAELLIPSEREGIONSELECTEDITOR_H
 #include "SAChartGlobals.h"
 #include "SAAbstractRegionSelectEditor.h"
-#include "qwt_plot.h"
 #include "SASelectRegionShapeItem.h"
 class SA_CHART_EXPORT SAEllipseRegionSelectEditor : public SAAbstractRegionSelectEditor
 {
@@ -30,7 +29,6 @@ protected:
     bool mouseMovedEvent( const QMouseEvent *e);
     bool mouseReleasedEvent( const QMouseEvent *e);
 private:
-    bool m_isEnable;///< 是否生效
     bool m_isStartDrawRegion;
     SASelectRegionShapeItem* m_shapeItem;
     SASelectRegionShapeItem* m_tmpItem;

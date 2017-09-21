@@ -54,6 +54,8 @@ protected:
     void startRectSelectMode();
     //开始椭圆选框模式
     void startEllipseSelectMode();
+    //开始椭圆选框模式
+    void startPolygonSelectMode();
 private:
     void addDatas(const QList<SAAbstractDatas*>& datas);
 protected:

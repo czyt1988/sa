@@ -1,19 +1,15 @@
-#ifndef SARECTSELECTEDITOR_H
-#define SARECTSELECTEDITOR_H
+#ifndef SAPOLYGONREGIONSELECTEDITOR_H
+#define SAPOLYGONREGIONSELECTEDITOR_H
 #include "SAChartGlobals.h"
 #include "SAAbstractRegionSelectEditor.h"
 #include "SASelectRegionShapeItem.h"
-class QKeyEvent;
-///
-/// \brief 用于给图标添加矩形选框的事件过滤器
-///
-class SA_CHART_EXPORT SARectRegionSelectEditor : public SAAbstractRegionSelectEditor
+#include <QPolygonF>
+class SA_CHART_EXPORT SAPolygonRegionSelectEditor : public SAAbstractRegionSelectEditor
 {
     Q_OBJECT
 public:
-    SARectRegionSelectEditor(QwtPlot* parent);
-    virtual ~SARectRegionSelectEditor();
-
+    SAPolygonRegionSelectEditor(QwtPlot* parent);
+    virtual ~SAPolygonRegionSelectEditor();
     //判断是否显示选区
     virtual bool isRegionVisible() const;
     //获取选择的数据区域
@@ -25,24 +21,19 @@ public:
     //获取选框区域的item
     const QwtPlotShapeItem* getShapeItem() const;
     QwtPlotShapeItem* getShapeItem();
-    //清理数据
-    void clear();
-
 private slots:
     void onItemAttached(QwtPlotItem* item,bool on);
 protected:
     bool mousePressEvent(const QMouseEvent *e);
     bool mouseMovedEvent( const QMouseEvent *e);
-    bool mouseReleasedEvent( const QMouseEvent *e);
     bool keyPressEvent(const QKeyEvent *e);
-    bool keyReleaseEvent(const QKeyEvent *e);
+    bool completeRegion();
 private:
-    bool m_isStartDrawRegion;
+    bool m_isStartDrawRegion;///< 是否生效
     SASelectRegionShapeItem* m_shapeItem;
     SASelectRegionShapeItem* m_tmpItem;
-    QPointF m_pressedPoint;
-    QRectF m_selectedRect;
-
+    QPolygonF m_polygon;///< 多边形
+    bool m_isFinishOneRegion;///< 标定是否已经完成了一次区域，m_tmpItem还是m_shapeItem显示
 };
 
-#endif // SARECTSELECTEDITOR_H
+#endif // SAPOLYGONREGIONSELECTEDITOR_H

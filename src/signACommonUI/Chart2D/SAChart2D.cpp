@@ -17,6 +17,7 @@
 #include "SALog.h"
 #include "SARectRegionSelectEditor.h"
 #include "SAEllipseRegionSelectEditor.h"
+#include "SAPolygonRegionSelectEditor.h"
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
   ,m_chartSelectRigionEditor(nullptr)
 {
@@ -170,8 +171,9 @@ void SAChart2D::startSelectMode(SelectionMode mode)
     m_selectMode = mode;
     switch(m_selectMode)
     {
-        case RectSelection:startRectSelectMode();break;
-        case EllipseSelection:startEllipseSelectMode();break;
+    case RectSelection:startRectSelectMode();break;
+    case EllipseSelection:startEllipseSelectMode();break;
+    case PolygonSelection:startPolygonSelectMode();break;
     }
 }
 ///
@@ -284,6 +286,28 @@ void SAChart2D::startEllipseSelectMode()
     if(nullptr == m_chartSelectRigionEditor)
     {
         m_chartSelectRigionEditor = new SAEllipseRegionSelectEditor(this);
+        if(!tmp.isEmpty())
+        {
+            m_chartSelectRigionEditor->setSelectRegion(tmp);
+        }
+    }
+    m_chartSelectRigionEditor->setEnabled(true);
+}
+///
+/// \brief 开始多边形选框模式
+///
+void SAChart2D::startPolygonSelectMode()
+{
+    QPainterPath tmp;
+    if(m_chartSelectRigionEditor)
+    {
+        tmp = m_chartSelectRigionEditor->getSelectRegion();
+        delete m_chartSelectRigionEditor;
+        m_chartSelectRigionEditor = nullptr;
+    }
+    if(nullptr == m_chartSelectRigionEditor)
+    {
+        m_chartSelectRigionEditor = new SAPolygonRegionSelectEditor(this);
         if(!tmp.isEmpty())
         {
             m_chartSelectRigionEditor->setSelectRegion(tmp);

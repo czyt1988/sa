@@ -1,12 +1,9 @@
 #include "SAEllipseRegionSelectEditor.h"
-#include <QEvent>
 #include <QMouseEvent>
-#include <QDebug>
 #include <QKeyEvent>
 
 SAEllipseRegionSelectEditor::SAEllipseRegionSelectEditor(QwtPlot *parent)
     :SAAbstractRegionSelectEditor(parent)
-    ,m_isEnable(false)
     ,m_isStartDrawRegion(false)
     ,m_shapeItem(nullptr)
     ,m_tmpItem(nullptr)
@@ -88,12 +85,12 @@ void SAEllipseRegionSelectEditor::setSelectionMode(const SAAbstractRegionSelectE
 
 const QwtPlotShapeItem *SAEllipseRegionSelectEditor::getShapeItem() const
 {
-
+    return m_shapeItem;
 }
 
 QwtPlotShapeItem *SAEllipseRegionSelectEditor::getShapeItem()
 {
-
+    return m_shapeItem;
 }
 
 void SAEllipseRegionSelectEditor::clear()
