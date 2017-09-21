@@ -12,7 +12,7 @@
 #include "SAPlotMarker.h"
 #include "SAYDataTracker.h"
 #include "SAXYDataTracker.h"
-#include "SAPlotPicker.h"
+#include "SACrossTracker.h"
 //unsigned int ChartWave_qwt::staticValue_nAutoLineID = 0;//静态变量初始化
 
 
@@ -35,66 +35,6 @@ public:
     ScrollBar *scrollBar;
     ScrollZoomer::ScrollBarPosition position;
     Qt::ScrollBarPolicy mode;
-};
-
-class Picker_qwt: public QwtPlotPicker
-{
-public:
-	Picker_qwt(int xAxis, int yAxis, RubberBand rubberBand, DisplayMode trackerMode, QWidget *parent)
-		:QwtPlotPicker(xAxis,yAxis,rubberBand,trackerMode,parent)
-	{}
-	Picker_qwt(QWidget *canvas):QwtPlotPicker(canvas)
-	{
-		setTrackerMode( QwtPlotPicker::AlwaysOn );//这是指定文字的显示，AlwaysOn值，光标不激活，也显示文字提示
-		setRubberBand( QwtPlotPicker::CrossRubberBand );
-		setStateMachine(  new QwtPickerTrackerMachine() );//QwtPickerTrackerMachine是不用鼠标激活
-		//如果是new QwtPickerDragPointMachine()就是鼠标点击激活
-	}
-	~Picker_qwt(){}
-	virtual QwtText trackerTextF( const QPointF &pos ) const
-    {
-        QString s("");
-		const QwtScaleDraw* sd = plot()->axisScaleDraw(QwtPlot::xBottom);
-		if(sd != nullptr)
-		{
-			const QwtDateScaleDraw* dsd = dynamic_cast<const QwtDateScaleDraw*>(sd);
-			if(dsd != nullptr)
-			{
-				//说明坐标轴是时间轴
-				s += QStringLiteral("(%1,").arg(dsd->label(pos.x()).text());
-			}
-			else
-			{
-                s += QString("(%1,").arg(pos.x());
-			}
-		}
-		sd = plot()->axisScaleDraw(QwtPlot::yLeft);
-		if(sd != nullptr)
-		{
-			const QwtDateScaleDraw* dsd = dynamic_cast<const QwtDateScaleDraw*>(sd);
-			if(dsd != nullptr)
-			{
-				//说明坐标轴是时间轴
-				s += QStringLiteral("%1)").arg(dsd->label(pos.y()).text());
-			}
-			else
-			{
-                s += QString("%2)").arg(pos.y());
-			}
-		}
-		//axisScaleDraw
-        
-
-        QwtText text( s );
-        text.setColor( Qt::white );
-        QColor c = rubberBandPen().color();
-        text.setBorderPen( QPen( c ) );
-        text.setBorderRadius( 6 );
-        c.setAlpha( 200 );
-        text.setBackgroundBrush( c );
-
-        return text;
-    }
 };
 
 
@@ -1343,18 +1283,7 @@ void SA2DGraph::setupPicker()
 {
     if(nullptr == m_picker)
     {
-        //m_picker = new QwtPlotPicker( QwtPlot::xBottom, QwtPlot::yLeft,
-        //    QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,canvas() );
-// 		m_picker = new Picker_qwt( QwtPlot::xBottom, QwtPlot::yLeft,
-//             QwtPlotPicker::CrossRubberBand,QwtPlotPicker::ActiveOnly /*QwtPicker::AlwaysOn*/,canvas() );
-        //m_picker = new Picker_qwt( this->canvas() );
-        //m_picker->setRubberBandPen(  QPen( QColor(186,85,211) ) );//QPen( "MediumOrchid" )
-        m_picker = new SAPlotPicker(this->canvas());
-        //m_picker->setTrackerPen(Qt::NoPen);
-
-        //m_picker->setTrackerMode(QwtPicker::AlwaysOn);
-
-
+        m_picker = new SACrossTracker(this->canvas());
     }
 
 }
@@ -1454,7 +1383,6 @@ void SA2DGraph::enableZoomer(QwtPlotZoomer *zoomer,bool enable)
         zoomer->setEnabled(true);
         zoomer->setZoomBase(true);
         zoomer->setRubberBand(QwtPicker::RectRubberBand);
-        //zoomer->setStateMachine( new QwtPickerDragRectMachine() );
         zoomer->setTrackerMode( (isEnablePicker() ? QwtPicker::AlwaysOff : QwtPicker::ActiveOnly) );
 
     }
@@ -1463,8 +1391,6 @@ void SA2DGraph::enableZoomer(QwtPlotZoomer *zoomer,bool enable)
         zoomer->setEnabled(false);
         zoomer->setRubberBand(QwtPicker::NoRubberBand);
         zoomer->setTrackerMode(QwtPicker::AlwaysOff);
-        //zoomer->setStateMachine( new QwtPickerTrackerMachine() );
-        //zoomer->setStateMachine( new QwtPickerDragPointMachine() );
     }
     if(isEnablePicker())
     {
