@@ -1,6 +1,7 @@
 #ifndef SARIBBONBAR_H
 #define SARIBBONBAR_H
 #include <QWidget>
+#include "SARibbonCategory.h"
 class SARibbonBarPrivate;
 class QAbstractButton;
 class SARibbonTabBar;
@@ -17,6 +18,8 @@ public:
     void setApplitionButton(QAbstractButton* btn);
     //获取tabbar
     SARibbonTabBar* ribbonTabBar();
+    //
+    SARibbonCategory* addCategory(const QString& title);
 signals:
     void applitionButtonClicked();
     //

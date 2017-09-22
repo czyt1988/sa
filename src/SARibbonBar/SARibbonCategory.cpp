@@ -1,6 +1,7 @@
 #include "SARibbonCategory.h"
 
-SARibbonCategory::SARibbonCategory()
+SARibbonCategory::SARibbonCategory(QWidget *parent)
+    :QWidget(parent)
 {
 
 }
