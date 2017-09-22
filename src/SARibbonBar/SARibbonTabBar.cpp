@@ -1,0 +1,37 @@
+#include "SARibbonTabBar.h"
+
+SARibbonTabBar::SARibbonTabBar(QWidget *parent):QTabBar(parent)
+{
+    setExpanding(false);
+    setStyleSheet(""
+                  "QTabBar::tab "
+                  "{"
+                  " background: transparent;"
+                  " margin-left: 4px;"
+                  " margin-right: 4px;"
+                  " min-width:60px;"
+                  " max-width:200px;"
+                  " min-height:30px;"
+                  " max-height:30px;"
+                  ""
+                  "}"
+                  "QTabBar::tab:selected, QTabBar::tab:hover "
+                  "{ "
+                  " border-top-left-radius: 2px;"
+                  " border-top-right-radius: 2px;"
+                  "}"
+                  "QTabBar::tab:selected{"
+                  " border: 1px solid #BAC9DB; "
+                  " background: white;"
+                  " border-bottom-color: #FFFFFF;"
+                  "}"
+                  "QTabBar::tab:hover:!selected"
+                  "{"
+                  " border: 1px solid #ECBC3D;"
+                  "}"
+                  "QTabBar::tab:!selected "
+                  "{"
+                  " margin-top: 1px;"
+                  "}"
+                  "");
+}
