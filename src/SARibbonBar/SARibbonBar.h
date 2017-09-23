@@ -18,20 +18,19 @@ public:
     void setApplitionButton(QAbstractButton* btn);
     //获取tabbar
     SARibbonTabBar* ribbonTabBar();
-    //
-    SARibbonCategory* addCategory(const QString& title);
+    //添加一个标签
+    SARibbonCategory* addCategoryPage(const QString& title);
 signals:
     void applitionButtonClicked();
     //
     void currentRibbonTabChanged(int index);
-    void ribbonTabBarClicked(int index);
-    void ribbonTabBarDoubleClicked(int index);
-    void ribbonTabCloseRequested(int index);
-    void ribbonTabMoved(int from, int to);
 
 private slots:
     void onWindowTitleChanged(const QString &title);
     void onWindowIconChanged(const QIcon &icon);
+    void onCurrentRibbonTabChanged(int index);
+    void onRibbonTabBarClicked(int index);
+    void onRibbonTabCloseRequested(int index);
 protected:
     void paintEvent(QPaintEvent* e);
     void resizeEvent(QResizeEvent* e);
@@ -39,6 +38,7 @@ protected:
     virtual void paintWindowTitle(QPainter& painter, const QString &title);
     virtual void paintWindowIcon(QPainter& painter, const QIcon &icon);
 private:
+    friend class SARibbonBarPrivate;
     SARibbonBarPrivate* m_d;
 };
 

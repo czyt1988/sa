@@ -111,7 +111,7 @@ public:
     ~WidgetData();
     QWidget* widget();
     // 处理鼠标事件-划过、按下、释放、移动
-    void handleWidgetEvent(QEvent *event);
+    bool handleWidgetEvent(QEvent *event);
     // 更新橡皮筋状态
     void updateRubberBandStatus();
 
@@ -123,15 +123,15 @@ private:
     // 移动窗体
     void moveWidget(const QPoint &gMousePos);
     // 处理鼠标按下
-    void handleMousePressEvent(QMouseEvent *event);
+    bool handleMousePressEvent(QMouseEvent *event);
     // 处理鼠标释放
-    void handleMouseReleaseEvent(QMouseEvent *event);
+    bool handleMouseReleaseEvent(QMouseEvent *event);
     // 处理鼠标移动
-    void handleMouseMoveEvent(QMouseEvent *event);
+    bool handleMouseMoveEvent(QMouseEvent *event);
     // 处理鼠标离开
-    void handleLeaveEvent(QEvent *event);
+    bool handleLeaveEvent(QEvent *event);
     // 处理鼠标进入
-    void handleHoverMoveEvent(QHoverEvent *event);
+    bool handleHoverMoveEvent(QHoverEvent *event);
 
 private:
     FramelessHelperPrivate *d;
@@ -178,27 +178,22 @@ QWidget* WidgetData::widget()
     return m_pWidget;
 }
 
-void WidgetData::handleWidgetEvent(QEvent *event)
+bool WidgetData::handleWidgetEvent(QEvent *event)
 {
     switch (event->type())
     {
-    default:
-        break;
     case QEvent::MouseButtonPress:
-        handleMousePressEvent(static_cast<QMouseEvent*>(event));
-        break;
+        return handleMousePressEvent(static_cast<QMouseEvent*>(event));
     case QEvent::MouseButtonRelease:
-        handleMouseReleaseEvent(static_cast<QMouseEvent*>(event));
-        break;
+        return handleMouseReleaseEvent(static_cast<QMouseEvent*>(event));
     case QEvent::MouseMove:
-        handleMouseMoveEvent(static_cast<QMouseEvent*>(event));
-        break;
+        return handleMouseMoveEvent(static_cast<QMouseEvent*>(event));
     case QEvent::Leave:
-        handleLeaveEvent(static_cast<QMouseEvent*>(event));
-        break;
+        return handleLeaveEvent(static_cast<QMouseEvent*>(event));
     case QEvent::HoverMove:
-        handleHoverMoveEvent(static_cast<QHoverEvent*>(event));
-        break;
+        return handleHoverMoveEvent(static_cast<QHoverEvent*>(event));
+    default:
+        return false;
     }
 }
 
@@ -356,7 +351,7 @@ void WidgetData::moveWidget(const QPoint& gMousePos)
     }
 }
 
-void WidgetData::handleMousePressEvent(QMouseEvent *event)
+bool WidgetData::handleMousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
@@ -374,17 +369,20 @@ void WidgetData::handleMousePressEvent(QMouseEvent *event)
             {
                 m_pRubberBand->setGeometry(frameRect);
                 m_pRubberBand->show();
+                return true;
             }
         }
-        else if (d->m_bRubberBandOnMove)
+        else if (d->m_bRubberBandOnMove && m_bLeftButtonTitlePressed)
         {
             m_pRubberBand->setGeometry(frameRect);
             m_pRubberBand->show();
+            return true;
         }
     }
+    return false;
 }
 
-void WidgetData::handleMouseReleaseEvent(QMouseEvent *event)
+bool WidgetData::handleMouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
@@ -395,44 +393,53 @@ void WidgetData::handleMouseReleaseEvent(QMouseEvent *event)
         {
             m_pRubberBand->hide();
             m_pWidget->setGeometry(m_pRubberBand->geometry());
+            return true;
         }
     }
+    return false;
 }
 
-void WidgetData::handleMouseMoveEvent(QMouseEvent *event)
+bool WidgetData::handleMouseMoveEvent(QMouseEvent *event)
 {
     if (m_bLeftButtonPressed)
     {
         if (d->m_bWidgetResizable && m_pressedMousePos.m_bOnEdges)
         {
             resizeWidget(event->globalPos());
+            return true;
         }
         else if (d->m_bWidgetMovable && m_bLeftButtonTitlePressed)
         {
             moveWidget(event->globalPos());
+            return true;
         }
+        return false;
     }
     else if (d->m_bWidgetResizable)
     {
         updateCursorShape(event->globalPos());
     }
+    return false;
 }
 
-void WidgetData::handleLeaveEvent(QEvent *event)
+bool WidgetData::handleLeaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
     if (!m_bLeftButtonPressed)
     {
         m_pWidget->unsetCursor();
+        return true;
     }
+    return false;
 }
 
-void WidgetData::handleHoverMoveEvent(QHoverEvent *event)
+bool WidgetData::handleHoverMoveEvent(QHoverEvent *event)
 {
     if (d->m_bWidgetResizable)
     {
         updateCursorShape(m_pWidget->mapToGlobal(event->pos()));
     }
+    return false;
 }
 
 FramelessHelper::FramelessHelper(QObject *parent)
@@ -443,20 +450,19 @@ FramelessHelper::FramelessHelper(QObject *parent)
     d->m_bWidgetResizable = true;
     d->m_bRubberBandOnResize = false;
     d->m_bRubberBandOnMove = false;
-    if(parent->isWidgetType())
+    if(parent)
     {
-        QWidget* w=qobject_cast<QWidget*>(parent);
+        QWidget* w = qobject_cast<QWidget*>(parent);
         if(w)
         {
             w->setWindowFlags(w->windowFlags()|Qt::FramelessWindowHint);
+            setWidgetMovable(true);  //设置窗体可移动
+            setWidgetResizable(true);  //设置窗体可缩放
+            setRubberBandOnMove(true);  //设置橡皮筋效果-可移动
+            setRubberBandOnResize(true);  //设置橡皮筋效果-可缩放
+            activateOn(w);  //激活当前窗体
         }
-        activateOn(w);  //激活当前窗体
     }
-    setTitleHeight(30);  //设置窗体的标题栏高度
-    setWidgetMovable(true);  //设置窗体可移动
-    setWidgetResizable(true);  //设置窗体可缩放
-    setRubberBandOnMove(true);  //设置橡皮筋效果-可移动
-    setRubberBandOnResize(true);  //设置橡皮筋效果-可缩放
 }
 
 FramelessHelper::~FramelessHelper()
@@ -484,8 +490,7 @@ bool FramelessHelper::eventFilter(QObject *obj, QEvent *event)
         WidgetData *data = d->m_widgetDataHash.value(static_cast<QWidget*>(obj));
         if (data)
         {
-            data->handleWidgetEvent(event);
-            return true;
+            return data->handleWidgetEvent(event);
         }
         break;
     }

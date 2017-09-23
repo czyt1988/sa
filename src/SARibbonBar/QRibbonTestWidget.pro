@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     SARibbonApplicationButton.cpp \
     SARibbonTabBar.cpp \
     SARibbonContextualTabGroup.cpp \
-    SARibbonCategory.cpp
+    SARibbonCategory.cpp \
+    mainwindow.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -30,6 +31,7 @@ HEADERS  += \
     SARibbonApplicationButton.h \
     SARibbonTabBar.h \
     SARibbonContextualTabGroup.h \
-    SARibbonCategory.h
+    SARibbonCategory.h \
+    mainwindow.h
 
 
