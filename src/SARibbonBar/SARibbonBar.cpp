@@ -31,13 +31,15 @@ public:
     SARibbonTabBar* ribbonTabBar;
     QStackedWidget* stackedContainerWidget;
     QList<ContextCategoryManagerData> currentShowingContextCategory;
-
+    int iconRightBorderPosition;///< 标题栏x值得最小值，在有图标和快捷启动按钮，此值都需要变化
     SARibbonBarPrivate(SARibbonBar* par)
         :titleBarHight(30)
         ,tabBarHight(30)
         ,ribbonBarBackground(QColor(227,227,229))
         ,titleTextColor(Qt::black)
+        ,applitionButton(nullptr)
         ,widgetBord(1,1,1,0)
+        ,iconRightBorderPosition(1)
     {
         MainClass = par;
         applitionButton = new SARibbonApplicationButton(par);
@@ -52,10 +54,7 @@ public:
                                   ,par->width(),tabBarHight);
         par->connect(ribbonTabBar,&QTabBar::currentChanged
                      ,par,&SARibbonBar::onCurrentRibbonTabChanged);
-        par->connect(ribbonTabBar,&QTabBar::tabBarClicked
-                     ,par,&SARibbonBar::onRibbonTabBarClicked);
-        par->connect(ribbonTabBar,&QTabBar::tabCloseRequested
-                     ,par,&SARibbonBar::onRibbonTabCloseRequested);
+
         //
         stackedContainerWidget = new QStackedWidget(par);
         stackedContainerWidget->setGeometry(widgetBord.left()
@@ -233,15 +232,7 @@ void SARibbonBar::onCurrentRibbonTabChanged(int index)
     emit currentRibbonTabChanged(index);
 }
 
-void SARibbonBar::onRibbonTabBarClicked(int index)
-{
 
-}
-
-void SARibbonBar::onRibbonTabCloseRequested(int index)
-{
-
-}
 
 void SARibbonBar::onContextsCategoryPageAdded(SARibbonCategory *category)
 {
@@ -252,17 +243,14 @@ void SARibbonBar::onContextsCategoryPageAdded(SARibbonCategory *category)
 void SARibbonBar::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
+    //!
     paintBackground(p);
-    QWidget* parWindow = parentWidget();
-    if(parWindow)
-    {
-        paintWindowTitle(p,parWindow->windowTitle());
-        paintWindowIcon(p,parWindow->windowIcon());
-    }
-    //显示上下文标签
+
+    //! 显示上下文标签
     p.save();
     QList<ContextCategoryManagerData> contextCategoryDataList = m_d->currentShowingContextCategory;
     bool isCurrentSelectContextCategoryPage = false;
+    QPoint contextCategoryRegion = QPoint(width(),-1);
     for(int i=0;i<contextCategoryDataList.size();++i)
     {
         QRect contextTitleRect;
@@ -278,23 +266,20 @@ void SARibbonBar::paintEvent(QPaintEvent *e)
             contextTitleRect-=m_d->ribbonTabBar->tabMargin();
             //把区域顶部扩展到窗口顶部
             contextTitleRect.setTop(m_d->widgetBord.top());
-            //绘制上下文标签
-            //首先有5像素的实体
-            p.setPen(Qt::NoPen);
-            p.setBrush(clr);
-            p.drawRect(QRect(contextTitleRect.x(),m_d->widgetBord.top(),contextTitleRect.width(),5));
-            int yStart = contextTitleRect.y()+5;
-            //剩下的是渐变颜色
-            QColor gColor = clr;
-            contextTitleRect -= QMargins(0,5,0,0);
-            QLinearGradient lineGradient;
-            lineGradient.setStart(contextTitleRect.x(),yStart);
-            lineGradient.setFinalStop(contextTitleRect.x(),contextTitleRect.bottom());
-            gColor.setAlpha(150);
-            lineGradient.setColorAt(0,gColor);
-            gColor.setAlpha(0);
-            lineGradient.setColorAt(0.9,gColor);
-            p.fillRect(contextTitleRect,lineGradient);
+            //绘制
+            paintContextCategoryTab(p
+                                    ,contextCategoryDataList[i].contextCategory->contextTitle()
+                                    ,contextTitleRect
+                                    ,clr);
+            //更新上下文标签的范围，用于控制标题栏的显示
+            if(contextTitleRect.left() < contextCategoryRegion.x())
+            {
+                contextCategoryRegion.setX(contextTitleRect.left());
+            }
+            if(contextTitleRect.right() > contextCategoryRegion.y())
+            {
+                contextCategoryRegion.setY(contextTitleRect.right());
+            }
         }
         isCurrentSelectContextCategoryPage = indexs.contains(m_d->ribbonTabBar->currentIndex());
         if(isCurrentSelectContextCategoryPage)
@@ -309,9 +294,42 @@ void SARibbonBar::paintEvent(QPaintEvent *e)
         }
     }
     p.restore();
+    //! 显示标题等
+    QWidget* parWindow = parentWidget();
+    if(parWindow)
+    {
+        paintWindowTitle(p,parWindow->windowTitle(),contextCategoryRegion);
+        paintWindowIcon(p,parWindow->windowIcon());
+    }
     QWidget::paintEvent(e);
 }
+void SARibbonBar::paintContextCategoryTab(QPainter &painter, const QString &title, QRect contextRect, const QColor &color)
+{
+    //绘制上下文标签
+    //首先有5像素的实体
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(color);
+    painter.drawRect(QRect(contextRect.x(),m_d->widgetBord.top(),contextRect.width(),5));
+    int yStart = contextRect.y()+5;
 
+    //剩下的是渐变颜色
+    contextRect -= QMargins(0,5,0,0);
+    QColor gColor = color;
+    QLinearGradient lineGradient;
+    lineGradient.setStart(contextRect.x(),yStart);
+    lineGradient.setFinalStop(contextRect.x(),contextRect.bottom());
+    gColor.setAlpha(150);
+    lineGradient.setColorAt(0,gColor);
+    gColor.setAlpha(0);
+    lineGradient.setColorAt(0.9,gColor);
+    painter.fillRect(contextRect,lineGradient);
+    //绘制标题
+    //TODO 判断如果颜色很接近，需要替换为白色
+    contextRect.setBottom(m_d->ribbonTabBar->geometry().top());
+    painter.setPen(Qt::black);
+    painter.setBrush(Qt::NoBrush);
+    painter.drawText(contextRect,Qt::AlignCenter,title);
+}
 void SARibbonBar::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e);
@@ -345,12 +363,46 @@ void SARibbonBar::paintBackground(QPainter &painter)
     painter.restore();
 }
 
-
-void SARibbonBar::paintWindowTitle(QPainter &painter, const QString &title)
+///
+/// \brief 绘制标题栏
+/// \param painter
+/// \param title 标题
+/// \param contextCategoryRegion 当前显示的上下文标签的范围，上下文标签是可以遮挡标题栏的，因此需要知道上下文标签的范围
+/// x表示左边界，y表示右边界
+///
+void SARibbonBar::paintWindowTitle(QPainter &painter, const QString &title, const QPoint &contextCategoryRegion)
 {
     painter.save();
     painter.setPen(m_d->titleTextColor);
-    painter.drawText(0,0,width(),m_d->titleBarHight,Qt::AlignCenter,title);
+    if(contextCategoryRegion.y() < 0)
+    {
+        int x = m_d->iconRightBorderPosition;
+        painter.drawText(x
+                         ,m_d->widgetBord.top()
+                         ,width()- m_d->iconRightBorderPosition - m_d->widgetBord.right()
+                         ,m_d->titleBarHight,Qt::AlignCenter,title);
+    }
+    else
+    {
+        if(width() - contextCategoryRegion.y() > contextCategoryRegion.x()-m_d->iconRightBorderPosition)
+        {
+            //说明左边的区域大一点，标题显示在坐标
+            int x = contextCategoryRegion.y();
+            painter.drawText(x
+                             ,m_d->widgetBord.top()
+                             ,width()-x
+                             ,m_d->titleBarHight,Qt::AlignCenter,title);
+        }
+        else
+        {
+            //说明右边的大一点
+            int x = m_d->iconRightBorderPosition;
+            painter.drawText(x
+                             ,m_d->widgetBord.top()
+                             ,contextCategoryRegion.x()-m_d->iconRightBorderPosition
+                             ,m_d->titleBarHight,Qt::AlignCenter,title);
+        }
+    }
     painter.restore();
 }
 
@@ -359,7 +411,16 @@ void SARibbonBar::paintWindowIcon(QPainter &painter, const QIcon &icon)
     painter.save();
     if(!icon.isNull())
     {
-        icon.paint(&painter,0,0,m_d->titleBarHight,m_d->titleBarHight);
+        int iconMinSize = m_d->titleBarHight;
+        icon.paint(&painter,m_d->widgetBord.left(),m_d->widgetBord.top()
+                   ,iconMinSize,iconMinSize);
+        m_d->iconRightBorderPosition = m_d->widgetBord.left()+iconMinSize;
+    }
+    else
+    {
+        m_d->iconRightBorderPosition = m_d->widgetBord.left();
     }
     painter.restore();
 }
+
+

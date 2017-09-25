@@ -39,17 +39,15 @@ private slots:
     void onWindowTitleChanged(const QString &title);
     void onWindowIconChanged(const QIcon &icon);
     void onCurrentRibbonTabChanged(int index);
-    void onRibbonTabBarClicked(int index);
-    void onRibbonTabCloseRequested(int index);
     void onContextsCategoryPageAdded(SARibbonCategory* category);
 
 protected:
     void paintEvent(QPaintEvent* e);
     void resizeEvent(QResizeEvent* e);
     virtual void paintBackground(QPainter& painter);
-    virtual void paintWindowTitle(QPainter& painter, const QString &title);
+    virtual void paintWindowTitle(QPainter& painter, const QString &title,const QPoint& contextCategoryRegion);
     virtual void paintWindowIcon(QPainter& painter, const QIcon &icon);
-   // virtual void paintContextCategoryTab(QPainter& painter);
+    virtual void paintContextCategoryTab(QPainter& painter,const QString& title, QRect contextRect, const QColor& color);
 private:
     friend class SARibbonBarPrivate;
     SARibbonBarPrivate* m_d;
