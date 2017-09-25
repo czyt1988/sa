@@ -5,6 +5,7 @@
 #include <QSet>
 #include <QStackedWidget>
 #include <QVariant>
+#include <QLinearGradient>
 #include <QDebug>
 class ContextCategoryManagerData
 {
@@ -172,15 +173,36 @@ void SARibbonBar::showContextCategory(SARibbonContextCategory *context)
     repaint();
 }
 
-void SARibbonBar::showContextCategory(const QString &title)
+void SARibbonBar::hideContextCategory(SARibbonContextCategory *context)
 {
-
+    for(int i=0;i<m_d->currentShowingContextCategory.size();++i)
+    {
+        if(m_d->currentShowingContextCategory[i].contextCategory == context)
+        {
+            const QList<int>& indexs = m_d->currentShowingContextCategory[i].tabPageIndex;
+            for(int j=indexs.size()-1;j>=0;--j)
+            {
+                m_d->ribbonTabBar->removeTab(indexs[j]);
+            }
+            m_d->currentShowingContextCategory.removeAt(i);
+        }
+    }
+    repaint();
 }
 
-void SARibbonBar::showContextCategory(const QVariant &id)
+void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory *context, bool visible)
 {
-
+    if(visible)
+    {
+        showContextCategory(context);
+    }
+    else
+    {
+        hideContextCategory(context);
+    }
 }
+
+
 
 void SARibbonBar::onWindowTitleChanged(const QString &title)
 {
@@ -245,6 +267,7 @@ void SARibbonBar::paintEvent(QPaintEvent *e)
     {
         QRect contextTitleRect;
         QList<int> indexs = contextCategoryDataList[i].tabPageIndex;
+        QColor clr = contextCategoryDataList[i].contextCategory->contextColor();
         if(!indexs.isEmpty())
         {
             contextTitleRect = m_d->ribbonTabBar->tabRect(indexs.first());
@@ -254,20 +277,30 @@ void SARibbonBar::paintEvent(QPaintEvent *e)
             contextTitleRect.setHeight(m_d->ribbonTabBar->height());
             contextTitleRect-=m_d->ribbonTabBar->tabMargin();
             //把区域顶部扩展到窗口顶部
-            contextTitleRect.setTop(0);
+            contextTitleRect.setTop(m_d->widgetBord.top());
             //绘制上下文标签
             //首先有5像素的实体
             p.setPen(Qt::NoPen);
-            p.setBrush(contextCategoryDataList[i].contextCategory->contextColor());
-            p.drawRect(QRect(contextTitleRect.x(),0,contextTitleRect.width(),5));
+            p.setBrush(clr);
+            p.drawRect(QRect(contextTitleRect.x(),m_d->widgetBord.top(),contextTitleRect.width(),5));
+            int yStart = contextTitleRect.y()+5;
             //剩下的是渐变颜色
-            p.drawRect(contextTitleRect);
+            QColor gColor = clr;
+            contextTitleRect -= QMargins(0,5,0,0);
+            QLinearGradient lineGradient;
+            lineGradient.setStart(contextTitleRect.x(),yStart);
+            lineGradient.setFinalStop(contextTitleRect.x(),contextTitleRect.bottom());
+            gColor.setAlpha(150);
+            lineGradient.setColorAt(0,gColor);
+            gColor.setAlpha(0);
+            lineGradient.setColorAt(0.9,gColor);
+            p.fillRect(contextTitleRect,lineGradient);
         }
         isCurrentSelectContextCategoryPage = indexs.contains(m_d->ribbonTabBar->currentIndex());
         if(isCurrentSelectContextCategoryPage)
         {
             QPen pen;
-            pen.setColor(contextCategoryDataList[i].contextCategory->contextColor());
+            pen.setColor(clr);
             pen.setWidth(1);
             p.setPen(pen);
             p.setBrush(Qt::NoBrush);

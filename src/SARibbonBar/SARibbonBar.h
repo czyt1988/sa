@@ -24,10 +24,12 @@ public:
     SARibbonCategory* addCategoryPage(const QString& title);
     //添加一个上下文标签
     SARibbonContextCategory* addContextCategory(const QString& title,const QColor& color,const QVariant& id=QVariant());
-    //
+    //显示一个上下文标签
     void showContextCategory(SARibbonContextCategory* context);
-    void showContextCategory(const QString& title);
-    void showContextCategory(const QVariant& id);
+    //隐藏一个上下文标签
+    void hideContextCategory(SARibbonContextCategory* context);
+    //设置上下文标签的显示或隐藏
+    void setContextCategoryVisible(SARibbonContextCategory* context,bool visible);
 signals:
     void applitionButtonClicked();
     //

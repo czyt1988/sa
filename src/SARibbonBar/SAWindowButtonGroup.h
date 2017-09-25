@@ -19,6 +19,8 @@ protected:
     QSize sizeHint();
     virtual bool eventFilter(QObject *watched, QEvent *e);
     virtual void parentResize();
+private:
+    void updateMaximizeButtonIcon();
 protected slots:
     Q_SLOT void closeWindow();
     Q_SLOT void minimizeWindow();

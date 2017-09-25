@@ -1,6 +1,7 @@
 #include "SAWindowButtonGroup.h"
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QStyle>
 #include <QDebug>
 class SAWindowButtonGroupPrivate
 {
@@ -34,6 +35,8 @@ public:
                                                    "QPushButton:hover {background-color:#C1D1B8}"
                                                    "QPushButton:pressed {background-color:#A5AF9B}"
                                                    "QPushButton:focus{outline: none;}"));
+                QIcon icon = par->style()->standardIcon(QStyle::SP_TitleBarMinButton);
+                buttonMinimize->setIcon(icon);
                 par->connect(buttonMinimize,&QAbstractButton::clicked
                              ,par,&SAWindowButtonGroup::minimizeWindow);
             }
@@ -64,6 +67,8 @@ public:
                                                    "QPushButton:hover {background-color:#C1D1B8}"
                                                    "QPushButton:pressed {background-color:#A5AF9B}"
                                                    "QPushButton:focus{outline: none;}"));
+                QIcon icon = par->style()->standardIcon(QStyle::SP_TitleBarMaxButton);
+                buttonMaximize->setIcon(icon);
                 par->connect(buttonMaximize,&QAbstractButton::clicked
                              ,par,&SAWindowButtonGroup::maximizeWindow);
             }
@@ -97,6 +102,8 @@ public:
                                                    "QPushButton:hover {background-color:#F0604D}"
                                                    "QPushButton:pressed {background-color:#F0604D}"
                                                    "QPushButton:focus{outline: none;}"));
+                QIcon icon = par->style()->standardIcon(QStyle::SP_TitleBarCloseButton);
+                buttonClose->setIcon(icon);
             }
         }
         else
@@ -176,6 +183,7 @@ void SAWindowButtonGroup::setupMinimizeButton(bool on)
 void SAWindowButtonGroup::setupMaximizeButton(bool on)
 {
     m_d->setupMaximizeButton(this,on);
+    updateMaximizeButtonIcon();
 }
 
 void SAWindowButtonGroup::setupCloseButton(bool on)
@@ -227,6 +235,28 @@ void SAWindowButtonGroup::parentResize()
     }
 }
 
+void SAWindowButtonGroup::updateMaximizeButtonIcon()
+{
+    QWidget* par = parentWidget();
+    if(par)
+    {
+        if(par->isMaximized())
+        {
+            if(m_d->buttonMaximize)
+            {
+                m_d->buttonMaximize->setIcon(style()->standardIcon(QStyle::SP_TitleBarNormalButton));
+            }
+        }
+        else
+        {
+            if(m_d->buttonMaximize)
+            {
+                m_d->buttonMaximize->setIcon(style()->standardIcon(QStyle::SP_TitleBarMaxButton));
+            }
+        }
+    }
+}
+
 void SAWindowButtonGroup::closeWindow()
 {
     if(parentWidget())
@@ -245,8 +275,13 @@ void SAWindowButtonGroup::maximizeWindow()
     if(par)
     {
         if(par->isMaximized())
+        {
             par->showNormal();
+        }
         else
+        {
             par->showMaximized();
+        }
+        updateMaximizeButtonIcon();
     }
 }

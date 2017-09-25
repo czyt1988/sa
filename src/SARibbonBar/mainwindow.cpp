@@ -15,16 +15,24 @@ MainWindow::MainWindow(QWidget *par):SARibbonMainWindow(par)
     createCategoryMain(categoryMain);
     SARibbonCategory* categoryOther = ribbon->addCategoryPage(tr("other"));
     createCategoryOther(categoryOther);
-    SARibbonContextCategory* contextCategory = ribbon->addContextCategory(tr("context"),Qt::red,1);
-    SARibbonCategory* contextCategoryPage1 = contextCategory->addCategoryPage(tr("page 1"));
-    SARibbonCategory* contextCategoryPage2 = contextCategory->addCategoryPage(tr("page 2"));
-    ribbon->showContextCategory(contextCategory);
+    m_contextCategory = ribbon->addContextCategory(tr("context"),Qt::red,1);
+    SARibbonCategory* contextCategoryPage1 = m_contextCategory->addCategoryPage(tr("page 1"));
+    SARibbonCategory* contextCategoryPage2 = m_contextCategory->addCategoryPage(tr("page 2"));
+
+}
+
+void MainWindow::onShowContextCategory(bool on)
+{
+    ribbonBar()->setContextCategoryVisible(m_contextCategory,on);
 }
 
 void MainWindow::createCategoryMain(SARibbonCategory *page)
 {
     QPushButton* button = new QPushButton(page);
+    button->setCheckable(true);
     button->setGeometry(0,0,100,25);
+    connect(button,&QPushButton::toggled
+            ,this,&MainWindow::onShowContextCategory);
 }
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)
