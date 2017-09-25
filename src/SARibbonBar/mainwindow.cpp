@@ -15,6 +15,10 @@ MainWindow::MainWindow(QWidget *par):SARibbonMainWindow(par)
     createCategoryMain(categoryMain);
     SARibbonCategory* categoryOther = ribbon->addCategoryPage(tr("other"));
     createCategoryOther(categoryOther);
+    SARibbonContextCategory* contextCategory = ribbon->addContextCategory(tr("context"),Qt::red,1);
+    SARibbonCategory* contextCategoryPage1 = contextCategory->addCategoryPage(tr("page 1"));
+    SARibbonCategory* contextCategoryPage2 = contextCategory->addCategoryPage(tr("page 2"));
+    ribbon->showContextCategory(contextCategory);
 }
 
 void MainWindow::createCategoryMain(SARibbonCategory *page)

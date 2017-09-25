@@ -223,7 +223,7 @@ void SAWindowButtonGroup::parentResize()
     if(par)
     {
         QSize parSize = par->size();
-        move(parSize.width() - width(),0);
+        move(parSize.width() - width()-1,1);
     }
 }
 

@@ -19,9 +19,9 @@ SOURCES += main.cpp\
     SAWindowButtonGroup.cpp \
     SARibbonApplicationButton.cpp \
     SARibbonTabBar.cpp \
-    SARibbonContextualTabGroup.cpp \
     SARibbonCategory.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    SARibbonContextCategory.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -30,8 +30,8 @@ HEADERS  += \
     SAWindowButtonGroup.h \
     SARibbonApplicationButton.h \
     SARibbonTabBar.h \
-    SARibbonContextualTabGroup.h \
     SARibbonCategory.h \
-    mainwindow.h
+    mainwindow.h \
+    SARibbonContextCategory.h
 
 

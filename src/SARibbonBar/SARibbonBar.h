@@ -1,7 +1,9 @@
 #ifndef SARIBBONBAR_H
 #define SARIBBONBAR_H
 #include <QWidget>
+#include <QVariant>
 #include "SARibbonCategory.h"
+#include "SARibbonContextCategory.h"
 class SARibbonBarPrivate;
 class QAbstractButton;
 class SARibbonTabBar;
@@ -20,6 +22,12 @@ public:
     SARibbonTabBar* ribbonTabBar();
     //添加一个标签
     SARibbonCategory* addCategoryPage(const QString& title);
+    //添加一个上下文标签
+    SARibbonContextCategory* addContextCategory(const QString& title,const QColor& color,const QVariant& id=QVariant());
+    //
+    void showContextCategory(SARibbonContextCategory* context);
+    void showContextCategory(const QString& title);
+    void showContextCategory(const QVariant& id);
 signals:
     void applitionButtonClicked();
     //
@@ -31,12 +39,15 @@ private slots:
     void onCurrentRibbonTabChanged(int index);
     void onRibbonTabBarClicked(int index);
     void onRibbonTabCloseRequested(int index);
+    void onContextsCategoryPageAdded(SARibbonCategory* category);
+
 protected:
     void paintEvent(QPaintEvent* e);
     void resizeEvent(QResizeEvent* e);
     virtual void paintBackground(QPainter& painter);
     virtual void paintWindowTitle(QPainter& painter, const QString &title);
     virtual void paintWindowIcon(QPainter& painter, const QIcon &icon);
+   // virtual void paintContextCategoryTab(QPainter& painter);
 private:
     friend class SARibbonBarPrivate;
     SARibbonBarPrivate* m_d;
