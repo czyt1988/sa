@@ -21,7 +21,10 @@ SOURCES += main.cpp\
     SARibbonTabBar.cpp \
     SARibbonCategory.cpp \
     mainwindow.cpp \
-    SARibbonContextCategory.cpp
+    SARibbonContextCategory.cpp \
+    SARibbonPannel.cpp \
+    SARibbonToolButton.cpp \
+    SARibbonWin7Style.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -32,6 +35,12 @@ HEADERS  += \
     SARibbonTabBar.h \
     SARibbonCategory.h \
     mainwindow.h \
-    SARibbonContextCategory.h
+    SARibbonContextCategory.h \
+    SARibbonPannel.h \
+    SARibbonToolButton.h \
+    SARibbonWin7Style.h
+
+RESOURCES += \
+    saribbonresouce.qrc
 
 

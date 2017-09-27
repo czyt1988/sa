@@ -4,6 +4,8 @@
 #include "SARibbonBar.h"
 #include "SARibbonCategory.h"
 #include <QPushButton>
+#include "SARibbonPannel.h"
+#include <QAction>
 MainWindow::MainWindow(QWidget *par):SARibbonMainWindow(par)
 {
     setWindowTitle(tr("ribbon test"));
@@ -28,11 +30,17 @@ void MainWindow::onShowContextCategory(bool on)
 
 void MainWindow::createCategoryMain(SARibbonCategory *page)
 {
-    QPushButton* button = new QPushButton(page);
-    button->setCheckable(true);
-    button->setGeometry(0,0,100,25);
-    connect(button,&QPushButton::toggled
-            ,this,&MainWindow::onShowContextCategory);
+    SARibbonPannel* pannel = page->addPannel(tr("pannel 1"));
+    QAction* act = new QAction(this);
+    act->setIcon(QIcon(":/icon/icon/save.png"));
+    act->setText(tr("open"));
+    pannel->addLargeAction(act);
+
+//    QPushButton* button = new QPushButton(page);
+//    button->setCheckable(true);
+//    button->setGeometry(0,0,100,25);
+//    connect(button,&QPushButton::toggled
+//            ,this,&MainWindow::onShowContextCategory);
 }
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)

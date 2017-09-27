@@ -353,6 +353,7 @@ void SARibbonBar::resizeEvent(QResizeEvent *e)
                                              ,m_d->ribbonTabBar->geometry().bottom()+1
                                             ,width()-m_d->widgetBord.left()-m_d->widgetBord.right()
                                              ,height()-m_d->ribbonTabBar->geometry().bottom()-2-m_d->widgetBord.bottom());
+   // qDebug() << m_d->stackedContainerWidget->size();
 }
 
 void SARibbonBar::paintBackground(QPainter &painter)
