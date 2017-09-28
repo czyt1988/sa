@@ -7,6 +7,8 @@
 #include <QVariant>
 #include <QLinearGradient>
 #include <QDebug>
+
+
 class ContextCategoryManagerData
 {
 public:
@@ -96,6 +98,7 @@ public:
 SARibbonBar::SARibbonBar(QWidget *parent):QWidget(parent)
   ,m_d(new SARibbonBarPrivate(this))
 {
+
     setFixedHeight(160);
     connect(parent,&QWidget::windowTitleChanged,this,&SARibbonBar::onWindowTitleChanged);
     connect(parent,&QWidget::windowIconChanged,this,&SARibbonBar::onWindowIconChanged);
@@ -200,6 +203,8 @@ void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory *context, bo
         hideContextCategory(context);
     }
 }
+
+
 
 
 

@@ -1,13 +1,14 @@
 #include "SARibbonPannel.h"
-#include <QToolButton>
+#include "SARibbonToolButton.h"
 SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
 {
     setFixedHeight(98);
+
 }
 
 void SARibbonPannel::addLargeAction(QAction *action)
 {
-    QToolButton* btn = new QToolButton(this);
+    SARibbonToolButton* btn = new SARibbonToolButton(this);
     btn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     btn->setGeometry(3,3,42,78);
     btn->setAutoRaise(true);

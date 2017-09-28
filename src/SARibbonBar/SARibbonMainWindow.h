@@ -5,6 +5,7 @@ class SARibbonMainWindowPrivate;
 class SARibbonBar;
 class SARibbonMainWindow : public QMainWindow
 {
+    Q_OBJECT
 public:
     SARibbonMainWindow(QWidget* parent = nullptr);
     //

@@ -30,6 +30,7 @@ public:
     void hideContextCategory(SARibbonContextCategory* context);
     //设置上下文标签的显示或隐藏
     void setContextCategoryVisible(SARibbonContextCategory* context,bool visible);
+
 signals:
     void applitionButtonClicked();
     //
