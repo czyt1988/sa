@@ -20,13 +20,12 @@ public:
     SARibbonToolButton(QWidget *parent = Q_NULLPTR);
     RibbonButtonType buttonType() const;
     void setButtonType(const RibbonButtonType &buttonType);
-
 protected:
     virtual void paintEvent(QPaintEvent *event);
     virtual void enterEvent(QEvent *event);
     virtual void leaveEvent(QEvent *e);
-    virtual void paintLargeButton(QPaintEvent *event);
-    virtual void paintSmallButton(QPaintEvent *event);
+    virtual void paintLargeButton(QPaintEvent *e);
+    virtual void paintSmallButton(QPaintEvent *e);
 private:
     RibbonButtonType m_buttonType;
 };

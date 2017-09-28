@@ -3,7 +3,7 @@
 #include "SAWindowButtonGroup.h"
 #include "SARibbonBar.h"
 #include <QApplication>
-#include <SARibbonWin7Style.h>
+
 class SARibbonMainWindowPrivate
 {
 public:
@@ -14,7 +14,6 @@ SARibbonMainWindow::SARibbonMainWindow(QWidget *parent)
     :QMainWindow(parent)
     ,m_d(new SARibbonMainWindowPrivate)
 {
-    QApplication::setStyle(new SARibbonWin7Style);
     FramelessHelper *pHelper = new FramelessHelper(this);
     pHelper->setTitleHeight(30);  //设置窗体的标题栏高度
     //
