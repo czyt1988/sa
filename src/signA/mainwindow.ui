@@ -208,6 +208,11 @@
      <addaction name="actionStartEllipseSelect"/>
      <addaction name="actionStartPolygonSelect"/>
      <addaction name="actionClearAllSelectiedRegion"/>
+     <addaction name="separator"/>
+     <addaction name="actionSingleSelection"/>
+     <addaction name="actionAdditionalSelection"/>
+     <addaction name="actionSubtractionSelection"/>
+     <addaction name="actionIntersectionSelection"/>
     </widget>
     <addaction name="actionEnableChartPicker"/>
     <addaction name="actionEnableChartPanner"/>
@@ -738,6 +743,9 @@
    <property name="toolTip">
     <string>打开数据源</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionWindowCascade">
    <property name="icon">
@@ -794,6 +802,9 @@
    </property>
    <property name="text">
     <string>保存</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionQuite">
@@ -1058,6 +1069,9 @@
    <property name="text">
     <string>撤销</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
   <action name="actionRedo">
    <property name="icon">
@@ -1066,6 +1080,9 @@
    </property>
    <property name="text">
     <string>重做</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
    </property>
   </action>
   <action name="actionValueManagerDock">
@@ -1227,18 +1244,65 @@
    </property>
   </action>
   <action name="actionStartEllipseSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>ellipseSelect</string>
    </property>
   </action>
   <action name="actionStartPolygonSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>polygonSelect</string>
    </property>
   </action>
   <action name="actionClearAllSelectiedRegion">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>clearAllSelect</string>
+   </property>
+  </action>
+  <action name="actionSingleSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>singleSelection</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="actionAdditionalSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>additionalSelection</string>
+   </property>
+  </action>
+  <action name="actionIntersectionSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>intersectionSelection</string>
+   </property>
+  </action>
+  <action name="actionSubtractionSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>subtractionSelection</string>
    </property>
   </action>
  </widget>

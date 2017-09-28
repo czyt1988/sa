@@ -44,7 +44,7 @@ public:
     bool isRegionVisible() const;
     //获取当前正在显示的选择区域
     SelectionMode currentSelectRegionMode() const;
-    //获取矩形选择编辑器
+    //获取当前选择编辑器
     SAAbstractRegionSelectEditor* getRegionSelectEditor();
     const SAAbstractRegionSelectEditor* getRegionSelectEditor() const;
     //获取当前可见的选区的范围

@@ -374,23 +374,44 @@ void MainWindow::initUI()
             ,this,&MainWindow::onActionChartZoomIn);
     connect(ui->actionZoomOut,&QAction::triggered
             ,this,&MainWindow::onActionChartZoomOut);
-
+    //选区菜单
+    m_chartRegionSelectionShapeActionGroup = new QActionGroup(this);
+    ui->actionStartRectSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
+    ui->actionStartEllipseSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
+    ui->actionStartPolygonSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
+    ui->actionClearAllSelectiedRegion->setActionGroup(m_chartRegionSelectionShapeActionGroup);
+    ui->actionClearAllSelectiedRegion->setChecked(true);
     //矩形选框
-    ui->actionStartRectSelect->setCheckable(true);
     connect(ui->actionStartRectSelect,&QAction::triggered
             ,this,&MainWindow::onActionStartRectSelectTriggered);
     //椭圆选框
-    ui->actionStartEllipseSelect->setCheckable(true);
     connect(ui->actionStartEllipseSelect,&QAction::triggered
             ,this,&MainWindow::onActionStartEllipseSelectTriggered);
     //多边形选框
-    ui->actionStartPolygonSelect->setCheckable(true);
     connect(ui->actionStartPolygonSelect,&QAction::triggered
             ,this,&MainWindow::onActionStartPolygonSelectTriggered);
     //清除所有选区
     connect(ui->actionClearAllSelectiedRegion,&QAction::triggered
-            ,this,&MainWindow::onActionClearAllSelectiedRegion);
+            ,this,&MainWindow::onActionClearAllSelectiedRegionTriggered);
 
+    //
+    m_chartRegionSelectionModeActionGroup = new QActionGroup(this);
+    ui->actionSingleSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
+    ui->actionAdditionalSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
+    ui->actionSubtractionSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
+    ui->actionIntersectionSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
+    //选区单选模式
+    connect(ui->actionStartRectSelect,&QAction::triggered
+            ,this,&MainWindow::onActionSingleSelectionTriggered);
+    //选区多选模式
+    connect(ui->actionAdditionalSelection,&QAction::triggered
+            ,this,&MainWindow::onActionAdditionalSelectionTriggered);
+    //选区减选模式
+    connect(ui->actionSubtractionSelection,&QAction::triggered
+            ,this,&MainWindow::onActionSubtractionSelectionTriggered);
+    //选区交集模式
+    connect(ui->actionIntersectionSelection,&QAction::triggered
+            ,this,&MainWindow::onActionIntersectionSelectionTriggered);
     //数据显示
     ui->actionYDataPicker->setCheckable(true);
     connect(ui->actionYDataPicker,&QAction::triggered,Lambda_SaChartEnable(YDataPicker));
@@ -441,9 +462,10 @@ void MainWindow::initUI()
     connect(ui->actionLegendPanel,&QAction::triggered,Lambda_SaChartEnable(LegendPanel));
 
 
-    //
+    //窗口激活对应数据特性的mdiSubWindowActived
     connect(ui->mdiArea,&QMdiArea::subWindowActivated
             ,ui->dataFeatureWidget,&SADataFeatureWidget::mdiSubWindowActived);
+    //数据特性窗口的message显示
     connect(ui->dataFeatureWidget,&SADataFeatureWidget::showMessageInfo
             ,this,&MainWindow::showMessageInfo);
     //窗口关闭的消息在 on_subWindow_close里
@@ -855,6 +877,11 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
         if(b)
         {
             chart->startSelectMode(SAChart2D::RectSelection);
+            SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
+            if(selectEditor)
+            {
+                selectEditor->setSelectionMode(getCurrentChartRegionSelectionMode());
+            }
             chart->enableZoomer(false);
         }
         else
@@ -876,6 +903,11 @@ void MainWindow::onActionStartEllipseSelectTriggered(bool b)
         if(b)
         {
             chart->startSelectMode(SAChart2D::EllipseSelection);
+            SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
+            if(selectEditor)
+            {
+                selectEditor->setSelectionMode(getCurrentChartRegionSelectionMode());
+            }
             chart->enableZoomer(false);
         }
         else
@@ -897,6 +929,11 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
         if(b)
         {
             chart->startSelectMode(SAChart2D::PolygonSelection);
+            SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
+            if(selectEditor)
+            {
+                selectEditor->setSelectionMode(getCurrentChartRegionSelectionMode());
+            }
             chart->enableZoomer(false);
         }
         else
@@ -910,7 +947,7 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
 /// \brief 清除所有选区
 /// \param b
 ///
-void MainWindow::onActionClearAllSelectiedRegion(bool b)
+void MainWindow::onActionClearAllSelectiedRegionTriggered(bool b)
 {
     Q_UNUSED(b);
     SAChart2D* chart = this->getCurSubWindowChart();
@@ -919,6 +956,107 @@ void MainWindow::onActionClearAllSelectiedRegion(bool b)
         chart->clearAllSelectedRegion();
     }
     updateChartSetToolBar();
+}
+///
+/// \brief 选区单选模式
+/// \param b
+///
+void MainWindow::onActionSingleSelectionTriggered(bool b)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+        if(b)
+        {
+            SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
+            if(selectEditor)
+            {
+                selectEditor->setSelectionMode(SAAbstractRegionSelectEditor::SingleSelection);
+            }
+        }
+    }
+}
+///
+/// \brief 选区多选模式
+/// \param b
+///
+void MainWindow::onActionAdditionalSelectionTriggered(bool b)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+        if(b)
+        {
+            SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
+            if(selectEditor)
+            {
+                selectEditor->setSelectionMode(SAAbstractRegionSelectEditor::AdditionalSelection);
+            }
+        }
+    }
+}
+///
+/// \brief 选区减选模式
+/// \param b
+///
+void MainWindow::onActionSubtractionSelectionTriggered(bool b)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+        if(b)
+        {
+            SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
+            if(selectEditor)
+            {
+                selectEditor->setSelectionMode(SAAbstractRegionSelectEditor::SubtractionSelection);
+            }
+        }
+    }
+}
+///
+/// \brief 选区交集模式
+/// \param b
+///
+void MainWindow::onActionIntersectionSelectionTriggered(bool b)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+        if(b)
+        {
+            SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
+            if(selectEditor)
+            {
+                selectEditor->setSelectionMode(SAAbstractRegionSelectEditor::IntersectionSelection);
+            }
+        }
+    }
+}
+///
+/// \brief 获取当前ui选择的区域选择模式
+/// \return
+///
+SAAbstractRegionSelectEditor::SelectionMode MainWindow::getCurrentChartRegionSelectionMode() const
+{
+    QAction* act = m_chartRegionSelectionModeActionGroup->checkedAction();
+    if(act == ui->actionSingleSelection)
+    {
+        return SAAbstractRegionSelectEditor::SingleSelection;
+    }
+    else if(act == ui->actionAdditionalSelection)
+    {
+        return SAAbstractRegionSelectEditor::AdditionalSelection;
+    }
+    else if(act == ui->actionSubtractionSelection)
+    {
+        return SAAbstractRegionSelectEditor::SubtractionSelection;
+    }
+    else if(act == ui->actionIntersectionSelection)
+    {
+        return SAAbstractRegionSelectEditor::IntersectionSelection;
+    }
+    return SAAbstractRegionSelectEditor::SingleSelection;
 }
 
 ///
@@ -1312,10 +1450,6 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
         ui->actionShowCrowdedVGrid->setChecked(c->isEnableGridXMin());
         ui->actionShowLegend->setChecked(c->isEnableLegend());
         ui->actionLegendPanel->setChecked(c->isEnableLegendPanel());
-        SAChart2D::SelectionMode selMode = c->currentSelectRegionMode();
-        ui->actionStartRectSelect->setChecked(SAChart2D::RectSelection == selMode);
-        ui->actionStartEllipseSelect->setChecked(SAChart2D::EllipseSelection == selMode);
-        ui->actionStartPolygonSelect->setChecked(SAChart2D::PolygonSelection == selMode);
     }
 }
 

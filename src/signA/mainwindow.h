@@ -31,13 +31,14 @@
 #include <tuple>
 #include "SAPluginManager.h"
 #include "SAUIInterface.h"
+#include "SAAbstractRegionSelectEditor.h"
 namespace Ui {
 class MainWindow;
 }
 
 
 class QProgressBar;
-
+class QActionGroup;
 
 
 class SAInformationStatusWidget;
@@ -269,7 +270,17 @@ private slots:
     //开始多边形选框工具
     void onActionStartPolygonSelectTriggered(bool b);
     //清除所有选区
-    void onActionClearAllSelectiedRegion(bool b);
+    void onActionClearAllSelectiedRegionTriggered(bool b);
+    //选区单选模式
+    void onActionSingleSelectionTriggered(bool b);
+    //选区多选模式
+    void onActionAdditionalSelectionTriggered(bool b);
+    //选区减选模式
+    void onActionSubtractionSelectionTriggered(bool b);
+    //选区交集模式
+    void onActionIntersectionSelectionTriggered(bool b);
+    //获取当前ui选择的区域选择模式
+    SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
     //开启当前绘图的十字光标
     void onActionEnableChartPicker(bool check);
     //开启当前绘图的拖动
@@ -439,6 +450,8 @@ private:
 
     std::unique_ptr<SADrawDelegate> m_drawDelegate;///< 绘图代理
     SAFigureWindow* m_lastShowFigureWindow;///<记录最后一次显示的figure window
+    QActionGroup* m_chartRegionSelectionShapeActionGroup;///<选区选择形状的action group
+    QActionGroup* m_chartRegionSelectionModeActionGroup;///<选区选择模式的action group
 
 };
 
