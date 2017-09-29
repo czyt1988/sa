@@ -1,6 +1,7 @@
 #include "SARibbonCategory.h"
 #include <QList>
 #include <QResizeEvent>
+#include <QPainter>
 class SARibbonCategoryPrivate
 {
 public:
@@ -12,6 +13,8 @@ SARibbonCategory::SARibbonCategory(QWidget *parent)
     ,m_d(new SARibbonCategoryPrivate)
 {
     setFixedHeight(98);
+    setAutoFillBackground(true);
+    setBackgroundBrush(Qt::white);
 }
 
 SARibbonCategory::~SARibbonCategory()
@@ -27,8 +30,19 @@ SARibbonCategory::~SARibbonCategory()
 SARibbonPannel *SARibbonCategory::addPannel(const QString &title)
 {
     SARibbonPannel* pannel = new SARibbonPannel(this);
+    pannel->setWindowTitle(title);
     m_d->pannelLists.append(pannel);
     return pannel;
+}
+///
+/// \brief SARibbonCategory::setBackgroundBrush
+/// \param brush
+///
+void SARibbonCategory::setBackgroundBrush(const QBrush &brush)
+{
+    QPalette p = palette();
+    p.setBrush(QPalette::Background,brush);
+    setPalette(p);
 }
 
 void SARibbonCategory::resizeEvent(QResizeEvent *event)
@@ -47,4 +61,9 @@ void SARibbonCategory::resizeEvent(QResizeEvent *event)
         pannel->move(lastPos,0);
         lastPos = pannel->width() + 1;
     }
+}
+
+void SARibbonCategory::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
 }

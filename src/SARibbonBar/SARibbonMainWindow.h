@@ -11,6 +11,8 @@ public:
     //
     const SARibbonBar* ribbonBar() const;
     SARibbonBar* ribbonBar();
+protected:
+    void resizeEvent(QResizeEvent *event);
 private:
     SARibbonMainWindowPrivate* m_d;
 };

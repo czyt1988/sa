@@ -22,12 +22,18 @@ public:
     void setButtonType(const RibbonButtonType &buttonType);
 protected:
     virtual void paintEvent(QPaintEvent *event);
-    virtual void enterEvent(QEvent *event);
-    virtual void leaveEvent(QEvent *e);
+    virtual void mouseMoveEvent(QMouseEvent *e);
+    virtual void mousePressEvent(QMouseEvent *e);
+    virtual void mouseReleaseEvent(QMouseEvent *e);
     virtual void paintLargeButton(QPaintEvent *e);
     virtual void paintSmallButton(QPaintEvent *e);
+    virtual void paintMenuButtonPopupButton(QPaintEvent *e);
+    virtual bool hitButton(const QPoint &pos) const;
 private:
     RibbonButtonType m_buttonType;
+    bool m_mouseOnSubControl;
+    QColor m_borderColor;
+    bool m_menuButtonPressed;
 };
 
 #endif // SARIBBONTOOLBUTTON_H

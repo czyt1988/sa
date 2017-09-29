@@ -2,6 +2,7 @@
 #define SARIBBONPANNEL_H
 #include <QWidget>
 class SARibbonToolButton;
+class QGridLayout;
 ///
 /// \brief The SARibbonPannel class
 ///
@@ -13,10 +14,14 @@ public:
     using QWidget::addAction;
     SARibbonToolButton* addLargeAction(QAction *action);
     SARibbonToolButton *addSmallAction(QAction *action);
+    void addWidget(QWidget* w);
 protected:
     static QSize maxHightIconSize(const QSize& size,int height);
+    void paintEvent(QPaintEvent *event);
 private:
+    QGridLayout* m_gridLayout;
     QPoint m_nextElementPosition;
+    int m_row;
 };
 
 #endif // SARIBBONPANNEL_H

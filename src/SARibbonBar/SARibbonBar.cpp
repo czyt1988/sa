@@ -337,6 +337,7 @@ void SARibbonBar::paintContextCategoryTab(QPainter &painter, const QString &titl
 }
 void SARibbonBar::resizeEvent(QResizeEvent *e)
 {
+    qDebug() << "resize:" << size();
     Q_UNUSED(e);
     int x = m_d->widgetBord.left();
     if(m_d->applitionButton)

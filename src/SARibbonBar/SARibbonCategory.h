@@ -13,8 +13,10 @@ public:
     SARibbonCategory(QWidget* parent);
     ~SARibbonCategory();
     SARibbonPannel* addPannel(const QString& title);
+    void setBackgroundBrush(const QBrush& brush);
 protected:
     void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event);
 private:
     SARibbonCategoryPrivate* m_d;
 };
