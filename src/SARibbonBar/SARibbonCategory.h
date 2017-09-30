@@ -17,6 +17,8 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
+    //绘制分割线
+    virtual QPixmap drawSeparatorPixmap() const;
 private:
     SARibbonCategoryPrivate* m_d;
 };

@@ -127,6 +127,8 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     btn->setPopupMode(QToolButton::InstantPopup);
     connect(act,&QAction::triggered,this,&MainWindow::onInstantPopupCheckableTest);
 
+    SARibbonPannel* panne2 = page->addPannel(tr("pannel 2"));
+
 }
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)

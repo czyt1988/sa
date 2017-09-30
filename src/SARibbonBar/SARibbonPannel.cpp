@@ -25,6 +25,7 @@ SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
                           " }"
                           ""));
     setFixedHeight(98);
+    setMinimumWidth(50);
     m_gridLayout = new QGridLayout(this);
     m_gridLayout->setSpacing(0);
     m_gridLayout->setContentsMargins(3,2,3,21);
@@ -69,6 +70,7 @@ void SARibbonPannel::addWidget(QWidget *w)
 {
     m_gridLayout->addWidget(w,0,m_gridLayout->columnCount(),6,1);
 }
+
 
 QSize SARibbonPannel::maxHightIconSize(const QSize &size, int height)
 {
