@@ -7,6 +7,9 @@
 class SARibbonBarPrivate;
 class QAbstractButton;
 class SARibbonTabBar;
+///
+/// \brief The SARibbonBar class
+///
 class SARibbonBar : public QWidget
 {
     Q_OBJECT

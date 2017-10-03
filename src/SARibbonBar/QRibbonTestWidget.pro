@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     SARibbonContextCategory.cpp \
     SARibbonPannel.cpp \
     SARibbonToolButton.cpp \
-    SARibbonTheme.cpp
+    SARibbonTheme.cpp \
+    SARibbonMenu.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -38,7 +39,8 @@ HEADERS  += \
     SARibbonContextCategory.h \
     SARibbonPannel.h \
     SARibbonToolButton.h \
-    SARibbonTheme.h
+    SARibbonTheme.h \
+    SARibbonMenu.h
 
 RESOURCES += \
     saribbonresouce.qrc

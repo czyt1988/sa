@@ -128,6 +128,25 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     connect(act,&QAction::triggered,this,&MainWindow::onInstantPopupCheckableTest);
 
     SARibbonPannel* panne2 = page->addPannel(tr("pannel 2"));
+    act = new QAction(this);
+    act->setCheckable(true);
+    act->setIcon(QIcon(":/icon/icon/Graph-add.png"));
+    act->setText(tr("InstantPopup"));
+    act->setMenu(menu);
+    btn = panne2->addLargeAction(act);
+    btn->setCheckable(true);
+    btn->setPopupMode(QToolButton::InstantPopup);
+
+
+    act = new QAction(this);
+    act->setCheckable(true);
+    act->setIcon(QIcon(":/icon/icon/Graph-add.png"));
+    act->setText(tr("InstantPopup"));
+    act->setMenu(menu);
+    btn = panne2->addLargeAction(act);
+    btn->setCheckable(true);
+    btn->setPopupMode(QToolButton::InstantPopup);
+    btn->setEnabled(false);
 
 }
 
