@@ -1,12 +1,13 @@
 #ifndef SARIBBONCATEGORY_H
 #define SARIBBONCATEGORY_H
+#include "SARibbonGlobal.h"
 #include <QWidget>
 #include "SARibbonPannel.h"
 class SARibbonCategoryPrivate;
 ///
 /// \brief 一项rubbon页
 ///
-class SARibbonCategory : public QWidget
+class SA_RIBBON_EXPORT SARibbonCategory : public QWidget
 {
     Q_OBJECT
 public:

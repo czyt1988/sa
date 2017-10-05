@@ -1,12 +1,13 @@
 #ifndef SARIBBONMAINWINDOW_H
 #define SARIBBONMAINWINDOW_H
+#include "SARibbonGlobal.h"
 #include <QMainWindow>
 class SARibbonMainWindowPrivate;
 class SARibbonBar;
 ///
 /// \brief The SARibbonMainWindow class
 ///
-class SARibbonMainWindow : public QMainWindow
+class SA_RIBBON_EXPORT SARibbonMainWindow : public QMainWindow
 {
     Q_OBJECT
 public:

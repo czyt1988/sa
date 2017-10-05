@@ -1,11 +1,11 @@
 #ifndef SARIBBONTOOLBUTTON_H
 #define SARIBBONTOOLBUTTON_H
-
+#include "SARibbonGlobal.h"
 #include <QToolButton>
 ///
 /// \brief Ribbon界面适用的toolButton
 ///
-class SARibbonToolButton : public QToolButton
+class SA_RIBBON_EXPORT SARibbonToolButton : public QToolButton
 {
     Q_OBJECT
     Q_ENUMS(RibbonButtonType)

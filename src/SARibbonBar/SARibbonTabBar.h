@@ -1,8 +1,9 @@
 #ifndef SARIBBONTABBAR_H
 #define SARIBBONTABBAR_H
+#include "SARibbonGlobal.h"
 #include <QTabBar>
 #include <QMargins>
-class SARibbonTabBar : public QTabBar
+class SA_RIBBON_EXPORT SARibbonTabBar : public QTabBar
 {
     Q_OBJECT
 public:

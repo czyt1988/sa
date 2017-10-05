@@ -1,12 +1,13 @@
 #ifndef SARIBBONCONTEXTCATEGORY_H
 #define SARIBBONCONTEXTCATEGORY_H
+#include "SARibbonGlobal.h"
 #include "SARibbonCategory.h"
 #include <QWidget>
 class SARibbonContextCategoryPrivate;
 ///
 /// \brief 管理上下文标签的类
 ///
-class SARibbonContextCategory : public QObject
+class SA_RIBBON_EXPORT SARibbonContextCategory : public QObject
 {
     Q_OBJECT
 public:

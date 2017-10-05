@@ -1,5 +1,6 @@
 #ifndef SARIBBONBAR_H
 #define SARIBBONBAR_H
+#include "SARibbonGlobal.h"
 #include <QWidget>
 #include <QVariant>
 #include "SARibbonCategory.h"
@@ -10,7 +11,7 @@ class SARibbonTabBar;
 ///
 /// \brief The SARibbonBar class
 ///
-class SARibbonBar : public QWidget
+class SA_RIBBON_EXPORT SARibbonBar : public QWidget
 {
     Q_OBJECT
 public:

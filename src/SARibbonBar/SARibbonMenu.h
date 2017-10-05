@@ -1,10 +1,11 @@
 #ifndef SARIBBONMENU_H
 #define SARIBBONMENU_H
+#include "SARibbonGlobal.h"
 #include <QMenu>
 ///
 /// \brief 用在ribbon的menu
 ///
-class SARibbonMenu : public QMenu
+class SA_RIBBON_EXPORT SARibbonMenu : public QMenu
 {
     Q_OBJECT
 public:

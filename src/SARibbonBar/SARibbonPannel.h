@@ -1,12 +1,13 @@
 #ifndef SARIBBONPANNEL_H
 #define SARIBBONPANNEL_H
+#include "SARibbonGlobal.h"
 #include <QWidget>
 class SARibbonToolButton;
 class QGridLayout;
 ///
 /// \brief The SARibbonPannel class
 ///
-class SARibbonPannel : public QWidget
+class SA_RIBBON_EXPORT SARibbonPannel : public QWidget
 {
     Q_OBJECT
 public:
