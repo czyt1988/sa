@@ -98,7 +98,6 @@ public:
 SARibbonBar::SARibbonBar(QWidget *parent):QWidget(parent)
   ,m_d(new SARibbonBarPrivate(this))
 {
-
     setFixedHeight(160);
     connect(parent,&QWidget::windowTitleChanged,this,&SARibbonBar::onWindowTitleChanged);
     connect(parent,&QWidget::windowIconChanged,this,&SARibbonBar::onWindowIconChanged);
@@ -229,7 +228,10 @@ void SARibbonBar::onCurrentRibbonTabChanged(int index)
         quint64 p = var.value<quint64>();
         category = (SARibbonCategory*)p;
     }
-    m_d->stackedContainerWidget->setCurrentWidget(category);
+    if(category)
+    {
+        m_d->stackedContainerWidget->setCurrentWidget(category);
+    }
     if(!m_d->currentShowingContextCategory.isEmpty())
     {
         repaint();

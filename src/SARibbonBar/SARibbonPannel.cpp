@@ -10,20 +10,6 @@ SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
   ,m_nextElementPosition(3,3)
   ,m_row(0)
 {
-    setStyleSheet(QString(""
-                          "SARibbonToolButton::pressed{"
-                          " border: 1px solid #f2ca58;"
-                          " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
-                          "}"
-                          "SARibbonToolButton::checked{"
-                          " border: 1px solid #f2ca58;"
-                          " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
-                          "}"
-                          "SARibbonToolButton::hover {"
-                          " border: 1px solid #f2ca58;"
-                          " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
-                          " }"
-                          ""));
     setFixedHeight(98);
     setMinimumWidth(50);
     m_gridLayout = new QGridLayout(this);

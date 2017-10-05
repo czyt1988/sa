@@ -4,7 +4,7 @@
 ///
 /// \brief 用在ribbon的menu
 ///
-class SARibbonMenu : QMenu
+class SARibbonMenu : public QMenu
 {
     Q_OBJECT
 public:

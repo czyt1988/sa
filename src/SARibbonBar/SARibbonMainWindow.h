@@ -3,6 +3,9 @@
 #include <QMainWindow>
 class SARibbonMainWindowPrivate;
 class SARibbonBar;
+///
+/// \brief The SARibbonMainWindow class
+///
 class SARibbonMainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -11,6 +14,20 @@ public:
     //
     const SARibbonBar* ribbonBar() const;
     SARibbonBar* ribbonBar();
+    //重写设置stylesheet
+    void setStyleSheet(const QString &styleSheet);
+    ///
+    /// \brief 枚举所有ribbon的元素
+    ///
+    enum RibbonElement
+    {
+        RibbonApplicationButton = 0 ///< ApplicationButton
+        ,RibbonTabBar
+        ,RibbonToolButton
+        ,RibbonMenu
+    };
+    QString ribbonElementStyleSheet(RibbonElement element) const;
+    void setRibbonElementStyleSheet(RibbonElement element,const QString& styleSheet);
 protected:
     void resizeEvent(QResizeEvent *event);
 private:

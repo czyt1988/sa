@@ -9,22 +9,39 @@
 #include <QAction>
 #include <QMenu>
 #include <QDebug>
+#include <QElapsedTimer>
+#include "SARibbonMenu.h"
+#define PRINT_COST(ElapsedTimer,LastTime,STR) \
+    do{\
+    int ___TMP_INT = ElapsedTimer.elapsed();\
+    qDebug() << STR << ___TMP_INT - LastTime << "(" << ___TMP_INT << ")";\
+    LastTime = ___TMP_INT;\
+    }while(0)
 MainWindow::MainWindow(QWidget *par):SARibbonMainWindow(par)
 {
+#if 1
+    QElapsedTimer cost;
+    int lastTimes = 0;
+    cost.start();
     setWindowTitle(tr("ribbon test"));
     m_edit = new QTextEdit(this);
     setCentralWidget(m_edit);
+    PRINT_COST(cost,lastTimes,"setCentralWidget & setWindowTitle");
     SARibbonBar* ribbon = ribbonBar();
     ribbon->applitionButton()->setText(tr("File"));
     SARibbonCategory* categoryMain = ribbon->addCategoryPage(tr("main page"));
+    PRINT_COST(cost,lastTimes,"new main page");
     createCategoryMain(categoryMain);
+    PRINT_COST(cost,lastTimes,"add main page element");
     SARibbonCategory* categoryOther = ribbon->addCategoryPage(tr("other"));
     createCategoryOther(categoryOther);
+    PRINT_COST(cost,lastTimes,"add other page");
     m_contextCategory = ribbon->addContextCategory(tr("context"),Qt::red,1);
     SARibbonCategory* contextCategoryPage1 = m_contextCategory->addCategoryPage(tr("page 1"));
     SARibbonCategory* contextCategoryPage2 = m_contextCategory->addCategoryPage(tr("page 2"));
+    PRINT_COST(cost,lastTimes,"add contextCategory page");
+#endif
     showMaximized();
-
 }
 
 void MainWindow::onShowContextCategory(bool on)
@@ -61,7 +78,7 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     pannel->addSmallAction(act);
 
     SARibbonToolButton * btn;
-    QMenu* menu = new QMenu(this);
+    SARibbonMenu* menu = new SARibbonMenu(this);
     QAction * item = menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
     menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
     menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
@@ -152,7 +169,7 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)
 {
-    QMenu* menu = new QMenu(this);
+    SARibbonMenu* menu = new SARibbonMenu(this);
     QAction * item = menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
     menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
     menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
