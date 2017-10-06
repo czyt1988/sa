@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include "SARibbonMenu.h"
+#include <QComboBox>
 #define PRINT_COST(ElapsedTimer,LastTime,STR) \
     do{\
     int ___TMP_INT = ElapsedTimer.elapsed();\
@@ -51,11 +52,18 @@ void MainWindow::onShowContextCategory(bool on)
 
 void MainWindow::createCategoryMain(SARibbonCategory *page)
 {
+    QElapsedTimer cost;
+    cost.start();
+    int lastTimes = 0;
     SARibbonPannel* pannel = page->addPannel(tr("pannel 1"));
+    PRINT_COST(cost,lastTimes,"addPannel pannel 1");
+
     QAction* act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/save.png"));
     act->setText(tr("text action"));
+    PRINT_COST(cost,lastTimes,"new Large Action");
     pannel->addLargeAction(act);
+    PRINT_COST(cost,lastTimes,"add 1 Large Action");
 
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/save.png"));
@@ -71,24 +79,25 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     act->setIcon(QIcon(":/icon/icon/folder.png"));
     act->setText(tr("text action"));
     pannel->addSmallAction(act);
-
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/folder.png"));
     act->setText(tr("text action"));
     pannel->addSmallAction(act);
 
+    pannel->addSeparator();
+
     SARibbonToolButton * btn;
     SARibbonMenu* menu = new SARibbonMenu(this);
     QAction * item = menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11111"));
     menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111111111111111111111"));
 
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/folder.png"));
@@ -165,6 +174,8 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     btn->setPopupMode(QToolButton::InstantPopup);
     btn->setEnabled(false);
 
+    QComboBox* com = new QComboBox(this);
+    pannel->addWidget(com);
 }
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)

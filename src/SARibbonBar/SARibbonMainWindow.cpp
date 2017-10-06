@@ -100,6 +100,9 @@ void SARibbonMainWindowPrivate::init()
                       "SARibbonMenu::item:hover {   "
                       "    border: 1px solid #FFB700;"
                       "}  "
+                      "SARibbonMenu::icon{"
+                      "margin-left: 5px;"
+                      "}"
                       );
 }
 

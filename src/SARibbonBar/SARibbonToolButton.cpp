@@ -63,6 +63,12 @@ void SARibbonToolButton::mouseReleaseEvent(QMouseEvent *e)
     m_menuButtonPressed = false;
 }
 
+void SARibbonToolButton::leaveEvent(QEvent *e)
+{
+    m_mouseOnSubControl = false;
+    QToolButton::leaveEvent(e);
+}
+
 
 
 void SARibbonToolButton::paintLargeButton(QPaintEvent *e)

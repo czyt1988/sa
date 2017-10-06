@@ -25,6 +25,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *e);
     virtual void mousePressEvent(QMouseEvent *e);
     virtual void mouseReleaseEvent(QMouseEvent *e);
+    virtual void leaveEvent(QEvent *e);
     virtual void paintLargeButton(QPaintEvent *e);
     virtual void paintSmallButton(QPaintEvent *e);
     virtual void paintMenuButtonPopupButton(QPaintEvent *e);

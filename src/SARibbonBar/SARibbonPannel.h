@@ -15,7 +15,8 @@ public:
     using QWidget::addAction;
     SARibbonToolButton* addLargeAction(QAction *action);
     SARibbonToolButton *addSmallAction(QAction *action);
-    void addWidget(QWidget* w);
+    QAction* addSeparator();
+    void addWidget(QWidget* w, int row=0);
 protected:
     static QSize maxHightIconSize(const QSize& size,int height);
     void paintEvent(QPaintEvent *event);

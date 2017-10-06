@@ -29,6 +29,7 @@ SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
         btn->setPopupMode(QToolButton::MenuButtonPopup);
     m_gridLayout->addWidget(btn,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
+    addAction(action);
     return btn;
 }
 
@@ -49,12 +50,32 @@ SARibbonToolButton* SARibbonPannel::addSmallAction(QAction *action)
     m_row += 2;
     if(m_row >= 6)
         m_row = 0;
+    addAction(action);
     return btn;
 }
 
-void SARibbonPannel::addWidget(QWidget *w)
+QAction *SARibbonPannel::addSeparator()
 {
-    m_gridLayout->addWidget(w,0,m_gridLayout->columnCount(),6,1);
+    QAction*action = new QAction(this);
+    action->setSeparator(true);
+    addAction(action);
+    return action;
+}
+
+void SARibbonPannel::addWidget(QWidget *w,int row)
+{
+    if(row<0)
+    {
+        m_gridLayout->addWidget(w,0,m_gridLayout->columnCount(),6,1);
+    }
+    else
+    {
+        if(row > 4)
+        {
+            row = 4;
+        }
+        m_gridLayout->addWidget(w,row,m_gridLayout->columnCount(),2,1);
+    }
 }
 
 
