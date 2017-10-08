@@ -6,9 +6,15 @@
 #include <QGridLayout>
 #include <QFontMetrics>
 #include <QPainter>
+#include "SARibbonPannelOptionButton.h"
+#include "SARibbonSeparatorWidget.h"
 SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
   ,m_nextElementPosition(3,3)
   ,m_row(0)
+  ,m_optionActionButton(nullptr)
+  ,m_titleOptionButtonSpace(6)
+  ,m_titleHeight(21)
+  ,m_titleY(77)
 {
     setFixedHeight(98);
     setMinimumWidth(50);
@@ -54,12 +60,16 @@ SARibbonToolButton* SARibbonPannel::addSmallAction(QAction *action)
     return btn;
 }
 
-QAction *SARibbonPannel::addSeparator()
+void SARibbonPannel::addSeparator()
 {
+#if 0
     QAction*action = new QAction(this);
     action->setSeparator(true);
     addAction(action);
-    return action;
+#else
+    SARibbonSeparatorWidget* sep = new SARibbonSeparatorWidget(height() - 10,this);
+    m_gridLayout->addWidget(sep,0,m_gridLayout->columnCount(),6,1);
+#endif
 }
 
 void SARibbonPannel::addWidget(QWidget *w,int row)
@@ -78,6 +88,25 @@ void SARibbonPannel::addWidget(QWidget *w,int row)
     }
 }
 
+void SARibbonPannel::addOptionAction(QAction *action)
+{
+    if(nullptr == action)
+    {
+        if(m_optionActionButton)
+        {
+            delete m_optionActionButton;
+            m_optionActionButton = nullptr;
+        }
+        return;
+    }
+    if(nullptr == m_optionActionButton)
+    {
+        m_optionActionButton = new SARibbonPannelOptionButton(this);
+    }
+    m_optionActionButton->setDefaultAction(action);
+    repaint();
+}
+
 
 QSize SARibbonPannel::maxHightIconSize(const QSize &size, int height)
 {
@@ -90,9 +119,40 @@ QSize SARibbonPannel::maxHightIconSize(const QSize &size, int height)
 
 void SARibbonPannel::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     QPainter p(this);
     QFont f = font();
     f.setPixelSize(11);
     p.setFont(f);
-    p.drawText(0,77,width(),21,Qt::AlignCenter,windowTitle());
+    if(m_optionActionButton)
+    {
+        p.drawText(0,m_titleY
+                   ,width()-m_optionActionButton->width() - m_titleOptionButtonSpace
+                   ,m_titleHeight,Qt::AlignCenter,windowTitle());
+    }
+    else
+    {
+        p.drawText(0,m_titleY,width(),m_titleHeight,Qt::AlignCenter,windowTitle());
+    }
+
+}
+
+QSize SARibbonPannel::sizeHint() const
+{
+    QSize laySize = layout()->sizeHint();
+    QFontMetrics fm = fontMetrics();
+    QSize titleSize = fm.size(Qt::TextShowMnemonic,windowTitle());
+    int maxWidth = qMax(laySize.width(),titleSize.width());
+    return QSize(maxWidth,laySize.height());
+}
+
+void SARibbonPannel::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
+    if(m_optionActionButton)
+    {
+        m_optionActionButton->move(width()-m_titleOptionButtonSpace/2 - m_optionActionButton->width()
+                                   ,m_titleY+(m_titleHeight-m_optionActionButton->height())/2);
+        qDebug() << "m_optionActionButton geometry" <<m_optionActionButton->geometry();
+    }
 }

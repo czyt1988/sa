@@ -221,6 +221,9 @@ void MainWindow::createCategoryOther(SARibbonCategory *page)
     btn->setMenu(menu);
     pannel->addWidget(btn);
 
+    QAction* optAct = new QAction(this);
+    pannel->addOptionAction(optAct);
+
 }
 
 void MainWindow::onMenuButtonPopupCheckableTest(bool b)

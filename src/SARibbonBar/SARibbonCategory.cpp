@@ -4,16 +4,18 @@
 #include <QPainter>
 #include <QLinearGradient>
 #include <QDebug>
+QPixmap* SARibbonCategoryProxy::category_separator_pixmap = nullptr;
 class SARibbonCategoryPrivate
 {
 public:
+    SARibbonCategory* parent;
     QList<SARibbonPannel*> pannelLists;
     QList<int> separatorX;
 };
 
 SARibbonCategory::SARibbonCategory(QWidget *parent)
     :QWidget(parent)
-    ,m_d(new SARibbonCategoryPrivate)
+    ,m_proxy(new SARibbonCategoryProxy(this))
 {
     setFixedHeight(98);
     setAutoFillBackground(true);
@@ -22,7 +24,6 @@ SARibbonCategory::SARibbonCategory(QWidget *parent)
 
 SARibbonCategory::~SARibbonCategory()
 {
-    delete m_d;
 }
 
 ///
@@ -32,10 +33,7 @@ SARibbonCategory::~SARibbonCategory()
 ///
 SARibbonPannel *SARibbonCategory::addPannel(const QString &title)
 {
-    SARibbonPannel* pannel = new SARibbonPannel(this);
-    pannel->setWindowTitle(title);
-    m_d->pannelLists.append(pannel);
-    return pannel;
+    return proxy()->addPannel(title);
 }
 ///
 /// \brief SARibbonCategory::setBackgroundBrush
@@ -43,15 +41,64 @@ SARibbonPannel *SARibbonCategory::addPannel(const QString &title)
 ///
 void SARibbonCategory::setBackgroundBrush(const QBrush &brush)
 {
-    QPalette p = palette();
-    p.setBrush(QPalette::Background,brush);
-    setPalette(p);
+    proxy()->setBackgroundBrush(brush);
+}
+
+SARibbonCategoryProxy *SARibbonCategory::proxy()
+{
+    return m_proxy.data();
+}
+
+void SARibbonCategory::setProxy(SARibbonCategoryProxy *proxy)
+{
+    m_proxy.reset(proxy);
 }
 
 void SARibbonCategory::resizeEvent(QResizeEvent *event)
 {
-    Q_UNUSED(event);
+    proxy()->resizeEvent(event);
+    QWidget::resizeEvent(event);
+}
 
+void SARibbonCategory::paintEvent(QPaintEvent *event)
+{
+    proxy()->paintEvent(event);
+    QWidget::paintEvent(event);
+}
+
+
+//////////////////////////////////////////////////////////////////
+
+SARibbonCategoryProxy::SARibbonCategoryProxy(SARibbonCategory *parent)
+    :m_d(new SARibbonCategoryPrivate)
+{
+    m_d->parent = parent;
+}
+
+SARibbonCategoryProxy::~SARibbonCategoryProxy()
+{
+    delete m_d;
+}
+
+SARibbonPannel *SARibbonCategoryProxy::addPannel(const QString &title)
+{
+    SARibbonPannel* pannel = new SARibbonPannel(ribbonCategory());
+    pannel->setWindowTitle(title);
+    m_d->pannelLists.append(pannel);
+    return pannel;
+}
+
+void SARibbonCategoryProxy::setBackgroundBrush(const QBrush &brush)
+{
+    QPalette p = ribbonCategory()->palette();
+    p.setBrush(QPalette::Background,brush);
+    ribbonCategory()->setPalette(p);
+}
+
+
+void SARibbonCategoryProxy::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
     const int size = m_d->pannelLists.size();
     int lastPos = 0;
     for(int i=0;i<size;++i)
@@ -72,21 +119,24 @@ void SARibbonCategory::resizeEvent(QResizeEvent *event)
         pannel->move(lastPos,0);
         lastPos = pannel->width() + 1;
     }
-    QWidget::resizeEvent(event);
 }
 
-void SARibbonCategory::paintEvent(QPaintEvent *event)
+void SARibbonCategoryProxy::paintEvent(QPaintEvent *event)
 {
-    QPainter p(this);
-    QPixmap pixmap = drawSeparatorPixmap();
+    Q_UNUSED(event);
+    QPainter p(ribbonCategory());
+    if(nullptr == category_separator_pixmap)
+    {
+        category_separator_pixmap = new QPixmap(drawSeparatorPixmap());
+    }
     for(int i=0;i<m_d->separatorX.size();++i)
     {
-        p.drawPixmap(m_d->separatorX[i],0,pixmap);
+        p.drawPixmap(m_d->separatorX[i],0,*category_separator_pixmap);
     }
-    QWidget::paintEvent(event);
+
 }
 
-QPixmap SARibbonCategory::drawSeparatorPixmap() const
+QPixmap SARibbonCategoryProxy::drawSeparatorPixmap() const
 {
     QPixmap pix(1,98);
     QPainter p(&pix);
@@ -101,4 +151,9 @@ QPixmap SARibbonCategory::drawSeparatorPixmap() const
     p.setPen(pen);
     p.drawLine(0,97,0,0);
     return pix;
+}
+
+SARibbonCategory *SARibbonCategoryProxy::ribbonCategory()
+{
+    return m_d->parent;
 }

@@ -104,6 +104,13 @@ void SARibbonMainWindowPrivate::init()
                       "margin-left: 5px;"
                       "}"
                       );
+    ribbonStyleSheet[SARibbonMainWindow::RibbonMenu]
+            = QString(
+                      "SARibbonPannelOptionButton::hover {  "
+                      "    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);  "
+                      "    border: 0px;"
+                      "}"
+                      );
 }
 
 SARibbonMainWindow::SARibbonMainWindow(QWidget *parent)

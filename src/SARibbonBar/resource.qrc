@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>resource/ribbonPannelOptionButton.png</file>
+    </qresource>
+</RCC>

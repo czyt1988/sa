@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     SARibbonPannel.cpp \
     SARibbonToolButton.cpp \
     SARibbonMenu.cpp \
-    SARibbonStyle.cpp
+    SARibbonStyle.cpp \
+    SARibbonPannelOptionButton.cpp \
+    SARibbonSeparatorWidget.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -41,9 +43,12 @@ HEADERS  += \
     SARibbonToolButton.h \
     SARibbonMenu.h \
     SARibbonStyle.h \
-    SARibbonGlobal.h
+    SARibbonGlobal.h \
+    SARibbonPannelOptionButton.h \
+    SARibbonSeparatorWidget.h
 
 RESOURCES += \
-    saribbonresouce.qrc
+    saribbonresouce.qrc \
+    resource.qrc
 
 DEFINES += SA_NO_EXPORT

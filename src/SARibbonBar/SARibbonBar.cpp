@@ -23,9 +23,9 @@ public:
 class SARibbonBarPrivate
 {
 public:
+    const int titleBarHight;
     QMargins widgetBord;
     SARibbonBar* MainClass;
-    const int titleBarHight;
     const int tabBarHight;
     QBrush ribbonBarBackground;
     QColor titleTextColor;
@@ -36,34 +36,39 @@ public:
     int iconRightBorderPosition;///< 标题栏x值得最小值，在有图标和快捷启动按钮，此值都需要变化
     SARibbonBarPrivate(SARibbonBar* par)
         :titleBarHight(30)
+        ,widgetBord(1,1,1,0)
         ,tabBarHight(30)
         ,ribbonBarBackground(QColor(227,227,229))
         ,titleTextColor(Qt::black)
         ,applitionButton(nullptr)
-        ,widgetBord(1,1,1,0)
+        ,ribbonTabBar(nullptr)
+        ,stackedContainerWidget(nullptr)
         ,iconRightBorderPosition(1)
     {
         MainClass = par;
-        applitionButton = new SARibbonApplicationButton(par);
-        applitionButton->setObjectName(QStringLiteral("SARibbonApplicationButton"));
+    }
+
+    void init(SARibbonBarSubElementCreateProxy* proxy)
+    {
+        applitionButton = proxy->createRibbonApplicationButton();
         applitionButton->setGeometry(widgetBord.left(),titleBarHight+widgetBord.top(),56,30);
-        par->connect(applitionButton,&QAbstractButton::clicked
-                     ,par,&SARibbonBar::applitionButtonClicked);
+        MainClass->connect(applitionButton,&QAbstractButton::clicked
+                     ,MainClass,&SARibbonBar::applitionButtonClicked);
         //
-        ribbonTabBar = new SARibbonTabBar(par);
+        ribbonTabBar = proxy->createRibbonTabBar();
         ribbonTabBar->setGeometry(applitionButton->geometry().right()
                                   ,titleBarHight+widgetBord.top()
-                                  ,par->width(),tabBarHight);
-        par->connect(ribbonTabBar,&QTabBar::currentChanged
-                     ,par,&SARibbonBar::onCurrentRibbonTabChanged);
+                                  ,MainClass->width(),tabBarHight);
+        MainClass->connect(ribbonTabBar,&QTabBar::currentChanged
+                     ,MainClass,&SARibbonBar::onCurrentRibbonTabChanged);
 
         //
-        stackedContainerWidget = new QStackedWidget(par);
+        stackedContainerWidget = new QStackedWidget(MainClass);
         stackedContainerWidget->setGeometry(widgetBord.left()
                                             ,ribbonTabBar->geometry().bottom()+1
-                                            ,par->width()-widgetBord.left()-widgetBord.right()
-                                            ,par->height()-ribbonTabBar->geometry().bottom()-2-widgetBord.bottom());
-        }
+                                            ,MainClass->width()-widgetBord.left()-widgetBord.right()
+                                            ,MainClass->height()-ribbonTabBar->geometry().bottom()-2-widgetBord.bottom());
+    }
 
     void setApplitionButton(QAbstractButton *btn)
     {
@@ -96,8 +101,10 @@ public:
 
 
 SARibbonBar::SARibbonBar(QWidget *parent):QWidget(parent)
+  ,m_createProxy(new SARibbonBarSubElementCreateProxy(this))
   ,m_d(new SARibbonBarPrivate(this))
 {
+    m_d->init(m_createProxy.data());
     setFixedHeight(160);
     connect(parent,&QWidget::windowTitleChanged,this,&SARibbonBar::onWindowTitleChanged);
     connect(parent,&QWidget::windowIconChanged,this,&SARibbonBar::onWindowIconChanged);
@@ -132,7 +139,7 @@ SARibbonTabBar *SARibbonBar::ribbonTabBar()
 ///
 SARibbonCategory *SARibbonBar::addCategoryPage(const QString &title)
 {
-    SARibbonCategory* catagory = new SARibbonCategory(this);
+    SARibbonCategory* catagory =  subElementCreateProxy()->createRibbonCategory();
     catagory->setWindowTitle(title);
     int index = m_d->ribbonTabBar->addTab(title);
     m_d->ribbonTabBar->setTabData(index,QVariant((quint64)catagory));
@@ -201,6 +208,16 @@ void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory *context, bo
     {
         hideContextCategory(context);
     }
+}
+
+void SARibbonBar::setSubElementCreateProxy(SARibbonBarSubElementCreateProxy *proxy)
+{
+    m_createProxy.reset(proxy);
+}
+
+SARibbonBarSubElementCreateProxy *SARibbonBar::subElementCreateProxy()
+{
+    return m_createProxy.data();
 }
 
 
@@ -432,3 +449,36 @@ void SARibbonBar::paintWindowIcon(QPainter &painter, const QIcon &icon)
 }
 
 
+
+SARibbonBarSubElementCreateProxy::SARibbonBarSubElementCreateProxy(SARibbonBar *parent)
+    :m_ribbonBar(parent)
+{
+
+}
+
+SARibbonBarSubElementCreateProxy::~SARibbonBarSubElementCreateProxy()
+{
+
+}
+
+SARibbonBar *SARibbonBarSubElementCreateProxy::ribbonBar()
+{
+    return m_ribbonBar;
+}
+
+SARibbonTabBar *SARibbonBarSubElementCreateProxy::createRibbonTabBar()
+{
+    return new SARibbonTabBar(ribbonBar());
+}
+
+SARibbonApplicationButton *SARibbonBarSubElementCreateProxy::createRibbonApplicationButton()
+{
+    SARibbonApplicationButton* applitionButton = new SARibbonApplicationButton(ribbonBar());
+    applitionButton->setObjectName(QStringLiteral("SARibbonApplicationButton"));
+    return applitionButton;
+}
+
+SARibbonCategory *SARibbonBarSubElementCreateProxy::createRibbonCategory()
+{
+    return new SARibbonCategory(ribbonBar());
+}
