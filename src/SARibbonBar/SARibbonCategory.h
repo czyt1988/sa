@@ -46,6 +46,10 @@ public:
 protected:
     static QPixmap* category_separator_pixmap;
 private:
+    int showNormalPannel(SARibbonPannel* pannel, int index, int x);
+    void buildReduceModePannel(SARibbonPannel* pannel, int x);
+    static QPoint calcPopupPannelPosition(SARibbonCategory* category,SARibbonPannel *pannel, int x);
+private:
     SARibbonCategoryPrivate* m_d;
 };
 

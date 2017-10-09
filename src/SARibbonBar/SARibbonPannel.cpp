@@ -6,6 +6,8 @@
 #include <QGridLayout>
 #include <QFontMetrics>
 #include <QPainter>
+#include <QApplication>
+#include <QDesktopWidget>
 #include "SARibbonPannelOptionButton.h"
 #include "SARibbonSeparatorWidget.h"
 SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
@@ -15,6 +17,7 @@ SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
   ,m_titleOptionButtonSpace(6)
   ,m_titleHeight(21)
   ,m_titleY(77)
+  ,m_defaultReduceButton(nullptr)
 {
     setFixedHeight(98);
     setMinimumWidth(50);
@@ -36,6 +39,44 @@ SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
     m_gridLayout->addWidget(btn,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
     addAction(action);
+    return btn;
+}
+
+
+SARibbonToolButton *SARibbonPannel::addLargeToolButton(const QString& text,const QIcon& icon,QToolButton::ToolButtonPopupMode popMode)
+{
+    SARibbonToolButton* btn = new SARibbonToolButton(this);
+    btn->setButtonType(SARibbonToolButton::LargeButton);
+    btn->setAutoRaise(true);
+    QSize iconSize = maxHightIconSize(icon.actualSize(QSize(32,32)),32);
+    btn->setIconSize(iconSize);
+    btn->setIcon(icon);
+    btn->setPopupMode(popMode);
+    btn->setText(text);
+    m_gridLayout->addWidget(btn,0,m_gridLayout->columnCount(),6,1);
+    m_row = 0;
+
+    return btn;
+}
+
+
+SARibbonToolButton *SARibbonPannel::addSmallToolButton(const QString &text, const QIcon &icon, QToolButton::ToolButtonPopupMode popMode)
+{
+    SARibbonToolButton* btn = new SARibbonToolButton(this);
+    btn->setButtonType(SARibbonToolButton::SmallButton);
+    btn->setAutoRaise(true);
+    QSize iconSize = maxHightIconSize(icon.actualSize(QSize(16,16)),16);
+    btn->setIconSize(iconSize);
+    btn->setIcon(icon);
+    btn->setPopupMode(popMode);
+    btn->setText(text);
+    if(0 == m_row)
+        m_gridLayout->addWidget(btn,m_row,m_gridLayout->columnCount(),2,1);
+    else
+        m_gridLayout->addWidget(btn,m_row,m_gridLayout->columnCount()-1,2,1);
+    m_row += 2;
+    if(m_row >= 6)
+        m_row = 0;
     return btn;
 }
 
@@ -72,7 +113,7 @@ void SARibbonPannel::addSeparator()
 #endif
 }
 
-void SARibbonPannel::addWidget(QWidget *w,int row)
+void SARibbonPannel::addWidget(QWidget *w, int row)
 {
     if(row<0)
     {
@@ -86,6 +127,11 @@ void SARibbonPannel::addWidget(QWidget *w,int row)
         }
         m_gridLayout->addWidget(w,row,m_gridLayout->columnCount(),2,1);
     }
+}
+
+void SARibbonPannel::addWidget(QWidget *w, int row, int rowSpan)
+{
+    m_gridLayout->addWidget(w,row,m_gridLayout->columnCount(),rowSpan,1);
 }
 
 void SARibbonPannel::addOptionAction(QAction *action)
@@ -146,13 +192,26 @@ QSize SARibbonPannel::sizeHint() const
     return QSize(maxWidth,laySize.height());
 }
 
+void SARibbonPannel::setReduce(bool isReduce)
+{
+    if(isReduce)
+    {
+        setWindowFlags(Qt::Popup);
+    }
+    else
+    {
+        setWindowFlags( Qt::Widget);
+    }
+}
+
+
 void SARibbonPannel::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
+
     if(m_optionActionButton)
     {
         m_optionActionButton->move(width()-m_titleOptionButtonSpace/2 - m_optionActionButton->width()
                                    ,m_titleY+(m_titleHeight-m_optionActionButton->height())/2);
-        qDebug() << "m_optionActionButton geometry" <<m_optionActionButton->geometry();
     }
 }
