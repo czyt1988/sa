@@ -175,7 +175,11 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     btn->setEnabled(false);
 
     QComboBox* com = new QComboBox(this);
+    com->setSizePolicy(QSizePolicy::Expanding,
+                       QSizePolicy::Fixed);
+    com->setWindowTitle("123123");
     pannel->addWidget(com);
+    pannel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 }
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)

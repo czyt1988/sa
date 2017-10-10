@@ -26,6 +26,8 @@ public:
         ,RibbonTabBar
         ,RibbonToolButton
         ,RibbonMenu
+        ,RibbonPannelOptionButton
+        ,RibbonPannel
     };
     QString ribbonElementStyleSheet(RibbonElement element) const;
     void setRibbonElementStyleSheet(RibbonElement element,const QString& styleSheet);

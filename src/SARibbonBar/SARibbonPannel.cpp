@@ -149,7 +149,7 @@ void SARibbonPannel::addOptionAction(QAction *action)
     {
         m_optionActionButton = new SARibbonPannelOptionButton(this);
     }
-    m_optionActionButton->setDefaultAction(action);
+    m_optionActionButton->connectAction(action);
     repaint();
 }
 
@@ -166,6 +166,7 @@ QSize SARibbonPannel::maxHightIconSize(const QSize &size, int height)
 void SARibbonPannel::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
+    QWidget::paintEvent(event);
     QPainter p(this);
     QFont f = font();
     f.setPixelSize(11);
@@ -180,7 +181,6 @@ void SARibbonPannel::paintEvent(QPaintEvent *event)
     {
         p.drawText(0,m_titleY,width(),m_titleHeight,Qt::AlignCenter,windowTitle());
     }
-
 }
 
 QSize SARibbonPannel::sizeHint() const
@@ -188,7 +188,15 @@ QSize SARibbonPannel::sizeHint() const
     QSize laySize = layout()->sizeHint();
     QFontMetrics fm = fontMetrics();
     QSize titleSize = fm.size(Qt::TextShowMnemonic,windowTitle());
-    int maxWidth = qMax(laySize.width(),titleSize.width());
+    int maxWidth = laySize.width();
+    if(m_defaultReduceButton)
+    {
+        maxWidth = qMax(laySize.width(),titleSize.width()) + m_titleOptionButtonSpace + m_defaultReduceButton->width();
+    }
+    else
+    {
+        maxWidth = qMax(laySize.width(),titleSize.width());
+    }
     return QSize(maxWidth,laySize.height());
 }
 

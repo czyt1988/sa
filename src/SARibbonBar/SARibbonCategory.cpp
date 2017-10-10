@@ -254,7 +254,7 @@ QPoint SARibbonCategoryProxy::calcPopupPannelPosition(SARibbonCategory* category
 {
     QPoint absPosition = category->mapToGlobal(QPoint(x,category->height()));
     QRect r = QApplication::desktop()->availableGeometry(category);
-    qDebug() << "x"<<x<<"desktop:" << r << " absPosition" << absPosition;
+    //qDebug() << "x"<<x<<"desktop:" << r << " absPosition" << absPosition;
     if((absPosition.x() + pannel->width()) < r.width())
     {
         return absPosition;
