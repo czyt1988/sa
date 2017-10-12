@@ -179,7 +179,7 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
                        QSizePolicy::Fixed);
     com->setWindowTitle("123123");
     pannel->addWidget(com);
-    pannel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    pannel->setExpanding();
 }
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)

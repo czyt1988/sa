@@ -20,6 +20,7 @@ public:
     SARibbonToolButton(QWidget *parent = Q_NULLPTR);
     RibbonButtonType buttonType() const;
     void setButtonType(const RibbonButtonType &buttonType);
+    virtual QSize minimumSizeHint() const;
 protected:
     virtual void paintEvent(QPaintEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *e);

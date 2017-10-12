@@ -270,4 +270,9 @@ void SARibbonToolButton::setButtonType(const RibbonButtonType &buttonType)
     }
 }
 
+QSize SARibbonToolButton::minimumSizeHint() const
+{
+    return sizeHint();
+}
+
 

@@ -39,6 +39,7 @@ SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
     m_gridLayout->addWidget(btn,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
     addAction(action);
+    updateMinSize();
     return btn;
 }
 
@@ -55,7 +56,7 @@ SARibbonToolButton *SARibbonPannel::addLargeToolButton(const QString& text,const
     btn->setText(text);
     m_gridLayout->addWidget(btn,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
-
+    updateMinSize();
     return btn;
 }
 
@@ -75,8 +76,9 @@ SARibbonToolButton *SARibbonPannel::addSmallToolButton(const QString &text, cons
     else
         m_gridLayout->addWidget(btn,m_row,m_gridLayout->columnCount()-1,2,1);
     m_row += 2;
-    if(m_row >= 6)
+    if(m_row >= 5)//
         m_row = 0;
+    updateMinSize();
     return btn;
 }
 
@@ -95,9 +97,10 @@ SARibbonToolButton* SARibbonPannel::addSmallAction(QAction *action)
     else
         m_gridLayout->addWidget(btn,m_row,m_gridLayout->columnCount()-1,2,1);
     m_row += 2;
-    if(m_row >= 6)
+    if(m_row >= 5)
         m_row = 0;
     addAction(action);
+    updateMinSize();
     return btn;
 }
 
@@ -110,6 +113,8 @@ void SARibbonPannel::addSeparator()
 #else
     SARibbonSeparatorWidget* sep = new SARibbonSeparatorWidget(height() - 10,this);
     m_gridLayout->addWidget(sep,0,m_gridLayout->columnCount(),6,1);
+    m_row = 0;
+    updateMinSize();
 #endif
 }
 
@@ -118,6 +123,7 @@ void SARibbonPannel::addWidget(QWidget *w, int row)
     if(row<0)
     {
         m_gridLayout->addWidget(w,0,m_gridLayout->columnCount(),6,1);
+        m_row = 0;
     }
     else
     {
@@ -126,12 +132,19 @@ void SARibbonPannel::addWidget(QWidget *w, int row)
             row = 4;
         }
         m_gridLayout->addWidget(w,row,m_gridLayout->columnCount(),2,1);
+        m_row = row + 2;
+        if(m_row >= 5)
+            m_row = 0;
     }
 }
 
 void SARibbonPannel::addWidget(QWidget *w, int row, int rowSpan)
 {
     m_gridLayout->addWidget(w,row,m_gridLayout->columnCount(),rowSpan,1);
+    m_row = row + rowSpan;
+    if(m_row >= 5)
+        m_row = 0;
+    updateMinSize();
 }
 
 void SARibbonPannel::addOptionAction(QAction *action)
@@ -200,6 +213,11 @@ QSize SARibbonPannel::sizeHint() const
     return QSize(maxWidth,laySize.height());
 }
 
+QSize SARibbonPannel::minimumSizeHint() const
+{
+    return layout()->minimumSize();
+}
+
 void SARibbonPannel::setReduce(bool isReduce)
 {
     if(isReduce)
@@ -212,6 +230,11 @@ void SARibbonPannel::setReduce(bool isReduce)
     }
 }
 
+void SARibbonPannel::setExpanding()
+{
+    setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+}
+
 
 void SARibbonPannel::resizeEvent(QResizeEvent *event)
 {
@@ -222,4 +245,9 @@ void SARibbonPannel::resizeEvent(QResizeEvent *event)
         m_optionActionButton->move(width()-m_titleOptionButtonSpace/2 - m_optionActionButton->width()
                                    ,m_titleY+(m_titleHeight-m_optionActionButton->height())/2);
     }
+}
+
+void SARibbonPannel::updateMinSize()
+{
+    setMinimumWidth(minimumSizeHint().width());
 }

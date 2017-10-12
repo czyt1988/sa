@@ -23,11 +23,14 @@ public:
     void addWidget(QWidget* w, int row,int rowSpan);
     void addOptionAction(QAction* action);
     virtual QSize sizeHint() const;
+    virtual QSize minimumSizeHint() const;
     void setReduce(bool isReduce);
+    void setExpanding();
 protected:
     static QSize maxHightIconSize(const QSize& size,int height);
     void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
+    void updateMinSize();
 private:
     QGridLayout* m_gridLayout;
     QPoint m_nextElementPosition;

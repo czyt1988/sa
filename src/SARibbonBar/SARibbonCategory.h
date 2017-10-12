@@ -6,6 +6,7 @@
 #include <QScopedPointer>
 class SARibbonCategoryPrivate;
 class SARibbonCategoryProxy;
+class QHBoxLayout;
 ///
 /// \brief 一项ribbon页
 ///
@@ -24,6 +25,7 @@ protected:
     void paintEvent(QPaintEvent *event);
 private:
     QScopedPointer<SARibbonCategoryProxy> m_proxy;
+    QHBoxLayout* m_pannelLayout;
 };
 
 ///
@@ -40,15 +42,8 @@ public:
     virtual void setBackgroundBrush(const QBrush& brush);
     virtual void resizeEvent(QResizeEvent *event);
     virtual void paintEvent(QPaintEvent *event);
-    //绘制分割线
-    virtual QPixmap drawSeparatorPixmap() const;
     SARibbonCategory* ribbonCategory();
-protected:
-    static QPixmap* category_separator_pixmap;
-private:
-    int showNormalPannel(SARibbonPannel* pannel, int index, int x);
-    void buildReduceModePannel(SARibbonPannel* pannel, int x);
-    static QPoint calcPopupPannelPosition(SARibbonCategory* category,SARibbonPannel *pannel, int x);
+
 private:
     SARibbonCategoryPrivate* m_d;
 };
