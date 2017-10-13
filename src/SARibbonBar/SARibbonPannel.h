@@ -26,6 +26,7 @@ public:
     virtual QSize minimumSizeHint() const;
     void setReduce(bool isReduce);
     void setExpanding();
+    bool isExpanding() const;
 protected:
     static QSize maxHightIconSize(const QSize& size,int height);
     void paintEvent(QPaintEvent *event);

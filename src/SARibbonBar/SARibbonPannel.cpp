@@ -24,6 +24,7 @@ SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
     m_gridLayout = new QGridLayout(this);
     m_gridLayout->setSpacing(0);
     m_gridLayout->setContentsMargins(3,2,3,21);
+    setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
 }
 
 SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
@@ -233,6 +234,12 @@ void SARibbonPannel::setReduce(bool isReduce)
 void SARibbonPannel::setExpanding()
 {
     setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+}
+
+bool SARibbonPannel::isExpanding() const
+{
+    QSizePolicy sp = sizePolicy();
+    return sp.horizontalPolicy() == QSizePolicy::Expanding;
 }
 
 

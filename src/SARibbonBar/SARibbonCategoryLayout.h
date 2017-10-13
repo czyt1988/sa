@@ -25,7 +25,6 @@ public:
     QSize minimumSize();
     Qt::Orientations expandingDirections() const;
 protected:
-    void layoutNormalPannel(SARibbonPannel* pannel,int x,int y,int w,int h);
     int buildReduceModePannel(SARibbonPannel* realPannel, int x, int y);
     static QPoint calcPopupPannelPosition(SARibbonCategory* category,SARibbonPannel *pannel, int x);
 private:

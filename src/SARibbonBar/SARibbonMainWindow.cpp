@@ -114,7 +114,7 @@ void SARibbonMainWindowPrivate::init()
     ribbonStyleSheet[SARibbonMainWindow::RibbonPannel]
             = QString(
                       "SARibbonPannel {  "
-                      "    background-color: #FFFFF  "
+                      "    background-color: #FFFFFF;  "
                       "    border: 0px;"
                       "}"
                       );
