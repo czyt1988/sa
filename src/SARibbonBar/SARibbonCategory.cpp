@@ -277,6 +277,7 @@ int SARibbonCategoryProxy::buildReduceModePannel(SARibbonPannel *realPannel, int
                                     ,QToolButton::InstantPopup);
     info.reduceModeShowPannel = reducePannel;
     reducePannel->move(x,y);
+
     categoryPage->connect(btn,&SARibbonToolButton::clicked
                                   ,categoryPage,[categoryPage,info](bool on){
         Q_UNUSED(on);
@@ -284,6 +285,7 @@ int SARibbonCategoryProxy::buildReduceModePannel(SARibbonPannel *realPannel, int
         QPoint pos = SARibbonCategoryProxy::calcPopupPannelPosition(categoryPage,info.realShowPannel,pannelX);
         qDebug() << "pannelX:" << pannelX << " pos:" <<pos;
        //info.realShowPannel->move(pos);
+        info.realShowPannel->setReduce(true);
         info.realShowPannel->setGeometry(pos.x(),pos.y(),info.realShowPannel->sizeHint().width(),info.realShowPannel->sizeHint().height());
         info.realShowPannel->setVisible(true);
         info.realShowPannel->show();
@@ -291,8 +293,10 @@ int SARibbonCategoryProxy::buildReduceModePannel(SARibbonPannel *realPannel, int
         info.realShowPannel->raise();
         info.realShowPannel->activateWindow();
         info.realShowPannel->repaint();
-        QEvent event1(QEvent::UpdateRequest);
-        QApplication::sendEvent(info.realShowPannel,&event1);
+        if(nullptr == info.realShowPannel->paintEngine())
+        {
+            qDebug() << "info.realShowPannel->paintEngine() is null";
+        }
         qDebug() << "realShowPannel geometry:"<<info.realShowPannel->geometry()
                  << "\n window flag:"<<info.realShowPannel->windowFlags()
         << "\n is active:"<<info.realShowPannel->isActiveWindow()
