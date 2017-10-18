@@ -57,6 +57,7 @@ SARibbonCategory *SARibbonCategoryLayout::ribbonCategory()
 void SARibbonCategoryLayout::addItem(QLayoutItem *item)
 {
     itemList.append(item);
+    invalidate();
 }
 
 QLayoutItem *SARibbonCategoryLayout::itemAt(int index) const
@@ -112,6 +113,27 @@ Qt::Orientations SARibbonCategoryLayout::expandingDirections() const
     return Qt::Horizontal;
 }
 
+void SARibbonCategoryLayout::invalidate()
+{
+    m_isChanged = true;
+    QLayout::invalidate();
+}
+
+bool SARibbonCategoryLayout::eventFilter(QObject *watched, QEvent *event)
+{
+//    qDebug() << "watched:"<<watched->metaObject()->className()
+//             << " event:"<< event->type();
+    if(QEvent::LayoutRequest == event->type())
+    {
+//        if(watched->isWidgetType())
+//        {
+//            setGeometry(qobject_cast<QWidget*>(watched)->rect());
+
+//        }
+    }
+    return false;
+}
+
 
 
 int SARibbonCategoryLayout::buildReduceModePannel(SARibbonPannel *realPannel,int x,int y)
@@ -131,9 +153,23 @@ int SARibbonCategoryLayout::buildReduceModePannel(SARibbonPannel *realPannel,int
         Q_UNUSED(on);
         int pannelX = info.reduceModeShowPannel->geometry().x();
         QPoint pos = SARibbonCategoryLayout::calcPopupPannelPosition(categoryPage,info.realShowPannel,pannelX);
-        info.realShowPannel->move(pos);
-        info.realShowPannel->setFocus();
+        qDebug() << "pannelX:" << pannelX << " pos:" <<pos;
+       //info.realShowPannel->move(pos);
+        info.realShowPannel->setGeometry(pos.x(),pos.y(),info.realShowPannel->sizeHint().width(),info.realShowPannel->sizeHint().height());
+        info.realShowPannel->setVisible(true);
         info.realShowPannel->show();
+        info.realShowPannel->setFocus();
+        info.realShowPannel->raise();
+        info.realShowPannel->activateWindow();
+        info.realShowPannel->repaint();
+        QEvent event1(QEvent::UpdateRequest);
+        QApplication::sendEvent(info.realShowPannel,&event1);
+        qDebug() << "realShowPannel geometry:"<<info.realShowPannel->geometry()
+                 << "\n window flag:"<<info.realShowPannel->windowFlags()
+        << "\n is active:"<<info.realShowPannel->isActiveWindow()
+           << "\n is visible:"<<info.realShowPannel->isVisible()
+              << "\n is visible to parent:"<<info.realShowPannel->isVisibleTo(categoryPage)
+           ;
     });
     m_pannelReduceInfo[realPannel] = info;
     return reducePannel->geometry().right();
@@ -143,21 +179,21 @@ QPoint SARibbonCategoryLayout::calcPopupPannelPosition(SARibbonCategory *categor
 {
     QPoint absPosition = category->mapToGlobal(QPoint(x,category->height()));
     QRect r = QApplication::desktop()->availableGeometry(category);
-    //qDebug() << "x"<<x<<"desktop:" << r << " absPosition" << absPosition;
-    if((absPosition.x() + pannel->width()) < r.width())
+    if((absPosition.x() + pannel->sizeHint().width()) < r.width())
     {
         return absPosition;
     }
-    //x - ( popupPannelwidth - ( r.right() - x ));
-    return QPoint(r.width()-  pannel->width(),absPosition.y());
+    return QPoint(r.width()-  pannel->sizeHint().width(),absPosition.y());
 }
 
 void SARibbonCategoryLayout::setGeometry(const QRect &rect)
 {
     if(rect == geometry())
     {
+        qDebug() <<"warning !!!!rect == geometry() at SARibbonCategoryLayout::setGeometry(const QRect &rect) ";
         return;
     }
+    qDebug() <<"void SARibbonCategoryLayout::setGeometry("<< rect;
     QLayout::setGeometry(rect);
     //
     int marginLeft,marginRight,marginTop,marginBottom;
@@ -176,11 +212,11 @@ void SARibbonCategoryLayout::setGeometry(const QRect &rect)
         QWidget *wid = item->widget();
         QSize widSize = wid->sizeHint();
         int nextX = x + widSize.width();
-        SARibbonPannel* pannel = qobject_cast<SARibbonPannel*>(wid);
+
         if(nextX > rect.right())
         {
             //说明超出边界
-            if(pannel)
+            if(SARibbonPannel* pannel = qobject_cast<SARibbonPannel*>(wid))
             {//此时无法显示全一个pannel
                 if(!m_pannelReduceInfo.contains(pannel))
                 {
@@ -191,23 +227,20 @@ void SARibbonCategoryLayout::setGeometry(const QRect &rect)
                 SARibbonReduceActionInfo reduceInfo = m_pannelReduceInfo.value(pannel);
                 QSize reducePannelSize = reduceInfo.reduceModeShowPannel->sizeHint();
                 widgetItems.append(qMakePair(reduceInfo.reduceModeShowPannel,QRect(x,y,reducePannelSize.width(),reducePannelSize.height())));
-                pannel->setVisible(false);
                 reduceInfo.reduceModeShowPannel->setVisible(true);
                 x = x + reducePannelSize.width();
             }
-            else
-            {
-                wid->setVisible(false);
-            }
+            wid->setVisible(false);
+
         }
         else
         {
             //此时能显示全一个pannel
-            if(pannel)
+            if(SARibbonPannel* pannel = qobject_cast<SARibbonPannel*>(wid))
             {
                 pannel->setReduce(false);
                 //layoutNormalPannel(pannel,x,y,widSize.width(),widSize.height());
-                widgetItems.append(qMakePair(pannel,QRect(x,y,widSize.width(),widSize.height())));
+                //widgetItems.append(qMakePair(pannel,QRect(x,y,widSize.width(),widSize.height())));
                 if(m_pannelReduceInfo.contains(pannel))
                 {
                     //把reduce信息删除
@@ -219,10 +252,8 @@ void SARibbonCategoryLayout::setGeometry(const QRect &rect)
                     expandingItem.append(qMakePair(pannel,QRect(x,y,widSize.width(),widSize.height())));
                 }
             }
-            else
-            {
-                widgetItems.append(qMakePair(wid,QRect(x,y,widSize.width(),widSize.height())));
-            }
+
+            widgetItems.append(qMakePair(wid,QRect(x,y,widSize.width(),widSize.height())));
             if(!(wid->isVisible()))
             {
                 wid->setVisible(true);
@@ -260,4 +291,5 @@ void SARibbonCategoryLayout::setGeometry(const QRect &rect)
     {
         widgetItems[i].first->setGeometry( widgetItems[i].second );
     }
+    m_isChanged = false;
 }

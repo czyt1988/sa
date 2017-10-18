@@ -83,6 +83,25 @@ void SARibbonMainWindowPrivate::init()
                      " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
                      " }"
                      "");
+    ribbonStyleSheet[SARibbonMainWindow::RibbonControlButton]
+            = QString(""
+                      "SARibbonControlButton{"
+                      " border: 1px solid #C0C2C4;"
+                      " background-color: #FFFFFF;"
+                      "}"
+                     "SARibbonControlButton::pressed{"
+                     " border: 1px solid #f2ca58;"
+                     " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
+                     "}"
+                     "SARibbonControlButton::checked{"
+                     " border: 1px solid #f2ca58;"
+                     " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
+                     "}"
+                     "SARibbonControlButton::hover {"
+                     " border: 1px solid #f2ca58;"
+                     " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
+                     " }"
+                     "");
     ribbonStyleSheet[SARibbonMainWindow::RibbonMenu]
             = QString(
                     "SARibbonMenu {  "
@@ -116,6 +135,12 @@ void SARibbonMainWindowPrivate::init()
                       "SARibbonPannel {  "
                       "    background-color: #FFFFFF;  "
                       "    border: 0px;"
+                      "}"
+                      );
+    ribbonStyleSheet[SARibbonMainWindow::RibbonGallery]
+            = QString(
+                      "SARibbonGallery {  "
+                      " border: 1px solid #C0C2C4;"
                       "}"
                       );
 }

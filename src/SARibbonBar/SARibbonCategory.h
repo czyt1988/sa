@@ -4,9 +4,10 @@
 #include <QWidget>
 #include "SARibbonPannel.h"
 #include <QScopedPointer>
-class SARibbonCategoryPrivate;
+class SARibbonCategoryProxyPrivate;
 class SARibbonCategoryProxy;
 class QHBoxLayout;
+#define NOT_USE_LAYOUT 1
 ///
 /// \brief 一项ribbon页
 ///
@@ -43,9 +44,14 @@ public:
     virtual void resizeEvent(QResizeEvent *event);
     virtual void paintEvent(QPaintEvent *event);
     SARibbonCategory* ribbonCategory();
-
+#if NOT_USE_LAYOUT
+    virtual void resizePannels(const QSize &categorySize);
+protected:
+    int buildReduceModePannel(SARibbonPannel* realPannel, int x, int y);
+    static QPoint calcPopupPannelPosition(SARibbonCategory* category,SARibbonPannel *pannel, int x);
+#endif
 private:
-    SARibbonCategoryPrivate* m_d;
+    SARibbonCategoryProxyPrivate* m_d;
 };
 
 #endif // SARIBBONCATEGORY_H

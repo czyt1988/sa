@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     SARibbonSeparatorWidget.cpp \
     Form.cpp \
     SARibbonCategoryLayout.cpp \
-    SARibbonGallery.cpp
+    SARibbonGallery.cpp \
+    SARibbonControlButton.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -51,7 +52,8 @@ HEADERS  += \
     SARibbonSeparatorWidget.h \
     Form.h \
     SARibbonCategoryLayout.h \
-    SARibbonGallery.h
+    SARibbonGallery.h \
+    SARibbonControlButton.h
 
 RESOURCES += \
     saribbonresouce.qrc \

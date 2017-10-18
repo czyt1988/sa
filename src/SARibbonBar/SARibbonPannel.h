@@ -3,6 +3,7 @@
 #include "SARibbonGlobal.h"
 #include <QWidget>
 #include "SARibbonToolButton.h"
+class SARibbonGallery;
 class QGridLayout;
 class SARibbonPannelOptionButton;
 ///
@@ -18,6 +19,7 @@ public:
     SARibbonToolButton* addLargeAction(QAction *action);
     SARibbonToolButton* addSmallToolButton(const QString& text,const QIcon& icon,QToolButton::ToolButtonPopupMode popMode);
     SARibbonToolButton *addSmallAction(QAction *action);
+    SARibbonGallery* addGallery();
     void addSeparator();
     void addWidget(QWidget* w, int row=0);
     void addWidget(QWidget* w, int row,int rowSpan);
@@ -25,13 +27,13 @@ public:
     virtual QSize sizeHint() const;
     virtual QSize minimumSizeHint() const;
     void setReduce(bool isReduce);
-    void setExpanding();
+    void setExpanding(bool isExpanding = true);
     bool isExpanding() const;
+    bool event(QEvent *event);
 protected:
     static QSize maxHightIconSize(const QSize& size,int height);
     void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
-    void updateMinSize();
 private:
     QGridLayout* m_gridLayout;
     QPoint m_nextElementPosition;

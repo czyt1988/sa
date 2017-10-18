@@ -28,6 +28,8 @@ public:
         ,RibbonMenu
         ,RibbonPannelOptionButton
         ,RibbonPannel
+        ,RibbonControlButton
+        ,RibbonGallery
     };
     QString ribbonElementStyleSheet(RibbonElement element) const;
     void setRibbonElementStyleSheet(RibbonElement element,const QString& styleSheet);

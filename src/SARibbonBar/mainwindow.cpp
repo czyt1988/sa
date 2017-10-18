@@ -12,6 +12,7 @@
 #include <QElapsedTimer>
 #include "SARibbonMenu.h"
 #include <QComboBox>
+#include "SARibbonGallery.h"
 #define PRINT_COST(ElapsedTimer,LastTime,STR) \
     do{\
     int ___TMP_INT = ElapsedTimer.elapsed();\
@@ -30,16 +31,16 @@ MainWindow::MainWindow(QWidget *par):SARibbonMainWindow(par)
     PRINT_COST(cost,lastTimes,"setCentralWidget & setWindowTitle");
     SARibbonBar* ribbon = ribbonBar();
     ribbon->applitionButton()->setText(tr("File"));
-    SARibbonCategory* categoryMain = ribbon->addCategoryPage(tr("main page"));
+    SARibbonCategory* categoryMain = ribbon->addCategoryPage(tr("主页"));
     PRINT_COST(cost,lastTimes,"new main page");
     createCategoryMain(categoryMain);
     PRINT_COST(cost,lastTimes,"add main page element");
-    SARibbonCategory* categoryOther = ribbon->addCategoryPage(tr("other"));
+    SARibbonCategory* categoryOther = ribbon->addCategoryPage(tr("其他"));
     createCategoryOther(categoryOther);
     PRINT_COST(cost,lastTimes,"add other page");
     m_contextCategory = ribbon->addContextCategory(tr("context"),Qt::red,1);
-    SARibbonCategory* contextCategoryPage1 = m_contextCategory->addCategoryPage(tr("page 1"));
-    SARibbonCategory* contextCategoryPage2 = m_contextCategory->addCategoryPage(tr("page 2"));
+    SARibbonCategory* contextCategoryPage1 = m_contextCategory->addCategoryPage(tr("页面1"));
+    SARibbonCategory* contextCategoryPage2 = m_contextCategory->addCategoryPage(tr("页面2"));
     PRINT_COST(cost,lastTimes,"add contextCategory page");
 #endif
     showMaximized();
@@ -55,33 +56,33 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     QElapsedTimer cost;
     cost.start();
     int lastTimes = 0;
-    SARibbonPannel* pannel = page->addPannel(tr("pannel 1"));
+    SARibbonPannel* pannel = page->addPannel(tr("面板1"));
     PRINT_COST(cost,lastTimes,"addPannel pannel 1");
 
     QAction* act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/save.png"));
-    act->setText(tr("text action"));
+    act->setText(tr("保存"));
     PRINT_COST(cost,lastTimes,"new Large Action");
     pannel->addLargeAction(act);
     PRINT_COST(cost,lastTimes,"add 1 Large Action");
 
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/save.png"));
-    act->setText(tr("text action"));
+    act->setText(tr("测试1"));
     pannel->addSmallAction(act);
 
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/filter.png"));
-    act->setText(tr("text action"));
+    act->setText(tr("测试2"));
     pannel->addSmallAction(act);
 
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/folder.png"));
-    act->setText(tr("text action"));
+    act->setText(tr("测试3"));
     pannel->addSmallAction(act);
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/folder.png"));
-    act->setText(tr("text action"));
+    act->setText(tr("测试4"));
     pannel->addSmallAction(act);
 
     pannel->addSeparator();
@@ -157,22 +158,27 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     act = new QAction(this);
     act->setCheckable(true);
     act->setIcon(QIcon(":/icon/icon/Graph-add.png"));
-    act->setText(tr("InstantPopup"));
-    act->setMenu(menu);
+    act->setText(tr("显示\n上下文标签"));
     btn = panne2->addLargeAction(act);
     btn->setCheckable(true);
-    btn->setPopupMode(QToolButton::InstantPopup);
-
+    //btn->setPopupMode(QToolButton::InstantPopup);
+    connect(act,&QAction::triggered,this,[this](bool on){
+        if(on)
+            this->ribbonBar()->showContextCategory(this->m_contextCategory);
+        else
+            this->ribbonBar()->hideContextCategory(this->m_contextCategory);
+    });
 
     act = new QAction(this);
     act->setCheckable(true);
     act->setIcon(QIcon(":/icon/icon/Graph-add.png"));
-    act->setText(tr("InstantPopup"));
+    act->setText(tr("非激活"));
     act->setMenu(menu);
     btn = panne2->addLargeAction(act);
     btn->setCheckable(true);
     btn->setPopupMode(QToolButton::InstantPopup);
     btn->setEnabled(false);
+
 
     QComboBox* com = new QComboBox(this);
     com->setSizePolicy(QSizePolicy::Expanding,
@@ -180,6 +186,8 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     com->setWindowTitle("123123");
     pannel->addWidget(com);
     pannel->setExpanding();
+    QAction* optAct = new QAction(this);
+    pannel->addOptionAction(optAct);
 }
 
 void MainWindow::createCategoryOther(SARibbonCategory *page)
@@ -197,36 +205,39 @@ void MainWindow::createCategoryOther(SARibbonCategory *page)
     menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
 
     SARibbonPannel* pannel = page->addPannel(tr("pannel 1"));
-    QToolButton* btn;
-    btn = new QToolButton(this);
+    SARibbonToolButton* btn;
+    btn = pannel->addLargeAction(item);
     btn->setIcon(QIcon(":/icon/icon/folder.png"));
-    btn->setText(tr("text \n action"));
+    btn->setText(tr("非标准\n图标"));
     btn->setPopupMode(QToolButton::DelayedPopup);
     btn->setFixedHeight(78);
     btn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     btn->setMenu(menu);
     pannel->addWidget(btn);
 
-    btn = new QToolButton(this);
+    btn = pannel->addLargeAction(item);
     btn->setIcon(QIcon(":/icon/icon/folder.png"));
-    btn->setText(tr("text \n action"));
+    btn->setText(tr("换页\n测试"));
     btn->setPopupMode(QToolButton::MenuButtonPopup);
     btn->setFixedHeight(78);
     btn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     btn->setMenu(menu);
     pannel->addWidget(btn);
 
-    btn = new QToolButton(this);
+    btn = pannel->addLargeAction(item);
     btn->setIcon(QIcon(":/icon/icon/folder.png"));
-    btn->setText(tr("text \n action"));
+    btn->setText(tr("大按钮"));
     btn->setPopupMode(QToolButton::InstantPopup);
     btn->setFixedHeight(78);
     btn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     btn->setMenu(menu);
     pannel->addWidget(btn);
 
+    SARibbonGallery* gallery = pannel->addGallery();
+
     QAction* optAct = new QAction(this);
     pannel->addOptionAction(optAct);
+    pannel->setObjectName("debug");
 
 }
 

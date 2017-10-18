@@ -24,10 +24,13 @@ public:
     QSize sizeHint() const;
     QSize minimumSize();
     Qt::Orientations expandingDirections() const;
+    void invalidate();
+    bool eventFilter(QObject *watched, QEvent *event);
 protected:
     int buildReduceModePannel(SARibbonPannel* realPannel, int x, int y);
     static QPoint calcPopupPannelPosition(SARibbonCategory* category,SARibbonPannel *pannel, int x);
 private:
+    bool m_isChanged;
     QList<QLayoutItem *> itemList;
     QMap<SARibbonPannel*,SARibbonReduceActionInfo> m_pannelReduceInfo;
 };

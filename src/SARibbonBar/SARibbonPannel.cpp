@@ -10,6 +10,7 @@
 #include <QDesktopWidget>
 #include "SARibbonPannelOptionButton.h"
 #include "SARibbonSeparatorWidget.h"
+#include "SARibbonGallery.h"
 SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
   ,m_nextElementPosition(3,3)
   ,m_row(0)
@@ -25,6 +26,7 @@ SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
     m_gridLayout->setSpacing(0);
     m_gridLayout->setContentsMargins(3,2,3,21);
     setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
+    //setMouseTracking(true);
 }
 
 SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
@@ -40,7 +42,6 @@ SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
     m_gridLayout->addWidget(btn,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
     addAction(action);
-    updateMinSize();
     return btn;
 }
 
@@ -57,7 +58,6 @@ SARibbonToolButton *SARibbonPannel::addLargeToolButton(const QString& text,const
     btn->setText(text);
     m_gridLayout->addWidget(btn,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
-    updateMinSize();
     return btn;
 }
 
@@ -79,7 +79,6 @@ SARibbonToolButton *SARibbonPannel::addSmallToolButton(const QString &text, cons
     m_row += 2;
     if(m_row >= 5)//
         m_row = 0;
-    updateMinSize();
     return btn;
 }
 
@@ -101,8 +100,16 @@ SARibbonToolButton* SARibbonPannel::addSmallAction(QAction *action)
     if(m_row >= 5)
         m_row = 0;
     addAction(action);
-    updateMinSize();
     return btn;
+}
+
+SARibbonGallery *SARibbonPannel::addGallery()
+{
+    SARibbonGallery* gallery = new SARibbonGallery(this);
+    m_gridLayout->addWidget(gallery,0,m_gridLayout->columnCount(),6,1);
+    m_row = 0;
+    setExpanding();
+    return gallery;
 }
 
 void SARibbonPannel::addSeparator()
@@ -115,7 +122,6 @@ void SARibbonPannel::addSeparator()
     SARibbonSeparatorWidget* sep = new SARibbonSeparatorWidget(height() - 10,this);
     m_gridLayout->addWidget(sep,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
-    updateMinSize();
 #endif
 }
 
@@ -145,7 +151,6 @@ void SARibbonPannel::addWidget(QWidget *w, int row, int rowSpan)
     m_row = row + rowSpan;
     if(m_row >= 5)
         m_row = 0;
-    updateMinSize();
 }
 
 void SARibbonPannel::addOptionAction(QAction *action)
@@ -179,8 +184,6 @@ QSize SARibbonPannel::maxHightIconSize(const QSize &size, int height)
 
 void SARibbonPannel::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event);
-    QWidget::paintEvent(event);
     QPainter p(this);
     QFont f = font();
     f.setPixelSize(11);
@@ -195,6 +198,8 @@ void SARibbonPannel::paintEvent(QPaintEvent *event)
     {
         p.drawText(0,m_titleY,width(),m_titleHeight,Qt::AlignCenter,windowTitle());
     }
+
+    QWidget::paintEvent(event);
 }
 
 QSize SARibbonPannel::sizeHint() const
@@ -231,9 +236,10 @@ void SARibbonPannel::setReduce(bool isReduce)
     }
 }
 
-void SARibbonPannel::setExpanding()
+void SARibbonPannel::setExpanding(bool isExpanding)
 {
-    setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    setSizePolicy(isExpanding ? QSizePolicy::Expanding : QSizePolicy::Preferred
+                                ,QSizePolicy::Fixed);
 }
 
 bool SARibbonPannel::isExpanding() const
@@ -242,19 +248,21 @@ bool SARibbonPannel::isExpanding() const
     return sp.horizontalPolicy() == QSizePolicy::Expanding;
 }
 
+bool SARibbonPannel::event(QEvent *event)
+{
+   // qDebug() << "SARibbonPannel event: "<<event->type();
+    return QWidget::event(event);
+}
+
 
 void SARibbonPannel::resizeEvent(QResizeEvent *event)
 {
-    Q_UNUSED(event);
-
     if(m_optionActionButton)
     {
         m_optionActionButton->move(width()-m_titleOptionButtonSpace/2 - m_optionActionButton->width()
                                    ,m_titleY+(m_titleHeight-m_optionActionButton->height())/2);
     }
+    return QWidget::resizeEvent(event);
 }
 
-void SARibbonPannel::updateMinSize()
-{
-    setMinimumWidth(minimumSizeHint().width());
-}
+

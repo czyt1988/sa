@@ -14,7 +14,7 @@ SARibbonToolButton::SARibbonToolButton(QWidget *parent)
     ,m_borderColor(242,202,88)
     ,m_menuButtonPressed(false)
 {
-
+    setButtonType(SmallButton);
 }
 
 void SARibbonToolButton::paintEvent(QPaintEvent *event)
@@ -202,7 +202,9 @@ void SARibbonToolButton::paintMenuButtonPopupButton(QPaintEvent *e)
 
 
     // 绘制边框
-    if(opt.state & QStyle::State_MouseOver && (opt.features & QStyleOptionToolButton::MenuButtonPopup))
+    if(((opt.state & QStyle::State_MouseOver) && (opt.features & QStyleOptionToolButton::MenuButtonPopup))
+            ||
+           ((isChecked()) && (opt.features & QStyleOptionToolButton::MenuButtonPopup)) )//checked
     {
         p.save();
         p.setPen(m_borderColor);
@@ -211,6 +213,8 @@ void SARibbonToolButton::paintMenuButtonPopupButton(QPaintEvent *e)
         p.drawLine(0,opt.rect.height()/2,opt.rect.width(),opt.rect.height()/2);//分界线
         p.restore();
     }
+
+
     //绘制sub control 的下拉箭头
     if (opt.features & QStyleOptionToolButton::HasMenu)
     {
