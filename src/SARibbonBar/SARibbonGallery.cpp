@@ -64,6 +64,11 @@ QSize SARibbonGallery::minimumSizeHint() const
     return QSize(88,60);
 }
 
+void SARibbonGallery::addGalleryGroup(SARibbonGalleryGroup *group)
+{
+
+}
+
 void SARibbonGallery::onPageDown()
 {
 

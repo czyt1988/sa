@@ -1,6 +1,7 @@
 #ifndef SARIBBONGALLERY_H
 #define SARIBBONGALLERY_H
 #include <QFrame>
+#include "SARibbonGalleryGroup.h"
 class SARibbonGalleryPrivate;
 class SARibbonGallery : public QFrame
 {
@@ -10,6 +11,7 @@ public:
     virtual ~SARibbonGallery();
     virtual QSize sizeHint() const;
     virtual QSize minimumSizeHint() const;
+    virtual void addGalleryGroup(SARibbonGalleryGroup* group);
 protected slots:
     void onPageDown();
     void onPageUp();
