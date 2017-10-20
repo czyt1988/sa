@@ -1,6 +1,8 @@
 #include "SARibbonGalleryGroup.h"
 
 SARibbonGalleryGroup::SARibbonGalleryGroup(QWidget *w):QWidget(w)
+  ,m_enableTitle(true)
+  ,m_itemSize(72,56)
 {
 
 }
@@ -48,7 +50,21 @@ const QList<SARibbonGalleryItem *> &SARibbonGalleryGroup::itemList() const
 
 QSize SARibbonGalleryGroup::sizeHint() const
 {
+    if(m_enableTitle)
+    {
+        if(0 == m_items.size())
+            return QSize(300,fontMetrics().height());
+    }
+}
 
+void SARibbonGalleryGroup::setItemSize(const QSize &size)
+{
+
+}
+
+void SARibbonGalleryGroup::enableTitle(bool b)
+{
+    m_enableTitle = b;
 }
 
 void SARibbonGalleryGroup::paintEvent(QPaintEvent *event)
