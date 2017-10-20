@@ -30,6 +30,7 @@ public:
         ,RibbonPannel
         ,RibbonControlButton
         ,RibbonGallery
+        ,RibbonGalleryGroup
     };
     QString ribbonElementStyleSheet(RibbonElement element) const;
     void setRibbonElementStyleSheet(RibbonElement element,const QString& styleSheet);

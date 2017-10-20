@@ -3,7 +3,22 @@
 #include <QList>
 #include "SARibbonGalleryItem.h"
 #include <QListView>
+#include <QStyledItemDelegate>
+///
+/// \brief SARibbonGalleryGroup对应的显示代理
+///
+class SARibbonGalleryGroupItemDelegate : public QStyledItemDelegate
+{
+public:
+    SARibbonGalleryGroupItemDelegate(QObject *parent = Q_NULLPTR);
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
+
+///
+/// \brief SARibbonGalleryGroup对应的model
+///
 class SARibbonGalleryGroupModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -26,7 +41,7 @@ private:
 ///
 /// \brief Gallery的组
 ///
-/// 组负责管理Gallery Item，
+/// 组负责显示管理Gallery Item，
 ///
 #include "SARibbonGalleryItem.h"
 class SARibbonGalleryGroup : public QListView
@@ -39,6 +54,8 @@ public:
 
     void addItem(const QIcon& icon);
     void addItem(SARibbonGalleryItem *item);
+    //构建一个model，这个model的父类是SARibbonGalleryGroup，如果要共享model，需要手动处理model的父类
+    void setupGroupModel();
     SARibbonGalleryGroupModel* groupModel();
 };
 

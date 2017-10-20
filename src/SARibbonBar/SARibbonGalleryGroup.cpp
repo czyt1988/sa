@@ -1,5 +1,32 @@
 #include "SARibbonGalleryGroup.h"
+#include <QPainter>
+#include <QDebug>
+////////////////////////////////////////
 
+SARibbonGalleryGroupItemDelegate::SARibbonGalleryGroupItemDelegate(QObject *parent)
+    :QStyledItemDelegate(parent)
+{
+
+}
+
+void SARibbonGalleryGroupItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+//    if (option.state & QStyle::State_Selected)
+//    {
+//        painter->fillRect(option.rect, option.palette.highlight());
+//    }
+    QStyledItemDelegate::paint(painter,option,index);
+}
+
+QSize SARibbonGalleryGroupItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    //option.rect对应grid size
+    Q_UNUSED(index);
+    return QSize(option.rect.width(),option.rect.height());
+}
+
+
+//////////////////////////////////////////
 
 SARibbonGalleryGroupModel::SARibbonGalleryGroupModel(QObject *parent):QAbstractListModel(parent)
 {
@@ -61,6 +88,9 @@ void SARibbonGalleryGroupModel::clear()
     endResetModel();
 }
 
+
+
+
 SARibbonGalleryItem *SARibbonGalleryGroupModel::at(int row) const
 {
     return m_items.value(row);
@@ -91,7 +121,10 @@ void SARibbonGalleryGroupModel::append(SARibbonGalleryItem *item)
     endInsertRows();
 }
 
-
+//////////////////////////
+/// \brief SARibbonGalleryGroup::SARibbonGalleryGroup
+/// \param w
+///////////////////////
 
 SARibbonGalleryGroup::SARibbonGalleryGroup(QWidget *w):QListView(w)
 {
@@ -102,6 +135,7 @@ SARibbonGalleryGroup::SARibbonGalleryGroup(QWidget *w):QListView(w)
 
     setIconSize(QSize(72,60));
     setGridSize(QSize(72,60));
+    setItemDelegate(new SARibbonGalleryGroupItemDelegate(this));
 }
 
 SARibbonGalleryGroup::~SARibbonGalleryGroup()
@@ -126,11 +160,19 @@ void SARibbonGalleryGroup::addItem(SARibbonGalleryItem *item)
     }
     groupModel()->append(item);
 }
+///
+/// \brief 构建一个model，这个model的父类是SARibbonGalleryGroup，如果要共享model，需要手动处理model的父类
+///
+void SARibbonGalleryGroup::setupGroupModel()
+{
+    setModel(new SARibbonGalleryGroupModel(this));
+}
 
 SARibbonGalleryGroupModel *SARibbonGalleryGroup::groupModel()
 {
     return qobject_cast<SARibbonGalleryGroupModel*>(model());
 }
+
 
 
 
