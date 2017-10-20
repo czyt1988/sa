@@ -234,12 +234,11 @@ void MainWindow::createCategoryOther(SARibbonCategory *page)
     pannel->addWidget(btn);
 
     SARibbonGallery* gallery = pannel->addGallery();
-    SARibbonGalleryGroup* group = new SARibbonGalleryGroup(gallery);
+    SARibbonGalleryGroup*group = gallery->addGalleryGroup();
     for(int i=0;i<10;++i)
     {
-        group->addItem(QString::number(i));
+        group->addItem(QIcon(":/icon/icon/folder.png"));
     }
-    gallery->addGalleryGroup(group);
     QAction* optAct = new QAction(this);
     pannel->addOptionAction(optAct);
     pannel->setObjectName("debug");

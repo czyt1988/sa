@@ -2,12 +2,12 @@
 #include <QWidgetAction>
 SARibbonMenu::SARibbonMenu(QWidget *parent):QMenu(parent)
 {
-
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 SARibbonMenu::SARibbonMenu(const QString &title, QWidget *parent):QMenu(title,parent)
 {
-
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 QAction *SARibbonMenu::addRibbonMenu(SARibbonMenu *menu)

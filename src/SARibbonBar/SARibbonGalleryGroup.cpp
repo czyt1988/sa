@@ -84,11 +84,24 @@ SARibbonGalleryItem *SARibbonGalleryGroupModel::take(int row)
     return item;
 }
 
+void SARibbonGalleryGroupModel::append(SARibbonGalleryItem *item)
+{
+    beginInsertRows(QModelIndex(), m_items.count(), m_items.count()+1);
+    m_items.append(item);
+    endInsertRows();
+}
+
 
 
 SARibbonGalleryGroup::SARibbonGalleryGroup(QWidget *w):QListView(w)
 {
     setViewMode(QListView::IconMode);
+    setResizeMode(QListView::Adjust);
+    setSelectionRectVisible(true);
+    setUniformItemSizes(true);
+
+    setIconSize(QSize(72,60));
+    setGridSize(QSize(72,60));
 }
 
 SARibbonGalleryGroup::~SARibbonGalleryGroup()
@@ -96,23 +109,29 @@ SARibbonGalleryGroup::~SARibbonGalleryGroup()
 
 }
 
-void SARibbonGalleryGroup::addItem(const QString &label,const QIcon& icon)
+void SARibbonGalleryGroup::addItem(const QIcon& icon)
 {
-    new SARibbonGalleryItem();
+    if(nullptr == groupModel())
+    {
+        return;
+    }
+    addItem(new SARibbonGalleryItem(icon));
 }
 
 void SARibbonGalleryGroup::addItem(SARibbonGalleryItem *item)
 {
-
-}
-
-void SARibbonGalleryGroup::addItems(const QStringList &labels)
-{
-    for(int i=0;i<labels.size();++i)
+    if(nullptr == groupModel())
     {
-        addItem(labels[i]);
+        return;
     }
+    groupModel()->append(item);
 }
+
+SARibbonGalleryGroupModel *SARibbonGalleryGroup::groupModel()
+{
+    return qobject_cast<SARibbonGalleryGroupModel*>(model());
+}
+
 
 
 

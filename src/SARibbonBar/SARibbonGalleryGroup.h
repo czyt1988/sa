@@ -3,24 +3,6 @@
 #include <QList>
 #include "SARibbonGalleryItem.h"
 #include <QListView>
-///
-/// \brief Gallery的组
-///
-/// 组负责管理Gallery Item，
-///
-#include "SARibbonGalleryItem.h"
-class SARibbonGalleryGroup : public QListView
-{
-    Q_OBJECT
-public:
-    SARibbonGalleryGroup(QWidget* w = 0);
-
-    virtual ~SARibbonGalleryGroup();
-
-    void addItem(const QString &label,const QIcon& icon);
-    void addItem(SARibbonGalleryItem *item);
-    void addItems(const QStringList &labels);
-};
 
 class SARibbonGalleryGroupModel : public QAbstractListModel
 {
@@ -37,8 +19,28 @@ public:
     SARibbonGalleryItem * at(int row) const;
     void insert(int row, SARibbonGalleryItem *item);
     SARibbonGalleryItem * take(int row);
+    void append(SARibbonGalleryItem *item);
 private:
     QList<SARibbonGalleryItem*> m_items;
 };
+///
+/// \brief Gallery的组
+///
+/// 组负责管理Gallery Item，
+///
+#include "SARibbonGalleryItem.h"
+class SARibbonGalleryGroup : public QListView
+{
+    Q_OBJECT
+public:
+    SARibbonGalleryGroup(QWidget* w = 0);
+
+    virtual ~SARibbonGalleryGroup();
+
+    void addItem(const QIcon& icon);
+    void addItem(SARibbonGalleryItem *item);
+    SARibbonGalleryGroupModel* groupModel();
+};
+
 
 #endif // SARIBBONGALLERYGROUP_H

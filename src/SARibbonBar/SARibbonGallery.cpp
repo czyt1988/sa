@@ -1,11 +1,17 @@
 #include "SARibbonGallery.h"
 #include "SARibbonControlButton.h"
 #include <QIcon>
+#include <QApplication>
 #define ICON_ARROW_UP QIcon(":/image/resource/ArrowUp.png")
 #define ICON_ARROW_DOWN QIcon(":/image/resource/ArrowDown.png")
 #define ICON_ARROW_MORE QIcon(":/image/resource/ArrowMore.png")
 #include "SARibbonMenu.h"
 #include <QResizeEvent>
+#include <QDebug>
+#include <QVBoxLayout>
+
+
+
 class SARibbonGalleryPrivate
 {
 public:
@@ -13,7 +19,11 @@ public:
     SARibbonControlButton* buttonDown;
     SARibbonControlButton* buttonMore;
     SARibbonGallery* Parent;
-    SARibbonMenu* popupMenu;
+#if 0
+    SARibbonMenu* popupWidget;
+#else
+    RibbonGalleryViewport* popupWidget;
+#endif
     SARibbonGalleryGroup* viewportGroup;
     SARibbonGalleryPrivate():Parent(nullptr)
     {
@@ -21,6 +31,7 @@ public:
 
     void init(SARibbonGallery* parent)
     {
+        Parent = parent;
         buttonUp = new SARibbonControlButton(parent);
         buttonDown = new SARibbonControlButton(parent);
         buttonMore = new SARibbonControlButton(parent);
@@ -33,8 +44,9 @@ public:
         buttonUp->setIcon(ICON_ARROW_UP);
         buttonDown->setIcon(ICON_ARROW_DOWN);
         buttonMore->setIcon(ICON_ARROW_MORE);
-        Parent = parent;
-        popupMenu = nullptr;
+        Parent->connect(buttonMore,&QAbstractButton::clicked
+                        ,Parent,&SARibbonGallery::onShowMoreDetail);
+        popupWidget = nullptr;
         viewportGroup = nullptr;
     }
 
@@ -43,11 +55,15 @@ public:
         return Parent != nullptr;
     }
 
-    void createPopupMenu()
+    void createPopupWidget()
     {
-        if(nullptr == popupMenu)
+        if(nullptr == popupWidget)
         {
-            popupMenu = new SARibbonMenu(Parent);
+#if 0
+            popupWidget = new SARibbonMenu(Parent);
+#else
+            popupWidget = new RibbonGalleryViewport(Parent);
+#endif
         }
     }
 
@@ -59,9 +75,28 @@ public:
         }
         viewportGroup->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         viewportGroup->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
+        viewportGroup->setModel(v->model());
     }
 };
+
+
+//////////////////////////////////////////////
+
+
+RibbonGalleryViewport::RibbonGalleryViewport(QWidget *parent):QWidget(parent)
+{
+    setWindowFlags(Qt::Popup);
+    m_layout = new QVBoxLayout(this);
+    m_layout->setSpacing(0);
+    m_layout->setMargin(1);
+}
+
+void RibbonGalleryViewport::addWidget(QWidget *w)
+{
+    m_layout->addWidget(w);
+}
+
+//////////////////////////////////////////////
 
 SARibbonGallery::SARibbonGallery(QWidget *parent):QFrame(parent)
   ,m_d(new SARibbonGalleryPrivate)
@@ -89,17 +124,21 @@ QSize SARibbonGallery::minimumSizeHint() const
     return QSize(88,60);
 }
 
-void SARibbonGallery::addGalleryGroup(SARibbonGalleryGroup *group)
+SARibbonGalleryGroup *SARibbonGallery::addGalleryGroup()
 {
-    if(nullptr == m_d->popupMenu)
+    SARibbonGalleryGroup* group = new SARibbonGalleryGroup(this);
+    SARibbonGalleryGroupModel* model = new SARibbonGalleryGroupModel(this);
+    group->setModel(model);
+    if(nullptr == m_d->popupWidget)
     {
-        m_d->createPopupMenu();
+        m_d->createPopupWidget();
     }
-    m_d->popupMenu->addWidget(group);
+    m_d->popupWidget->addWidget(group);
     if(nullptr == m_d->viewportGroup)
     {
         m_d->setViewPort(group);
     }
+    return group;
 }
 
 void SARibbonGallery::onPageDown()
@@ -114,7 +153,14 @@ void SARibbonGallery::onPageUp()
 
 void SARibbonGallery::onShowMoreDetail()
 {
-
+    if(nullptr == m_d->popupWidget)
+    {
+        return;
+    }
+    QSize popupMenuSize = m_d->popupWidget->sizeHint();
+    QPoint start = mapToGlobal(QPoint(0,0));
+    m_d->popupWidget->setGeometry(start.x(),start.y(),width(),popupMenuSize.height());
+    m_d->popupWidget->show();
 }
 
 void SARibbonGallery::resizeEvent(QResizeEvent *event)
@@ -143,3 +189,5 @@ void SARibbonGallery::paintEvent(QPaintEvent *event)
     QFrame::paintEvent(event);
 
 }
+
+

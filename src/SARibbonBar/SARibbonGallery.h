@@ -2,6 +2,7 @@
 #define SARIBBONGALLERY_H
 #include <QFrame>
 #include "SARibbonGalleryGroup.h"
+class QVBoxLayout;
 class SARibbonGalleryPrivate;
 class SARibbonGallery : public QFrame
 {
@@ -11,7 +12,7 @@ public:
     virtual ~SARibbonGallery();
     virtual QSize sizeHint() const;
     virtual QSize minimumSizeHint() const;
-    virtual void addGalleryGroup(SARibbonGalleryGroup* group);
+    virtual SARibbonGalleryGroup* addGalleryGroup();
 protected slots:
     void onPageDown();
     void onPageUp();
@@ -21,7 +22,18 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 private:
+    friend class SARibbonGalleryPrivate;
     SARibbonGalleryPrivate* m_d;
+};
+
+class RibbonGalleryViewport : public QWidget
+{
+    Q_OBJECT
+public:
+    RibbonGalleryViewport(QWidget* parent);
+    void addWidget(QWidget* w);
+private:
+    QVBoxLayout* m_layout;
 };
 
 #endif // SARIBBONGALLERY_H
