@@ -59,7 +59,7 @@ QSize SARibbonGalleryGroup::sizeHint() const
             size.setHeight(qMax(size.height(),fontMetrics().height()));
         }
     }
-
+    return size;
 }
 
 void SARibbonGalleryGroup::setItemSize(const QSize &size)
