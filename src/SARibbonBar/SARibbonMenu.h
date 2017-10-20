@@ -14,6 +14,7 @@ public:
     QAction *addRibbonMenu(SARibbonMenu *menu);
     SARibbonMenu *addRibbonMenu(const QString &title);
     SARibbonMenu *addRibbonMenu(const QIcon &icon, const QString &title);
+    QAction *addWidget(QWidget* w);
 };
 
 #endif // SARIBBONMENU_H

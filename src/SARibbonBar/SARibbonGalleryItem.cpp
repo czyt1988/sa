@@ -1,77 +1,32 @@
 #include "SARibbonGalleryItem.h"
 #include "SARibbonGalleryGroup.h"
 
-SARibbonGalleryItem::SARibbonGalleryItem():m_group(nullptr)
+SARibbonGalleryItem::SARibbonGalleryItem()
+{
+
+}
+
+SARibbonGalleryItem::SARibbonGalleryItem(const QString &text, QListWidget *parent, int type)
+    :QListWidgetItem(text,parent,type)
+{
+
+}
+
+SARibbonGalleryItem::SARibbonGalleryItem(const QIcon &icon, const QString &text, QListWidget *parent, int type)
+    :QListWidgetItem(icon,text,parent,type)
 {
 
 }
 
 
-
-void SARibbonGalleryItem::setData(int role, const QVariant &data)
+SARibbonGalleryItem::SARibbonGalleryItem(const SARibbonGalleryItem &other)
+    :QListWidgetItem(other.icon(),other.text(),other.listWidget(),other.type())
 {
-    m_datas[role] = data;
+
 }
 
-QVariant SARibbonGalleryItem::data(int role) const
-{
-    return m_datas.value(role);
-}
 
-void SARibbonGalleryItem::setText(const QString &text)
+SARibbonGalleryItem *SARibbonGalleryItem::clone()
 {
-    setData(Qt::DisplayRole,text);
-}
-
-QString SARibbonGalleryItem::text() const
-{
-    return data(Qt::DisplayRole).toString();
-}
-
-void SARibbonGalleryItem::setToolTip(const QString &text)
-{
-    setData(Qt::ToolTipRole, text);
-}
-
-QString SARibbonGalleryItem::toolTip() const
-{
-    return data(Qt::ToolTipRole).toString();
-}
-
-void SARibbonGalleryItem::setIcon(const QIcon &ico)
-{
-    setData(Qt::DecorationRole, ico);
-}
-
-QIcon SARibbonGalleryItem::icon() const
-{
-    return qvariant_cast<QIcon>(data(Qt::DecorationRole));
-}
-
-bool SARibbonGalleryItem::isVisible() const
-{
-    return m_isVisible;
-}
-
-void SARibbonGalleryItem::setVisible(bool isVisible)
-{
-    m_isVisible = isVisible;
-    if(m_group)
-    {
-        m_group->update();
-    }
-}
-
-bool SARibbonGalleryItem::isEnable() const
-{
-    return m_isEnable;
-}
-
-void SARibbonGalleryItem::setEnable(bool isEnable)
-{
-    m_isEnable = isEnable;
-    if(m_group)
-    {
-        m_group->update();
-    }
+    return new SARibbonGalleryItem(*this);
 }

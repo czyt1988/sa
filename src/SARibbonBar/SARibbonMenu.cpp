@@ -1,5 +1,5 @@
 #include "SARibbonMenu.h"
-
+#include <QWidgetAction>
 SARibbonMenu::SARibbonMenu(QWidget *parent):QMenu(parent)
 {
 
@@ -26,4 +26,12 @@ SARibbonMenu *SARibbonMenu::addRibbonMenu(const QIcon &icon, const QString &titl
     SARibbonMenu* menu = new SARibbonMenu(title,this);
     menu->setIcon(icon);
     return menu;
+}
+
+QAction* SARibbonMenu::addWidget(QWidget *w)
+{
+    QWidgetAction* action = new QWidgetAction(this);
+    action->setDefaultWidget(w);
+    addAction(action);
+    return action;
 }

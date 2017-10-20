@@ -4,6 +4,8 @@
 #define ICON_ARROW_UP QIcon(":/image/resource/ArrowUp.png")
 #define ICON_ARROW_DOWN QIcon(":/image/resource/ArrowDown.png")
 #define ICON_ARROW_MORE QIcon(":/image/resource/ArrowMore.png")
+#include "SARibbonMenu.h"
+#include <QResizeEvent>
 class SARibbonGalleryPrivate
 {
 public:
@@ -11,6 +13,8 @@ public:
     SARibbonControlButton* buttonDown;
     SARibbonControlButton* buttonMore;
     SARibbonGallery* Parent;
+    SARibbonMenu* popupMenu;
+    SARibbonGalleryGroup* viewportGroup;
     SARibbonGalleryPrivate():Parent(nullptr)
     {
     }
@@ -30,11 +34,32 @@ public:
         buttonDown->setIcon(ICON_ARROW_DOWN);
         buttonMore->setIcon(ICON_ARROW_MORE);
         Parent = parent;
+        popupMenu = nullptr;
+        viewportGroup = nullptr;
     }
 
     bool isValid() const
     {
         return Parent != nullptr;
+    }
+
+    void createPopupMenu()
+    {
+        if(nullptr == popupMenu)
+        {
+            popupMenu = new SARibbonMenu(Parent);
+        }
+    }
+
+    void setViewPort(SARibbonGalleryGroup* v)
+    {
+        if(nullptr == viewportGroup)
+        {
+            viewportGroup = new SARibbonGalleryGroup(Parent);
+        }
+        viewportGroup->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        viewportGroup->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     }
 };
 
@@ -66,7 +91,15 @@ QSize SARibbonGallery::minimumSizeHint() const
 
 void SARibbonGallery::addGalleryGroup(SARibbonGalleryGroup *group)
 {
-
+    if(nullptr == m_d->popupMenu)
+    {
+        m_d->createPopupMenu();
+    }
+    m_d->popupMenu->addWidget(group);
+    if(nullptr == m_d->viewportGroup)
+    {
+        m_d->setViewPort(group);
+    }
 }
 
 void SARibbonGallery::onPageDown()
@@ -86,14 +119,23 @@ void SARibbonGallery::onShowMoreDetail()
 
 void SARibbonGallery::resizeEvent(QResizeEvent *event)
 {
-    QFrame::resizeEvent(event);
-    if(m_d->isValid())
+    if(!m_d->isValid())
     {
-        const QRect r = rect();
-        m_d->buttonUp->move(r.width() - m_d->buttonUp->width(),0);
-        m_d->buttonDown->move(r.width() - m_d->buttonDown->width(),m_d->buttonUp->height());
-        m_d->buttonMore->move(r.width() - m_d->buttonMore->width(),m_d->buttonDown->geometry().bottom());
+        return;
     }
+    const QSize r = event->size();
+    int subW = 0;
+    m_d->buttonUp->move(r.width() - m_d->buttonUp->width(),0);
+    subW = qMax(subW,m_d->buttonUp->width());
+    m_d->buttonDown->move(r.width() - m_d->buttonDown->width(),m_d->buttonUp->height());
+    subW = qMax(subW,m_d->buttonDown->width());
+    m_d->buttonMore->move(r.width() - m_d->buttonMore->width(),m_d->buttonDown->geometry().bottom());
+    subW = qMax(subW,m_d->buttonMore->width());
+    if(m_d->viewportGroup)
+    {
+        m_d->viewportGroup->setGeometry(0,0,r.width()-subW,r.height());
+    }
+    QFrame::resizeEvent(event);
 }
 
 void SARibbonGallery::paintEvent(QPaintEvent *event)

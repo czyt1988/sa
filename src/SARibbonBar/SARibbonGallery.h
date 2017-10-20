@@ -19,6 +19,7 @@ protected slots:
 protected:
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
+
 private:
     SARibbonGalleryPrivate* m_d;
 };
