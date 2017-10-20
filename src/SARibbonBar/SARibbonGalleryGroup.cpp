@@ -50,11 +50,16 @@ const QList<SARibbonGalleryItem *> &SARibbonGalleryGroup::itemList() const
 
 QSize SARibbonGalleryGroup::sizeHint() const
 {
+    QSize size = minimumSizeHint();
     if(m_enableTitle)
     {
         if(0 == m_items.size())
-            return QSize(300,fontMetrics().height());
+        {
+            //只有标题栏显示
+            size.setHeight(qMax(size.height(),fontMetrics().height()));
+        }
     }
+
 }
 
 void SARibbonGalleryGroup::setItemSize(const QSize &size)
