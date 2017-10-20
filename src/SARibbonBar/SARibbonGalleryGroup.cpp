@@ -21,7 +21,7 @@ void SARibbonGalleryGroup::append(SARibbonGalleryItem *item)
 
 SARibbonGalleryItem *SARibbonGalleryGroup::at(int index)
 {
-    m_items.at(index);
+    return m_items.at(index);
 }
 
 int SARibbonGalleryGroup::size() const
