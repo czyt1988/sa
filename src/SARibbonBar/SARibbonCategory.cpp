@@ -10,7 +10,7 @@
 #include <QHBoxLayout>
 #include "SARibbonSeparatorWidget.h"
 #include "SARibbonCategoryLayout.h"
-
+#include "SARibbonElementManager.h"
 
 #include <QList>
 #include <QMap>
@@ -124,9 +124,9 @@ SARibbonCategoryProxy::~SARibbonCategoryProxy()
 
 SARibbonPannel *SARibbonCategoryProxy::addPannel(const QString &title)
 {
-    SARibbonPannel* pannel = new SARibbonPannel(ribbonCategory());
+    SARibbonPannel* pannel = RibbonSubElementDelegate->createRibbonPannel(ribbonCategory());
     pannel->setWindowTitle(title);
-    SARibbonSeparatorWidget* seprator = new SARibbonSeparatorWidget(ribbonCategory()->height(),ribbonCategory());
+    SARibbonSeparatorWidget* seprator = RibbonSubElementDelegate->createRibbonSeparatorWidget(ribbonCategory()->height(),ribbonCategory());
 #if NOT_USE_LAYOUT
     m_d->pannelLists.append(pannel);
     m_d->separatorLists.append(seprator);

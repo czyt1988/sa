@@ -25,7 +25,6 @@ SOURCES += main.cpp\
     SARibbonPannel.cpp \
     SARibbonToolButton.cpp \
     SARibbonMenu.cpp \
-    SARibbonStyle.cpp \
     SARibbonPannelOptionButton.cpp \
     SARibbonSeparatorWidget.cpp \
     Form.cpp \
@@ -33,7 +32,10 @@ SOURCES += main.cpp\
     SARibbonGallery.cpp \
     SARibbonControlButton.cpp \
     SARibbonGalleryGroup.cpp \
-    SARibbonGalleryItem.cpp
+    SARibbonGalleryItem.cpp \
+    SARibbonComboBox.cpp \
+    SARibbonElementCreateDelegate.cpp \
+    SARibbonElementManager.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -48,7 +50,6 @@ HEADERS  += \
     SARibbonPannel.h \
     SARibbonToolButton.h \
     SARibbonMenu.h \
-    SARibbonStyle.h \
     SARibbonGlobal.h \
     SARibbonPannelOptionButton.h \
     SARibbonSeparatorWidget.h \
@@ -57,7 +58,10 @@ HEADERS  += \
     SARibbonGallery.h \
     SARibbonControlButton.h \
     SARibbonGalleryGroup.h \
-    SARibbonGalleryItem.h
+    SARibbonGalleryItem.h \
+    SARibbonComboBox.h \
+    SARibbonElementCreateDelegate.h \
+    SARibbonElementManager.h
 
 RESOURCES += \
     saribbonresouce.qrc \

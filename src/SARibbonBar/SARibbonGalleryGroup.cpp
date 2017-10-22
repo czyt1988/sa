@@ -3,19 +3,25 @@
 #include <QDebug>
 ////////////////////////////////////////
 
-SARibbonGalleryGroupItemDelegate::SARibbonGalleryGroupItemDelegate(QObject *parent)
+SARibbonGalleryGroupItemDelegate::SARibbonGalleryGroupItemDelegate(SARibbonGalleryGroup *group, QObject *parent)
     :QStyledItemDelegate(parent)
+    ,m_group(group)
 {
 
 }
 
 void SARibbonGalleryGroupItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-//    if (option.state & QStyle::State_Selected)
-//    {
-//        painter->fillRect(option.rect, option.palette.highlight());
-//    }
-    QStyledItemDelegate::paint(painter,option,index);
+    QStyle* style = m_group->style();
+    painter->save();
+    painter->setClipRect(option.rect);
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, m_group);
+    // draw the icon
+    QRect iconRect=option.rect;
+    iconRect.adjust(3,3,-3,-3);
+    QIcon ico = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+    ico.paint(painter, iconRect, Qt::AlignCenter, QIcon::Normal, QIcon::On);
+    painter->restore();
 }
 
 QSize SARibbonGalleryGroupItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -133,9 +139,9 @@ SARibbonGalleryGroup::SARibbonGalleryGroup(QWidget *w):QListView(w)
     setSelectionRectVisible(true);
     setUniformItemSizes(true);
 
-    setIconSize(QSize(72,60));
-    setGridSize(QSize(72,60));
-    setItemDelegate(new SARibbonGalleryGroupItemDelegate(this));
+    setIconSize(QSize(72,56));
+    setGridSize(QSize(72,56));
+    setItemDelegate(new SARibbonGalleryGroupItemDelegate(this,this));
 }
 
 SARibbonGalleryGroup::~SARibbonGalleryGroup()

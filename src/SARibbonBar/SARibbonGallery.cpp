@@ -9,8 +9,8 @@
 #include <QResizeEvent>
 #include <QDebug>
 #include <QVBoxLayout>
-
-
+#include <QScrollBar>
+#include "SARibbonElementManager.h"
 
 class SARibbonGalleryPrivate
 {
@@ -44,6 +44,10 @@ public:
         buttonUp->setIcon(ICON_ARROW_UP);
         buttonDown->setIcon(ICON_ARROW_DOWN);
         buttonMore->setIcon(ICON_ARROW_MORE);
+        Parent->connect(buttonUp,&QAbstractButton::clicked
+                        ,Parent,&SARibbonGallery::onPageUp);
+        Parent->connect(buttonDown,&QAbstractButton::clicked
+                        ,Parent,&SARibbonGallery::onPageDown);
         Parent->connect(buttonMore,&QAbstractButton::clicked
                         ,Parent,&SARibbonGallery::onShowMoreDetail);
         popupWidget = nullptr;
@@ -71,7 +75,7 @@ public:
     {
         if(nullptr == viewportGroup)
         {
-            viewportGroup = new SARibbonGalleryGroup(Parent);
+            viewportGroup = RibbonSubElementDelegate->createRibbonGalleryGroup(Parent);
         }
         viewportGroup->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         viewportGroup->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -126,7 +130,7 @@ QSize SARibbonGallery::minimumSizeHint() const
 
 SARibbonGalleryGroup *SARibbonGallery::addGalleryGroup()
 {
-    SARibbonGalleryGroup* group = new SARibbonGalleryGroup(this);
+    SARibbonGalleryGroup* group = RibbonSubElementDelegate->createRibbonGalleryGroup(this);
     SARibbonGalleryGroupModel* model = new SARibbonGalleryGroupModel(this);
     group->setModel(model);
     if(nullptr == m_d->popupWidget)
@@ -143,12 +147,36 @@ SARibbonGalleryGroup *SARibbonGallery::addGalleryGroup()
 
 void SARibbonGallery::onPageDown()
 {
-
+    if(m_d->viewportGroup)
+    {
+        QScrollBar* vscrollBar = m_d->viewportGroup->verticalScrollBar();
+//        qDebug() << "singleStep:" << vscrollBar->singleStep()
+//                 << "pageStep:" << vscrollBar->pageStep()
+//                 << "max" << vscrollBar->maximum()
+//                 << "min" << vscrollBar->minimum()
+//                 << "value:" << vscrollBar->value()
+//                    ;
+        int v = vscrollBar->value();
+        v += vscrollBar->singleStep();
+        vscrollBar->setValue(v);
+    }
 }
 
 void SARibbonGallery::onPageUp()
 {
-
+    if(m_d->viewportGroup)
+    {
+        QScrollBar* vscrollBar = m_d->viewportGroup->verticalScrollBar();
+//        qDebug() << "singleStep:" << vscrollBar->singleStep()
+//                 << "pageStep:" << vscrollBar->pageStep()
+//                 << "max" << vscrollBar->maximum()
+//                 << "min" << vscrollBar->minimum()
+//                 << "value:" << vscrollBar->value()
+//                    ;
+        int v = vscrollBar->value();
+        v -= vscrollBar->singleStep();
+        vscrollBar->setValue(v);
+    }
 }
 
 void SARibbonGallery::onShowMoreDetail()

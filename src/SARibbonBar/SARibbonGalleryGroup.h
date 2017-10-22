@@ -4,16 +4,19 @@
 #include "SARibbonGalleryItem.h"
 #include <QListView>
 #include <QStyledItemDelegate>
+#include "SARibbonGalleryItem.h"
 ///
 /// \brief SARibbonGalleryGroup对应的显示代理
 ///
 class SARibbonGalleryGroupItemDelegate : public QStyledItemDelegate
 {
 public:
-    SARibbonGalleryGroupItemDelegate(QObject *parent = Q_NULLPTR);
+    SARibbonGalleryGroupItemDelegate(SARibbonGalleryGroup* group,QObject *parent = Q_NULLPTR);
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+private:
+    SARibbonGalleryGroup* m_group;
 };
 
 ///
@@ -43,7 +46,7 @@ private:
 ///
 /// 组负责显示管理Gallery Item，
 ///
-#include "SARibbonGalleryItem.h"
+
 class SARibbonGalleryGroup : public QListView
 {
     Q_OBJECT

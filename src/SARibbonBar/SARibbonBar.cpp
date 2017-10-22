@@ -7,7 +7,7 @@
 #include <QVariant>
 #include <QLinearGradient>
 #include <QDebug>
-
+#include "SARibbonElementManager.h"
 
 class ContextCategoryManagerData
 {
@@ -48,14 +48,14 @@ public:
         MainClass = par;
     }
 
-    void init(SARibbonBarSubElementCreateProxy* proxy)
+    void init(SARibbonBar* par)
     {
-        applitionButton = proxy->createRibbonApplicationButton();
+        applitionButton = RibbonSubElementDelegate->createRibbonApplicationButton(par);
         applitionButton->setGeometry(widgetBord.left(),titleBarHight+widgetBord.top(),56,30);
         MainClass->connect(applitionButton,&QAbstractButton::clicked
                      ,MainClass,&SARibbonBar::applitionButtonClicked);
         //
-        ribbonTabBar = proxy->createRibbonTabBar();
+        ribbonTabBar = RibbonSubElementDelegate->createRibbonTabBar(par);
         ribbonTabBar->setGeometry(applitionButton->geometry().right()
                                   ,titleBarHight+widgetBord.top()
                                   ,MainClass->width(),tabBarHight);
@@ -101,10 +101,9 @@ public:
 
 
 SARibbonBar::SARibbonBar(QWidget *parent):QWidget(parent)
-  ,m_createProxy(new SARibbonBarSubElementCreateProxy(this))
   ,m_d(new SARibbonBarPrivate(this))
 {
-    m_d->init(m_createProxy.data());
+    m_d->init(this);
     setFixedHeight(160);
     connect(parent,&QWidget::windowTitleChanged,this,&SARibbonBar::onWindowTitleChanged);
     connect(parent,&QWidget::windowIconChanged,this,&SARibbonBar::onWindowIconChanged);
@@ -139,7 +138,7 @@ SARibbonTabBar *SARibbonBar::ribbonTabBar()
 ///
 SARibbonCategory *SARibbonBar::addCategoryPage(const QString &title)
 {
-    SARibbonCategory* catagory =  subElementCreateProxy()->createRibbonCategory();
+    SARibbonCategory* catagory =  RibbonSubElementDelegate->createRibbonCategory(this);
     catagory->setWindowTitle(title);
     int index = m_d->ribbonTabBar->addTab(title);
     m_d->ribbonTabBar->setTabData(index,QVariant((quint64)catagory));
@@ -149,7 +148,7 @@ SARibbonCategory *SARibbonBar::addCategoryPage(const QString &title)
 
 SARibbonContextCategory *SARibbonBar::addContextCategory(const QString &title, const QColor &color, const QVariant &id)
 {
-    SARibbonContextCategory* context = new SARibbonContextCategory(this);
+    SARibbonContextCategory* context = RibbonSubElementDelegate->createRibbonContextCategory(this);
     context->setContextTitle(title);
     context->setId(id);
     context->setContextColor(color);
@@ -210,15 +209,7 @@ void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory *context, bo
     }
 }
 
-void SARibbonBar::setSubElementCreateProxy(SARibbonBarSubElementCreateProxy *proxy)
-{
-    m_createProxy.reset(proxy);
-}
 
-SARibbonBarSubElementCreateProxy *SARibbonBar::subElementCreateProxy()
-{
-    return m_createProxy.data();
-}
 
 
 
@@ -227,13 +218,13 @@ SARibbonBarSubElementCreateProxy *SARibbonBar::subElementCreateProxy()
 void SARibbonBar::onWindowTitleChanged(const QString &title)
 {
     Q_UNUSED(title);
-    repaint();
+    update();
 }
 
 void SARibbonBar::onWindowIconChanged(const QIcon &icon)
 {
     Q_UNUSED(icon);
-    repaint();
+    update();
 }
 
 void SARibbonBar::onCurrentRibbonTabChanged(int index)
@@ -450,35 +441,3 @@ void SARibbonBar::paintWindowIcon(QPainter &painter, const QIcon &icon)
 
 
 
-SARibbonBarSubElementCreateProxy::SARibbonBarSubElementCreateProxy(SARibbonBar *parent)
-    :m_ribbonBar(parent)
-{
-
-}
-
-SARibbonBarSubElementCreateProxy::~SARibbonBarSubElementCreateProxy()
-{
-
-}
-
-SARibbonBar *SARibbonBarSubElementCreateProxy::ribbonBar()
-{
-    return m_ribbonBar;
-}
-
-SARibbonTabBar *SARibbonBarSubElementCreateProxy::createRibbonTabBar()
-{
-    return new SARibbonTabBar(ribbonBar());
-}
-
-SARibbonApplicationButton *SARibbonBarSubElementCreateProxy::createRibbonApplicationButton()
-{
-    SARibbonApplicationButton* applitionButton = new SARibbonApplicationButton(ribbonBar());
-    applitionButton->setObjectName(QStringLiteral("SARibbonApplicationButton"));
-    return applitionButton;
-}
-
-SARibbonCategory *SARibbonBarSubElementCreateProxy::createRibbonCategory()
-{
-    return new SARibbonCategory(ribbonBar());
-}

@@ -11,6 +11,7 @@
 #include "SARibbonPannelOptionButton.h"
 #include "SARibbonSeparatorWidget.h"
 #include "SARibbonGallery.h"
+#include "SARibbonElementManager.h"
 SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
   ,m_nextElementPosition(3,3)
   ,m_row(0)
@@ -31,7 +32,7 @@ SARibbonPannel::SARibbonPannel(QWidget *parent):QWidget(parent)
 
 SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
 {
-    SARibbonToolButton* btn = new SARibbonToolButton(this);
+    SARibbonToolButton* btn = RibbonSubElementDelegate->createRibbonToolButton(this);
     btn->setButtonType(SARibbonToolButton::LargeButton);
     btn->setAutoRaise(true);
     btn->setDefaultAction(action);
@@ -48,7 +49,7 @@ SARibbonToolButton *SARibbonPannel::addLargeAction(QAction *action)
 
 SARibbonToolButton *SARibbonPannel::addLargeToolButton(const QString& text,const QIcon& icon,QToolButton::ToolButtonPopupMode popMode)
 {
-    SARibbonToolButton* btn = new SARibbonToolButton(this);
+    SARibbonToolButton* btn = RibbonSubElementDelegate->createRibbonToolButton(this);
     btn->setButtonType(SARibbonToolButton::LargeButton);
     btn->setAutoRaise(true);
     QSize iconSize = maxHightIconSize(icon.actualSize(QSize(32,32)),32);
@@ -64,7 +65,7 @@ SARibbonToolButton *SARibbonPannel::addLargeToolButton(const QString& text,const
 
 SARibbonToolButton *SARibbonPannel::addSmallToolButton(const QString &text, const QIcon &icon, QToolButton::ToolButtonPopupMode popMode)
 {
-    SARibbonToolButton* btn = new SARibbonToolButton(this);
+    SARibbonToolButton* btn = RibbonSubElementDelegate->createRibbonToolButton(this);
     btn->setButtonType(SARibbonToolButton::SmallButton);
     btn->setAutoRaise(true);
     QSize iconSize = maxHightIconSize(icon.actualSize(QSize(16,16)),16);
@@ -84,7 +85,7 @@ SARibbonToolButton *SARibbonPannel::addSmallToolButton(const QString &text, cons
 
 SARibbonToolButton* SARibbonPannel::addSmallAction(QAction *action)
 {
-    SARibbonToolButton* btn = new SARibbonToolButton(this);
+    SARibbonToolButton* btn = RibbonSubElementDelegate->createRibbonToolButton(this);
     btn->setButtonType(SARibbonToolButton::SmallButton);
     btn->setAutoRaise(true);
     btn->setDefaultAction(action);
@@ -105,7 +106,7 @@ SARibbonToolButton* SARibbonPannel::addSmallAction(QAction *action)
 
 SARibbonGallery *SARibbonPannel::addGallery()
 {
-    SARibbonGallery* gallery = new SARibbonGallery(this);
+    SARibbonGallery* gallery = RibbonSubElementDelegate->createRibbonGallery(this);
     m_gridLayout->addWidget(gallery,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
     setExpanding();
@@ -119,38 +120,49 @@ void SARibbonPannel::addSeparator()
     action->setSeparator(true);
     addAction(action);
 #else
-    SARibbonSeparatorWidget* sep = new SARibbonSeparatorWidget(height() - 10,this);
+    SARibbonSeparatorWidget* sep = RibbonSubElementDelegate->createRibbonSeparatorWidget(height() - 10,this);
     m_gridLayout->addWidget(sep,0,m_gridLayout->columnCount(),6,1);
     m_row = 0;
 #endif
 }
 
-void SARibbonPannel::addWidget(QWidget *w, int row)
+void SARibbonPannel::addWidget(QWidget *w)
 {
-    if(row<0)
+    int col = m_gridLayout->columnCount();
+    if(0 != m_row)
     {
-        m_gridLayout->addWidget(w,0,m_gridLayout->columnCount(),6,1);
+        col -= 1;
+    }
+    m_gridLayout->addWidget(w,m_row,col,2,1);
+    m_row += 2;
+    if(m_row >= 5)
         m_row = 0;
-    }
-    else
-    {
-        if(row > 4)
-        {
-            row = 4;
-        }
-        m_gridLayout->addWidget(w,row,m_gridLayout->columnCount(),2,1);
-        m_row = row + 2;
-        if(m_row >= 5)
-            m_row = 0;
-    }
 }
 
 void SARibbonPannel::addWidget(QWidget *w, int row, int rowSpan)
 {
-    m_gridLayout->addWidget(w,row,m_gridLayout->columnCount(),rowSpan,1);
+    int col = m_gridLayout->columnCount();
+    if(0 != row)
+    {
+        col -= 1;
+    }
+    m_gridLayout->addWidget(w,row,col,rowSpan,1);
     m_row = row + rowSpan;
     if(m_row >= 5)
         m_row = 0;
+}
+
+void SARibbonPannel::addWidget(QWidget *w, int row, int rowSpan, int column, int columnSpan)
+{
+    m_gridLayout->addWidget(w,row,column,rowSpan,columnSpan);
+    m_row = row + rowSpan;
+    if(row >= 5)
+        m_row = 0;
+}
+
+int SARibbonPannel::gridLayoutColumnCount() const
+{
+    return m_gridLayout->columnCount();
 }
 
 void SARibbonPannel::addOptionAction(QAction *action)

@@ -17,4 +17,7 @@
 #ifndef SA_RIBBON_EXPORT
 #define SA_RIBBON_EXPORT
 #endif
+
+
+
 #endif // SARIBBONGLOBAL_H

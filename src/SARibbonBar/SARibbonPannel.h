@@ -21,8 +21,10 @@ public:
     SARibbonToolButton *addSmallAction(QAction *action);
     SARibbonGallery* addGallery();
     void addSeparator();
-    void addWidget(QWidget* w, int row=0);
+    void addWidget(QWidget* w);
     void addWidget(QWidget* w, int row,int rowSpan);
+    void addWidget(QWidget* w, int row,int rowSpan,int column,int columnSpan);
+    int gridLayoutColumnCount() const;
     void addOptionAction(QAction* action);
     virtual QSize sizeHint() const;
     virtual QSize minimumSizeHint() const;

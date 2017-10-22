@@ -6,6 +6,7 @@
 #include "SARibbonCategory.h"
 #include "SARibbonContextCategory.h"
 #include <QScopedPointer>
+class SARibbonElementCreateDelegate;
 class SARibbonBarPrivate;
 class QAbstractButton;
 class SARibbonTabBar;
@@ -36,10 +37,7 @@ public:
     void hideContextCategory(SARibbonContextCategory* context);
     //设置上下文标签的显示或隐藏
     void setContextCategoryVisible(SARibbonContextCategory* context,bool visible);
-    //设置子元素创建代理，此代理的生命周期由此类控制
-    void setSubElementCreateProxy(SARibbonBarSubElementCreateProxy* proxy);
-protected:
-    SARibbonBarSubElementCreateProxy* subElementCreateProxy();
+
 signals:
     void applitionButtonClicked();
     //
@@ -60,29 +58,9 @@ protected:
     virtual void paintContextCategoryTab(QPainter& painter,const QString& title, QRect contextRect, const QColor& color);
 private:
     friend class SARibbonBarPrivate;
-    QScopedPointer<SARibbonBarSubElementCreateProxy> m_createProxy;
     SARibbonBarPrivate* m_d;
 };
 
-class SARibbonApplicationButton;
-///
-/// \brief RibbonBar 子元素创建调用的代理类
-/// 如果重写了\sa SARibbonCategory \sa SARibbonTabBar \sa SARibbonApplicationButton 可以通过重载此代理
-/// 来对子元素创建进行重定向
-///
-class SA_RIBBON_EXPORT SARibbonBarSubElementCreateProxy
-{
-public:
-    SARibbonBarSubElementCreateProxy(SARibbonBar* parent);
-    virtual ~SARibbonBarSubElementCreateProxy();
 
-
-    SARibbonBar* ribbonBar();
-    virtual SARibbonTabBar* createRibbonTabBar();
-    virtual SARibbonApplicationButton* createRibbonApplicationButton();
-    virtual SARibbonCategory* createRibbonCategory();
-private:
-    SARibbonBar* m_ribbonBar;
-};
 
 #endif // SARIBBONBAR_H

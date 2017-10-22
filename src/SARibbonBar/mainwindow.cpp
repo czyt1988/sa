@@ -11,7 +11,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include "SARibbonMenu.h"
-#include <QComboBox>
+#include "SARibbonComboBox.h"
 #include "SARibbonGallery.h"
 #define PRINT_COST(ElapsedTimer,LastTime,STR) \
     do{\
@@ -180,11 +180,24 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     btn->setEnabled(false);
 
 
-    QComboBox* com = new QComboBox(this);
+    SARibbonComboBox* com = new SARibbonComboBox(this);
     com->setSizePolicy(QSizePolicy::Expanding,
                        QSizePolicy::Fixed);
-    com->setWindowTitle("123123");
+    com->setWindowIcon(QIcon(":/icon/icon/Graph-add.png"));
+    com->setWindowTitle("SARibbonComboBox");
+    com->comboBox()->addItem("SARibbonComboBox测试");
+    com->comboBox()->setEditable(true);
     pannel->addWidget(com);
+
+    com = new SARibbonComboBox(this);
+    com->setSizePolicy(QSizePolicy::Expanding,
+                       QSizePolicy::Fixed);
+    com->setWindowIcon(QIcon(":/icon/icon/folder.png"));
+    com->setWindowTitle("editableeeeeeeeee");
+    com->comboBox()->addItem("111111111111");
+    pannel->addWidget(com);
+
+
     pannel->setExpanding();
     QAction* optAct = new QAction(this);
     pannel->addOptionAction(optAct);
@@ -235,7 +248,7 @@ void MainWindow::createCategoryOther(SARibbonCategory *page)
 
     SARibbonGallery* gallery = pannel->addGallery();
     SARibbonGalleryGroup*group = gallery->addGalleryGroup();
-    for(int i=0;i<10;++i)
+    for(int i=0;i<100;++i)
     {
         group->addItem(QIcon(":/icon/icon/folder.png"));
     }

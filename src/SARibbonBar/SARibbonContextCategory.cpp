@@ -1,6 +1,7 @@
 #include "SARibbonContextCategory.h"
 #include <QList>
 #include <QVariant>
+#include "SARibbonElementManager.h"
 class SARibbonCategoryData
 {
 public:
@@ -29,7 +30,7 @@ SARibbonContextCategory::~SARibbonContextCategory()
 SARibbonCategory *SARibbonContextCategory::addCategoryPage(const QString &title)
 {
     SARibbonCategoryData catData;
-    SARibbonCategory* category = new SARibbonCategory(parentWidget());
+    SARibbonCategory* category = RibbonSubElementDelegate->createRibbonCategory(parentWidget());
     category->setWindowTitle(title);
     catData.categoryPage = category;
     m_d->categoryDataList.append(catData);
