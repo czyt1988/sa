@@ -174,6 +174,7 @@ void SAChart2D::startSelectMode(SelectionMode mode)
     case RectSelection:startRectSelectMode();break;
     case EllipseSelection:startEllipseSelectMode();break;
     case PolygonSelection:startPolygonSelectMode();break;
+    default:return;
     }
 }
 ///
