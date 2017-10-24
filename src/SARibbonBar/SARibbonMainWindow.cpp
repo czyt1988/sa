@@ -72,7 +72,7 @@ void SARibbonMainWindowPrivate::init()
     ribbonStyleSheet[SARibbonMainWindow::RibbonToolButton]
             = QString(""
                      "SARibbonToolButton::pressed{"
-                     " border: 1px solid #f2ca58;"
+                     " border: 1px solid #000;"
                      " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);"
                      "}"
                      "SARibbonToolButton::checked{"
@@ -160,14 +160,17 @@ void SARibbonMainWindowPrivate::init()
             = QString(
                       "QComboBox {  "
                       " border: 1px solid #C0C2C4;"
-                      " background: white;"
+                      //" background: white;"
                       "}"
                       "QComboBox:hover{  "
-                      " border: 1px solid #FDEEB3;"
-                      " background: white;"
+                      "  border: 1px solid #FDEEB3;"
+                      "  color : #000;"
+
+                      //" background: white;"
                       "}"
                       "QComboBox:editable {"
-                      "    background: white;"
+                      "  color : #000;"
+                      "  background: white;"
                       "}"
 
                       "QComboBox::drop-down {"
@@ -185,6 +188,11 @@ void SARibbonMainWindowPrivate::init()
                         "QComboBox::down-arrow {"
                         "    image: url(:/image/resource/ArrowDown.png);"
                         "}"
+                    "QComboBox QAbstractItemView {"
+                    "   border: 1px solid #C0C2C4;"
+                    "   selection-color:#000;"
+                    "   selection-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FEF9F4, stop:0.38 #FDE0BD,stop:0.39 #FFCE69, stop:1 #FFFFE7);"
+                    "}"
                       );
 }
 

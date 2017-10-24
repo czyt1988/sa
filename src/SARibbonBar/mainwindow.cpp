@@ -81,6 +81,9 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     act->setText(tr("保存"));
     PRINT_COST(cost,lastTimes,"new Large Action");
     pannel->addLargeAction(act);
+    connect(act,&QAction::triggered,this,[this](bool b){
+        this->m_edit->append("action clicked");
+    });
     PRINT_COST(cost,lastTimes,"add 1 Large Action");
 
     act = new QAction(this);
@@ -199,7 +202,8 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
                        QSizePolicy::Fixed);
     com->setWindowIcon(QIcon(":/icon/icon/Graph-add.png"));
     com->setWindowTitle("ComboBox");
-    com->comboBox()->addItem("SARibbonComboBox测试");
+    for (int i=0;i<40;++i)
+        com->comboBox()->addItem("SARibbonComboBox测试");
     com->comboBox()->setEditable(true);
     pannel->addWidget(com);
 
@@ -208,7 +212,8 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
                        QSizePolicy::Fixed);
     com->setWindowIcon(QIcon(":/icon/icon/folder.png"));
     com->setWindowTitle("ComboBox Editable");
-    com->comboBox()->addItem("111111111111");
+    for (int i=0;i<40;++i)
+        com->comboBox()->addItem("111111111111");
     pannel->addWidget(com);
 
     SARibbonLineEdit* lineEdit = new SARibbonLineEdit(this);

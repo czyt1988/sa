@@ -196,15 +196,13 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
     }
     else if(opt.subControls & QStyle::SC_ToolButton)
     {
-        tool.rect = opt.rect;
-        tool.state = bflags;
         if (autoRaise)
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &opt, &p, this);
         }
         else
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &opt, &p, this);
         }
     }
 
@@ -232,10 +230,13 @@ void SARibbonToolButton::paintLargeButton(QPaintEvent *e)
     QStyleOptionToolButton opt;
     initStyleOption(&opt);
 
-
     bool autoRaise = opt.state & QStyle::State_AutoRaise;
-    QStyle::State bflags = opt.state & ~QStyle::State_Sunken;
+    QStyle::State bflags = opt.state;
     QStyle::State mflags = bflags;
+
+//    bool autoRaise = opt.state & QStyle::State_AutoRaise;
+//    QStyle::State bflags = opt.state & ~QStyle::State_Sunken;
+//    QStyle::State mflags = bflags;
     if (autoRaise)
     {
         if (!(bflags & QStyle::State_MouseOver) || !(bflags & QStyle::State_Enabled)) {
@@ -315,15 +316,17 @@ void SARibbonToolButton::paintLargeButton(QPaintEvent *e)
     }
     else if(opt.subControls & QStyle::SC_ToolButton)
     {
-        tool.rect = opt.rect;
-        tool.state = bflags;
+        if(opt.state & QStyle::State_Sunken)
+        {
+            qDebug()<<"State_Sunken"<<autoRaise;
+        }
         if (autoRaise)
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &opt, &p, this);
         }
         else
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &opt, &p, this);
         }
     }
 
@@ -351,17 +354,17 @@ void SARibbonToolButton::paintLargeButton(QPaintEvent *e)
     }
 
     //绘制Focus
-    if (opt.state & QStyle::State_HasFocus)
-    {
-        qDebug() << "HasFocus";
-        QStyleOptionFocusRect fr;
-        fr.QStyleOption::operator=(opt);
-        fr.rect.adjust(3, 3, -3, -3);
-        if (opt.features & QStyleOptionToolButton::MenuButtonPopup)
-            fr.rect.adjust(0, 0, -style()->pixelMetric(QStyle::PM_MenuButtonIndicator,
-                                              &opt, this), 0);
-        style()->drawPrimitive(QStyle::PE_FrameFocusRect, &fr, &p, this);
-    }
+//    if (opt.state & QStyle::State_HasFocus)
+//    {
+//        qDebug() << "HasFocus";
+//        QStyleOptionFocusRect fr;
+//        fr.QStyleOption::operator=(opt);
+//        fr.rect.adjust(3, 3, -3, -3);
+//        if (opt.features & QStyleOptionToolButton::MenuButtonPopup)
+//            fr.rect.adjust(0, 0, -style()->pixelMetric(QStyle::PM_MenuButtonIndicator,
+//                                              &opt, this), 0);
+//        style()->drawPrimitive(QStyle::PE_FrameFocusRect, &fr, &p, this);
+//    }
 
     drawIconAndLabel(p,opt);
 }
@@ -378,10 +381,10 @@ void SARibbonToolButton::drawIconAndLabel(QPainter &p, const QStyleOptionToolBut
     if(LargeButton == m_buttonType)
     {
         //绘制图标和文字
-        QStyleOptionToolButton label = opt;
-        QStyle::State bflags = opt.state & ~QStyle::State_Sunken;
-        label.state = bflags;
-        style()->drawControl(QStyle::CE_ToolButtonLabel, &label, &p, this);
+//        QStyleOptionToolButton label = opt;
+//        QStyle::State bflags = opt.state & ~QStyle::State_Sunken;//去除图标和文字的抖动
+//        label.state = bflags;
+        style()->drawControl(QStyle::CE_ToolButtonLabel, &opt, &p, this);
     }
     else
     {
@@ -413,8 +416,6 @@ void SARibbonToolButton::drawIconAndLabel(QPainter &p, const QStyleOptionToolBut
             }
             else
             {
-//                pr.setWidth(pmSize.width() + 8);
-//                tr.adjust(pr.width(), 0, -8, 0);
                 style()->drawItemPixmap(&p, QStyle::visualRect(opt.direction, opt.rect, pr), Qt::AlignCenter, pm);
                 alignment |= Qt::AlignLeft | Qt::AlignVCenter;
             }
