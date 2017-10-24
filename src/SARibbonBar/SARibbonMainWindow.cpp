@@ -33,6 +33,7 @@ void SARibbonMainWindowPrivate::init()
                       "    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,   "
                       "        stop:0 #467BBB, stop:0.5 #2F63AE,stop:0.51 #1C438A, stop:1 #358BC9);  "
                       "}  "
+                      "SARibbonApplicationButton:focus{outline: none;}"
                       );
     ribbonStyleSheet[SARibbonMainWindow::RibbonTabBar]
             = QString(""
@@ -155,7 +156,7 @@ void SARibbonMainWindowPrivate::init()
                       "    border: 2px solid #FDEEB3;"
                       "}"
                       );
-    ribbonStyleSheet[SARibbonMainWindow::RibbonComboBox]
+    ribbonStyleSheet[SARibbonMainWindow::Q_ComboBox]
             = QString(
                       "QComboBox {  "
                       " border: 1px solid #C0C2C4;"
@@ -174,9 +175,6 @@ void SARibbonMainWindowPrivate::init()
                       "      subcontrol-position: top right;"
                       "      width: 15px;"
                       "      border-left: none;"
-//                      "      border-left-width: 1px;"
-//                      "      border-left-color: #C0C2C4;"
-//                      "      border-left-style: solid;"
                       "      border-top-right-radius: 0px;"
                       "      border-bottom-right-radius: 0px;"
                       "}"
@@ -184,9 +182,9 @@ void SARibbonMainWindowPrivate::init()
                       "    border: 1px solid #FDEEB3;"
                       "    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEEB3, stop:0.1282 #FDE38A,stop:0.8333 #FCE58C, stop:1 #FDFDEB);  "
                       "}"
-                    "QComboBox::down-arrow {"
-                    "    image: url(:/image/resource/ArrowDown.png);"
-                    "}"
+                        "QComboBox::down-arrow {"
+                        "    image: url(:/image/resource/ArrowDown.png);"
+                        "}"
                       );
 }
 

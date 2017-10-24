@@ -7,6 +7,7 @@
 #include <QStyleOption>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include "SARibbonDrawHelper.h"
 SARibbonToolButton::SARibbonToolButton(QWidget *parent)
     :QToolButton(parent)
     ,m_buttonType(LargeButton)
@@ -28,11 +29,33 @@ void SARibbonToolButton::paintEvent(QPaintEvent *event)
     }
 }
 
+void SARibbonToolButton::resizeEvent(QResizeEvent *e)
+{
+    QStyleOptionToolButton opt;
+    initStyleOption(&opt);
+    m_iconRect = QRect(0,0,height(),height());
+    QSize iconSize = SARibbonDrawHelper::iconActualSize(opt.icon,&opt,m_iconRect.size().boundedTo(opt.iconSize));
+    if(iconSize.width() > m_iconRect.width())
+    {
+        m_iconRect.setWidth(iconSize.width());
+    }
+    QToolButton::resizeEvent(e);
+}
+
 
 
 void SARibbonToolButton::mouseMoveEvent(QMouseEvent *e)
 {
-    bool isMouseOnSubControl = (e->pos().y() > (height()/2));
+    bool isMouseOnSubControl(false);
+    if(LargeButton == m_buttonType)
+    {
+        isMouseOnSubControl = (e->pos().y() > (height()/2));
+    }
+    else
+    {
+        isMouseOnSubControl = !m_iconRect.contains(e->pos());
+    }
+
     if(m_mouseOnSubControl != isMouseOnSubControl)
     {
         m_mouseOnSubControl = isMouseOnSubControl;
@@ -45,12 +68,24 @@ void SARibbonToolButton::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton && (popupMode() == MenuButtonPopup))
     {
-        QRect popupr = rect().adjusted(0,height()/2,0,0);
-        if (popupr.isValid() && popupr.contains(e->pos()))
+        if(LargeButton == m_buttonType)
         {
-            m_menuButtonPressed = true;
-            showMenu();
-            return;
+            QRect popupr = rect().adjusted(0,height()/2,0,0);
+            if (popupr.isValid() && popupr.contains(e->pos()))
+            {
+                m_menuButtonPressed = true;
+                showMenu();
+                return;
+            }
+        }
+        else
+        {
+            if(m_iconRect.isValid() && !m_iconRect.contains(e->pos()))
+            {
+                m_menuButtonPressed = true;
+                showMenu();
+                return;
+            }
         }
     }
     m_menuButtonPressed = false;
@@ -70,33 +105,126 @@ void SARibbonToolButton::leaveEvent(QEvent *e)
 }
 
 
-
-void SARibbonToolButton::paintLargeButton(QPaintEvent *e)
-{
-//    if(this->menu())
-//    {
-        paintMenuButtonPopupButton(e);
-//    }
-//    else
-//    {
-//        QStylePainter p(this);
-//        QStyleOptionToolButton opt;
-//        initStyleOption(&opt);
-//        p.drawComplexControl(QStyle::CC_ToolButton, opt);
-//    }
-
-}
-
 void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
 {
     Q_UNUSED(e);
     QStylePainter p(this);
     QStyleOptionToolButton opt;
     initStyleOption(&opt);
+#if 0
     p.drawComplexControl(QStyle::CC_ToolButton, opt);
+#else
+    bool autoRaise = opt.state & QStyle::State_AutoRaise;
+    QStyle::State bflags = opt.state & ~QStyle::State_Sunken;
+    QStyle::State mflags = bflags;
+    if (autoRaise)
+    {
+        if (!(bflags & QStyle::State_MouseOver) || !(bflags & QStyle::State_Enabled)) {
+            bflags &= ~QStyle::State_Raised;
+        }
+    }
+    if (opt.state & QStyle::State_Sunken)
+    {
+        if (opt.activeSubControls & QStyle::SC_ToolButton)
+        {
+            bflags |= QStyle::State_Sunken;
+            mflags |= QStyle::State_MouseOver | QStyle::State_Sunken;
+        }
+        else if (opt.activeSubControls & QStyle::SC_ToolButtonMenu)
+        {
+            mflags |= QStyle::State_Sunken;
+            bflags |= QStyle::State_MouseOver;
+        }
+    }
+    //绘制背景
+    QStyleOption tool(0);
+    tool.palette = opt.palette;
+
+    if ((opt.subControls & QStyle::SC_ToolButton)
+            &&
+            (opt.features & QStyleOptionToolButton::MenuButtonPopup))
+    {
+        tool.rect = opt.rect;
+        tool.state = bflags;
+        if(opt.activeSubControls &= QStyle::SC_ToolButtonMenu)
+        {
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
+            p.save();
+            p.setPen(m_borderColor);
+            p.setBrush(Qt::NoBrush);
+            p.drawRect(opt.rect.adjusted(0,0,0,-1));
+            p.drawRect(m_iconRect);//分界线
+            p.restore();
+        }
+        else
+        {
+            if(m_mouseOnSubControl)//此时鼠标在indecater那
+            {
+                tool.rect.adjust(m_iconRect.width(),0,0,0);
+            }
+            else
+            {
+                tool.rect = m_iconRect;
+            }
+
+
+            if (autoRaise)
+            {
+                style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
+            }
+            else
+            {
+                style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
+            }
+        }
+
+    }
+    else if((opt.subControls & QStyle::SC_ToolButton)
+            && (opt.features & QStyleOptionToolButton::HasMenu)
+            )
+    {
+        tool.rect = opt.rect;
+        tool.state = bflags;
+        if (autoRaise)
+        {
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
+        }
+        else
+        {
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
+        }
+    }
+    else if(opt.subControls & QStyle::SC_ToolButton)
+    {
+        tool.rect = opt.rect;
+        tool.state = bflags;
+        if (autoRaise)
+        {
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
+        }
+        else
+        {
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
+        }
+    }
+
+    // 绘制边框
+    if(((opt.state & QStyle::State_MouseOver) && (opt.features & QStyleOptionToolButton::MenuButtonPopup))
+            ||
+           ((isChecked()) && (opt.features & QStyleOptionToolButton::MenuButtonPopup)) )//checked
+    {
+        p.save();
+        p.setPen(m_borderColor);
+        p.setBrush(Qt::NoBrush);
+        p.drawRect(opt.rect.adjusted(0,0,-1,-1));
+        p.drawRect(m_iconRect);//分界线
+        p.restore();
+    }
+    drawIconAndLabel(p,opt);
+#endif
 }
 
-void SARibbonToolButton::paintMenuButtonPopupButton(QPaintEvent *e)
+void SARibbonToolButton::paintLargeButton(QPaintEvent *e)
 {
     Q_UNUSED(e);
 
@@ -234,15 +362,8 @@ void SARibbonToolButton::paintMenuButtonPopupButton(QPaintEvent *e)
                                               &opt, this), 0);
         style()->drawPrimitive(QStyle::PE_FrameFocusRect, &fr, &p, this);
     }
-    //绘制图标和文字
-    QStyleOptionToolButton label = opt;
-    label.state = bflags;
-    if (!autoRaise)
-        label.state &= ~QStyle::State_Sunken;
-    QRect button;
-    button = style()->subControlRect(QStyle::CC_ToolButton, &opt, QStyle::SC_ToolButton, this);
-    style()->drawControl(QStyle::CE_ToolButtonLabel, &label, &p, this);
 
+    drawIconAndLabel(p,opt);
 }
 
 bool SARibbonToolButton::hitButton(const QPoint &pos) const
@@ -250,6 +371,71 @@ bool SARibbonToolButton::hitButton(const QPoint &pos) const
     if(QAbstractButton::hitButton(pos))
         return !m_menuButtonPressed;
     return false;
+}
+
+void SARibbonToolButton::drawIconAndLabel(QPainter &p, const QStyleOptionToolButton &opt)
+{
+    if(LargeButton == m_buttonType)
+    {
+        //绘制图标和文字
+        QStyleOptionToolButton label = opt;
+        QStyle::State bflags = opt.state & ~QStyle::State_Sunken;
+        label.state = bflags;
+        style()->drawControl(QStyle::CE_ToolButtonLabel, &label, &p, this);
+    }
+    else
+    {
+        QPixmap pm;
+        QSize pmSize = opt.iconSize;
+        if (!opt.icon.isNull())
+        {
+            pm = SARibbonDrawHelper::iconToPixmap(opt.icon,this,&opt,opt.rect.size().boundedTo(opt.iconSize));
+            pmSize = pm.size() / pm.devicePixelRatio();
+        }
+
+        if (opt.toolButtonStyle != Qt::ToolButtonIconOnly)
+        {
+            p.save();
+            p.setFont(opt.font);
+
+            QRect pr = m_iconRect;
+            QRect tr = opt.rect.adjusted(pr.width(),0,-8,0);
+            int alignment = Qt::TextShowMnemonic;
+            //快捷键的下划线
+            if (!style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this))
+            {
+                alignment |= Qt::TextHideMnemonic;
+            }
+
+            if (opt.toolButtonStyle == Qt::ToolButtonTextUnderIcon)
+            {
+
+            }
+            else
+            {
+//                pr.setWidth(pmSize.width() + 8);
+//                tr.adjust(pr.width(), 0, -8, 0);
+                style()->drawItemPixmap(&p, QStyle::visualRect(opt.direction, opt.rect, pr), Qt::AlignCenter, pm);
+                alignment |= Qt::AlignLeft | Qt::AlignVCenter;
+            }
+            style()->drawItemText(&p, QStyle::visualRect(opt.direction, opt.rect, tr), alignment, opt.palette,
+                                             opt.state & QStyle::State_Enabled, opt.text,
+                                             QPalette::ButtonText);
+            p.restore();
+        }
+        else
+        {
+            style()->drawItemPixmap(&p, opt.rect, Qt::AlignCenter, pm);
+        }
+
+        //绘制sub control 的下拉箭头
+        if (opt.features & QStyleOptionToolButton::HasMenu)
+        {
+            QStyleOptionToolButton tool = opt;
+            tool.rect = opt.rect.adjusted(opt.rect.width()-8,0,0,0);
+            style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &tool, &p, this);
+        }
+    }
 }
 
 SARibbonToolButton::RibbonButtonType SARibbonToolButton::buttonType() const
@@ -264,14 +450,13 @@ void SARibbonToolButton::setButtonType(const RibbonButtonType &buttonType)
     {
         setFixedHeight(78);
         setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        setMouseTracking(true);
     }
     else
     {
         setFixedHeight(26);
         setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        setMouseTracking(false);
     }
+    setMouseTracking(true);
 }
 
 QSize SARibbonToolButton::minimumSizeHint() const

@@ -12,6 +12,7 @@
 #include <QElapsedTimer>
 #include "SARibbonMenu.h"
 #include "SARibbonComboBox.h"
+#include "SARibbonLineEdit.h"
 #include "SARibbonGallery.h"
 #define PRINT_COST(ElapsedTimer,LastTime,STR) \
     do{\
@@ -30,6 +31,9 @@ MainWindow::MainWindow(QWidget *par):SARibbonMainWindow(par)
     setCentralWidget(m_edit);
     PRINT_COST(cost,lastTimes,"setCentralWidget & setWindowTitle");
     SARibbonBar* ribbon = ribbonBar();
+    QFont f = ribbon->font();
+    f.setFamily("微软雅黑");
+    ribbon->setFont(f);
     ribbon->applitionButton()->setText(tr("File"));
     SARibbonCategory* categoryMain = ribbon->addCategoryPage(tr("主页"));
     PRINT_COST(cost,lastTimes,"new main page");
@@ -55,6 +59,19 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
 {
     QElapsedTimer cost;
     cost.start();
+    SARibbonToolButton * btn;
+    SARibbonMenu* menu = new SARibbonMenu(this);
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111111"));
+    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111111111111111111111"));
+
     int lastTimes = 0;
     SARibbonPannel* pannel = page->addPannel(tr("面板1"));
     PRINT_COST(cost,lastTimes,"addPannel pannel 1");
@@ -74,31 +91,28 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/filter.png"));
     act->setText(tr("测试2"));
-    pannel->addSmallAction(act);
+    act->setMenu(menu);
+    btn = pannel->addSmallAction(act);
+    btn->setPopupMode(QToolButton::DelayedPopup);
 
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/folder.png"));
     act->setText(tr("测试3"));
-    pannel->addSmallAction(act);
+    act->setMenu(menu);
+    btn = pannel->addSmallAction(act);
+    btn->setPopupMode(QToolButton::MenuButtonPopup);
+
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/folder.png"));
     act->setText(tr("测试4"));
-    pannel->addSmallAction(act);
+    act->setMenu(menu);
+    btn = pannel->addSmallAction(act);
+    btn->setPopupMode(QToolButton::InstantPopup);
 
     pannel->addSeparator();
 
-    SARibbonToolButton * btn;
-    SARibbonMenu* menu = new SARibbonMenu(this);
-    QAction * item = menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("11111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111111"));
-    menu->addAction(QIcon(":/icon/icon/folder.png"),tr("1111111111111111111111111111"));
+
+
 
     act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/folder.png"));
@@ -184,7 +198,7 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     com->setSizePolicy(QSizePolicy::Expanding,
                        QSizePolicy::Fixed);
     com->setWindowIcon(QIcon(":/icon/icon/Graph-add.png"));
-    com->setWindowTitle("SARibbonComboBox");
+    com->setWindowTitle("ComboBox");
     com->comboBox()->addItem("SARibbonComboBox测试");
     com->comboBox()->setEditable(true);
     pannel->addWidget(com);
@@ -193,10 +207,17 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     com->setSizePolicy(QSizePolicy::Expanding,
                        QSizePolicy::Fixed);
     com->setWindowIcon(QIcon(":/icon/icon/folder.png"));
-    com->setWindowTitle("editableeeeeeeeee");
+    com->setWindowTitle("ComboBox Editable");
     com->comboBox()->addItem("111111111111");
     pannel->addWidget(com);
 
+    SARibbonLineEdit* lineEdit = new SARibbonLineEdit(this);
+    lineEdit->setSizePolicy(QSizePolicy::Expanding,
+                       QSizePolicy::Fixed);
+    lineEdit->setWindowIcon(QIcon(":/icon/icon/folder.png"));
+    lineEdit->setWindowTitle("Line Edit");
+    lineEdit->lineEdit()->setText("SARibbonLineEdit");
+    pannel->addWidget(lineEdit);
 
     pannel->setExpanding();
     QAction* optAct = new QAction(this);

@@ -23,19 +23,22 @@ public:
     virtual QSize minimumSizeHint() const;
 protected:
     virtual void paintEvent(QPaintEvent *event);
+    virtual void resizeEvent(QResizeEvent* e);
     virtual void mouseMoveEvent(QMouseEvent *e);
     virtual void mousePressEvent(QMouseEvent *e);
     virtual void mouseReleaseEvent(QMouseEvent *e);
     virtual void leaveEvent(QEvent *e);
     virtual void paintLargeButton(QPaintEvent *e);
     virtual void paintSmallButton(QPaintEvent *e);
-    virtual void paintMenuButtonPopupButton(QPaintEvent *e);
     virtual bool hitButton(const QPoint &pos) const;
+
+    virtual void drawIconAndLabel(QPainter& p,const QStyleOptionToolButton& opt);
 private:
     RibbonButtonType m_buttonType;
     bool m_mouseOnSubControl;
     QColor m_borderColor;
     bool m_menuButtonPressed;
+    QRect m_iconRect;
 };
 
 #endif // SARIBBONTOOLBUTTON_H
