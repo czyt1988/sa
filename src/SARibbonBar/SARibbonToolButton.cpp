@@ -144,6 +144,7 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
             &&
             (opt.features & QStyleOptionToolButton::MenuButtonPopup))
     {
+        qDebug() << 1;
         tool.rect = opt.rect;
         tool.state = bflags;
         if(opt.activeSubControls &= QStyle::SC_ToolButtonMenu)
@@ -183,6 +184,7 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
             && (opt.features & QStyleOptionToolButton::HasMenu)
             )
     {
+        qDebug() << 2;
         tool.rect = opt.rect;
         tool.state = bflags;
         if (autoRaise)
@@ -196,13 +198,16 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
     }
     else if(opt.subControls & QStyle::SC_ToolButton)
     {
+        qDebug() << 3;
+        tool.rect = opt.rect;
+        tool.state = bflags;
         if (autoRaise)
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
         }
         else
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
         }
     }
 

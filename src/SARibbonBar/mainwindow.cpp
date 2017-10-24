@@ -14,6 +14,7 @@
 #include "SARibbonComboBox.h"
 #include "SARibbonLineEdit.h"
 #include "SARibbonGallery.h"
+#include "SARibbonCheckBox.h"
 #define PRINT_COST(ElapsedTimer,LastTime,STR) \
     do{\
     int ___TMP_INT = ElapsedTimer.elapsed();\
@@ -223,6 +224,13 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     lineEdit->setWindowTitle("Line Edit");
     lineEdit->lineEdit()->setText("SARibbonLineEdit");
     pannel->addWidget(lineEdit);
+
+    SARibbonCheckBox* checkBox = new SARibbonCheckBox(this);
+    checkBox->setSizePolicy(QSizePolicy::Expanding,
+                       QSizePolicy::Fixed);
+    checkBox->setWindowIcon(QIcon(":/icon/icon/folder.png"));
+    checkBox->checkBox()->setText("checkBox");
+    pannel->addWidget(checkBox);
 
     pannel->setExpanding();
     QAction* optAct = new QAction(this);

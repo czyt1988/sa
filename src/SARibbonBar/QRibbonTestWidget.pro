@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     SARibbonElementManager.cpp \
     SARibbonDrawHelper.cpp \
     SARibbonCtrolContainer.cpp \
-    SARibbonLineEdit.cpp
+    SARibbonLineEdit.cpp \
+    SARibbonCheckBox.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -67,7 +68,8 @@ HEADERS  += \
     SARibbonElementManager.h \
     SARibbonDrawHelper.h \
     SARibbonCtrolContainer.h \
-    SARibbonLineEdit.h
+    SARibbonLineEdit.h \
+    SARibbonCheckBox.h
 
 RESOURCES += \
     saribbonresouce.qrc \
