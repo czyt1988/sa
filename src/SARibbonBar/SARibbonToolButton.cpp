@@ -144,6 +144,7 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
             &&
             (opt.features & QStyleOptionToolButton::MenuButtonPopup))
     {
+        qDebug() << "1";
         tool.rect = opt.rect;
         tool.state = bflags;
         if(opt.activeSubControls &= QStyle::SC_ToolButtonMenu)
@@ -196,13 +197,20 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
     }
     else if(opt.subControls & QStyle::SC_ToolButton)
     {
+        tool.rect = opt.rect;
+        tool.state = bflags;
+        if(opt.state & QStyle::State_Sunken)
+        {
+            tool.state &= ~QStyle::State_MouseOver;
+        }
+
         if (autoRaise)
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
         }
         else
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
         }
     }
 
@@ -316,17 +324,19 @@ void SARibbonToolButton::paintLargeButton(QPaintEvent *e)
     }
     else if(opt.subControls & QStyle::SC_ToolButton)
     {
+        tool.rect = opt.rect;
+        tool.state = bflags;
         if(opt.state & QStyle::State_Sunken)
         {
-            qDebug()<<"State_Sunken"<<autoRaise;
+            tool.state &= ~QStyle::State_MouseOver;
         }
         if (autoRaise)
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
         }
         else
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
         }
     }
 
