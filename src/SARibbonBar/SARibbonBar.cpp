@@ -111,25 +111,19 @@ public:
 
     void setHideMode()
     {
-        if(this->isHideMode)
-        {
-            return;
-        }
         this->isHideMode = true;
         MainClass->setFixedHeight(ribbonTabBar->geometry().bottom());
         this->stackedContainerWidget->setWindowFlags(Qt::Popup);
+        this->stackedContainerWidget->setFrameShape(QFrame::Panel);
         this->stackedContainerWidget->hide();
     }
 
     void setNormalMode()
     {
-        if(!this->isHideMode)
-        {
-            return;
-        }
         this->isHideMode = false;
         MainClass->setFixedHeight(160);
         this->stackedContainerWidget->setWindowFlags(Qt::Widget);
+        this->stackedContainerWidget->setFrameShape(QFrame::NoFrame);
         this->stackedContainerWidget->show();
     }
 };

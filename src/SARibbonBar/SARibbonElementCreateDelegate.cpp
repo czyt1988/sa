@@ -67,5 +67,7 @@ SARibbonToolButton *SARibbonElementCreateDelegate::createRibbonToolButton(QWidge
 
 SARibbonControlButton *SARibbonElementCreateDelegate::createHidePannelButton(SARibbonBar *parent)
 {
-    return new SARibbonControlButton(parent);
+    SARibbonControlButton* btn = new SARibbonControlButton(parent);
+    btn->setFixedSize(16,16);
+    return btn;
 }

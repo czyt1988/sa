@@ -72,8 +72,8 @@ void SARibbonMainWindowPrivate::init()
     ribbonStyleSheet[SARibbonMainWindow::RibbonToolButton]
             = QString(""
                      "SARibbonToolButton::pressed{"
-                     " border: 1px solid #000;"
-                     " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FCE58C, stop:0.1282 #FFC655,stop:0.8333 #FFBF3E, stop:1 #FDFDEB);"
+                     " border: 1px solid #FFBF3E;"
+                     " background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,stop:0 #FDEDA3, stop:0.1282 #FDD36A,stop:0.8333 #FCD57C, stop:1 #FDFDEB);"
                      "}"
                      "SARibbonToolButton::checked{"
                      " border: 1px solid #f2ca58;"
