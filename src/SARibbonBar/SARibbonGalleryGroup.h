@@ -13,9 +13,9 @@ class SA_RIBBON_EXPORT SARibbonGalleryGroupItemDelegate : public QStyledItemDele
 {
 public:
     SARibbonGalleryGroupItemDelegate(SARibbonGalleryGroup* group,QObject *parent = Q_NULLPTR);
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 private:
     SARibbonGalleryGroup* m_group;
 };

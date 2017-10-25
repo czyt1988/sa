@@ -22,8 +22,8 @@ public:
     SARibbonCategoryProxy* proxy();
     void setProxy(SARibbonCategoryProxy* proxy);
 protected:
-    void resizeEvent(QResizeEvent *event);
-    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 private:
     QScopedPointer<SARibbonCategoryProxy> m_proxy;
     QHBoxLayout* m_pannelLayout;

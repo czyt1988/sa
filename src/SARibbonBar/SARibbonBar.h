@@ -60,8 +60,8 @@ protected slots:
     void onContextsCategoryPageAdded(SARibbonCategory* category);
 
 protected:
-    void paintEvent(QPaintEvent* e);
-    void resizeEvent(QResizeEvent* e);
+    void paintEvent(QPaintEvent* e) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent* e) Q_DECL_OVERRIDE;
     virtual void resizeHideModeButton(const QRect& tabRect);
     virtual void paintBackground(QPainter& painter);
     virtual void paintWindowTitle(QPainter& painter, const QString &title,const QPoint& contextCategoryRegion);

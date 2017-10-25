@@ -375,7 +375,7 @@ void SARibbonBar::onCurrentRibbonTabClicked(int index)
 ///
 void SARibbonBar::onCurrentRibbonTabDoubleClicked(int index)
 {
-    qDebug() << "onCurrentRibbonTabDoubleClicked" << isRibbonBarHideMode();
+    Q_UNUSED(index);
     setHideMode(!isRibbonBarHideMode());
 }
 

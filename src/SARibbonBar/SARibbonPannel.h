@@ -26,16 +26,16 @@ public:
     void addWidget(QWidget* w, int row,int rowSpan,int column,int columnSpan);
     int gridLayoutColumnCount() const;
     void addOptionAction(QAction* action);
-    virtual QSize sizeHint() const;
-    virtual QSize minimumSizeHint() const;
+    virtual QSize sizeHint() const Q_DECL_OVERRIDE;
+    virtual QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     void setReduce(bool isReduce);
     void setExpanding(bool isExpanding = true);
     bool isExpanding() const;
-    bool event(QEvent *event);
+    bool event(QEvent *event) Q_DECL_OVERRIDE;
 protected:
     static QSize maxHightIconSize(const QSize& size,int height);
-    void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    virtual void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 private:
     QGridLayout* m_gridLayout;
     QPoint m_nextElementPosition;

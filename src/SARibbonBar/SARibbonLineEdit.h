@@ -11,7 +11,7 @@ public:
     SARibbonLineEdit(QWidget *parent = Q_NULLPTR);
     QLineEdit* lineEdit();
 protected:
-    void initStyleOption(QStyleOption* opt);
+    void initStyleOption(QStyleOption* opt) Q_DECL_OVERRIDE;
 private:
     QLineEdit* m_w;
 };

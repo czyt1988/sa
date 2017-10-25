@@ -36,7 +36,7 @@ public:
     QString ribbonElementStyleSheet(RibbonElement element) const;
     void setRibbonElementStyleSheet(RibbonElement element,const QString& styleSheet);
 protected:
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 private:
     SARibbonMainWindowPrivate* m_d;
 };

@@ -9,7 +9,7 @@ public:
     SARibbonCheckBox(QWidget *parent = Q_NULLPTR);
     QCheckBox* checkBox();
 protected:
-    void initStyleOption(QStyleOption* opt);
+    void initStyleOption(QStyleOption* opt) Q_DECL_OVERRIDE;
 private:
     QCheckBox* m_w;
 };

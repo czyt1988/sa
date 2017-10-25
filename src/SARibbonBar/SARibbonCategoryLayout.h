@@ -16,17 +16,17 @@ public:
 
     SARibbonCategory* ribbonCategory();
 
-    virtual void addItem(QLayoutItem *item);
-    virtual QLayoutItem *itemAt(int index) const;
-    virtual QLayoutItem *takeAt(int index);
-    virtual int count() const;
+    virtual void addItem(QLayoutItem *item) Q_DECL_OVERRIDE;
+    virtual QLayoutItem *itemAt(int index) const Q_DECL_OVERRIDE;
+    virtual QLayoutItem *takeAt(int index) Q_DECL_OVERRIDE;
+    virtual int count() const Q_DECL_OVERRIDE;
     
-    void setGeometry(const QRect &rect);
-    QSize sizeHint() const;
-    QSize minimumSize();
-    Qt::Orientations expandingDirections() const;
-    void invalidate();
-    bool eventFilter(QObject *watched, QEvent *event);
+    void setGeometry(const QRect &rect) Q_DECL_OVERRIDE;
+    QSize sizeHint() const Q_DECL_OVERRIDE;
+    QSize minimumSize() const Q_DECL_OVERRIDE;
+    Qt::Orientations expandingDirections() const Q_DECL_OVERRIDE;
+    void invalidate() Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
 protected:
     int buildReduceModePannel(SARibbonPannel* realPannel, int x, int y);
     static QPoint calcPopupPannelPosition(SARibbonCategory* category,SARibbonPannel *pannel, int x);

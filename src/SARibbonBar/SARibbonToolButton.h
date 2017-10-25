@@ -20,17 +20,17 @@ public:
     SARibbonToolButton(QWidget *parent = Q_NULLPTR);
     RibbonButtonType buttonType() const;
     void setButtonType(const RibbonButtonType &buttonType);
-    virtual QSize minimumSizeHint() const;
+    virtual QSize minimumSizeHint() const Q_DECL_OVERRIDE;
 protected:
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent* e);
-    virtual void mouseMoveEvent(QMouseEvent *e);
-    virtual void mousePressEvent(QMouseEvent *e);
-    virtual void mouseReleaseEvent(QMouseEvent *e);
-    virtual void leaveEvent(QEvent *e);
+    virtual void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    virtual void resizeEvent(QResizeEvent* e) Q_DECL_OVERRIDE;
+    virtual void mouseMoveEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+    virtual void mousePressEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+    virtual void mouseReleaseEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+    virtual void leaveEvent(QEvent *e) Q_DECL_OVERRIDE;
     virtual void paintLargeButton(QPaintEvent *e);
     virtual void paintSmallButton(QPaintEvent *e);
-    virtual bool hitButton(const QPoint &pos) const;
+    virtual bool hitButton(const QPoint &pos) const Q_DECL_OVERRIDE;
 
     virtual void drawIconAndLabel(QPainter& p,const QStyleOptionToolButton& opt);
 private:

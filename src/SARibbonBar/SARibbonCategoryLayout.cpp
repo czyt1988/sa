@@ -103,7 +103,7 @@ QSize SARibbonCategoryLayout::sizeHint() const
     return size;
 }
 
-QSize SARibbonCategoryLayout::minimumSize()
+QSize SARibbonCategoryLayout::minimumSize() const
 {
     return QSize(50,10);
 }

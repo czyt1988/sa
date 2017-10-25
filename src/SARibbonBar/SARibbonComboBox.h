@@ -13,7 +13,7 @@ public:
     SARibbonComboBox(QWidget *parent = Q_NULLPTR);
     QComboBox* comboBox();
 protected:
-    void initStyleOption(QStyleOption* opt);
+    void initStyleOption(QStyleOption* opt) Q_DECL_OVERRIDE;
 private:
     QComboBox* m_w;
 };
