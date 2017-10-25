@@ -11,6 +11,7 @@
 #include "SARibbonToolButton.h"
 #include "SARibbonControlButton.h"
 #include "SARibbonButtonGroupWidget.h"
+#include "SARibbonStackedWidget.h"
 SARibbonElementCreateDelegate::SARibbonElementCreateDelegate()
 {
 
@@ -64,6 +65,11 @@ SARibbonGalleryGroup *SARibbonElementCreateDelegate::createRibbonGalleryGroup(QW
 SARibbonToolButton *SARibbonElementCreateDelegate::createRibbonToolButton(QWidget *parent)
 {
     return new SARibbonToolButton(parent);
+}
+
+SARibbonStackedWidget *SARibbonElementCreateDelegate::createRibbonStackedWidget(SARibbonBar *parent)
+{
+    return new SARibbonStackedWidget(parent);
 }
 
 SARibbonControlButton *SARibbonElementCreateDelegate::createHidePannelButton(SARibbonBar *parent)

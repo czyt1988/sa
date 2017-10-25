@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     SARibbonCtrolContainer.cpp \
     SARibbonLineEdit.cpp \
     SARibbonCheckBox.cpp \
-    SARibbonButtonGroupWidget.cpp
+    SARibbonButtonGroupWidget.cpp \
+    SARibbonStackedWidget.cpp
 
 HEADERS  += \
     SARibbonBar.h \
@@ -71,7 +72,8 @@ HEADERS  += \
     SARibbonCtrolContainer.h \
     SARibbonLineEdit.h \
     SARibbonCheckBox.h \
-    SARibbonButtonGroupWidget.h
+    SARibbonButtonGroupWidget.h \
+    SARibbonStackedWidget.h
 
 RESOURCES += \
     saribbonresouce.qrc \

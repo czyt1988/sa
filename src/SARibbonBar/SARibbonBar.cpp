@@ -4,7 +4,7 @@
 #include "SARibbonTabBar.h"
 #include <QSet>
 #include <QResizeEvent>
-#include <QStackedWidget>
+#include "SARibbonStackedWidget.h"
 #include <QVariant>
 #include <QLinearGradient>
 #include <QDebug>
@@ -36,7 +36,7 @@ public:
     QColor titleTextColor;
     QAbstractButton* applitionButton;
     SARibbonTabBar* ribbonTabBar;
-    QStackedWidget* stackedContainerWidget;
+    SARibbonStackedWidget* stackedContainerWidget;
     QList<ContextCategoryManagerData> currentShowingContextCategory;
     int iconRightBorderPosition;///< 标题栏x值得最小值，在有图标和快捷启动按钮，此值都需要变化
     SARibbonControlButton* hidePannelButton;///< 隐藏面板按钮
@@ -78,7 +78,7 @@ public:
         MainClass->connect(ribbonTabBar,&QTabBar::tabBarDoubleClicked
                      ,MainClass,&SARibbonBar::onCurrentRibbonTabDoubleClicked);
         //
-        stackedContainerWidget = new QStackedWidget(MainClass);
+        stackedContainerWidget = RibbonSubElementDelegate->createRibbonStackedWidget(MainClass);
         stackedContainerWidget->setGeometry(widgetBord.left()
                                             ,ribbonTabBar->geometry().bottom()+1
                                             ,MainClass->width()-widgetBord.left()-widgetBord.right()
