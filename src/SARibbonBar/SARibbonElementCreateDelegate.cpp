@@ -10,6 +10,7 @@
 #include "SARibbonGalleryGroup.h"
 #include "SARibbonToolButton.h"
 #include "SARibbonControlButton.h"
+#include "SARibbonButtonGroupWidget.h"
 SARibbonElementCreateDelegate::SARibbonElementCreateDelegate()
 {
 
@@ -68,6 +69,14 @@ SARibbonToolButton *SARibbonElementCreateDelegate::createRibbonToolButton(QWidge
 SARibbonControlButton *SARibbonElementCreateDelegate::createHidePannelButton(SARibbonBar *parent)
 {
     SARibbonControlButton* btn = new SARibbonControlButton(parent);
-    btn->setFixedSize(16,16);
+    btn->setAutoRaise(false);
+    btn->setObjectName(QStringLiteral("SARibbonBarHidePannelButton"));
+    btn->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    btn->setFixedSize(parent->tabBarHeight()-4,parent->tabBarHeight()-4);
     return btn;
+}
+
+SARibbonButtonGroupWidget *SARibbonElementCreateDelegate::craeteButtonGroupWidget(QWidget *parent)
+{
+    return new SARibbonButtonGroupWidget(parent);
 }

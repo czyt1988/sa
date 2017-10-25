@@ -97,6 +97,15 @@ void MainWindow::createCategoryMain(SARibbonCategory *page)
     });
 
     act = new QAction(this);
+    act->setIcon(QIcon(":/icon/icon/save.png"));
+    act->setText(tr("显示隐藏按钮"));
+    act->setCheckable(true);
+    pannel->addSmallAction(act);
+    connect(act,&QAction::triggered,this,[this](bool b){
+        this->ribbonBar()->showHideModeButton(b);
+    });
+
+    act = new QAction(this);
     act->setIcon(QIcon(":/icon/icon/filter.png"));
     act->setText(tr("测试2"));
     act->setMenu(menu);

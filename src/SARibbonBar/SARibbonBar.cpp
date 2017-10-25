@@ -3,6 +3,7 @@
 #include "SARibbonApplicationButton.h"
 #include "SARibbonTabBar.h"
 #include <QSet>
+#include <QResizeEvent>
 #include <QStackedWidget>
 #include <QVariant>
 #include <QLinearGradient>
@@ -11,7 +12,8 @@
 #include "SARibbonControlButton.h"
 #include <QApplication>
 #include <QDesktopWidget>
-
+#include <SARibbonButtonGroupWidget.h>
+#include <QAction>
 class ContextCategoryManagerData
 {
 public:
@@ -38,6 +40,7 @@ public:
     QList<ContextCategoryManagerData> currentShowingContextCategory;
     int iconRightBorderPosition;///< 标题栏x值得最小值，在有图标和快捷启动按钮，此值都需要变化
     SARibbonControlButton* hidePannelButton;///< 隐藏面板按钮
+    SARibbonButtonGroupWidget* tabBarRightSizeButtonGroupWidget;///< 在tab bar旁边的button group widget
     bool isHideMode;///< 标记当前的显示模式
 
     SARibbonBarPrivate(SARibbonBar* par)
@@ -51,6 +54,7 @@ public:
         ,stackedContainerWidget(nullptr)
         ,iconRightBorderPosition(1)
         ,hidePannelButton(nullptr)
+        ,tabBarRightSizeButtonGroupWidget(nullptr)
         ,isHideMode(false)
     {
         MainClass = par;
@@ -269,9 +273,19 @@ void SARibbonBar::showHideModeButton(bool isShow)
 {
     if(isShow)
     {
+        activeTabBarRightButtonGroup();
         if(nullptr == m_d->hidePannelButton)
         {
             m_d->hidePannelButton = RibbonSubElementDelegate->createHidePannelButton(this);
+            QAction* action = new QAction(m_d->hidePannelButton);
+            action->setCheckable(true);
+            action->setChecked(isRibbonBarHideMode());
+            action->setIcon(QIcon(":/icon/icon/save.png"));
+            connect(action,&QAction::triggered,this,[this](bool on){
+                this->setHideMode(on);
+            });
+            m_d->hidePannelButton->setDefaultAction(action);
+            m_d->tabBarRightSizeButtonGroupWidget->addButton(m_d->hidePannelButton);
             update();
         }
     }
@@ -284,6 +298,8 @@ void SARibbonBar::showHideModeButton(bool isShow)
             m_d->hidePannelButton = nullptr;
         }
     }
+    QResizeEvent resizeEvent(size(),size());
+    QApplication::sendEvent(this,&resizeEvent);
 }
 ///
 /// \brief 是否显示隐藏ribbon按钮
@@ -292,6 +308,11 @@ void SARibbonBar::showHideModeButton(bool isShow)
 bool SARibbonBar::isShowHideModeButton() const
 {
     return (nullptr != m_d->hidePannelButton);
+}
+
+int SARibbonBar::tabBarHeight() const
+{
+    return m_d->tabBarHight;
 }
 
 
@@ -385,6 +406,19 @@ void SARibbonBar::onContextsCategoryPageAdded(SARibbonCategory *category)
 {
     Q_ASSERT_X(category != nullptr,"onContextsCategoryPageAdded","add nullptr page");
     m_d->stackedContainerWidget->addWidget(category);
+}
+
+void SARibbonBar::activeTabBarRightButtonGroup()
+{
+    if(nullptr == m_d->tabBarRightSizeButtonGroupWidget)
+    {
+        m_d->tabBarRightSizeButtonGroupWidget = RibbonSubElementDelegate->craeteButtonGroupWidget(this);
+        m_d->tabBarRightSizeButtonGroupWidget->setFrameShape(QFrame::NoFrame);
+    }
+    if(!m_d->tabBarRightSizeButtonGroupWidget->isVisible())
+    {
+        m_d->tabBarRightSizeButtonGroupWidget->setVisible(true);
+    }
 }
 
 void SARibbonBar::paintEvent(QPaintEvent *e)
@@ -481,23 +515,32 @@ void SARibbonBar::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e);
     int x = m_d->widgetBord.left();
+    //applitionButton 定位
     if(m_d->applitionButton)
     {
         m_d->applitionButton->move(m_d->widgetBord.left(),m_d->titleBarHight+m_d->widgetBord.top());
         x = m_d->applitionButton->geometry().right();
-        m_d->ribbonTabBar->setGeometry(x
-                                       ,m_d->titleBarHight+m_d->widgetBord.top()
-                                       ,width()-x-m_d->widgetBord.right()
-                                       ,m_d->tabBarHight);
     }
-    else
+    //tab bar 定位
+    int tabBarWidth = width()-x-m_d->widgetBord.right();
+    int tabBarY = m_d->titleBarHight+m_d->widgetBord.top();
+    if(m_d->tabBarRightSizeButtonGroupWidget && m_d->tabBarRightSizeButtonGroupWidget->isVisible())
     {
-        m_d->ribbonTabBar->setGeometry(x,m_d->titleBarHight+m_d->widgetBord.top()
-                                ,width()-x-m_d->widgetBord.right()
-                                       ,m_d->tabBarHight);
+        tabBarWidth -= (m_d->tabBarRightSizeButtonGroupWidget->sizeHint().width());
+        qDebug() << "m_d->tabBarRightSizeButtonGroupWidget->sizeHint()"<<m_d->tabBarRightSizeButtonGroupWidget->sizeHint();
     }
-
-    resizeHideModeButton(m_d->ribbonTabBar->geometry());
+    m_d->ribbonTabBar->setGeometry(x
+                                   ,tabBarY
+                                   ,tabBarWidth
+                                   ,m_d->tabBarHight);
+    //tab bar右边的按钮群
+    if(m_d->tabBarRightSizeButtonGroupWidget && m_d->tabBarRightSizeButtonGroupWidget->isVisible())
+    {
+        m_d->tabBarRightSizeButtonGroupWidget->setGeometry(m_d->ribbonTabBar->geometry().right()
+                                                           ,tabBarY
+                                                           ,m_d->tabBarRightSizeButtonGroupWidget->sizeHint().width()
+                                                           ,m_d->tabBarHight-2);
+    }
 
     if(m_d->isHideMode)
     {
@@ -514,13 +557,7 @@ void SARibbonBar::resizeEvent(QResizeEvent *e)
                                              ,height()-m_d->ribbonTabBar->geometry().bottom()-2-m_d->widgetBord.bottom());
     }
 }
-///
-/// \brief 缩小模式的控制函数指针定位
-///
-void SARibbonBar::resizeHideModeButton(const QRect &tabRect)
-{
 
-}
 
 void SARibbonBar::paintBackground(QPainter &painter)
 {

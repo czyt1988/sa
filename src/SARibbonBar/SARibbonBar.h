@@ -40,12 +40,14 @@ public:
     void setContextCategoryVisible(SARibbonContextCategory* context,bool visible);
     //设置为隐藏模式
     void setHideMode(bool isHide);
-    //
+    //当前Ribbon是否是隐藏模式
     bool isRibbonBarHideMode() const;
     //设置显示隐藏ribbon按钮
     void showHideModeButton(bool isShow = true);
     //是否显示隐藏ribbon按钮
     bool isShowHideModeButton() const;
+    //ribbon tab的高度
+    int tabBarHeight() const;
 signals:
     void applitionButtonClicked();
     //
@@ -60,9 +62,11 @@ protected slots:
     void onContextsCategoryPageAdded(SARibbonCategory* category);
 
 protected:
+    //激活tabbar右边的按钮群
+    void activeTabBarRightButtonGroup();
     void paintEvent(QPaintEvent* e) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent* e) Q_DECL_OVERRIDE;
-    virtual void resizeHideModeButton(const QRect& tabRect);
+
     virtual void paintBackground(QPainter& painter);
     virtual void paintWindowTitle(QPainter& painter, const QString &title,const QPoint& contextCategoryRegion);
     virtual void paintWindowIcon(QPainter& painter, const QIcon &icon);

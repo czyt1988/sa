@@ -1,5 +1,7 @@
 #include "SARibbonButtonGroupWidget.h"
 #include <QHBoxLayout>
+#include <QDebug>
+#include <QMargins>
 class SARibbonButtonGroupWidgetPrivate
 {
 public:
@@ -11,6 +13,8 @@ public:
     void init()
     {
         QHBoxLayout *layout = new QHBoxLayout;
+        layout->setMargin(0);
+        layout->setSpacing(0);
         Parent->setLayout(layout);
     }
 };
@@ -30,14 +34,45 @@ SARibbonButtonGroupWidget::~SARibbonButtonGroupWidget()
 void SARibbonButtonGroupWidget::addButton(QAbstractButton *btn)
 {
     layout()->addWidget(btn);
+    layout()->setAlignment(btn,Qt::AlignCenter);
 }
 
 QSize SARibbonButtonGroupWidget::sizeHint() const
 {
-    return layout()->sizeHint();
+    const QMargins& margins = layout()->contentsMargins();
+    int w = 0;
+    w += margins.right();
+    w += margins.left();
+    int h = 28;
+    const int itemCount = layout()->count();
+    for(int i=0;i<itemCount;++i)
+    {
+        QLayoutItem* item = layout()->itemAt(i);
+        QWidget* widget = item->widget();
+        if(widget)
+        {
+            w += widget->size().width() + layout()->spacing();
+        }
+    }
+    return QSize(w,h);
 }
 
 QSize SARibbonButtonGroupWidget::minimumSizeHint() const
 {
-    return layout()->minimumSize();
+    const QMargins& margins = layout()->contentsMargins();
+    int w = 0;
+    w += margins.right();
+    w += margins.left();
+    int h = 28;
+    const int itemCount = layout()->count();
+    for(int i=0;i<itemCount;++i)
+    {
+        QLayoutItem* item = layout()->itemAt(i);
+        QWidget* widget = item->widget();
+        if(widget)
+        {
+            w += widget->minimumSizeHint().width();
+        }
+    }
+    return QSize(w,h);
 }
