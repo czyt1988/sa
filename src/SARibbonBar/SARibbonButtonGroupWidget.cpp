@@ -51,7 +51,10 @@ QSize SARibbonButtonGroupWidget::sizeHint() const
         QWidget* widget = item->widget();
         if(widget)
         {
-            w += widget->size().width() + layout()->spacing();
+            if(widget->isVisible())
+            {
+                w += widget->size().width() + layout()->spacing();
+            }
         }
     }
     return QSize(w,h);
@@ -71,7 +74,10 @@ QSize SARibbonButtonGroupWidget::minimumSizeHint() const
         QWidget* widget = item->widget();
         if(widget)
         {
-            w += widget->minimumSizeHint().width();
+            if(widget->isVisible())
+            {
+                w += widget->minimumSizeHint().width();
+            }
         }
     }
     return QSize(w,h);

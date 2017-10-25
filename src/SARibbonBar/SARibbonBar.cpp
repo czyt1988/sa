@@ -552,7 +552,7 @@ void SARibbonBar::resizeEvent(QResizeEvent *e)
     else
     {
         m_d->stackedContainerWidget->setGeometry(m_d->widgetBord.left()
-                                             ,m_d->ribbonTabBar->geometry().bottom()+1
+                                             ,m_d->ribbonTabBar->geometry().bottom()+10
                                             ,width()-m_d->widgetBord.left()-m_d->widgetBord.right()
                                              ,height()-m_d->ribbonTabBar->geometry().bottom()-2-m_d->widgetBord.bottom());
     }

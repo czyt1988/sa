@@ -40,6 +40,7 @@ void SARibbonMainWindowPrivate::init()
                      "SARibbonTabBar::tab "
                      "{"
                      " background: transparent;"
+                     " border-bottom-color: #FF0000;"
                      " margin-top: 0px;"
                      " margin-right: 0px;"
                      " margin-left: 6px;"

@@ -11,7 +11,7 @@ class SARibbonElementCreateDelegate;
 class SARibbonBarPrivate;
 class QAbstractButton;
 class SARibbonTabBar;
-class SARibbonBarSubElementCreateProxy;
+
 ///
 /// \brief The SARibbonBar class
 ///
