@@ -1,10 +1,11 @@
 #ifndef SARIBBONCTROLCONTAINER_H
 #define SARIBBONCTROLCONTAINER_H
+#include "SARibbonGlobal.h"
 #include <QWidget>
 #include <QScopedPointer>
 class QStyleOption;
 class SARibbonCtrolContainerPrivate;
-class SARibbonCtrolContainer : public QWidget
+class SA_RIBBON_EXPORT SARibbonCtrolContainer : public QWidget
 {
 public:
     SARibbonCtrolContainer(QWidget *containerWidget,QWidget *parent = Q_NULLPTR);

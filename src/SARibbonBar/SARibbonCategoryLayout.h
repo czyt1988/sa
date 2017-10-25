@@ -1,12 +1,13 @@
 #ifndef SARIBBONCATEGORYLAYOUT_H
 #define SARIBBONCATEGORYLAYOUT_H
+#include "SARibbonGlobal.h"
 #include <QLayout>
 #include <QList>
 #include <QMap>
 #include "SARibbonCategory.h"
 class SARibbonReduceActionInfo;
 class SARibbonPannel;
-class SARibbonCategoryLayout : public QLayout 
+class SA_RIBBON_EXPORT SARibbonCategoryLayout : public QLayout
 {
 public:
     SARibbonCategoryLayout(SARibbonCategory *parent);

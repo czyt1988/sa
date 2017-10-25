@@ -1,6 +1,8 @@
 #ifndef SARIBBONELEMENTCREATEDELEGATE_H
 #define SARIBBONELEMENTCREATEDELEGATE_H
+#include "SARibbonGlobal.h"
 class QWidget;
+class SARibbonBar;
 class SARibbonTabBar;
 class SARibbonApplicationButton;
 class SARibbonCategory;
@@ -10,11 +12,12 @@ class SARibbonSeparatorWidget;
 class SARibbonGallery;
 class SARibbonGalleryGroup;
 class SARibbonToolButton;
+class SARibbonControlButton;
 ///
 /// \brief SARibbon的子元素创建的代理，SARibbon内部创建子元素都通过SARibbonElementCreateDelegate来创建
 /// 如果有些子元素重载，如SARibbonCategory，可以重载此类的createRibbonCategory,返回重载的类来进行重载
 ///
-class SARibbonElementCreateDelegate
+class SA_RIBBON_EXPORT SARibbonElementCreateDelegate
 {
 public:
     SARibbonElementCreateDelegate();
@@ -28,6 +31,8 @@ public:
     virtual SARibbonGallery* createRibbonGallery(QWidget* parent);
     virtual SARibbonGalleryGroup* createRibbonGalleryGroup(QWidget* parent);
     virtual SARibbonToolButton* createRibbonToolButton(QWidget* parent);
+    //创建隐藏ribbon的按钮代理函数
+    virtual SARibbonControlButton* createHidePannelButton(SARibbonBar* parent);
 };
 
 #endif // SARIBBONELEMENTCREATEDELEGATE_H

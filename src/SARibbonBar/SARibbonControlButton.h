@@ -1,8 +1,8 @@
 #ifndef SARIBBONCONTROLBUTTON_H
 #define SARIBBONCONTROLBUTTON_H
 #include <QToolButton>
-
-class SARibbonControlButton : public QToolButton
+#include "SARibbonGlobal.h"
+class SA_RIBBON_EXPORT SARibbonControlButton : public QToolButton
 {
     Q_OBJECT
 public:

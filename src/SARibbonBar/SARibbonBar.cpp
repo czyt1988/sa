@@ -8,6 +8,9 @@
 #include <QLinearGradient>
 #include <QDebug>
 #include "SARibbonElementManager.h"
+#include "SARibbonControlButton.h"
+#include <QApplication>
+#include <QDesktopWidget>
 
 class ContextCategoryManagerData
 {
@@ -34,6 +37,9 @@ public:
     QStackedWidget* stackedContainerWidget;
     QList<ContextCategoryManagerData> currentShowingContextCategory;
     int iconRightBorderPosition;///< 标题栏x值得最小值，在有图标和快捷启动按钮，此值都需要变化
+    SARibbonControlButton* hidePannelButton;///< 隐藏面板按钮
+    bool isHideMode;///< 标记当前的显示模式
+
     SARibbonBarPrivate(SARibbonBar* par)
         :titleBarHight(30)
         ,widgetBord(1,1,1,0)
@@ -44,6 +50,8 @@ public:
         ,ribbonTabBar(nullptr)
         ,stackedContainerWidget(nullptr)
         ,iconRightBorderPosition(1)
+        ,hidePannelButton(nullptr)
+        ,isHideMode(false)
     {
         MainClass = par;
     }
@@ -61,13 +69,17 @@ public:
                                   ,MainClass->width(),tabBarHight);
         MainClass->connect(ribbonTabBar,&QTabBar::currentChanged
                      ,MainClass,&SARibbonBar::onCurrentRibbonTabChanged);
-
+        MainClass->connect(ribbonTabBar,&QTabBar::tabBarClicked
+                     ,MainClass,&SARibbonBar::onCurrentRibbonTabClicked);
+        MainClass->connect(ribbonTabBar,&QTabBar::tabBarDoubleClicked
+                     ,MainClass,&SARibbonBar::onCurrentRibbonTabDoubleClicked);
         //
         stackedContainerWidget = new QStackedWidget(MainClass);
         stackedContainerWidget->setGeometry(widgetBord.left()
                                             ,ribbonTabBar->geometry().bottom()+1
                                             ,MainClass->width()-widgetBord.left()-widgetBord.right()
                                             ,MainClass->height()-ribbonTabBar->geometry().bottom()-2-widgetBord.bottom());
+        setNormalMode();
     }
 
     void setApplitionButton(QAbstractButton *btn)
@@ -96,6 +108,30 @@ public:
         }
         return false;
     }
+
+    void setHideMode()
+    {
+        if(this->isHideMode)
+        {
+            return;
+        }
+        this->isHideMode = true;
+        MainClass->setFixedHeight(ribbonTabBar->geometry().bottom());
+        this->stackedContainerWidget->setWindowFlags(Qt::Popup);
+        this->stackedContainerWidget->hide();
+    }
+
+    void setNormalMode()
+    {
+        if(!this->isHideMode)
+        {
+            return;
+        }
+        this->isHideMode = false;
+        MainClass->setFixedHeight(160);
+        this->stackedContainerWidget->setWindowFlags(Qt::Widget);
+        this->stackedContainerWidget->show();
+    }
 };
 
 
@@ -104,7 +140,6 @@ SARibbonBar::SARibbonBar(QWidget *parent):QWidget(parent)
   ,m_d(new SARibbonBarPrivate(this))
 {
     m_d->init(this);
-    setFixedHeight(160);
     connect(parent,&QWidget::windowTitleChanged,this,&SARibbonBar::onWindowTitleChanged);
     connect(parent,&QWidget::windowIconChanged,this,&SARibbonBar::onWindowIconChanged);
 }
@@ -208,6 +243,62 @@ void SARibbonBar::setContextCategoryVisible(SARibbonContextCategory *context, bo
         hideContextCategory(context);
     }
 }
+///
+/// \brief 设置为隐藏/显示模式
+/// \param isHide
+///
+void SARibbonBar::setHideMode(bool isHide)
+{
+    if(isHide)
+    {
+        m_d->setHideMode();
+    }
+    else
+    {
+        m_d->setNormalMode();
+    }
+    update();
+}
+
+///
+/// \brief 当前ribbon是否是隐藏模式
+/// \return
+///
+bool SARibbonBar::isRibbonBarHideMode() const
+{
+    return m_d->isHideMode;
+}
+///
+/// \brief 设置显示隐藏ribbon按钮
+///
+void SARibbonBar::showHideModeButton(bool isShow)
+{
+    if(isShow)
+    {
+        if(nullptr == m_d->hidePannelButton)
+        {
+            m_d->hidePannelButton = RibbonSubElementDelegate->createHidePannelButton(this);
+            update();
+        }
+    }
+    else
+    {
+        if(nullptr != m_d->hidePannelButton)
+        {
+            m_d->hidePannelButton->hide();
+            m_d->hidePannelButton->deleteLater();
+            m_d->hidePannelButton = nullptr;
+        }
+    }
+}
+///
+/// \brief 是否显示隐藏ribbon按钮
+/// \return
+///
+bool SARibbonBar::isShowHideModeButton() const
+{
+    return (nullptr != m_d->hidePannelButton);
+}
 
 
 
@@ -226,7 +317,10 @@ void SARibbonBar::onWindowIconChanged(const QIcon &icon)
     Q_UNUSED(icon);
     update();
 }
-
+///
+/// \brief ribbon tab bar改变
+/// \param index
+///
 void SARibbonBar::onCurrentRibbonTabChanged(int index)
 {
     QVariant var = m_d->ribbonTabBar->tabData(index);
@@ -239,12 +333,56 @@ void SARibbonBar::onCurrentRibbonTabChanged(int index)
     if(category)
     {
         m_d->stackedContainerWidget->setCurrentWidget(category);
+        if (isRibbonBarHideMode() && !m_d->stackedContainerWidget->isVisible())
+        {
+            m_d->stackedContainerWidget->setFocus();
+            m_d->stackedContainerWidget->show();
+        }
     }
     if(!m_d->currentShowingContextCategory.isEmpty())
     {
         repaint();
     }
     emit currentRibbonTabChanged(index);
+}
+///
+/// \brief ribbon tab bar点击
+/// \param index
+///
+void SARibbonBar::onCurrentRibbonTabClicked(int index)
+{
+    if(isRibbonBarHideMode())
+    {
+        QVariant var = m_d->ribbonTabBar->tabData(index);
+        SARibbonCategory* category = nullptr;
+        if(var.isValid())
+        {
+            quint64 p = var.value<quint64>();
+            category = (SARibbonCategory*)p;
+        }
+        if(category)
+        {
+            m_d->stackedContainerWidget->setCurrentWidget(category);
+            if (!m_d->stackedContainerWidget->isVisible())
+            {
+                m_d->stackedContainerWidget->setFocus();
+                m_d->stackedContainerWidget->show();
+            }
+        }
+        if(!m_d->currentShowingContextCategory.isEmpty())
+        {
+            repaint();
+        }
+    }
+}
+///
+/// \brief ribbon tab bar双击
+/// \param index
+///
+void SARibbonBar::onCurrentRibbonTabDoubleClicked(int index)
+{
+    qDebug() << "onCurrentRibbonTabDoubleClicked" << isRibbonBarHideMode();
+    setHideMode(!isRibbonBarHideMode());
 }
 
 
@@ -364,11 +502,30 @@ void SARibbonBar::resizeEvent(QResizeEvent *e)
                                 ,width()-x-m_d->widgetBord.right()
                                        ,m_d->tabBarHight);
     }
-    m_d->stackedContainerWidget->setGeometry(m_d->widgetBord.left()
+
+    resizeHideModeButton(m_d->ribbonTabBar->geometry());
+
+    if(m_d->isHideMode)
+    {
+        QPoint absPosition = mapToGlobal(QPoint(m_d->widgetBord.left(),m_d->ribbonTabBar->geometry().bottom()+1));
+        m_d->stackedContainerWidget->setGeometry(QRect(absPosition.x(),absPosition.y()
+                                                       ,width()-m_d->widgetBord.left()-m_d->widgetBord.right()
+                                                        ,height()-m_d->ribbonTabBar->geometry().bottom()-2-m_d->widgetBord.bottom()));
+    }
+    else
+    {
+        m_d->stackedContainerWidget->setGeometry(m_d->widgetBord.left()
                                              ,m_d->ribbonTabBar->geometry().bottom()+1
                                             ,width()-m_d->widgetBord.left()-m_d->widgetBord.right()
                                              ,height()-m_d->ribbonTabBar->geometry().bottom()-2-m_d->widgetBord.bottom());
-   // qDebug() << m_d->stackedContainerWidget->size();
+    }
+}
+///
+/// \brief 缩小模式的控制函数指针定位
+///
+void SARibbonBar::resizeHideModeButton(const QRect &tabRect)
+{
+
 }
 
 void SARibbonBar::paintBackground(QPainter &painter)

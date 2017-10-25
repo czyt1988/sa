@@ -1,4 +1,5 @@
 #include "SARibbonElementCreateDelegate.h"
+#include "SARibbonBar.h"
 #include "SARibbonApplicationButton.h"
 #include "SARibbonTabBar.h"
 #include "SARibbonCategory.h"
@@ -8,6 +9,7 @@
 #include "SARibbonGallery.h"
 #include "SARibbonGalleryGroup.h"
 #include "SARibbonToolButton.h"
+#include "SARibbonControlButton.h"
 SARibbonElementCreateDelegate::SARibbonElementCreateDelegate()
 {
 
@@ -61,4 +63,9 @@ SARibbonGalleryGroup *SARibbonElementCreateDelegate::createRibbonGalleryGroup(QW
 SARibbonToolButton *SARibbonElementCreateDelegate::createRibbonToolButton(QWidget *parent)
 {
     return new SARibbonToolButton(parent);
+}
+
+SARibbonControlButton *SARibbonElementCreateDelegate::createHidePannelButton(SARibbonBar *parent)
+{
+    return new SARibbonControlButton(parent);
 }

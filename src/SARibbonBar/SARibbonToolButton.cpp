@@ -144,7 +144,7 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
             &&
             (opt.features & QStyleOptionToolButton::MenuButtonPopup))
     {
-        qDebug() << 1;
+
         tool.rect = opt.rect;
         tool.state = bflags;
         if(opt.activeSubControls &= QStyle::SC_ToolButtonMenu)
@@ -184,7 +184,6 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
             && (opt.features & QStyleOptionToolButton::HasMenu)
             )
     {
-        qDebug() << 2;
         tool.rect = opt.rect;
         tool.state = bflags;
         if (autoRaise)
@@ -198,9 +197,12 @@ void SARibbonToolButton::paintSmallButton(QPaintEvent *e)
     }
     else if(opt.subControls & QStyle::SC_ToolButton)
     {
-        qDebug() << 3;
         tool.rect = opt.rect;
         tool.state = bflags;
+        if(opt.state & QStyle::State_Sunken)
+        {
+            tool.state &= ~QStyle::State_MouseOver;
+        }
         if (autoRaise)
         {
             style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
@@ -321,17 +323,19 @@ void SARibbonToolButton::paintLargeButton(QPaintEvent *e)
     }
     else if(opt.subControls & QStyle::SC_ToolButton)
     {
+        tool.rect = opt.rect;
+        tool.state = bflags;
         if(opt.state & QStyle::State_Sunken)
         {
-            qDebug()<<"State_Sunken"<<autoRaise;
+            tool.state &= ~QStyle::State_MouseOver;
         }
         if (autoRaise)
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonTool, &tool, &p, this);
         }
         else
         {
-            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &opt, &p, this);
+            style()->drawPrimitive(QStyle::PE_PanelButtonBevel, &tool, &p, this);
         }
     }
 
@@ -386,10 +390,10 @@ void SARibbonToolButton::drawIconAndLabel(QPainter &p, const QStyleOptionToolBut
     if(LargeButton == m_buttonType)
     {
         //绘制图标和文字
-//        QStyleOptionToolButton label = opt;
-//        QStyle::State bflags = opt.state & ~QStyle::State_Sunken;//去除图标和文字的抖动
-//        label.state = bflags;
-        style()->drawControl(QStyle::CE_ToolButtonLabel, &opt, &p, this);
+        QStyleOptionToolButton label = opt;
+        QStyle::State bflags = opt.state & ~QStyle::State_Sunken;//去除图标和文字的抖动
+        label.state = bflags;
+        style()->drawControl(QStyle::CE_ToolButtonLabel, &label, &p, this);
     }
     else
     {

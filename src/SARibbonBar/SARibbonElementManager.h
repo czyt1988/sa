@@ -1,10 +1,11 @@
 #ifndef SARIBBONELEMENTMANAGER_H
 #define SARIBBONELEMENTMANAGER_H
 #include "SARibbonElementCreateDelegate.h"
+#include "SARibbonGlobal.h"
 ///
 /// \brief 此类是一个全局单例，用于管理SARibbonElementCreateDelegate
 ///
-class SARibbonElementManager
+class SA_RIBBON_EXPORT SARibbonElementManager
 {
 protected:
     SARibbonElementManager();

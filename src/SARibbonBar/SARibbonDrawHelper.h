@@ -4,10 +4,11 @@
 #include <QStylePainter>
 #include <QStyleOption>
 #include <QPixmap>
+#include "SARibbonGlobal.h"
 ///
 /// \brief 绘图辅助
 ///
-class SARibbonDrawHelper
+class SA_RIBBON_EXPORT SARibbonDrawHelper
 {
 public:
     SARibbonDrawHelper();

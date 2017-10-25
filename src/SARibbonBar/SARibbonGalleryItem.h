@@ -1,5 +1,6 @@
 #ifndef SARIBBONGALLERYITEM_H
 #define SARIBBONGALLERYITEM_H
+#include "SARibbonGlobal.h"
 #include <QIcon>
 #include <QVariant>
 #include <QMap>
@@ -7,7 +8,7 @@ class SARibbonGalleryGroup;
 ///
 /// \brief 类似QStandardItem的GalleryItem
 ///
-class SARibbonGalleryItem
+class SA_RIBBON_EXPORT SARibbonGalleryItem
 {
 public:
     SARibbonGalleryItem();

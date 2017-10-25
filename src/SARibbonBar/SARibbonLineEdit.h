@@ -1,10 +1,11 @@
 #ifndef SARIBBONLINEEDIT_H
 #define SARIBBONLINEEDIT_H
+#include "SARibbonGlobal.h"
 #include <QLineEdit>
 #include "SARibbonCtrolContainer.h"
 
 
-class SARibbonLineEdit : public SARibbonCtrolContainer
+class SA_RIBBON_EXPORT SARibbonLineEdit : public SARibbonCtrolContainer
 {
 public:
     SARibbonLineEdit(QWidget *parent = Q_NULLPTR);

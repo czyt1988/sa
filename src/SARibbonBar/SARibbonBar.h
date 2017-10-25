@@ -6,6 +6,7 @@
 #include "SARibbonCategory.h"
 #include "SARibbonContextCategory.h"
 #include <QScopedPointer>
+
 class SARibbonElementCreateDelegate;
 class SARibbonBarPrivate;
 class QAbstractButton;
@@ -37,21 +38,31 @@ public:
     void hideContextCategory(SARibbonContextCategory* context);
     //设置上下文标签的显示或隐藏
     void setContextCategoryVisible(SARibbonContextCategory* context,bool visible);
-
+    //设置为隐藏模式
+    void setHideMode(bool isHide);
+    //
+    bool isRibbonBarHideMode() const;
+    //设置显示隐藏ribbon按钮
+    void showHideModeButton(bool isShow = true);
+    //是否显示隐藏ribbon按钮
+    bool isShowHideModeButton() const;
 signals:
     void applitionButtonClicked();
     //
     void currentRibbonTabChanged(int index);
 
-private slots:
+protected slots:
     void onWindowTitleChanged(const QString &title);
     void onWindowIconChanged(const QIcon &icon);
-    void onCurrentRibbonTabChanged(int index);
+    virtual void onCurrentRibbonTabChanged(int index);
+    virtual void onCurrentRibbonTabClicked(int index);
+    virtual void onCurrentRibbonTabDoubleClicked(int index);
     void onContextsCategoryPageAdded(SARibbonCategory* category);
 
 protected:
     void paintEvent(QPaintEvent* e);
     void resizeEvent(QResizeEvent* e);
+    virtual void resizeHideModeButton(const QRect& tabRect);
     virtual void paintBackground(QPainter& painter);
     virtual void paintWindowTitle(QPainter& painter, const QString &title,const QPoint& contextCategoryRegion);
     virtual void paintWindowIcon(QPainter& painter, const QIcon &icon);

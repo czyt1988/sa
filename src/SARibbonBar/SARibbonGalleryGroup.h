@@ -1,5 +1,6 @@
 #ifndef SARIBBONGALLERYGROUP_H
 #define SARIBBONGALLERYGROUP_H
+#include "SARibbonGlobal.h"
 #include <QList>
 #include "SARibbonGalleryItem.h"
 #include <QListView>
@@ -8,7 +9,7 @@
 ///
 /// \brief SARibbonGalleryGroup对应的显示代理
 ///
-class SARibbonGalleryGroupItemDelegate : public QStyledItemDelegate
+class SA_RIBBON_EXPORT SARibbonGalleryGroupItemDelegate : public QStyledItemDelegate
 {
 public:
     SARibbonGalleryGroupItemDelegate(SARibbonGalleryGroup* group,QObject *parent = Q_NULLPTR);

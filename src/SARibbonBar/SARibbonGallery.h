@@ -1,10 +1,11 @@
 #ifndef SARIBBONGALLERY_H
 #define SARIBBONGALLERY_H
+#include "SARibbonGlobal.h"
 #include <QFrame>
 #include "SARibbonGalleryGroup.h"
 class QVBoxLayout;
 class SARibbonGalleryPrivate;
-class SARibbonGallery : public QFrame
+class SA_RIBBON_EXPORT SARibbonGallery : public QFrame
 {
     Q_OBJECT
 public:
