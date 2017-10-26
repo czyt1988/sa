@@ -1,6 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#ifdef SA_USE_RIBBON_UI
+#include "SARibbonMainWindow.h"
+
+#include <QScopedPointer>
+class MainWindowPrivate;
+#else
+namespace Ui {
+class MainWindow;
+}
+#endif
 #include <memory>
 #include <QMainWindow>
 //#include "SAChartSupport.h"
@@ -15,8 +25,6 @@
 #include <QToolButton>
 #include <QAction>
 #include <QSettings>
-
-
 #include "SAResourDefine.h"
 #include <SAMdiSubWindow.h>
 
@@ -32,9 +40,7 @@
 #include "SAPluginManager.h"
 #include "SAUIInterface.h"
 #include "SAAbstractRegionSelectEditor.h"
-namespace Ui {
-class MainWindow;
-}
+
 
 
 class QProgressBar;
@@ -59,7 +65,11 @@ class SARectRegionSelectEditor;
 /// \brief The MainWindow class
 /// \todo 更改project model
 ///
+#ifdef SA_USE_RIBBON_UI
+class MainWindow : public SARibbonMainWindow
+#else
 class MainWindow : public QMainWindow
+#endif
 {
     Q_OBJECT
     
@@ -434,7 +444,11 @@ private:
     //============================================================
 
 private:
+#ifdef SA_USE_RIBBON_UI
+    QScopedPointer<MainWindowPrivate> ui;
+#else
     Ui::MainWindow *ui;
+#endif
     SAUI* uiInterface;
     progressStateWidget* ui_status_progress;///< 状态栏上的进度信息
     SAInformationStatusWidget* ui_status_info;///< 状态栏上的特殊信息

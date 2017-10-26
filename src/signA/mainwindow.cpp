@@ -1,7 +1,12 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <functional>
 
+#ifdef SA_USE_RIBBON_UI
+#include "MainWindowPrivate.h"
+#else
+#include "ui_mainwindow.h"
+#endif
+
+#include <functional>
 #include <QElapsedTimer>
 //#include "TxtQuickImportWizDlg.h"
 //----------Qt---------------
@@ -128,8 +133,13 @@ void debug();
 
 
 MainWindow::MainWindow(QWidget *parent) :
+#ifdef SA_USE_RIBBON_UI
+    SARibbonMainWindow(parent),
+    ui(new MainWindowPrivate)
+#else
     QMainWindow(parent),
     ui(new Ui::MainWindow)
+#endif
   ,uiInterface(new SAUI(this))
   ,ui_status_progress(nullptr)
   ,ui_status_info(nullptr)
@@ -140,7 +150,11 @@ MainWindow::MainWindow(QWidget *parent) :
   ,m_nUserChartCount(0)
   ,m_lastShowFigureWindow(nullptr)
 {
+#ifdef SA_USE_RIBBON_UI
+    ui->init();
+#else
     ui->setupUi(this);
+#endif
     saAddLog("start app");
     saStartElapsed("start main app init");
     QWidget* p = takeCentralWidget();
@@ -570,7 +584,9 @@ void MainWindow::onActionProjectSettingTriggered()
 MainWindow::~MainWindow()
 {
     saveSetting();
+#ifndef SA_USE_RIBBON_UI
     delete ui;
+#endif
 }
 
 void MainWindow::loadSetting()
@@ -1514,7 +1530,7 @@ void MainWindow::raiseMessageInfoDock()
 ///
 void MainWindow::addDataImportPluginAction(QAction *action)
 {
-    ui->menu_import->addAction(action);
+    ui->menuImport->addAction(action);
 }
 ///
 /// \brief 添加导入数据插件菜单
@@ -1523,7 +1539,7 @@ void MainWindow::addDataImportPluginAction(QAction *action)
 ///
 QAction *MainWindow::addDataImportPluginMenu(QMenu *menu)
 {
-    return ui->menu_import->addMenu(menu);
+    return ui->menuImport->addMenu(menu);
 }
 ///
 /// \brief 把菜单添加到分析功能的菜单中
@@ -1532,7 +1548,7 @@ QAction *MainWindow::addDataImportPluginMenu(QMenu *menu)
 ///
 QAction *MainWindow::addAnalysisPluginMenu(QMenu *menu)
 {
-    return ui->menu_Analysis->addMenu(menu);
+    return ui->menuAnalysis->addMenu(menu);
 }
 
 

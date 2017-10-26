@@ -22,6 +22,7 @@ OTHER_FILES += readme.md
 
 DESTDIR = ../bin
 DEFINES -= SA_TDMS
+DEFINES += SA_USE_RIBBON_UI
 
 TARGET = signA
 TEMPLATE = app
@@ -41,7 +42,8 @@ SOURCES += main.cpp\
     SAInformationStatusWidget.cpp \
     CurveSelectDialog.cpp \
     SAPluginManager.cpp \
-    SAUI.cpp
+    SAUI.cpp \
+    MainWindowPrivate.cpp
 
 HEADERS  += mainwindow.h \
     DebugInfo.h \
@@ -56,7 +58,8 @@ HEADERS  += mainwindow.h \
     CurveSelectDialog.h \
     SAPluginManager.h \
     SAUI.h \
-    SAResourDefine.h
+    SAResourDefine.h \
+    MainWindowPrivate.h
 
 
 
@@ -89,6 +92,8 @@ include($$PWD/../signALib/signALib.pri)
 include($$PWD/../signAChart/signAChart.pri)
 #sa signACommonUI support
 include($$PWD/../signACommonUI/signACommonUI.pri)
+#sa ribbon support
+include($$PWD/../SARibbonBar/SARibbon/SARibbonBar.pri)
 #}
 
 
