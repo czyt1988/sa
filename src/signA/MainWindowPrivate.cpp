@@ -448,19 +448,20 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_DataFeature->setWidget(dockWidgetContents_2);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_DataFeature);
-    toolBar_chart = new QToolBar(mainWinowPtr);
-    toolBar_chart->setObjectName(QStringLiteral("toolBar_chart"));
-    toolBar_chart->setIconSize(QSize(24, 24));
-    toolBar_chart->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_chart);
-    toolBar_chartSet = new QToolBar(mainWinowPtr);
-    toolBar_chartSet->setObjectName(QStringLiteral("toolBar_chartSet"));
-    toolBar_chartSet->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_chartSet);
-    toolBar_plot = new QToolBar(mainWinowPtr);
-    toolBar_plot->setObjectName(QStringLiteral("toolBar_plot"));
-    toolBar_plot->setToolButtonStyle(Qt::ToolButtonFollowStyle);
-    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_plot);
+
+//    toolBar_chart = new QToolBar(mainWinowPtr);
+//    toolBar_chart->setObjectName(QStringLiteral("toolBar_chart"));
+//    toolBar_chart->setIconSize(QSize(24, 24));
+//    toolBar_chart->setToolButtonStyle(Qt::ToolButtonIconOnly);
+//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_chart);
+//    toolBar_chartSet = new QToolBar(mainWinowPtr);
+//    toolBar_chartSet->setObjectName(QStringLiteral("toolBar_chartSet"));
+//    toolBar_chartSet->setToolButtonStyle(Qt::ToolButtonIconOnly);
+//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_chartSet);
+//    toolBar_plot = new QToolBar(mainWinowPtr);
+//    toolBar_plot->setObjectName(QStringLiteral("toolBar_plot"));
+//    toolBar_plot->setToolButtonStyle(Qt::ToolButtonFollowStyle);
+//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_plot);
     dockWidget_windowList = new QDockWidget(mainWinowPtr);
     dockWidget_windowList->setObjectName(QStringLiteral("dockWidget_windowList"));
     dockWidgetContents_4 = new QWidget();
@@ -627,9 +628,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_plotSet->setWidget(dockWidgetContents);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_plotSet);
-    toolBarChartTools = new QToolBar(mainWinowPtr);
-    toolBarChartTools->setObjectName(QStringLiteral("toolBarChartTools"));
-    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBarChartTools);
+//    toolBarChartTools = new QToolBar(mainWinowPtr);
+//    toolBarChartTools->setObjectName(QStringLiteral("toolBarChartTools"));
+//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBarChartTools);
 
 //    menuBar->addAction(menuFile->menuAction());
 //    menuBar->addAction(menuEdit->menuAction());
@@ -693,20 +694,20 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuEdit->addAction(actionRedo);
     menuTool->addAction(actionProjectSetting);
 
-    toolBar_chart->addAction(actionPickCurveToData);
-    toolBar_chart->addAction(actionInRangDataRemove);
-    toolBar_chart->addAction(actionOutRangDataRemove);
-    toolBar_chartSet->addAction(actionEnableChartPicker);
-    toolBar_chartSet->addAction(actionEnableChartPanner);
-    toolBar_chartSet->addAction(actionEnableChartZoom);
-    toolBar_chartSet->addAction(actionXYDataPicker);
-    toolBar_chartSet->addAction(actionShowGrid);
-    toolBar_chartSet->addAction(actionShowLegend);
-    toolBar_chartSet->addAction(actionLegendPanel);
-    toolBar_chartSet->addAction(actionChartSet);
-    toolBar_plot->addAction(actionNewChart);
-    toolBar_plot->addAction(actionNewTrend);
-    toolBar_plot->addSeparator();
+//    toolBar_chart->addAction(actionPickCurveToData);
+//    toolBar_chart->addAction(actionInRangDataRemove);
+//    toolBar_chart->addAction(actionOutRangDataRemove);
+//    toolBar_chartSet->addAction(actionEnableChartPicker);
+//    toolBar_chartSet->addAction(actionEnableChartPanner);
+//    toolBar_chartSet->addAction(actionEnableChartZoom);
+//    toolBar_chartSet->addAction(actionXYDataPicker);
+//    toolBar_chartSet->addAction(actionShowGrid);
+//    toolBar_chartSet->addAction(actionShowLegend);
+//    toolBar_chartSet->addAction(actionLegendPanel);
+//    toolBar_chartSet->addAction(actionChartSet);
+//    toolBar_plot->addAction(actionNewChart);
+//    toolBar_plot->addAction(actionNewTrend);
+//    toolBar_plot->addSeparator();
 
     retranslateUi(mainWinowPtr);
     QObject::connect(actionQuite, SIGNAL(triggered()), mainWinowPtr, SLOT(close()));
@@ -718,7 +719,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 }
 
 
-void MainWindowPrivate::retranslateUi(QMainWindow *mainWinowPtr)
+void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 {
     mainWinowPtr->setWindowTitle(QApplication::translate("MainWindow", "signA-\344\277\241\345\217\267\345\244\204\347\220\206", 0));
     actionOpen->setText(QApplication::translate("MainWindow", "\346\211\223\345\274\200\346\226\207\344\273\266", 0));
@@ -823,7 +824,6 @@ void MainWindowPrivate::retranslateUi(QMainWindow *mainWinowPtr)
     menuFile->setTitle(QApplication::translate("MainWindow", "\346\226\207\344\273\266", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "\345\257\274\345\207\272", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "\345\257\274\345\205\245", 0));
-    menuWindow->setTitle(QApplication::translate("MainWindow", "\347\252\227\345\217\243", 0));
     menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "\347\252\227\345\217\243", 0));
     menuAnalysis->setTitle(QApplication::translate("MainWindow", "\345\210\206\346\236\220", 0));
     menuLineChart->setTitle(QApplication::translate("MainWindow", "\345\233\276\350\241\250", 0));
@@ -840,9 +840,9 @@ void MainWindowPrivate::retranslateUi(QMainWindow *mainWinowPtr)
     menuEdit->setTitle(QApplication::translate("MainWindow", "\347\274\226\350\276\221", 0));
     menuTool->setTitle(QApplication::translate("MainWindow", "Tool", 0));
     dockWidget_DataFeature->setWindowTitle(QApplication::translate("MainWindow", "\346\225\260\346\215\256\347\211\271\346\200\247", 0));
-    toolBar_chart->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
-    toolBar_chartSet->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
-    toolBar_plot->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
+//    toolBar_chart->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
+//    toolBar_chartSet->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
+//    toolBar_plot->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
     dockWidget_windowList->setWindowTitle(QApplication::translate("MainWindow", "\345\255\220\347\252\227\345\217\243\345\210\227\350\241\250", 0));
     dockWidget_valueManage->setWindowTitle(QApplication::translate("MainWindow", "\345\217\230\351\207\217\347\256\241\347\220\206", 0));
     dockWidget_plotLayer->setWindowTitle(QApplication::translate("MainWindow", "\345\233\276\345\261\202", 0));
@@ -854,7 +854,7 @@ void MainWindowPrivate::retranslateUi(QMainWindow *mainWinowPtr)
     dockWidget_valueViewer->setWindowTitle(QApplication::translate("MainWindow", "\345\217\230\351\207\217\346\225\260\346\215\256\351\242\204\350\247\210", 0));
     dockWidget_message->setWindowTitle(QApplication::translate("MainWindow", "\344\277\241\346\201\257\347\252\227\345\217\243", 0));
     dockWidget_plotSet->setWindowTitle(QApplication::translate("MainWindow", "plot config", 0));
-    toolBarChartTools->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
+//    toolBarChartTools->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 
     mainRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Main", 0));
     mainCategoryFilePannel->setWindowTitle(QApplication::translate("MainWindow", "File", 0));

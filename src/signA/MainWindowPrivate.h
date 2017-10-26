@@ -155,9 +155,9 @@ public:
         QWidget *dockWidgetContents_2;
         QVBoxLayout *verticalLayout_2;
         SADataFeatureWidget *dataFeatureWidget;
-        QToolBar *toolBar_chart;
-        QToolBar *toolBar_chartSet;
-        QToolBar *toolBar_plot;
+//        QToolBar *toolBar_chart;
+//        QToolBar *toolBar_chartSet;
+//        QToolBar *toolBar_plot;
         QDockWidget *dockWidget_windowList;
         QWidget *dockWidgetContents_4;
         QVBoxLayout *verticalLayout_6;
@@ -192,7 +192,7 @@ public:
         QWidget *dockWidgetContents;
         QVBoxLayout *verticalLayout;
         SAFiugreSetWidget *figureSetWidget;
-        QToolBar *toolBarChartTools;
+        //QToolBar *toolBarChartTools;
 
     MainWindowPrivate(MainWindow* p);
     void init();

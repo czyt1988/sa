@@ -135,7 +135,7 @@ void debug();
 MainWindow::MainWindow(QWidget *parent) :
 #ifdef SA_USE_RIBBON_UI
     SARibbonMainWindow(parent),
-    ui(new MainWindowPrivate)
+    ui(new MainWindowPrivate(this))
 #else
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -150,13 +150,13 @@ MainWindow::MainWindow(QWidget *parent) :
   ,m_nUserChartCount(0)
   ,m_lastShowFigureWindow(nullptr)
 {
+    saAddLog("start app");
+    saStartElapsed("start main app init");
 #ifdef SA_USE_RIBBON_UI
     ui->init();
 #else
     ui->setupUi(this);
 #endif
-    saAddLog("start app");
-    saStartElapsed("start main app init");
     QWidget* p = takeCentralWidget();
     if(p)
         delete p;//移除中央窗口
@@ -167,7 +167,9 @@ MainWindow::MainWindow(QWidget *parent) :
     initProcess();
     saElapsed("init ui and menu");
     saStartElapsed("start load plugin and theme");
+#ifndef SA_USE_RIBBON_UI
     ui->toolBar_chartSet->setEnabled(false);
+#endif
     initPlugin();
     initTheme();
     saElapsed("loaded plugins and themes");
@@ -368,7 +370,7 @@ void MainWindow::initUI()
     connect(ui->actionEnableChartZoom,&QAction::triggered
             ,this,&MainWindow::onActionEnableChartZoom);
 
-
+#ifndef SA_USE_RIBBON_UI
     QToolButton* toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionEnableChartZoom));
     if(toolbtn)
     {
@@ -380,6 +382,7 @@ void MainWindow::initUI()
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m1);
     }
+#endif
     connect(ui->actionZoomBase,&QAction::triggered
             ,this,&MainWindow::onActionChartZoomToBase);
     connect(ui->actionChartZoomReset,&QAction::triggered
@@ -431,7 +434,7 @@ void MainWindow::initUI()
     connect(ui->actionYDataPicker,&QAction::triggered,Lambda_SaChartEnable(YDataPicker));
     ui->actionXYDataPicker->setCheckable(true);
     connect(ui->actionXYDataPicker,&QAction::triggered,Lambda_SaChartEnable(XYDataPicker));
-
+#ifndef SA_USE_RIBBON_UI
     toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionXYDataPicker));
     if(toolbtn)
     {
@@ -440,10 +443,11 @@ void MainWindow::initUI()
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m);
     }
-
+#endif
     //网格
     ui->actionShowGrid->setCheckable(true);
     connect(ui->actionShowGrid,&QAction::triggered,Lambda_SaChartEnable(Grid));
+#ifndef SA_USE_RIBBON_UI
     toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionShowGrid));
     if(toolbtn)
     {
@@ -455,7 +459,7 @@ void MainWindow::initUI()
         toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
         toolbtn->setMenu(m1);
     }
-
+#endif
     //显示水平网格
     ui->actionShowHGrid->setCheckable(true);
     connect(ui->actionShowHGrid,&QAction::triggered,Lambda_SaChartEnable(GridY));
@@ -1221,7 +1225,9 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
         return;
     if(m_lastActiveWnd == arg1)
         return;
+#ifndef SA_USE_RIBBON_UI
     ui->toolBar_chartSet->setEnabled(true);
+#endif
     m_lastActiveWnd = arg1;
 
     SAFigureWindow* fig = getFigureWidgetFromMdiSubWindow(arg1);
