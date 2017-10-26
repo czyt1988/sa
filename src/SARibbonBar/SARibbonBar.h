@@ -11,7 +11,7 @@ class SARibbonElementCreateDelegate;
 class SARibbonBarPrivate;
 class QAbstractButton;
 class SARibbonTabBar;
-
+class SARibbonButtonGroupWidget;
 ///
 /// \brief The SARibbonBar class
 ///
@@ -48,6 +48,8 @@ public:
     bool isShowHideModeButton() const;
     //ribbon tab的高度
     int tabBarHeight() const;
+    //激活tabbar右边的按钮群
+    SARibbonButtonGroupWidget* activeTabBarRightButtonGroup();
 signals:
     void applitionButtonClicked();
     //
@@ -62,8 +64,6 @@ protected slots:
     void onContextsCategoryPageAdded(SARibbonCategory* category);
 
 protected:
-    //激活tabbar右边的按钮群
-    void activeTabBarRightButtonGroup();
     void paintEvent(QPaintEvent* e) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent* e) Q_DECL_OVERRIDE;
 

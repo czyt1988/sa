@@ -35,6 +35,8 @@ void SARibbonButtonGroupWidget::addButton(QAbstractButton *btn)
 {
     layout()->addWidget(btn);
     layout()->setAlignment(btn,Qt::AlignCenter);
+    btn->setVisible(true);
+    update();
 }
 
 QSize SARibbonButtonGroupWidget::sizeHint() const

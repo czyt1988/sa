@@ -42,7 +42,7 @@ public:
     SARibbonControlButton* hidePannelButton;///< 隐藏面板按钮
     SARibbonButtonGroupWidget* tabBarRightSizeButtonGroupWidget;///< 在tab bar旁边的button group widget
     bool isHideMode;///< 标记当前的显示模式
-
+    QColor tabBarBaseLineColor;///< tabbar底部的线条颜色
     SARibbonBarPrivate(SARibbonBar* par)
         :titleBarHight(30)
         ,widgetBord(1,1,1,0)
@@ -56,6 +56,7 @@ public:
         ,hidePannelButton(nullptr)
         ,tabBarRightSizeButtonGroupWidget(nullptr)
         ,isHideMode(false)
+        ,tabBarBaseLineColor(186,201,219)
     {
         MainClass = par;
     }
@@ -68,6 +69,7 @@ public:
                      ,MainClass,&SARibbonBar::applitionButtonClicked);
         //
         ribbonTabBar = RibbonSubElementDelegate->createRibbonTabBar(par);
+        ribbonTabBar->setDrawBase(false);
         ribbonTabBar->setGeometry(applitionButton->geometry().right()
                                   ,titleBarHight+widgetBord.top()
                                   ,MainClass->width(),tabBarHight);
@@ -408,7 +410,7 @@ void SARibbonBar::onContextsCategoryPageAdded(SARibbonCategory *category)
     m_d->stackedContainerWidget->addWidget(category);
 }
 
-void SARibbonBar::activeTabBarRightButtonGroup()
+SARibbonButtonGroupWidget *SARibbonBar::activeTabBarRightButtonGroup()
 {
     if(nullptr == m_d->tabBarRightSizeButtonGroupWidget)
     {
@@ -419,7 +421,9 @@ void SARibbonBar::activeTabBarRightButtonGroup()
     {
         m_d->tabBarRightSizeButtonGroupWidget->setVisible(true);
     }
+    return m_d->tabBarRightSizeButtonGroupWidget;
 }
+
 
 void SARibbonBar::paintEvent(QPaintEvent *e)
 {
@@ -527,7 +531,6 @@ void SARibbonBar::resizeEvent(QResizeEvent *e)
     if(m_d->tabBarRightSizeButtonGroupWidget && m_d->tabBarRightSizeButtonGroupWidget->isVisible())
     {
         tabBarWidth -= (m_d->tabBarRightSizeButtonGroupWidget->sizeHint().width());
-        qDebug() << "m_d->tabBarRightSizeButtonGroupWidget->sizeHint()"<<m_d->tabBarRightSizeButtonGroupWidget->sizeHint();
     }
     m_d->ribbonTabBar->setGeometry(x
                                    ,tabBarY
@@ -552,7 +555,7 @@ void SARibbonBar::resizeEvent(QResizeEvent *e)
     else
     {
         m_d->stackedContainerWidget->setGeometry(m_d->widgetBord.left()
-                                             ,m_d->ribbonTabBar->geometry().bottom()+10
+                                             ,m_d->ribbonTabBar->geometry().bottom()+1
                                             ,width()-m_d->widgetBord.left()-m_d->widgetBord.right()
                                              ,height()-m_d->ribbonTabBar->geometry().bottom()-2-m_d->widgetBord.bottom());
     }
@@ -564,6 +567,13 @@ void SARibbonBar::paintBackground(QPainter &painter)
     painter.save();
     painter.setBrush(m_d->ribbonBarBackground);
     painter.drawRect(rect());
+    //在tabbar下绘制一条线
+    const int lineY = m_d->ribbonTabBar->geometry().bottom();
+    QPen pen(m_d->tabBarBaseLineColor);
+    pen.setWidth(1);
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
+    painter.drawLine(QPoint(m_d->widgetBord.left(),lineY),QPoint(width() - m_d->widgetBord.right(),lineY));
     painter.restore();
 }
 
