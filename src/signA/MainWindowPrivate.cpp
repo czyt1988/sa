@@ -1,6 +1,6 @@
 #include "MainWindowPrivate.h"
 #include "mainwindow.h"
-
+#include <QDebug>
 MainWindowPrivate::MainWindowPrivate(MainWindow* p)
     :Parent(p)
 {
@@ -280,15 +280,24 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSingleSelection->setCheckable(true);
     actionSingleSelection->setChecked(true);
     actionSingleSelection->setMenuRole(QAction::TextHeuristicRole);
+    actionSingleSelection->setIcon(QIcon(":/icons/icons/SingleSelection.png"));
+
     actionAdditionalSelection = new QAction(mainWinowPtr);
     actionAdditionalSelection->setObjectName(QStringLiteral("actionAdditionalSelection"));
     actionAdditionalSelection->setCheckable(true);
+    actionAdditionalSelection->setIcon(QIcon(":/icons/icons/AdditionalSelection.png"));
+
     actionIntersectionSelection = new QAction(mainWinowPtr);
     actionIntersectionSelection->setObjectName(QStringLiteral("actionIntersectionSelection"));
     actionIntersectionSelection->setCheckable(true);
+    actionIntersectionSelection->setIcon(QIcon(":/icons/icons/IntersectionSelection.png"));
+
     actionSubtractionSelection = new QAction(mainWinowPtr);
     actionSubtractionSelection->setObjectName(QStringLiteral("actionSubtractionSelection"));
     actionSubtractionSelection->setCheckable(true);
+    actionSubtractionSelection->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
+
+
     centralWidget = new QWidget(mainWinowPtr);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
     centralWidget->setMaximumSize(QSize(0, 0));
@@ -395,7 +404,31 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     //Selector Editor
     operateCategorySelectEditorPannel = operateRibbonCategory->addPannel(QStringLiteral("Select Editor"));
     operateCategorySelectEditorPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
+    ribbonButtonStartRectSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartRectSelect);
+    ribbonButtonStartEllipseSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartEllipseSelect);
+    ribbonButtonStartPolygonSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartPolygonSelect);
+    ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget();
+    ribbonButtonSingleSelection = new SARibbonToolButton(actionSingleSelection);
+    ribbonButtonSingleSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ribbonButtonSingleSelection->setFixedSize(26,26);
+    ribbonButtonAdditionalSelection = new SARibbonToolButton(actionAdditionalSelection);
+    ribbonButtonAdditionalSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ribbonButtonAdditionalSelection->setFixedSize(26,26);
+    ribbonButtonSubtractionSelection = new SARibbonToolButton(actionSubtractionSelection);
+    ribbonButtonSubtractionSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ribbonButtonSubtractionSelection->setFixedSize(26,26);
+    ribbonButtonIntersectionSelection = new SARibbonToolButton(actionIntersectionSelection);
+    ribbonButtonIntersectionSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ribbonButtonIntersectionSelection->setFixedSize(26,26);
 
+    ribbonButtonGroupSelectionMode->addButton(ribbonButtonSingleSelection);
+    ribbonButtonGroupSelectionMode->addButton(ribbonButtonAdditionalSelection);
+    ribbonButtonGroupSelectionMode->addButton(ribbonButtonSubtractionSelection);
+    ribbonButtonGroupSelectionMode->addButton(ribbonButtonIntersectionSelection);
+    operateCategorySelectEditorPannel->addWidget(ribbonButtonGroupSelectionMode
+                                                 ,0,3);
+    qDebug() << "ribbonButtonSingleSelection"<<ribbonButtonSingleSelection->isVisible();
+    qDebug() << "ribbonButtonGroupSelectionMode"<<ribbonButtonGroupSelectionMode->sizeHint();
     //! View Category Page
     viewRibbonCategory = menuBar->addCategoryPage(QStringLiteral("View"));
     viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
@@ -414,7 +447,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet->addAction(actionValueManagerDock);
     menuWindowsViewSet->addAction(actionValueViewerDock);
     ribbonButtonAllDock->setMenu(menuWindowsViewSet);
-    viewCategoryWindowPannel->addSeparator();
     ribbonButtonSetDefalutDockPos = viewCategoryWindowPannel->addLargeAction(actionSetDefalutDockPos);
     //sub window mode
     windowModeCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Sub Window Mode"));

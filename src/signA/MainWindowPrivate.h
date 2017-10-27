@@ -29,6 +29,7 @@
 #include "SARibbonPannel.h"
 #include "SARibbonToolButton.h"
 #include "SARibbonMenu.h"
+#include "SARibbonButtonGroupWidget.h"
 class MainWindow;
 class MainWindowPrivate
 {
@@ -109,9 +110,17 @@ public:
 
         SARibbonMenu *menuFile;
         SARibbonMenu *menuLineChart;
-        //!Chart Operate
+        //! operate Category Page
         SARibbonCategory* operateRibbonCategory;
         SARibbonPannel* operateCategorySelectEditorPannel;
+        SARibbonToolButton* ribbonButtonStartRectSelect;
+        SARibbonToolButton* ribbonButtonStartEllipseSelect;
+        SARibbonToolButton* ribbonButtonStartPolygonSelect;
+        SARibbonToolButton* ribbonButtonSingleSelection;
+        SARibbonToolButton* ribbonButtonAdditionalSelection;
+        SARibbonToolButton* ribbonButtonSubtractionSelection;
+        SARibbonToolButton* ribbonButtonIntersectionSelection;
+        SARibbonButtonGroupWidget* ribbonButtonGroupSelectionMode;
         //!View Category Page
         SARibbonCategory* viewRibbonCategory;
         SARibbonPannel* viewCategoryWindowPannel;

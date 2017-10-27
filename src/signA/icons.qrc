@@ -46,6 +46,10 @@
         <file>icons/inRangDataRemove.png</file>
         <file>icons/outRangDataRemove.png</file>
         <file>icons/pickCurveToData.png</file>
+        <file>icons/IntersectionSelection.png</file>
+        <file>icons/SingleSelection.png</file>
+        <file>icons/SubtractionSelection.png</file>
+        <file>icons/AdditionalSelection.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>
