@@ -31,135 +31,112 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionOpen = new QAction(mainWinowPtr);
     actionOpen->setObjectName(QStringLiteral("actionOpen"));
-    QIcon icon;
-    icon.addFile(QStringLiteral(":/icons/icons/open.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionOpen->setIcon(icon);
+    actionOpen->setIcon(QIcon(":/icons/icons/open.png"));
+
     actionWindowCascade = new QAction(mainWinowPtr);
     actionWindowCascade->setObjectName(QStringLiteral("actionWindowCascade"));
-    QIcon icon1;
-    icon1.addFile(QStringLiteral(":/icons/icons/windowCascade.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionWindowCascade->setIcon(icon1);
+    actionWindowCascade->setIcon(QIcon(":/icons/icons/windowCascade.png"));
+
     actionWindowTile = new QAction(mainWinowPtr);
     actionWindowTile->setObjectName(QStringLiteral("actionWindowTile"));
-    QIcon icon2;
-    icon2.addFile(QStringLiteral(":/icons/icons/windowTile.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionWindowTile->setIcon(icon2);
+    actionWindowTile->setIcon(QIcon(":/icons/icons/windowTile.png"));
+
     actionWindowMode = new QAction(mainWinowPtr);
     actionWindowMode->setObjectName(QStringLiteral("actionWindowMode"));
     actionWindowMode->setCheckable(true);
     actionWindowMode->setChecked(true);
-    QIcon icon3;
-    icon3.addFile(QStringLiteral(":/icons/icons/windowMode.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionWindowMode->setIcon(icon3);
+    actionWindowMode->setIcon(QIcon(":/icons/icons/windowMode.png"));
+
     actionTabMode = new QAction(mainWinowPtr);
     actionTabMode->setObjectName(QStringLiteral("actionTabMode"));
     actionTabMode->setCheckable(true);
-    QIcon icon4;
-    icon4.addFile(QStringLiteral(":/icons/icons/tabMode.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionTabMode->setIcon(icon4);
+    actionTabMode->setIcon(QIcon(":/icons/icons/tabMode.png"));
+
     actionSave = new QAction(mainWinowPtr);
     actionSave->setObjectName(QStringLiteral("actionSave"));
     actionSave->setEnabled(true);
-    QIcon icon5;
-    icon5.addFile(QStringLiteral(":/icons/icons/save.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionSave->setIcon(icon5);
+    actionSave->setIcon(QIcon(":/icons/icons/save.png"));
+
     actionQuite = new QAction(mainWinowPtr);
     actionQuite->setObjectName(QStringLiteral("actionQuite"));
-    QIcon icon6;
-    icon6.addFile(QStringLiteral(":/icons/icons/quit.svg"), QSize(), QIcon::Normal, QIcon::Off);
-    actionQuite->setIcon(icon6);
+    actionQuite->setIcon(QIcon(":/icons/icons/quit.svg"));
+
     actionDataFeatureDock = new QAction(mainWinowPtr);
     actionDataFeatureDock->setObjectName(QStringLiteral("actionDataFeatureDock"));
-    QIcon icon7;
-    icon7.addFile(QStringLiteral(":/icons/icons/dataFeatureDock.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionDataFeatureDock->setIcon(icon7);
+    actionDataFeatureDock->setIcon(QIcon(":/icons/icons/dataFeatureDock.png"));
+
     actionNewChart = new QAction(mainWinowPtr);
     actionNewChart->setObjectName(QStringLiteral("actionNewChart"));
-    QIcon icon8;
-    icon8.addFile(QStringLiteral(":/icons/icons/newChart.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionNewChart->setIcon(icon8);
+    actionNewChart->setIcon(QIcon(":/icons/icons/newChart.png"));
+
     actionNewTrend = new QAction(mainWinowPtr);
     actionNewTrend->setObjectName(QStringLiteral("actionNewTrend"));
-    QIcon icon9;
-    icon9.addFile(QStringLiteral(":/icons/icons/newTrend.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionNewTrend->setIcon(icon9);
+    actionNewTrend->setIcon(QIcon(":/icons/icons/newTrend.png"));
+
     actionClearProject = new QAction(mainWinowPtr);
     actionClearProject->setObjectName(QStringLiteral("actionClearProject"));
-    QIcon icon10;
-    icon10.addFile(QStringLiteral(":/icons/icons/clearProject.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionClearProject->setIcon(icon10);
+    actionClearProject->setIcon(QIcon(":/icons/icons/clearProject.png"));
+
     actionInRangDataRemove = new QAction(mainWinowPtr);
     actionInRangDataRemove->setObjectName(QStringLiteral("actionInRangDataRemove"));
-    QIcon icon11;
-    icon11.addFile(QStringLiteral(":/icons/icons/inRangDataRemove.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionInRangDataRemove->setIcon(icon11);
+    actionInRangDataRemove->setIcon(QIcon(":/icons/icons/inRangDataRemove.png"));
+
     actionOutRangDataRemove = new QAction(mainWinowPtr);
     actionOutRangDataRemove->setObjectName(QStringLiteral("actionOutRangDataRemove"));
-    QIcon icon12;
-    icon12.addFile(QStringLiteral(":/icons/icons/outRangDataRemove.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionOutRangDataRemove->setIcon(icon12);
-    actionExportReport = new QAction(mainWinowPtr);
-    actionExportReport->setObjectName(QStringLiteral("actionExportReport"));
+    actionOutRangDataRemove->setIcon(QIcon(":/icons/icons/outRangDataRemove.png"));
+
     actionSubWindowListDock = new QAction(mainWinowPtr);
     actionSubWindowListDock->setObjectName(QStringLiteral("actionSubWindowListDock"));
-    QIcon icon13;
-    icon13.addFile(QStringLiteral(":/icons/icons/subWindowListDock.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionSubWindowListDock->setIcon(icon13);
-    actionEnableChartPicker = new QAction(mainWinowPtr);
-    actionEnableChartPicker->setObjectName(QStringLiteral("actionEnableChartPicker"));
-    QIcon icon14;
-    icon14.addFile(QStringLiteral(":/figureSet/icons/figureSet/crossCursor.svg"), QSize(), QIcon::Normal, QIcon::Off);
-    actionEnableChartPicker->setIcon(icon14);
+    actionSubWindowListDock->setIcon(QIcon(":/icons/icons/subWindowListDock.png"));
+
+    actionEnableChartCrossCursor = new QAction(mainWinowPtr);
+    actionEnableChartCrossCursor->setObjectName(QStringLiteral("actionEnableChartPicker"));
+    actionEnableChartCrossCursor->setIcon(QIcon(":/figureSet/icons/figureSet/crossCursor.svg"));
+
     actionEnableChartPanner = new QAction(mainWinowPtr);
     actionEnableChartPanner->setObjectName(QStringLiteral("actionEnableChartPanner"));
-    QIcon icon15;
-    icon15.addFile(QStringLiteral(":/figureSet/icons/figureSet/pannerChart.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionEnableChartPanner->setIcon(icon15);
+    actionEnableChartPanner->setIcon(QIcon(":/figureSet/icons/figureSet/pannerChart.png"));
+
     actionEnableChartZoom = new QAction(mainWinowPtr);
     actionEnableChartZoom->setObjectName(QStringLiteral("actionEnableChartZoom"));
-    QIcon icon16;
-    icon16.addFile(QStringLiteral(":/figureSet/icons/figureSet/zoomChart.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionEnableChartZoom->setIcon(icon16);
+    actionEnableChartZoom->setIcon(QIcon(":/figureSet/icons/figureSet/zoomChart.png"));
+
     actionYDataPicker = new QAction(mainWinowPtr);
     actionYDataPicker->setObjectName(QStringLiteral("actionYDataPicker"));
-    QIcon icon17;
-    icon17.addFile(QStringLiteral(":/figureSet/icons/figureSet/yDataPicker.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionYDataPicker->setIcon(icon17);
+    actionYDataPicker->setIcon(QIcon(":/figureSet/icons/figureSet/yDataPicker.png"));
+
+    actionXYDataPicker = new QAction(mainWinowPtr);
+    actionXYDataPicker->setObjectName(QStringLiteral("actionXYDataPicker"));
+    actionXYDataPicker->setIcon(QIcon(":/figureSet/icons/figureSet/xyDataPicker.png"));
+
     actionShowGrid = new QAction(mainWinowPtr);
     actionShowGrid->setObjectName(QStringLiteral("actionShowGrid"));
-    QIcon icon18;
-    icon18.addFile(QStringLiteral(":/figureSet/icons/figureSet/showGrid.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionShowGrid->setIcon(icon18);
+    actionShowGrid->setIcon(QIcon(":/figureSet/icons/figureSet/showGrid.png"));
+
     actionShowHGrid = new QAction(mainWinowPtr);
     actionShowHGrid->setObjectName(QStringLiteral("actionShowHGrid"));
-    QIcon icon19;
-    icon19.addFile(QStringLiteral(":/figureSet/icons/figureSet/GridXOnly.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionShowHGrid->setIcon(icon19);
+    actionShowHGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
+
     actionShowVGrid = new QAction(mainWinowPtr);
     actionShowVGrid->setObjectName(QStringLiteral("actionShowVGrid"));
-    QIcon icon20;
-    icon20.addFile(QStringLiteral(":/figureSet/icons/figureSet/GridYOnly.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionShowVGrid->setIcon(icon20);
+    actionShowVGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridYOnly.png"));
+
     actionShowCrowdedHGrid = new QAction(mainWinowPtr);
     actionShowCrowdedHGrid->setObjectName(QStringLiteral("actionShowCrowdedHGrid"));
-    QIcon icon21;
-    icon21.addFile(QStringLiteral(":/figureSet/icons/figureSet/GridXMin.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionShowCrowdedHGrid->setIcon(icon21);
+    actionShowCrowdedHGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXMin.png"));
+
     actionShowCrowdedVGrid = new QAction(mainWinowPtr);
     actionShowCrowdedVGrid->setObjectName(QStringLiteral("actionShowCrowdedVGrid"));
-    QIcon icon22;
-    icon22.addFile(QStringLiteral(":/figureSet/icons/figureSet/GridYMin.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionShowCrowdedVGrid->setIcon(icon22);
+    actionShowCrowdedVGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridYMin.png"));
+
     actionShowLegend = new QAction(mainWinowPtr);
     actionShowLegend->setObjectName(QStringLiteral("actionShowLegend"));
-    QIcon icon23;
-    icon23.addFile(QStringLiteral(":/figureSet/icons/figureSet/ShowLegend.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionShowLegend->setIcon(icon23);
+    actionShowLegend->setIcon(QIcon(":/figureSet/icons/figureSet/ShowLegend.png"));
+
     actionLegendPanel = new QAction(mainWinowPtr);
     actionLegendPanel->setObjectName(QStringLiteral("actionLegendPanel"));
-    QIcon icon24;
-    icon24.addFile(QStringLiteral(":/figureSet/icons/figureSet/legendPanel.svg"), QSize(), QIcon::Normal, QIcon::Off);
-    actionLegendPanel->setIcon(icon24);
+    actionLegendPanel->setIcon(QIcon(":/figureSet/icons/figureSet/legendPanel.svg"));
+
     actionChartSet = new QAction(mainWinowPtr);
     actionChartSet->setObjectName(QStringLiteral("actionChartSet"));
     QIcon icon25;
@@ -232,11 +209,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     QIcon icon38;
     icon38.addFile(QStringLiteral(":/icons/icons/figureViewer.png"), QSize(), QIcon::Normal, QIcon::Off);
     actionFigureViewer->setIcon(icon38);
-    actionXYDataPicker = new QAction(mainWinowPtr);
-    actionXYDataPicker->setObjectName(QStringLiteral("actionXYDataPicker"));
-    QIcon icon39;
-    icon39.addFile(QStringLiteral(":/figureSet/icons/figureSet/xyDataPicker.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionXYDataPicker->setIcon(icon39);
+
     actionDeleteValue = new QAction(mainWinowPtr);
     actionDeleteValue->setObjectName(QStringLiteral("actionDeleteValue"));
     QIcon icon40;
@@ -263,18 +236,26 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionZoomIn->setObjectName(QStringLiteral("actionZoomIn"));
     actionZoomOut = new QAction(mainWinowPtr);
     actionZoomOut->setObjectName(QStringLiteral("actionZoomOut"));
+
     actionStartRectSelect = new QAction(mainWinowPtr);
+    actionStartRectSelect->setIcon(QIcon(":/icons/icons/StartRectSelect.png"));
     actionStartRectSelect->setObjectName(QStringLiteral("actionStartRectSelect"));
     actionStartRectSelect->setCheckable(true);
+
     actionStartEllipseSelect = new QAction(mainWinowPtr);
+    actionStartEllipseSelect->setIcon(QIcon(":/icons/icons/StartEllipseSelect.png"));
     actionStartEllipseSelect->setObjectName(QStringLiteral("actionStartEllipseSelect"));
     actionStartEllipseSelect->setCheckable(true);
+
     actionStartPolygonSelect = new QAction(mainWinowPtr);
+    actionStartPolygonSelect->setIcon(QIcon(":/icons/icons/StartPolygonSelect.png"));
     actionStartPolygonSelect->setObjectName(QStringLiteral("actionStartPolygonSelect"));
     actionStartPolygonSelect->setCheckable(true);
+
     actionClearAllSelectiedRegion = new QAction(mainWinowPtr);
     actionClearAllSelectiedRegion->setObjectName(QStringLiteral("actionClearAllSelectiedRegion"));
     actionClearAllSelectiedRegion->setCheckable(true);
+
     actionSingleSelection = new QAction(mainWinowPtr);
     actionSingleSelection->setObjectName(QStringLiteral("actionSingleSelection"));
     actionSingleSelection->setCheckable(true);
@@ -332,6 +313,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuAnalysis->setObjectName(QStringLiteral("menu_Analysis"));
     menuLineChart = new SARibbonMenu(menuBar);
     menuLineChart->setObjectName(QStringLiteral("menuLineChart"));
+    menuLineChart->setIcon(QIcon(":/icons/icons/lineChart.png"));
     menuData = new SARibbonMenu(menuBar);
     menuData->setObjectName(QStringLiteral("menuData"));
     menuChartDataManager = new SARibbonMenu(menuData);
@@ -345,13 +327,13 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuChartSet->setObjectName(QStringLiteral("menu_chartSet"));
     menuGrid = new SARibbonMenu(menuChartSet);
     menuGrid->setObjectName(QStringLiteral("menu_grid"));
-    menuGrid->setIcon(icon18);
+    //menuGrid->setIcon(icon18);
     menuLegend = new SARibbonMenu(menuChartSet);
     menuLegend->setObjectName(QStringLiteral("menu_legend"));
-    menuLegend->setIcon(icon23);
+    //menuLegend->setIcon(icon23);
     menuZoomSet = new SARibbonMenu(menuChartSet);
     menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
-    menuZoomSet->setIcon(icon16);
+    //menuZoomSet->setIcon(icon16);
     menuDataPickMenu = new SARibbonMenu(menuChartSet);
     menuDataPickMenu->setObjectName(QStringLiteral("menu_dataPickMenu"));
     menuRegionSelect = new SARibbonMenu(menuChartSet);
@@ -385,7 +367,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuFile->addAction(menuExport->menuAction());
     menuFile->addAction(menuImport->menuAction());
     menuFile->addSeparator();
-    menuFile->addAction(actionExportReport);
     menuFile->addAction(actionQuite);
     ribbonButtonFileOpen->setMenu(menuFile);
 
@@ -407,28 +388,22 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonStartRectSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartRectSelect);
     ribbonButtonStartEllipseSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartEllipseSelect);
     ribbonButtonStartPolygonSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartPolygonSelect);
-    ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget();
-    ribbonButtonSingleSelection = new SARibbonToolButton(actionSingleSelection);
-    ribbonButtonSingleSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ribbonButtonSingleSelection->setFixedSize(26,26);
-    ribbonButtonAdditionalSelection = new SARibbonToolButton(actionAdditionalSelection);
-    ribbonButtonAdditionalSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ribbonButtonAdditionalSelection->setFixedSize(26,26);
-    ribbonButtonSubtractionSelection = new SARibbonToolButton(actionSubtractionSelection);
-    ribbonButtonSubtractionSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ribbonButtonSubtractionSelection->setFixedSize(26,26);
-    ribbonButtonIntersectionSelection = new SARibbonToolButton(actionIntersectionSelection);
-    ribbonButtonIntersectionSelection->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ribbonButtonIntersectionSelection->setFixedSize(26,26);
 
-    ribbonButtonGroupSelectionMode->addButton(ribbonButtonSingleSelection);
-    ribbonButtonGroupSelectionMode->addButton(ribbonButtonAdditionalSelection);
-    ribbonButtonGroupSelectionMode->addButton(ribbonButtonSubtractionSelection);
-    ribbonButtonGroupSelectionMode->addButton(ribbonButtonIntersectionSelection);
+    ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget(Parent);
+    ribbonButtonSingleSelection = ribbonButtonGroupSelectionMode->addButton(actionSingleSelection);
+    ribbonButtonAdditionalSelection = ribbonButtonGroupSelectionMode->addButton(actionAdditionalSelection);
+    ribbonButtonSubtractionSelection = ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
+    ribbonButtonIntersectionSelection = ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
     operateCategorySelectEditorPannel->addWidget(ribbonButtonGroupSelectionMode
                                                  ,0,3);
-    qDebug() << "ribbonButtonSingleSelection"<<ribbonButtonSingleSelection->isVisible();
-    qDebug() << "ribbonButtonGroupSelectionMode"<<ribbonButtonGroupSelectionMode->sizeHint();
+    //data view editor
+    operateCategoryDataViewPannel = operateRibbonCategory->addPannel(QStringLiteral("Data View"));
+    operateCategoryDataViewPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
+    ribbonButtonChartCrossCursor = operateCategoryDataViewPannel->addLargeAction(actionEnableChartCrossCursor);
+    ribbonButtonChartPanner = operateCategoryDataViewPannel->addLargeAction(actionEnableChartPanner);
+    ribbonButtonChartZoom = operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom,menuZoomSet);
+    ribbonButtonXYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionXYDataPicker);
+    ribbonButtonYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionYDataPicker);
     //! View Category Page
     viewRibbonCategory = menuBar->addCategoryPage(QStringLiteral("View"));
     viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
@@ -439,7 +414,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonLayerOutDock = viewCategoryWindowPannel->addSmallAction(actionLayerOutDock);
     ribbonButtonValueViewerDock = viewCategoryWindowPannel->addSmallAction(actionValueViewerDock);
     ribbonButtonValueManagerDock = viewCategoryWindowPannel->addSmallAction(actionValueManagerDock);
-    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock View"),QIcon(),QToolButton::InstantPopup);
+    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock View"),QIcon(":/icons/icons/AllDock.png"),QToolButton::InstantPopup);
     menuWindowsViewSet->addAction(actionFigureViewer);
     menuWindowsViewSet->addAction(actionDataFeatureDock);
     menuWindowsViewSet->addAction(actionSubWindowListDock);
@@ -688,7 +663,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuDataManager->addAction(actionViewValueInNewTab);
     menuDataManager->addAction(actionDeleteValue);
     menuDataManager->addAction(actionRenameValue);
-    menuChartSet->addAction(actionEnableChartPicker);
+    menuChartSet->addAction(actionEnableChartCrossCursor);
     menuChartSet->addAction(actionEnableChartPanner);
     menuChartSet->addAction(menuGrid->menuAction());
     menuChartSet->addAction(menuLegend->menuAction());
@@ -778,9 +753,9 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionClearProject->setText(QApplication::translate("MainWindow", "\346\270\205\351\231\244\346\226\271\346\241\210", 0));
     actionInRangDataRemove->setText(QApplication::translate("MainWindow", "\347\247\273\351\231\244\351\200\211\345\256\232\350\214\203\345\233\264\346\225\260\346\215\256", 0));
     actionOutRangDataRemove->setText(QApplication::translate("MainWindow", "\347\247\273\351\231\244\350\214\203\345\233\264\345\244\226\346\225\260\346\215\256", 0));
-    actionExportReport->setText(QApplication::translate("MainWindow", "\347\224\237\346\210\220\346\212\245\350\241\250", 0));
+
     actionSubWindowListDock->setText(QApplication::translate("MainWindow", "\345\255\220\347\252\227\345\217\243\345\210\227\350\241\250", 0));
-    actionEnableChartPicker->setText(QApplication::translate("MainWindow", "\345\215\201\345\255\227\345\205\211\346\240\207", 0));
+    actionEnableChartCrossCursor->setText(QApplication::translate("MainWindow", "\345\215\201\345\255\227\345\205\211\346\240\207", 0));
     actionEnableChartPanner->setText(QApplication::translate("MainWindow", "\347\247\273\345\212\250", 0));
     actionEnableChartZoom->setText(QApplication::translate("MainWindow", "\350\214\203\345\233\264\347\274\251\346\224\276", 0));
     actionEnableChartZoom->setIconText(QApplication::translate("MainWindow", "\347\274\251\346\224\276", 0));
@@ -894,4 +869,6 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
     operateCategorySelectEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Select Editor", 0));
+    ribbonButtonLineChart->setText(menuLineChart->title());
+    operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
 }

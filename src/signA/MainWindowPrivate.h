@@ -49,9 +49,8 @@ public:
         QAction *actionClearProject;
         QAction *actionInRangDataRemove;
         QAction *actionOutRangDataRemove;
-        QAction *actionExportReport;
         QAction *actionSubWindowListDock;
-        QAction *actionEnableChartPicker;
+        QAction *actionEnableChartCrossCursor;
         QAction *actionEnableChartPanner;
         QAction *actionEnableChartZoom;
         QAction *actionYDataPicker;
@@ -112,6 +111,7 @@ public:
         SARibbonMenu *menuLineChart;
         //! operate Category Page
         SARibbonCategory* operateRibbonCategory;
+
         SARibbonPannel* operateCategorySelectEditorPannel;
         SARibbonToolButton* ribbonButtonStartRectSelect;
         SARibbonToolButton* ribbonButtonStartEllipseSelect;
@@ -121,6 +121,13 @@ public:
         SARibbonToolButton* ribbonButtonSubtractionSelection;
         SARibbonToolButton* ribbonButtonIntersectionSelection;
         SARibbonButtonGroupWidget* ribbonButtonGroupSelectionMode;
+
+        SARibbonPannel* operateCategoryDataViewPannel;
+        SARibbonToolButton* ribbonButtonChartCrossCursor;
+        SARibbonToolButton* ribbonButtonChartPanner;
+        SARibbonToolButton* ribbonButtonChartZoom;
+        SARibbonToolButton* ribbonButtonXYDataPicker;
+        SARibbonToolButton* ribbonButtonYDataPicker;
         //!View Category Page
         SARibbonCategory* viewRibbonCategory;
         SARibbonPannel* viewCategoryWindowPannel;

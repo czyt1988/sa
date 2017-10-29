@@ -357,8 +357,8 @@ void MainWindow::initUI()
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
-    ui->actionEnableChartPicker->setCheckable(true);
-    connect(ui->actionEnableChartPicker,&QAction::triggered
+    ui->actionEnableChartCrossCursor->setCheckable(true);
+    connect(ui->actionEnableChartCrossCursor,&QAction::triggered
             ,this,&MainWindow::onActionEnableChartPicker);
 
     //拖动
@@ -1094,7 +1094,7 @@ void MainWindow::onActionEnableChartPicker(bool check)
     }
     else
     {
-        ui->actionEnableChartPicker->setChecked(false);
+        ui->actionEnableChartCrossCursor->setChecked(false);
     }
 }
 ///
@@ -1460,7 +1460,7 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
     auto c = w->current2DPlot();
     if(c)
     {
-        ui->actionEnableChartPicker->setChecked( c->isEnablePicker() );
+        ui->actionEnableChartCrossCursor->setChecked( c->isEnablePicker() );
         ui->actionEnableChartPanner->setChecked( c->isEnablePanner() );
         ui->actionEnableChartZoom->setChecked(c->isEnableZoomer());
         ui->actionYDataPicker->setChecked(c->isEnableYDataPicker());
