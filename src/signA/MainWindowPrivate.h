@@ -106,9 +106,14 @@ public:
         SARibbonPannel* mainCategoryChartPannel;
         SARibbonToolButton* ribbonButtonNewChart;
         SARibbonToolButton* ribbonButtonLineChart;
-
+        SARibbonToolButton* ribbonButtonBarChart;
+        SARibbonToolButton* ribbonButtonBoxChart;
+        SARibbonToolButton* ribbonButtonScatterChart;
         SARibbonMenu *menuFile;
         SARibbonMenu *menuLineChart;
+        SARibbonMenu *menuBarChart;
+        SARibbonMenu *menuBoxChart;
+        SARibbonMenu *menuScatterChart;
         //! operate Category Page
         SARibbonCategory* operateRibbonCategory;
 

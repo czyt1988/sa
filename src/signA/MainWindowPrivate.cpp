@@ -139,103 +139,89 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionChartSet = new QAction(mainWinowPtr);
     actionChartSet->setObjectName(QStringLiteral("actionChartSet"));
-    QIcon icon25;
-    icon25.addFile(QStringLiteral(":/figureSet/icons/figureSet/chartSet.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionChartSet->setIcon(icon25);
+    actionChartSet->setIcon(QIcon(":/figureSet/icons/figureSet/chartSet.png"));
+
     actionChartZoomReset = new QAction(mainWinowPtr);
     actionChartZoomReset->setObjectName(QStringLiteral("actionChartZoomReset"));
-    QIcon icon26;
-    icon26.addFile(QStringLiteral(":/figureSet/icons/figureSet/zoomChartReset.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionChartZoomReset->setIcon(icon26);
+    actionChartZoomReset->setIcon(QIcon(":/figureSet/icons/figureSet/zoomChartReset.png"));
+
     actionPickCurveToData = new QAction(mainWinowPtr);
     actionPickCurveToData->setObjectName(QStringLiteral("actionPickCurveToData"));
-    QIcon icon27;
-    icon27.addFile(QStringLiteral(":/icons/icons/pickCurveToData.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionPickCurveToData->setIcon(icon27);
+    actionPickCurveToData->setIcon(QIcon(":/icons/icons/pickCurveToData.png"));
+
     actionAbout = new QAction(mainWinowPtr);
     actionAbout->setObjectName(QStringLiteral("actionAbout"));
-    QIcon icon28;
-    icon28.addFile(QStringLiteral(":/icons/icons/information.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionAbout->setIcon(icon28);
+    actionAbout->setIcon(QIcon(":/icons/icons/information.png"));
+
     actionRescind = new QAction(mainWinowPtr);
     actionRescind->setObjectName(QStringLiteral("actionRescind"));
-    QIcon icon29;
-    icon29.addFile(QStringLiteral(":/icons/icons/undo.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionRescind->setIcon(icon29);
+    actionRescind->setIcon(QIcon(":/icons/icons/undo.png"));
+
     actionRedo = new QAction(mainWinowPtr);
     actionRedo->setObjectName(QStringLiteral("actionRedo"));
-    QIcon icon30;
-    icon30.addFile(QStringLiteral(":/icons/icons/redo.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionRedo->setIcon(icon30);
+    actionRedo->setIcon(QIcon(":/icons/icons/redo.png"));
+
     actionValueManagerDock = new QAction(mainWinowPtr);
     actionValueManagerDock->setObjectName(QStringLiteral("actionValueManagerDock"));
     actionValueManagerDock->setCheckable(false);
     actionValueManagerDock->setChecked(false);
-    QIcon icon31;
-    icon31.addFile(QStringLiteral(":/icons/icons/valueManagerDock.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionValueManagerDock->setIcon(icon31);
+    actionValueManagerDock->setIcon(QIcon(":/icons/icons/valueManagerDock.png"));
+
     actionViewValueInCurrentTab = new QAction(mainWinowPtr);
     actionViewValueInCurrentTab->setObjectName(QStringLiteral("actionViewValueInCurrentTab"));
-    QIcon icon32;
-    icon32.addFile(QStringLiteral(":/icons/icons/viewValueInCurrentTab.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionViewValueInCurrentTab->setIcon(icon32);
+    actionViewValueInCurrentTab->setIcon(QIcon(":/icons/icons/viewValueInCurrentTab.png"));
+
     actionViewValueInNewTab = new QAction(mainWinowPtr);
     actionViewValueInNewTab->setObjectName(QStringLiteral("actionViewValueInNewTab"));
-    QIcon icon33;
-    icon33.addFile(QStringLiteral(":/icons/icons/viewValueInNewTab.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionViewValueInNewTab->setIcon(icon33);
+    actionViewValueInNewTab->setIcon(QIcon(":/icons/icons/viewValueInNewTab.png"));
+
     actionLayerOutDock = new QAction(mainWinowPtr);
     actionLayerOutDock->setObjectName(QStringLiteral("actionLayerOutDock"));
-    QIcon icon34;
-    icon34.addFile(QStringLiteral(":/icons/icons/layout.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionLayerOutDock->setIcon(icon34);
+    actionLayerOutDock->setIcon(QIcon(":/icons/icons/layout.png"));
+
     actionRenameValue = new QAction(mainWinowPtr);
     actionRenameValue->setObjectName(QStringLiteral("actionRenameValue"));
-    QIcon icon35;
-    icon35.addFile(QStringLiteral(":/icons/icons/renameValue.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionRenameValue->setIcon(icon35);
+    actionRenameValue->setIcon(QIcon(":/icons/icons/renameValue.png"));
+
     actionSetDefalutDockPos = new QAction(mainWinowPtr);
     actionSetDefalutDockPos->setObjectName(QStringLiteral("actionSetDefalutDockPos"));
-    QIcon icon36;
-    icon36.addFile(QStringLiteral(":/icons/icons/setDefalutDockPos.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionSetDefalutDockPos->setIcon(icon36);
+    actionSetDefalutDockPos->setIcon(QIcon(":/icons/icons/setDefalutDockPos.png"));
+
     actionValueViewerDock = new QAction(mainWinowPtr);
     actionValueViewerDock->setObjectName(QStringLiteral("actionValueViewerDock"));
-    QIcon icon37;
-    icon37.addFile(QStringLiteral(":/icons/icons/valueViewerDock.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionValueViewerDock->setIcon(icon37);
+    actionValueViewerDock->setIcon(QIcon(":/icons/icons/valueViewerDock.png"));
+
     actionFigureViewer = new QAction(mainWinowPtr);
     actionFigureViewer->setObjectName(QStringLiteral("actionFigureViewer"));
-    QIcon icon38;
-    icon38.addFile(QStringLiteral(":/icons/icons/figureViewer.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionFigureViewer->setIcon(icon38);
+    actionFigureViewer->setIcon(QIcon(":/icons/icons/figureViewer.png"));
 
     actionDeleteValue = new QAction(mainWinowPtr);
     actionDeleteValue->setObjectName(QStringLiteral("actionDeleteValue"));
-    QIcon icon40;
-    icon40.addFile(QStringLiteral(":/icons/icons/deleteValue.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionDeleteValue->setIcon(icon40);
+    actionDeleteValue->setIcon(QIcon(":/icons/icons/deleteValue.png"));
+
     actionOpenProject = new QAction(mainWinowPtr);
     actionOpenProject->setObjectName(QStringLiteral("actionOpenProject"));
-    QIcon icon41;
-    icon41.addFile(QStringLiteral(":/icons/icons/openProject.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionOpenProject->setIcon(icon41);
+    actionOpenProject->setIcon(QIcon(":/icons/icons/openProject.png"));
+
     actionSaveAs = new QAction(mainWinowPtr);
     actionSaveAs->setObjectName(QStringLiteral("actionSaveAs"));
-    QIcon icon42;
-    icon42.addFile(QStringLiteral(":/icons/icons/saveAs.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionSaveAs->setIcon(icon42);
+    actionSaveAs->setIcon(QIcon(":/icons/icons/saveAs.png"));
+
     actionProjectSetting = new QAction(mainWinowPtr);
     actionProjectSetting->setObjectName(QStringLiteral("actionProjectSetting"));
-    QIcon icon43;
-    icon43.addFile(QStringLiteral(":/icons/icons/project.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionProjectSetting->setIcon(icon43);
+    actionProjectSetting->setIcon(QIcon(":/icons/icons/project.png"));
+
     actionZoomBase = new QAction(mainWinowPtr);
     actionZoomBase->setObjectName(QStringLiteral("actionZoomBase"));
+    actionZoomBase->setIcon(QIcon(":/icons/icons/zoomBase.png"));
+
     actionZoomIn = new QAction(mainWinowPtr);
     actionZoomIn->setObjectName(QStringLiteral("actionZoomIn"));
+    actionZoomIn->setIcon(QIcon(":/icons/icons/zoomIn.png"));
+
     actionZoomOut = new QAction(mainWinowPtr);
     actionZoomOut->setObjectName(QStringLiteral("actionZoomOut"));
+    actionZoomOut->setIcon(QIcon(":/icons/icons/zoomOut.png"));
 
     actionStartRectSelect = new QAction(mainWinowPtr);
     actionStartRectSelect->setIcon(QIcon(":/icons/icons/StartRectSelect.png"));
@@ -292,15 +278,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuExport = new SARibbonMenu(menuFile);
     menuExport->setObjectName(QStringLiteral("menu_export"));
-    QIcon icon44;
-    icon44.addFile(QStringLiteral(":/icons/icons/export.png"), QSize(), QIcon::Normal, QIcon::Off);
-    menuExport->setIcon(icon44);
+    menuExport->setIcon(QIcon(":/icons/icons/export.png"));
 
     menuImport = new SARibbonMenu(menuFile);
     menuImport->setObjectName(QStringLiteral("menu_import"));
-    QIcon icon45;
-    icon45.addFile(QStringLiteral(":/icons/icons/import.png"), QSize(), QIcon::Normal, QIcon::Off);
-    menuImport->setIcon(icon45);
+    menuImport->setIcon(QIcon(":/icons/icons/import.png"));
 
 
     menuWindowsViewSet = new SARibbonMenu(menuBar);
@@ -311,9 +293,23 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuAnalysis = new SARibbonMenu(menuBar);
     menuAnalysis->setObjectName(QStringLiteral("menu_Analysis"));
+
     menuLineChart = new SARibbonMenu(menuBar);
     menuLineChart->setObjectName(QStringLiteral("menuLineChart"));
-    menuLineChart->setIcon(QIcon(":/icons/icons/lineChart.png"));
+    menuLineChart->setIcon(QIcon(":/icons/icons/lineChart.svg"));
+
+    menuScatterChart = new SARibbonMenu(menuBar);
+    menuScatterChart->setObjectName(QStringLiteral("menuScatterChart"));
+    menuScatterChart->setIcon(QIcon(":/icons/icons/scatterChart.svg"));
+
+    menuBarChart = new SARibbonMenu(menuBar);
+    menuBarChart->setObjectName(QStringLiteral("menuBarChart"));
+    menuBarChart->setIcon(QIcon(":/icons/icons/barChart.svg"));
+
+    menuBoxChart = new SARibbonMenu(menuBar);
+    menuBoxChart->setObjectName(QStringLiteral("menuBoxChart"));
+    menuBoxChart->setIcon(QIcon(":/icons/icons/boxChart.svg"));
+
     menuData = new SARibbonMenu(menuBar);
     menuData->setObjectName(QStringLiteral("menuData"));
     menuChartDataManager = new SARibbonMenu(menuData);
@@ -379,6 +375,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonNewChart = mainCategoryChartPannel->addLargeAction(actionNewChart);
     menuLineChart->addAction(actionNewTrend);
     ribbonButtonLineChart = mainCategoryChartPannel->addLargeMenu(menuLineChart);
+    ribbonButtonScatterChart = mainCategoryChartPannel->addLargeMenu(menuScatterChart);
+    ribbonButtonBarChart = mainCategoryChartPannel->addLargeMenu(menuBarChart);
+    ribbonButtonBoxChart = mainCategoryChartPannel->addLargeMenu(menuBoxChart);
     //! operate Category Page
     operateRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Operate"));
     operateRibbonCategory->setObjectName(QStringLiteral("operateRibbonCategory"));
@@ -833,7 +832,6 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     menuImport->setTitle(QApplication::translate("MainWindow", "\345\257\274\345\205\245", 0));
     menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "\347\252\227\345\217\243", 0));
     menuAnalysis->setTitle(QApplication::translate("MainWindow", "\345\210\206\346\236\220", 0));
-    menuLineChart->setTitle(QApplication::translate("MainWindow", "\345\233\276\350\241\250", 0));
     menuData->setTitle(QApplication::translate("MainWindow", "\346\225\260\346\215\256", 0));
     menuChartDataManager->setTitle(QApplication::translate("MainWindow", "\345\233\276\347\272\277\346\225\260\346\215\256\346\223\215\344\275\234", 0));
     menuDataManager->setTitle(QApplication::translate("MainWindow", "\345\217\230\351\207\217\346\223\215\344\275\234", 0));
@@ -846,6 +844,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     menuHelp->setTitle(QApplication::translate("MainWindow", "\345\270\256\345\212\251", 0));
     menuEdit->setTitle(QApplication::translate("MainWindow", "\347\274\226\350\276\221", 0));
     menuTool->setTitle(QApplication::translate("MainWindow", "Tool", 0));
+    menuLineChart->setTitle(QApplication::translate("MainWindow", "线图", 0));
+    menuScatterChart->setTitle(QApplication::translate("MainWindow", "散点图", 0));
+    menuBarChart->setTitle(QApplication::translate("MainWindow", "柱状图", 0));
+    menuBoxChart->setTitle(QApplication::translate("MainWindow", "箱图", 0));
     dockWidget_DataFeature->setWindowTitle(QApplication::translate("MainWindow", "\346\225\260\346\215\256\347\211\271\346\200\247", 0));
 //    toolBar_chart->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 //    toolBar_chartSet->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
@@ -869,6 +871,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
     operateCategorySelectEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Select Editor", 0));
+    mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart", 0));
     ribbonButtonLineChart->setText(menuLineChart->title());
+    ribbonButtonBarChart->setText(menuBarChart->title());
+    ribbonButtonBoxChart->setText(menuBoxChart->title());
+    ribbonButtonScatterChart->setText(menuScatterChart->title());
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
 }

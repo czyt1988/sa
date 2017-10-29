@@ -53,8 +53,14 @@
         <file>icons/StartEllipseSelect.png</file>
         <file>icons/StartRectSelect.png</file>
         <file>icons/StartPolygonSelect.png</file>
-        <file>icons/lineChart.png</file>
         <file>icons/AllDock.png</file>
+        <file>icons/lineChart.svg</file>
+        <file>icons/barChart.svg</file>
+        <file>icons/boxChart.svg</file>
+        <file>icons/scatterChart.svg</file>
+        <file>icons/zoomBase.png</file>
+        <file>icons/zoomIn.png</file>
+        <file>icons/zoomOut.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>
