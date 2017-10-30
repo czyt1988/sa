@@ -476,8 +476,8 @@ void MainWindow::initUI()
     ui->actionShowLegend->setCheckable(true);
     connect(ui->actionShowLegend,&QAction::triggered,Lambda_SaChartEnable(Legend));
     //显示图例选择器
-    ui->actionLegendPanel->setCheckable(true);
-    connect(ui->actionLegendPanel,&QAction::triggered,Lambda_SaChartEnable(LegendPanel));
+    ui->actionShowLegendPanel->setCheckable(true);
+    connect(ui->actionShowLegendPanel,&QAction::triggered,Lambda_SaChartEnable(LegendPanel));
 
 
     //窗口激活对应数据特性的mdiSubWindowActived
@@ -1225,14 +1225,16 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
         return;
     if(m_lastActiveWnd == arg1)
         return;
-#ifndef SA_USE_RIBBON_UI
-    ui->toolBar_chartSet->setEnabled(true);
-#endif
     m_lastActiveWnd = arg1;
 
     SAFigureWindow* fig = getFigureWidgetFromMdiSubWindow(arg1);
     if(fig)
     {
+#ifdef SA_USE_RIBBON_UI
+        ui->menuBar->showContextCategory(ui->chartSetRibbonContextCategory);
+#else
+      ui->toolBar_chartSet->setEnabled(true);
+#endif
         //窗口激活后，把绘图窗口的指针保存
         m_lastShowFigureWindow = fig;
 
@@ -1270,6 +1272,12 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
             plotItemDataModel->clear();
         }
     }
+    else
+    {
+#ifdef SA_USE_RIBBON_UI
+        ui->menuBar->hideContextCategory(ui->chartSetRibbonContextCategory);
+#endif
+    }
     //设置绘图属性窗口,空指针也接受
     ui->figureSetWidget->setFigureWidget(fig);
 }
@@ -1298,8 +1306,10 @@ void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
         {
             plotItemDataModel->clear();
         }
+#ifdef SA_USE_RIBBON_UI
+        ui->menuBar->hideContextCategory(ui->chartSetRibbonContextCategory);
+#endif
     }
-
     ui->dataFeatureWidget->mdiSubWindowClosed(arg1);
 }
 
@@ -1471,7 +1481,7 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
         ui->actionShowCrowdedHGrid->setChecked(c->isEnableGridYMin());
         ui->actionShowCrowdedVGrid->setChecked(c->isEnableGridXMin());
         ui->actionShowLegend->setChecked(c->isEnableLegend());
-        ui->actionLegendPanel->setChecked(c->isEnableLegendPanel());
+        ui->actionShowLegendPanel->setChecked(c->isEnableLegendPanel());
     }
 }
 

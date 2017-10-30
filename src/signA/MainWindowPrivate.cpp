@@ -133,9 +133,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionShowLegend->setObjectName(QStringLiteral("actionShowLegend"));
     actionShowLegend->setIcon(QIcon(":/figureSet/icons/figureSet/ShowLegend.png"));
 
-    actionLegendPanel = new QAction(mainWinowPtr);
-    actionLegendPanel->setObjectName(QStringLiteral("actionLegendPanel"));
-    actionLegendPanel->setIcon(QIcon(":/figureSet/icons/figureSet/legendPanel.svg"));
+    actionShowLegendPanel = new QAction(mainWinowPtr);
+    actionShowLegendPanel->setObjectName(QStringLiteral("actionLegendPanel"));
+    actionShowLegendPanel->setIcon(QIcon(":/figureSet/icons/figureSet/legendPanel.svg"));
 
     actionChartSet = new QAction(mainWinowPtr);
     actionChartSet->setObjectName(QStringLiteral("actionChartSet"));
@@ -324,9 +324,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuGrid = new SARibbonMenu(menuChartSet);
     menuGrid->setObjectName(QStringLiteral("menu_grid"));
     //menuGrid->setIcon(icon18);
-    menuLegend = new SARibbonMenu(menuChartSet);
-    menuLegend->setObjectName(QStringLiteral("menu_legend"));
-    //menuLegend->setIcon(icon23);
+
     menuZoomSet = new SARibbonMenu(menuChartSet);
     menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
     //menuZoomSet->setIcon(icon16);
@@ -378,6 +376,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonScatterChart = mainCategoryChartPannel->addLargeMenu(menuScatterChart);
     ribbonButtonBarChart = mainCategoryChartPannel->addLargeMenu(menuBarChart);
     ribbonButtonBoxChart = mainCategoryChartPannel->addLargeMenu(menuBoxChart);
+
+    //
     //! operate Category Page
     operateRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Operate"));
     operateRibbonCategory->setObjectName(QStringLiteral("operateRibbonCategory"));
@@ -429,8 +429,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonWindowCascade = windowModeCategoryWindowPannel->addMediumAction(actionWindowCascade);
     ribbonButtonWindowTile = windowModeCategoryWindowPannel->addMediumAction(actionWindowTile);
 
-
-
+    //chartSetRibbonContextCategory
+    chartSetRibbonContextCategory = menuBar->addContextCategory("chart set",QColor(201,89,156),RIBBON_CONTEXT_CATEGORY_ID_CHART_SET);
+    chartFormatRibbonCategory = chartSetRibbonContextCategory->addCategoryPage("format");
+    chartLegendCategoryWindowPannel = chartFormatRibbonCategory->addPannel("legend");
+    ribbonButtonShowLegend = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegend);
+    ribbonButtonShowLegendPanel = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegendPanel);
 
 
     statusBar = new QStatusBar(mainWinowPtr);
@@ -665,7 +669,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuChartSet->addAction(actionEnableChartCrossCursor);
     menuChartSet->addAction(actionEnableChartPanner);
     menuChartSet->addAction(menuGrid->menuAction());
-    menuChartSet->addAction(menuLegend->menuAction());
     menuChartSet->addAction(menuZoomSet->menuAction());
     menuChartSet->addAction(actionChartSet);
     menuChartSet->addAction(menuDataPickMenu->menuAction());
@@ -677,8 +680,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuGrid->addSeparator();
     menuGrid->addAction(actionShowCrowdedHGrid);
     menuGrid->addAction(actionShowCrowdedVGrid);
-    menuLegend->addAction(actionShowLegend);
-    menuLegend->addAction(actionLegendPanel);
     menuZoomSet->addAction(actionEnableChartZoom);
     menuZoomSet->addAction(actionChartZoomReset);
     menuZoomSet->addAction(actionZoomBase);
@@ -785,8 +786,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 #ifndef QT_NO_TOOLTIP
     actionShowLegend->setToolTip(QApplication::translate("MainWindow", "\346\230\276\347\244\272/\351\232\220\350\227\217 \345\233\276\344\276\213", 0));
 #endif // QT_NO_TOOLTIP
-    actionLegendPanel->setText(QApplication::translate("MainWindow", "\345\233\276\344\276\213\351\200\211\346\213\251\345\231\250", 0));
-    actionLegendPanel->setIconText(QApplication::translate("MainWindow", "\345\233\276\344\276\213\351\200\211\346\213\251", 0));
+    actionShowLegendPanel->setText(QApplication::translate("MainWindow", "\345\233\276\344\276\213\351\200\211\346\213\251\345\231\250", 0));
+    actionShowLegendPanel->setIconText(QApplication::translate("MainWindow", "\345\233\276\344\276\213\351\200\211\346\213\251", 0));
     actionChartSet->setText(QApplication::translate("MainWindow", "\345\233\276\350\241\250\350\256\276\347\275\256", 0));
     actionChartZoomReset->setText(QApplication::translate("MainWindow", "\346\234\200\344\274\230\350\247\206\345\233\276", 0));
     actionPickCurveToData->setText(QApplication::translate("MainWindow", "\344\273\216\346\233\262\347\272\277\346\217\220\345\217\226\346\225\260\346\215\256", 0));
@@ -837,7 +838,6 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     menuDataManager->setTitle(QApplication::translate("MainWindow", "\345\217\230\351\207\217\346\223\215\344\275\234", 0));
     menuChartSet->setTitle(QApplication::translate("MainWindow", "\345\233\276\350\241\250\346\223\215\344\275\234", 0));
     menuGrid->setTitle(QApplication::translate("MainWindow", "\347\275\221\346\240\274\350\256\276\347\275\256", 0));
-    menuLegend->setTitle(QApplication::translate("MainWindow", "\345\233\276\344\276\213", 0));
     menuZoomSet->setTitle(QApplication::translate("MainWindow", "\347\274\251\346\224\276\346\223\215\344\275\234", 0));
     menuDataPickMenu->setTitle(QApplication::translate("MainWindow", "\346\225\260\346\215\256\346\230\276\347\244\272", 0));
     menuRegionSelect->setTitle(QApplication::translate("MainWindow", "\351\200\211\346\213\251", 0));
@@ -877,4 +877,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonBoxChart->setText(menuBoxChart->title());
     ribbonButtonScatterChart->setText(menuScatterChart->title());
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
+    chartSetRibbonContextCategory->setContextTitle(QApplication::translate("MainWindow", "Chart Set", 0));
+    chartFormatRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Format", 0));
+    chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
 }

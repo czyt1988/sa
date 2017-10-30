@@ -1,6 +1,6 @@
 #ifndef MAINWINDOWPRIVATE_H
 #define MAINWINDOWPRIVATE_H
-
+#define RIBBON_CONTEXT_CATEGORY_ID_CHART_SET (10)
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
@@ -30,6 +30,7 @@
 #include "SARibbonToolButton.h"
 #include "SARibbonMenu.h"
 #include "SARibbonButtonGroupWidget.h"
+#include "SARibbonContextCategory.h"
 class MainWindow;
 class MainWindowPrivate
 {
@@ -60,7 +61,7 @@ public:
         QAction *actionShowCrowdedHGrid;
         QAction *actionShowCrowdedVGrid;
         QAction *actionShowLegend;
-        QAction *actionLegendPanel;
+        QAction *actionShowLegendPanel;
         QAction *actionChartSet;
         QAction *actionChartZoomReset;
         QAction *actionPickCurveToData;
@@ -148,6 +149,17 @@ public:
         SARibbonToolButton* ribbonButtonTabMode;
         SARibbonToolButton* ribbonButtonWindowCascade;
         SARibbonToolButton* ribbonButtonWindowTile;
+        //! Chart Set Context Category
+        SARibbonContextCategory* chartSetRibbonContextCategory;
+        //chart Format Ribbon Category page
+        SARibbonCategory* chartFormatRibbonCategory;
+        //legend pannel
+        SARibbonPannel* chartLegendCategoryWindowPannel;
+        SARibbonToolButton* ribbonButtonShowLegend;
+        SARibbonToolButton* ribbonButtonShowLegendPanel;
+
+
+
 
 
         SARibbonMenu *menuWindowsViewSet;
@@ -163,7 +175,6 @@ public:
         SARibbonMenu *menuDataManager;
         SARibbonMenu *menuChartSet;
         SARibbonMenu *menuGrid;
-        SARibbonMenu *menuLegend;
         SARibbonMenu *menuZoomSet;
         SARibbonMenu *menuDataPickMenu;
         SARibbonMenu *menuRegionSelect;
@@ -176,9 +187,6 @@ public:
         QWidget *dockWidgetContents_2;
         QVBoxLayout *verticalLayout_2;
         SADataFeatureWidget *dataFeatureWidget;
-//        QToolBar *toolBar_chart;
-//        QToolBar *toolBar_chartSet;
-//        QToolBar *toolBar_plot;
         QDockWidget *dockWidget_windowList;
         QWidget *dockWidgetContents_4;
         QVBoxLayout *verticalLayout_6;
