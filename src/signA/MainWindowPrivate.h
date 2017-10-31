@@ -43,7 +43,7 @@ public:
         QAction *actionWindowMode;
         QAction *actionTabMode;
         QAction *actionSave;
-        QAction *actionQuite;
+        QAction *actionQuit;
         QAction *actionDataFeatureDock;
         QAction *actionNewChart;
         QAction *actionNewTrend;
@@ -134,6 +134,13 @@ public:
         SARibbonToolButton* ribbonButtonChartZoom;
         SARibbonToolButton* ribbonButtonXYDataPicker;
         SARibbonToolButton* ribbonButtonYDataPicker;
+        SARibbonMenu *menuZoomSet;
+
+        SARibbonPannel* operateCategoryDataEditorPannel;
+        SARibbonToolButton* ribbonButtonInRangDataRemove;
+        SARibbonToolButton* ribbonButtonPickCurveToData;
+
+        SARibbonMenu *menuDataRemove;
         //!View Category Page
         SARibbonCategory* viewRibbonCategory;
         SARibbonPannel* viewCategoryWindowPannel;
@@ -175,8 +182,7 @@ public:
         SARibbonMenu *menuDataManager;
         SARibbonMenu *menuChartSet;
         SARibbonMenu *menuGrid;
-        SARibbonMenu *menuZoomSet;
-        SARibbonMenu *menuDataPickMenu;
+
         SARibbonMenu *menuRegionSelect;
         SARibbonMenu *menuHelp;
         SARibbonMenu *menuEdit;

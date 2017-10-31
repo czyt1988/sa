@@ -44,7 +44,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionWindowMode = new QAction(mainWinowPtr);
     actionWindowMode->setObjectName(QStringLiteral("actionWindowMode"));
     actionWindowMode->setCheckable(true);
-    actionWindowMode->setChecked(true);
     actionWindowMode->setIcon(QIcon(":/icons/icons/windowMode.png"));
 
     actionTabMode = new QAction(mainWinowPtr);
@@ -57,9 +56,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSave->setEnabled(true);
     actionSave->setIcon(QIcon(":/icons/icons/save.png"));
 
-    actionQuite = new QAction(mainWinowPtr);
-    actionQuite->setObjectName(QStringLiteral("actionQuite"));
-    actionQuite->setIcon(QIcon(":/icons/icons/quit.svg"));
+    actionQuit = new QAction(mainWinowPtr);
+    actionQuit->setObjectName(QStringLiteral("actionQuite"));
+    actionQuit->setIcon(QIcon(":/icons/icons/quit.svg"));
 
     actionDataFeatureDock = new QAction(mainWinowPtr);
     actionDataFeatureDock->setObjectName(QStringLiteral("actionDataFeatureDock"));
@@ -327,9 +326,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuZoomSet = new SARibbonMenu(menuChartSet);
     menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
-    //menuZoomSet->setIcon(icon16);
-    menuDataPickMenu = new SARibbonMenu(menuChartSet);
-    menuDataPickMenu->setObjectName(QStringLiteral("menu_dataPickMenu"));
+
     menuRegionSelect = new SARibbonMenu(menuChartSet);
     menuRegionSelect->setObjectName(QStringLiteral("menuRegionSelect"));
     menuHelp = new SARibbonMenu(menuBar);
@@ -361,7 +358,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuFile->addAction(menuExport->menuAction());
     menuFile->addAction(menuImport->menuAction());
     menuFile->addSeparator();
-    menuFile->addAction(actionQuite);
+    menuFile->addAction(actionQuit);
     ribbonButtonFileOpen->setMenu(menuFile);
 
     ribbonButtonOpen = mainCategoryFilePannel->addSmallAction(actionOpen);
@@ -403,6 +400,18 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonChartZoom = operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom,menuZoomSet);
     ribbonButtonXYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionXYDataPicker);
     ribbonButtonYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionYDataPicker);
+
+    //data editor pannel
+    operateCategoryDataEditorPannel = new SARibbonPannel();
+    operateCategoryDataEditorPannel->setWindowTitle("Data Edit");
+    operateRibbonCategory->addPannel(operateCategoryDataEditorPannel);
+    menuDataRemove = new SARibbonMenu(Parent);
+    menuDataRemove->addAction(actionOutRangDataRemove);
+    ribbonButtonInRangDataRemove = operateCategoryDataEditorPannel->addLargeAction(actionInRangDataRemove);
+    ribbonButtonInRangDataRemove->setMenu(menuDataRemove);
+    ribbonButtonInRangDataRemove->setPopupMode(QToolButton::MenuButtonPopup);
+    ribbonButtonPickCurveToData = operateCategoryDataEditorPannel->addLargeAction(actionPickCurveToData);
+
     //! View Category Page
     viewRibbonCategory = menuBar->addCategoryPage(QStringLiteral("View"));
     viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
@@ -459,19 +468,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     dockWidget_DataFeature->setWidget(dockWidgetContents_2);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_DataFeature);
 
-//    toolBar_chart = new QToolBar(mainWinowPtr);
-//    toolBar_chart->setObjectName(QStringLiteral("toolBar_chart"));
-//    toolBar_chart->setIconSize(QSize(24, 24));
-//    toolBar_chart->setToolButtonStyle(Qt::ToolButtonIconOnly);
-//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_chart);
-//    toolBar_chartSet = new QToolBar(mainWinowPtr);
-//    toolBar_chartSet->setObjectName(QStringLiteral("toolBar_chartSet"));
-//    toolBar_chartSet->setToolButtonStyle(Qt::ToolButtonIconOnly);
-//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_chartSet);
-//    toolBar_plot = new QToolBar(mainWinowPtr);
-//    toolBar_plot->setObjectName(QStringLiteral("toolBar_plot"));
-//    toolBar_plot->setToolButtonStyle(Qt::ToolButtonFollowStyle);
-//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBar_plot);
+
     dockWidget_windowList = new QDockWidget(mainWinowPtr);
     dockWidget_windowList->setObjectName(QStringLiteral("dockWidget_windowList"));
     dockWidgetContents_4 = new QWidget();
@@ -671,7 +668,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuChartSet->addAction(menuGrid->menuAction());
     menuChartSet->addAction(menuZoomSet->menuAction());
     menuChartSet->addAction(actionChartSet);
-    menuChartSet->addAction(menuDataPickMenu->menuAction());
     menuChartSet->addAction(menuRegionSelect->menuAction());
     menuGrid->addAction(actionShowGrid);
     menuGrid->addSeparator();
@@ -685,8 +681,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuZoomSet->addAction(actionZoomBase);
     menuZoomSet->addAction(actionZoomIn);
     menuZoomSet->addAction(actionZoomOut);
-    menuDataPickMenu->addAction(actionYDataPicker);
-    menuDataPickMenu->addAction(actionXYDataPicker);
     menuRegionSelect->addAction(actionStartRectSelect);
     menuRegionSelect->addAction(actionStartEllipseSelect);
     menuRegionSelect->addAction(actionStartPolygonSelect);
@@ -717,7 +711,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 //    toolBar_plot->addSeparator();
 
     retranslateUi(mainWinowPtr);
-    QObject::connect(actionQuite, SIGNAL(triggered()), mainWinowPtr, SLOT(close()));
+    QObject::connect(actionQuit, SIGNAL(triggered()), mainWinowPtr, SLOT(close()));
 
     tabWidget_valueViewer->setCurrentIndex(-1);
 
@@ -728,92 +722,93 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 {
-    mainWinowPtr->setWindowTitle(QApplication::translate("MainWindow", "signA-\344\277\241\345\217\267\345\244\204\347\220\206", 0));
-    actionOpen->setText(QApplication::translate("MainWindow", "\346\211\223\345\274\200\346\226\207\344\273\266", 0));
+    mainWinowPtr->setWindowTitle(QApplication::translate("MainWindow", "SA - Signal Analysis", 0));
+    actionOpen->setText(QApplication::translate("MainWindow", "Open", 0));
 #ifndef QT_NO_TOOLTIP
-    actionOpen->setToolTip(QApplication::translate("MainWindow", "\346\211\223\345\274\200\346\225\260\346\215\256\346\272\220", 0));
+    actionOpen->setToolTip(QApplication::translate("MainWindow", "Open File", 0));
 #endif // QT_NO_TOOLTIP
     actionOpen->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", 0));
-    actionWindowCascade->setText(QApplication::translate("MainWindow", "\345\261\202\345\217\240\345\270\203\345\261\200", 0));
-    actionWindowTile->setText(QApplication::translate("MainWindow", "\345\271\263\351\223\272\345\270\203\345\261\200", 0));
-    actionWindowMode->setText(QApplication::translate("MainWindow", "\347\252\227\345\217\243\346\250\241\345\274\217", 0));
-    actionTabMode->setText(QApplication::translate("MainWindow", "\346\240\207\347\255\276\346\250\241\345\274\217", 0));
-    actionSave->setText(QApplication::translate("MainWindow", "\344\277\235\345\255\230", 0));
+    actionWindowCascade->setText(QApplication::translate("MainWindow", "Cascade", 0));
+    actionWindowTile->setText(QApplication::translate("MainWindow", "Tile", 0));
+    actionWindowMode->setText(QApplication::translate("MainWindow", "Window\nMode", 0));
+    actionTabMode->setText(QApplication::translate("MainWindow", "Tab \n Mode", 0));
+    actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
     actionSave->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", 0));
-    actionQuite->setText(QApplication::translate("MainWindow", "\351\200\200\345\207\272", 0));
-    actionDataFeatureDock->setText(QApplication::translate("MainWindow", "\346\225\260\346\215\256\347\211\271\346\200\247", 0));
-    actionNewChart->setText(QApplication::translate("MainWindow", "\346\226\260\345\233\276\344\276\213", 0));
+    actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0));
+    actionDataFeatureDock->setText(QApplication::translate("MainWindow", "Data Feature", 0));
+    actionNewChart->setText(QApplication::translate("MainWindow", "New Chart", 0));
 #ifndef QT_NO_TOOLTIP
-    actionNewChart->setToolTip(QApplication::translate("MainWindow", "\346\226\260\345\233\276\344\276\213-\346\240\271\346\215\256\347\224\250\346\210\267\345\256\232\344\271\211x,y\350\275\264\347\232\204\346\225\260\346\215\256\347\273\230\345\210\266\345\233\276\345\275\242", 0));
+    actionNewChart->setToolTip(QApplication::translate("MainWindow", "New Chart with dialog", 0));
 #endif // QT_NO_TOOLTIP
-    actionNewTrend->setText(QApplication::translate("MainWindow", "\350\266\213\345\212\277\345\233\276", 0));
+    actionNewTrend->setText(QApplication::translate("MainWindow", "Trend Chart", 0));
 #ifndef QT_NO_TOOLTIP
-    actionNewTrend->setToolTip(QApplication::translate("MainWindow", "\346\214\211\346\225\260\346\215\256\345\272\217\345\210\227\351\241\272\345\272\217\347\273\230\345\210\266\350\266\213\345\212\277", 0));
+    actionNewTrend->setToolTip(QApplication::translate("MainWindow", "Plot Trend With User Select Data Value", 0));
 #endif // QT_NO_TOOLTIP
-    actionClearProject->setText(QApplication::translate("MainWindow", "\346\270\205\351\231\244\346\226\271\346\241\210", 0));
-    actionInRangDataRemove->setText(QApplication::translate("MainWindow", "\347\247\273\351\231\244\351\200\211\345\256\232\350\214\203\345\233\264\346\225\260\346\215\256", 0));
-    actionOutRangDataRemove->setText(QApplication::translate("MainWindow", "\347\247\273\351\231\244\350\214\203\345\233\264\345\244\226\346\225\260\346\215\256", 0));
+    actionClearProject->setText(QApplication::translate("MainWindow", "Clear", 0));
+    actionInRangDataRemove->setText(QApplication::translate("MainWindow", "remove data\nin rang", 0));
+    actionOutRangDataRemove->setText(QApplication::translate("MainWindow", "remove data\nout rang", 0));
 
-    actionSubWindowListDock->setText(QApplication::translate("MainWindow", "\345\255\220\347\252\227\345\217\243\345\210\227\350\241\250", 0));
-    actionEnableChartCrossCursor->setText(QApplication::translate("MainWindow", "\345\215\201\345\255\227\345\205\211\346\240\207", 0));
-    actionEnableChartPanner->setText(QApplication::translate("MainWindow", "\347\247\273\345\212\250", 0));
-    actionEnableChartZoom->setText(QApplication::translate("MainWindow", "\350\214\203\345\233\264\347\274\251\346\224\276", 0));
-    actionEnableChartZoom->setIconText(QApplication::translate("MainWindow", "\347\274\251\346\224\276", 0));
-    actionYDataPicker->setText(QApplication::translate("MainWindow", "Y\345\200\274\346\230\276\347\244\272", 0));
-    actionYDataPicker->setIconText(QApplication::translate("MainWindow", "\346\225\260\346\215\256", 0));
+    actionSubWindowListDock->setText(QApplication::translate("MainWindow", "Sub Window\nList Dock", 0));
+    actionEnableChartCrossCursor->setText(QApplication::translate("MainWindow", "Cross", 0));
+    actionEnableChartPanner->setText(QApplication::translate("MainWindow", "Panner", 0));
+    actionEnableChartZoom->setText(QApplication::translate("MainWindow", "Zoom", 0));
+    actionEnableChartZoom->setIconText(QApplication::translate("MainWindow", "Zoom", 0));
+    actionYDataPicker->setText(QApplication::translate("MainWindow", "Y Picker", 0));
+    actionYDataPicker->setIconText(QApplication::translate("MainWindow", "Y Picker", 0));
+    actionXYDataPicker->setText(QApplication::translate("MainWindow", "XY Picker", 0));
 #ifndef QT_NO_TOOLTIP
-    actionYDataPicker->setToolTip(QApplication::translate("MainWindow", "\345\234\250\345\233\276\350\241\250\344\270\212\346\230\276\347\244\272\351\274\240\346\240\207\347\273\217\350\277\207\346\233\262\347\272\277\347\232\204\346\225\260\346\215\256", 0));
+    actionYDataPicker->setToolTip(QApplication::translate("MainWindow", "Pick Y Data in Chart", 0));
 #endif // QT_NO_TOOLTIP
-    actionShowGrid->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\347\275\221\346\240\274", 0));
-    actionShowGrid->setIconText(QApplication::translate("MainWindow", "\347\275\221\346\240\274", 0));
-    actionShowHGrid->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\346\260\264\345\271\263\347\275\221\346\240\274", 0));
-    actionShowHGrid->setIconText(QApplication::translate("MainWindow", "\346\260\264\345\271\263\347\275\221\346\240\274", 0));
+    actionShowGrid->setText(QApplication::translate("MainWindow", "Grid", 0));
+    actionShowGrid->setIconText(QApplication::translate("MainWindow", "Grid", 0));
+    actionShowHGrid->setText(QApplication::translate("MainWindow", "H Grid", 0));
+    actionShowHGrid->setIconText(QApplication::translate("MainWindow", "H Grid", 0));
 #ifndef QT_NO_TOOLTIP
-    actionShowHGrid->setToolTip(QApplication::translate("MainWindow", "\346\230\276\347\244\272/\351\232\220\350\227\217 \346\260\264\345\271\263\347\275\221\346\240\274\347\272\277", 0));
+    actionShowHGrid->setToolTip(QApplication::translate("MainWindow", "Horizontal Grid", 0));
 #endif // QT_NO_TOOLTIP
-    actionShowVGrid->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\345\236\202\347\233\264\347\275\221\346\240\274", 0));
-    actionShowVGrid->setIconText(QApplication::translate("MainWindow", "\345\236\202\347\233\264\347\275\221\346\240\274", 0));
+    actionShowVGrid->setText(QApplication::translate("MainWindow", "V Grid", 0));
+    actionShowVGrid->setIconText(QApplication::translate("MainWindow", "V Grid", 0));
 #ifndef QT_NO_TOOLTIP
-    actionShowVGrid->setToolTip(QApplication::translate("MainWindow", "\346\230\276\347\244\272/\351\232\220\350\227\217\345\236\202\347\233\264\347\275\221\346\240\274", 0));
+    actionShowVGrid->setToolTip(QApplication::translate("MainWindow", "Vertical Grid", 0));
 #endif // QT_NO_TOOLTIP
-    actionShowCrowdedHGrid->setText(QApplication::translate("MainWindow", "\345\257\206\351\233\206\346\260\264\345\271\263\347\275\221\346\240\274", 0));
+    actionShowCrowdedHGrid->setText(QApplication::translate("MainWindow", "Crowded H Grid", 0));
 #ifndef QT_NO_TOOLTIP
-    actionShowCrowdedHGrid->setToolTip(QApplication::translate("MainWindow", "\346\230\276\347\244\272/\351\232\220\350\227\217 \345\257\206\351\233\206\346\260\264\345\271\263\347\275\221\346\240\274", 0));
+    actionShowCrowdedHGrid->setToolTip(QApplication::translate("MainWindow", "Crowded\nH Grid", 0));
 #endif // QT_NO_TOOLTIP
-    actionShowCrowdedVGrid->setText(QApplication::translate("MainWindow", "\345\257\206\351\233\206\345\236\202\347\233\264\347\275\221\346\240\274", 0));
-    actionShowLegend->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272/\351\232\220\350\227\217 \345\233\276\344\276\213", 0));
-    actionShowLegend->setIconText(QApplication::translate("MainWindow", "\345\233\276\344\276\213", 0));
+    actionShowCrowdedVGrid->setText(QApplication::translate("MainWindow", "Crowded\nV Grid", 0));
+    actionShowLegend->setText(QApplication::translate("MainWindow", "Legend", 0));
+    actionShowLegend->setIconText(QApplication::translate("MainWindow", "Legend", 0));
 #ifndef QT_NO_TOOLTIP
-    actionShowLegend->setToolTip(QApplication::translate("MainWindow", "\346\230\276\347\244\272/\351\232\220\350\227\217 \345\233\276\344\276\213", 0));
+    actionShowLegend->setToolTip(QApplication::translate("MainWindow", "Show/Hide Legend", 0));
 #endif // QT_NO_TOOLTIP
-    actionShowLegendPanel->setText(QApplication::translate("MainWindow", "\345\233\276\344\276\213\351\200\211\346\213\251\345\231\250", 0));
-    actionShowLegendPanel->setIconText(QApplication::translate("MainWindow", "\345\233\276\344\276\213\351\200\211\346\213\251", 0));
-    actionChartSet->setText(QApplication::translate("MainWindow", "\345\233\276\350\241\250\350\256\276\347\275\256", 0));
-    actionChartZoomReset->setText(QApplication::translate("MainWindow", "\346\234\200\344\274\230\350\247\206\345\233\276", 0));
-    actionPickCurveToData->setText(QApplication::translate("MainWindow", "\344\273\216\346\233\262\347\272\277\346\217\220\345\217\226\346\225\260\346\215\256", 0));
-    actionAbout->setText(QApplication::translate("MainWindow", "\345\205\263\344\272\216", 0));
-    actionRescind->setText(QApplication::translate("MainWindow", "\346\222\244\351\224\200", 0));
+    actionShowLegendPanel->setText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
+    actionShowLegendPanel->setIconText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
+    actionChartSet->setText(QApplication::translate("MainWindow", "Chart Set", 0));
+    actionChartZoomReset->setText(QApplication::translate("MainWindow", "Zoom Reset", 0));
+    actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick Curve\nTo Data", 0));
+    actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
+    actionRescind->setText(QApplication::translate("MainWindow", "Rescind", 0));
     actionRescind->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));
-    actionRedo->setText(QApplication::translate("MainWindow", "\351\207\215\345\201\232", 0));
+    actionRedo->setText(QApplication::translate("MainWindow", "Redo", 0));
     actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
-    actionValueManagerDock->setText(QApplication::translate("MainWindow", "\345\217\230\351\207\217\347\256\241\347\220\206\347\252\227\345\217\243", 0));
-    actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "\345\234\250\345\275\223\345\211\215\346\240\207\347\255\276\351\241\265\346\265\217\350\247\210", 0));
-    actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "\345\234\250\346\226\260\346\240\207\347\255\276\351\241\265\346\265\217\350\247\210", 0));
-    actionLayerOutDock->setText(QApplication::translate("MainWindow", "\345\233\276\345\261\202\347\256\241\347\220\206", 0));
-    actionRenameValue->setText(QApplication::translate("MainWindow", "\351\207\215\345\221\275\345\220\215", 0));
+    actionValueManagerDock->setText(QApplication::translate("MainWindow", "Value Manager\nDock", 0));
+    actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "View Value In\nCurrent Tab", 0));
+    actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "View Value In\nNew Tab", 0));
+    actionLayerOutDock->setText(QApplication::translate("MainWindow", "Layerout", 0));
+    actionRenameValue->setText(QApplication::translate("MainWindow", "Rename Value", 0));
 #ifndef QT_NO_TOOLTIP
-    actionRenameValue->setToolTip(QApplication::translate("MainWindow", "\351\207\215\345\221\275\345\220\215\345\217\230\351\207\217", 0));
+    actionRenameValue->setToolTip(QApplication::translate("MainWindow", "Rename Value", 0));
 #endif // QT_NO_TOOLTIP
-    actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "\346\201\242\345\244\215\351\273\230\350\256\244\345\270\203\345\261\200", 0));
-    actionValueViewerDock->setText(QApplication::translate("MainWindow", "\345\217\230\351\207\217\351\242\204\350\247\210", 0));
-    actionFigureViewer->setText(QApplication::translate("MainWindow", "\345\233\276\345\275\242\347\225\214\351\235\242", 0));
-    actionXYDataPicker->setText(QApplication::translate("MainWindow", "XY\345\200\274\346\215\225\350\216\267", 0));
-    actionDeleteValue->setText(QApplication::translate("MainWindow", "\345\210\240\351\231\244\345\217\230\351\207\217", 0));
+    actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "Defalut View", 0));
+    actionValueViewerDock->setText(QApplication::translate("MainWindow", "Value Viewe", 0));
+    actionFigureViewer->setText(QApplication::translate("MainWindow", "Figure Viewe", 0));
+
+    actionDeleteValue->setText(QApplication::translate("MainWindow", "Delete Value", 0));
 #ifndef QT_NO_TOOLTIP
-    actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "\345\210\240\351\231\244\351\200\211\344\270\255\347\232\204\345\217\230\351\207\217\357\274\214\351\234\200\345\234\250\345\217\230\351\207\217\347\256\241\347\220\206\347\233\256\345\275\225\344\270\255\351\200\211\344\270\255\351\234\200\350\246\201\345\210\240\351\231\244\347\232\204\345\217\230\351\207\217\357\274\214\345\271\266\350\277\233\350\241\214\346\223\215\344\275\234", 0));
+    actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "Delete Value", 0));
 #endif // QT_NO_TOOLTIP
-    actionOpenProject->setText(QApplication::translate("MainWindow", "\346\211\223\345\274\200\351\241\271\347\233\256", 0));
-    actionSaveAs->setText(QApplication::translate("MainWindow", "\345\217\246\345\255\230\344\270\272", 0));
+    actionOpenProject->setText(QApplication::translate("MainWindow", "Open Project", 0));
+    actionSaveAs->setText(QApplication::translate("MainWindow", "Save As", 0));
     actionProjectSetting->setText(QApplication::translate("MainWindow", "Project Setting", 0));
     actionZoomBase->setText(QApplication::translate("MainWindow", "ZoomBase", 0));
     actionZoomIn->setText(QApplication::translate("MainWindow", "ZoomIn", 0));
@@ -828,40 +823,40 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionAdditionalSelection->setText(QApplication::translate("MainWindow", "additionalSelection", 0));
     actionIntersectionSelection->setText(QApplication::translate("MainWindow", "intersectionSelection", 0));
     actionSubtractionSelection->setText(QApplication::translate("MainWindow", "subtractionSelection", 0));
-    menuFile->setTitle(QApplication::translate("MainWindow", "\346\226\207\344\273\266", 0));
-    menuExport->setTitle(QApplication::translate("MainWindow", "\345\257\274\345\207\272", 0));
-    menuImport->setTitle(QApplication::translate("MainWindow", "\345\257\274\345\205\245", 0));
-    menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "\347\252\227\345\217\243", 0));
-    menuAnalysis->setTitle(QApplication::translate("MainWindow", "\345\210\206\346\236\220", 0));
-    menuData->setTitle(QApplication::translate("MainWindow", "\346\225\260\346\215\256", 0));
-    menuChartDataManager->setTitle(QApplication::translate("MainWindow", "\345\233\276\347\272\277\346\225\260\346\215\256\346\223\215\344\275\234", 0));
-    menuDataManager->setTitle(QApplication::translate("MainWindow", "\345\217\230\351\207\217\346\223\215\344\275\234", 0));
-    menuChartSet->setTitle(QApplication::translate("MainWindow", "\345\233\276\350\241\250\346\223\215\344\275\234", 0));
-    menuGrid->setTitle(QApplication::translate("MainWindow", "\347\275\221\346\240\274\350\256\276\347\275\256", 0));
-    menuZoomSet->setTitle(QApplication::translate("MainWindow", "\347\274\251\346\224\276\346\223\215\344\275\234", 0));
-    menuDataPickMenu->setTitle(QApplication::translate("MainWindow", "\346\225\260\346\215\256\346\230\276\347\244\272", 0));
-    menuRegionSelect->setTitle(QApplication::translate("MainWindow", "\351\200\211\346\213\251", 0));
-    menuHelp->setTitle(QApplication::translate("MainWindow", "\345\270\256\345\212\251", 0));
-    menuEdit->setTitle(QApplication::translate("MainWindow", "\347\274\226\350\276\221", 0));
+    menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
+    menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
+    menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
+    menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "Windows View", 0));
+    menuAnalysis->setTitle(QApplication::translate("MainWindow", "Analysis", 0));
+    menuData->setTitle(QApplication::translate("MainWindow", "Data", 0));
+    menuChartDataManager->setTitle(QApplication::translate("MainWindow", "Chart Data Manager", 0));
+    menuDataManager->setTitle(QApplication::translate("MainWindow", "Data Manager", 0));
+    menuChartSet->setTitle(QApplication::translate("MainWindow", "Chart Set", 0));
+    menuGrid->setTitle(QApplication::translate("MainWindow", "Grid", 0));
+    menuZoomSet->setTitle(QApplication::translate("MainWindow", "Zoom Set", 0));
+
+    menuRegionSelect->setTitle(QApplication::translate("MainWindow", "Select", 0));
+    menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0));
+    menuEdit->setTitle(QApplication::translate("MainWindow", "Edit", 0));
     menuTool->setTitle(QApplication::translate("MainWindow", "Tool", 0));
-    menuLineChart->setTitle(QApplication::translate("MainWindow", "线图", 0));
-    menuScatterChart->setTitle(QApplication::translate("MainWindow", "散点图", 0));
-    menuBarChart->setTitle(QApplication::translate("MainWindow", "柱状图", 0));
-    menuBoxChart->setTitle(QApplication::translate("MainWindow", "箱图", 0));
-    dockWidget_DataFeature->setWindowTitle(QApplication::translate("MainWindow", "\346\225\260\346\215\256\347\211\271\346\200\247", 0));
+    menuLineChart->setTitle(QApplication::translate("MainWindow", "Line", 0));
+    menuScatterChart->setTitle(QApplication::translate("MainWindow", "Scatter", 0));
+    menuBarChart->setTitle(QApplication::translate("MainWindow", "Bar", 0));
+    menuBoxChart->setTitle(QApplication::translate("MainWindow", "Box", 0));
+    dockWidget_DataFeature->setWindowTitle(QApplication::translate("MainWindow", "Data Feature", 0));
 //    toolBar_chart->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 //    toolBar_chartSet->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 //    toolBar_plot->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
-    dockWidget_windowList->setWindowTitle(QApplication::translate("MainWindow", "\345\255\220\347\252\227\345\217\243\345\210\227\350\241\250", 0));
-    dockWidget_valueManage->setWindowTitle(QApplication::translate("MainWindow", "\345\217\230\351\207\217\347\256\241\347\220\206", 0));
-    dockWidget_plotLayer->setWindowTitle(QApplication::translate("MainWindow", "\345\233\276\345\261\202", 0));
-    dockWidget_chartDataViewer->setWindowTitle(QApplication::translate("MainWindow", "\347\273\230\345\233\276\346\225\260\346\215\256\351\242\204\350\247\210", 0));
+    dockWidget_windowList->setWindowTitle(QApplication::translate("MainWindow", "Window List", 0));
+    dockWidget_valueManage->setWindowTitle(QApplication::translate("MainWindow", "Value Manage", 0));
+    dockWidget_plotLayer->setWindowTitle(QApplication::translate("MainWindow", "Layout", 0));
+    dockWidget_chartDataViewer->setWindowTitle(QApplication::translate("MainWindow", "Chart Data", 0));
 #ifndef QT_NO_TOOLTIP
     dockWidget_main->setToolTip(QString());
 #endif // QT_NO_TOOLTIP
-    dockWidget_main->setWindowTitle(QApplication::translate("MainWindow", "\344\270\273\350\247\206\345\233\276", 0));
-    dockWidget_valueViewer->setWindowTitle(QApplication::translate("MainWindow", "\345\217\230\351\207\217\346\225\260\346\215\256\351\242\204\350\247\210", 0));
-    dockWidget_message->setWindowTitle(QApplication::translate("MainWindow", "\344\277\241\346\201\257\347\252\227\345\217\243", 0));
+    dockWidget_main->setWindowTitle(QApplication::translate("MainWindow", "Main", 0));
+    dockWidget_valueViewer->setWindowTitle(QApplication::translate("MainWindow", "value View", 0));
+    dockWidget_message->setWindowTitle(QApplication::translate("MainWindow", "Message", 0));
     dockWidget_plotSet->setWindowTitle(QApplication::translate("MainWindow", "plot config", 0));
 //    toolBarChartTools->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 
@@ -877,6 +872,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonBoxChart->setText(menuBoxChart->title());
     ribbonButtonScatterChart->setText(menuScatterChart->title());
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
+    operateCategoryDataEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Data Edit", 0));
     chartSetRibbonContextCategory->setContextTitle(QApplication::translate("MainWindow", "Chart Set", 0));
     chartFormatRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Format", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));

@@ -308,27 +308,35 @@ void MainWindow::initUI()
     //- window menu 窗口 菜单
     connect(ui->actionSetDefalutDockPos,&QAction::triggered,this,&MainWindow::onActionSetDefalutDockPosTriggered);
     //窗口模式
-    connect(ui->actionWindowMode,&QAction::triggered,[&](){
+    connect(ui->actionWindowMode,&QAction::triggered,[this](bool on){
         czy::QtApp::QWaitCursor waitCur;
         Q_UNUSED(waitCur);
-        ui->actionTabMode->setChecked(false);
-        ui->actionWindowMode->setChecked(true);
-        if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
-            return;
+        ui->actionTabMode->setChecked(!on);
+        if(on){
+            if(QMdiArea::SubWindowView != this->ui->mdiArea->viewMode()){
+                ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
+            }
+        }else{
+            if(QMdiArea::SubWindowView == this->ui->mdiArea->viewMode()){
+                ui->mdiArea->setViewMode(QMdiArea::TabbedView);
+            }
         }
-        ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
     });
     //标签模式
-    connect(ui->actionTabMode,&QAction::triggered,[&](){
+    connect(ui->actionTabMode,&QAction::triggered,[this](bool on){
         czy::QtApp::QWaitCursor waitCur;
         Q_UNUSED(waitCur);
-        ui->actionTabMode->setChecked(true);
-        ui->actionWindowMode->setChecked(false);
+        ui->actionWindowMode->setChecked(!on);
 
-        if(QMdiArea::TabbedView == ui->mdiArea->viewMode()){
-            return;
+        if(on){
+            if(QMdiArea::TabbedView != this->ui->mdiArea->viewMode()){
+                ui->mdiArea->setViewMode(QMdiArea::TabbedView);
+            }
+        }else{
+            if(QMdiArea::TabbedView == this->ui->mdiArea->viewMode()){
+                ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
+            }
         }
-        ui->mdiArea->setViewMode(QMdiArea::TabbedView);
     });
     //层叠布置
     connect(ui->actionWindowCascade,&QAction::triggered,[&](){
