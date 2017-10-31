@@ -239,7 +239,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionClearAllSelectiedRegion = new QAction(mainWinowPtr);
     actionClearAllSelectiedRegion->setObjectName(QStringLiteral("actionClearAllSelectiedRegion"));
-    actionClearAllSelectiedRegion->setCheckable(true);
+    actionClearAllSelectiedRegion->setCheckable(false);
 
     actionSingleSelection = new QAction(mainWinowPtr);
     actionSingleSelection->setObjectName(QStringLiteral("actionSingleSelection"));
@@ -392,6 +392,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonIntersectionSelection = ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
     operateCategorySelectEditorPannel->addWidget(ribbonButtonGroupSelectionMode
                                                  ,0,3);
+
     //data view editor
     operateCategoryDataViewPannel = operateRibbonCategory->addPannel(QStringLiteral("Data View"));
     operateCategoryDataViewPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
@@ -791,7 +792,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionRescind->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));
     actionRedo->setText(QApplication::translate("MainWindow", "Redo", 0));
     actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
-    actionValueManagerDock->setText(QApplication::translate("MainWindow", "Value Manager\nDock", 0));
+    actionValueManagerDock->setText(QApplication::translate("MainWindow", "Value Manager", 0));
     actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "View Value In\nCurrent Tab", 0));
     actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "View Value In\nNew Tab", 0));
     actionLayerOutDock->setText(QApplication::translate("MainWindow", "Layerout", 0));
