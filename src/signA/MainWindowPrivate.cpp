@@ -435,7 +435,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonLayerOutDock = viewCategoryWindowPannel->addSmallAction(actionLayerOutDock);
     ribbonButtonValueViewerDock = viewCategoryWindowPannel->addSmallAction(actionValueViewerDock);
     ribbonButtonValueManagerDock = viewCategoryWindowPannel->addSmallAction(actionValueManagerDock);
-    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock View"),QIcon(":/icons/icons/AllDock.png"),QToolButton::InstantPopup);
+    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock\nView"),QIcon(":/icons/icons/AllDock.png"),QToolButton::InstantPopup);
     menuWindowsViewSet->addAction(actionFigureViewer);
     menuWindowsViewSet->addAction(actionDataFeatureDock);
     menuWindowsViewSet->addAction(actionSubWindowListDock);
@@ -750,7 +750,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
     actionSave->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", 0));
     actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0));
-    actionDataFeatureDock->setText(QApplication::translate("MainWindow", "Data Feature", 0));
+    actionDataFeatureDock->setText(QApplication::translate("MainWindow", "Data\nFeature", 0));
     actionNewChart->setText(QApplication::translate("MainWindow", "New Chart", 0));
 #ifndef QT_NO_TOOLTIP
     actionNewChart->setToolTip(QApplication::translate("MainWindow", "New Chart with dialog", 0));
@@ -813,9 +813,9 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 #ifndef QT_NO_TOOLTIP
     actionRenameValue->setToolTip(QApplication::translate("MainWindow", "Rename Value", 0));
 #endif // QT_NO_TOOLTIP
-    actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "Defalut View", 0));
-    actionValueViewerDock->setText(QApplication::translate("MainWindow", "Value Viewe", 0));
-    actionFigureViewer->setText(QApplication::translate("MainWindow", "Figure Viewe", 0));
+    actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "Defalut\nView", 0));
+    actionValueViewerDock->setText(QApplication::translate("MainWindow", "Value View", 0));
+    actionFigureViewer->setText(QApplication::translate("MainWindow", "Figure\nView", 0));
 
     actionDeleteValue->setText(QApplication::translate("MainWindow", "Delete Value", 0));
 #ifndef QT_NO_TOOLTIP
@@ -840,7 +840,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
-    menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "Windows View", 0));
+    menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "Windows\nView", 0));
     menuAnalysis->setTitle(QApplication::translate("MainWindow", "Analysis", 0));
     menuData->setTitle(QApplication::translate("MainWindow", "Data", 0));
     menuChartDataManager->setTitle(QApplication::translate("MainWindow", "Chart Data Manager", 0));
@@ -885,6 +885,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonBarChart->setText(menuBarChart->title());
     ribbonButtonBoxChart->setText(menuBoxChart->title());
     ribbonButtonScatterChart->setText(menuScatterChart->title());
+    ribbonButtonAllDock->setText(menuWindowsViewSet->title());
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
     operateCategoryDataEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Data Edit", 0));
     chartSetRibbonContextCategory->setContextTitle(QApplication::translate("MainWindow", "Chart Set", 0));
