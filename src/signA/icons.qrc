@@ -78,7 +78,6 @@
         <file>icons/figureSet/GridYMin.png</file>
         <file>icons/figureSet/GridYOnly.png</file>
         <file>icons/figureSet/ShowLegend.png</file>
-        <file>icons/figureSet/chartSet.png</file>
         <file>icons/figureSet/legendPanel.svg</file>
     </qresource>
     <qresource prefix="/windowIcons">

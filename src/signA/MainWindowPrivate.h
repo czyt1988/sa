@@ -31,6 +31,7 @@
 #include "SARibbonMenu.h"
 #include "SARibbonButtonGroupWidget.h"
 #include "SARibbonContextCategory.h"
+#include "SARibbonQuickAccessBar.h"
 class MainWindow;
 class MainWindowPrivate
 {
@@ -62,7 +63,6 @@ public:
         QAction *actionShowCrowdedVGrid;
         QAction *actionShowLegend;
         QAction *actionShowLegendPanel;
-        QAction *actionChartSet;
         QAction *actionChartZoomReset;
         QAction *actionPickCurveToData;
         QAction *actionAbout;
@@ -141,6 +141,17 @@ public:
         SARibbonToolButton* ribbonButtonPickCurveToData;
 
         SARibbonMenu *menuDataRemove;
+        //legend pannel
+        SARibbonPannel* chartLegendCategoryWindowPannel;
+        SARibbonToolButton* ribbonButtonShowLegend;
+        SARibbonToolButton* ribbonButtonShowLegendPanel;
+
+        SARibbonPannel* chartGridCategoryWindowPannel;
+        SARibbonToolButton* ribbonButtonShowGrid;
+        SARibbonToolButton* ribbonButtonShowHGrid;
+        SARibbonToolButton* ribbonButtonShowVGrid;
+        SARibbonToolButton* ribbonButtonShowCrowdedGrid;
+        SARibbonMenu *menuShowCrowdedGrid;
         //!View Category Page
         SARibbonCategory* viewRibbonCategory;
         SARibbonPannel* viewCategoryWindowPannel;
@@ -159,16 +170,11 @@ public:
         //! Chart Set Context Category
         SARibbonContextCategory* chartSetRibbonContextCategory;
         //chart Format Ribbon Category page
-        SARibbonCategory* chartFormatRibbonCategory;
-        //legend pannel
-        SARibbonPannel* chartLegendCategoryWindowPannel;
-        SARibbonToolButton* ribbonButtonShowLegend;
-        SARibbonToolButton* ribbonButtonShowLegendPanel;
 
 
 
 
-
+        //===========================================================
         SARibbonMenu *menuWindowsViewSet;
 
         //

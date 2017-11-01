@@ -1239,7 +1239,7 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
     if(fig)
     {
 #ifdef SA_USE_RIBBON_UI
-        ui->menuBar->showContextCategory(ui->chartSetRibbonContextCategory);
+
 #else
       ui->toolBar_chartSet->setEnabled(true);
 #endif
@@ -1282,9 +1282,6 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
     }
     else
     {
-#ifdef SA_USE_RIBBON_UI
-        ui->menuBar->hideContextCategory(ui->chartSetRibbonContextCategory);
-#endif
     }
     //设置绘图属性窗口,空指针也接受
     ui->figureSetWidget->setFigureWidget(fig);
@@ -1314,9 +1311,6 @@ void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
         {
             plotItemDataModel->clear();
         }
-#ifdef SA_USE_RIBBON_UI
-        ui->menuBar->hideContextCategory(ui->chartSetRibbonContextCategory);
-#endif
     }
     ui->dataFeatureWidget->mdiSubWindowClosed(arg1);
 }

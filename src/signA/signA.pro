@@ -18,7 +18,8 @@ QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
-OTHER_FILES += readme.md
+OTHER_FILES += readme.md\
+    logo.rc
 
 DESTDIR = ../bin
 DEFINES -= SA_TDMS

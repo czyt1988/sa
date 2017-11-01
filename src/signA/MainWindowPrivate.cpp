@@ -18,7 +18,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 {
     if (mainWinowPtr->objectName().isEmpty())
         mainWinowPtr->setObjectName(QStringLiteral("MainWindow"));
-
+    mainWinowPtr->setWindowIcon(QIcon(":/windowIcons/icons/windowIcon/figureWindow.svg"));
     mainWinowPtr->resize(1219, 689);
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     sizePolicy.setHorizontalStretch(0);
@@ -135,10 +135,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionShowLegendPanel = new QAction(mainWinowPtr);
     actionShowLegendPanel->setObjectName(QStringLiteral("actionLegendPanel"));
     actionShowLegendPanel->setIcon(QIcon(":/figureSet/icons/figureSet/legendPanel.svg"));
-
-    actionChartSet = new QAction(mainWinowPtr);
-    actionChartSet->setObjectName(QStringLiteral("actionChartSet"));
-    actionChartSet->setIcon(QIcon(":/figureSet/icons/figureSet/chartSet.png"));
 
     actionChartZoomReset = new QAction(mainWinowPtr);
     actionChartZoomReset->setObjectName(QStringLiteral("actionChartZoomReset"));
@@ -313,9 +309,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuData->setObjectName(QStringLiteral("menuData"));
     menuChartDataManager = new SARibbonMenu(menuData);
     menuChartDataManager->setObjectName(QStringLiteral("menu_chartDataManager"));
-    QIcon icon47;
-    icon47.addFile(QStringLiteral(":/icons/icons/chartDataManager.png"), QSize(), QIcon::Normal, QIcon::Off);
-    menuChartDataManager->setIcon(icon47);
+    menuChartDataManager->setIcon(QIcon(":/icons/icons/chartDataManager.png"));
+
     menuDataManager = new SARibbonMenu(menuData);
     menuDataManager->setObjectName(QStringLiteral("menu_dataManager"));
     menuChartSet = new SARibbonMenu(menuBar);
@@ -337,7 +332,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuTool->setObjectName(QStringLiteral("menu_tool"));
 
 
-
+//=======start ribbon set=============================================================================================
 
     //![1] Main Category Page
     mainRibbonCategory = menuBar->addCategoryPage(QStringLiteral("main"));
@@ -412,6 +407,23 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonInRangDataRemove->setMenu(menuDataRemove);
     ribbonButtonInRangDataRemove->setPopupMode(QToolButton::MenuButtonPopup);
     ribbonButtonPickCurveToData = operateCategoryDataEditorPannel->addLargeAction(actionPickCurveToData);
+    //legend pannel
+    chartLegendCategoryWindowPannel = operateRibbonCategory->addPannel("legend");
+    ribbonButtonShowLegend = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegend);
+    ribbonButtonShowLegendPanel = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegendPanel);
+    //Grid pannel
+    chartGridCategoryWindowPannel = operateRibbonCategory->addPannel("Grid");
+    ribbonButtonShowGrid = chartGridCategoryWindowPannel->addLargeAction(actionShowGrid);
+    ribbonButtonShowHGrid = chartGridCategoryWindowPannel->addSmallAction(actionShowHGrid);
+    ribbonButtonShowVGrid = chartGridCategoryWindowPannel->addSmallAction(actionShowVGrid);
+    menuShowCrowdedGrid = new SARibbonMenu(menuBar);
+    menuShowCrowdedGrid->setObjectName(QStringLiteral("menuShowCrowdedGrid"));
+    menuShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
+    menuShowCrowdedGrid->addAction(actionShowCrowdedHGrid);
+    menuShowCrowdedGrid->addAction(actionShowCrowdedVGrid);
+    ribbonButtonShowCrowdedGrid = chartGridCategoryWindowPannel->addSmallMenu(menuShowCrowdedGrid);
+    ribbonButtonShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
+
 
     //! View Category Page
     viewRibbonCategory = menuBar->addCategoryPage(QStringLiteral("View"));
@@ -439,13 +451,16 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonWindowCascade = windowModeCategoryWindowPannel->addMediumAction(actionWindowCascade);
     ribbonButtonWindowTile = windowModeCategoryWindowPannel->addMediumAction(actionWindowTile);
 
-    //chartSetRibbonContextCategory
+    //chart Set Ribbon Context Category
     chartSetRibbonContextCategory = menuBar->addContextCategory("chart set",QColor(201,89,156),RIBBON_CONTEXT_CATEGORY_ID_CHART_SET);
-    chartFormatRibbonCategory = chartSetRibbonContextCategory->addCategoryPage("format");
-    chartLegendCategoryWindowPannel = chartFormatRibbonCategory->addPannel("legend");
-    ribbonButtonShowLegend = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegend);
-    ribbonButtonShowLegendPanel = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegendPanel);
-
+    menuBar->quickAccessBar()->setEnableDrawIcon(false);
+    menuBar->quickAccessBar()->addSeparator();
+    menuBar->quickAccessBar()->addButton(actionSave);
+    menuBar->quickAccessBar()->addSeparator();
+    menuBar->quickAccessBar()->addButton(actionRescind);
+    menuBar->quickAccessBar()->addButton(actionRedo);
+    menuBar->quickAccessBar()->addSeparator();
+//=======end ribbon set=======================================================================================
 
     statusBar = new QStatusBar(mainWinowPtr);
     statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -668,7 +683,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuChartSet->addAction(actionEnableChartPanner);
     menuChartSet->addAction(menuGrid->menuAction());
     menuChartSet->addAction(menuZoomSet->menuAction());
-    menuChartSet->addAction(actionChartSet);
     menuChartSet->addAction(menuRegionSelect->menuAction());
     menuGrid->addAction(actionShowGrid);
     menuGrid->addSeparator();
@@ -784,7 +798,6 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 #endif // QT_NO_TOOLTIP
     actionShowLegendPanel->setText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
     actionShowLegendPanel->setIconText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
-    actionChartSet->setText(QApplication::translate("MainWindow", "Chart Set", 0));
     actionChartZoomReset->setText(QApplication::translate("MainWindow", "Zoom Reset", 0));
     actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick Curve\nTo Data", 0));
     actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
@@ -875,6 +888,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
     operateCategoryDataEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Data Edit", 0));
     chartSetRibbonContextCategory->setContextTitle(QApplication::translate("MainWindow", "Chart Set", 0));
-    chartFormatRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Format", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
+    chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));
+    ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));
 }
