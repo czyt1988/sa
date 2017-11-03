@@ -333,12 +333,13 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 //=======start ribbon set=============================================================================================
-
+    ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
+    ribbonRightTopBar->addButton(actionAbout);
     //![1] Main Category Page
     mainRibbonCategory = menuBar->addCategoryPage(QStringLiteral("main"));
     mainRibbonCategory->setObjectName(QStringLiteral("mainRibbonCategory"));
     //File Pannel
-    mainCategoryFilePannel = mainRibbonCategory->addPannel(QStringLiteral("mainCategoryFilePannel"));
+    mainCategoryFilePannel = mainRibbonCategory->addPannel(QStringLiteral("File"));
     mainCategoryFilePannel->setObjectName(QStringLiteral("mainCategoryFilePannel"));
 
     ribbonButtonFileOpen = mainCategoryFilePannel->addLargeAction(actionOpenProject);
@@ -361,7 +362,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonClearProject = mainCategoryFilePannel->addSmallAction(actionClearProject);
 
     //Chart Pannel
-    mainCategoryChartPannel = mainRibbonCategory->addPannel(QStringLiteral("mainCategoryChartPannel"));
+    mainCategoryChartPannel = mainRibbonCategory->addPannel(QStringLiteral("Chart"));
     ribbonButtonNewChart = mainCategoryChartPannel->addLargeAction(actionNewChart);
     menuLineChart->addAction(actionNewTrend);
     ribbonButtonLineChart = mainCategoryChartPannel->addLargeMenu(menuLineChart);
@@ -369,7 +370,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonBarChart = mainCategoryChartPannel->addLargeMenu(menuBarChart);
     ribbonButtonBoxChart = mainCategoryChartPannel->addLargeMenu(menuBoxChart);
 
-    //
+
     //! operate Category Page
     operateRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Operate"));
     operateRibbonCategory->setObjectName(QStringLiteral("operateRibbonCategory"));
@@ -751,7 +752,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionSave->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", 0));
     actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0));
     actionDataFeatureDock->setText(QApplication::translate("MainWindow", "Data\nFeature", 0));
-    actionNewChart->setText(QApplication::translate("MainWindow", "New Chart", 0));
+    actionNewChart->setText(QApplication::translate("MainWindow", "New\nChart", 0));
 #ifndef QT_NO_TOOLTIP
     actionNewChart->setToolTip(QApplication::translate("MainWindow", "New Chart with dialog", 0));
 #endif // QT_NO_TOOLTIP
@@ -821,7 +822,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 #ifndef QT_NO_TOOLTIP
     actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "Delete Value", 0));
 #endif // QT_NO_TOOLTIP
-    actionOpenProject->setText(QApplication::translate("MainWindow", "Open Project", 0));
+    actionOpenProject->setText(QApplication::translate("MainWindow", "Open\nProject", 0));
     actionSaveAs->setText(QApplication::translate("MainWindow", "Save As", 0));
     actionProjectSetting->setText(QApplication::translate("MainWindow", "Project Setting", 0));
     actionZoomBase->setText(QApplication::translate("MainWindow", "ZoomBase", 0));
@@ -876,11 +877,11 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 
     mainRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Main", 0));
     mainCategoryFilePannel->setWindowTitle(QApplication::translate("MainWindow", "File", 0));
+    mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart", 0));
     viewRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "View", 0));
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
     operateCategorySelectEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Select Editor", 0));
-    mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart", 0));
     ribbonButtonLineChart->setText(menuLineChart->title());
     ribbonButtonBarChart->setText(menuBarChart->title());
     ribbonButtonBoxChart->setText(menuBoxChart->title());

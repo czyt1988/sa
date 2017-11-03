@@ -96,6 +96,7 @@ public:
 
 
         SARibbonBar *menuBar;
+        SARibbonButtonGroupWidget* ribbonRightTopBar;
         //!Main Category Page
         SARibbonCategory* mainRibbonCategory;
         SARibbonPannel* mainCategoryFilePannel;
@@ -115,6 +116,7 @@ public:
         SARibbonMenu *menuBarChart;
         SARibbonMenu *menuBoxChart;
         SARibbonMenu *menuScatterChart;
+
         //! operate Category Page
         SARibbonCategory* operateRibbonCategory;
 
