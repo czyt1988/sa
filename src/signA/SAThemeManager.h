@@ -8,8 +8,8 @@ class SAThemeManager
 {
 public:
     SAThemeManager();
-    static void setStyle(const QString &styleName);
-    bool setDefault();
+    static QString getStyleString(const QString &styleName);
+    static QString getDefaultStyleString();
 private:
 };
 

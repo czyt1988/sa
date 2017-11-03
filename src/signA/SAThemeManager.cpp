@@ -12,28 +12,24 @@ SAThemeManager::SAThemeManager()
 
 }
 
-void SAThemeManager::setStyle(const QString &styleName)
+QString SAThemeManager::getStyleString(const QString &styleName)
 {
     QFile file(QApplication::applicationDirPath()+QDir::separator()+"theme"+QDir::separator()+styleName);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
-        SAThemeManager tmp;
-        tmp.setDefault();
-        return;
+        return SAThemeManager::getDefaultStyleString();
     }
-    QString ss = file.readAll();
-    qApp->setStyleSheet(ss);
+    return file.readAll();
 }
 
-bool SAThemeManager::setDefault()
+QString SAThemeManager::getDefaultStyleString()
 {
     QFile file(":/default/theme/default.qss");
-    if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
-        return false;
+        return "";
     }
-    qApp->setStyleSheet(file.readAll());
-    return true;
+    return file.readAll();
 }
 
 

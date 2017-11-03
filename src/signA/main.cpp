@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QTextCodec>
 #include "SAThemeManager.h"
-
+#include <QDebug>
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 #pragma execution_character_set("utf-8")
 #endif
@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     //样式设置
     MainWindow w;
-    SAThemeManager::setStyle("default.qss");
+    QString styleString = SAThemeManager::getDefaultStyleString();
+    w.SARibbonMainWindow::setStyleSheet(styleString);
     w.show();
     
     return a.exec();

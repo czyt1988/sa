@@ -92,6 +92,10 @@ public:
         QAction *actionAdditionalSelection;
         QAction *actionIntersectionSelection;
         QAction *actionSubtractionSelection;
+        QAction *actionDrawScatterChart;
+        QAction *actionDrawBarChart;
+        QAction *actionDrawBoxChart;
+
         QWidget *centralWidget;
 
 

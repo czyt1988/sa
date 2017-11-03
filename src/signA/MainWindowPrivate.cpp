@@ -259,6 +259,17 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSubtractionSelection->setCheckable(true);
     actionSubtractionSelection->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
 
+    actionDrawScatterChart = new QAction(mainWinowPtr);
+    actionDrawScatterChart->setObjectName(QStringLiteral("actionDrawScatterChart"));
+    //actionDrawScatterChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
+
+    actionDrawBarChart = new QAction(mainWinowPtr);
+    actionDrawBarChart->setObjectName(QStringLiteral("actionDrawBarChart"));
+    //actionDrawBarChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
+
+    actionDrawBoxChart = new QAction(mainWinowPtr);
+    actionDrawBoxChart->setObjectName(QStringLiteral("actionDrawBoxChart"));
+    //actionDrawBoxChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
 
     centralWidget = new QWidget(mainWinowPtr);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
@@ -652,19 +663,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_plotSet->setWidget(dockWidgetContents);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_plotSet);
-//    toolBarChartTools = new QToolBar(mainWinowPtr);
-//    toolBarChartTools->setObjectName(QStringLiteral("toolBarChartTools"));
-//    mainWinowPtr->addToolBar(Qt::TopToolBarArea, toolBarChartTools);
 
-//    menuBar->addAction(menuFile->menuAction());
-//    menuBar->addAction(menuEdit->menuAction());
-//    menuBar->addAction(menu_chart->menuAction());
-//    menuBar->addAction(menu_Analysis->menuAction());
-//    menuBar->addAction(menuData->menuAction());
-//    menuBar->addAction(menu_window->menuAction());
-//    menuBar->addAction(menu_chartSet->menuAction());
-//    menuBar->addAction(menuHelp->menuAction());
-//    menuBar->addAction(menu_tool->menuAction());
 
 
 
@@ -711,6 +710,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuEdit->addAction(actionRedo);
     menuTool->addAction(actionProjectSetting);
 
+    menuScatterChart->addAction(actionDrawScatterChart);
+
+    menuBarChart->addAction(actionDrawBarChart);
+
+    menuBoxChart->addAction(actionDrawBoxChart);
 //    toolBar_chart->addAction(actionPickCurveToData);
 //    toolBar_chart->addAction(actionInRangDataRemove);
 //    toolBar_chart->addAction(actionOutRangDataRemove);
@@ -830,14 +834,17 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionZoomIn->setShortcut(QApplication::translate("MainWindow", "Ctrl+=", 0));
     actionZoomOut->setText(QApplication::translate("MainWindow", "ZoomOut", 0));
     actionZoomOut->setShortcut(QApplication::translate("MainWindow", "Ctrl+-", 0));
-    actionStartRectSelect->setText(QApplication::translate("MainWindow", "rectSelect", 0));
-    actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "ellipseSelect", 0));
-    actionStartPolygonSelect->setText(QApplication::translate("MainWindow", "polygonSelect", 0));
-    actionClearAllSelectiedRegion->setText(QApplication::translate("MainWindow", "clearAllSelect", 0));
-    actionSingleSelection->setText(QApplication::translate("MainWindow", "singleSelection", 0));
-    actionAdditionalSelection->setText(QApplication::translate("MainWindow", "additionalSelection", 0));
-    actionIntersectionSelection->setText(QApplication::translate("MainWindow", "intersectionSelection", 0));
-    actionSubtractionSelection->setText(QApplication::translate("MainWindow", "subtractionSelection", 0));
+    actionStartRectSelect->setText(QApplication::translate("MainWindow", "Rect Select", 0));
+    actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "Ellipse Select", 0));
+    actionStartPolygonSelect->setText(QApplication::translate("MainWindow", "Polygon Select", 0));
+    actionClearAllSelectiedRegion->setText(QApplication::translate("MainWindow", "Clear Select", 0));
+    actionSingleSelection->setText(QApplication::translate("MainWindow", "New Select", 0));
+    actionAdditionalSelection->setText(QApplication::translate("MainWindow", "Add Select", 0));
+    actionIntersectionSelection->setText(QApplication::translate("MainWindow", "Int Select", 0));
+    actionSubtractionSelection->setText(QApplication::translate("MainWindow", "Sub Select", 0));
+    actionDrawScatterChart->setText(QApplication::translate("MainWindow", "Scatter", 0));
+    actionDrawBarChart->setText(QApplication::translate("MainWindow", "Bar", 0));
+    actionDrawBoxChart->setText(QApplication::translate("MainWindow", "Box", 0));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
