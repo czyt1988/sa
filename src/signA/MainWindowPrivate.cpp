@@ -298,7 +298,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet->setIcon(icon46);
 
     menuAnalysis = new SARibbonMenu(menuBar);
-    menuAnalysis->setObjectName(QStringLiteral("menu_Analysis"));
+    menuAnalysis->setObjectName(QStringLiteral("menuAnalysis"));
 
     menuLineChart = new SARibbonMenu(menuBar);
     menuLineChart->setObjectName(QStringLiteral("menuLineChart"));
@@ -435,8 +435,13 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuShowCrowdedGrid->addAction(actionShowCrowdedVGrid);
     ribbonButtonShowCrowdedGrid = chartGridCategoryWindowPannel->addSmallMenu(menuShowCrowdedGrid);
     ribbonButtonShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
-
-
+    //! Analysis
+    analysisRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Analysis"));
+    analysisRibbonCategory->setObjectName(QStringLiteral("analysisRibbonCategory"));
+    //Analysis Pannel
+    analysisCategoryFunctionPannel = analysisRibbonCategory->addPannel(QStringLiteral("Function"));
+    ribbonButtonAllFuntion = analysisCategoryFunctionPannel->addLargeMenu(menuAnalysis);
+    ribbonGalleryFuntions = analysisCategoryFunctionPannel->addGallery();
     //! View Category Page
     viewRibbonCategory = menuBar->addCategoryPage(QStringLiteral("View"));
     viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
@@ -463,8 +468,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonWindowCascade = windowModeCategoryWindowPannel->addMediumAction(actionWindowCascade);
     ribbonButtonWindowTile = windowModeCategoryWindowPannel->addMediumAction(actionWindowTile);
 
-    //chart Set Ribbon Context Category
-    chartSetRibbonContextCategory = menuBar->addContextCategory("chart set",QColor(201,89,156),RIBBON_CONTEXT_CATEGORY_ID_CHART_SET);
     menuBar->quickAccessBar()->setEnableDrawIcon(false);
     menuBar->quickAccessBar()->addSeparator();
     menuBar->quickAccessBar()->addButton(actionSave);
@@ -894,10 +897,11 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonBoxChart->setText(menuBoxChart->title());
     ribbonButtonScatterChart->setText(menuScatterChart->title());
     ribbonButtonAllDock->setText(menuWindowsViewSet->title());
+    ribbonButtonAllFuntion->setText(menuAnalysis->title());
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
     operateCategoryDataEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Data Edit", 0));
-    chartSetRibbonContextCategory->setContextTitle(QApplication::translate("MainWindow", "Chart Set", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
     chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));
     ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));
+
 }

@@ -32,6 +32,7 @@
 #include "SARibbonButtonGroupWidget.h"
 #include "SARibbonContextCategory.h"
 #include "SARibbonQuickAccessBar.h"
+#include "SARibbonGallery.h"
 class MainWindow;
 class MainWindowPrivate
 {
@@ -158,6 +159,11 @@ public:
         SARibbonToolButton* ribbonButtonShowVGrid;
         SARibbonToolButton* ribbonButtonShowCrowdedGrid;
         SARibbonMenu *menuShowCrowdedGrid;
+        //! Analysis
+        SARibbonCategory* analysisRibbonCategory;
+        SARibbonPannel* analysisCategoryFunctionPannel;
+        SARibbonToolButton* ribbonButtonAllFuntion;
+        SARibbonGallery* ribbonGalleryFuntions;
         //!View Category Page
         SARibbonCategory* viewRibbonCategory;
         SARibbonPannel* viewCategoryWindowPannel;
@@ -173,9 +179,7 @@ public:
         SARibbonToolButton* ribbonButtonTabMode;
         SARibbonToolButton* ribbonButtonWindowCascade;
         SARibbonToolButton* ribbonButtonWindowTile;
-        //! Chart Set Context Category
-        SARibbonContextCategory* chartSetRibbonContextCategory;
-        //chart Format Ribbon Category page
+
 
 
 

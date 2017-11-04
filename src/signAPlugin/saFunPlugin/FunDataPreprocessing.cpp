@@ -12,6 +12,7 @@
 #include "SAValueManager.h"
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
+#include "SAChart.h"
 #include <QMdiSubWindow>
 #include "SAGUIGlobalConfig.h"
 
@@ -137,8 +138,8 @@ void FunDataPreprocessing::sigmaDetect()
                     QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(waveRemove.get()));
                     if(cur)
                     {
-                        SA2DGraph::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
-                        SA2DGraph::setCurveLinePenStyle(cur,Qt::NoPen);
+                        SAChart::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
+                        SAChart::setCurveLinePenStyle(cur,Qt::NoPen);
                     }
                 }
                 else
@@ -146,8 +147,8 @@ void FunDataPreprocessing::sigmaDetect()
                     QwtPlotCurve* cur  = (QwtPlotCurve*)(chart->addCurve(outRangIndex.get(),waveRemove.get()));
                     if(cur)
                     {
-                        SA2DGraph::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
-                        SA2DGraph::setCurveLinePenStyle(cur,Qt::NoPen);
+                        SAChart::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
+                        SAChart::setCurveLinePenStyle(cur,Qt::NoPen);
                     }
                 }
             }
@@ -211,8 +212,8 @@ void FunDataPreprocessing::sigmaDetect()
             }
             if(cur)
             {
-                SAChart2D::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
-                SAChart2D::setCurveLinePenStyle(cur,Qt::NoPen);
+                SAChart::setCurveSymbol(cur,QwtSymbol::Cross,QSize(5,5));
+                SAChart::setCurveLinePenStyle(cur,Qt::NoPen);
             }
         }
     }

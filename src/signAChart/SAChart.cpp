@@ -620,6 +620,17 @@ void SAChart::setCurveSymbol(QwtPlotCurve *cur, QwtSymbol::Style style, const QS
 }
 ///
 /// \brief 设置曲线的线形
+/// \param cur
+/// \param style
+///
+void SAChart::setCurveLinePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
+{
+    QPen pen = cur->pen();
+    pen.setStyle(style);
+    cur->setPen(pen);
+}
+///
+/// \brief 设置曲线的线形
 /// \param cur 曲线
 /// \param style
 ///

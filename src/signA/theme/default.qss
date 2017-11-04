@@ -1,20 +1,8 @@
-QTabBar::tab {
-    min-height:22px;
-    background: transparent;
-    min-width: 8ex;
-    padding: 2px;
+QDockWidget {
+  border: 1px solid lightgray;
 }
-
-QTabBar::tab:selected, QTabBar::tab:hover {
-    background:#FFF;
+QDockWidget::title {
+  text-align: left;
+  background: lightgray;
+  padding-left: 5px;
 }
-
-QTabBar::tab:selected {
-    border-color: #FFCC66;
-}
-
-QTabBar::tab:hover:!selected {
-    border: 1px solid #ECBC3D;
-}
-
-

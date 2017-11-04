@@ -87,6 +87,7 @@ public:
     static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtPlotCurve* cur, const QRectF& rang = QRectF());
     //设置符号
     static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size = QSize(8,8));
+    static void setCurveLinePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
     //设置曲线的样式
     static void setCurvePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
     //把范围内的数据移除 返回移除的个数

@@ -8,6 +8,7 @@
 #include "SAValueManager.h"
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
+#include "SAChart.h"
 #include <QMdiSubWindow>
 #include "qwt_plot_curve.h"
 #include "SAGUIGlobalConfig.h"
@@ -58,7 +59,7 @@ void FunFit::polyfitInChart()
     {
         QwtPlotCurve* cur = curs[i];
         QVector<double> xs,ys;
-        SAChart2D::getXYDatas(xs,ys,curs[i]);
+        SAChart::getXYDatas(xs,ys,curs[i]);
         std::shared_ptr<SAVectorDouble> factor;//拟合的系数
         std::shared_ptr<SATableVariant> info;//拟合的误差参数
         std::tie(factor,info) = saFun::polyfit(xs,ys,order);
