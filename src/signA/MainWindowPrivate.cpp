@@ -299,6 +299,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuAnalysis = new SARibbonMenu(menuBar);
     menuAnalysis->setObjectName(QStringLiteral("menuAnalysis"));
+    menuAnalysis->setIcon(QIcon(":/icons/icons/allFunction.svg"));
 
     menuLineChart = new SARibbonMenu(menuBar);
     menuLineChart->setObjectName(QStringLiteral("menuLineChart"));

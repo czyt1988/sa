@@ -61,6 +61,7 @@
         <file>icons/zoomBase.png</file>
         <file>icons/zoomIn.png</file>
         <file>icons/zoomOut.png</file>
+        <file>icons/allFunction.svg</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>
