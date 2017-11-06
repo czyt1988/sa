@@ -119,6 +119,7 @@ private:
     SAUIInterface* m_ui;
     //
     QHash<QString,QList<QAction*> > m_category2actionList;
+    bool m_isSetupUI;///< 是否已经完成ui的构建
 };
 
 

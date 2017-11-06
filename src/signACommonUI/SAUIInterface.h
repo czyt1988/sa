@@ -37,7 +37,12 @@ public:
     virtual QAction* addDataImportPluginMenu(QMenu *menu) = 0;
     //把菜单添加到分析功能的菜单中
     virtual QAction *addAnalysisPluginMenu(QMenu *menu) = 0;
-
+#if SA_USE_RIBBON_UI
+    ///
+    /// \group Ribbon相关操作
+    ///
+    virtual void addAnalysisActionsToRibbonGallery(const QString& name,const QList<QAction*>& actions);
+#endif
 public slots:
 
     /// \group 进度栏 消息窗口的相关操作
@@ -101,10 +106,6 @@ public:
     virtual QList<QMdiSubWindow*> getSubWindowList() const = 0;
     //从subwindow指针中查找是否含有SAFigureWindow
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* sub);
-    /// \}
-
-    /// \group 子窗口的相关控制
-    /// \{
     //获取当前激活的子窗口
     virtual QMdiSubWindow* getCurrentActiveSubWindow() const = 0;
     //判断mdi中是否存在指定的子窗口
@@ -126,6 +127,9 @@ public:
     //选择曲线
     virtual QList<QwtPlotCurve*> selectCurves(SAChart2D* chart) = 0;
     /// \}
+    ///
+
+
 signals:
     ///
     /// \brief 在主界面变量管理树选择发生改变后会发射此信号

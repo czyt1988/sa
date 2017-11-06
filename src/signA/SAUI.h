@@ -22,7 +22,12 @@ public:
     virtual QAction* addDataImportPluginMenu(QMenu *menu);
     //把菜单添加到分析功能的菜单中
     virtual QAction *addAnalysisPluginMenu(QMenu *menu);
-
+#if SA_USE_RIBBON_UI
+    ///
+    /// \group Ribbon相关操作
+    ///
+    virtual void addAnalysisActionsToRibbonGallery(const QString& name,const QList<QAction*>& actions);
+#endif
 public slots:
     /// \group 进度栏 消息窗口的相关操作
     /// \{

@@ -110,6 +110,7 @@ SAFunPlugin::SAFunPlugin()
     :m_ui(nullptr)
     ,m_menuDSP(nullptr)
     ,m_spectrumAction(nullptr)
+    ,m_isSetupUI(false)
 {
     m_funDSP.reset(new FunDsp);//std::make_unique<FunDsp>();
     m_funDataPreprocessing.reset(new FunDataPreprocessing);//std::make_unique<FunDataPreprocessing>();
@@ -138,6 +139,7 @@ void SAFunPlugin::setupUI(SAUIInterface* ui)
     setupFittingMenu();
     //
     retranslateUI();
+    m_isSetupUI = true;
 }
 //#define FUNPTR_CAST(PTR) static_cast<bool(*)(QList<SAAbstractDatas*>&,QList<SAAbstractDatas*>&,QString*)>(PTR)
 
@@ -346,7 +348,7 @@ QStringList SAFunPlugin::getFunctionActionCategory() const
 ///
 QList<QAction *> SAFunPlugin::getActionList(const QString &category) const
 {
-
+    return m_category2actionList[category];
 }
 
 void SAFunPlugin::retranslateUI()
@@ -392,7 +394,10 @@ bool SAFunPlugin::event(QEvent *e)
 {
     if(e->type() == QEvent::LanguageChange)
     {
-        //TODO
+        if(m_isSetupUI)
+        {
+            retranslateUI();
+        }
     }
     return QObject::event(e);
 }

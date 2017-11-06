@@ -191,7 +191,7 @@ bool SAPluginManager::loadDataImportPlugin(QLibrary& lib, const QString &baseNam
 
 bool SAPluginManager::loadFunctionPlugin(QLibrary &lib, const QString &baseName, const QString &fullPath)
 {
-    QString errUnexp = tr("unexpect library!name:%1").arg(fullPath);
+    QString errUnexp = tr("Unexpect Function Plugin Library!File Name:%1").arg(fullPath);
     SA_CreatePluginFunPtr creFp = (SA_CreatePluginFunPtr)lib.resolve("createPlugin");
     if(nullptr == creFp)
     {

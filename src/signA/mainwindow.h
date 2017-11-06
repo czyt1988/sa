@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+#include "SAGlobals.h"
 #ifdef SA_USE_RIBBON_UI
 #include "SARibbonMainWindow.h"
 

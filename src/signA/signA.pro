@@ -23,7 +23,7 @@ OTHER_FILES += readme.md\
 
 DESTDIR = ../bin
 DEFINES -= SA_TDMS
-DEFINES += SA_USE_RIBBON_UI
+
 
 TARGET = signA
 TEMPLATE = app

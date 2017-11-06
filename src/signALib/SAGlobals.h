@@ -1,6 +1,10 @@
 #ifndef SAGLOBALS_H
 #define SAGLOBALS_H
 class SAAbstractDatas;
+///
+/// \def 包含Ribbon界面
+///
+#define SA_USE_RIBBON_UI 1
 
 namespace SA {
     enum ThermoChartPARAM{
