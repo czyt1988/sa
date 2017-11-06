@@ -91,11 +91,7 @@ SA_PLUGIN_EXPORT SAAbstractPlugin::PluginType pluginType()
     return s_pluginType;
 }
 
-//类似 bool(QList<SAAbstractDatas *> &,QList<SAAbstractDatas *> &,QString&) 的函数导出
-SA_PLUGIN_EXPORT QStringList functionNames()
-{
-    return s_functionNames;
-}
+
 //======================================================================
 
 
@@ -392,12 +388,13 @@ void SAFunPlugin::retranslateUI()
 
 }
 
-void SAFunPlugin::event(QEvent *e)
+bool SAFunPlugin::event(QEvent *e)
 {
     if(e->type() == QEvent::LanguageChange)
     {
         //TODO
     }
+    return QObject::event(e);
 }
 ///
 /// \brief 求和

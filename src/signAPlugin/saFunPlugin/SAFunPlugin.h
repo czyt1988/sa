@@ -49,7 +49,7 @@ public:
     //
     void retranslateUI();
 protected:
-    void event(QEvent *e);
+    bool event(QEvent *e);
 private slots:
     //======统计学相关菜单==========================================
     //求和
