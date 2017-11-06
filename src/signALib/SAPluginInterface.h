@@ -8,6 +8,7 @@ QT_BEGIN_NAMESPACE
 class QString;
 class QStringList;
 class QIcon;
+class QAction;
 QT_END_NAMESPACE
 #include <QList>
 class SAAbstractDatas;
@@ -122,10 +123,10 @@ public:
     virtual ~SAAbstractFunctionPackagePlugin(){}
     //获取包名
     virtual QString getPackageName() const = 0;
-    //获取包里的函数名
-    virtual QStringList getFunctionNames() const = 0;
-    //获取函数的描述
-    virtual QString getFunctionDescribe(const QString& funName) const = 0;
+    //获取功能action的目录列表 注意，此函数需要setupUI后调用
+    virtual QStringList getFunctionActionCategory() const = 0;
+    //获取目录对应的actions 目录通过getFunctionActionCategory获取 注意，此函数需要setupUI后调用
+    virtual QList<QAction*> getActionList(const QString& category) const = 0;
 };
 
 

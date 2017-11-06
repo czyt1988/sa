@@ -61,8 +61,6 @@ static const QString s_pluginVersion = TR("version 0.1");
 static const SAAbstractPlugin::PluginType s_pluginType = SAAbstractPlugin::Function;
 //类似 bool(QList<SAAbstractDatas *> &,QList<SAAbstractDatas *> &,QString&) 的函数导出
 static const QString s_packageName = "sa";
-static const QStringList s_functionNames = QStringList()
-        <<"spectrum";
 
 
 SA_PLUGIN_EXPORT SAAbstractPlugin *createPlugin()
@@ -142,14 +140,13 @@ void SAFunPlugin::setupUI(SAUIInterface* ui)
     setupDSPMenu();
     //拟合菜单
     setupFittingMenu();
+    //
+    retranslateUI();
 }
 //#define FUNPTR_CAST(PTR) static_cast<bool(*)(QList<SAAbstractDatas*>&,QList<SAAbstractDatas*>&,QString*)>(PTR)
 
 void SAFunPlugin::init()
 {
-    m_funInfo["spectrum"] = tr("fft");
-    m_funInfo["powerSpectrum"] = tr("psd");
-    m_funInfo["to_dc"] = tr("to_dc");
 
 }
 ///
@@ -158,94 +155,102 @@ void SAFunPlugin::init()
 void SAFunPlugin::setupDSPMenu()
 {
     //数字信号处理
-    m_menuDSP.reset(new QMenu(tr("Signal processing"),m_ui->getMainWindowPtr()));
+    m_menuDSP.reset(new QMenu("Signal processing",m_ui->getMainWindowPtr()));
+    m_menuDSP->setObjectName(QStringLiteral("SignalProcessingMenu"));
 
     //去趋势
-    m_detrendDirectAction = m_menuDSP->addAction(ICON_detrendDirect,tr("detrend(direct)"));
+    m_detrendDirectAction = m_menuDSP->addAction(ICON_detrendDirect,"detrend(direct)");
     m_detrendDirectAction->setObjectName("detrend(direct)");
-    m_detrendDirectAction->setWhatsThis(tr("direct detrend for signal"));
     connect(m_detrendDirectAction,&QAction::triggered
             ,this,&SAFunPlugin::on_detrendDirect);
     //信号设置窗
-    m_waveSetWindowAction = m_menuDSP->addAction(QIcon(),tr("window"));
+    m_waveSetWindowAction = m_menuDSP->addAction(QIcon(),"window");
     m_waveSetWindowAction->setObjectName("wave set window");
-    m_waveSetWindowAction->setWhatsThis(tr("set the window to the wave"));
     connect(m_waveSetWindowAction,&QAction::triggered,this,&SAFunPlugin::on_setWindowToWave);
 
     //频谱分析
     m_spectrumAction = m_menuDSP->addAction(ICON_spectrum,tr("spectrum"));
     m_spectrumAction->setObjectName("spectrum");
-    m_spectrumAction->setWhatsThis(tr("make spectrum for signal"));
     connect(m_spectrumAction,&QAction::triggered,this,&SAFunPlugin::on_spectrumAction);
 
     //功率谱分析
     m_powerSpectrumAction = m_menuDSP->addAction(ICON_powerSpectrum,tr("PSD(power Spectrum)"));
     m_powerSpectrumAction->setObjectName("PSD(power Spectrum)");
-    m_powerSpectrumAction->setWhatsThis(tr("make power spectrum for signal"));
     connect(m_powerSpectrumAction,&QAction::triggered,this,&SAFunPlugin::on_powerSpectrumAction);
 
     //时频分析工具箱
     m_tmeFrequencyAction = m_menuDSP->addAction(tr("tme frequency toolbox"));
     m_tmeFrequencyAction->setObjectName("tme frequency toolbox");
-    m_tmeFrequencyAction->setWhatsThis(tr("tme frequency toolbox"));
     connect(m_tmeFrequencyAction,&QAction::triggered,this,&SAFunPlugin::on_tmeFrequencyAction);
 
     m_ui->addAnalysisPluginMenu(m_menuDSP.get());
+    m_category2actionList[m_menuDSP->title()] = QList<QAction*>()
+            << m_detrendDirectAction
+            << m_waveSetWindowAction
+            << m_spectrumAction
+            << m_powerSpectrumAction
+            << m_tmeFrequencyAction;
 }
 ///
 /// \brief 统计学相关菜单
 ///
 void SAFunPlugin::setupStatisticsMenu()
 {
-    m_menuStatistics.reset(new QMenu(tr("Statistics"),m_ui->getMainWindowPtr()));
+    m_menuStatistics.reset(new QMenu(("Statistics"),m_ui->getMainWindowPtr()));
+    m_menuStatistics->setObjectName(QStringLiteral("StatisticsMenu"));
     //求和
     m_sumAction = m_menuStatistics->addAction(tr("sum"));
-    m_sumAction->setObjectName("sum");
-    m_sumAction->setWhatsThis(tr("sum datas"));
+    m_sumAction->setObjectName("sumAction");
     connect(m_sumAction,&QAction::triggered,this,&SAFunPlugin::on_sumAction);
     //求均值
     m_meanAction = m_menuStatistics->addAction(tr("mean"));
-    m_meanAction->setObjectName("mean");
-    m_meanAction->setWhatsThis(tr("mean datas"));
+    m_meanAction->setObjectName("meanAction");
     connect(m_meanAction,&QAction::triggered,this,&SAFunPlugin::on_meanAction);
     //求差分
     m_diffAction = m_menuStatistics->addAction(tr("diff"));
-    m_diffAction->setObjectName("diff");
-    m_diffAction->setWhatsThis(tr("diff datas"));
+    m_diffAction->setObjectName("diffAction");
     connect(m_diffAction,&QAction::triggered,this,&SAFunPlugin::on_diffAction);
     //求统计参数
     m_statisticsAction = m_menuStatistics->addAction(tr("statistics"));
-    m_statisticsAction->setObjectName("diff");
-    m_statisticsAction->setWhatsThis(tr("diff datas"));
+    m_statisticsAction->setObjectName("statisticsAction");
     connect(m_statisticsAction,&QAction::triggered,this,&SAFunPlugin::on_statisticsAction);
     //频率统计
     m_histAction = m_menuStatistics->addAction(tr("hist"));
-    m_histAction->setObjectName("hist");
-    m_histAction->setWhatsThis(tr("hist datas"));
+    m_histAction->setObjectName("histAction");
     connect(m_histAction,&QAction::triggered,this,&SAFunPlugin::on_histAction);
 
 
     m_ui->addAnalysisPluginMenu(m_menuStatistics.get());
+    m_category2actionList[m_menuStatistics->title()] = QList<QAction*>()
+            << m_sumAction
+            << m_meanAction
+            << m_diffAction
+            << m_statisticsAction
+            << m_histAction;
 }
 ///
 /// \brief 数据预处理
 ///
 void SAFunPlugin::setupDataPreprocessingMenu()
 {
-    m_dataPreprocessing.reset(new QMenu(tr("data preprocessing"),m_ui->getMainWindowPtr()));
+    m_dataPreprocessing.reset(new QMenu(("data preprocessing"),m_ui->getMainWindowPtr()));
+    m_dataPreprocessing->setObjectName(QStringLiteral("DataPreprocessingMenu"));
     //西格玛检测
     m_sigmaDetectAction = m_dataPreprocessing->addAction(tr("sigma detect"));
-    m_sigmaDetectAction->setObjectName("sigma detect");
-    m_sigmaDetectAction->setWhatsThis(tr("detect the datas out of sigma rang"));
+    m_sigmaDetectAction->setObjectName("sigmaDetectAction");
     connect(m_sigmaDetectAction,&QAction::triggered,this,&SAFunPlugin::on_sigmaDetectAction);
 
     //m点n次滤波
     m_pointSmoothAction = m_dataPreprocessing->addAction(tr("m points n pow smooth"));
-    m_pointSmoothAction->setObjectName("m points n pow smooth");
-    m_pointSmoothAction->setWhatsThis(tr("m points n pow smooth"));
+    m_pointSmoothAction->setObjectName("mPointsNPowSmoothAction");
     connect(m_pointSmoothAction,&QAction::triggered,this,&SAFunPlugin::on_pointSmoothAction);
 
     m_ui->addAnalysisPluginMenu(m_dataPreprocessing.get());
+
+    m_category2actionList[m_dataPreprocessing->title()] = QList<QAction*>()
+            << m_sigmaDetectAction
+            << m_pointSmoothAction
+               ;
 
 }
 ///
@@ -253,14 +258,17 @@ void SAFunPlugin::setupDataPreprocessingMenu()
 ///
 void SAFunPlugin::setupFittingMenu()
 {
-    m_dataFitting.reset(new QMenu(tr("data fitting"),m_ui->getMainWindowPtr()));
+    m_dataFitting.reset(new QMenu(("fitting"),m_ui->getMainWindowPtr()));
+    m_dataFitting->setObjectName(QStringLiteral("DataFittingMenu"));
     //拟合图表曲线
     m_FittingFigureCurve = m_dataFitting->addAction(ICON_fit, tr("Fitting Curve in Fig"));
-    m_FittingFigureCurve->setObjectName("Fitting Curve in Fig");
-    m_FittingFigureCurve->setWhatsThis(tr("Fitting the Curves in Current Figure"));
+    m_FittingFigureCurve->setObjectName("FittingCurveInFigAction");
     connect(m_FittingFigureCurve,&QAction::triggered,this,&SAFunPlugin::on_fittingFigureCurveAction);
 
     m_ui->addAnalysisPluginMenu(m_dataFitting.get());
+    m_category2actionList[m_dataFitting->title()] = QList<QAction*>()
+            << m_FittingFigureCurve
+               ;
 }
 
 
@@ -308,22 +316,88 @@ QString SAFunPlugin::getPackageName() const
 {
     return s_packageName;
 }
+
+
 ///
-/// \brief 获取包里的函数名
+/// \brief 获取功能action的目录列表
 /// \return
 ///
-QStringList SAFunPlugin::getFunctionNames() const
+QStringList SAFunPlugin::getFunctionActionCategory() const
 {
-    return s_functionNames;
+    QStringList res;
+    if(nullptr != m_menuDSP)
+    {
+        res << m_menuDSP->title();
+    }
+    if(nullptr != m_dataPreprocessing)
+    {
+        res << m_dataPreprocessing->title();
+    }
+    if(nullptr != m_menuStatistics)
+    {
+        res << m_menuStatistics->title();
+    }
+    if(nullptr != m_dataFitting)
+    {
+        res << m_dataFitting->title();
+    }
+    return res;
 }
 ///
-/// \brief 获取函数对应描述
-/// \param funName 函数名
-/// \return 函数对应描述
+/// \brief 获取目录对应的actions 目录通过getFunctionActionCategory获取
+/// \param category
+/// \return
 ///
-QString SAFunPlugin::getFunctionDescribe(const QString &funName) const
+QList<QAction *> SAFunPlugin::getActionList(const QString &category) const
 {
-    return m_funInfo[funName];
+
+}
+
+void SAFunPlugin::retranslateUI()
+{
+    //
+    m_menuDSP->setTitle(tr("Signal processing"));
+    m_detrendDirectAction->setText(tr("detrend(direct)"));
+    m_detrendDirectAction->setToolTip(tr("direct detrend for signal"));
+    m_waveSetWindowAction->setText(tr("set window"));
+    m_waveSetWindowAction->setToolTip(tr("set the window to the wave"));
+    m_spectrumAction->setText(tr("spectrum"));
+    m_spectrumAction->setToolTip(tr("make spectrum for signal"));
+    m_powerSpectrumAction->setText(tr("power spectrum"));
+    m_powerSpectrumAction->setToolTip(tr("make power spectrum for signal"));
+    m_tmeFrequencyAction->setText(tr("tme frequency"));
+    m_tmeFrequencyAction->setToolTip(tr("tme frequency toolbox"));
+    //
+    m_menuStatistics->setTitle(tr("Statistics"));
+    m_sumAction->setText(tr("sum"));
+    m_sumAction->setToolTip(tr("sum datas"));
+    m_meanAction->setText(tr("mean"));
+    m_meanAction->setToolTip(tr("mean datas"));
+    m_diffAction->setText(tr("diff"));
+    m_diffAction->setToolTip(tr("diff datas"));
+    m_statisticsAction->setText(tr("statistics"));
+    m_statisticsAction->setToolTip(tr("statistics datas"));
+    m_histAction->setText(tr("hist"));
+    m_histAction->setToolTip(tr("hist datas"));
+    //
+    m_dataPreprocessing->setTitle(tr("data preprocessing"));
+    m_sigmaDetectAction->setText(tr("sigma detect"));
+    m_sigmaDetectAction->setToolTip(tr("detect the datas out of sigma rang"));
+    m_pointSmoothAction->setText(tr("m points n pow smooth"));
+    m_pointSmoothAction->setToolTip(tr("m points n pow smooth"));
+    //
+    m_dataFitting->setTitle(tr("fitting"));
+    m_FittingFigureCurve->setText(tr("Fitting"));
+    m_FittingFigureCurve->setToolTip(tr("Fitting the Curves in Current Figure"));
+
+}
+
+void SAFunPlugin::event(QEvent *e)
+{
+    if(e->type() == QEvent::LanguageChange)
+    {
+        //TODO
+    }
 }
 ///
 /// \brief 求和

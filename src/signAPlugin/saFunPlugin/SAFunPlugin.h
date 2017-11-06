@@ -41,12 +41,15 @@ public:
     virtual void setupUI(SAUIInterface* ui);
 
     //获取包名
-    virtual QString getPackageName() const;
-    //获取包里的函数名
-    virtual QStringList getFunctionNames() const;
-    //获取函数描述
-    virtual QString getFunctionDescribe(const QString& funName) const;
-
+    virtual QString getPackageName() const; 
+    //获取功能action的目录列表
+    virtual QStringList getFunctionActionCategory() const;
+    //获取目录对应的actions 目录通过getFunctionActionCategory获取
+    virtual QList<QAction*> getActionList(const QString& category) const;
+    //
+    void retranslateUI();
+protected:
+    void event(QEvent *e);
 private slots:
     //======统计学相关菜单==========================================
     //求和
@@ -109,13 +112,13 @@ private:
     //======统计学相关菜单==========================================
     QAction* m_FittingFigureCurve;///< 拟合图表曲线
     //
-    QHash<QString,QString> m_funInfo;///<
-    //
     std::unique_ptr<FunDsp> m_funDSP;///< Dsp相关的函数封装
     std::unique_ptr<FunDataPreprocessing> m_funDataPreprocessing;///< DataPreprocessing相关的函数封装
     std::unique_ptr<FunNum> m_funNum;///< num相关的函数封装
     std::unique_ptr<FunFit> m_funFit;///< Fit相关的函数封装
     SAUIInterface* m_ui;
+    //
+    QHash<QString,QList<QAction*> > m_category2actionList;
 };
 
 
