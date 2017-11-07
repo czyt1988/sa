@@ -41,7 +41,7 @@ public:
     ///
     /// \group Ribbon相关操作
     ///
-    virtual void addAnalysisActionsToRibbonGallery(const QString& name,const QList<QAction*>& actions);
+    virtual void addAnalysisActionsToRibbonGallery(const QString& name,const QList<QAction*>& actions) = 0;
 #endif
 public slots:
 

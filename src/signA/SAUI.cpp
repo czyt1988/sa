@@ -63,6 +63,15 @@ QAction *SAUI::addAnalysisPluginMenu(QMenu *menu)
 {
     return m_mainWnd->addAnalysisPluginMenu(menu);
 }
+///
+/// \brief SAUI::addAnalysisActionsToRibbonGallery
+/// \param name
+/// \param actions
+///
+void SAUI::addAnalysisActionsToRibbonGallery(const QString &name, const QList<QAction *> &actions)
+{
+    m_mainWnd->addAnalysisActionsToRibbonGallery(name,actions);
+}
 
 void SAUI::showNormalMessageInfo(const QString &info, int interval)
 {

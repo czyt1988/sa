@@ -177,6 +177,10 @@ public:
     QAction* addDataImportPluginMenu(QMenu *menu);
     //把菜单添加到分析功能的菜单中
     QAction *addAnalysisPluginMenu(QMenu *menu);
+#ifdef SA_USE_RIBBON_UI
+    //把action加入 ribbon界面的Gallery
+    void addAnalysisActionsToRibbonGallery(const QString &name, const QList<QAction *> &actions);
+#endif
     /// \}
 
     ///
@@ -429,6 +433,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
+    friend class SAUI;
     //配置信息加载
     void saveSetting();
     void loadSetting();

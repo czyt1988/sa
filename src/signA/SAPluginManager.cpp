@@ -1,4 +1,5 @@
 #include "SAPluginManager.h"
+#include "SAUIInterface.h"
 #include <QDir>
 #include <QApplication>
 #include <QPluginLoader>
@@ -218,7 +219,12 @@ bool SAPluginManager::loadFunctionPlugin(QLibrary &lib, const QString &baseName,
 
     m_normalPluginList.append(pi);
     funPlugin->setupUI(m_ui);
-
+    QStringList categoryStr = funPlugin->getFunctionActionCategory();
+    for(int i=0;i<categoryStr.size();++i)
+    {
+        QList<QAction*> actList = funPlugin->getActionList(categoryStr[i]);
+        m_ui->addAnalysisActionsToRibbonGallery(categoryStr[i],actList);
+    }
     return true;
 }
 

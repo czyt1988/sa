@@ -1568,7 +1568,18 @@ QAction *MainWindow::addAnalysisPluginMenu(QMenu *menu)
 {
     return ui->menuAnalysis->addMenu(menu);
 }
-
+#ifdef SA_USE_RIBBON_UI
+///
+/// \brief 把action加入 ribbon界面的Gallery
+/// \param name
+/// \param actions
+///
+void MainWindow::addAnalysisActionsToRibbonGallery(const QString &name, const QList<QAction *> &actions)
+{
+    SARibbonGalleryGroup* group = ui->ribbonGalleryFuntions->addCategoryActions(name,actions);
+    group->setEnableIconText(true);
+}
+#endif
 
 ///
 /// \brief 在ui界面显示普通信息

@@ -182,12 +182,6 @@ void SAFunPlugin::setupDSPMenu()
     connect(m_tmeFrequencyAction,&QAction::triggered,this,&SAFunPlugin::on_tmeFrequencyAction);
 
     m_ui->addAnalysisPluginMenu(m_menuDSP.get());
-    m_category2actionList[m_menuDSP->title()] = QList<QAction*>()
-            << m_detrendDirectAction
-            << m_waveSetWindowAction
-            << m_spectrumAction
-            << m_powerSpectrumAction
-            << m_tmeFrequencyAction;
 }
 ///
 /// \brief 统计学相关菜单
@@ -219,12 +213,6 @@ void SAFunPlugin::setupStatisticsMenu()
 
 
     m_ui->addAnalysisPluginMenu(m_menuStatistics.get());
-    m_category2actionList[m_menuStatistics->title()] = QList<QAction*>()
-            << m_sumAction
-            << m_meanAction
-            << m_diffAction
-            << m_statisticsAction
-            << m_histAction;
 }
 ///
 /// \brief 数据预处理
@@ -245,11 +233,6 @@ void SAFunPlugin::setupDataPreprocessingMenu()
 
     m_ui->addAnalysisPluginMenu(m_dataPreprocessing.get());
 
-    m_category2actionList[m_dataPreprocessing->title()] = QList<QAction*>()
-            << m_sigmaDetectAction
-            << m_pointSmoothAction
-               ;
-
 }
 ///
 /// \brief 构建拟合菜单
@@ -264,9 +247,6 @@ void SAFunPlugin::setupFittingMenu()
     connect(m_FittingFigureCurve,&QAction::triggered,this,&SAFunPlugin::on_fittingFigureCurveAction);
 
     m_ui->addAnalysisPluginMenu(m_dataFitting.get());
-    m_category2actionList[m_dataFitting->title()] = QList<QAction*>()
-            << m_FittingFigureCurve
-               ;
 }
 
 
@@ -387,7 +367,29 @@ void SAFunPlugin::retranslateUI()
     m_dataFitting->setTitle(tr("fitting"));
     m_FittingFigureCurve->setText(tr("Fitting"));
     m_FittingFigureCurve->setToolTip(tr("Fitting the Curves in Current Figure"));
-
+    //
+    m_category2actionList.clear();
+    m_category2actionList[m_menuDSP->title()] = QList<QAction*>()
+            << m_detrendDirectAction
+            << m_waveSetWindowAction
+            << m_spectrumAction
+            << m_powerSpectrumAction
+            << m_tmeFrequencyAction
+               ;
+    m_category2actionList[m_menuStatistics->title()] = QList<QAction*>()
+            << m_sumAction
+            << m_meanAction
+            << m_diffAction
+            << m_statisticsAction
+            << m_histAction
+               ;
+    m_category2actionList[m_dataPreprocessing->title()] = QList<QAction*>()
+            << m_sigmaDetectAction
+            << m_pointSmoothAction
+               ;
+    m_category2actionList[m_dataFitting->title()] = QList<QAction*>()
+            << m_FittingFigureCurve
+               ;
 }
 
 bool SAFunPlugin::event(QEvent *e)

@@ -26,6 +26,7 @@ public:
     ///
     /// \group Ribbon相关操作
     ///
+    //把action加入 ribbon界面的Gallery
     virtual void addAnalysisActionsToRibbonGallery(const QString& name,const QList<QAction*>& actions);
 #endif
 public slots:
