@@ -198,23 +198,6 @@ void MainWindow::init()
     ui_status_progress->setVisible(false);
 }
 
-#define Lambda_SaChartEnable(exp)\
-    [&](bool check){\
-    SAChart2D* chart = getCurSubWindowChart();\
-    if(chart)\
-{\
-    if(check)\
-{\
-    if(!chart->isEnable##exp())\
-    chart->enable##exp(check);\
-    }\
-    else\
-{\
-    if(chart->isEnable##exp())\
-    chart->enable##exp(check);\
-    }\
-    }\
-    }\
     ///
 /// \brief 界面初始化
 ///
@@ -308,75 +291,43 @@ void MainWindow::initUI()
     //- window menu 窗口 菜单
     connect(ui->actionSetDefalutDockPos,&QAction::triggered,this,&MainWindow::onActionSetDefalutDockPosTriggered);
     //窗口模式
-    connect(ui->actionWindowMode,&QAction::triggered,[this](bool on){
-        czy::QtApp::QWaitCursor waitCur;
-        Q_UNUSED(waitCur);
-        ui->actionTabMode->setChecked(!on);
-        if(on){
-            if(QMdiArea::SubWindowView != this->ui->mdiArea->viewMode()){
-                ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
-            }
-        }else{
-            if(QMdiArea::SubWindowView == this->ui->mdiArea->viewMode()){
-                ui->mdiArea->setViewMode(QMdiArea::TabbedView);
-            }
-        }
-    });
+    connect(ui->actionWindowMode,&QAction::triggered,this,&MainWindow::onActionWindowModeTriggered);
     //标签模式
-    connect(ui->actionTabMode,&QAction::triggered,[this](bool on){
-        czy::QtApp::QWaitCursor waitCur;
-        Q_UNUSED(waitCur);
-        ui->actionWindowMode->setChecked(!on);
-
-        if(on){
-            if(QMdiArea::TabbedView != this->ui->mdiArea->viewMode()){
-                ui->mdiArea->setViewMode(QMdiArea::TabbedView);
-            }
-        }else{
-            if(QMdiArea::TabbedView == this->ui->mdiArea->viewMode()){
-                ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
-            }
-        }
-    });
+    connect(ui->actionTabMode,&QAction::triggered,this,&MainWindow::onActionTabModeTriggered);
+    ui->actionTabMode->setChecked(true);//默认标签模式
     //层叠布置
-    connect(ui->actionWindowCascade,&QAction::triggered,[&](){
-        czy::QtApp::QWaitCursor waitCur;
-        Q_UNUSED(waitCur);
-        if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
-            ui->mdiArea->cascadeSubWindows();
-        }
-    });
+    connect(ui->actionWindowCascade,&QAction::triggered,this,&MainWindow::onActionWindowCascadeTriggered);
     //均匀布置
-    connect(ui->actionWindowTile,&QAction::triggered,[&](){
-        czy::QtApp::QWaitCursor waitCur;
-        Q_UNUSED(waitCur);
-        if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
-            ui->mdiArea->tileSubWindows();
-        }
-    });
-
+    connect(ui->actionWindowTile,&QAction::triggered,this,&MainWindow::onActionWindowTileTriggered);
+    //======================================================
     //显示隐藏dock窗口
-    connect(ui->actionDataFeatureDock,&QAction::triggered,[&](){ui->dockWidget_DataFeature->show();});
-    connect(ui->actionSubWindowListDock,&QAction::triggered,[&](){ui->dockWidget_windowList->show();});
-    connect(ui->actionValueManagerDock,&QAction::triggered,[&](){ui->dockWidget_valueManage->show();});
-    connect(ui->actionLayerOutDock,&QAction::triggered,[&](){ui->dockWidget_plotLayer->show();});
-    connect(ui->actionValueViewerDock,&QAction::triggered,[&](){ui->dockWidget_valueViewer->show();});
-    connect(ui->actionFigureViewer,&QAction::triggered,[&](){ui->dockWidget_main->show();});
+    //显示隐藏DataFeatureDock窗口
+    connect(ui->actionDataFeatureDock,&QAction::triggered,this,&MainWindow::onActionDataFeatureDockTriggered);
+    //显示隐藏SubWindowListDock窗口
+    connect(ui->actionSubWindowListDock,&QAction::triggered,this,&MainWindow::onActionSubWindowListDockTriggered);
+    //显示隐藏ValueManagerDock窗口
+    connect(ui->actionValueManagerDock,&QAction::triggered,this,&MainWindow::onActionValueManagerDockTriggered);
+    //显示隐藏LayerOutDock窗口
+    connect(ui->actionLayerOutDock,&QAction::triggered,this,&MainWindow::onActionLayerOutDockTriggered);
+    //显示隐藏ValueViewerDock窗口
+    connect(ui->actionValueViewerDock,&QAction::triggered,this,&MainWindow::onActionValueViewerDockTriggered);
+    //显示隐藏FigureViewer窗口
+    connect(ui->actionFigureViewer,&QAction::triggered,this,&MainWindow::onActionFigureViewerTriggered);
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
     ui->actionEnableChartCrossCursor->setCheckable(true);
     connect(ui->actionEnableChartCrossCursor,&QAction::triggered
-            ,this,&MainWindow::onActionEnableChartPicker);
+            ,this,&MainWindow::onActionEnableChartPickerTriggered);
 
     //拖动
     ui->actionEnableChartPanner->setCheckable(true);
     connect(ui->actionEnableChartPanner,&QAction::triggered
-            ,this,&MainWindow::onActionEnableChartPanner);
+            ,this,&MainWindow::onActionEnableChartPannerTriggered);
     //区间缩放
     ui->actionEnableChartZoom->setCheckable(true);
     connect(ui->actionEnableChartZoom,&QAction::triggered
-            ,this,&MainWindow::onActionEnableChartZoom);
+            ,this,&MainWindow::onActionEnableChartZoomTriggered);
 
 #ifndef SA_USE_RIBBON_UI
     QToolButton* toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionEnableChartZoom));
@@ -392,13 +343,13 @@ void MainWindow::initUI()
     }
 #endif
     connect(ui->actionZoomBase,&QAction::triggered
-            ,this,&MainWindow::onActionChartZoomToBase);
+            ,this,&MainWindow::onActionChartZoomToBaseTriggered);
     connect(ui->actionChartZoomReset,&QAction::triggered
-            ,this,&MainWindow::onActionChartZoomReset);
+            ,this,&MainWindow::onActionChartZoomResetTriggered);
     connect(ui->actionZoomIn,&QAction::triggered
-            ,this,&MainWindow::onActionChartZoomIn);
+            ,this,&MainWindow::onActionChartZoomInTriggered);
     connect(ui->actionZoomOut,&QAction::triggered
-            ,this,&MainWindow::onActionChartZoomOut);
+            ,this,&MainWindow::onActionChartZoomOutTriggered);
     //选区菜单
     m_chartRegionSelectionShapeActionGroup = new QActionGroup(this);
     ui->actionStartRectSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
@@ -439,9 +390,11 @@ void MainWindow::initUI()
             ,this,&MainWindow::onActionIntersectionSelectionTriggered);
     //数据显示
     ui->actionYDataPicker->setCheckable(true);
-    connect(ui->actionYDataPicker,&QAction::triggered,Lambda_SaChartEnable(YDataPicker));
+    //拾取y值
+    connect(ui->actionYDataPicker,&QAction::triggered,this,&MainWindow::onActionYDataPickerTriggered);
     ui->actionXYDataPicker->setCheckable(true);
-    connect(ui->actionXYDataPicker,&QAction::triggered,Lambda_SaChartEnable(XYDataPicker));
+    //拾取xy值
+    connect(ui->actionXYDataPicker,&QAction::triggered,this,&MainWindow::onActionXYDataPickerTriggered);
 #ifndef SA_USE_RIBBON_UI
     toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionXYDataPicker));
     if(toolbtn)
@@ -454,7 +407,7 @@ void MainWindow::initUI()
 #endif
     //网格
     ui->actionShowGrid->setCheckable(true);
-    connect(ui->actionShowGrid,&QAction::triggered,Lambda_SaChartEnable(Grid));
+    connect(ui->actionShowGrid,&QAction::triggered,this,&MainWindow::onActionShowGridTriggered);
 #ifndef SA_USE_RIBBON_UI
     toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionShowGrid));
     if(toolbtn)
@@ -470,22 +423,22 @@ void MainWindow::initUI()
 #endif
     //显示水平网格
     ui->actionShowHGrid->setCheckable(true);
-    connect(ui->actionShowHGrid,&QAction::triggered,Lambda_SaChartEnable(GridY));
+    connect(ui->actionShowHGrid,&QAction::triggered,this,&MainWindow::onActionShowHGridTriggered);
     //显示密集水平网格
     ui->actionShowCrowdedHGrid->setCheckable(true);
-    connect(ui->actionShowCrowdedHGrid,&QAction::triggered,Lambda_SaChartEnable(GridYMin));
+    connect(ui->actionShowCrowdedHGrid,&QAction::triggered,this,&MainWindow::onActionShowCrowdedHGridTriggered);
     //显示垂直网格
     ui->actionShowVGrid->setCheckable(true);
-    connect(ui->actionShowVGrid,&QAction::triggered,Lambda_SaChartEnable(GridX));
-    //显示密集水平网格
+    connect(ui->actionShowVGrid,&QAction::triggered,this,&MainWindow::onActionShowVGridTriggered);
+    //显示密集垂直网格
     ui->actionShowCrowdedVGrid->setCheckable(true);
-    connect(ui->actionShowCrowdedVGrid,&QAction::triggered,Lambda_SaChartEnable(GridXMin));
+    connect(ui->actionShowCrowdedVGrid,&QAction::triggered,this,&MainWindow::onActionShowCrowdedVGridTriggered);
     //显示图例
     ui->actionShowLegend->setCheckable(true);
-    connect(ui->actionShowLegend,&QAction::triggered,Lambda_SaChartEnable(Legend));
+    connect(ui->actionShowLegend,&QAction::triggered,this,&MainWindow::onActionShowLegendTriggered);
     //显示图例选择器
     ui->actionShowLegendPanel->setCheckable(true);
-    connect(ui->actionShowLegendPanel,&QAction::triggered,Lambda_SaChartEnable(LegendPanel));
+    connect(ui->actionShowLegendPanel,&QAction::triggered,this,&MainWindow::onActionShowLegendPanelTriggered);
 
 
     //窗口激活对应数据特性的mdiSubWindowActived
@@ -583,6 +536,131 @@ void MainWindow::onActionSetDefalutDockPosTriggered()
     ui->dockWidget_chartDataViewer->raise();
     ui->dockWidget_main->raise();
 
+}
+///
+/// \brief 标签模式
+/// \param on
+///
+void MainWindow::onActionTabModeTriggered(bool on)
+{
+    czy::QtApp::QWaitCursor waitCur;
+    Q_UNUSED(waitCur);
+    ui->actionWindowMode->setChecked(!on);
+
+    if(on){
+        if(QMdiArea::TabbedView != this->ui->mdiArea->viewMode()){
+            ui->mdiArea->setViewMode(QMdiArea::TabbedView);
+        }
+    }else{
+        if(QMdiArea::TabbedView == this->ui->mdiArea->viewMode()){
+            ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
+        }
+    }
+}
+///
+/// \brief 窗口模式
+/// \param on
+///
+void MainWindow::onActionWindowModeTriggered(bool on)
+{
+    czy::QtApp::QWaitCursor waitCur;
+    Q_UNUSED(waitCur);
+    ui->actionTabMode->setChecked(!on);
+    if(on){
+        if(QMdiArea::SubWindowView != this->ui->mdiArea->viewMode()){
+            ui->mdiArea->setViewMode(QMdiArea::SubWindowView);
+        }
+    }else{
+        if(QMdiArea::SubWindowView == this->ui->mdiArea->viewMode()){
+            ui->mdiArea->setViewMode(QMdiArea::TabbedView);
+        }
+    }
+}
+///
+/// \brief 窗口模式 - 层叠布置
+/// \param on
+///
+void MainWindow::onActionWindowCascadeTriggered(bool on)
+{
+    Q_UNUSED(on);
+    czy::QtApp::QWaitCursor waitCur;
+    Q_UNUSED(waitCur);
+    if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
+        ui->mdiArea->cascadeSubWindows();
+    }
+}
+///
+/// \brief 窗口模式 - 均匀布置
+/// \param on
+///
+void MainWindow::onActionWindowTileTriggered(bool on)
+{
+    Q_UNUSED(on);
+    czy::QtApp::QWaitCursor waitCur;
+    Q_UNUSED(waitCur);
+    if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
+        ui->mdiArea->tileSubWindows();
+    }
+}
+///
+/// \brief 显示隐藏DataFeatureDock窗口
+/// \param on
+///
+void MainWindow::onActionDataFeatureDockTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_DataFeature->show();
+    ui->dockWidget_DataFeature->raise();
+}
+///
+/// \brief 显示隐藏SubWindowListDock窗口
+/// \param on
+///
+void MainWindow::onActionSubWindowListDockTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_windowList->show();
+    ui->dockWidget_windowList->raise();
+}
+///
+/// \brief 显示隐藏ValueManagerDock窗口
+/// \param on
+///
+void MainWindow::onActionValueManagerDockTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_valueManage->show();
+    ui->dockWidget_valueManage->raise();
+}
+///
+/// \brief 显示隐藏LayerOutDock窗口
+/// \param on
+///
+void MainWindow::onActionLayerOutDockTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_plotLayer->show();
+    ui->dockWidget_plotLayer->raise();
+}
+///
+/// \brief 显示隐藏ValueViewerDock窗口
+/// \param on
+///
+void MainWindow::onActionValueViewerDockTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_valueViewer->show();
+    ui->dockWidget_valueViewer->raise();
+}
+///
+/// \brief 显示隐藏FigureViewer窗口
+/// \param on
+///
+void MainWindow::onActionFigureViewerTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_main->show();
+    ui->dockWidget_main->raise();
 }
 
 void MainWindow::onActionProjectSettingTriggered()
@@ -1090,7 +1168,7 @@ SAAbstractRegionSelectEditor::SelectionMode MainWindow::getCurrentChartRegionSel
 ///
 /// \brief 开启当前绘图的十字光标
 ///
-void MainWindow::onActionEnableChartPicker(bool check)
+void MainWindow::onActionEnableChartPickerTriggered(bool check)
 {
     SAFigureWindow* fig = getCurrentFigureWindow();
     if(fig)
@@ -1109,7 +1187,7 @@ void MainWindow::onActionEnableChartPicker(bool check)
 /// \brief 开启当前绘图的拖动
 /// \param check
 ///
-void MainWindow::onActionEnableChartPanner(bool check)
+void MainWindow::onActionEnableChartPannerTriggered(bool check)
 {
     SAFigureWindow* fig = getCurrentFigureWindow();
     if(fig)
@@ -1128,7 +1206,7 @@ void MainWindow::onActionEnableChartPanner(bool check)
 /// \brief 开启当前绘图的区间缩放
 /// \param check
 ///
-void MainWindow::onActionEnableChartZoom(bool check)
+void MainWindow::onActionEnableChartZoomTriggered(bool check)
 {
     SAFigureWindow* fig = getCurrentFigureWindow();
     if(fig)
@@ -1150,7 +1228,7 @@ void MainWindow::onActionEnableChartZoom(bool check)
 /// \brief 当前绘图的缩放还原
 /// \param check
 ///
-void MainWindow::onActionChartZoomToBase(bool check)
+void MainWindow::onActionChartZoomToBaseTriggered(bool check)
 {
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
@@ -1161,7 +1239,7 @@ void MainWindow::onActionChartZoomToBase(bool check)
 /// \brief 当前绘图放大
 /// \param check
 ///
-void MainWindow::onActionChartZoomIn(bool check)
+void MainWindow::onActionChartZoomInTriggered(bool check)
 {
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
@@ -1172,7 +1250,7 @@ void MainWindow::onActionChartZoomIn(bool check)
 /// \brief 当前绘图缩小
 /// \param check
 ///
-void MainWindow::onActionChartZoomOut(bool check)
+void MainWindow::onActionChartZoomOutTriggered(bool check)
 {
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
@@ -1183,12 +1261,125 @@ void MainWindow::onActionChartZoomOut(bool check)
 /// \brief 当前绘图重置
 /// \param check
 ///
-void MainWindow::onActionChartZoomReset(bool check)
+void MainWindow::onActionChartZoomResetTriggered(bool check)
 {
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
         chart->setZoomReset();
+}
+///
+/// \brief 拾取y值
+/// \param on
+///
+void MainWindow::onActionYDataPickerTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableYDataPicker(on);
+    }
+}
+///
+/// \brief 拾取xy值
+/// \param on
+///
+void MainWindow::onActionXYDataPickerTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableXYDataPicker(on);
+    }
+}
+///
+/// \brief 网格
+/// \param on
+///
+void MainWindow::onActionShowGridTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableGrid(on);
+    }
+    updateChartGridActionState(chart);
+}
+///
+/// \brief 显示水平网格
+/// \param on
+///
+void MainWindow::onActionShowHGridTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableGridY(on);
+    }
+    updateChartGridActionState(chart);
+}
+///
+/// \brief 垂直网格
+/// \param on
+///
+void MainWindow::onActionShowVGridTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableGridX(on);
+    }
+    updateChartGridActionState(chart);
+}
+///
+/// \brief 显示密集水平网格
+/// \param on
+///
+void MainWindow::onActionShowCrowdedHGridTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableGridYMin(on);
+    }
+    updateChartGridActionState(chart);
+}
+///
+/// \brief 显示密集垂直网格
+/// \param on
+///
+void MainWindow::onActionShowCrowdedVGridTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableGridXMin(on);
+    }
+    updateChartGridActionState(chart);
+}
+///
+/// \brief 显示图例
+/// \param on
+///
+void MainWindow::onActionShowLegendTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableLegend(on);
+    }
+}
+///
+/// \brief 显示图例选择器
+/// \param on
+///
+void MainWindow::onActionShowLegendPanelTriggered(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(chart)
+    {
+        chart->enableLegendPanel(on);
+    }
 }
 
 
@@ -1988,6 +2179,26 @@ bool MainWindow::setProjectInfomation()
 void MainWindow::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
     ui->tabWidget_valueViewer->removeDatas(dataBeDeletedPtr);
+}
+
+void MainWindow::updateChartGridActionState(SA2DGraph *chart)
+{
+    if(chart)
+    {
+        ui->actionShowGrid->setChecked(chart->isEnableGrid());
+        ui->actionShowHGrid->setChecked(chart->isEnableGridY());
+        ui->actionShowVGrid->setChecked(chart->isEnableGridX());
+        ui->actionShowCrowdedHGrid->setChecked(chart->isEnableGridYMin());
+        ui->actionShowCrowdedVGrid->setChecked(chart->isEnableGridXMin());
+    }
+    else
+    {
+        ui->actionShowGrid->setChecked(false);
+        ui->actionShowHGrid->setChecked(false);
+        ui->actionShowVGrid->setChecked(false);
+        ui->actionShowCrowdedHGrid->setChecked(false);
+        ui->actionShowCrowdedVGrid->setChecked(false);
+    }
 }
 
 

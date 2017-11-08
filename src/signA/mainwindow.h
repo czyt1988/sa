@@ -57,6 +57,7 @@ class SATabValueViewerWidget;
 class SAValueManagerModel;
 class SAFigureWindow;
 class SAChart2D;
+class SA2DGraph;
 class QwtPlotItem;
 
 class SAAbstractDataImportInterface;
@@ -296,19 +297,37 @@ private slots:
     //获取当前ui选择的区域选择模式
     SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
     //开启当前绘图的十字光标
-    void onActionEnableChartPicker(bool check);
+    void onActionEnableChartPickerTriggered(bool check);
     //开启当前绘图的拖动
-    void onActionEnableChartPanner(bool check);
+    void onActionEnableChartPannerTriggered(bool check);
     //开启当前绘图的区间缩放
-    void onActionEnableChartZoom(bool check);
+    void onActionEnableChartZoomTriggered(bool check);
     //当前绘图的缩放还原
-    void onActionChartZoomToBase(bool check);
+    void onActionChartZoomToBaseTriggered(bool check);
     //当前绘图放大
-    void onActionChartZoomIn(bool check);
+    void onActionChartZoomInTriggered(bool check);
     //当前绘图缩小
-    void onActionChartZoomOut(bool check);
+    void onActionChartZoomOutTriggered(bool check);
     //当前绘图重置
-    void onActionChartZoomReset(bool check);
+    void onActionChartZoomResetTriggered(bool check);
+    //拾取y值
+    void onActionYDataPickerTriggered(bool on);
+    //拾取xy值
+    void onActionXYDataPickerTriggered(bool on);
+    //网格
+    void onActionShowGridTriggered(bool on);
+    //水平网格
+    void onActionShowHGridTriggered(bool on);
+    //垂直网格
+    void onActionShowVGridTriggered(bool on);
+    //显示密集水平网格
+    void onActionShowCrowdedHGridTriggered(bool on);
+    //显示密集垂直网格
+    void onActionShowCrowdedVGridTriggered(bool on);
+    //显示图例
+    void onActionShowLegendTriggered(bool on);
+    //显示图例选择器
+    void onActionShowLegendPanelTriggered(bool on);
     /// \}
 
     ///
@@ -360,6 +379,26 @@ private slots:
     /// \{
     //视图 - 恢复默认布局
     void onActionSetDefalutDockPosTriggered();
+    //标签模式
+    void onActionTabModeTriggered(bool on);
+    //窗口模式
+    void onActionWindowModeTriggered(bool on);
+    //窗口模式 - 层叠布置
+    void onActionWindowCascadeTriggered(bool on);
+    //窗口模式 - 均匀布置
+    void onActionWindowTileTriggered(bool on);
+    //显示隐藏DataFeatureDock窗口
+    void onActionDataFeatureDockTriggered(bool on);
+    //显示隐藏SubWindowListDock窗口
+    void onActionSubWindowListDockTriggered(bool on);
+    //显示隐藏ValueManagerDock窗口
+    void onActionValueManagerDockTriggered(bool on);
+    //显示隐藏LayerOutDock窗口
+    void onActionLayerOutDockTriggered(bool on);
+    //显示隐藏ValueViewerDock窗口
+    void onActionValueViewerDockTriggered(bool on);
+    //显示隐藏FigureViewer窗口
+    void onActionFigureViewerTriggered(bool on);
     /// \}
 
     ///
@@ -447,7 +486,7 @@ private:
     //变量管理器的移除控制触发的槽
     Q_SLOT void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
     //============================================================
-
+    void updateChartGridActionState(SA2DGraph* chart);
 private:
 #ifdef SA_USE_RIBBON_UI
     QScopedPointer<MainWindowPrivate> ui;
