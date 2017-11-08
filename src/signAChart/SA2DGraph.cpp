@@ -1844,7 +1844,7 @@ void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString
 /// \param curve
 /// \return 返回区域的索引x为第一个索引，y为第二个索引
 ///
-QPoint SA2DGraph::getPlottingRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const
+QPoint SA2DGraph::getVisibleRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const
 {
 	if (!curve)
 		return QPoint(0,0);
@@ -1878,7 +1878,7 @@ QPoint SA2DGraph::getPlottingRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve*
 	return boundary;
 }
 
-QPoint SA2DGraph::getPlottingRegionDatas(std::vector<double>& out_xs
+QPoint SA2DGraph::getVisibleRegionDatas(std::vector<double>& out_xs
 	,std::vector<double>& out_ys
     ,QwtPlotCurve* curve) const
 {
@@ -1916,7 +1916,7 @@ QPoint SA2DGraph::getPlottingRegionDatas(std::vector<double>& out_xs
     return boundary;
 }
 
-QPoint SA2DGraph::getPlottingRegionDatas(QVector<double>& out_xs, QVector<double>& out_ys, QwtPlotCurve* curve) const
+QPoint SA2DGraph::getVisibleRegionDatas(QVector<double>& out_xs, QVector<double>& out_ys, QwtPlotCurve* curve) const
 {
     if (!curve)
         return QPoint(0,0);
@@ -1955,7 +1955,7 @@ QPoint SA2DGraph::getPlottingRegionDatas(QVector<double>& out_xs, QVector<double
 /// \brief 获取当前正在显示的区域
 /// \return
 ///
-QRectF SA2DGraph::getPlottingRegionRang() const
+QRectF SA2DGraph::getVisibleRegionRang() const
 {
     QwtPlot::Axis xaxis = QwtPlot::xBottom;
     if(!axisEnabled(QwtPlot::xBottom))

@@ -1925,7 +1925,7 @@ void MainWindow::onActionPickCurveToDataTriggered()
         QString name = QInputDialog::getText(this,QStringLiteral("数据命名")
                                              ,QStringLiteral("请为导出的数据命名："),QLineEdit::Normal,(*i)->title().text());
         if(SA::InViewRange == rang)
-            pickCurData(name,(*i),pickMode,chart->getPlottingRegionRang());
+      --      pickCurData(name,(*i),pickMode,chart->getVisibleRegionRang());
         else
             pickCurData(name,(*i),pickMode,QRectF());
     }

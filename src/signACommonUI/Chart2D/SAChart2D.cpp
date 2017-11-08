@@ -156,6 +156,40 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
     replot();
 }
 ///
+/// \brief 获取选择范围内的数据,如果当前没有选区，返回false
+/// \param xy
+/// \param cur
+/// \return
+///
+bool SAChart2D::getDataInSelectRang(QVector<QPointF> &xy, QwtPlotCurve *cur)
+{
+    QPainterPath region = getVisibleRegion();
+    if(region.isEmpty())
+    {
+        return false;
+    }
+    SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
+    if(nullptr == editor)
+    {
+        return;
+    }
+    int xa = cur->xAxis();
+    int ya = cur->yAxis();
+    if(xa == editor->getXAxis() && ya == editor->getYAxis())
+    {
+        SAChart::getDataInRang(region,cur,xy);
+    }
+    else
+    {
+        region = editor->transformToOtherAxis(xa,ya);
+        if(!region.isEmpty())
+        {
+            SAChart::getDataInRang(region,cur,xy);
+        }
+    }
+    return true;
+}
+///
 /// \brief 开始选择模式
 /// 选择模式可分为矩形，圆形等，具体见\sa SelectionMode
 /// \param mode 选择模式

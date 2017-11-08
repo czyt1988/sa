@@ -679,3 +679,18 @@ int SAChart::removeDataInRang(const QPainterPath &removeRang, QwtPlotCurve *curv
     curve->setSamples(newLine);
     return newLine.size();
 }
+
+int SAChart::getDataInRang(const QPainterPath &rang, QwtPlotCurve *curve, QVector<QPointF> &res)
+{
+    QPointF point;
+    size_t length = curve->data()->size();
+    for(size_t i = 0;i<length;++i)
+    {
+        point = curve->data()->sample(i);
+        if(rang.contains(point))
+        {
+            res.push_back(point);
+        }
+    }
+    return res.size();
+}

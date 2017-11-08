@@ -304,12 +304,12 @@ public:
 
 
 
-    QRectF getPlottingRegionRang() const;
-    QPoint getPlottingRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const;
-	QPoint getPlottingRegionDatas(std::vector<double>& out_xs
+    QRectF getVisibleRegionRang() const;
+    QPoint getVisibleRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const;
+    QPoint getVisibleRegionDatas(std::vector<double>& out_xs
 		,std::vector<double>& out_ys
         ,QwtPlotCurve* curve) const;
-    QPoint getPlottingRegionDatas(QVector<double>& out_xs
+    QPoint getVisibleRegionDatas(QVector<double>& out_xs
         ,QVector<double>& out_ys
         ,QwtPlotCurve* curve) const;
 	enum AxisDateScaleType{

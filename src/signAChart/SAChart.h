@@ -93,6 +93,8 @@ public:
     //把范围内的数据移除 返回移除的个数
     static int removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtPlotCurve* curve);
+    //获取范围内的数据 返回获取的个数
+    static int getDataInRang(const QPainterPath& rang,QwtPlotCurve* curve,QVector<QPointF>& res);
 };
 
 #endif // SACHART_H

@@ -23,7 +23,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_viewRange">
         <property name="text">
-         <string>导出当前显示范围内数据</string>
+         <string>导出当前选择范围内数据</string>
         </property>
        </widget>
       </item>
