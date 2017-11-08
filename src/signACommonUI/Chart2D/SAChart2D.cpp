@@ -121,7 +121,7 @@ SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
 void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
 {
     setAutoReplot(false);
-    QPainterPath region = getVisibleRegion();
+    QPainterPath region = getSelectionRange();
     if(region.isEmpty())
     {
         return;
@@ -161,9 +161,9 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
 /// \param cur
 /// \return
 ///
-bool SAChart2D::getDataInSelectRang(QVector<QPointF> &xy, QwtPlotCurve *cur)
+bool SAChart2D::getDataInSelectRange(QVector<QPointF> &xy, QwtPlotCurve *cur)
 {
-    QPainterPath region = getVisibleRegion();
+    QPainterPath region = getSelectionRange();
     if(region.isEmpty())
     {
         return false;
@@ -171,7 +171,7 @@ bool SAChart2D::getDataInSelectRang(QVector<QPointF> &xy, QwtPlotCurve *cur)
     SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
     if(nullptr == editor)
     {
-        return;
+        return false;
     }
     int xa = cur->xAxis();
     int ya = cur->yAxis();
@@ -307,7 +307,7 @@ const SAAbstractRegionSelectEditor *SAChart2D::getRegionSelectEditor() const
 /// \brief 获取当前可见的选区的范围
 /// \return
 ///
-QPainterPath SAChart2D::getVisibleRegion() const
+QPainterPath SAChart2D::getSelectionRange() const
 {
     const SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
     if(editor)

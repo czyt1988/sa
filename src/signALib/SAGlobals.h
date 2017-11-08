@@ -24,9 +24,9 @@ namespace SA {
 //        ,PointSeries///<点集
 //        ,TDMSChannel
 //    };
-    enum ViewRange{
-        InViewRange = 0x1///<在可视范围内
-        ,OutViewRange = 0x2///< 不可视范围内
+    enum DataSelectRange{
+        InSelectionRange = 0x1///<在可视范围内
+        ,OutSelectionRange = 0x2///< 不可视范围内
         ,AllRange = 0x3///< 所有范围
     };
     ///

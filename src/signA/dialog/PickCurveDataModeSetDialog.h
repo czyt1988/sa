@@ -14,7 +14,7 @@ class PickCurveDataModeSetDialog : public QDialog
 public:
     explicit PickCurveDataModeSetDialog(QWidget *parent = 0);
     ~PickCurveDataModeSetDialog();
-    SA::ViewRange getViewRange() const;
+    SA::DataSelectRange getViewRange() const;
     SA::PickDataMode getPickDataMode() const;
 private slots:
     void on_buttonBox_accepted();

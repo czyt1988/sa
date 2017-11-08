@@ -1918,16 +1918,23 @@ void MainWindow::onActionPickCurveToDataTriggered()
     PickCurveDataModeSetDialog pcDlg(this);
     if(QDialog::Accepted !=  pcDlg.exec())
         return;
-    SA::ViewRange rang = pcDlg.getViewRange();
+    SA::DataSelectRange rang = pcDlg.getViewRange();
     SA::PickDataMode pickMode = pcDlg.getPickDataMode();
     for(auto i=curs.begin();i!=curs.end();++i)
     {
         QString name = QInputDialog::getText(this,QStringLiteral("数据命名")
                                              ,QStringLiteral("请为导出的数据命名："),QLineEdit::Normal,(*i)->title().text());
-        if(SA::InViewRange == rang)
-      --      pickCurData(name,(*i),pickMode,chart->getVisibleRegionRang());
+        QVector<QPointF> xy;
+        if(SA::InSelectionRange == rang)
+        {
+            chart->getDataInSelectRange(xy,*i);
+            makeValueFromXYSeries(name,pickMode,xy);
+        }
         else
-            pickCurData(name,(*i),pickMode,QRectF());
+        {
+            SAChart::getXYDatas(xy,(*i));
+            makeValueFromXYSeries(name,pickMode,xy);
+        }
     }
 }
 ///
@@ -2041,32 +2048,28 @@ SAPlotLayerModel* MainWindow::getPlotLayerModel() const
 	return static_cast<SAPlotLayerModel*>(ui->tableView_layer->model());
 }
 ///
-/// \brief 抽取曲线的数据到openDataManager
-/// \param name 曲线数据名
-/// \param cur 曲线指针
+/// \brief 把一个XYSeries转换为value
+/// \param name 新变量名称
 /// \param pickMode 抽取方式
-/// \param rang 抽取范围
+/// \param xy 数据值
 ///
-void MainWindow::pickCurData(const QString& name, QwtPlotCurve *cur, SA::PickDataMode pickMode, const QRectF& rang)
+void MainWindow::makeValueFromXYSeries(const QString& name, SA::PickDataMode pickMode, const QVector<QPointF>& xy)
 {
     std::shared_ptr<SAAbstractDatas> p = nullptr;
     if(SA::XOnly == pickMode)
     {
         QVector<double> x;
-        SAChart::getXDatas(x,cur,rang);
+        SAChart::getXDatas(xy,x);
         p = SAValueManager::makeData<SAVectorDouble>(name,x);//new SAVectorDouble(name,x);
-
     }
     else if(SA::YOnly == pickMode)
     {
         QVector<double> y;
-        SAChart::getYDatas(y,cur,rang);
+        SAChart::getYDatas(xy,y);
         p = SAValueManager::makeData<SAVectorDouble>(name,y);//new SAVectorDouble(name,y);
     }
     else if(SA::XYPoint == pickMode)
     {
-        QVector<QPointF> xy;
-        SAChart::getXYDatas(xy,cur,rang);
         p = SAValueManager::makeData<SAVectorPointF>(name,xy);//new SAVectorPointF(name,xy);
     }
     saValueManager->addData(p);

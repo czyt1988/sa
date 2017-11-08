@@ -15,10 +15,10 @@ PickCurveDataModeSetDialog::~PickCurveDataModeSetDialog()
     delete ui;
 }
 
-SA::ViewRange PickCurveDataModeSetDialog::getViewRange() const
+SA::DataSelectRange PickCurveDataModeSetDialog::getViewRange() const
 {
     if(ui->radioButton_viewRange->isChecked())
-        return SA::InViewRange;
+        return SA::InSelectionRange;
     else if(ui->radioButton_allRange->isChecked())
         return SA::AllRange;
     return SA::AllRange;

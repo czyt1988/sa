@@ -35,7 +35,7 @@ public:
     //移除范围内数据
     void removeDataInRang(QList<QwtPlotCurve *> curves);
     //获取选择范围内的数据,如果当前没有选区，返回false
-    bool getDataInSelectRang(QVector<QPointF>& xy,QwtPlotCurve *cur);
+    bool getDataInSelectRange(QVector<QPointF>& xy,QwtPlotCurve *cur);
     //开始选择模式
     void enableSelection(SelectionMode mode, bool on = true);
     //判断当前的选择模式
@@ -50,7 +50,7 @@ public:
     SAAbstractRegionSelectEditor* getRegionSelectEditor();
     const SAAbstractRegionSelectEditor* getRegionSelectEditor() const;
     //获取当前可见的选区的范围
-    QPainterPath getVisibleRegion() const;
+    QPainterPath getSelectionRange() const;
 protected:
     //开始矩形选框模式
     void startRectSelectMode();

@@ -452,8 +452,8 @@ public:
 
 
 
-
-    void pickCurData(const QString& name, QwtPlotCurve* cur, SA::PickDataMode pickMode, const QRectF& rang);
+    //把一个XYSeries转换为value
+    void makeValueFromXYSeries(const QString& name, SA::PickDataMode pickMode, const QVector<QPointF>& xy);
 
     //-------dock-图层表格相关---------------------
     //图层表格model
