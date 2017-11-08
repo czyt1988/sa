@@ -17,6 +17,8 @@ public:
     virtual void setSelectRegion(const QPainterPath& shape);
     //设置选择模式
     virtual void setSelectionMode(const SelectionMode &selectionMode);
+    //rtti
+    virtual int rtti() const;
     //获取选框区域的item
     const QwtPlotShapeItem* getShapeItem() const;
     QwtPlotShapeItem* getShapeItem();

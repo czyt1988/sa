@@ -314,6 +314,14 @@ void SARectRegionSelectEditor::setSelectionMode(const SARectRegionSelectEditor::
 
     SAAbstractRegionSelectEditor::setSelectionMode(selectionMode);
 }
+///
+/// \brief rtti
+/// \return
+///
+int SARectRegionSelectEditor::rtti() const
+{
+    return RTTIRectRegionSelectEditor;
+}
 
 ///
 /// \brief 清理数据

@@ -82,6 +82,14 @@ void SAEllipseRegionSelectEditor::setSelectionMode(const SAAbstractRegionSelectE
 
     SAAbstractRegionSelectEditor::setSelectionMode(selectionMode);
 }
+///
+/// \brief rtti
+/// \return
+///
+int SAEllipseRegionSelectEditor::rtti() const
+{
+    return RTTIEllipseRegionSelectEditor;
+}
 
 const QwtPlotShapeItem *SAEllipseRegionSelectEditor::getShapeItem() const
 {

@@ -36,8 +36,9 @@ public:
     void removeDataInRang(QList<QwtPlotCurve *> curves);
 
     //开始选择模式
-    void startSelectMode(SelectionMode mode = RectSelection);
-    void stopSelectMode();
+    void enableSelection(SelectionMode mode, bool on = true);
+    //判断当前的选择模式
+    bool isEnableSelection(SelectionMode mode) const;
     //清除所有选区
     void clearAllSelectedRegion();
     //判断是否有选区
@@ -56,6 +57,8 @@ protected:
     void startEllipseSelectMode();
     //开始椭圆选框模式
     void startPolygonSelectMode();
+    //
+    void stopSelectMode();
 private:
     void addDatas(const QList<SAAbstractDatas*>& datas);
 protected:

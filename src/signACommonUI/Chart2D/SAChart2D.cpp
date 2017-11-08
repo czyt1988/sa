@@ -161,21 +161,56 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
 /// \param mode 选择模式
 /// \see SelectionMode
 ///
-void SAChart2D::startSelectMode(SelectionMode mode)
+void SAChart2D::enableSelection(SelectionMode mode,bool on)
 {
-    if(NoneSelection == mode)
+    if(on)
     {
-        return;
+        if(NoneSelection == mode)
+        {
+            return;
+        }
+        stopSelectMode();
+        m_selectMode = mode;
+        switch(m_selectMode)
+        {
+        case RectSelection:startRectSelectMode();break;
+        case EllipseSelection:startEllipseSelectMode();break;
+        case PolygonSelection:startPolygonSelectMode();break;
+        default:return;
+        }
     }
-    stopSelectMode();
-    m_selectMode = mode;
-    switch(m_selectMode)
+    else
     {
-    case RectSelection:startRectSelectMode();break;
-    case EllipseSelection:startEllipseSelectMode();break;
-    case PolygonSelection:startPolygonSelectMode();break;
-    default:return;
+        stopSelectMode();
     }
+}
+///
+/// \brief 判断当前的选择模式
+/// \param mode
+/// \return
+///
+bool SAChart2D::isEnableSelection(SAChart2D::SelectionMode mode) const
+{
+    if(nullptr == m_chartSelectRigionEditor)
+    {
+        return false;
+    }
+    if(!m_chartSelectRigionEditor->isEnabled())
+    {
+        return false;
+    }
+    switch(mode)
+    {
+    case RectSelection:
+        return m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIRectRegionSelectEditor;
+    case EllipseSelection:
+        return m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIEllipseRegionSelectEditor;
+    case PolygonSelection:
+        return m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIPolygonRegionSelectEditor;
+    default:
+        break;
+    }
+    return false;
 }
 ///
 /// \brief 结束当前的选择模式

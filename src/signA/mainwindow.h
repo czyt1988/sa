@@ -303,7 +303,7 @@ private slots:
     //开启当前绘图的区间缩放
     void onActionEnableChartZoomTriggered(bool check);
     //当前绘图的缩放还原
-    void onActionChartZoomToBaseTriggered(bool check);
+    void onActionSetChartZoomToBaseTriggered(bool check);
     //当前绘图放大
     void onActionChartZoomInTriggered(bool check);
     //当前绘图缩小

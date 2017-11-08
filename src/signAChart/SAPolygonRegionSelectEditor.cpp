@@ -15,7 +15,18 @@ SAPolygonRegionSelectEditor::SAPolygonRegionSelectEditor(QwtPlot* parent)
 
 SAPolygonRegionSelectEditor::~SAPolygonRegionSelectEditor()
 {
-
+    if(m_shapeItem)
+    {
+        m_shapeItem->detach();
+        delete m_shapeItem;
+        m_shapeItem = nullptr;
+    }
+    if(m_tmpItem)
+    {
+        m_tmpItem->detach();
+        delete m_tmpItem;
+        m_tmpItem = nullptr;
+    }
 }
 
 bool SAPolygonRegionSelectEditor::isRegionVisible() const
@@ -68,6 +79,11 @@ void SAPolygonRegionSelectEditor::setSelectionMode(const SAAbstractRegionSelectE
 
     SAAbstractRegionSelectEditor::setSelectionMode(selectionMode);
 
+}
+
+int SAPolygonRegionSelectEditor::rtti() const
+{
+    return RTTIPolygonRegionSelectEditor;
 }
 
 const QwtPlotShapeItem *SAPolygonRegionSelectEditor::getShapeItem() const
@@ -190,11 +206,11 @@ bool SAPolygonRegionSelectEditor::keyPressEvent(const QKeyEvent *e)
 {
     if(Qt::Key_Enter == e->key() || Qt::Key_Return == e->key())
     {
-        if(completeRegion())
-        {
-            return true;
-        }
-        return false;
+        return completeRegion();
+    }
+    else if(Qt::Key_Escape == e->key() || Qt::Key_Backspace == e->key() )
+    {
+        return backspaceRegion();
     }
     return false;
 }
@@ -204,9 +220,18 @@ bool SAPolygonRegionSelectEditor::completeRegion()
     if(m_polygon.size()<=2)
     {
         m_polygon.clear();
+        if(m_tmpItem)
+        {
+            m_tmpItem->detach();
+            delete m_tmpItem;
+            m_tmpItem = nullptr;
+        }
+        m_isStartDrawRegion = false;
+        return false;//点数不足，完成失败
     }
     else
     {
+        //点数足够，封闭多边形
         if(m_polygon.last() != m_polygon.first())
         {
             m_polygon.append(m_polygon.first());
@@ -220,6 +245,14 @@ bool SAPolygonRegionSelectEditor::completeRegion()
         {
             m_shapeItem->setPolygon(m_polygon);
         }
+        else
+        {
+            //几乎无可能进入这里
+            m_shapeItem = new SASelectRegionShapeItem("select region");
+            m_shapeItem->attach(plot());
+            m_shapeItem->setPolygon(m_polygon);
+        }
+        m_polygon.clear();
         break;
     }
     case AdditionalSelection:
@@ -228,17 +261,6 @@ bool SAPolygonRegionSelectEditor::completeRegion()
     {
         if(m_shapeItem)
         {
-            if(m_polygon.isEmpty())
-            {
-                if(m_tmpItem)
-                {
-                    m_tmpItem->detach();
-                    delete m_tmpItem;
-                    m_tmpItem = nullptr;
-                }
-                m_isStartDrawRegion = false;
-                return false;
-            }
             QPainterPath shape = m_shapeItem->shape();
             QPainterPath addtion;
             addtion.addPolygon(m_polygon);
@@ -264,6 +286,14 @@ bool SAPolygonRegionSelectEditor::completeRegion()
             }
             m_shapeItem->setShape(shape);
         }
+        else
+        {
+            //几乎无可能进入这里
+            m_shapeItem = new SASelectRegionShapeItem("select region");
+            m_shapeItem->attach(plot());
+            m_shapeItem->setPolygon(m_polygon);
+        }
+        m_polygon.clear();
         if(m_tmpItem)
         {
             m_tmpItem->detach();
@@ -274,5 +304,42 @@ bool SAPolygonRegionSelectEditor::completeRegion()
     }
     }
     m_isStartDrawRegion = false;
+    return true;
+}
+
+bool SAPolygonRegionSelectEditor::backspaceRegion()
+{
+    if(!m_isStartDrawRegion)
+    {
+        return false;
+    }
+    if(m_polygon.size()<=1)
+    {
+        return false;
+    }
+    m_polygon.pop_back();
+    switch(getSelectionMode())
+    {
+    case SingleSelection:
+    {
+        if(m_shapeItem)
+        {
+            m_shapeItem->setPolygon(m_polygon);
+        }
+        break;
+    }
+    case AdditionalSelection:
+    case SubtractionSelection:
+    case IntersectionSelection:
+    {
+        if(m_tmpItem)
+        {
+            m_tmpItem->setPolygon(m_polygon);
+        }
+        break;
+    }
+    default:
+        return false;
+    }
     return true;
 }

@@ -342,8 +342,8 @@ void MainWindow::initUI()
         toolbtn->setMenu(m1);
     }
 #endif
-    connect(ui->actionZoomBase,&QAction::triggered
-            ,this,&MainWindow::onActionChartZoomToBaseTriggered);
+    connect(ui->actionSetZoomBase,&QAction::triggered
+            ,this,&MainWindow::onActionSetChartZoomToBaseTriggered);
     connect(ui->actionChartZoomReset,&QAction::triggered
             ,this,&MainWindow::onActionChartZoomResetTriggered);
     connect(ui->actionZoomIn,&QAction::triggered
@@ -982,17 +982,17 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
     {
         if(b)
         {
-            chart->startSelectMode(SAChart2D::RectSelection);
+            chart->unenableEditor();
+            chart->enableSelection(SAChart2D::RectSelection,b);
             SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
             if(selectEditor)
             {
                 selectEditor->setSelectionMode(getCurrentChartRegionSelectionMode());
             }
-            chart->enableZoomer(false);
         }
         else
         {
-            chart->stopSelectMode();
+            chart->enableSelection(SAChart2D::RectSelection,false);
         }
     }
     updateChartSetToolBar();
@@ -1008,17 +1008,17 @@ void MainWindow::onActionStartEllipseSelectTriggered(bool b)
     {
         if(b)
         {
-            chart->startSelectMode(SAChart2D::EllipseSelection);
+            chart->unenableEditor();
+            chart->enableSelection(SAChart2D::EllipseSelection,b);
             SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
             if(selectEditor)
             {
                 selectEditor->setSelectionMode(getCurrentChartRegionSelectionMode());
             }
-            chart->enableZoomer(false);
         }
         else
         {
-            chart->stopSelectMode();
+            chart->enableSelection(SAChart2D::EllipseSelection,false);
         }
     }
     updateChartSetToolBar();
@@ -1034,17 +1034,17 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
     {
         if(b)
         {
-            chart->startSelectMode(SAChart2D::PolygonSelection);
+            chart->unenableEditor();
+            chart->enableSelection(SAChart2D::PolygonSelection,b);
             SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
             if(selectEditor)
             {
                 selectEditor->setSelectionMode(getCurrentChartRegionSelectionMode());
             }
-            chart->enableZoomer(false);
         }
         else
         {
-            chart->stopSelectMode();
+            chart->enableSelection(SAChart2D::PolygonSelection,false);
         }
     }
     updateChartSetToolBar();
@@ -1175,13 +1175,11 @@ void MainWindow::onActionEnableChartPickerTriggered(bool check)
     {
         QList<SAChart2D*> charts = fig->get2DPlots();
         std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
+            c->unenableEditor();
             c->enablePicker(check);
         });
     }
-    else
-    {
-        ui->actionEnableChartCrossCursor->setChecked(false);
-    }
+    updateChartSetToolBar(fig);
 }
 ///
 /// \brief 开启当前绘图的拖动
@@ -1194,13 +1192,11 @@ void MainWindow::onActionEnableChartPannerTriggered(bool check)
     {
         QList<SAChart2D*> charts = fig->get2DPlots();
         std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
+            c->unenableEditor();
             c->enablePanner(check);
         });
     }
-    else
-    {
-        ui->actionEnableChartPanner->setChecked(false);
-    }
+    updateChartSetToolBar(fig);
 }
 ///
 /// \brief 开启当前绘图的区间缩放
@@ -1213,22 +1209,18 @@ void MainWindow::onActionEnableChartZoomTriggered(bool check)
     {
         QList<SAChart2D*> charts = fig->get2DPlots();
         std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
-            if(check)
-            {
-                //选框模式和放大模式是有冲突的。
-                c->stopSelectMode();
-            }
+            c->unenableEditor();
             c->enableZoomer(check);
         });
 
     }
-    updateChartSetToolBar();
+    updateChartSetToolBar(fig);
 }
 ///
 /// \brief 当前绘图的缩放还原
 /// \param check
 ///
-void MainWindow::onActionChartZoomToBaseTriggered(bool check)
+void MainWindow::onActionSetChartZoomToBaseTriggered(bool check)
 {
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
@@ -1277,8 +1269,10 @@ void MainWindow::onActionYDataPickerTriggered(bool on)
     SAChart2D* chart = getCurSubWindowChart();
     if(chart)
     {
+        chart->unenableEditor();
         chart->enableYDataPicker(on);
     }
+    updateChartSetToolBar();
 }
 ///
 /// \brief 拾取xy值
@@ -1289,8 +1283,10 @@ void MainWindow::onActionXYDataPickerTriggered(bool on)
     SAChart2D* chart = getCurSubWindowChart();
     if(chart)
     {
+        chart->unenableEditor();
         chart->enableXYDataPicker(on);
     }
+    updateChartSetToolBar();
 }
 ///
 /// \brief 网格
@@ -1368,6 +1364,7 @@ void MainWindow::onActionShowLegendTriggered(bool on)
     {
         chart->enableLegend(on);
     }
+    updateChartSetToolBar();
 }
 ///
 /// \brief 显示图例选择器
@@ -1380,6 +1377,7 @@ void MainWindow::onActionShowLegendPanelTriggered(bool on)
     {
         chart->enableLegendPanel(on);
     }
+    updateChartSetToolBar();
 }
 
 
@@ -1406,6 +1404,7 @@ void MainWindow::onActionClearProjectTriggered()
     }
     ui->mdiArea->closeAllSubWindows();
     showNormalMessageInfo(QStringLiteral("清除方案"),0);
+    updateChartSetToolBar();
     emit cleanedProject();
 }
 
@@ -1658,6 +1657,17 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
     }
     if(nullptr == w)
     {
+        ui->actionEnableChartCrossCursor->setChecked( false );
+        ui->actionEnableChartPanner->setChecked( false );
+        ui->actionEnableChartZoom->setChecked(false);
+        ui->actionYDataPicker->setChecked(false);
+        ui->actionXYDataPicker->setChecked(false);
+        ui->actionShowLegend->setChecked(false);
+        ui->actionShowLegendPanel->setChecked(false);
+        ui->actionStartRectSelect->setChecked(false);
+        ui->actionStartEllipseSelect->setChecked(false);
+        ui->actionStartPolygonSelect->setChecked(false);
+        updateChartGridActionState(nullptr);
         return;
     }
     auto c = w->current2DPlot();
@@ -1668,14 +1678,10 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
         ui->actionEnableChartZoom->setChecked(c->isEnableZoomer());
         ui->actionYDataPicker->setChecked(c->isEnableYDataPicker());
         ui->actionXYDataPicker->setChecked(c->isEnableXYDataPicker());
-        ui->actionShowGrid->setChecked(c->isEnableGrid());
-        ui->actionShowHGrid->setChecked(c->isEnableGridY());
-        ui->actionShowVGrid->setChecked(c->isEnableGridX());
-        ui->actionShowCrowdedHGrid->setChecked(c->isEnableGridYMin());
-        ui->actionShowCrowdedVGrid->setChecked(c->isEnableGridXMin());
         ui->actionShowLegend->setChecked(c->isEnableLegend());
         ui->actionShowLegendPanel->setChecked(c->isEnableLegendPanel());
     }
+    updateChartGridActionState(c);
 }
 
 QList<QMdiSubWindow *> MainWindow::getSubWindowList() const
@@ -2200,6 +2206,7 @@ void MainWindow::updateChartGridActionState(SA2DGraph *chart)
         ui->actionShowCrowdedVGrid->setChecked(false);
     }
 }
+
 
 
 

@@ -1277,6 +1277,32 @@ double SA2DGraph::axisYmax(int axisId) const
         return inl.maxValue();
     return double();
 }
+///
+/// \brief 此功能用于禁止所有活动的editor，如Zoomer，Picker，Panner，DataPicker等
+///
+void SA2DGraph::unenableEditor()
+{
+    if(isEnableZoomer())
+    {
+        enableZoomer(false);
+    }
+    if(isEnablePicker())
+    {
+        enablePicker(false);
+    }
+    if(isEnablePanner())
+    {
+        enablePanner(false);
+    }
+    if(isEnableYDataPicker())
+    {
+        enableYDataPicker(false);
+    }
+    if(isEnableXYDataPicker())
+    {
+        enableXYDataPicker(false);
+    }
+}
 
 
 void SA2DGraph::setupPicker()
@@ -1485,23 +1511,15 @@ void SA2DGraph::deleteZoomer()
 ///
 void SA2DGraph::setZoomReset()
 {
-//    setAxisAutoScale(QwtPlot::yLeft,true);
-//    setAxisAutoScale(QwtPlot::xBottom,true);
-//    setAxisAutoScale(QwtPlot::xTop,true);
-//    setAxisAutoScale(QwtPlot::yRight,true);
-//    replot();
     if(!m_zoomer.isNull())
     {
-        m_zoomer->setZoomBase(false);
         m_zoomer->zoom(0);
 
     }
     if(m_zoomerSecond)
     {
-        m_zoomerSecond->setZoomBase(false);
         m_zoomerSecond->zoom(0);
     }
-
 }
 
 void SA2DGraph::zoomIn()

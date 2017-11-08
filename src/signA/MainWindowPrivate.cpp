@@ -206,9 +206,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionProjectSetting->setObjectName(QStringLiteral("actionProjectSetting"));
     actionProjectSetting->setIcon(QIcon(":/icons/icons/project.png"));
 
-    actionZoomBase = new QAction(mainWinowPtr);
-    actionZoomBase->setObjectName(QStringLiteral("actionZoomBase"));
-    actionZoomBase->setIcon(QIcon(":/icons/icons/zoomBase.png"));
+    actionSetZoomBase = new QAction(mainWinowPtr);
+    actionSetZoomBase->setObjectName(QStringLiteral("actionZoomBase"));
+    actionSetZoomBase->setIcon(QIcon(":/icons/icons/zoomBase.png"));
 
     actionZoomIn = new QAction(mainWinowPtr);
     actionZoomIn->setObjectName(QStringLiteral("actionZoomIn"));
@@ -697,9 +697,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuGrid->addAction(actionShowCrowdedVGrid);
     menuZoomSet->addAction(actionEnableChartZoom);
     menuZoomSet->addAction(actionChartZoomReset);
-    menuZoomSet->addAction(actionZoomBase);
     menuZoomSet->addAction(actionZoomIn);
     menuZoomSet->addAction(actionZoomOut);
+    menuZoomSet->addSeparator();
+    menuZoomSet->addAction(actionSetZoomBase);
     menuRegionSelect->addAction(actionStartRectSelect);
     menuRegionSelect->addAction(actionStartEllipseSelect);
     menuRegionSelect->addAction(actionStartPolygonSelect);
@@ -833,10 +834,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionOpenProject->setText(QApplication::translate("MainWindow", "Open\nProject", 0));
     actionSaveAs->setText(QApplication::translate("MainWindow", "Save As", 0));
     actionProjectSetting->setText(QApplication::translate("MainWindow", "Project Setting", 0));
-    actionZoomBase->setText(QApplication::translate("MainWindow", "ZoomBase", 0));
-    actionZoomIn->setText(QApplication::translate("MainWindow", "ZoomIn", 0));
+    actionSetZoomBase->setText(QApplication::translate("MainWindow", "Set Zoom Base", 0));
+    actionZoomIn->setText(QApplication::translate("MainWindow", "Zoom In", 0));
     actionZoomIn->setShortcut(QApplication::translate("MainWindow", "Ctrl+=", 0));
-    actionZoomOut->setText(QApplication::translate("MainWindow", "ZoomOut", 0));
+    actionZoomOut->setText(QApplication::translate("MainWindow", "Zoom Out", 0));
     actionZoomOut->setShortcut(QApplication::translate("MainWindow", "Ctrl+-", 0));
     actionStartRectSelect->setText(QApplication::translate("MainWindow", "Rect Select", 0));
     actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "Ellipse Select", 0));

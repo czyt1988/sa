@@ -18,6 +18,7 @@ public:
         ,SubtractionSelection ///< 减去选区
         ,IntersectionSelection ///<  交集选区
     };
+
     virtual SelectionMode getSelectionMode() const;
     virtual void setSelectionMode(const SelectionMode &selectionMode);
     //获取选择的数据区域
