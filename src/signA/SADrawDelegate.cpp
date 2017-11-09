@@ -46,7 +46,14 @@ void SADrawDelegate::drawTrend(const QList<SAAbstractDatas *> &datas)
         chart = pFigure->create2DPlot();
     }
     std::for_each(datas.begin(),datas.end(),[chart](SAAbstractDatas* data){
-        chart->addCurve(data,1,1);
+        if(SA::VectorPoint == data->getType())
+        {
+            chart->addCurve(data);
+        }
+        else
+        {
+            chart->addCurve(data,1,1);
+        }
     });
 
     chart->setAutoReplot(false);

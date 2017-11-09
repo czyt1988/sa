@@ -30,7 +30,7 @@ private slots:
     Q_SLOT void onAxisMinScaleChanged(double v);
     Q_SLOT void onScaleDivChanged();
     Q_SLOT void onScaleStyleChanged(int id);
-
+    Q_SLOT void onChartDelete(QObject *obj);
 private:
     void updateUI();
     void updateAxisScaleUI();
@@ -44,6 +44,8 @@ private:
 
     void connectChartAxis();
     void disconnectChartAxis();
+    void connectChart();
+    void disconnectChart();
 private:
     Ui::SAQwtAxisSetWidget *ui;
     QwtPlot* m_chart;

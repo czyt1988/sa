@@ -16,6 +16,8 @@ public:
     void setChart(SAChart2D *chart);
 signals:
     void chartTitleChanged(const QString& text);
+private slots:
+    void onChartDelete(QObject *obj);
 private:
     class UI;
     SAChartSetWidget::UI* ui;

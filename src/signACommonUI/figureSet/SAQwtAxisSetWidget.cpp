@@ -156,6 +156,12 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
     }
 }
 
+void SAQwtAxisSetWidget::onChartDelete(QObject *obj)
+{
+    m_chart = nullptr;
+    resetAxisValue();
+}
+
 void SAQwtAxisSetWidget::updateUI()
 {
     bool enable = ui->checkBoxEnable->isChecked();
@@ -263,12 +269,36 @@ void SAQwtAxisSetWidget::connectChartAxis()
 
 void SAQwtAxisSetWidget::disconnectChartAxis()
 {
+    if(nullptr == m_chart)
+    {
+        return;
+    }
     QwtScaleWidget* aw  = m_chart->axisWidget(m_axisID);
     if(aw)
     {
         disconnect(aw,&QwtScaleWidget::scaleDivChanged
                 ,this,&SAQwtAxisSetWidget::onScaleDivChanged);
     }
+}
+
+void SAQwtAxisSetWidget::connectChart()
+{
+    if(nullptr == m_chart)
+    {
+        return;
+    }
+    connect(m_chart,&QObject::destroyed
+            ,this,&SAQwtAxisSetWidget::onChartDelete);
+}
+
+void SAQwtAxisSetWidget::disconnectChart()
+{
+    if(nullptr == m_chart)
+    {
+        return;
+    }
+    disconnect(m_chart,&QObject::destroyed
+            ,this,&SAQwtAxisSetWidget::onChartDelete);
 }
 
 QwtPlot *SAQwtAxisSetWidget::getChart() const
@@ -278,21 +308,18 @@ QwtPlot *SAQwtAxisSetWidget::getChart() const
 
 void SAQwtAxisSetWidget::setChart(QwtPlot *chart, int axisID)
 {
-    if(m_chart)
+    if(m_chart && (m_chart != chart))
     {
+        disconnectChart();
         disconnectChartAxis();
     }
-    else
-    {
-        resetAxisValue();
-        m_chart = nullptr;
-        return;
-    }
+
     m_chart = nullptr;//先设置为null，使得槽函数不动作
     updateAxisValue(chart,axisID);
     m_chart = chart;
     m_axisID = axisID;
     connectChartAxis();
+    connectChart();
 }
 
 void SAQwtAxisSetWidget::updateAxisValue()

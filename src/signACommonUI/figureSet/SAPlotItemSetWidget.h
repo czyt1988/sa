@@ -15,6 +15,7 @@ public:
     void setChart(QwtPlot* chart);
 private slots:
     void onPlotItemAttached(QwtPlotItem* item, bool on);
+    void onChartDelete(QObject* obj);
 private:
     class UI;
     SAPlotItemSetWidget::UI* ui;

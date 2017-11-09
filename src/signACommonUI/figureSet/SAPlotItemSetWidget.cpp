@@ -20,6 +20,16 @@ public:
     //
     QScrollArea* tabScrollArea1;
     SACurvePlotItemSetWidget* curveItemSetWidget;
+    UI():chartWidget(nullptr)
+      ,parentClass(nullptr)
+      ,itemTabWidget(nullptr)
+      ,verticalLayout(nullptr)
+      ,tabScrollArea1(nullptr)
+      ,curveItemSetWidget(nullptr)
+    {
+
+    }
+
     void setupUI(SAPlotItemSetWidget* par)
     {
         this->parentClass = par;
@@ -71,10 +81,10 @@ SAPlotItemSetWidget::~SAPlotItemSetWidget()
 
 void SAPlotItemSetWidget::setChart(QwtPlot *chart)
 {
-    QwtPlot* oldChart = ui->chartWidget;
-    if(oldChart)
+    if(ui->chartWidget && ui->chartWidget != chart)
     {
-        disconnect(oldChart,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
+        disconnect(ui->chartWidget,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
+        disconnect(ui->chartWidget,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
     ui->chartWidget = chart;
     if(nullptr == chart)
@@ -85,7 +95,8 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
     {
         QwtPlotItemList curItems = SAChart::getCurveItemList(chart);
         ui->curveItemSetWidget->setPlotItems(curItems);
-        connect(chart,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
+        connect(ui->chartWidget,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
+        connect(ui->chartWidget,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
 
 }
@@ -102,4 +113,11 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
     {
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }
+}
+
+void SAPlotItemSetWidget::onChartDelete(QObject *obj)
+{
+    Q_UNUSED(obj);
+    ui->chartWidget = nullptr;
+    ui->curveItemSetWidget->setPlotItems(QwtPlotItemList());
 }

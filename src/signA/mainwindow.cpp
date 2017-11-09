@@ -460,6 +460,8 @@ void MainWindow::initUI()
             ,this,&MainWindow::showMessageInfo);
 
     showMaximized();
+    ui->actionWindowMode->setChecked(QMdiArea::SubWindowView == ui->mdiArea->viewMode());
+    ui->actionTabMode->setChecked(QMdiArea::TabbedView == ui->mdiArea->viewMode());
 }
 
 

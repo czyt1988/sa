@@ -15,6 +15,7 @@
 class SAChartSetWidget::UI
 {
 public:
+
     SAChart2D* chartCtrl;
     QVBoxLayout *verticalLayout;
     QTabWidget* tabWidget;
@@ -23,12 +24,23 @@ public:
     QScrollArea* tabScrollArea2;
     SAPlotItemSetWidget* plotItemsSetWidget;
     SAChartAxesSetWidget* plotAxesSetWidget;
+    UI():chartCtrl(nullptr)
+      ,verticalLayout(nullptr)
+      ,tabWidget(nullptr)
+      ,chartNormalSetWidget(nullptr)
+      ,tabScrollArea1(nullptr)
+      ,tabScrollArea2(nullptr)
+      ,plotItemsSetWidget(nullptr)
+      ,plotAxesSetWidget(nullptr)
+    {
+
+    }
     void setupUI(SAChartSetWidget* par)
     {
         par->setObjectName(QStringLiteral("SAChartSetWidget"));
         par->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         tabWidget = new QTabWidget(par);
-        tabWidget->setObjectName(QStringLiteral("tabWidget"));
+        tabWidget->setObjectName(QStringLiteral("SAChartSetWidgetTabWidget"));
         tabWidget->setTabPosition(QTabWidget::North);
         verticalLayout = new QVBoxLayout;
         verticalLayout->setSpacing(5);
@@ -89,8 +101,24 @@ SAChartSetWidget::~SAChartSetWidget()
 
 void SAChartSetWidget::setChart(SAChart2D *chart)
 {
+    if(ui->chartCtrl && (ui->chartCtrl != chart))
+    {
+        disconnect(ui->chartCtrl,&QObject::destroyed,this,&SAChartSetWidget::onChartDelete);
+    }
+    if(chart)
+    {
+        connect(chart,&QObject::destroyed,this,&SAChartSetWidget::onChartDelete);
+    }
     ui->chartCtrl = chart;
-    ui->chartNormalSetWidget->setChart(chart);
-    ui->plotAxesSetWidget->setChart(chart);
-    ui->plotItemsSetWidget->setChart(chart);
+    if(chart)
+    {
+        ui->chartNormalSetWidget->setChart(chart);
+        ui->plotAxesSetWidget->setChart(chart);
+        ui->plotItemsSetWidget->setChart(chart);
+    }
+}
+
+void SAChartSetWidget::onChartDelete(QObject* obj)
+{
+    ui->chartCtrl = nullptr;
 }

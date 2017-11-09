@@ -5,7 +5,7 @@
 #include "SAChart2D.h"
 #include "SASeries.h"
 #include "SAChart.h"
-
+#include <QHeaderView>
 #define ROLE_PTR Qt::UserRole
 
 
@@ -20,7 +20,11 @@ void CurveSelectDialog::UI::setupUi(CurveSelectDialog *d)
     tableView->setObjectName(("tableView"));
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableView->setSortingEnabled(true);
-
+    QHeaderView* header = tableView->horizontalHeader();
+    if(header)
+    {
+        header->setStretchLastSection(true);
+    }
     verticalLayout->addWidget(tableView);
 
     horizontalLayout = new QHBoxLayout();
