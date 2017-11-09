@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "SACommonUIGlobal.h"
+#define SAFiugreSetWidget_USE_COMBOX 1
 class SAFigureWindow;
 
 ///
@@ -18,8 +19,12 @@ public:
 private slots:
     void onChartTitleChanged(const QString& text);
     void onPlotDestroy(QObject* obj);
+#ifdef SAFiugreSetWidget_USE_COMBOX
+    void onComboxChanged(int index);
+#else
 private:
     void disconnectOldFigure();
+#endif
 private:
     class UI;
     SAFiugreSetWidget::UI * ui;

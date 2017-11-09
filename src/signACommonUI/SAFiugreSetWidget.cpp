@@ -10,20 +10,46 @@
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QStackedWidget>
 #include "SAChart2D.h"
+
 class SAFiugreSetWidget::UI
 {
 public:
     QVBoxLayout *verticalLayout;
+#if SAFiugreSetWidget_USE_COMBOX
+    QComboBox* chartSelectComboBox;
+    SAChartSetWidget* chartSetWidget;
+#else
     QTabWidget *tabWidget;
+#endif
     QMap<QwtPlot*,SAChartSetWidget*> plotMapToWidget;
 
-    void setupUi(QWidget *SAFiugreSetWidget)
+    void setupUi(SAFiugreSetWidget *p)
     {
-        if (SAFiugreSetWidget->objectName().isEmpty())
-            SAFiugreSetWidget->setObjectName(QStringLiteral("SAFiugreSetWidget"));
-        SAFiugreSetWidget->resize(308, 464);
+        if (p->objectName().isEmpty())
+            p->setObjectName(QStringLiteral("SAFiugreSetWidget"));
+        p->resize(308, 464);
 
+#if SAFiugreSetWidget_USE_COMBOX
+        chartSelectComboBox = new QComboBox(p);
+        chartSelectComboBox->setObjectName(QStringLiteral("SAFiugreSetWidgetChartSelectComboBox"));
+        chartSetWidget = new SAChartSetWidget(p);
+        chartSetWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+        verticalLayout = new QVBoxLayout;
+        verticalLayout->setSpacing(4);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
+        verticalLayout->addWidget(chartSelectComboBox);
+        verticalLayout->addWidget(chartSetWidget);
+        p->setLayout(verticalLayout);
+        p->connect(chartSetWidget,&SAChartSetWidget::chartTitleChanged
+                ,p,&SAFiugreSetWidget::onChartTitleChanged);
+        p->connect(chartSelectComboBox,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
+                   ,p,&SAFiugreSetWidget::onComboxChanged);
+        retranslateUi(p);
+#else
         tabWidget = new QTabWidget(SAFiugreSetWidget);
         tabWidget->setObjectName(QStringLiteral("SAFiugreSetWidgetTabWidget"));
         tabWidget->setTabPosition(QTabWidget::South);
@@ -39,11 +65,12 @@ public:
         retranslateUi(SAFiugreSetWidget);
 
         tabWidget->setCurrentIndex(0);
+#endif
     } // setupUi
 
     void retranslateUi(QWidget *SAFiugreSetWidget)
     {
-        SAFiugreSetWidget->setWindowTitle(QApplication::translate("SAFiugreSetWidget", "Form", 0));
+        SAFiugreSetWidget->setWindowTitle(QApplication::translate("SAFiugreSetWidget", "Fiugre Set", 0));
     } // retranslateUi
 };
 
@@ -62,8 +89,29 @@ SAFiugreSetWidget::~SAFiugreSetWidget()
 
 void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
-    disconnectOldFigure();
+#if SAFiugreSetWidget_USE_COMBOX
     m_fig = fig;
+    ui->chartSelectComboBox->clear();
+    QList<SAChart2D*> plots = fig->get2DPlots();
+    for(int i=0;i<plots.size();++i)
+    {
+        QString title = plots[i]->title().text();
+        if(title.isEmpty())
+        {
+            title = tr("chart %1").arg(i+1);
+        }
+        //combox 插入条目
+        ui->chartSelectComboBox->addItem(title,QVariant::fromValue((quintptr)plots[i]));
+        //关联槽
+        connect(plots[i],&QObject::destroyed,this,&SAFiugreSetWidget::onPlotDestroy);
+    }
+    if(!plots.isEmpty())
+    {
+        ui->chartSetWidget->setChart(plots.first());
+    }
+#else
+    m_fig = fig;
+    disconnectOldFigure();
     if(nullptr == fig)
     {
         while(ui->tabWidget->count() > 1)
@@ -138,10 +186,14 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
             connect(plots[i],&QObject::destroyed,this,&SAFiugreSetWidget::onPlotDestroy);
         }
     }
+#endif
 }
 
 void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
 {
+#if SAFiugreSetWidget_USE_COMBOX
+    ui->chartSelectComboBox->setCurrentText(text);
+#else
     QObject* obj = sender();
     SAChartSetWidget* w = qobject_cast<SAChartSetWidget*>(obj);
     if(nullptr == w)
@@ -160,10 +212,27 @@ void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
             ui->tabWidget->setTabText(index,text);
         }
     }
+#endif
 }
 
 void SAFiugreSetWidget::onPlotDestroy(QObject *obj)
 {
+#if SAFiugreSetWidget_USE_COMBOX
+    int count = ui->chartSelectComboBox->count();
+    for(int i=0;i<count;++i)
+    {
+        QVariant var = ui->chartSelectComboBox->itemData(i);
+        if(var.canConvert<qintptr>())
+        {
+            qintptr ptr = var.value<qintptr>();
+            if(ptr == ((qintptr)obj))
+            {
+                ui->chartSelectComboBox->removeItem(i);
+                return;
+            }
+        }
+    }
+#else
     QwtPlot* plot = (QwtPlot*)obj;
     SAChartSetWidget* w = ui->plotMapToWidget.value(plot,nullptr);
     if(w)
@@ -185,8 +254,17 @@ void SAFiugreSetWidget::onPlotDestroy(QObject *obj)
         }
         ui->plotMapToWidget.remove(plot);
     }
+#endif
 }
 
+
+
+#if SAFiugreSetWidget_USE_COMBOX
+void SAFiugreSetWidget::onComboxChanged(int index)
+{
+
+}
+#else
 void SAFiugreSetWidget::disconnectOldFigure()
 {
     if(nullptr == m_fig)
@@ -200,3 +278,4 @@ void SAFiugreSetWidget::disconnectOldFigure()
     }
     ui->plotMapToWidget.clear();
 }
+#endif
