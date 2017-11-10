@@ -168,6 +168,20 @@ public:
     void raiseMainDock();
     //把信息窗口抬起
     void raiseMessageInfoDock();
+    //让ValueViewerDock显示到最前面
+    void raiseValueViewerDock();
+    //让DataFeatureDock显示到最前面
+    void raiseDataFeatureDock();
+    //让windowListDock显示到最前面
+    void raiseWindowListDock();
+    //让valueManageDock显示到最前面
+    void raiseValueManageDock();
+    //让ChartLayoutDock显示到最前面
+    void raiseChartLayoutDock();
+    //让chartDataViewerDock显示到最前面
+    void raiseChartDataViewerDock();
+    //让ChartSettingDock显示到最前面
+    void raiseChartSettingDock();
     /// \}
 
     ///

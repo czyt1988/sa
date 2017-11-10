@@ -193,6 +193,41 @@ void SAUI::raiseMessageInfoDock()
     m_mainWnd->raiseMessageInfoDock();
 }
 
+void SAUI::raiseValueViewerDock()
+{
+    m_mainWnd->raiseValueViewerDock();
+}
+
+void SAUI::raiseDataFeatureDock()
+{
+    m_mainWnd->raiseDataFeatureDock();
+}
+
+void SAUI::raiseWindowListDock()
+{
+    m_mainWnd->raiseWindowListDock();
+}
+
+void SAUI::raiseValueManageDock()
+{
+    m_mainWnd->raiseValueManageDock();
+}
+
+void SAUI::raiseChartLayoutDock()
+{
+    m_mainWnd->raiseChartLayoutDock();
+}
+
+void SAUI::raiseChartDataViewerDock()
+{
+    m_mainWnd->raiseChartDataViewerDock();
+}
+
+void SAUI::raiseChartSettingDock()
+{
+    m_mainWnd->raiseChartSettingDock();
+}
+
 QList<QwtPlotCurve *> SAUI::selectCurves(SAChart2D* chart)
 {
     QList<QwtPlotCurve *> res;

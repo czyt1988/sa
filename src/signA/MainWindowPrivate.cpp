@@ -469,7 +469,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonWindowCascade = windowModeCategoryWindowPannel->addMediumAction(actionWindowCascade);
     ribbonButtonWindowTile = windowModeCategoryWindowPannel->addMediumAction(actionWindowTile);
 
-    menuBar->quickAccessBar()->setEnableDrawIcon(false);
+    menuBar->quickAccessBar()->setEnableShowIcon(false);
     menuBar->quickAccessBar()->addSeparator();
     menuBar->quickAccessBar()->addButton(actionSave);
     menuBar->quickAccessBar()->addSeparator();

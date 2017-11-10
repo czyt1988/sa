@@ -878,7 +878,10 @@ void MainWindow::onActionOpenProjectTriggered()
     QString path = QFileDialog::getExistingDirectory(this,QStringLiteral("选择项目目录"));
     if(path.isEmpty())
         return;
-    saProjectManager->load(path);
+    if(saProjectManager->load(path))
+    {
+        raiseValueManageDock();
+    }
 }
 
 
@@ -1740,6 +1743,55 @@ void MainWindow::raiseMainDock()
 void MainWindow::raiseMessageInfoDock()
 {
     ui->dockWidget_message->raise();
+}
+///
+/// \brief 让ValueViewerDock显示到最前面
+///
+void MainWindow::raiseValueViewerDock()
+{
+    ui->dockWidget_valueViewer->raise();
+}
+///
+/// \brief 让DataFeatureDock显示到最前面
+///
+void MainWindow::raiseDataFeatureDock()
+{
+    ui->dockWidget_DataFeature->raise();
+}
+///
+/// \brief 让windowList显示到最前面
+///
+void MainWindow::raiseWindowListDock()
+{
+    ui->dockWidget_windowList->raise();
+}
+///
+/// \brief 让valueManageDock显示到最前面
+///
+void MainWindow::raiseValueManageDock()
+{
+    ui->dockWidget_valueManage->raise();
+}
+///
+/// \brief 让ChartLayoutDock显示到最前面
+///
+void MainWindow::raiseChartLayoutDock()
+{
+    ui->dockWidget_plotLayer->raise();
+}
+///
+/// \brief 让chartDataViewerDock显示到最前面
+///
+void MainWindow::raiseChartDataViewerDock()
+{
+    ui->dockWidget_chartDataViewer->raise();
+}
+///
+/// \brief 让ChartSettingDock显示到最前面
+///
+void MainWindow::raiseChartSettingDock()
+{
+    ui->dockWidget_plotSet->raise();
 }
 ///
 /// \brief 如果插件只导入到data import菜单下的条目可以调用此函数，如果需要插入一个QMenu可以使用addDataImportPluginAction

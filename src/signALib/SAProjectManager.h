@@ -7,6 +7,7 @@
 #include "SALibGlobal.h"
 class QDomDocument;
 class SAValueManager;
+class SAProjectManagerPrivate;
 class SALIB_EXPORT SAProjectManager : public QObject
 {
     Q_OBJECT
@@ -26,9 +27,9 @@ public:
     //加载工程
     bool load(const QString &projectedPath);
     //当前工程是否已变更
-    bool isdirty() const;
+    bool isDirty() const;
     //设置当前工程已经变更
-    void setDirty(bool isdirty);
+    void setDirty(bool isDirty);
     //工程名设置
     QString getProjectName() const;
     void setProjectName(const QString &projectName);
@@ -69,15 +70,7 @@ private slots:
     //数据管理器变量名字变更的绑定
     void onDataNameChanged(SAAbstractDatas* data,const QString& oldName);
 private:
-    QString m_projectFullPath;///< 项目对应路径
-    QString m_projectName;///< 项目名
-    QString m_projectDescribe;///< 项目描述
-    bool m_isdirty;///< 工程变更标记
-    //--记录文件和数据相互的映射
-    QMap<QString,SAAbstractDatas*> m_dataFileName2DataPtr;///< 记录数据文件路径
-    QMap<SAAbstractDatas*,QString> m_dataPtr2DataFileName;///< 记录数据指针对应的保存文件名
-    //end
-    QSet<QString> m_dataWillBeDeleted;///< 记录将要删除的数据文件
+    SA_IMPL(SAProjectManager)
 private:
     static SAProjectManager* s_instance;
 };

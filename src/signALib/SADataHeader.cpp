@@ -10,69 +10,146 @@
     QApplication::translate("SADataHeader", str, 0)
 
 
-SADataHeader::SADataHeader():m_magic1(MAGIC_1),m_magic2(MAGIC_2)
+class SADataHeaderPrivate
 {
-    m_versionFlag = 1;//第一版
-    m_externFlag = 0;
-    m_dataType = SA::UnknowType;
-    m_externFlag = 0;
-    m_dataDim = 0;
+    SA_IMPL_PUBLIC(SADataHeader)
+public:
+    unsigned int m_magic1;///< 魔数1
+    int m_dataType;///< 记录变量类型
+    int m_versionFlag;///< 版本标量
+    int m_externFlag;///< 扩展标记，用于保存旧的id
+    int m_dataDim;///<数据的维度
+    QString m_version;///< 记录版本
+    QString m_dataName;///< 记录变量名
+    QString m_externInfo;///< 扩展标记信息
+    unsigned int m_magic2;///< 魔数2
+    SADataHeaderPrivate(SADataHeader* p):q_ptr(p)
+    {
+
+    }
+    void init()
+    {
+        m_versionFlag = 1;//第一版
+        m_externFlag = 0;
+        m_dataType = SA::UnknowType;
+        m_externFlag = 0;
+        m_dataDim = 0;
+        m_magic1 = MAGIC_1;
+        m_magic2 = MAGIC_2;
+    }
+};
+
+
+SADataHeader::SADataHeader():d_ptr(new SADataHeaderPrivate(this))
+{
+    SA_D(SADataHeader);
+    d->init();
     setVersionString(SA_DATA_VERSION);
 }
 
-SADataHeader::SADataHeader(const SAAbstractDatas *data):m_magic1(MAGIC_1),m_magic2(MAGIC_2)
+SADataHeader::SADataHeader(const SAAbstractDatas *data):d_ptr(new SADataHeaderPrivate(this))
 {
-
-    m_versionFlag = 1;//第一版
+    SA_D(SADataHeader);
+    d->init();
+    d->m_versionFlag = 1;//第一版
     if(data)
     {
-        m_externFlag = data->getID();
-        m_dataType = data->getType();
-        m_dataName = data->getName();
-        m_dataDim = data->getDim();
+        d->m_externFlag = data->getID();
+        d->m_dataType = data->getType();
+        d->m_dataName = data->getName();
+        d->m_dataDim = data->getDim();
     }
+}
+
+SADataHeader::~SADataHeader()
+{
+
 }
 
 void SADataHeader::setVersionString(const QString &version)
 {
-    m_version = version;
+    SA_D(SADataHeader);
+    d->m_version = version;
 }
 
 QString SADataHeader::getVersionString() const
 {
-    return m_version;
+    SA_DC(SADataHeader);
+    return d->m_version;
+}
+
+void SADataHeader::setVersionFlag(int flag)
+{
+    SA_D(SADataHeader);
+    d->m_versionFlag = flag;
+}
+
+int SADataHeader::getVersionFlag() const
+{
+    SA_DC(SADataHeader);
+    return d->m_versionFlag;
+}
+
+void SADataHeader::setExternFlag(int flag)
+{
+    SA_D(SADataHeader);
+    d->m_externFlag = flag;
+}
+
+int SADataHeader::getExternFlag() const
+{
+    SA_DC(SADataHeader);
+    return d->m_externFlag;
 }
 
 void SADataHeader::setExternInfo(const QString &info)
 {
-    m_externInfo = info;
+    SA_D(SADataHeader);
+    d->m_externInfo = info;
 }
 
 QString SADataHeader::getExternInfo() const
 {
-    return m_externInfo;
+    SA_DC(SADataHeader);
+    return d->m_externInfo;
 }
 
 void SADataHeader::setDataName(const QString &name)
 {
-    m_dataName = name;
+    SA_D(SADataHeader);
+    d->m_dataName = name;
 }
 
 QString SADataHeader::getDataName() const
 {
-    return m_dataName;
+    SA_DC(SADataHeader);
+    return d->m_dataName;
+}
+
+void SADataHeader::setDataType(int type)
+{
+    SA_D(SADataHeader);
+    d->m_dataType = type;
+}
+
+int SADataHeader::getDataType() const
+{
+    SA_DC(SADataHeader);
+    return d->m_dataType;
 }
 
 
 bool SADataHeader::isValid() const
 {
-    return ((this->m_magic1 == MAGIC_1) && (this->m_magic2 == MAGIC_2));
+    SA_DC(SADataHeader);
+    return ((d->m_magic1 == MAGIC_1) && (d->m_magic2 == MAGIC_2));
 }
 
 void SADataHeader::setInValid()
 {
-    this->m_magic1 = 0;
-    this->m_magic2 = 0;
+    SA_D(SADataHeader);
+    d->m_magic1 = 0;
+    d->m_magic2 = 0;
 }
 
 bool SADataHeader::parserXML(SADataHeader *d, const QString &xmlString,QString& errString)
@@ -167,14 +244,26 @@ bool SADataHeader::makeXML(const SADataHeader* d, QString &xmlString)
     return (!xml.hasError());
 }
 
+QString SADataHeader::getXMLRootStartElementString()
+{
+    return "sa";
+}
+
+QString SADataHeader::getXMLPropertyStartElementString()
+{
+    return "prop";
+}
+
 int SADataHeader::getDataDim() const
 {
-    return m_dataDim;
+    SA_DC(SADataHeader);
+    return d->m_dataDim;
 }
 
 void SADataHeader::setDataDim(int dataDim)
 {
-    m_dataDim = dataDim;
+    SA_D(SADataHeader);
+    d->m_dataDim = dataDim;
 }
 
 
@@ -229,8 +318,8 @@ QDataStream &operator>>(QDataStream &in, SADataHeader &item)
         item.setInValid();//先设置为非有效
         return in;
     }
-    item.m_magic1 = MAGIC_1;
-    item.m_magic2 = MAGIC_2;
+    item.d_ptr->m_magic1 = MAGIC_1;
+    item.d_ptr->m_magic2 = MAGIC_2;
     return in;
 }
 

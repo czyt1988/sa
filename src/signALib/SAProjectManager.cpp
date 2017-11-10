@@ -8,7 +8,29 @@
 #define DATA_FOLDER_NAME "DATA"
 SAProjectManager* SAProjectManager::s_instance = nullptr;
 
+
+class SAProjectManagerPrivate
+{
+    SA_IMPL_PUBLIC(SAProjectManager)
+public:
+    QString m_projectFullPath;///< 项目对应路径
+    QString m_projectName;///< 项目名
+    QString m_projectDescribe;///< 项目描述
+    bool m_isdirty;///< 工程变更标记
+    //--记录文件和数据相互的映射
+    QMap<QString,SAAbstractDatas*> m_dataFileName2DataPtr;///< 记录数据文件路径
+    QMap<SAAbstractDatas*,QString> m_dataPtr2DataFileName;///< 记录数据指针对应的保存文件名
+    //end
+    QSet<QString> m_dataWillBeDeleted;///< 记录将要删除的数据文件
+    SAProjectManagerPrivate(SAProjectManager* p):q_ptr(p)
+    {
+
+    }
+};
+
+
 SAProjectManager::SAProjectManager():QObject(nullptr)
+  ,d_ptr(new SAProjectManagerPrivate(this))
 {
     connect(saValueManager,&SAValueManager::dataRemoved,this,&SAProjectManager::onDataRemoved);
     connect(saValueManager,&SAValueManager::dataNameChanged,this,&SAProjectManager::onDataNameChanged);
@@ -39,7 +61,8 @@ SAProjectManager *SAProjectManager::getInstance()
 ///
 QString SAProjectManager::getProjectFullPath() const
 {
-    return m_projectFullPath;
+    SA_DC(SAProjectManager);
+    return d->m_projectFullPath;
 }
 ///
 /// \brief 保存工程
@@ -47,11 +70,12 @@ QString SAProjectManager::getProjectFullPath() const
 ///
 bool SAProjectManager::save()
 {
-    if(m_projectFullPath.isNull())
+    SA_D(SAProjectManager);
+    if(d->m_projectFullPath.isNull())
     {
         return false;
     }
-    return saveAs(m_projectFullPath);
+    return saveAs(d->m_projectFullPath);
 }
 ///
 /// \brief 设置项目的路径
@@ -59,7 +83,8 @@ bool SAProjectManager::save()
 ///
 void SAProjectManager::setProjectFullPath(const QString &projectFullPath)
 {
-    m_projectFullPath = projectFullPath;
+    SA_D(SAProjectManager);
+    d->m_projectFullPath = projectFullPath;
 }
 
 void SAProjectManager::saveProjectInfo(const QString &projectFullPath)
@@ -98,6 +123,7 @@ void SAProjectManager::saveProjectInfo(const QString &projectFullPath)
 ///
 bool SAProjectManager::loadProjectInfo(const QString &projectFullPath)
 {
+
     QString projectDesXml = getProjectDescribeFilePath(projectFullPath);
     QFile file(projectDesXml);
     if(!file.open(QIODevice::ReadOnly))
@@ -134,6 +160,7 @@ bool SAProjectManager::loadProjectInfo(const QString &projectFullPath)
 
 void SAProjectManager::loadValues(const QString &projectFullPath)
 {
+    SA_D(SAProjectManager);
     QString dataPath = getProjectDataFolderPath(projectFullPath);
     QDir dir(dataPath);
     if(!dir.exists())
@@ -142,12 +169,12 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
         return;
     }
     saValueManager->clear();
-    m_dataPtr2DataFileName.clear();
-    m_dataFileName2DataPtr.clear();
-    saValueManager->load(dataPath,m_dataPtr2DataFileName);
-    for(auto i = m_dataPtr2DataFileName.begin();i != m_dataPtr2DataFileName.end();++i)
+    d->m_dataPtr2DataFileName.clear();
+    d->m_dataFileName2DataPtr.clear();
+    saValueManager->load(dataPath,d->m_dataPtr2DataFileName);
+    for(auto i = d->m_dataPtr2DataFileName.begin();i != d->m_dataPtr2DataFileName.end();++i)
     {
-        m_dataFileName2DataPtr[i.value()] = i.key();
+        d->m_dataFileName2DataPtr[i.value()] = i.key();
     }
     return;
 }
@@ -177,14 +204,15 @@ bool SAProjectManager::saveValues(const QString &projectFullPath)
 ///
 void SAProjectManager::removeWillDeletedFiles()
 {
-    for(auto i = m_dataWillBeDeleted.begin();i!=m_dataWillBeDeleted.end();++i)
+    SA_D(SAProjectManager);
+    for(auto i = d->m_dataWillBeDeleted.begin();i!=d->m_dataWillBeDeleted.end();++i)
     {
         if(QFile::exists(*i))
         {
             QFile::remove(*i);
         }
     }
-    m_dataWillBeDeleted.clear();
+    d->m_dataWillBeDeleted.clear();
 }
 ///
 /// \brief 数据管理器移除数据时
@@ -194,18 +222,19 @@ void SAProjectManager::removeWillDeletedFiles()
 ///
 void SAProjectManager::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
+    SA_D(SAProjectManager);
     for(auto i = dataBeDeletedPtr.begin();i!=dataBeDeletedPtr.end();++i)
     {
-        auto dataPtr2PathIte = m_dataPtr2DataFileName.find(*i);
-        if(dataPtr2PathIte != m_dataPtr2DataFileName.end())
+        auto dataPtr2PathIte = d->m_dataPtr2DataFileName.find(*i);
+        if(dataPtr2PathIte != d->m_dataPtr2DataFileName.end())
         {
-            m_dataWillBeDeleted.insert(dataPtr2PathIte.value());
-            auto dataPath2Ptr = m_dataFileName2DataPtr.find(dataPtr2PathIte.value());
-            if(dataPath2Ptr != m_dataFileName2DataPtr.end())
+            d->m_dataWillBeDeleted.insert(dataPtr2PathIte.value());
+            auto dataPath2Ptr = d->m_dataFileName2DataPtr.find(dataPtr2PathIte.value());
+            if(dataPath2Ptr != d->m_dataFileName2DataPtr.end())
             {
-                m_dataFileName2DataPtr.erase(dataPath2Ptr);
+                d->m_dataFileName2DataPtr.erase(dataPath2Ptr);
             }
-            m_dataPtr2DataFileName.erase(dataPtr2PathIte);
+            d->m_dataPtr2DataFileName.erase(dataPtr2PathIte);
         }
     }
     setDirty(true);
@@ -215,11 +244,12 @@ void SAProjectManager::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDelet
 ///
 void SAProjectManager::onDataClear()
 {
+    SA_D(SAProjectManager);
     //变量管理器的数据进行了清除
     //把所有已经记录的数据文件映射标记位删除状态
-    for(auto i = m_dataFileName2DataPtr.begin();i != m_dataFileName2DataPtr.end();++i)
+    for(auto i = d->m_dataFileName2DataPtr.begin();i != d->m_dataFileName2DataPtr.end();++i)
     {
-        m_dataWillBeDeleted.insert(i.key());
+        d->m_dataWillBeDeleted.insert(i.key());
     }
     setDirty(true);
 }
@@ -230,13 +260,14 @@ void SAProjectManager::onDataClear()
 ///
 void SAProjectManager::onDataNameChanged(SAAbstractDatas *data, const QString &oldName)
 {
+    SA_D(SAProjectManager);
     setDirty(true);
-    if(m_projectFullPath.isEmpty())
+    if(d->m_projectFullPath.isEmpty())
     {
         //说明没指定项目位置
         return;
     }
-    QString dataPath = getProjectDataFolderPath(m_projectFullPath);
+    QString dataPath = getProjectDataFolderPath(d->m_projectFullPath);
     if(dataPath.isEmpty())
     {
         emit messageInformation(tr("can not make dir:%1").arg(dataPath)
@@ -256,12 +287,14 @@ void SAProjectManager::onDataNameChanged(SAAbstractDatas *data, const QString &o
 
 QString SAProjectManager::getProjectDescribe() const
 {
-    return m_projectDescribe;
+    SA_DC(SAProjectManager);
+    return d->m_projectDescribe;
 }
 
 void SAProjectManager::setProjectDescribe(const QString &projectDescribe)
 {
-    m_projectDescribe = projectDescribe;
+    SA_D(SAProjectManager);
+    d->m_projectDescribe = projectDescribe;
 }
 ///
 /// \brief 根据工程的文件夹获取工程的xml描述文件
@@ -300,7 +333,8 @@ QString SAProjectManager::getProjectDataFolderPath(const QString &projectFolder,
 ///
 QString SAProjectManager::getDataFilePath(const SAAbstractDatas *dataPtr) const
 {
-    return m_dataPtr2DataFileName.value(const_cast<SAAbstractDatas *>(dataPtr));
+    SA_DC(SAProjectManager);
+    return d->m_dataPtr2DataFileName.value(const_cast<SAAbstractDatas *>(dataPtr));
 }
 ///
 /// \brief 获取工程的名称
@@ -308,7 +342,8 @@ QString SAProjectManager::getDataFilePath(const SAAbstractDatas *dataPtr) const
 ///
 QString SAProjectManager::getProjectName() const
 {
-    return m_projectName;
+    SA_DC(SAProjectManager);
+    return d->m_projectName;
 }
 ///
 /// \brief 设置工程的名称
@@ -317,7 +352,8 @@ QString SAProjectManager::getProjectName() const
 ///
 void SAProjectManager::setProjectName(const QString &projectName)
 {
-    m_projectName = projectName;
+    SA_D(SAProjectManager);
+    d->m_projectName = projectName;
 }
 ///
 /// \brief 另存工程
@@ -362,6 +398,7 @@ bool SAProjectManager::saveAs(const QString &savePath)
 ///
 bool SAProjectManager::load(const QString &projectedPath)
 {
+    SA_D(SAProjectManager);
     //验证目录正确性
     QDir dir(projectedPath);
     if(!dir.exists ())
@@ -372,7 +409,7 @@ bool SAProjectManager::load(const QString &projectedPath)
         return false;
     }
     //- 本地变量初始化
-    m_dataWillBeDeleted.clear();
+    d->m_dataWillBeDeleted.clear();
 
     //- start %加载项目描述
     loadProjectInfo(projectedPath);
@@ -386,12 +423,14 @@ bool SAProjectManager::load(const QString &projectedPath)
     return true;
 }
 
-bool SAProjectManager::isdirty() const
+bool SAProjectManager::isDirty() const
 {
-    return m_isdirty;
+    SA_DC(SAProjectManager);
+    return d->m_isdirty;
 }
 
 void SAProjectManager::setDirty(bool isdirty)
 {
-    m_isdirty = isdirty;
+    SA_D(SAProjectManager);
+    d->m_isdirty = isdirty;
 }

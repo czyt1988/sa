@@ -192,7 +192,8 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
 {
 #if SAFiugreSetWidget_USE_COMBOX
-    ui->chartSelectComboBox->setCurrentText(text);
+    //ui->chartSelectComboBox->setCurrentText(text);
+    ui->chartSelectComboBox->setItemText(ui->chartSelectComboBox->currentIndex(),text);
 #else
     QObject* obj = sender();
     SAChartSetWidget* w = qobject_cast<SAChartSetWidget*>(obj);

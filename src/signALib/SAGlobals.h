@@ -1,10 +1,64 @@
 #ifndef SAGLOBALS_H
 #define SAGLOBALS_H
 class SAAbstractDatas;
+#include <QScopedPointer>
 ///
 /// \def 包含Ribbon界面
 ///
+#ifndef SA_USE_RIBBON_UI
 #define SA_USE_RIBBON_UI 1
+#endif
+///
+/// \def impl的简易实现
+///
+#ifndef SA_IMPL
+#define SA_IMPL(Class) \
+    private:\
+    inline Class##Private* d_func() { return d_ptr.data(); } \
+    inline const Class##Private* d_func() const { return d_ptr.data(); } \
+    friend class Class##Private;\
+    QScopedPointer< Class##Private > d_ptr;
+#endif
+///
+/// \def impl的定义
+///
+#ifndef SA_IMPL_PUBLIC
+#define SA_IMPL_PUBLIC(Class)                                    \
+    inline Class* q_func() { return static_cast<Class *>(q_ptr); } \
+    inline const Class* q_func() const { return static_cast<const Class *>(q_ptr); } \
+    friend class Class;\
+    Class* q_ptr;
+#endif
+///
+/// \def impl获取指针，参考Q_D
+///
+#ifndef SA_D
+#define SA_D(Class) \
+    Class##Private * d = d_func()
+#endif
+///
+/// \def impl获取指针，参考Q_D
+///
+#ifndef SA_DC
+#define SA_DC(Class) \
+    const Class##Private * d = d_func()
+#endif
+///
+/// \def impl获取指针，参考Q_Q
+///
+#ifndef SA_Q
+#define SA_Q(Class) \
+    Class * q = q_func()
+#endif
+///
+/// \def impl获取指针，参考Q_Q
+///
+#ifndef SA_QC
+#define SA_QC(Class) \
+    const Class * q = q_func()
+#endif
+
+
 
 namespace SA {
     enum ThermoChartPARAM{

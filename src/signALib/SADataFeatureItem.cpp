@@ -13,14 +13,34 @@
 #define XML_ATT_NAME__ "name"
 #define XML_ATT_VALUE_TYPE__ "varType"
 #define XML_ATT_VALUE__ "var"
-SADataFeatureItem::SADataFeatureItem()
-    :m_name(""),m_parent(nullptr),m_currentRowIndex(0)
+
+class SADataFeatureItemPrivate
 {
-    m_childs.clear();
+    SA_IMPL_PUBLIC(SADataFeatureItem)
+public:
+    QString m_name;
+    SADataFeatureItem* m_parent;
+    int m_currentRowIndex;
+    QList<SADataFeatureItem*> m_childs;
+    QVariant m_value;
+    QHash<int,QVariant> m_datas;
+    SADataFeatureItemPrivate(SADataFeatureItem* p):q_ptr(p)
+      ,m_name(""),m_parent(nullptr),m_currentRowIndex(0)
+    {
+
+    }
+};
+
+
+
+SADataFeatureItem::SADataFeatureItem()
+    :d_ptr(new SADataFeatureItemPrivate(this))
+{
+
 }
 
 SADataFeatureItem::SADataFeatureItem(const QString &text)
-    :m_name(""),m_parent(nullptr),m_currentRowIndex(0)
+    :d_ptr(new SADataFeatureItemPrivate(this))
 {
     setItemType(DescribeItem);
     setName(text);
@@ -28,7 +48,7 @@ SADataFeatureItem::SADataFeatureItem(const QString &text)
 
 
 SADataFeatureItem::SADataFeatureItem(const QString &name, const QVariant &data)
-    :m_name(""),m_parent(nullptr),m_currentRowIndex(0)
+    :d_ptr(new SADataFeatureItemPrivate(this))
 {
     setName(name);
     setValue(data);
@@ -37,12 +57,14 @@ SADataFeatureItem::SADataFeatureItem(const QString &name, const QVariant &data)
 
 void SADataFeatureItem::setValue(const QVariant &var)
 {
-    m_value = var;
+    SA_D(SADataFeatureItem);
+    d->m_value = var;
 }
 
 QVariant SADataFeatureItem::getValue() const
 {
-    return m_value;
+    SA_DC(SADataFeatureItem);
+    return d->m_value;
 }
 
 
@@ -51,19 +73,21 @@ QVariant SADataFeatureItem::getValue() const
 
 SADataFeatureItem::~SADataFeatureItem()
 {
-    std::for_each(m_childs.begin(),m_childs.end(),[](SADataFeatureItem* item){
+    SA_D(SADataFeatureItem);
+    std::for_each(d->m_childs.begin(),d->m_childs.end(),[](SADataFeatureItem* item){
        if(item)
        {
            delete item;
        }
     });
-    m_childs.clear();
+    d->m_childs.clear();
 }
 
 void SADataFeatureItem::appendItem(SADataFeatureItem *item)
 {
-    m_childs.append(item);
-    item->m_currentRowIndex = m_childs.size()-1;
+    SA_D(SADataFeatureItem);
+    d->m_childs.append(item);
+    item->d_ptr->m_currentRowIndex = d->m_childs.size()-1;
     item->setParent(this);
 }
 
@@ -220,22 +244,26 @@ QString SADataFeatureItem::toXml(const SADataFeatureItem *item)
 
 void SADataFeatureItem::setName(const QString &name)
 {
-    m_name = name;
+    SA_D(SADataFeatureItem);
+    d->m_name = name;
 }
 
 QString SADataFeatureItem::getName() const
 {
-    return m_name;
+    SA_DC(SADataFeatureItem);
+    return d->m_name;
 }
 
 QVariant SADataFeatureItem::getData(int role) const
 {
-    return m_datas.value(role,QVariant());
+    SA_DC(SADataFeatureItem);
+    return d->m_datas.value(role,QVariant());
 }
 
 void SADataFeatureItem::setData(const QVariant &var, int role)
 {
-    m_datas[role] = var;
+    SA_D(SADataFeatureItem);
+    d->m_datas[role] = var;
 }
 
 
@@ -400,7 +428,8 @@ bool SADataFeatureItem::getItemInfoFromElement(QDomElement *xmlItem, SADataFeatu
 ///
 int SADataFeatureItem::getCurrentRowIndex() const
 {
-    return m_currentRowIndex;
+    SA_DC(SADataFeatureItem);
+    return d->m_currentRowIndex;
 }
 ///
 /// \brief 设置子条目指针
@@ -410,15 +439,17 @@ int SADataFeatureItem::getCurrentRowIndex() const
 ///
 SADataFeatureItem *SADataFeatureItem::setChild(int index, SADataFeatureItem *newItemPtr)
 {
+    SA_D(SADataFeatureItem);
     SADataFeatureItem * oldItem = getChild(index);
-    m_childs[index] = newItemPtr;
-    newItemPtr->m_currentRowIndex = oldItem->getCurrentRowIndex();
+    d->m_childs[index] = newItemPtr;
+    newItemPtr->d_ptr->m_currentRowIndex = oldItem->getCurrentRowIndex();
     return oldItem;
 }
 
 SADataFeatureItem *SADataFeatureItem::getParent() const
 {
-    return m_parent;
+    SA_DC(SADataFeatureItem);
+    return d->m_parent;
 }
 ///
 /// \brief 获取子条目数
@@ -426,7 +457,8 @@ SADataFeatureItem *SADataFeatureItem::getParent() const
 ///
 int SADataFeatureItem::getChildCount() const
 {
-    return m_childs.size();
+    SA_DC(SADataFeatureItem);
+    return d->m_childs.size();
 }
 ///
 /// \brief 获取子节点
@@ -435,10 +467,12 @@ int SADataFeatureItem::getChildCount() const
 ///
 SADataFeatureItem *SADataFeatureItem::getChild(int index) const
 {
-    return m_childs[index];
+    SA_DC(SADataFeatureItem);
+    return d->m_childs[index];
 }
 
 void SADataFeatureItem::setParent(SADataFeatureItem *parent)
 {
-    m_parent = parent;
+    SA_D(SADataFeatureItem);
+    d->m_parent = parent;
 }

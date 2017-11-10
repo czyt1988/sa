@@ -7,11 +7,14 @@
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class QDomElement;
+class SADataFeatureItemPrivate;
 ///
 /// \brief SADataFeatureItem接口,类似QStandardItem
 ///
 class SALIB_EXPORT SADataFeatureItem
 {
+    Q_DISABLE_COPY(SADataFeatureItem)
+    SA_IMPL(SADataFeatureItem)
 public:
     SADataFeatureItem();
     SADataFeatureItem(const QString & text);
@@ -83,13 +86,8 @@ private:
     static bool readChildItem(QDomElement* xmlItem,SADataFeatureItem *parentItem);
     static bool getItemInfoFromElement(QDomElement* xmlItem,SADataFeatureItem *item);
 private:
-    QString m_name;
-    SADataFeatureItem* m_parent;
-    int m_currentRowIndex;
-    QList<SADataFeatureItem*> m_childs;
-    QVariant m_value;
-    QHash<int,QVariant> m_datas;
+
 };
-Q_DECLARE_METATYPE(SADataFeatureItem)
+
 
 #endif // SADATAFEATUREITEM_H

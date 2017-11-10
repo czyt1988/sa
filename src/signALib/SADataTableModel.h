@@ -9,6 +9,7 @@
 #include <QHash>
 #include <QMultiHash>
 class SAAbstractDatas;
+
 class SALIB_EXPORT SADataTableModel : public QAbstractTableModel
 {
 public:
