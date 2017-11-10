@@ -263,8 +263,7 @@ public:
     //添加样条线
     QwtPlotMarker* addVLine(double val);
     QwtPlotMarker* addHLine(double val);
-    //添加bar
-    QwtPlotHistogram* addBar(const QVector< QwtIntervalSample > &sample);
+
     //========================================================================================
     //网格 grid 操作
     //========================================================================================

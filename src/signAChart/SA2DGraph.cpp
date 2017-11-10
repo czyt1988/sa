@@ -1138,17 +1138,7 @@ QwtPlotMarker* SA2DGraph::addHLine(double val)
     return marker;
 }
 
-QwtPlotHistogram*SA2DGraph::addBar(const QVector<QwtIntervalSample>& sample)
-{
-    QwtPlotHistogram* his = new QwtPlotHistogram();
-    his->setSamples (sample);
-    his->setYAxis(yLeft);
-    his->setXAxis(xBottom);
-    his->setStyle (QwtPlotHistogram::Columns);
-    his->attach (this);
-    emit plotCurveChanged(his);
-    return his;
-}
+
 
 ///
 /// \brief 在图片上标记点

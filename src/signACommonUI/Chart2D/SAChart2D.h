@@ -3,6 +3,7 @@
 #include "SA2DGraph.h"
 #include "SACommonUIGlobal.h"
 #include <memory>
+class SAChart2DPrivate;
 class SAAbstractRegionSelectEditor;
 class SAAbstractDatas;
 class SAXYSeries;
@@ -13,6 +14,8 @@ class SABarSeries;
 class SA_COMMON_UI_EXPORT SAChart2D : public SA2DGraph
 {
     Q_OBJECT
+    Q_DISABLE_COPY(SAChart2D)
+    SA_IMPL(SAChart2D)
 public:
     SAChart2D(QWidget *parent = nullptr);
     ~SAChart2D();
@@ -30,7 +33,7 @@ public:
     SAXYSeries* addCurve(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
     void addCurve(QwtPlotCurve* cur);
     //添加bar
-    using SA2DGraph::addBar;
+    QwtPlotHistogram* addBar(const QVector< QwtIntervalSample > &sample);
     SABarSeries *addBar(SAAbstractDatas* datas);
     //移除范围内数据
     void removeDataInRang(QList<QwtPlotCurve *> curves);

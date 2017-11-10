@@ -1,6 +1,7 @@
 #include "SAFigureOptCommand.h"
 #include <SAChart2D.h>
 #include "SAXYSeries.h"
+#include "qwt_plot_item.h"
 SAFigureOptCommand::SAFigureOptCommand(const QString &cmdName):QUndoCommand(cmdName)
 {
 
@@ -8,20 +9,54 @@ SAFigureOptCommand::SAFigureOptCommand(const QString &cmdName):QUndoCommand(cmdN
 
 
 
-SAFigureChartAddCurveCommand::SAFigureChartAddCurveCommand(SAChart2D *chart, SAXYSeries *ser,const QString &cmdName)
+SAFigureChartItemAddCommand::SAFigureChartItemAddCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName)
     :SAFigureOptCommand(cmdName)
     ,m_chart(chart)
-    ,m_series(ser)
+    ,m_item(ser)
 {
 
 }
 
-void SAFigureChartAddCurveCommand::redo()
+SAFigureChartItemAddCommand::~SAFigureChartItemAddCommand()
 {
-    m_series->attach(m_chart);
+    if(nullptr == m_item->plot())
+    {
+        delete m_item;
+    }
 }
 
-void SAFigureChartAddCurveCommand::undo()
+void SAFigureChartItemAddCommand::redo()
 {
-    m_series->detach();
+    m_item->attach(m_chart);
+}
+
+void SAFigureChartItemAddCommand::undo()
+{
+    m_item->detach();
+}
+
+SAFigureChartItemDeleteCommand::SAFigureChartItemDeleteCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName)
+    :SAFigureOptCommand(cmdName)
+    ,m_chart(chart)
+    ,m_item(ser)
+{
+
+}
+
+SAFigureChartItemDeleteCommand::~SAFigureChartItemDeleteCommand()
+{
+    if(nullptr == m_item->plot())
+    {
+        delete m_item;
+    }
+}
+
+void SAFigureChartItemDeleteCommand::redo()
+{
+    m_item->detach();
+}
+
+void SAFigureChartItemDeleteCommand::undo()
+{
+    m_item->attach(m_chart);
 }

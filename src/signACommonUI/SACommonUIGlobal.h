@@ -3,7 +3,7 @@
 #include <qglobal.h>
 #define SALIB_VERSION 1
 #define SALIB_VERSION_STR "0.1"
-
+#include "SAGlobals.h"
 
 
 #if defined(SA_COMMON_UI_MAKE)     // create a DLL library

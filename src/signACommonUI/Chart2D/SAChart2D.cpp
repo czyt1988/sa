@@ -18,6 +18,22 @@
 #include "SARectRegionSelectEditor.h"
 #include "SAEllipseRegionSelectEditor.h"
 #include "SAPolygonRegionSelectEditor.h"
+#include <QUndoStack>
+#include "SAFigureOptCommand.h"
+#include "qwt_text.h"
+class SAChart2DPrivate
+{
+    SA_IMPL_PUBLIC(SAChart2D)
+    QUndoStack m_undoStack;
+public:
+    SAChart2DPrivate(SAChart2D* p):q_ptr(p)
+    {
+
+    }
+
+
+};
+
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
   ,m_chartSelectRigionEditor(nullptr)
 {
@@ -34,14 +50,16 @@ SAChart2D::~SAChart2D()
 ///
 SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
 {
+    SA_D(SAChart2D);
     std::unique_ptr<SAXYSeries> series(new SAXYSeries(datas->getName(),datas));
     if(series->dataSize() <= 0)
     {
         return nullptr;
     }
+
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    series->attach(this);
+    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add xy serise:%1").arg(series->title().text())));
     emit plotCurveChanged(series.get());
     return series.release();
 }
@@ -54,6 +72,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
 ///
 SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xDetal)
 {
+    SA_D(SAChart2D);
     std::unique_ptr<SAXYSeries> series(new SAXYSeries(datas->getName()));
     series->setSamples(datas,xStart,xDetal);
     if(series->dataSize() <= 0)
@@ -62,7 +81,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
     }
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    series->attach(this);
+    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add xy serise:%1").arg(series->title().text())));
     emit plotCurveChanged(series.get());
     return series.release();
 }
@@ -75,6 +94,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
 ///
 SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QString &name)
 {
+    SA_D(SAChart2D);
     std::unique_ptr<SAXYSeries> series(new SAXYSeries(name));
     series->setSamples(x,y);
     if(series->dataSize() <= 0)
@@ -83,7 +103,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QS
     }
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    series->attach(this);
+    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add xy serise:%1").arg(series->title().text())));
     emit plotCurveChanged(series.get());
     return series.release();
 }
@@ -91,7 +111,21 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QS
 
 void SAChart2D::addCurve(QwtPlotCurve *cur)
 {
-    cur->attach(this);
+    SA_D(SAChart2D);
+    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,cur,tr("add curve:%1").arg(cur->title().text())));
+}
+
+QwtPlotHistogram *SAChart2D::addBar(const QVector<QwtIntervalSample> &sample)
+{
+    SA_D(SAChart2D);
+    QwtPlotHistogram* his = new QwtPlotHistogram();
+    his->setSamples (sample);
+    his->setYAxis(yLeft);
+    his->setXAxis(xBottom);
+    his->setStyle (QwtPlotHistogram::Columns);
+    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,his,tr("add bar:%1").arg(his->title().text())));
+    emit plotCurveChanged(his);
+    return his;
 }
 ///
 /// \brief SAChart2D::addBar
@@ -100,6 +134,7 @@ void SAChart2D::addCurve(QwtPlotCurve *cur)
 ///
 SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
 {
+    SA_D(SAChart2D);
     std::unique_ptr<SABarSeries> series(new SABarSeries(datas,datas->getName()));
     if(series->dataSize() <= 0)
     {
@@ -109,7 +144,7 @@ SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
     series->setBrush(QBrush(clr));
     series->setPen(clr,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
     series->setStyle(QwtPlotHistogram::Columns);
-    series->attach(this);
+    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add bar:%1").arg(series->title().text())));
     emit plotCurveChanged(series.get());
     return series.release();
 }
