@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="32px"
+	 height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+<g id="bk">
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" x1="3" y1="5.073" x2="3" y2="29.375"/>
+			<g>
+				<path d="M3,5.792l1.441,0.876l0.032-0.049l-0.933-2.35C3.36,3.45,3.18,2.631,3,1.813C2.82,2.631,2.64,3.45,2.459,4.269
+					l-0.933,2.35l0.024,0.049L3,5.792z"/>
+			</g>
+		</g>
+	</g>
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" x1="3" y1="29.375" x2="27.177" y2="29.375"/>
+			<g>
+				<path d="M26.459,29.375l-0.877-1.441l0.049-0.032l2.351,0.934c0.818,0.18,1.638,0.359,2.456,0.54
+					c-0.818,0.18-1.638,0.36-2.456,0.54l-2.351,0.934l-0.049-0.024L26.459,29.375z"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="PSD">
+	<polyline fill="none" stroke="#E60012" stroke-miterlimit="10" points="4.25,17.5 6.375,17.938 7.625,9.625 9.5,19.75 11,16.75 
+		12.625,17.938 14.125,17.375 15,17.75 16,18.5 17.625,17.75 18.5,20.25 21.25,26 22.875,24 24,27.125 25,26 25.625,28.5 	"/>
+	<rect x="7.25" fill="none" width="25.875" height="17.938"/>
+	<text transform="matrix(1 0 0 1 7.25 12.3203)" font-family="'AdobeSongStd-Light-GBpc-EUC-H'" font-size="14">PSD</text>
+</g>
+</svg>

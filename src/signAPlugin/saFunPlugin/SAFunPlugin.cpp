@@ -162,7 +162,7 @@ void SAFunPlugin::setupDSPMenu()
     connect(m_detrendDirectAction,&QAction::triggered
             ,this,&SAFunPlugin::on_detrendDirect);
     //信号设置窗
-    m_waveSetWindowAction = m_menuDSP->addAction(QIcon(),"window");
+    m_waveSetWindowAction = m_menuDSP->addAction(ICON_window,"window");
     m_waveSetWindowAction->setObjectName("wave set window");
     connect(m_waveSetWindowAction,&QAction::triggered,this,&SAFunPlugin::on_setWindowToWave);
 
@@ -177,7 +177,7 @@ void SAFunPlugin::setupDSPMenu()
     connect(m_powerSpectrumAction,&QAction::triggered,this,&SAFunPlugin::on_powerSpectrumAction);
 
     //时频分析工具箱
-    m_tmeFrequencyAction = m_menuDSP->addAction(tr("tme frequency toolbox"));
+    m_tmeFrequencyAction = m_menuDSP->addAction(ICON_stft,tr("tme frequency toolbox"));
     m_tmeFrequencyAction->setObjectName("tme frequency toolbox");
     connect(m_tmeFrequencyAction,&QAction::triggered,this,&SAFunPlugin::on_tmeFrequencyAction);
 

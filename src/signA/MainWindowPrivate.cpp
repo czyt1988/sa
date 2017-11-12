@@ -219,17 +219,17 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionZoomOut->setIcon(QIcon(":/icons/icons/zoomOut.png"));
 
     actionStartRectSelect = new QAction(mainWinowPtr);
-    actionStartRectSelect->setIcon(QIcon(":/icons/icons/StartRectSelect.png"));
+    actionStartRectSelect->setIcon(QIcon(":/icons/icons/StartRectSelect.svg"));
     actionStartRectSelect->setObjectName(QStringLiteral("actionStartRectSelect"));
     actionStartRectSelect->setCheckable(true);
 
     actionStartEllipseSelect = new QAction(mainWinowPtr);
-    actionStartEllipseSelect->setIcon(QIcon(":/icons/icons/StartEllipseSelect.png"));
+    actionStartEllipseSelect->setIcon(QIcon(":/icons/icons/StartEllipseSelect.svg"));
     actionStartEllipseSelect->setObjectName(QStringLiteral("actionStartEllipseSelect"));
     actionStartEllipseSelect->setCheckable(true);
 
     actionStartPolygonSelect = new QAction(mainWinowPtr);
-    actionStartPolygonSelect->setIcon(QIcon(":/icons/icons/StartPolygonSelect.png"));
+    actionStartPolygonSelect->setIcon(QIcon(":/icons/icons/StartPolygonSelect.svg"));
     actionStartPolygonSelect->setObjectName(QStringLiteral("actionStartPolygonSelect"));
     actionStartPolygonSelect->setCheckable(true);
 

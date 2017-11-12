@@ -50,9 +50,6 @@
         <file>icons/SingleSelection.png</file>
         <file>icons/SubtractionSelection.png</file>
         <file>icons/AdditionalSelection.png</file>
-        <file>icons/StartEllipseSelect.png</file>
-        <file>icons/StartRectSelect.png</file>
-        <file>icons/StartPolygonSelect.png</file>
         <file>icons/AllDock.png</file>
         <file>icons/lineChart.svg</file>
         <file>icons/barChart.svg</file>
@@ -62,6 +59,9 @@
         <file>icons/zoomIn.png</file>
         <file>icons/zoomOut.png</file>
         <file>icons/allFunction.svg</file>
+        <file>icons/StartRectSelect.svg</file>
+        <file>icons/StartEllipseSelect.svg</file>
+        <file>icons/StartPolygonSelect.svg</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>
