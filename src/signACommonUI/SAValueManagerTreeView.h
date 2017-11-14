@@ -6,6 +6,7 @@ class SAValueManagerModel;
 class SAAbstractDatas;
 class SA_COMMON_UI_EXPORT SAValueManagerTreeView : public QTreeView
 {
+    Q_OBJECT
 public:
     SAValueManagerTreeView(QWidget* parent = nullptr);
     SAValueManagerModel* getValueManagerModel() const;
