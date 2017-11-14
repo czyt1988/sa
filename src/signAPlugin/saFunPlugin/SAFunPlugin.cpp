@@ -203,11 +203,11 @@ void SAFunPlugin::setupStatisticsMenu()
     m_diffAction->setObjectName("diffAction");
     connect(m_diffAction,&QAction::triggered,this,&SAFunPlugin::on_diffAction);
     //求统计参数
-    m_statisticsAction = m_menuStatistics->addAction(tr("statistics"));
+    m_statisticsAction = m_menuStatistics->addAction(ICON_statistics,tr("statistics"));
     m_statisticsAction->setObjectName("statisticsAction");
     connect(m_statisticsAction,&QAction::triggered,this,&SAFunPlugin::on_statisticsAction);
     //频率统计
-    m_histAction = m_menuStatistics->addAction(tr("hist"));
+    m_histAction = m_menuStatistics->addAction(ICON_hist,tr("hist"));
     m_histAction->setObjectName("histAction");
     connect(m_histAction,&QAction::triggered,this,&SAFunPlugin::on_histAction);
 
@@ -227,7 +227,7 @@ void SAFunPlugin::setupDataPreprocessingMenu()
     connect(m_sigmaDetectAction,&QAction::triggered,this,&SAFunPlugin::on_sigmaDetectAction);
 
     //m点n次滤波
-    m_pointSmoothAction = m_dataPreprocessing->addAction(tr("m points n pow smooth"));
+    m_pointSmoothAction = m_dataPreprocessing->addAction(ICON_mPointnPow,tr("m points n pow smooth"));
     m_pointSmoothAction->setObjectName("mPointsNPowSmoothAction");
     connect(m_pointSmoothAction,&QAction::triggered,this,&SAFunPlugin::on_pointSmoothAction);
 

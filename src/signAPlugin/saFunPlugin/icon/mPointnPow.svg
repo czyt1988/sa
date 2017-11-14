@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+<g id="bk">
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" x1="3" y1="5.073" x2="3" y2="29.375"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<line fill="none" stroke="#000000" stroke-linecap="round" stroke-miterlimit="10" x1="3" y1="29.375" x2="27.177" y2="29.375"/>
+		</g>
+	</g>
+</g>
+<g id="Fit">
+	<ellipse fill="#F41137" cx="6.186" cy="22.347" rx="0.96" ry="0.951"/>
+	<ellipse fill="#F41137" cx="24.895" cy="23.298" rx="0.959" ry="0.951"/>
+	<ellipse fill="#F41137" cx="9.203" cy="18.542" rx="0.96" ry="0.951"/>
+	<ellipse fill="#F41137" cx="24.895" cy="20.444" rx="0.961" ry="0.951"/>
+	<ellipse fill="#5A4FED" cx="15.471" cy="10.562" rx="0.96" ry="0.951"/>
+	<ellipse fill="#F41137" cx="20.271" cy="17.492" rx="0.959" ry="0.951"/>
+	<ellipse fill="#F41137" cx="12.083" cy="20.445" rx="0.96" ry="0.951"/>
+</g>
+<line fill="none" stroke="#192BD8" stroke-miterlimit="10" x1="13.25" y1="7.917" x2="17.75" y2="13.25"/>
+<line fill="none" stroke="#192BD8" stroke-miterlimit="10" x1="17.93" y1="8.491" x2="12.415" y2="13.242"/>
+<path fill="none" stroke="#000000" stroke-miterlimit="10" d="M6.583,22.954c2.167-2.853,2.62-3.134,4.083-3.804
+	c2.415-1.105,6.063-1.095,7.75-0.409c1.854,0.753,3.583,1.886,4.416,3.262"/>
+</svg>
