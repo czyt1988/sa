@@ -222,7 +222,7 @@ void SAFunPlugin::setupDataPreprocessingMenu()
     m_dataPreprocessing.reset(new QMenu(("data preprocessing"),m_ui->getMainWindowPtr()));
     m_dataPreprocessing->setObjectName(QStringLiteral("DataPreprocessingMenu"));
     //西格玛检测
-    m_sigmaDetectAction = m_dataPreprocessing->addAction(tr("sigma detect"));
+    m_sigmaDetectAction = m_dataPreprocessing->addAction(ICON_sigmaDetect,tr("sigma detect"));
     m_sigmaDetectAction->setObjectName("sigmaDetectAction");
     connect(m_sigmaDetectAction,&QAction::triggered,this,&SAFunPlugin::on_sigmaDetectAction);
 

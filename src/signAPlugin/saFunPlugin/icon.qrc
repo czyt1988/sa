@@ -6,5 +6,6 @@
         <file>icon/fit.svg</file>
         <file>icon/window.svg</file>
         <file>icon/stft.svg</file>
+        <file>icon/sigmaDetect.svg</file>
     </qresource>
 </RCC>

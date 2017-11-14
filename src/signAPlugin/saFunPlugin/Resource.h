@@ -7,6 +7,7 @@
 #define ICON_fit QIcon(":/icon/icon/fit.svg")
 #define ICON_window QIcon(":/icon/icon/window.svg")
 #define ICON_stft QIcon(":/icon/icon/stft.svg")
+#define ICON_sigmaDetect QIcon(":/icon/icon/sigmaDetect.svg")
 
 #endif // RESOURCE
 
