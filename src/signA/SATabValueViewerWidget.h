@@ -24,6 +24,9 @@ public:
     SADataTableModel* getTabModel(int index);
     //数据要删除，先把显示的内容擦除
     void removeDatas(const QList<SAAbstractDatas*>& datas);
+public slots:
+    //添加且释放内存
+    void clearAndReleaseAll();
 private slots:
     void tabBarCustomContextMenuRequested(const QPoint &pos);
     void action_saveToCsv_triggered();

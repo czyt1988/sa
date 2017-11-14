@@ -133,6 +133,12 @@ bool SAPolygonRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
         {
             m_shapeItem->setPolygon(m_polygon);
         }
+        if(m_tmpItem)
+        {
+            m_tmpItem->detach();
+            delete m_tmpItem;
+            m_tmpItem = nullptr;
+        }
         break;
     }
     case AdditionalSelection:

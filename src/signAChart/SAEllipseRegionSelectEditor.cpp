@@ -151,6 +151,12 @@ bool SAEllipseRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
     {
         m_isStartDrawRegion = true;
         m_pressedPoint = invTransform(p);
+        if(m_tmpItem)
+        {
+            m_tmpItem->detach();
+            delete m_tmpItem;
+            m_tmpItem = nullptr;
+        }
         break;
     }
     case AdditionalSelection:

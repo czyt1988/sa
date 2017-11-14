@@ -130,6 +130,21 @@ void SATabValueViewerWidget::removeDatas(const QList<SAAbstractDatas *> &datas)
         tabModel->removeDatas(datas);
     }
 }
+///
+/// \brief SATabValueViewerWidget::clearAndReleaseAll
+///
+void SATabValueViewerWidget::clearAndReleaseAll()
+{
+    while(count())
+    {
+        QWidget* w = widget(0);
+        if(w)
+        {
+            delete w;
+        }
+        removeTab(0);
+    }
+}
 
 void SATabValueViewerWidget::tabBarCustomContextMenuRequested(const QPoint &pos)
 {

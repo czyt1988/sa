@@ -377,7 +377,7 @@ void MainWindow::initUI()
     ui->actionSubtractionSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
     ui->actionIntersectionSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
     //选区单选模式
-    connect(ui->actionStartRectSelect,&QAction::triggered
+    connect(ui->actionSingleSelection,&QAction::triggered
             ,this,&MainWindow::onActionSingleSelectionTriggered);
     //选区多选模式
     connect(ui->actionAdditionalSelection,&QAction::triggered
@@ -458,7 +458,8 @@ void MainWindow::initUI()
     //SAProjectManager和saUI的关联
     connect(saProjectManager,&SAProjectManager::messageInformation
             ,this,&MainWindow::showMessageInfo);
-
+    //功能性关联
+    connect(this,&MainWindow::cleanedProject,ui->tabWidget_valueViewer,&SATabValueViewerWidget::clearAndReleaseAll);
     showMaximized();
     ui->actionWindowMode->setChecked(QMdiArea::SubWindowView == ui->mdiArea->viewMode());
     ui->actionTabMode->setChecked(QMdiArea::TabbedView == ui->mdiArea->viewMode());
@@ -1410,6 +1411,8 @@ void MainWindow::onActionClearProjectTriggered()
     ui->mdiArea->closeAllSubWindows();
     showNormalMessageInfo(QStringLiteral("清除方案"),0);
     updateChartSetToolBar();
+    //数据预览窗口清空
+
     emit cleanedProject();
 }
 
