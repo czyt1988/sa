@@ -2158,18 +2158,19 @@ void MainWindow::showElapesdMessageInfo(const QString& info, SA::MeaasgeType typ
 ///
 void MainWindow::onActionUndoTriggered()
 {
-    QWidget* w = QApplication::activeWindow();
-    if(w)
+    SAFigureWindow* f = getCurrentFigureWindow();
+    if(f)
     {
-        if(SAFigureWindow* f = qobject_cast<SAFigureWindow*>(w))
+        if(f->isActiveWindow())
         {
             f->undo();
+            return;
         }
-        else if(SAValueManagerTreeView* f = qobject_cast<SAValueManagerTreeView*>(w))
-        {
-            Q_UNUSED(f);
-            saValueManager->undo();
-        }
+    }
+    if(ui->treeView_valueManager->isActiveWindow())
+    {
+        saValueManager->undo();
+        return;
     }
 }
 ///
@@ -2177,18 +2178,19 @@ void MainWindow::onActionUndoTriggered()
 ///
 void MainWindow::onActionRedoTriggered()
 {
-    QWidget* w = QApplication::activeWindow();
-    if(w)
+    SAFigureWindow* f = getCurrentFigureWindow();
+    if(f)
     {
-        if(SAFigureWindow* f = qobject_cast<SAFigureWindow*>(w))
+        if(f->isActiveWindow())
         {
             f->redo();
+            return;
         }
-        else if(SAValueManagerTreeView* f = qobject_cast<SAValueManagerTreeView*>(w))
-        {
-            Q_UNUSED(f);
-            saValueManager->redo();
-        }
+    }
+    if(ui->treeView_valueManager->isActiveWindow())
+    {
+        saValueManager->redo();
+        return;
     }
 }
 

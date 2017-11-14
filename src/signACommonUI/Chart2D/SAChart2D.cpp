@@ -592,7 +592,6 @@ void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
             if(itemList.size() > 0)
             {
                 d_ptr->appendItemListAddCommand(itemList,tr("add datas"));
-                replot();
             }
             return;
         }

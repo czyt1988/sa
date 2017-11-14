@@ -812,9 +812,9 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick Curve\nTo Data", 0));
     actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
     actionUndo->setText(QApplication::translate("MainWindow", "Rescind", 0));
-    //actionRescind->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));
+    actionUndo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));
     actionRedo->setText(QApplication::translate("MainWindow", "Redo", 0));
-    //actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
+    actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
     actionValueManagerDock->setText(QApplication::translate("MainWindow", "Value Manager", 0));
     actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "View Value In\nCurrent Tab", 0));
     actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "View Value In\nNew Tab", 0));

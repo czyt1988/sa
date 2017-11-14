@@ -166,7 +166,7 @@ void SAFigureWindow::undo()
         c->undo();
     }
 }
-
+#if 0
 void SAFigureWindow::keyPressEvent(QKeyEvent *e)
 {
     qDebug() << e->type() << e->key() << " " << e->modifiers();
@@ -183,7 +183,7 @@ void SAFigureWindow::keyPressEvent(QKeyEvent *e)
     }
     QMainWindow::keyPressEvent(e);
 }
-
+#endif
 
 
 

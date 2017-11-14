@@ -92,6 +92,7 @@ void SAFigureChartItemListAddCommand::redo()
         m_itemList[i]->attach(m_chart);
     }
     m_chart->setAutoReplot(true);
+    m_chart->replot();
 }
 
 void SAFigureChartItemListAddCommand::undo()
@@ -103,4 +104,5 @@ void SAFigureChartItemListAddCommand::undo()
         m_itemList[i]->detach();
     }
     m_chart->setAutoReplot(true);
+    m_chart->replot();
 }

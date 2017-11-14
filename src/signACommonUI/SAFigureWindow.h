@@ -17,6 +17,7 @@ class SAChart2D;
 class SAFigureContainer;
 class CurveDataFeatureItem;
 class SAFigureWindowPrivate;
+
 ///
 /// \brief SA的绘图窗口
 ///
@@ -42,8 +43,10 @@ public:
 public slots:
     void redo();
     void undo();
+#if 0
 protected:
     void keyPressEvent(QKeyEvent *e);
+#endif
 signals:
     //绘图数据变更消息
     void chartDataChanged(QwtPlot* plot,QwtPlotItem* item);
