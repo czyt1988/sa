@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QColor>
 #include <QQueue>
-#include "SAGlobals.h"
+#include "../global/SAGlobals.h"
 class QTimer;
 namespace Ui {
 class SAInformationStatusWidget;

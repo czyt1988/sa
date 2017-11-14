@@ -1,8 +1,9 @@
 #ifndef SAFIGUREOPTCOMMAND_H
 #define SAFIGUREOPTCOMMAND_H
 #include <QUndoCommand>
+#include <QList>
+#include "qwt_plot_item.h"
 class SAChart2D;
-class QwtPlotItem;
 class SAAbstractDatas;
 
 
@@ -25,6 +26,21 @@ public:
 private:
     SAChart2D* m_chart;
     QwtPlotItem* m_item;
+};
+
+///
+/// \brief 绘图元素群的添加
+///
+class SAFigureChartItemListAddCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureChartItemListAddCommand(SAChart2D* chart,const QList<QwtPlotItem*>& itemList,const QString &cmdName);
+    ~SAFigureChartItemListAddCommand();
+    virtual void redo();
+    virtual void undo();
+private:
+    SAChart2D* m_chart;
+    QList<QwtPlotItem*> m_itemList;
 };
 
 ///

@@ -27,14 +27,25 @@ public:
     };
 
     //添加曲线
-    using SA2DGraph::addCurve;
+    QwtPlotCurve* addCurve(const double *xData, const double *yData, int size);
+    QwtPlotCurve* addCurve(const QVector<QPointF>& xyDatas);
+    QwtPlotCurve* addCurve(const QVector< double > &xData, const QVector< double > &yData);
     SAXYSeries *addCurve(SAAbstractDatas* datas);
     SAXYSeries* addCurve(SAAbstractDatas* datas,double xStart,double xDetal);
     SAXYSeries* addCurve(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
     void addCurve(QwtPlotCurve* cur);
+    void addCurve(SAXYSeries* cur);
     //添加bar
     QwtPlotHistogram* addBar(const QVector< QwtIntervalSample > &sample);
     SABarSeries *addBar(SAAbstractDatas* datas);
+    void addBar(QwtPlotHistogram* cur);
+    void addBar(SABarSeries* cur);
+    //添加样条线
+    QwtPlotMarker* addVLine(double val);
+    QwtPlotMarker* addHLine(double val);
+    void addPlotMarker(QwtPlotMarker* marker);
+    //移除一个对象
+    void removeItem(QwtPlotItem* item);
     //移除范围内数据
     void removeDataInRang(QList<QwtPlotCurve *> curves);
     //获取选择范围内的数据,如果当前没有选区，返回false
@@ -54,6 +65,9 @@ public:
     const SAAbstractRegionSelectEditor* getRegionSelectEditor() const;
     //获取当前可见的选区的范围
     QPainterPath getSelectionRange() const;
+    //ctrl+z || ctrl + y
+    void redo();
+    void undo();
 protected:
     //开始矩形选框模式
     void startRectSelectMode();
@@ -61,7 +75,7 @@ protected:
     void startEllipseSelectMode();
     //开始椭圆选框模式
     void startPolygonSelectMode();
-    //
+    //结束选区模式但不清空
     void stopSelectMode();
 private:
     void addDatas(const QList<SAAbstractDatas*>& datas);
@@ -69,9 +83,7 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
-private:
-    SelectionMode m_selectMode;///< 选择模式
-    SAAbstractRegionSelectEditor* m_chartSelectRigionEditor;///< 矩形选择编辑器
+
 };
 
 #endif // SACHART2D_H

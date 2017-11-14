@@ -694,3 +694,70 @@ int SAChart::getDataInRang(const QPainterPath &rang, QwtPlotCurve *curve, QVecto
     }
     return res.size();
 }
+
+QRectF SAChart::getVisibleRegionRang(QwtPlot *chart)
+{
+    QwtPlot::Axis xaxis = QwtPlot::xBottom;
+    if(!chart->axisEnabled(QwtPlot::xBottom))
+        xaxis = QwtPlot::xTop;
+    QwtInterval inter = chart->axisInterval(xaxis);
+    double xmin = inter.minValue();
+    double xmax = inter.maxValue();
+    QwtPlot::Axis yaxis = QwtPlot::yLeft;
+    if(!chart->axisEnabled(QwtPlot::yLeft))
+        yaxis = QwtPlot::yRight;
+    inter = chart->axisInterval(yaxis);
+    double ymin = inter.minValue();
+    double ymax = inter.maxValue();
+    return QRectF(xmin,ymin,xmax-xmin,ymax-ymin);
+}
+///
+/// \brief 获取当前正在显示的区域
+/// \param chart
+/// \return
+///
+QRectF SAChart::getVisibleRegionRang(QwtPlot *chart, int xAxis, int yAxis)
+{
+    QwtInterval inter = chart->axisInterval(xAxis);
+    double xmin = inter.minValue();
+    double xmax = inter.maxValue();
+    inter = chart->axisInterval(yAxis);
+    double ymin = inter.minValue();
+    double ymax = inter.maxValue();
+    return QRectF(xmin,ymin,xmax-xmin,ymax-ymin);
+}
+///
+/// \brief 获取x轴的值在当前显示区域的数据
+/// \param chart
+/// \param cur
+/// \param out_xys
+/// \return 返回区域的索引x为第一个索引，y为第二个索引
+///
+QPoint SAChart::getXInVisibleRegionDatas(QwtPlot *chart, QwtPlotCurve *cur, QVector<QPointF> &out_xys)
+{
+    QPoint boundary(0,0);
+    QwtInterval xInter = chart->axisInterval(cur->xAxis());
+    double min = xInter.minValue();
+    double max = xInter.maxValue();
+
+    auto pdatas = cur->data();
+    size_t n = pdatas->size();
+    out_xys.reserve(n);
+    bool firstIn(true);
+    for(size_t i=0;i<n;++i)
+    {
+        if(pdatas->sample(i).x()>=min
+            &&
+            pdatas->sample(i).x()<= max)
+        {
+            out_xys.push_back(pdatas->sample(i));
+            if (firstIn)
+            {
+                boundary.rx() = i;
+                firstIn = false;
+            }
+            boundary.ry() = i;
+        }
+    }
+    return boundary;
+}

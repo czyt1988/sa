@@ -42,10 +42,11 @@ class QwtDateScaleDraw;
 class ScrollData;
 class SAYDataTracker;
 class SAXYDataTracker;
+class SA2DGraphPrivate;
+
 class SA_CHART_EXPORT ScrollBar: public QScrollBar
 {
     Q_OBJECT
-
 public:
     ScrollBar( QWidget *parent = NULL );
     ScrollBar( Qt::Orientation, QWidget *parent = NULL );
@@ -243,33 +244,10 @@ public:
 class SA_CHART_EXPORT SA2DGraph : public QwtPlot
 {
     Q_OBJECT
+    SA_IMPL(SA2DGraph)
 public:
     SA2DGraph(QWidget *parent = nullptr);
     virtual ~SA2DGraph();
-    //========================================================================================
-    //画线和数据 操作
-    //========================================================================================
-    ///
-    /// \brief 绘图
-    /// \param xyDatas 波形图的xy数据
-    /// \return
-    ///
-    QwtPlotCurve* addCurve(const QVector<QPointF>& xyDatas);
-    QwtPlotCurve* addCurve(std::vector<double>& xDatas,std::vector<double>& yDatas);
-    QwtPlotCurve* addCurve(const double *xData, const double *yData, int size);
-    QwtPlotCurve* addCurve(const QVector< double > &xData, const QVector< double > &yData);
-    void addCurve(QwtPlotCurve* pC);
-
-    //添加样条线
-    QwtPlotMarker* addVLine(double val);
-    QwtPlotMarker* addHLine(double val);
-
-    //========================================================================================
-    //网格 grid 操作
-    //========================================================================================
-
-
-
     ///
     /// \brief getCureList 获取所有曲线
     /// \return
@@ -287,30 +265,7 @@ public:
     ///
     QwtPlotCurve* getCurveByTitle(const QString& strName);
 
-    ///
-    /// \brief 获取y轴数据
-    /// \param ys
-    /// \param nCur
-    ///
-    void getYDatas(QVector<double>& ys,int nCur);
-    void getYDatas(QVector<double>& ys,const QString& strCurName);
-    void getXDatas(QVector<double>& xs,int nCur);
-    void getXDatas(QVector<double>& xs,const QString& strCurName);
-    void getXYDatas(QVector<QPointF>& xys,int nCur);
-    void getXYDatas(QVector<QPointF>& xys,const QString& strCurName);
-    void getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur);
-    void getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString& strCurName);
 
-
-
-    QRectF getVisibleRegionRang() const;
-    QPoint getVisibleRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const;
-    QPoint getVisibleRegionDatas(std::vector<double>& out_xs
-		,std::vector<double>& out_ys
-        ,QwtPlotCurve* curve) const;
-    QPoint getVisibleRegionDatas(QVector<double>& out_xs
-        ,QVector<double>& out_ys
-        ,QwtPlotCurve* curve) const;
 	enum AxisDateScaleType{
         h_m=0,
         hh_mm=1,
@@ -376,13 +331,6 @@ public slots:
 
     void enableXYDataPicker(bool enable = true);
 signals:
-    ///
-    /// \brief 有曲线或图线添加\修改\触发的信号
-    /// \param plotCur 发生变更的条目
-    /// \note 只有通过此类操作的曲线添加修改会触发这个信号
-    ///
-    void plotCurveChanged(QwtPlotItem* plotCur);
-
 	void enableZoomerChanged(bool enable);
 	void enablePickerChanged(bool enable);
 	void enableGridChanged(bool enable);
@@ -411,28 +359,15 @@ public:
     bool isEnableXYDataPicker() const;
 protected:
     virtual void resizeEvent( QResizeEvent * );
-private:
-    QScopedPointer<SAPlotZoomer> m_zoomer;
-    QScopedPointer<SAPlotZoomer> m_zoomerSecond;
-    QwtPlotGrid *m_grid;
-    QwtPlotPicker *m_picker;
-	QwtPlotPanner* m_panner;
-	LegendItem* m_legend;
-	QwtLegend* m_legendPanel;
-    SAYDataTracker* m_yDataPicker;
-    SAXYDataTracker* m_xyDataPicker;
 public:
-    QwtPlotZoomer * zoomer(){return m_zoomer.data();}
-    QwtPlotZoomer * zoomerSecond(){return m_zoomerSecond.data();}
-public:
+    QwtPlotZoomer * zoomer();
+    QwtPlotZoomer * zoomerSecond();
 	///
 	/// \brief 返回网格指针
 	/// \return
 	///
-	QwtPlotGrid * grid(){
-		return m_grid;
-	}
-private:
+    QwtPlotGrid * grid();
+protected:
 	///
 	/// \brief 设置网格
 	/// \param color 网格的颜色

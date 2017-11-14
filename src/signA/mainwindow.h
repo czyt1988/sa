@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include "SAGlobals.h"
+#include "../global/SAGlobals.h"
 #ifdef SA_USE_RIBBON_UI
 #include "SARibbonMainWindow.h"
 
@@ -57,7 +57,6 @@ class SATabValueViewerWidget;
 class SAValueManagerModel;
 class SAFigureWindow;
 class SAChart2D;
-class SA2DGraph;
 class QwtPlotItem;
 
 class SAAbstractDataImportInterface;
@@ -380,7 +379,7 @@ private slots:
     /// \group edit menu(编辑菜单)
     /// \{
     //Rescind（回退）
-    void onActionRescindTriggered();
+    void onActionUndoTriggered();
     //Redo （重做）
     void onActionRedoTriggered();
     /// \}
@@ -500,7 +499,7 @@ private:
     //变量管理器的移除控制触发的槽
     Q_SLOT void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
     //============================================================
-    void updateChartGridActionState(SA2DGraph* chart);
+    void updateChartGridActionState(SAChart2D *chart);
 private:
 #ifdef SA_USE_RIBBON_UI
     QScopedPointer<MainWindowPrivate> ui;

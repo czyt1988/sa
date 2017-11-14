@@ -1,7 +1,6 @@
 #ifndef SAVALUEMANAGER_H
 #define SAVALUEMANAGER_H
 #include "SALibGlobal.h"
-#include "SAGlobals.h"
 #include "SAData.h"
 //--stl
 #include <memory>
@@ -108,6 +107,10 @@ public:
     static QList<SAAbstractDatas*> fromSmartPtr(const QList<std::shared_ptr<SAAbstractDatas> >& smrPtrs);
     //清空undo stack
     void clearUndoStack();
+    //
+public slots:
+    void redo();
+    void undo();
 public:
     ///
     /// \name 对于1维数据的操作
@@ -128,7 +131,7 @@ public:
     void addDatas(QList<std::shared_ptr<SAAbstractDatas> > datas);
     /// \}
     ///
-    QUndoStack* getUndoStack();
+
 signals:
     ///
     /// \brief 信息，对于一些操作的错误等内容，通过message信号发射，信息的类型通过type进行筛选

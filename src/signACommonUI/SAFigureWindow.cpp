@@ -2,6 +2,8 @@
 #include <QtWidgets/QApplication>
 #include <QMessageBox>
 #include <QGridLayout>
+#include <QKeyEvent>
+#include <QAction>
 //sa chart
 #include "SAChart2D.h"
 //sa lib
@@ -24,33 +26,45 @@ if(nullptr == chart)\
     return;\
 }
 
-void SAFigureWindow::UI::setupUI(SAFigureWindow *par)
+class SAFigureWindowPrivate
 {
-    centralwidget = new SAFigureContainer(par);
-    centralwidget->setObjectName(QStringLiteral("centralwidget"));
-    par->setCentralWidget(centralwidget);
-}
+    SA_IMPL_PUBLIC(SAFigureWindow)
+public:
+    SAFigureContainer *centralwidget;
+    SAChart2D *currentPlot;
+    SAFigureWindowPrivate(SAFigureWindow* p):q_ptr(p)
+      ,centralwidget(nullptr)
+      ,currentPlot(nullptr)
+    {
 
-void SAFigureWindow::UI::retranslateUi(SAFigureWindow *par)
-{
-    par->setWindowTitle(QApplication::translate("SAFigureWindow", "Figure", 0));
-}
+    }
+
+    void setupUI()
+    {
+        centralwidget = new SAFigureContainer(q_ptr);
+        centralwidget->setObjectName(QStringLiteral("centralwidget"));
+        q_ptr->setCentralWidget(centralwidget);
+        q_ptr->setAcceptDrops(true);
+        q_ptr->setAutoFillBackground(true);
+        q_ptr->setBackgroundColor(QColor(255,255,255));
+    }
+
+    void retranslateUi()
+    {
+        q_ptr->setWindowTitle(QApplication::translate("SAFigureWindow", "Figure", 0));
+    }
+};
 
 //=============================================================================
 
 SAFigureWindow::SAFigureWindow(QWidget *parent) :
     QMainWindow(parent)
-    ,ui(new UI)
-  ,m_currentPlot(nullptr)
+    ,d_ptr(new SAFigureWindowPrivate(this))
 {
-    ui->setupUI(this);
-    setAcceptDrops(true);
-    setAutoFillBackground(true);
-    setBackgroundColor(QColor(255,255,255));
+    d_ptr->setupUI();
     static int s_figure_count=0;
     ++s_figure_count;
     setWindowTitle(QString("figure-%1").arg(s_figure_count));
-    initUI();
 }
 
 SAFigureWindow::~SAFigureWindow()
@@ -70,9 +84,9 @@ SAChart2D *SAFigureWindow::create2DSubPlot(float xPresent, float yPresent, float
 {
     try
     {
-        SAChart2D* plot = new SAChart2D(ui->centralwidget);
-        ui->centralwidget->addWidget (plot,xPresent,yPresent,wPresent,hPresent);
-        m_currentPlot = plot;
+        SAChart2D* plot = new SAChart2D(d_ptr->centralwidget);
+        d_ptr->centralwidget->addWidget (plot,xPresent,yPresent,wPresent,hPresent);
+        d_ptr->currentPlot = plot;
         return plot;
     }
     catch(std::bad_alloc& b)
@@ -91,7 +105,7 @@ SAChart2D *SAFigureWindow::create2DSubPlot(float xPresent, float yPresent, float
 QList<SAChart2D *> SAFigureWindow::get2DPlots() const
 {
     QList<SAChart2D*> res;
-    QList<QWidget *> widgets = ui->centralwidget->getWidgetList();
+    QList<QWidget *> widgets = d_ptr->centralwidget->getWidgetList();
     for(auto i=widgets.begin();i!=widgets.end();++i)
     {
         SAChart2D* chart = qobject_cast<SAChart2D*>(*i);
@@ -109,7 +123,7 @@ QList<SAChart2D *> SAFigureWindow::get2DPlots() const
 ///
 SAChart2D *SAFigureWindow::current2DPlot() const
 {
-    return m_currentPlot;
+    return d_ptr->currentPlot;
 }
 
 
@@ -133,13 +147,47 @@ void SAFigureWindow::setBackgroundColor(const QColor &clr)
     setPalette(p);
 }
 
-
-
-
-void SAFigureWindow::initUI()
+void SAFigureWindow::redo()
 {
-
+    SAChart2D * c = current2DPlot();
+    if(c)
+    {
+        qDebug() << "void SAFigureWindow::redo()";
+        c->redo();
+    }
 }
+
+void SAFigureWindow::undo()
+{
+    SAChart2D * c = current2DPlot();
+    if(c)
+    {
+        qDebug() << "void SAFigureWindow::undo()";
+        c->undo();
+    }
+}
+
+void SAFigureWindow::keyPressEvent(QKeyEvent *e)
+{
+    qDebug() << e->type() << e->key() << " " << e->modifiers();
+    if(Qt::ControlModifier & e->modifiers())
+    {
+        if(Qt::Key_Z == e->key())
+        {
+            undo();
+        }
+        else if(Qt::Key_Y == e->key())
+        {
+            redo();
+        }
+    }
+    QMainWindow::keyPressEvent(e);
+}
+
+
+
+
+
 
 
 

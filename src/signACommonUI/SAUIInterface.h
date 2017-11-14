@@ -6,7 +6,6 @@
 #include <QHash>
 
 #include "SACommonUIGlobal.h"
-#include "SAGlobals.h"
 class QWidget;
 class QAction;
 class QMenu;

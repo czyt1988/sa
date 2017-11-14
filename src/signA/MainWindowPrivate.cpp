@@ -148,9 +148,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionAbout->setObjectName(QStringLiteral("actionAbout"));
     actionAbout->setIcon(QIcon(":/icons/icons/information.png"));
 
-    actionRescind = new QAction(mainWinowPtr);
-    actionRescind->setObjectName(QStringLiteral("actionRescind"));
-    actionRescind->setIcon(QIcon(":/icons/icons/undo.png"));
+    actionUndo = new QAction(mainWinowPtr);
+    actionUndo->setObjectName(QStringLiteral("actionRescind"));
+    actionUndo->setIcon(QIcon(":/icons/icons/undo.png"));
 
     actionRedo = new QAction(mainWinowPtr);
     actionRedo->setObjectName(QStringLiteral("actionRedo"));
@@ -473,7 +473,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBar->quickAccessBar()->addSeparator();
     menuBar->quickAccessBar()->addButton(actionSave);
     menuBar->quickAccessBar()->addSeparator();
-    menuBar->quickAccessBar()->addButton(actionRescind);
+    menuBar->quickAccessBar()->addButton(actionUndo);
     menuBar->quickAccessBar()->addButton(actionRedo);
     menuBar->quickAccessBar()->addSeparator();
 //=======end ribbon set=======================================================================================
@@ -711,7 +711,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuRegionSelect->addAction(actionSubtractionSelection);
     menuRegionSelect->addAction(actionIntersectionSelection);
     menuHelp->addAction(actionAbout);
-    menuEdit->addAction(actionRescind);
+    menuEdit->addAction(actionUndo);
     menuEdit->addAction(actionRedo);
     menuTool->addAction(actionProjectSetting);
 
@@ -811,10 +811,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionChartZoomReset->setText(QApplication::translate("MainWindow", "Zoom Reset", 0));
     actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick Curve\nTo Data", 0));
     actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
-    actionRescind->setText(QApplication::translate("MainWindow", "Rescind", 0));
-    actionRescind->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));
+    actionUndo->setText(QApplication::translate("MainWindow", "Rescind", 0));
+    //actionRescind->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));
     actionRedo->setText(QApplication::translate("MainWindow", "Redo", 0));
-    actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
+    //actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
     actionValueManagerDock->setText(QApplication::translate("MainWindow", "Value Manager", 0));
     actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "View Value In\nCurrent Tab", 0));
     actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "View Value In\nNew Tab", 0));

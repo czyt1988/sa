@@ -253,10 +253,6 @@ bool SAValueManager::isNameNotConflict(const QString &name, const SAAbstractData
 
 
 
-QUndoStack *SAValueManager::getUndoStack()
-{
-    return &m_undoStack;
-}
 
 ///
 /// \brief 销毁数据内存
@@ -727,6 +723,16 @@ QList<SAAbstractDatas *> SAValueManager::fromSmartPtr(const QList<std::shared_pt
 void SAValueManager::clearUndoStack()
 {
     m_undoStack.clear();
+}
+
+void SAValueManager::redo()
+{
+    m_undoStack.redo();
+}
+
+void SAValueManager::undo()
+{
+    m_undoStack.undo();
 }
 
 

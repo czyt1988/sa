@@ -2,7 +2,6 @@
 #define SADATAPACKAGE_H
 #include "SALibGlobal.h"
 #include "SAItem.h"
-#include "SAGlobals.h"
 #include "SAData.h"
 
 ///

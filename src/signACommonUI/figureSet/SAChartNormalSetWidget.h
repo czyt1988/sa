@@ -3,7 +3,6 @@
 #include <QWidget>
 
 class SAChart2D;
-class SA2DGraph;
 class QwtPlot;
 ///
 /// \ingroup CommonUI

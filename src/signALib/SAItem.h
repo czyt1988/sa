@@ -1,7 +1,6 @@
 #ifndef SAITEM_H
 #define SAITEM_H
 #include "SALibGlobal.h"
-#include "SAGlobals.h"
 #include <QStandardItem>
 
 

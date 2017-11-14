@@ -3,7 +3,6 @@
 #include <QObject>
 #include <QMap>
 #include <QSet>
-#include "SAGlobals.h"
 #include "SALibGlobal.h"
 class QDomDocument;
 class SAValueManager;

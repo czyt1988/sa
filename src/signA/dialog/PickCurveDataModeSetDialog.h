@@ -1,6 +1,6 @@
 #ifndef EXPROTCURVEDATADIALOG_H
 #define EXPROTCURVEDATADIALOG_H
-#include "SAGlobals.h"
+#include "../global/SAGlobals.h"
 #include <QDialog>
 
 namespace Ui {

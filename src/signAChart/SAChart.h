@@ -95,6 +95,12 @@ public:
     static int removeDataInRang(const QPainterPath& removeRang,QwtPlotCurve* curve);
     //获取范围内的数据 返回获取的个数
     static int getDataInRang(const QPainterPath& rang,QwtPlotCurve* curve,QVector<QPointF>& res);
+    //获取当前正在显示的区域
+    static QRectF getVisibleRegionRang(QwtPlot* chart);
+    //获取当前正在显示的区域
+    static QRectF getVisibleRegionRang(QwtPlot* chart,int xAxis,int yAxis);
+    //获取当前显示区域的数据
+    static QPoint getXInVisibleRegionDatas(QwtPlot* chart,QwtPlotCurve* cur,QVector<QPointF>& out_xys);
 };
 
 #endif // SACHART_H

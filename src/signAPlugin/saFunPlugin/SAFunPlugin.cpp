@@ -1,7 +1,7 @@
 #include "SAFunPlugin.h"
 #include <QApplication>
 //sa lib
-#include "SAGlobals.h"
+#include "../global/SAGlobals.h"
 #include "SAAbstractFunctionItem.h"
 #include "SAStandardFunctionItem.h"
 #include "SAAbstractDatas.h"

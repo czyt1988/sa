@@ -2,9 +2,10 @@
 #define SACHARTGLOBALS_H
 
 #include <qglobal.h>
+#include "../global/SAGlobals.h"
+
 #define SACHARTLIB_VERSION 1
 #define SACHARTLIB_VERSION_STR "0.1"
-
 
 
 #if defined(SA_CHART_MAKE)     // create a DLL library

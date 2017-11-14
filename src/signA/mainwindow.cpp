@@ -282,7 +282,7 @@ void MainWindow::initUI()
     connect(ui->treeView_curPlotItem,&QTreeView::clicked,this,&MainWindow::onTreeViewCurPlotItemClicked);
     //-------------------------------------
     // - TreeView CurPlotItem slots(曲线条目树形窗口)
-    connect(ui->actionRescind,&QAction::triggered,this,&MainWindow::onActionRescindTriggered);
+    connect(ui->actionUndo,&QAction::triggered,this,&MainWindow::onActionUndoTriggered);
     connect(ui->actionRedo,&QAction::triggered,this,&MainWindow::onActionRedoTriggered);
     //-------------------------------------
     // - tool menu signal/slots connect
@@ -2156,16 +2156,40 @@ void MainWindow::showElapesdMessageInfo(const QString& info, SA::MeaasgeType typ
 ///
 /// \brief Rescind （回退）
 ///
-void MainWindow::onActionRescindTriggered()
+void MainWindow::onActionUndoTriggered()
 {
-    saValueManager->getUndoStack()->undo();
+    QWidget* w = QApplication::activeWindow();
+    if(w)
+    {
+        if(SAFigureWindow* f = qobject_cast<SAFigureWindow*>(w))
+        {
+            f->undo();
+        }
+        else if(SAValueManagerTreeView* f = qobject_cast<SAValueManagerTreeView*>(w))
+        {
+            Q_UNUSED(f);
+            saValueManager->undo();
+        }
+    }
 }
 ///
 /// \brief Redo （重做）
 ///
 void MainWindow::onActionRedoTriggered()
 {
-    saValueManager->getUndoStack()->redo();
+    QWidget* w = QApplication::activeWindow();
+    if(w)
+    {
+        if(SAFigureWindow* f = qobject_cast<SAFigureWindow*>(w))
+        {
+            f->redo();
+        }
+        else if(SAValueManagerTreeView* f = qobject_cast<SAValueManagerTreeView*>(w))
+        {
+            Q_UNUSED(f);
+            saValueManager->redo();
+        }
+    }
 }
 
 ///
@@ -2244,7 +2268,7 @@ void MainWindow::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
     ui->tabWidget_valueViewer->removeDatas(dataBeDeletedPtr);
 }
 
-void MainWindow::updateChartGridActionState(SA2DGraph *chart)
+void MainWindow::updateChartGridActionState(SAChart2D *chart)
 {
     if(chart)
     {

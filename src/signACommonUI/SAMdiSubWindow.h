@@ -2,7 +2,6 @@
 #define MdiSubWindow_H
 
 #include <QMdiSubWindow>
-#include "SAGlobals.h"
 #include "SACommonUIGlobal.h"
 class QEvent;
 class QCloseEvent;

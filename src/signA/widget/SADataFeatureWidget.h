@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QProcess>
 #include <QMap>
-#include "SAGlobals.h"
+#include "../global/SAGlobals.h"
 #include <memory>
 class QwtPlotItem;
 class QMdiSubWindow;

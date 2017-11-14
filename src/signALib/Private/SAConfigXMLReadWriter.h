@@ -1,7 +1,7 @@
 #ifndef SACONFIGXMLREADWRITER_H
 #define SACONFIGXMLREADWRITER_H
 #include <QObject>
-#include <SAGlobals.h>
+#include "SAGlobalConfig.h"
 #include <QHash>
 #include <QVariant>
 #include <functional>

@@ -47,7 +47,6 @@ HEADERS += \
     SAUIHelper.h \
     SAMdiSubWindow.h \
     SAFigureContainer.h \
-    QwtPlotPropertySetDialog.h \
     SAFiugreSetWidget.h \
     SAPropertySetWidget.h \
     TestWidget.h \
@@ -69,7 +68,6 @@ SOURCES += \
     SAUIHelper.cpp \
     SAMdiSubWindow.cpp \
     SAFigureContainer.cpp \
-    QwtPlotPropertySetDialog.cpp \
     SAFiugreSetWidget.cpp \
     SAPropertySetWidget.cpp \
     TestWidget.cpp \

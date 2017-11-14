@@ -8,7 +8,7 @@
 #include <functional>
 
 #include "SACommonUIGlobal.h"
-#include "SAGlobals.h"
+
 class SAUIInterface;
 class QAction;
 class QMenu;

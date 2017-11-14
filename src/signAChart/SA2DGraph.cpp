@@ -15,7 +15,31 @@
 #include "SACrossTracker.h"
 //unsigned int ChartWave_qwt::staticValue_nAutoLineID = 0;//静态变量初始化
 
+class SA2DGraphPrivate
+{
+    SA_IMPL_PUBLIC(SA2DGraph)
+public:
+    QScopedPointer<SAPlotZoomer> m_zoomer;
+    QScopedPointer<SAPlotZoomer> m_zoomerSecond;
+    QwtPlotGrid *m_grid;
+    QwtPlotPicker *m_picker;
+    QwtPlotPanner* m_panner;
+    LegendItem* m_legend;
+    QwtLegend* m_legendPanel;
+    SAYDataTracker* m_yDataPicker;
+    SAXYDataTracker* m_xyDataPicker;
+    SA2DGraphPrivate(SA2DGraph* p):q_ptr(p)
+      ,m_grid(nullptr)
+      ,m_picker(nullptr)
+      ,m_panner(nullptr)
+      ,m_legend(nullptr)
+      ,m_legendPanel(nullptr)
+      ,m_yDataPicker(nullptr)
+      ,m_xyDataPicker(nullptr)
+    {
 
+    }
+};
 
 class ScrollData
 {
@@ -829,15 +853,7 @@ struct compareX
 //}
 
 SA2DGraph::SA2DGraph(QWidget *parent):QwtPlot(parent)
-  ,m_grid(nullptr)
-  ,m_picker(nullptr)
-  ,m_zoomer(nullptr)
-  ,m_zoomerSecond(nullptr)
-  ,m_panner(nullptr)
-  ,m_legend(nullptr)
-  ,m_legendPanel(nullptr)
-  ,m_yDataPicker(nullptr)
-  ,m_xyDataPicker(nullptr)
+  ,d_ptr(new SA2DGraphPrivate(this))
 {
     setAutoReplot( false );
     setAutoFillBackground(true);
@@ -870,88 +886,107 @@ void SA2DGraph::resizeEvent( QResizeEvent *event )
     //updateGradient();
 }
 
-//bool SA2DGraph::isEnableZoomerScroll() const
-//{
-//    Zoomer_qwt* zm = qobject_cast<Zoomer_qwt*>(m_zoomer);
-//    if(zm)
-//    {
-//        return zm->isEnableScrollBar();
-//    }
-//    return false;
-//}
+QwtPlotZoomer *SA2DGraph::zoomer()
+{
+    SA_D(SA2DGraph);
+    return d->m_zoomer.data();
+}
+
+QwtPlotZoomer *SA2DGraph::zoomerSecond()
+{
+    SA_D(SA2DGraph);
+    return d->m_zoomerSecond.data();
+}
+
+QwtPlotGrid *SA2DGraph::grid()
+{
+    SA_D(SA2DGraph);
+    return d->m_grid;
+}
+
 
 bool SA2DGraph::isEnableGrid() const
 {
-    if(m_grid)
-        return m_grid->isVisible();
+    SA_DC(SA2DGraph);
+    if(d->m_grid)
+        return d->m_grid->isVisible();
     return false;
 }
 
 bool SA2DGraph::isEnableGridX() const
 {
-    if(m_grid)
-        if(m_grid->isVisible())
-            return m_grid->xEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_grid)
+        if(d->m_grid->isVisible())
+            return d->m_grid->xEnabled();
     return false;
 }
 
 bool SA2DGraph::isEnableGridY() const
 {
-    if(m_grid)
-        if(m_grid->isVisible())
-            return m_grid->yEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_grid)
+        if(d->m_grid->isVisible())
+            return d->m_grid->yEnabled();
     return false;
 }
 
 bool SA2DGraph::isEnableGridXMin() const
 {
-    if(m_grid)
-        if(m_grid->isVisible())
-            return m_grid->xMinEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_grid)
+        if(d->m_grid->isVisible())
+            return d->m_grid->xMinEnabled();
     return false;
 }
 
 bool SA2DGraph::isEnableGridYMin() const
 {
-    if(m_grid)
-        if(m_grid->isVisible())
-            return m_grid->yMinEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_grid)
+        if(d->m_grid->isVisible())
+            return d->m_grid->yMinEnabled();
     return false;
 }
 
 bool SA2DGraph::isEnablePanner() const
 {
-    if(m_panner)
-        return m_panner->isEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_panner)
+        return d->m_panner->isEnabled();
     return false;
 }
 
 bool SA2DGraph::isEnableLegend() const
 {
-    if(m_legend)
-        return m_legend->isVisible();
+    SA_DC(SA2DGraph);
+    if(d->m_legend)
+        return d->m_legend->isVisible();
     return false;
 }
 
 bool SA2DGraph::isEnableLegendPanel() const
 {
-    if(m_legendPanel)
-        return m_legendPanel->isVisible();
+    SA_DC(SA2DGraph);
+    if(d->m_legendPanel)
+        return d->m_legendPanel->isVisible();
     return false;
 
 }
 
 bool SA2DGraph::isEnableYDataPicker() const
 {
-    if(m_yDataPicker)
-        return m_yDataPicker->isEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_yDataPicker)
+        return d->m_yDataPicker->isEnabled();
     return false;
 }
 
 bool SA2DGraph::isEnableXYDataPicker() const
 {
-    if(m_xyDataPicker)
-        return m_xyDataPicker->isEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_xyDataPicker)
+        return d->m_xyDataPicker->isEnabled();
     return false;
 }
 //========================================================================================
@@ -962,40 +997,43 @@ QwtPlotGrid* SA2DGraph::setupGrid(
         ,qreal 	width
         ,Qt::PenStyle style)
 {
+    SA_D(SA2DGraph);
     bool bShouldAttachAgain(false);
-    if(nullptr == m_grid){
-        m_grid = new QwtPlotGrid;
+    if(nullptr == d->m_grid){
+        d->m_grid = new QwtPlotGrid;
         bShouldAttachAgain = true;
     }
     //大刻度显示网格- 所谓大刻度是值刻度上带数值的
-    m_grid->setMajorPen( color, width, style );
-	m_grid->setMinorPen( color, 0 , Qt::DotLine );//小刻度的样式
+    d->m_grid->setMajorPen( color, width, style );
+    d->m_grid->setMinorPen( color, 0 , Qt::DotLine );//小刻度的样式
     if(bShouldAttachAgain){
-        m_grid->attach( this );
+        d->m_grid->attach( this );
     }
-    return m_grid;
+    return d->m_grid;
 }
 
 void SA2DGraph::deleteGrid(){
-    if(nullptr == m_grid){
+    SA_D(SA2DGraph);
+    if(nullptr == d->m_grid){
         return;
     }
-    m_grid->detach();
-    delete m_grid;
-    m_grid = nullptr;
+    d->m_grid->detach();
+    delete d->m_grid;
+    d->m_grid = nullptr;
     replot();//刷新，否则不显示
 }
 
 void SA2DGraph::enableGrid(bool isShow)
 {
+    SA_D(SA2DGraph);
 	if (isShow)
 	{
-		if(nullptr == m_grid){
+        if(nullptr == d->m_grid){
 			setupGrid();
 		}
-		m_grid->enableX(true);
-		m_grid->enableY(true);
-		m_grid->show();
+        d->m_grid->enableX(true);
+        d->m_grid->enableY(true);
+        d->m_grid->show();
 		emit enableGridXChanged(isShow);
 		emit enableGridYChanged(isShow);
 		emit enableGridChanged(isShow);
@@ -1003,10 +1041,10 @@ void SA2DGraph::enableGrid(bool isShow)
 	}
 	else
 	{
-		if(nullptr == m_grid){
+        if(nullptr == d->m_grid){
 			return;
 		}
-		m_grid->hide();
+        d->m_grid->hide();
 	}
     replot();
 	emit enableGridChanged(isShow);
@@ -1014,9 +1052,10 @@ void SA2DGraph::enableGrid(bool isShow)
 
 void SA2DGraph::enableGridX(bool enable)
 {
-	if (nullptr == m_grid)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_grid)
 		return;
-	m_grid->enableX(enable);
+    d->m_grid->enableX(enable);
 	emit enableGridXChanged(enable);
 	if (!enable)
 	{
@@ -1027,9 +1066,10 @@ void SA2DGraph::enableGridX(bool enable)
 
 void SA2DGraph::enableGridY(bool enable)
 {
-	if (nullptr == m_grid)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_grid)
 		return;
-	m_grid->enableY(enable);
+    d->m_grid->enableY(enable);
 	emit enableGridYChanged(enable);
 	if (!enable)
 	{
@@ -1039,16 +1079,18 @@ void SA2DGraph::enableGridY(bool enable)
 
 void SA2DGraph::enableGridXMin(bool enable)
 {
-	if (nullptr == m_grid)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_grid)
 		return;
-	m_grid->enableXMin(enable);
+    d->m_grid->enableXMin(enable);
 	emit enableGridXMinChanged(enable);
 }
 void SA2DGraph::enableGridYMin(bool enable)
 {
-	if (nullptr == m_grid)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_grid)
 		return;
-	m_grid->enableYMin(enable);
+    d->m_grid->enableYMin(enable);
 	emit enableGridYMinChanged(enable);
 }
 
@@ -1056,87 +1098,8 @@ void SA2DGraph::enableGridYMin(bool enable)
 //画线和数据 操作
 //========================================================================================
 
-QwtPlotCurve* SA2DGraph::addCurve(const QVector<QPointF>& xyDatas)
-{
-    QwtPlotCurve* pCurve = nullptr;
-    pCurve = new QwtPlotCurve;
-    pCurve->setYAxis(yLeft);
-    pCurve->setXAxis(xBottom);
-    pCurve->setStyle(QwtPlotCurve::Lines);
-    pCurve->setSamples(xyDatas);
-    pCurve->attach(this);
-    emit plotCurveChanged(pCurve);
-    return pCurve;
-}
-
-QwtPlotCurve* SA2DGraph::addCurve(std::vector<double>& xDatas,std::vector<double>& yDatas)
-{
-    QwtPlotCurve* pCurve = nullptr;
-    pCurve = new QwtPlotCurve;
-    pCurve->setYAxis(yLeft);
-    pCurve->setXAxis(xBottom);
-    pCurve->setStyle(QwtPlotCurve::Lines);
-    pCurve->setSamples(&xDatas[0],&yDatas[0],xDatas.size() <= yDatas.size() ? xDatas.size() : yDatas.size());
-    pCurve->attach(this);
-    emit plotCurveChanged(pCurve);
-    return pCurve;
-}
-
-QwtPlotCurve* SA2DGraph::addCurve(const double *xData, const double *yData, int size)
-{
-    QwtPlotCurve* pCurve = nullptr;
-    pCurve = new QwtPlotCurve;
-    pCurve->setYAxis(yLeft);
-    pCurve->setXAxis(xBottom);
-    pCurve->setStyle(QwtPlotCurve::Lines);
-    pCurve->setSamples(xData,yData,size);
-    pCurve->attach(this);
-    emit plotCurveChanged(pCurve);
-    return pCurve;
-}
-
-QwtPlotCurve* SA2DGraph::addCurve(const QVector< double > &xData
-                                      , const QVector< double > &yData)
-{
-    QwtPlotCurve* pCurve = nullptr;
-    pCurve = new QwtPlotCurve;
-    pCurve->setYAxis(yLeft);
-    pCurve->setXAxis(xBottom);
-    pCurve->setStyle(QwtPlotCurve::Lines);
-    pCurve->setSamples(xData,yData);
-    pCurve->attach(this);
-    emit plotCurveChanged(pCurve);
-    return pCurve;
-}
 
 
-void SA2DGraph::addCurve(QwtPlotCurve* pC)
-{
-    pC->attach(this);
-    emit plotCurveChanged(pC);
-}
-///
-/// \brief 添加一条竖直线
-/// \return
-///
-QwtPlotMarker* SA2DGraph::addVLine(double val)
-{
-    QwtPlotMarker *marker = new QwtPlotMarker();
-    marker->setXValue(val);
-    marker->setLineStyle( QwtPlotMarker::VLine );
-    marker->setItemAttribute( QwtPlotItem::Legend, true );
-    marker->attach( this );
-    return marker;
-}
-QwtPlotMarker* SA2DGraph::addHLine(double val)
-{
-    QwtPlotMarker *marker = new QwtPlotMarker();
-    marker->setYValue(val);
-    marker->setLineStyle( QwtPlotMarker::HLine );
-    marker->setItemAttribute( QwtPlotItem::Legend, true );
-    marker->attach( this );
-    return marker;
-}
 
 
 
@@ -1297,25 +1260,27 @@ void SA2DGraph::unenableEditor()
 
 void SA2DGraph::setupPicker()
 {
-    if(nullptr == m_picker)
+    SA_D(SA2DGraph);
+    if(nullptr == d->m_picker)
     {
-        m_picker = new SACrossTracker(this->canvas());
+        d->m_picker = new SACrossTracker(this->canvas());
     }
 
 }
 
 void SA2DGraph::enablePicker(bool enable)
 {
-    if(!enable && nullptr == m_picker)
+    SA_D(SA2DGraph);
+    if(!enable && nullptr == d->m_picker)
         return;
-    if(nullptr == m_picker)
+    if(nullptr == d->m_picker)
         setupPicker();
-	m_picker->setEnabled( enable );
-    if(m_zoomer.isNull())
+    d->m_picker->setEnabled( enable );
+    if(d->m_zoomer.isNull())
     {
         if(isEnableZoomer())
         {
-            m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::AlwaysOn) );
+            d->m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::AlwaysOn) );
         }
     }
 	emit enablePickerChanged(enable);
@@ -1324,19 +1289,20 @@ void SA2DGraph::enablePicker(bool enable)
 
 void SA2DGraph::enablePanner(bool enable)
 {
+    SA_D(SA2DGraph);
 	if (enable)
 	{
-		if (nullptr == m_panner)
+        if (nullptr == d->m_panner)
 		{
 			setupPanner();
 		}
-		m_panner->setEnabled(enable);
+        d->m_panner->setEnabled(enable);
 	}
 	else
 	{
-		if (nullptr != m_panner)
+        if (nullptr != d->m_panner)
 		{
-			m_panner->setEnabled(enable);
+            d->m_panner->setEnabled(enable);
 		}
 	}
 	emit enablePannerChanged(enable);
@@ -1347,19 +1313,21 @@ void SA2DGraph::enablePanner(bool enable)
 void SA2DGraph::setupPanner()
 {
 	//设置拖动
-	if (nullptr == m_panner)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_panner)
 	{
-		m_panner = new QwtPlotPanner( canvas() );
-		m_panner->setMouseButton( Qt::MidButton );
+        d->m_panner = new QwtPlotPanner( canvas() );
+        d->m_panner->setMouseButton( Qt::MidButton );
 	}
 }
 void SA2DGraph::deletePanner()
 {
-	if (nullptr != m_panner)
+    SA_D(SA2DGraph);
+    if (nullptr != d->m_panner)
 	{
-		m_panner->setParent(nullptr);//断开和canvas()的父子连接
-		delete m_panner;
-		m_panner = nullptr;
+        d->m_panner->setParent(nullptr);//断开和canvas()的父子连接
+        delete d->m_panner;
+        d->m_panner = nullptr;
 	}
 }
 ///
@@ -1368,22 +1336,23 @@ void SA2DGraph::deletePanner()
 ///
 void SA2DGraph::enableZoomer(bool enable)
 {
+    SA_D(SA2DGraph);
     if(!enable)
     {
-        if(m_zoomer.isNull())
+        if(d->m_zoomer.isNull())
         {
             return;
         }
     }
-    if(m_zoomer.isNull() /*|| nullptr == m_zoomerSecond*/)
+    if(d->m_zoomer.isNull() /*|| nullptr == m_zoomerSecond*/)
     {
         setupZoomer();
     }
-    enableZoomer(m_zoomer.data(),enable);
-    enableZoomer(m_zoomerSecond.data(),enable);
+    enableZoomer(d->m_zoomer.data(),enable);
+    enableZoomer(d->m_zoomerSecond.data(),enable);
     if(isEnablePicker())
     {
-        m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::ActiveOnly) );
+        d->m_zoomer->setTrackerMode( (enable ? QwtPicker::AlwaysOff : QwtPicker::ActiveOnly) );
     }
     emit enableZoomerChanged(enable);
 }
@@ -1418,19 +1387,21 @@ void SA2DGraph::enableZoomer(QwtPlotZoomer *zoomer,bool enable)
 ///
 void SA2DGraph::setZoomBase()
 {
-    if(!m_zoomer.isNull())
+    SA_D(SA2DGraph);
+    if(!d->m_zoomer.isNull())
     {
-        m_zoomer->setZoomBase(true);
+        d->m_zoomer->setZoomBase(true);
     }
-    if(!m_zoomerSecond.isNull())
+    if(!d->m_zoomerSecond.isNull())
     {
-        m_zoomerSecond->setZoomBase(true);
+        d->m_zoomerSecond->setZoomBase(true);
     }
 }
 
 void SA2DGraph::setupZoomer()
 {
-    if(m_zoomer.isNull())
+    SA_D(SA2DGraph);
+    if(d->m_zoomer.isNull())
     {
         qDebug()<<"setup zoom";
 #if 0
@@ -1450,32 +1421,32 @@ void SA2DGraph::setupZoomer()
         m_zoomer = zoom;
 
 #else
-        m_zoomer.reset(new SAPlotZoomer(xBottom,yLeft,canvas()));
-        m_zoomer->setKeyPattern( QwtEventPattern::KeyRedo, Qt::Key_I, Qt::ShiftModifier );
-        m_zoomer->setKeyPattern( QwtEventPattern::KeyUndo, Qt::Key_O, Qt::ShiftModifier );
-        m_zoomer->setKeyPattern( QwtEventPattern::KeyHome, Qt::Key_Home );
-        m_zoomer->setMousePattern( QwtEventPattern::MouseSelect2,
+        d->m_zoomer.reset(new SAPlotZoomer(xBottom,yLeft,canvas()));
+        d->m_zoomer->setKeyPattern( QwtEventPattern::KeyRedo, Qt::Key_I, Qt::ShiftModifier );
+        d->m_zoomer->setKeyPattern( QwtEventPattern::KeyUndo, Qt::Key_O, Qt::ShiftModifier );
+        d->m_zoomer->setKeyPattern( QwtEventPattern::KeyHome, Qt::Key_Home );
+        d->m_zoomer->setMousePattern( QwtEventPattern::MouseSelect2,
                 Qt::RightButton, Qt::ControlModifier );
-        m_zoomer->setMousePattern( QwtEventPattern::MouseSelect3,
+        d->m_zoomer->setMousePattern( QwtEventPattern::MouseSelect3,
                 Qt::RightButton );
-        m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
-        m_zoomer->setZoomBase(false);
-        m_zoomer->setMaxStackDepth(20);
+        d->m_zoomer->setTrackerMode( QwtPicker::AlwaysOff );
+        d->m_zoomer->setZoomBase(false);
+        d->m_zoomer->setMaxStackDepth(20);
 #endif
     }
-    if(nullptr == m_zoomerSecond)
+    if(nullptr == d->m_zoomerSecond)
     {
-        m_zoomerSecond.reset(new SAPlotZoomer(xTop,yRight,canvas()));
-        m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyRedo, Qt::Key_I, Qt::ShiftModifier );
-        m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyUndo, Qt::Key_O, Qt::ShiftModifier );
-        m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyHome, Qt::Key_Home );
-        m_zoomerSecond->setMousePattern( QwtEventPattern::MouseSelect2,
+        d->m_zoomerSecond.reset(new SAPlotZoomer(xTop,yRight,canvas()));
+        d->m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyRedo, Qt::Key_I, Qt::ShiftModifier );
+        d->m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyUndo, Qt::Key_O, Qt::ShiftModifier );
+        d->m_zoomerSecond->setKeyPattern( QwtEventPattern::KeyHome, Qt::Key_Home );
+        d->m_zoomerSecond->setMousePattern( QwtEventPattern::MouseSelect2,
                 Qt::RightButton, Qt::ControlModifier );
-        m_zoomerSecond->setMousePattern( QwtEventPattern::MouseSelect3,
+        d->m_zoomerSecond->setMousePattern( QwtEventPattern::MouseSelect3,
                 Qt::RightButton );
-        m_zoomerSecond->setTrackerMode( QwtPicker::AlwaysOff );
-        m_zoomerSecond->setZoomBase(false);
-        m_zoomerSecond->setMaxStackDepth(20);
+        d->m_zoomerSecond->setTrackerMode( QwtPicker::AlwaysOff );
+        d->m_zoomerSecond->setZoomBase(false);
+        d->m_zoomerSecond->setMaxStackDepth(20);
     }
     QwtPlotMagnifier *magnifier = new QwtPlotMagnifier( canvas() );
     magnifier->setMouseButton( Qt::NoButton );
@@ -1484,13 +1455,14 @@ void SA2DGraph::setupZoomer()
 
 void SA2DGraph::deleteZoomer()
 {
-    if(!m_zoomer.isNull())
+    SA_D(SA2DGraph);
+    if(!d->m_zoomer.isNull())
     {
-        m_zoomer.reset();
+        d->m_zoomer.reset();
     }
-    if(!m_zoomerSecond.isNull())
+    if(!d->m_zoomerSecond.isNull())
     {
-        m_zoomerSecond.reset();
+        d->m_zoomerSecond.reset();
     }
 }
 
@@ -1501,25 +1473,27 @@ void SA2DGraph::deleteZoomer()
 ///
 void SA2DGraph::setZoomReset()
 {
-    if(!m_zoomer.isNull())
+    SA_D(SA2DGraph);
+    if(!d->m_zoomer.isNull())
     {
-        m_zoomer->zoom(0);
+        d->m_zoomer->zoom(0);
 
     }
-    if(m_zoomerSecond)
+    if(!d->m_zoomerSecond.isNull())
     {
-        m_zoomerSecond->zoom(0);
+        d->m_zoomerSecond->zoom(0);
     }
 }
 
 void SA2DGraph::zoomIn()
 {
-    if(m_zoomer.isNull())
+    SA_D(SA2DGraph);
+    if(d->m_zoomer.isNull())
     {
         setupZoomer();
     }
 
-    QRectF rect = m_zoomer->zoomRect();
+    QRectF rect = d->m_zoomer->zoomRect();
     double w = rect.width()*0.625;
     double h = rect.height()*0.625;
     double x = rect.x() + (rect.width()-w)/2.0;
@@ -1529,17 +1503,18 @@ void SA2DGraph::zoomIn()
     rect.setWidth(w);
     rect.setHeight(h);
 
-    m_zoomer->zoom(rect);
+    d->m_zoomer->zoom(rect);
 }
 
 void SA2DGraph::zoomOut()
 {
-    if(m_zoomer.isNull())
+    SA_D(SA2DGraph);
+    if(d->m_zoomer.isNull())
     {
         setupZoomer();
     }
 
-    QRectF rect = m_zoomer->zoomRect();
+    QRectF rect = d->m_zoomer->zoomRect();
     double w = rect.width()*1.6;
     double h = rect.height()*1.6;
     double x = rect.x() - (w - rect.width())/2.0;
@@ -1548,26 +1523,28 @@ void SA2DGraph::zoomOut()
     rect.setY(y);
     rect.setWidth(w);
     rect.setHeight(h);
-    m_zoomer->zoom(rect);
+    d->m_zoomer->zoom(rect);
 
 }
 
 void SA2DGraph::setupLegend()
 {
-	if (nullptr == m_legend)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_legend)
 	{
-		m_legend = new LegendItem();
-		m_legend->attach( this );
+        d->m_legend = new LegendItem();
+        d->m_legend->attach( this );
 	}
 }
 
 void SA2DGraph::enableLegend(bool enable)
 {
+    SA_D(SA2DGraph);
 	if (enable)
 	{
-		if (m_legend)
+        if (d->m_legend)
 		{
-			m_legend->setVisible(true);
+            d->m_legend->setVisible(true);
 		}
 		else
 		{
@@ -1576,9 +1553,9 @@ void SA2DGraph::enableLegend(bool enable)
 	}
 	else
 	{
-		if (m_legend)
+        if (d->m_legend)
 		{
-			m_legend->setVisible(false);
+            d->m_legend->setVisible(false);
 // 			m_legend->detach();
 // 			delete m_legend;
 // 			m_legend = nullptr;
@@ -1601,15 +1578,16 @@ void SA2DGraph::enableLegendPanel(bool enable )
 }
 void SA2DGraph::setuplegendPanel()
 {
-	if (m_legendPanel)
+    SA_D(SA2DGraph);
+    if (d->m_legendPanel)
 	{
 		return;
 	}
-	m_legendPanel = new QwtLegend;
-	m_legendPanel->setDefaultItemMode( QwtLegendData::Checkable );
-	insertLegend( m_legendPanel, QwtPlot::RightLegend );
+    d->m_legendPanel = new QwtLegend;
+    d->m_legendPanel->setDefaultItemMode( QwtLegendData::Checkable );
+    insertLegend( d->m_legendPanel, QwtPlot::RightLegend );
 //	connect( m_legendPanel, &QwtLegend::checked,&ChartWave_qwt::showItem);
-	connect( m_legendPanel, SIGNAL( checked( const QVariant &, bool, int ) ),
+    connect( d->m_legendPanel, SIGNAL( checked( const QVariant &, bool, int ) ),
 		SLOT( showItem( const QVariant &, bool ) ) );
 
 	QwtPlotItemList items = itemList( QwtPlotItem::Rtti_PlotCurve );
@@ -1617,51 +1595,56 @@ void SA2DGraph::setuplegendPanel()
 	{
 		const QVariant itemInfo = itemToInfo( items[i] );
 		QwtLegendLabel *legendLabel =
-			qobject_cast<QwtLegendLabel *>( m_legendPanel->legendWidget( itemInfo ) );
+            qobject_cast<QwtLegendLabel *>( d->m_legendPanel->legendWidget( itemInfo ) );
 		if ( legendLabel )
 			legendLabel->setChecked( items[i]->isVisible() );
 	}
 }
 void SA2DGraph::deletelegendPanel()
 {
+    SA_D(SA2DGraph);
 	insertLegend( nullptr);//内部会销毁
-	m_legendPanel = nullptr;
+    d->m_legendPanel = nullptr;
 }
 
 void SA2DGraph::setupYDataPicker()
 {
-    if (nullptr == m_yDataPicker)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_yDataPicker)
 	{
-        m_yDataPicker = new SAYDataTracker( this->canvas() );
-        m_yDataPicker->setRubberBandPen( QPen( "MediumOrchid" ) );
+        d->m_yDataPicker = new SAYDataTracker( this->canvas() );
+        d->m_yDataPicker->setRubberBandPen( QPen( "MediumOrchid" ) );
 	}
 }
 void SA2DGraph::deleteYDataPicker()
 {
-    if (nullptr != m_yDataPicker)
+    SA_D(SA2DGraph);
+    if (nullptr != d->m_yDataPicker)
 	{
-        m_yDataPicker->setParent(nullptr);//断开和canvas()的父子连接
-        delete m_yDataPicker;
-        m_yDataPicker = nullptr;
+        d->m_yDataPicker->setParent(nullptr);//断开和canvas()的父子连接
+        delete d->m_yDataPicker;
+        d->m_yDataPicker = nullptr;
     }
 }
 
 void SA2DGraph::setupXYDataPicker()
 {
-    if (nullptr == m_xyDataPicker)
+    SA_D(SA2DGraph);
+    if (nullptr == d->m_xyDataPicker)
     {
-        m_xyDataPicker = new SAXYDataTracker( this->canvas() );
-        m_xyDataPicker->setRubberBandPen( QPen( "MediumOrchid" ) );
+        d->m_xyDataPicker = new SAXYDataTracker( this->canvas() );
+        d->m_xyDataPicker->setRubberBandPen( QPen( "MediumOrchid" ) );
     }
 }
 
 void SA2DGraph::deleteXYDataPicker()
 {
-    if (nullptr != m_xyDataPicker)
+    SA_D(SA2DGraph);
+    if (nullptr != d->m_xyDataPicker)
     {
-        m_xyDataPicker->setParent(nullptr);//断开和canvas()的父子连接
-        delete m_xyDataPicker;
-        m_xyDataPicker = nullptr;
+        d->m_xyDataPicker->setParent(nullptr);//断开和canvas()的父子连接
+        delete d->m_xyDataPicker;
+        d->m_xyDataPicker = nullptr;
     }
 }
 
@@ -1696,10 +1679,11 @@ void SA2DGraph::enableXYDataPicker(bool enable)
 ///
 bool SA2DGraph::isEnableZoomer() const
 {
-    if(m_zoomer)
-        return m_zoomer->isEnabled();
-    if(m_zoomerSecond)
-        return m_zoomerSecond->isEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_zoomer)
+        return d->m_zoomer->isEnabled();
+    if(d->m_zoomerSecond)
+        return d->m_zoomerSecond->isEnabled();
     return false;
 }
 ///
@@ -1708,8 +1692,9 @@ bool SA2DGraph::isEnableZoomer() const
 ///
 bool SA2DGraph::isEnablePicker() const
 {
-    if(m_picker)
-        return m_picker->isEnabled();
+    SA_DC(SA2DGraph);
+    if(d->m_picker)
+        return d->m_picker->isEnabled();
     return false;
 }
 void SA2DGraph::showItem( const QVariant &itemInfo, bool on )
@@ -1753,214 +1738,7 @@ QwtPlotCurve* SA2DGraph::getCurveByTitle(const QString& strName)
     return nullptr;
 }
 
-void SA2DGraph::getYDatas(QVector<double>& ys,int nCur)
-{
-    QwtPlotCurve* cur = getCurveList().at(nCur);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getYDatas(ys,cur);
-}
 
-void SA2DGraph::getYDatas(QVector<double>& ys,const QString& strCurName)
-{
-    QwtPlotCurve* cur = getCurveByTitle(strCurName);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getYDatas(ys,cur);
-}
-
-void SA2DGraph::getXDatas(QVector<double>& xs,int nCur)
-{
-    QwtPlotCurve* cur = getCurveList().at(nCur);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getXDatas(xs,cur);
-}
-
-void SA2DGraph::getXDatas(QVector<double>& xs,const QString& strCurName)
-{
-    QwtPlotCurve* cur = getCurveByTitle(strCurName);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getXDatas(xs,cur);
-}
-
-void SA2DGraph::getXYDatas(QVector<QPointF>& xys,int nCur)
-{
-    QwtPlotCurve* cur = getCurveList().at(nCur);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getXYDatas(xys,cur);
-
-}
-
-void SA2DGraph::getXYDatas(QVector<QPointF>& xys,const QString& strCurName)
-{
-    QwtPlotCurve* cur = getCurveByTitle(strCurName);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getXYDatas(xys,cur);
-}
-
-void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,int nCur)
-{
-    QwtPlotCurve* cur = getCurveList().at(nCur);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getYDatas(ys,cur);
-    SAChart::getXDatas(xs,cur);
-}
-
-void SA2DGraph::getXYDatas(QVector<double>& xs,QVector<double>& ys,const QString& strCurName)
-{
-    QwtPlotCurve* cur = getCurveByTitle(strCurName);
-    if(nullptr == cur){
-        return;
-    }
-    SAChart::getYDatas(ys,cur);
-    SAChart::getXDatas(xs,cur);
-}
-
-///
-/// \brief 获取当前显示区域的数据
-/// \param out_xys
-/// \param curve
-/// \return 返回区域的索引x为第一个索引，y为第二个索引
-///
-QPoint SA2DGraph::getVisibleRegionDatas(QVector<QPointF>& out_xys,QwtPlotCurve* curve) const
-{
-	if (!curve)
-		return QPoint(0,0);
-	QPoint boundary(0,0);
-    QwtPlot::Axis xaxis = QwtPlot::xBottom;
-    if(!axisEnabled(QwtPlot::xBottom))
-        xaxis = QwtPlot::xTop;
-    QwtInterval xInter = axisInterval(xaxis);
-	double min = xInter.minValue();
-	double max = xInter.maxValue();
-
-	auto pdatas = curve->data();
-	size_t n = pdatas->size();
-	out_xys.reserve(n);
-	bool firstIn(true);
-    for(size_t i=0;i<n;++i)
-	{
-		if(pdatas->sample(i).x()>=min 
-			&&
-			pdatas->sample(i).x()<= max)
-		{
-			out_xys.push_back(pdatas->sample(i));
-			if (firstIn)
-			{
-				boundary.rx() = i;
-				firstIn = false;
-			}
-			boundary.ry() = i;
-		}
-	}
-	return boundary;
-}
-
-QPoint SA2DGraph::getVisibleRegionDatas(std::vector<double>& out_xs
-	,std::vector<double>& out_ys
-    ,QwtPlotCurve* curve) const
-{
-	if (!curve)
-		return QPoint(0,0);
-	QPoint boundary(0,0);
-    QwtPlot::Axis xaxis = QwtPlot::xBottom;
-    if(!axisEnabled(QwtPlot::xBottom))
-        xaxis = QwtPlot::xTop;
-    QwtInterval xInter = axisInterval(xaxis);
-	double min = xInter.minValue();
-	double max = xInter.maxValue();
-
-	auto pdatas = curve->data();
-	size_t n = pdatas->size();
-	out_xs.reserve(n);
-	out_ys.reserve(n);
-	bool firstIn(true);
-    for(size_t i=0;i<n;++i)
-	{
-		if(pdatas->sample(i).x()>=min 
-			&&
-			pdatas->sample(i).x()<= max)
-		{
-			out_xs.push_back(pdatas->sample(i).x());
-			out_ys.push_back(pdatas->sample(i).y());
-			if (firstIn)
-			{
-				boundary.rx() = i;
-				firstIn = false;
-			}
-			boundary.ry() = i;
-		}
-	}
-    return boundary;
-}
-
-QPoint SA2DGraph::getVisibleRegionDatas(QVector<double>& out_xs, QVector<double>& out_ys, QwtPlotCurve* curve) const
-{
-    if (!curve)
-        return QPoint(0,0);
-    QPoint boundary(0,0);
-    QwtPlot::Axis xaxis = QwtPlot::xBottom;
-    if(!axisEnabled(QwtPlot::xBottom))
-        xaxis = QwtPlot::xTop;
-    QwtInterval xInter = axisInterval(xaxis);
-    double min = xInter.minValue();
-    double max = xInter.maxValue();
-
-    auto pdatas = curve->data();
-    size_t n = pdatas->size();
-    out_xs.reserve(n);
-    out_ys.reserve(n);
-    bool firstIn(true);
-    for(size_t i=0;i<n;++i)
-    {
-        if(pdatas->sample(i).x()>=min
-            &&
-            pdatas->sample(i).x()<= max)
-        {
-            out_xs.push_back(pdatas->sample(i).x());
-            out_ys.push_back(pdatas->sample(i).y());
-            if (firstIn)
-            {
-                boundary.rx() = i;
-                firstIn = false;
-            }
-            boundary.ry() = i;
-        }
-    }
-    return boundary;
-}
-///
-/// \brief 获取当前正在显示的区域
-/// \return
-///
-QRectF SA2DGraph::getVisibleRegionRang() const
-{
-    QwtPlot::Axis xaxis = QwtPlot::xBottom;
-    if(!axisEnabled(QwtPlot::xBottom))
-        xaxis = QwtPlot::xTop;
-    QwtInterval inter = axisInterval(xaxis);
-    double xmin = inter.minValue();
-    double xmax = inter.maxValue();
-    QwtPlot::Axis yaxis = QwtPlot::yLeft;
-    if(!axisEnabled(QwtPlot::yLeft))
-        yaxis = QwtPlot::yRight;
-    inter = axisInterval(yaxis);
-    double ymin = inter.minValue();
-    double ymax = inter.maxValue();
-    return QRectF(xmin,ymin,xmax-xmin,ymax-ymin);
-}
 
 ///
 /// \brief 把AxisDateScaleType转换为字符

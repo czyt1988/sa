@@ -13,10 +13,10 @@ DESTDIR = ../bin/libs
 CONFIG += c++11
 
 HEADERS += \
+    /../global/SAGlobals.h \
     SAData.h \
     SADataPackage.h \
     SAItem.h \
-    SAGlobals.h \
     SALibGlobal.h \
     SAValueManager.h \
     SAValueManagerModel.h \
@@ -48,7 +48,6 @@ SOURCES += \
     SAItem.cpp \
     SAValueManager.cpp \
     SAValueManagerModel.cpp \
-    SAGlobals.cpp \
     SARandColorMaker.cpp \
     SACsvWriter.cpp \
     SALog.cpp \

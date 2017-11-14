@@ -3,8 +3,8 @@
 #include <qglobal.h>
 #define SALIB_VERSION 1
 #define SALIB_VERSION_STR "0.1"
-#include "SAGlobals.h"
 
+#include "../global/SAGlobals.h"
 
 #if defined(SALIB_MAKE)     // create a DLL library
 #define SALIB_EXPORT Q_DECL_EXPORT

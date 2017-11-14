@@ -1,6 +1,6 @@
 #ifndef SAQWTAXISSETWIDGET_H
 #define SAQWTAXISSETWIDGET_H
-
+#include "SACommonUIGlobal.h"
 #include <QWidget>
 class QwtPlot;
 class QButtonGroup;
@@ -8,7 +8,7 @@ namespace Ui {
 class SAQwtAxisSetWidget;
 }
 
-class SAQwtAxisSetWidget : public QWidget
+class SA_COMMON_UI_EXPORT SAQwtAxisSetWidget : public QWidget
 {
     Q_OBJECT
 

@@ -16,7 +16,7 @@ class DataFeaturePlotInfoItem;
 class SAChart2D;
 class SAFigureContainer;
 class CurveDataFeatureItem;
-
+class SAFigureWindowPrivate;
 ///
 /// \brief SA的绘图窗口
 ///
@@ -24,6 +24,7 @@ class SA_COMMON_UI_EXPORT SAFigureWindow : public QMainWindow
         ,public SAAbstractFigure
 {
     Q_OBJECT
+    SA_IMPL(SAFigureWindow)
 public:
     explicit SAFigureWindow(QWidget *parent = 0);
     ~SAFigureWindow();
@@ -38,23 +39,15 @@ public:
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
     void setBackgroundColor(const QColor& clr);
+public slots:
+    void redo();
+    void undo();
+protected:
+    void keyPressEvent(QKeyEvent *e);
 signals:
     //绘图数据变更消息
     void chartDataChanged(QwtPlot* plot,QwtPlotItem* item);
 private:
-    void initUI();
-private:
-    class UI
-    {
-    public:
-        void setupUI(SAFigureWindow* par);
-        void retranslateUi(SAFigureWindow* par);
-        SAFigureContainer *centralwidget;
-    };
-
-private:
-    QScopedPointer<UI> ui;
-    SAChart2D *m_currentPlot;
 };
 
 #endif // SAFIGUREWINDOW_H

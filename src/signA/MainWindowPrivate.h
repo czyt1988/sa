@@ -67,7 +67,7 @@ public:
     QAction *actionChartZoomReset;
     QAction *actionPickCurveToData;
     QAction *actionAbout;
-    QAction *actionRescind;
+    QAction *actionUndo;
     QAction *actionRedo;
     QAction *actionValueManagerDock;
     QAction *actionViewValueInCurrentTab;

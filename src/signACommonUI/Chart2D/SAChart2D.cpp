@@ -24,18 +24,34 @@
 class SAChart2DPrivate
 {
     SA_IMPL_PUBLIC(SAChart2D)
+public:
     QUndoStack m_undoStack;
+    SAChart2D::SelectionMode m_selectMode;///< 选择模式
+    SAAbstractRegionSelectEditor* m_chartSelectRigionEditor;///< 矩形选择编辑器
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
+      ,m_selectMode(SAChart2D::NoneSelection)
+      ,m_chartSelectRigionEditor(nullptr)
     {
 
     }
 
-
+    void appendItemAddCommand(QwtPlotItem* item,const QString& des)
+    {
+        m_undoStack.push(new SAFigureChartItemAddCommand(q_ptr,item,des));
+    }
+    void appendItemListAddCommand(QList<QwtPlotItem*> itemList,const QString& des)
+    {
+        m_undoStack.push(new SAFigureChartItemListAddCommand(q_ptr,itemList,des));
+    }
+    void removeItemCommand(QwtPlotItem* item,const QString& des)
+    {
+        m_undoStack.push(new SAFigureChartItemDeleteCommand(q_ptr,item,des));
+    }
 };
 
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
-  ,m_chartSelectRigionEditor(nullptr)
+  ,d_ptr(new SAChart2DPrivate(this))
 {
     setAcceptDrops(true);
 }
@@ -43,6 +59,35 @@ SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
 SAChart2D::~SAChart2D()
 {
 }
+
+QwtPlotCurve *SAChart2D::addCurve(const double *xData, const double *yData, int size)
+{
+    if(size<=0)
+    {
+        return nullptr;
+    }
+    QwtPlotCurve* pCurve = nullptr;
+    pCurve = new QwtPlotCurve;
+    pCurve->setYAxis(yLeft);
+    pCurve->setXAxis(xBottom);
+    pCurve->setStyle(QwtPlotCurve::Lines);
+    pCurve->setSamples(xData,yData,size);
+    addCurve(pCurve);
+    return pCurve;
+}
+
+QwtPlotCurve *SAChart2D::addCurve(const QVector<double> &xData, const QVector<double> &yData)
+{
+    QwtPlotCurve* pCurve = nullptr;
+    pCurve = new QwtPlotCurve;
+    pCurve->setYAxis(yLeft);
+    pCurve->setXAxis(xBottom);
+    pCurve->setStyle(QwtPlotCurve::Lines);
+    pCurve->setSamples(xData,yData);
+    addCurve(pCurve);
+    return pCurve;
+}
+
 ///
 /// \brief 添加曲线
 /// \param datas
@@ -50,7 +95,6 @@ SAChart2D::~SAChart2D()
 ///
 SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
 {
-    SA_D(SAChart2D);
     std::unique_ptr<SAXYSeries> series(new SAXYSeries(datas->getName(),datas));
     if(series->dataSize() <= 0)
     {
@@ -59,8 +103,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
 
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add xy serise:%1").arg(series->title().text())));
-    emit plotCurveChanged(series.get());
+    addCurve(series.get());
     return series.release();
 }
 ///
@@ -72,7 +115,6 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
 ///
 SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xDetal)
 {
-    SA_D(SAChart2D);
     std::unique_ptr<SAXYSeries> series(new SAXYSeries(datas->getName()));
     series->setSamples(datas,xStart,xDetal);
     if(series->dataSize() <= 0)
@@ -81,8 +123,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
     }
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add xy serise:%1").arg(series->title().text())));
-    emit plotCurveChanged(series.get());
+    addCurve(series.get());
     return series.release();
 }
 ///
@@ -94,7 +135,6 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
 ///
 SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QString &name)
 {
-    SA_D(SAChart2D);
     std::unique_ptr<SAXYSeries> series(new SAXYSeries(name));
     series->setSamples(x,y);
     if(series->dataSize() <= 0)
@@ -103,28 +143,33 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QS
     }
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add xy serise:%1").arg(series->title().text())));
-    emit plotCurveChanged(series.get());
+    addCurve(series.get());
     return series.release();
 }
 
 
 void SAChart2D::addCurve(QwtPlotCurve *cur)
 {
-    SA_D(SAChart2D);
-    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,cur,tr("add curve:%1").arg(cur->title().text())));
+    d_ptr->appendItemAddCommand(cur,tr("add curve:%1").arg(cur->title().text()));
+}
+
+void SAChart2D::addCurve(SAXYSeries *cur)
+{
+    d_ptr->appendItemAddCommand(cur,tr("add curve:%1").arg(cur->title().text()));
 }
 
 QwtPlotHistogram *SAChart2D::addBar(const QVector<QwtIntervalSample> &sample)
 {
-    SA_D(SAChart2D);
+    if(sample.size() <= 0)
+    {
+        return nullptr;
+    }
     QwtPlotHistogram* his = new QwtPlotHistogram();
     his->setSamples (sample);
     his->setYAxis(yLeft);
     his->setXAxis(xBottom);
     his->setStyle (QwtPlotHistogram::Columns);
-    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,his,tr("add bar:%1").arg(his->title().text())));
-    emit plotCurveChanged(his);
+    addBar(his);
     return his;
 }
 ///
@@ -134,7 +179,6 @@ QwtPlotHistogram *SAChart2D::addBar(const QVector<QwtIntervalSample> &sample)
 ///
 SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
 {
-    SA_D(SAChart2D);
     std::unique_ptr<SABarSeries> series(new SABarSeries(datas,datas->getName()));
     if(series->dataSize() <= 0)
     {
@@ -144,9 +188,61 @@ SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
     series->setBrush(QBrush(clr));
     series->setPen(clr,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
     series->setStyle(QwtPlotHistogram::Columns);
-    d->m_undoStack.push(new SAFigureChartItemAddCommand(this,series.get(),tr("add bar:%1").arg(series->title().text())));
-    emit plotCurveChanged(series.get());
+    addBar(series.get());
     return series.release();
+}
+
+void SAChart2D::addBar(QwtPlotHistogram *cur)
+{
+    d_ptr->appendItemAddCommand(cur,tr("add bar:%1").arg(cur->title().text()));
+}
+
+void SAChart2D::addBar(SABarSeries *cur)
+{
+    d_ptr->appendItemAddCommand(cur,tr("add bar:%1").arg(cur->title().text()));
+}
+///
+/// \brief 添加一条竖直线
+/// \return
+///
+QwtPlotMarker *SAChart2D::addVLine(double val)
+{
+    QwtPlotMarker *marker = new QwtPlotMarker();
+    marker->setXValue(val);
+    marker->setLineStyle( QwtPlotMarker::VLine );
+    marker->setItemAttribute( QwtPlotItem::Legend, true );
+    addPlotMarker(marker);
+    return marker;
+}
+///
+/// \brief 添加一条水平线
+/// \param val
+/// \return
+///
+QwtPlotMarker *SAChart2D::addHLine(double val)
+{
+    QwtPlotMarker *marker = new QwtPlotMarker();
+    marker->setYValue(val);
+    marker->setLineStyle( QwtPlotMarker::HLine );
+    marker->setItemAttribute( QwtPlotItem::Legend, true );
+    addPlotMarker(marker);
+    return marker;
+}
+///
+/// \brief 添加一个marker
+/// \param marker
+///
+void SAChart2D::addPlotMarker(QwtPlotMarker *marker)
+{
+    d_ptr->appendItemAddCommand(marker,tr("add marker:%1").arg(marker->title().text()));
+}
+///
+/// \brief 移除一个对象
+/// \param item
+///
+void SAChart2D::removeItem(QwtPlotItem *item)
+{
+    d_ptr->removeItemCommand(item,tr("delete [%1]").arg(item->title().text()));
 }
 
 ///
@@ -232,6 +328,7 @@ bool SAChart2D::getDataInSelectRange(QVector<QPointF> &xy, QwtPlotCurve *cur)
 ///
 void SAChart2D::enableSelection(SelectionMode mode,bool on)
 {
+    SA_D(SAChart2D);
     if(on)
     {
         if(NoneSelection == mode)
@@ -239,8 +336,8 @@ void SAChart2D::enableSelection(SelectionMode mode,bool on)
             return;
         }
         stopSelectMode();
-        m_selectMode = mode;
-        switch(m_selectMode)
+        d->m_selectMode = mode;
+        switch(mode)
         {
         case RectSelection:startRectSelectMode();break;
         case EllipseSelection:startEllipseSelectMode();break;
@@ -260,22 +357,23 @@ void SAChart2D::enableSelection(SelectionMode mode,bool on)
 ///
 bool SAChart2D::isEnableSelection(SAChart2D::SelectionMode mode) const
 {
-    if(nullptr == m_chartSelectRigionEditor)
+    SA_DC(SAChart2D);
+    if(nullptr == d->m_chartSelectRigionEditor)
     {
         return false;
     }
-    if(!m_chartSelectRigionEditor->isEnabled())
+    if(!d->m_chartSelectRigionEditor->isEnabled())
     {
         return false;
     }
     switch(mode)
     {
     case RectSelection:
-        return m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIRectRegionSelectEditor;
+        return d->m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIRectRegionSelectEditor;
     case EllipseSelection:
-        return m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIEllipseRegionSelectEditor;
+        return d->m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIEllipseRegionSelectEditor;
     case PolygonSelection:
-        return m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIPolygonRegionSelectEditor;
+        return d->m_chartSelectRigionEditor->rtti() == SAAbstractPlotEditor::RTTIPolygonRegionSelectEditor;
     default:
         break;
     }
@@ -286,24 +384,26 @@ bool SAChart2D::isEnableSelection(SAChart2D::SelectionMode mode) const
 ///
 void SAChart2D::stopSelectMode()
 {
-    if(nullptr == m_chartSelectRigionEditor)
+    SA_D(SAChart2D);
+    if(nullptr == d->m_chartSelectRigionEditor)
     {
         return;
     }
-    m_chartSelectRigionEditor->setEnabled(false);
-    m_selectMode = NoneSelection;
+    d->m_chartSelectRigionEditor->setEnabled(false);
+    d->m_selectMode = NoneSelection;
 }
 ///
 /// \brief 清除所有选区
 ///
 void SAChart2D::clearAllSelectedRegion()
 {
-    if(nullptr == m_chartSelectRigionEditor)
+    SA_D(SAChart2D);
+    if(nullptr == d->m_chartSelectRigionEditor)
     {
         return;
     }
-    delete m_chartSelectRigionEditor;
-    m_chartSelectRigionEditor = nullptr;
+    delete d->m_chartSelectRigionEditor;
+    d->m_chartSelectRigionEditor = nullptr;
 }
 ///
 /// \brief 判断是否有选区
@@ -311,11 +411,12 @@ void SAChart2D::clearAllSelectedRegion()
 ///
 bool SAChart2D::isRegionVisible() const
 {
-    if(nullptr == m_chartSelectRigionEditor)
+    SA_DC(SAChart2D);
+    if(nullptr == d->m_chartSelectRigionEditor)
     {
         return false;
     }
-    return m_chartSelectRigionEditor->isRegionVisible();
+    return d->m_chartSelectRigionEditor->isRegionVisible();
 }
 ///
 /// \brief 获取当前正在显示的选择区域
@@ -323,7 +424,8 @@ bool SAChart2D::isRegionVisible() const
 ///
 SAChart2D::SelectionMode SAChart2D::currentSelectRegionMode() const
 {
-    return m_selectMode;
+    SA_DC(SAChart2D);
+    return d->m_selectMode;
 }
 ///
 /// \brief 获取矩形选择编辑器
@@ -331,12 +433,14 @@ SAChart2D::SelectionMode SAChart2D::currentSelectRegionMode() const
 ///
 SAAbstractRegionSelectEditor *SAChart2D::getRegionSelectEditor()
 {
-    return m_chartSelectRigionEditor;
+    SA_D(SAChart2D);
+    return d->m_chartSelectRigionEditor;
 }
 
 const SAAbstractRegionSelectEditor *SAChart2D::getRegionSelectEditor() const
 {
-    return m_chartSelectRigionEditor;
+    SA_DC(SAChart2D);
+    return d->m_chartSelectRigionEditor;
 }
 ///
 /// \brief 获取当前可见的选区的范围
@@ -355,70 +459,87 @@ QPainterPath SAChart2D::getSelectionRange() const
     return QPainterPath();
 }
 ///
+/// \brief redo
+///
+void SAChart2D::redo()
+{
+    d_ptr->m_undoStack.redo();
+}
+///
+/// \brief undo
+///
+void SAChart2D::undo()
+{
+    d_ptr->m_undoStack.undo();
+}
+///
 /// \brief 开始矩形选框模式
 ///
 void SAChart2D::startRectSelectMode()
 {
+    SA_D(SAChart2D);
     QPainterPath tmp;
-    if(m_chartSelectRigionEditor)
+    if(d->m_chartSelectRigionEditor)
     {
-        tmp = m_chartSelectRigionEditor->getSelectRegion();
-        delete m_chartSelectRigionEditor;
-        m_chartSelectRigionEditor = nullptr;
+        tmp = d->m_chartSelectRigionEditor->getSelectRegion();
+        delete d->m_chartSelectRigionEditor;
+        d->m_chartSelectRigionEditor = nullptr;
     }
-    if(nullptr == m_chartSelectRigionEditor)
+    if(nullptr == d->m_chartSelectRigionEditor)
     {
-        m_chartSelectRigionEditor = new SARectRegionSelectEditor(this);
+        d->m_chartSelectRigionEditor = new SARectRegionSelectEditor(this);
         if(!tmp.isEmpty())
         {
-            m_chartSelectRigionEditor->setSelectRegion(tmp);
+            d->m_chartSelectRigionEditor->setSelectRegion(tmp);
         }
     }
-    m_chartSelectRigionEditor->setEnabled(true);
+    d->m_chartSelectRigionEditor->setEnabled(true);
 }
 ///
 /// \brief 开始椭圆选框模式
 ///
 void SAChart2D::startEllipseSelectMode()
 {
+    SA_D(SAChart2D);
     QPainterPath tmp;
-    if(m_chartSelectRigionEditor)
+    if(d->m_chartSelectRigionEditor)
     {
-        tmp = m_chartSelectRigionEditor->getSelectRegion();
-        delete m_chartSelectRigionEditor;
-        m_chartSelectRigionEditor = nullptr;
+        tmp = d->m_chartSelectRigionEditor->getSelectRegion();
+        delete d->m_chartSelectRigionEditor;
+        d->m_chartSelectRigionEditor = nullptr;
     }
-    if(nullptr == m_chartSelectRigionEditor)
+    if(nullptr == d->m_chartSelectRigionEditor)
     {
-        m_chartSelectRigionEditor = new SAEllipseRegionSelectEditor(this);
+        d->m_chartSelectRigionEditor = new SAEllipseRegionSelectEditor(this);
         if(!tmp.isEmpty())
         {
-            m_chartSelectRigionEditor->setSelectRegion(tmp);
+            d->m_chartSelectRigionEditor->setSelectRegion(tmp);
         }
     }
-    m_chartSelectRigionEditor->setEnabled(true);
+    d->m_chartSelectRigionEditor->setEnabled(true);
 }
 ///
 /// \brief 开始多边形选框模式
 ///
 void SAChart2D::startPolygonSelectMode()
 {
+    SA_D(SAChart2D);
     QPainterPath tmp;
-    if(m_chartSelectRigionEditor)
+    if(d->m_chartSelectRigionEditor)
     {
-        tmp = m_chartSelectRigionEditor->getSelectRegion();
-        delete m_chartSelectRigionEditor;
-        m_chartSelectRigionEditor = nullptr;
+        tmp = d->m_chartSelectRigionEditor->getSelectRegion();
+        delete d->m_chartSelectRigionEditor;
+        d->m_chartSelectRigionEditor = nullptr;
     }
-    if(nullptr == m_chartSelectRigionEditor)
+    if(nullptr == d->m_chartSelectRigionEditor)
     {
-        m_chartSelectRigionEditor = new SAPolygonRegionSelectEditor(this);
+        d->m_chartSelectRigionEditor = new SAPolygonRegionSelectEditor(this);
         if(!tmp.isEmpty())
         {
-            m_chartSelectRigionEditor->setSelectRegion(tmp);
+            d->m_chartSelectRigionEditor->setSelectRegion(tmp);
         }
     }
-    m_chartSelectRigionEditor->setEnabled(true);
+    d->m_chartSelectRigionEditor->setEnabled(true);
 }
 
 ///
@@ -427,6 +548,7 @@ void SAChart2D::startPolygonSelectMode()
 ///
 void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
 {
+    saPrint();
     const int dataCount = datas.size();
     if(1 == dataCount)
     {
@@ -437,6 +559,7 @@ void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
             {
                 return;
             }
+            QList<QwtPlotItem*> itemList;
             if(dlg.isFollow())
             {
                 QwtPlotCurve* cur = dlg.getSelFollowCurs();
@@ -458,14 +581,18 @@ void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
                 series->setSamples(x,y);
                 series->setPen(SARandColorMaker::getCurveColor()
                             ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-                series->attach(this);
-                emit plotCurveChanged(series.release());
+                itemList.append(series.release());
             }
             else if(dlg.isSelDef())
             {
                 double startData,addedData;
                 dlg.getSelDefData(startData,addedData);
                 addCurve(datas[0],startData,addedData);
+            }
+            if(itemList.size() > 0)
+            {
+                d_ptr->appendItemListAddCommand(itemList,tr("add datas"));
+                replot();
             }
             return;
         }
@@ -487,9 +614,12 @@ void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
     }
     else
     {
+        setAutoReplot(false);
         std::for_each(datas.cbegin(),datas.cend(),[this](SAAbstractDatas* data){
             addCurve(data);
         });
+        setAutoReplot(true);
+        replot();
     }
 }
 

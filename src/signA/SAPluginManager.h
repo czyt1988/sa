@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QLibrary>
 #include "SAPluginInterface.h"
-#include "SAGlobals.h"
+#include "../global/SAGlobals.h"
 class SAUIInterface;
 ///
 /// \brief SA的插件管理类，此类管理所有外加的插件
