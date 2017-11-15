@@ -12,7 +12,7 @@ namespace saFun {
 
 //去直流 to_dc(wave)
 SA_CORE_FUN__EXPORT
-std::shared_ptr<SAVectorDouble> detrendDirect(SAAbstractDatas* wave);
+std::shared_ptr<SAAbstractDatas> detrendDirect(SAAbstractDatas* wave);
 
 //频谱分析 spectrum(wave,fs,fftSize,ampType)->[fre,amp]
 SA_CORE_FUN__EXPORT
@@ -29,7 +29,7 @@ std::tuple<std::shared_ptr<SAVectorDouble>,std::shared_ptr<SAVectorDouble> > pow
                                   ,double samplingInterval);
 //设置窗函数
 SA_CORE_FUN__EXPORT
-std::shared_ptr<SAVectorDouble> setWindow(SAAbstractDatas* wave,czy::Math::DSP::WindowType window);
+std::shared_ptr<SAAbstractDatas> setWindow(SAAbstractDatas* wave,czy::Math::DSP::WindowType window);
 //窗函数名
 SA_CORE_FUN__EXPORT
 QString windowName(czy::Math::DSP::WindowType window);

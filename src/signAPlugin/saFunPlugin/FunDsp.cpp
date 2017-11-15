@@ -189,7 +189,7 @@ void FunDsp::spectrum()
         default:window = czy::Math::DSP::WindowRect;break;
     }
 
-    std::shared_ptr<SAVectorDouble> preTrendData = nullptr;
+    std::shared_ptr<SAAbstractDatas> preTrendData = nullptr;
     if(dlg.getDataByID<bool>("detrend"))//dlg.getData(3).toBool())
     {
         preTrendData = saFun::detrendDirect(preTrendData.get() ? preTrendData.get() : data);
@@ -328,7 +328,7 @@ void FunDsp::powerSpectrum()
         case 4:window = czy::Math::DSP::WindowBartlett;break;
         default:window = czy::Math::DSP::WindowRect;break;
     }
-    std::shared_ptr<SAVectorDouble> preTrendData = nullptr;
+    std::shared_ptr<SAAbstractDatas> preTrendData = nullptr;
     if(dlg.getDataByID<bool>("detrend"))
     {
         preTrendData = saFun::detrendDirect(preTrendData.get() ? preTrendData.get() : data);

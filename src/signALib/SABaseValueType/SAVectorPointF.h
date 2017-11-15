@@ -6,16 +6,21 @@
 class SALIB_EXPORT SAVectorPointF : public SAVectorDatas<QPointF>
 {
 public:
-    SAVectorPointF(){setData (getType (),SA_ROLE_DATA_TYPE);}
-    SAVectorPointF(const QString & name):SAVectorDatas<QPointF>(name){setData (getType (),SA_ROLE_DATA_TYPE);}
+    SAVectorPointF()
+        :SAVectorDatas<QPointF>(){setData (getType (),SA_ROLE_DATA_TYPE);}
+    SAVectorPointF(const QString & name)
+        :SAVectorDatas<QPointF>(name){setData (getType (),SA_ROLE_DATA_TYPE);}
     SAVectorPointF(const QString& name,const QVector<QPointF>& datas)
-        :SAVectorDatas<QPointF>(name,datas)
-    {
-        setData (getType (),SA_ROLE_DATA_TYPE);
-    }
+        :SAVectorDatas<QPointF>(name,datas){setData (getType (),SA_ROLE_DATA_TYPE);}
     SAVectorPointF(const QString& name,const QVector<double>& xs,const QVector<double>& ys)
-        :SAVectorDatas<QPointF>(name)
-    {
+        :SAVectorDatas<QPointF>(name){
+        setData (getType (),SA_ROLE_DATA_TYPE);
+        setXYValueDatas(xs,ys);
+    }
+    SAVectorPointF(const QVector<QPointF>& datas)
+        :SAVectorDatas<QPointF>(datas){setData (getType (),SA_ROLE_DATA_TYPE);}
+    SAVectorPointF(const QVector<double>& xs,const QVector<double>& ys)
+        :SAVectorDatas<QPointF>(){
         setData (getType (),SA_ROLE_DATA_TYPE);
         setXYValueDatas(xs,ys);
     }

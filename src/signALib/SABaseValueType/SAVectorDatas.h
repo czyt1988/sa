@@ -15,6 +15,7 @@ public:
     SAVectorDatas();
     SAVectorDatas(const QString & name);
     SAVectorDatas(const QString& name,const QVector<T>& datas);
+    SAVectorDatas(const QVector<T>& datas);
     virtual ~SAVectorDatas();
 
     int getSize(int dim=SA::Dim1) const;
@@ -87,6 +88,11 @@ SAVectorDatas<T>::SAVectorDatas(const QString &name):SAAbstractDatas(name)
 }
 template<typename T>
 SAVectorDatas<T>::SAVectorDatas(const QString &name, const QVector<T> &datas):SAAbstractDatas(name)
+{
+    setValueDatas(datas);
+}
+template<typename T>
+SAVectorDatas<T>::SAVectorDatas(const QVector<T> &datas)
 {
     setValueDatas(datas);
 }

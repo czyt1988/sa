@@ -11,23 +11,51 @@
 #define TR(str)\
     QApplication::translate("sa_fun_dsp", str, 0)
 
+std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::WindowType window);
+std::shared_ptr<SAVectorPointF> _setWindow(SAVectorPointF* wave, czy::Math::DSP::WindowType window);
+std::shared_ptr<SAVectorPointF> _detrendDirect(SAVectorPointF* wave);
+std::shared_ptr<SAVectorDouble> _detrendDirect(QVector<double>& wave);
 
+std::shared_ptr<SAVectorPointF> _detrendDirect(SAVectorPointF* wave)
+{
+    QVector<double> x,y;
+    wave->getYs(y);
+    wave->getXs(x);
+    czy::Math::DSP::detrend(y.begin(),y.end());
+    return SAValueManager::makeData<SAVectorPointF>(wave->getName() + "detrendDirect",x,y);
+}
+std::shared_ptr<SAVectorDouble> _detrendDirect(QVector<double>& wave)
+{
+    czy::Math::DSP::detrend(wave.begin(),wave.end());
+    return SAValueManager::makeData<SAVectorDouble>(wave);
+}
 
 ///
 /// \brief 去直流
 /// \param wave 波形
 /// \return 去直流后波形
 ///
-std::shared_ptr<SAVectorDouble> saFun::detrendDirect(SAAbstractDatas* wave)
+std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(SAAbstractDatas* wave)
 {
     QVector<double> waveData;
-    if(!SAAbstractDatas::converToDoubleVector(wave,waveData))
+    if(SA::VectorPoint == wave->getType())
     {
-        setErrorString(TR("can not conver data to double vector!"));
-        return nullptr;
+        std::shared_ptr<SAVectorPointF> res = _detrendDirect(static_cast<SAVectorPointF*>(wave));
+        return SAValueManager::castPointToBase(res);
     }
+    else if(SAAbstractDatas::converToDoubleVector(wave,waveData))
+    {
+        std::shared_ptr<SAVectorDouble> res = _detrendDirect(waveData);
+        if(res)
+        {
+            res->setName(wave->getName() + "detrendDirect");
+        }
+        return SAValueManager::castPointToBase(res);
+    }
+    setErrorString(TR("can not conver data to double vector!"));
+    return nullptr;
     czy::Math::DSP::detrend(waveData.begin(),waveData.end());
-    return SAValueManager::makeData<SAVectorDouble>(QString("%1_DC").arg(wave->getName()),waveData);
+
 }
 
 
@@ -48,7 +76,12 @@ saFun::spectrum(SAAbstractDatas* wave
                                   , czy::Math::DSP::SpectrumType ampType)
 {
     QVector<double> waveArr;
-    if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
+    if(SA::VectorPoint == wave->getType())
+    {
+        SAVectorPointF* pf = static_cast<SAVectorPointF*>(wave);
+        pf->getYs(waveArr);
+    }
+    else if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return std::make_tuple(nullptr,nullptr);
@@ -96,7 +129,12 @@ saFun::powerSpectrum(SAAbstractDatas* wave
                                   ,double samplingInterval)
 {
     QVector<double> waveArr;
-    if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
+    if(SA::VectorPoint == wave->getType())
+    {
+        SAVectorPointF* pf = static_cast<SAVectorPointF*>(wave);
+        pf->getYs(waveArr);
+    }
+    else if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return std::make_tuple(nullptr,nullptr);
@@ -124,27 +162,50 @@ saFun::powerSpectrum(SAAbstractDatas* wave
     }
     return std::make_tuple(fre,mag);
 }
+
+std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::WindowType window)
+{
+    czy::Math::DSP::windowed (y.begin (),y.end (),window);
+    return SAValueManager::makeData<SAVectorDouble>(y);
+}
+std::shared_ptr<SAVectorPointF> _setWindow(SAVectorPointF* wave, czy::Math::DSP::WindowType window)
+{
+    QVector<double> x,y;
+    wave->getYs(y);
+    wave->getXs(x);
+    czy::Math::DSP::windowed (y.begin (),y.end (),window);
+    return SAValueManager::makeData<SAVectorPointF>(wave->getName() + "window",x,y);
+}
 ///
 /// \brief 设置窗函数
 /// \param wave 波形
 /// \param window 窗类型
 /// \return 设置窗后的波形
 ///
-std::shared_ptr<SAVectorDouble> saFun::setWindow(SAAbstractDatas *wave, czy::Math::DSP::WindowType window)
+std::shared_ptr<SAAbstractDatas> saFun::setWindow(SAAbstractDatas *wave, czy::Math::DSP::WindowType window)
 {
     QVector<double> waveArr;
-    if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
+    if(SA::VectorPoint == wave->getType())
     {
-        setErrorString(TR("can not conver data to double vector!"));
-        return nullptr;
+        std::shared_ptr<SAVectorPointF> res = _setWindow(static_cast<SAVectorPointF*>(wave),window);
+        return SAValueManager::castPointToBase(res);
     }
-    if(waveArr.size() <= 0)
+    else if(SAAbstractDatas::converToDoubleVector(wave,waveArr))
     {
-        setErrorString(TR("wave size is too short!"));
-        return nullptr;
+        if(waveArr.size() <= 0)
+        {
+            setErrorString(TR("wave size is too short!"));
+            return nullptr;
+        }
+        std::shared_ptr<SAVectorDouble> res = _setWindow(waveArr,window);
+        if(res)
+        {
+            res->setName(wave->getName() + "window");
+        }
+        return SAValueManager::castPointToBase(res);
     }
-    czy::Math::DSP::windowed (waveArr.begin (),waveArr.end (),window);
-    return SAValueManager::makeData<SAVectorDouble>(wave->getName() + "window",waveArr);
+    setErrorString(TR("can not conver data to double vector!"));
+    return nullptr;
 }
 
 

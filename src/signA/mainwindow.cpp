@@ -800,7 +800,10 @@ SADrawDelegate*MainWindow::getDrawDelegate() const
 {
     return m_drawDelegate.get ();
 }
-
+///
+/// \brief 下面三个函数移动到SAFigureWindow里
+/// \param event
+///
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
     if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
