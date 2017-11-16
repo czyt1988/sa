@@ -131,7 +131,7 @@ int SATableData<T>::getSize(int dim) const
 template<typename T>
 int SATableData<T>::getDim() const
 {
-    return 2;
+    return SA::Dim2;
 }
 ///
 /// \brief 表格对应的行列是否有内容

@@ -801,14 +801,14 @@ std::shared_ptr<SAVectorDouble> SAValueManager::createVectorDoubleFromData(const
     }
     else
     {
-        const int size = data->getSize(0);
+        const int size = data->getSize(SA::Dim1);
         res->reserve(size);
         double d;
         bool isOK = false;
         QVariant var;
         for(int i=0;i<size;++i)
         {
-            var = data->getAt(i,0);
+            var = data->getAt(SA::Dim1);
             d = var.toDouble(&isOK);
             if(isOK)
             {

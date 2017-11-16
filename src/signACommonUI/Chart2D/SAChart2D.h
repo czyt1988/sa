@@ -33,6 +33,7 @@ public:
     SAXYSeries *addCurve(SAAbstractDatas* datas);
     SAXYSeries* addCurve(SAAbstractDatas* datas,double xStart,double xDetal);
     SAXYSeries* addCurve(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
+    QList<SAXYSeries *> addCurves(QList<SAAbstractDatas*> datas);
     void addCurve(QwtPlotCurve* cur);
     void addCurve(SAXYSeries* cur);
     //添加bar
@@ -78,7 +79,7 @@ protected:
     //结束选区模式但不清空
     void stopSelectMode();
 private:
-    void addDatas(const QList<SAAbstractDatas*>& datas);
+    QList<SAXYSeries *> addDatas(const QList<SAAbstractDatas*>& datas);
 protected:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;

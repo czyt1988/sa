@@ -40,6 +40,10 @@ public:
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
     void setBackgroundColor(const QColor& clr);
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 public slots:
     void redo();
     void undo();

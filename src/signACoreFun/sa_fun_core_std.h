@@ -23,7 +23,7 @@ template<class FUN_2>
 SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> double_transform(SAAbstractDatas* a,SAAbstractDatas* b,FUN_2 fun)
 {
     std::shared_ptr<SAAbstractDatas> res = nullptr;
-    if(1 == a->getDim() && 1 == b->getDim())
+    if(SA::Dim1 == a->getDim() && SA::Dim1 == b->getDim())
     {
         if(a->getSize(SA::Dim1) != b->getSize(SA::Dim1))
         {
@@ -47,7 +47,7 @@ SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> double_transform(SAAbstract
         res = std::static_pointer_cast<SAAbstractDatas>(SAValueManager::makeData<SAVectorDouble>("tmp_double_transform",va));
         return res;
     }
-    else if(1 == a->getDim() && 0 == b->getDim())
+    else if(SA::Dim1 == a->getDim() && SA::Dim0 == b->getDim())
     {
         QVector<double> va;
         if(!SAAbstractDatas::converToDoubleVector(a,va))
@@ -72,7 +72,7 @@ SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> double_transform(SAAbstract
         res = std::static_pointer_cast<SAAbstractDatas>(SAValueManager::makeData<SAVectorDouble>("tmp_double_transform",va));
         return res;
     }
-    else if(0 == a->getDim() && 1 == b->getDim())
+    else if(SA::Dim0 == a->getDim() && SA::Dim1 == b->getDim())
     {
         QVector<double> vb;
         if(!SAAbstractDatas::converToDoubleVector(b,vb))
@@ -97,7 +97,7 @@ SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> double_transform(SAAbstract
         res = std::static_pointer_cast<SAAbstractDatas>(SAValueManager::makeData<SAVectorDouble>("tmp_double_transform",vb));
         return res;
     }
-    else if(0 == a->getDim() && 0 == b->getDim())
+    else if(SA::Dim0 == a->getDim() && SA::Dim0 == b->getDim())
     {
         QVariant vara = a->getAt(0);
         QVariant varb = b->getAt(0);

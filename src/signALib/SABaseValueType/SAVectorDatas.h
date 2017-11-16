@@ -153,10 +153,6 @@ int SAVectorDatas<T>::getSize(int dim) const {
     {
         return this->m_datas.size();
     }
-    else if(dim==SA::Dim2)
-    {
-        return 1;
-    }
     return 0;
 }
 

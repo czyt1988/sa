@@ -147,6 +147,11 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QS
     return series.release();
 }
 
+QList<SAXYSeries *> SAChart2D::addCurves(QList<SAAbstractDatas *> datas)
+{
+    return addDatas(datas);
+}
+
 
 void SAChart2D::addCurve(QwtPlotCurve *cur)
 {
@@ -546,19 +551,22 @@ void SAChart2D::startPolygonSelectMode()
 /// \brief 向chart添加一组数据
 /// \param datas
 ///
-void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
+QList<SAXYSeries *> SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
 {
     saPrint();
+    QList<SAXYSeries *> res;
     const int dataCount = datas.size();
     if(1 == dataCount)
     {
         if(SA::Dim1 == datas[0]->getDim())
         {
+            //1维向量
             SATendencyChartDataSelectDialog dlg(this);
             if(QDialog::Accepted != dlg.exec())
             {
-                return;
+                return QList<SAXYSeries *>();
             }
+
             QList<QwtPlotItem*> itemList;
             if(dlg.isFollow())
             {
@@ -567,7 +575,7 @@ void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
                 QVector<double> x,y;
                 if(!SAAbstractDatas::converToDoubleVector(datas[0],y))
                 {
-                    return;
+                    return QList<SAXYSeries *>();
                 }
                 SAChart::getXDatas(x,cur);
                 if(x.size() < y.size())
@@ -587,39 +595,56 @@ void SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
             {
                 double startData,addedData;
                 dlg.getSelDefData(startData,addedData);
-                addCurve(datas[0],startData,addedData);
+                SAXYSeries* seris = addCurve(datas[0],startData,addedData);
+                res.append(seris);
             }
+
             if(itemList.size() > 0)
             {
                 d_ptr->appendItemListAddCommand(itemList,tr("add datas"));
+                for(int i=0;i<itemList.size();++i)
+                {
+                    res.append(static_cast<SAXYSeries*>(itemList[i]));
+                }
             }
-            return;
+            return res;
         }
         else
         {
-            addCurve(datas[0]);
+           SAXYSeries* seris = addCurve(datas[0]);
+           if(seris)
+           {
+                res.append(seris);
+           }
         }
     }
     else if (2 == dataCount)
     {
         if(SA::Dim1 == datas[0]->getDim()
-                &&SA::Dim1 == datas[1]->getDim())
+                &&
+                SA::Dim1 == datas[1]->getDim())
         {
-            addCurve(datas[0],datas[1]
+            SAXYSeries* seris = addCurve(datas[0],datas[1]
                     ,QString("%1-%2")
                     .arg(datas[0]->getName())
                     .arg(datas[1]->getName()));
+            res.append(seris);
         }
     }
     else
     {
         setAutoReplot(false);
-        std::for_each(datas.cbegin(),datas.cend(),[this](SAAbstractDatas* data){
-            addCurve(data);
+        std::for_each(datas.cbegin(),datas.cend(),[this,&res](SAAbstractDatas* data){
+            SAXYSeries* seris = addCurve(data);
+            if(seris)
+            {
+                res.append(seris);
+            }
         });
         setAutoReplot(true);
         replot();
     }
+    return res;
 }
 
 void SAChart2D::dragEnterEvent(QDragEnterEvent *event)

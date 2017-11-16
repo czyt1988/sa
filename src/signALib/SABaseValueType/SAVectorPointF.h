@@ -3,6 +3,10 @@
 
 #include "SAVectorDatas.h"
 #include <QPointF>
+///
+/// \brief 封装的点序列
+/// 由于点是2维，因此，点序列也是个二维向量，
+///
 class SALIB_EXPORT SAVectorPointF : public SAVectorDatas<QPointF>
 {
 public:
@@ -25,16 +29,21 @@ public:
         setXYValueDatas(xs,ys);
     }
     void setXYValueDatas(const QVector<double>& xs,const QVector<double>& ys);
+    //获取维度 0代表点数，1代表向量，2代表表……
+    //获取尺寸，dim是维度，对应1为行，2为列，3就是第三维
+    virtual int getSize(int dim=SA::Dim1) const;
+    virtual int getDim() const;
     virtual ~SAVectorPointF(){}
     virtual int getType() const   {return SA::VectorPoint;}
     virtual QString getTypeName() const{return QString("point Vector");}
+    //返回点序列值,若调调用dim1，将返回QVariant(QPointF),若调用(dim1,dim2)将返回QVariant(double)
     virtual QVariant getAt(const std::initializer_list<size_t>& index) const;
     virtual QString displayAt(const std::initializer_list<size_t>& index) const;
     void getYs(QVector<double>& data) const;
     void getXs(QVector<double>& data) const;
 
     //根据现有点序列创建一个新的点序列，并替换掉y值
-    virtual SAVectorPointF* copyChangY(const QVector<double>& y) const;
+    SAVectorPointF* copyChangY(const QVector<double>& y) const;
 
     virtual void write(QDataStream & out) const;
     //转换为QPointF数组

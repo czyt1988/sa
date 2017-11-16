@@ -4,12 +4,15 @@
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QAction>
+#include <QMimeData>
 //sa chart
 #include "SAChart2D.h"
 //sa lib
 #include "SAData.h"
 #include "SARandColorMaker.h"
 #include "SAFigureGlobalConfig.h"
+#include "SAValueManager.h"
+#include "SAValueManagerMimeData.h"
 //sa common ui
 #include "SAFigureContainer.h"
 #define GET_CHART_PTR \
@@ -145,6 +148,47 @@ void SAFigureWindow::setBackgroundColor(const QColor &clr)
     QPalette p = palette();
     p.setColor(QPalette::Window,clr);
     setPalette(p);
+}
+
+void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+    {
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    }
+    else
+    {
+        event->ignore();
+    }
+}
+
+void SAFigureWindow::dragMoveEvent(QDragMoveEvent *event)
+{
+    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+    {
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    }
+}
+
+void SAFigureWindow::dropEvent(QDropEvent *event)
+{
+    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+    {
+        QList<int> ids;
+        if(SAValueManagerMimeData::getValueIDsFromMimeData(event->mimeData(),ids))
+        {
+            QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
+            if(datas.size() > 0)
+            {
+                if(SAChart2D * c = current2DPlot())
+                {
+                    c->addCurves(datas);
+                }
+            }
+        }
+    }
 }
 
 void SAFigureWindow::redo()

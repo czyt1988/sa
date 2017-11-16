@@ -28,7 +28,7 @@ void FunDsp::detrendDirect()
     {
         return;
     }
-    std::shared_ptr<SAVectorDouble> res = saFun::detrendDirect(data);
+    std::shared_ptr<SAAbstractDatas> res = saFun::detrendDirect(data);
     if(nullptr == res)
     {
         saUI->showErrorMessageInfo(saFun::getLastErrorString());

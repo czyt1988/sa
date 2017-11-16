@@ -48,7 +48,7 @@ template<typename DATA_TYPE>
 int SASingleDatas<DATA_TYPE>::getSize(int dim) const
 {
     Q_UNUSED(dim);
-    if(SA::Dim0 == dim || SA::Dim1== dim  || SA::Dim2== dim)
+    if(SA::Dim0 == dim || SA::Dim1== dim)
     {
         return 1;
     }
@@ -58,7 +58,7 @@ int SASingleDatas<DATA_TYPE>::getSize(int dim) const
 template<typename DATA_TYPE>
 int SASingleDatas<DATA_TYPE>::getDim() const
 {
-    return 1;
+    return SA::Dim0;
 }
 
 template<typename DATA_TYPE>
