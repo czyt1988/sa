@@ -255,6 +255,13 @@ bool SAEllipseRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
             if(m_shapeItem)
             {
                 m_shapeItem->setEllipse(m_selectedRect);
+                emit finishSelection(m_shapeItem->shape());
+            }
+            else
+            {
+                QPainterPath p;
+                p.addEllipse(m_selectedRect);
+                emit finishSelection(p);
             }
         }
         m_isStartDrawRegion = false;
@@ -283,9 +290,9 @@ bool SAEllipseRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
             m_selectedRect.setY(m_pressedPoint.y());
             m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
             m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
+            QPainterPath shape = m_shapeItem->shape();
             if(m_shapeItem)
             {
-                QPainterPath shape = m_shapeItem->shape();
                 QPainterPath addtion;
                 addtion.addEllipse(m_selectedRect);
                 switch(getSelectionMode())
@@ -310,6 +317,15 @@ bool SAEllipseRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
                 }
                 m_shapeItem->setShape(shape);
             }
+            else
+            {
+                //几乎无可能进入这里
+                m_shapeItem = new SASelectRegionShapeItem("select region");
+                m_shapeItem->attach(plot());
+                m_shapeItem->setShape(shape);
+            }
+
+            emit finishSelection(shape);
             if(m_tmpItem)
             {
                 m_tmpItem->detach();

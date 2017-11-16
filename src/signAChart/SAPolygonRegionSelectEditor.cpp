@@ -258,6 +258,7 @@ bool SAPolygonRegionSelectEditor::completeRegion()
             m_shapeItem->attach(plot());
             m_shapeItem->setPolygon(m_polygon);
         }
+        emit finishSelection(m_shapeItem->shape());
         m_polygon.clear();
         break;
     }
@@ -265,9 +266,9 @@ bool SAPolygonRegionSelectEditor::completeRegion()
     case SubtractionSelection:
     case IntersectionSelection:
     {
+        QPainterPath shape = m_shapeItem->shape();
         if(m_shapeItem)
         {
-            QPainterPath shape = m_shapeItem->shape();
             QPainterPath addtion;
             addtion.addPolygon(m_polygon);
             switch(getSelectionMode())
@@ -297,8 +298,9 @@ bool SAPolygonRegionSelectEditor::completeRegion()
             //几乎无可能进入这里
             m_shapeItem = new SASelectRegionShapeItem("select region");
             m_shapeItem->attach(plot());
-            m_shapeItem->setPolygon(m_polygon);
+            m_shapeItem->setShape(shape);
         }
+        emit finishSelection(shape);
         m_polygon.clear();
         if(m_tmpItem)
         {

@@ -397,8 +397,8 @@ namespace czy{
                     ++i;
                 }
                 m_data = datas;
-                m_columns = maxCol;
-                m_rows = maxRow;
+                m_columns = maxCol+1;
+                m_rows = maxRow+1;
             }
 
 //            friend QDataStream &operator<<(QDataStream & out, const Table & item);

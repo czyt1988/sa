@@ -3,6 +3,7 @@
 #include "SA2DGraph.h"
 #include "SACommonUIGlobal.h"
 #include <memory>
+class QUndoStack;
 class SAChart2DPrivate;
 class SAAbstractRegionSelectEditor;
 class SAAbstractDatas;
@@ -69,6 +70,8 @@ public:
     //ctrl+z || ctrl + y
     void redo();
     void undo();
+    //获取redo undo stack
+    QUndoStack* undoStack();
 protected:
     //开始矩形选框模式
     void startRectSelectMode();

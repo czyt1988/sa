@@ -28,6 +28,7 @@ public:
     QUndoStack m_undoStack;
     SAChart2D::SelectionMode m_selectMode;///< 选择模式
     SAAbstractRegionSelectEditor* m_chartSelectRigionEditor;///< 矩形选择编辑器
+    QMap<QString,QPainterPath> m_selectionMap;///< 此图保存的选区，选区可以保存，并加载
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
       ,m_selectMode(SAChart2D::NoneSelection)

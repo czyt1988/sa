@@ -41,6 +41,12 @@ public:
     QPointF transform( const QPointF &pos ) const;
     //把当前区域转换为其它轴系
     QPainterPath transformToOtherAxis(int axisX,int axisY);
+signals:
+    ///
+    /// \brief 完成选择发出的信号
+    /// \param shape 选区的区域
+    ///
+    void finishSelection(const QPainterPath& shape);
 protected:
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual bool mousePressEvent( const QMouseEvent* e);

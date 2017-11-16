@@ -156,6 +156,14 @@ bool SARectRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
             {
                 m_shapeItem->setRect(m_selectedRect);
             }
+            else
+            {
+                //几乎无可能进入这里
+                m_shapeItem = new SASelectRegionShapeItem("select region");
+                m_shapeItem->attach(plot());
+                m_shapeItem->setRect(m_selectedRect);
+            }
+            emit finishSelection(m_shapeItem->shape());
         }
         m_isStartDrawRegion = false;
         break;
@@ -183,9 +191,9 @@ bool SARectRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
             m_selectedRect.setY(m_pressedPoint.y());
             m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
             m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
+            QPainterPath shape = m_shapeItem->shape();
             if(m_shapeItem)
             {
-                QPainterPath shape = m_shapeItem->shape();
                 QPainterPath addtion;
                 addtion.addRect(m_selectedRect);
                 switch(getSelectionMode())
@@ -210,6 +218,7 @@ bool SARectRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
                 }
                 m_shapeItem->setShape(shape);
             }
+            emit finishSelection(shape);
             if(m_tmpItem)
             {
                 m_tmpItem->detach();
