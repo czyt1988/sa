@@ -129,9 +129,7 @@ public:
     SARibbonPannel* operateCategorySelectEditorPannel;
     SARibbonToolButton* ribbonButtonStartSelection;
 
-    SARibbonToolButton* ribbonButtonStartEllipseSelect;
-    SARibbonToolButton* ribbonButtonStartPolygonSelect;
-    SARibbonToolButton* ribbonButtonClearnSelection;
+
     SARibbonToolButton* ribbonButtonSingleSelection;
     SARibbonToolButton* ribbonButtonAdditionalSelection;
     SARibbonToolButton* ribbonButtonSubtractionSelection;

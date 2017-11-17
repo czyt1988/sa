@@ -404,9 +404,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonStartSelection->setMenu(menuSelection);
     ribbonButtonStartSelection->setPopupMode(QToolButton::MenuButtonPopup);
 
-    ribbonButtonStartEllipseSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartEllipseSelect);
-    ribbonButtonStartPolygonSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartPolygonSelect);
-    ribbonButtonClearnSelection = operateCategorySelectEditorPannel->addSmallAction(actionClearAllSelectiedRegion);
 
     ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget(Parent);
     ribbonButtonSingleSelection = ribbonButtonGroupSelectionMode->addButton(actionSingleSelection);
