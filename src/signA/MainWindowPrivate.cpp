@@ -88,6 +88,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSubWindowListDock->setObjectName(QStringLiteral("actionSubWindowListDock"));
     actionSubWindowListDock->setIcon(QIcon(":/icons/icons/subWindowListDock.png"));
 
+    actionMessageInfoDock = new QAction(mainWinowPtr);
+    actionMessageInfoDock->setObjectName(QStringLiteral("actionMessageInfoDock"));
+
+
     actionEnableChartCrossCursor = new QAction(mainWinowPtr);
     actionEnableChartCrossCursor->setObjectName(QStringLiteral("actionEnableChartPicker"));
     actionEnableChartCrossCursor->setIcon(QIcon(":/figureSet/icons/figureSet/crossCursor.svg"));
@@ -460,6 +464,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet->addAction(actionLayerOutDock);
     menuWindowsViewSet->addAction(actionValueManagerDock);
     menuWindowsViewSet->addAction(actionValueViewerDock);
+    menuWindowsViewSet->addAction(actionMessageInfoDock);
     ribbonButtonAllDock->setMenu(menuWindowsViewSet);
     ribbonButtonSetDefalutDockPos = viewCategoryWindowPannel->addLargeAction(actionSetDefalutDockPos);
     //sub window mode
@@ -676,18 +681,22 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuData->addAction(menuChartDataManager->menuAction());
     menuData->addAction(menuDataManager->menuAction());
+
     menuChartDataManager->addAction(actionInRangDataRemove);
     menuChartDataManager->addAction(actionOutRangDataRemove);
     menuChartDataManager->addAction(actionPickCurveToData);
+
     menuDataManager->addAction(actionViewValueInCurrentTab);
     menuDataManager->addAction(actionViewValueInNewTab);
     menuDataManager->addAction(actionDeleteValue);
     menuDataManager->addAction(actionRenameValue);
+
     menuChartSet->addAction(actionEnableChartCrossCursor);
     menuChartSet->addAction(actionEnableChartPanner);
     menuChartSet->addAction(menuGrid->menuAction());
     menuChartSet->addAction(menuZoomSet->menuAction());
     menuChartSet->addAction(menuRegionSelect->menuAction());
+
     menuGrid->addAction(actionShowGrid);
     menuGrid->addSeparator();
     menuGrid->addAction(actionShowHGrid);
@@ -695,12 +704,14 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuGrid->addSeparator();
     menuGrid->addAction(actionShowCrowdedHGrid);
     menuGrid->addAction(actionShowCrowdedVGrid);
+
     menuZoomSet->addAction(actionEnableChartZoom);
     menuZoomSet->addAction(actionChartZoomReset);
     menuZoomSet->addAction(actionZoomIn);
     menuZoomSet->addAction(actionZoomOut);
     menuZoomSet->addSeparator();
     menuZoomSet->addAction(actionSetZoomBase);
+
     menuRegionSelect->addAction(actionStartRectSelect);
     menuRegionSelect->addAction(actionStartEllipseSelect);
     menuRegionSelect->addAction(actionStartPolygonSelect);
@@ -710,9 +721,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuRegionSelect->addAction(actionAdditionalSelection);
     menuRegionSelect->addAction(actionSubtractionSelection);
     menuRegionSelect->addAction(actionIntersectionSelection);
+
     menuHelp->addAction(actionAbout);
+
     menuEdit->addAction(actionUndo);
     menuEdit->addAction(actionRedo);
+
     menuTool->addAction(actionProjectSetting);
 
     menuScatterChart->addAction(actionDrawScatterChart);
@@ -826,7 +840,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "Defalut\nView", 0));
     actionValueViewerDock->setText(QApplication::translate("MainWindow", "Value View", 0));
     actionFigureViewer->setText(QApplication::translate("MainWindow", "Figure\nView", 0));
-
+    actionMessageInfoDock->setText(QApplication::translate("MainWindow", "Message\nView", 0));
     actionDeleteValue->setText(QApplication::translate("MainWindow", "Delete Value", 0));
 #ifndef QT_NO_TOOLTIP
     actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "Delete Value", 0));

@@ -70,6 +70,7 @@ public:
     QAction *actionUndo;
     QAction *actionRedo;
     QAction *actionValueManagerDock;
+    QAction *actionMessageInfoDock;
     QAction *actionViewValueInCurrentTab;
     QAction *actionViewValueInNewTab;
     QAction *actionLayerOutDock;

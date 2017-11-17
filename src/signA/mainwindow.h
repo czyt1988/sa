@@ -412,6 +412,8 @@ private slots:
     void onActionValueViewerDockTriggered(bool on);
     //显示隐藏FigureViewer窗口
     void onActionFigureViewerTriggered(bool on);
+    //显示隐藏message窗口
+    void onActionMessageInfoDockTriggered(bool on);
     /// \}
 
     ///

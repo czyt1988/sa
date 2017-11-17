@@ -313,6 +313,9 @@ void MainWindow::initUI()
     connect(ui->actionValueViewerDock,&QAction::triggered,this,&MainWindow::onActionValueViewerDockTriggered);
     //显示隐藏FigureViewer窗口
     connect(ui->actionFigureViewer,&QAction::triggered,this,&MainWindow::onActionFigureViewerTriggered);
+    //显示隐藏message窗口
+    connect(ui->actionMessageInfoDock,&QAction::triggered,this,&MainWindow::onActionMessageInfoDockTriggered);
+
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
@@ -664,6 +667,16 @@ void MainWindow::onActionFigureViewerTriggered(bool on)
     Q_UNUSED(on);
     ui->dockWidget_main->show();
     ui->dockWidget_main->raise();
+}
+///
+/// \brief 显示隐藏message窗口
+/// \param on
+///
+void MainWindow::onActionMessageInfoDockTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_message->show();
+    ui->dockWidget_message->raise();
 }
 
 void MainWindow::onActionProjectSettingTriggered()
