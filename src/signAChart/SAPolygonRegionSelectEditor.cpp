@@ -1,13 +1,50 @@
 #include "SAPolygonRegionSelectEditor.h"
 #include <QMouseEvent>
 #include <QKeyEvent>
+class SAPolygonRegionSelectEditorPrivate
+{
+    SA_IMPL_PUBLIC(SAPolygonRegionSelectEditor)
+public:
+    bool m_isStartDrawRegion;///< 是否生效
+    SASelectRegionShapeItem* m_tmpItem;
+    QPolygonF m_polygon;///< 多边形
+    bool m_isFinishOneRegion;///< 标定是否已经完成了一次区域，m_tmpItem还是m_shapeItem显示
+    QPainterPath m_lastPainterPath;
+
+    SAPolygonRegionSelectEditorPrivate(SAPolygonRegionSelectEditor* p):q_ptr(p)
+      ,m_isStartDrawRegion(false)
+      ,m_tmpItem(nullptr)
+      ,m_isFinishOneRegion(false)
+    {
+
+    }
+    ~SAPolygonRegionSelectEditorPrivate()
+    {
+        releaseTmpItem();
+    }
+
+    void releaseTmpItem()
+    {
+        if(m_tmpItem)
+        {
+            m_tmpItem->detach();
+            delete m_tmpItem;
+            m_tmpItem = nullptr;
+        }
+    }
+    void createTmpItem()
+    {
+        if(nullptr == m_tmpItem)
+        {
+            m_tmpItem = new SASelectRegionShapeItem("temp region");
+            m_tmpItem->attach(q_ptr->plot());
+        }
+    }
+};
 
 SAPolygonRegionSelectEditor::SAPolygonRegionSelectEditor(QwtPlot* parent)
     :SAAbstractRegionSelectEditor(parent)
-    ,m_isStartDrawRegion(false)
-    ,m_shapeItem(nullptr)
-    ,m_tmpItem(nullptr)
-    ,m_isFinishOneRegion(false)
+    ,d_ptr(new SAPolygonRegionSelectEditorPrivate(this))
 {
     setEnabled(true);
     connect(parent,&QwtPlot::itemAttached,this,&SAPolygonRegionSelectEditor::onItemAttached);
@@ -15,70 +52,24 @@ SAPolygonRegionSelectEditor::SAPolygonRegionSelectEditor(QwtPlot* parent)
 
 SAPolygonRegionSelectEditor::~SAPolygonRegionSelectEditor()
 {
-    if(m_shapeItem)
-    {
-        m_shapeItem->detach();
-        delete m_shapeItem;
-        m_shapeItem = nullptr;
-    }
-    if(m_tmpItem)
-    {
-        m_tmpItem->detach();
-        delete m_tmpItem;
-        m_tmpItem = nullptr;
-    }
-}
 
-bool SAPolygonRegionSelectEditor::isRegionVisible() const
-{
-    if(m_shapeItem)
-    {
-        if(m_shapeItem->isVisible())
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 QPainterPath SAPolygonRegionSelectEditor::getSelectRegion() const
 {
-    if(nullptr == m_shapeItem)
-    {
-        return QPainterPath();
-    }
-    return m_shapeItem->shape();
+    SA_DC(SAPolygonRegionSelectEditor);
+    return d->m_lastPainterPath;
 }
 
 void SAPolygonRegionSelectEditor::setSelectRegion(const QPainterPath &shape)
 {
-    if(nullptr == m_shapeItem)
-    {
-        m_shapeItem = new SASelectRegionShapeItem("select region");
-        m_shapeItem->setShape(shape);
-        m_shapeItem->attach(plot());
-    }
+    SA_D(SAPolygonRegionSelectEditor);
+    d->m_lastPainterPath = shape;
 }
 
 void SAPolygonRegionSelectEditor::setSelectionMode(const SAAbstractRegionSelectEditor::SelectionMode &selectionMode)
 {
-    switch(selectionMode)
-    {
-    case SingleSelection:
-    {
-        if(m_tmpItem)
-        {
-            m_tmpItem->detach();
-            delete m_tmpItem;
-            m_tmpItem = nullptr;
-        }
-    }
-    default:
-        break;
-    }
-
     SAAbstractRegionSelectEditor::setSelectionMode(selectionMode);
-
 }
 
 int SAPolygonRegionSelectEditor::rtti() const
@@ -86,86 +77,40 @@ int SAPolygonRegionSelectEditor::rtti() const
     return RTTIPolygonRegionSelectEditor;
 }
 
-const QwtPlotShapeItem *SAPolygonRegionSelectEditor::getShapeItem() const
-{
-    return m_shapeItem;
-}
-
-QwtPlotShapeItem *SAPolygonRegionSelectEditor::getShapeItem()
-{
-    return m_shapeItem;
-}
-
 void SAPolygonRegionSelectEditor::onItemAttached(QwtPlotItem *item, bool on)
 {
+    SA_D(SAPolygonRegionSelectEditor);
     if(!on)
     {
-        if(item == m_shapeItem)
+        if(item == d->m_tmpItem)
         {
-            m_shapeItem = nullptr;
-        }
-        if(item == m_tmpItem)
-        {
-            m_tmpItem = nullptr;
+            d->m_tmpItem = nullptr;
         }
     }
 }
 
 bool SAPolygonRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
 {
+    SA_D(SAPolygonRegionSelectEditor);
     if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
     {
         return false;
     }
     QPoint p = e->pos();
-    if(nullptr == m_shapeItem)
+    d->m_isStartDrawRegion = true;
+    d->createTmpItem();
+    d->m_polygon.append(invTransform(p));
+    if(d->m_tmpItem)
     {
-        m_shapeItem = new SASelectRegionShapeItem("select region");
-        m_shapeItem->attach(plot());
-    }
-    switch(getSelectionMode())
-    {
-    case SingleSelection://单一选择
-    {
-        m_isStartDrawRegion = true;
-        m_polygon.append(invTransform(p));
-        if(m_shapeItem)
-        {
-            m_shapeItem->setPolygon(m_polygon);
-        }
-        if(m_tmpItem)
-        {
-            m_tmpItem->detach();
-            delete m_tmpItem;
-            m_tmpItem = nullptr;
-        }
-        break;
-    }
-    case AdditionalSelection:
-    case SubtractionSelection:
-    case IntersectionSelection:
-    {
-        m_isStartDrawRegion = true;
-        m_polygon.append(invTransform(p));
-
-        if(nullptr == m_tmpItem)
-        {
-            m_tmpItem = new SASelectRegionShapeItem("temp region");
-            m_tmpItem->attach(plot());
-        }
-        m_tmpItem->setPolygon(m_polygon);
-
-        break;
-    }
-    default:
-        return false;
+        d->m_tmpItem->setPolygon(d->m_polygon);
     }
     return true;
 }
 
 bool SAPolygonRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
 {
-    if(!m_isStartDrawRegion)
+    SA_D(SAPolygonRegionSelectEditor);
+    if(!d->m_isStartDrawRegion)
     {
         return false;
     }
@@ -174,35 +119,12 @@ bool SAPolygonRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
         return false;
     }
     QPoint p = e->pos();
-
-    switch(getSelectionMode())
+    QPointF pf = invTransform(p);
+    QPolygonF tmp = d->m_polygon;
+    tmp.append(pf);
+    if(d->m_tmpItem)
     {
-    case SingleSelection:
-    {
-        QPointF pf = invTransform(p);
-        QPolygonF tmp = m_polygon;
-        tmp.append(pf);
-        if(m_shapeItem)
-        {
-            m_shapeItem->setPolygon(tmp);
-        }
-        break;
-    }
-    case AdditionalSelection:
-    case SubtractionSelection:
-    case IntersectionSelection:
-    {
-        QPointF pf = invTransform(p);
-        QPolygonF tmp = m_polygon;
-        tmp.append(pf);
-        if(m_tmpItem)
-        {
-            m_tmpItem->setPolygon(tmp);
-        }
-        break;
-    }
-    default:
-        return false;
+        d->m_tmpItem->setPolygon(tmp);
     }
     return false;//把移动的事件继续传递下去
 }
@@ -223,131 +145,74 @@ bool SAPolygonRegionSelectEditor::keyPressEvent(const QKeyEvent *e)
 
 bool SAPolygonRegionSelectEditor::completeRegion()
 {
-    if(m_polygon.size()<=2)
+    SA_D(SAPolygonRegionSelectEditor);
+    if(d->m_polygon.size()<=2)
     {
-        m_polygon.clear();
-        if(m_tmpItem)
-        {
-            m_tmpItem->detach();
-            delete m_tmpItem;
-            m_tmpItem = nullptr;
-        }
-        m_isStartDrawRegion = false;
+        d->m_polygon.clear();
+        d->releaseTmpItem();
+        d->m_isStartDrawRegion = false;
         return false;//点数不足，完成失败
     }
     else
     {
         //点数足够，封闭多边形
-        if(m_polygon.last() != m_polygon.first())
+        if(d->m_polygon.last() != d->m_polygon.first())
         {
-            m_polygon.append(m_polygon.first());
+            d->m_polygon.append(d->m_polygon.first());
         }
     }
+    QPainterPath painterPath;
+    painterPath.addPolygon(d->m_polygon);
     switch(getSelectionMode())
     {
     case SingleSelection:
     {
-        if(m_shapeItem)
-        {
-            m_shapeItem->setPolygon(m_polygon);
-        }
-        else
-        {
-            //几乎无可能进入这里
-            m_shapeItem = new SASelectRegionShapeItem("select region");
-            m_shapeItem->attach(plot());
-            m_shapeItem->setPolygon(m_polygon);
-        }
-        emit finishSelection(m_shapeItem->shape());
-        m_polygon.clear();
+        d->m_lastPainterPath = painterPath;
         break;
     }
     case AdditionalSelection:
-    case SubtractionSelection:
-    case IntersectionSelection:
     {
-        QPainterPath shape = m_shapeItem->shape();
-        if(m_shapeItem)
-        {
-            QPainterPath addtion;
-            addtion.addPolygon(m_polygon);
-            switch(getSelectionMode())
-            {
-            case AdditionalSelection:
-            {
-                shape = shape.united(addtion);
-                break;
-            }
-            case SubtractionSelection:
-            {
-                shape = shape.subtracted(addtion);
-                break;
-            }
-            case IntersectionSelection:
-            {
-                shape = shape.intersected(addtion);
-                break;
-            }
-            default:
-                break;
-            }
-            m_shapeItem->setShape(shape);
-        }
-        else
-        {
-            //几乎无可能进入这里
-            m_shapeItem = new SASelectRegionShapeItem("select region");
-            m_shapeItem->attach(plot());
-            m_shapeItem->setShape(shape);
-        }
-        emit finishSelection(shape);
-        m_polygon.clear();
-        if(m_tmpItem)
-        {
-            m_tmpItem->detach();
-            delete m_tmpItem;
-            m_tmpItem = nullptr;
-        }
+        d->m_lastPainterPath = d->m_lastPainterPath.united(painterPath);
         break;
     }
-    }
-    m_isStartDrawRegion = false;
-    return true;
-}
-
-bool SAPolygonRegionSelectEditor::backspaceRegion()
-{
-    if(!m_isStartDrawRegion)
+    case SubtractionSelection:
     {
-        return false;
-    }
-    if(m_polygon.size()<=1)
-    {
-        return false;
-    }
-    m_polygon.pop_back();
-    switch(getSelectionMode())
-    {
-    case SingleSelection:
-    {
-        if(m_shapeItem)
-        {
-            m_shapeItem->setPolygon(m_polygon);
-        }
+        d->m_lastPainterPath = d->m_lastPainterPath.subtracted(painterPath);
         break;
     }
-    case AdditionalSelection:
-    case SubtractionSelection:
     case IntersectionSelection:
     {
-        if(m_tmpItem)
-        {
-            m_tmpItem->setPolygon(m_polygon);
-        }
+        d->m_lastPainterPath = d->m_lastPainterPath.intersected(painterPath);
         break;
     }
     default:
+        break;
+    }
+    d->releaseTmpItem();
+    d->m_polygon.clear();
+    d->m_isStartDrawRegion = false;
+    emit finishSelection(d->m_lastPainterPath);
+    return true;
+}
+///
+/// \brief 回退
+/// \return
+///
+bool SAPolygonRegionSelectEditor::backspaceRegion()
+{
+    SA_D(SAPolygonRegionSelectEditor);
+    if(!d->m_isStartDrawRegion)
+    {
         return false;
+    }
+    if(d->m_polygon.size()<=1)
+    {
+        return false;
+    }
+    d->m_polygon.pop_back();
+    if(d->m_tmpItem)
+    {
+        d->m_tmpItem->setPolygon(d->m_polygon);
     }
     return true;
 }

@@ -25,8 +25,6 @@ public:
     virtual QPainterPath getSelectRegion() const = 0;
     //设置选区
     virtual void setSelectRegion(const QPainterPath& shape) = 0;
-    //判断是否显示选区
-    virtual bool isRegionVisible() const = 0;
     //判断点是否在区域里 此算法频繁调用会耗时
     virtual bool isContains(const QPointF& p) const;
     //获取绑定的x轴

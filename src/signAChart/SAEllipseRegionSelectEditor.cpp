@@ -1,73 +1,27 @@
 #include "SAEllipseRegionSelectEditor.h"
 #include <QMouseEvent>
 #include <QKeyEvent>
-
-SAEllipseRegionSelectEditor::SAEllipseRegionSelectEditor(QwtPlot *parent)
-    :SAAbstractRegionSelectEditor(parent)
-    ,m_isStartDrawRegion(false)
-    ,m_shapeItem(nullptr)
-    ,m_tmpItem(nullptr)
-    ,m_selectedRect(QRectF())
+class SAEllipseRegionSelectEditorPrivate
 {
-    setEnabled(true);
-    connect(parent,&QwtPlot::itemAttached,this,&SAEllipseRegionSelectEditor::onItemAttached);
-}
-
-SAEllipseRegionSelectEditor::~SAEllipseRegionSelectEditor()
-{
-    if(m_shapeItem)
+    SA_IMPL_PUBLIC(SAEllipseRegionSelectEditor)
+public:
+    bool m_isStartDrawRegion;
+    SASelectRegionShapeItem* m_tmpItem;
+    QPointF m_pressedPoint;
+    QRectF m_selectedRect;
+    QPainterPath m_lastPainterPath;
+    SAEllipseRegionSelectEditorPrivate(SAEllipseRegionSelectEditor* p):q_ptr(p)
+      ,m_isStartDrawRegion(false)
+      ,m_tmpItem(nullptr)
+      ,m_selectedRect(QRectF())
     {
-        m_shapeItem->detach();
-        delete m_shapeItem;
-        m_shapeItem = nullptr;
+
     }
-    if(m_tmpItem)
+    ~SAEllipseRegionSelectEditorPrivate()
     {
-        m_tmpItem->detach();
-        delete m_tmpItem;
-        m_tmpItem = nullptr;
+        releaseTmpItem();
     }
-}
-
-
-bool SAEllipseRegionSelectEditor::isRegionVisible() const
-{
-    if(m_shapeItem)
-    {
-        if(m_shapeItem->isVisible())
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-QPainterPath SAEllipseRegionSelectEditor::getSelectRegion() const
-{
-    if(nullptr == m_shapeItem)
-    {
-        return QPainterPath();
-    }
-    return m_shapeItem->shape();
-}
-
-void SAEllipseRegionSelectEditor::setSelectRegion(const QPainterPath &shape)
-{
-    if(nullptr == m_shapeItem)
-    {
-        m_shapeItem = new SASelectRegionShapeItem("select region");
-        m_shapeItem->setShape(shape);
-        m_shapeItem->attach(plot());
-    }
-}
-
-
-void SAEllipseRegionSelectEditor::setSelectionMode(const SAAbstractRegionSelectEditor::SelectionMode &selectionMode)
-{
-    switch(selectionMode)
-    {
-    case SingleSelection:
+    void releaseTmpItem()
     {
         if(m_tmpItem)
         {
@@ -76,10 +30,46 @@ void SAEllipseRegionSelectEditor::setSelectionMode(const SAAbstractRegionSelectE
             m_tmpItem = nullptr;
         }
     }
-    default:
-        break;
+    void createTmpItem()
+    {
+        if(nullptr == m_tmpItem)
+        {
+            m_tmpItem = new SASelectRegionShapeItem("temp region");
+            m_tmpItem->attach(q_ptr->plot());
+        }
     }
+};
 
+SAEllipseRegionSelectEditor::SAEllipseRegionSelectEditor(QwtPlot *parent)
+    :SAAbstractRegionSelectEditor(parent)
+    ,d_ptr(new SAEllipseRegionSelectEditorPrivate(this))
+{
+    setEnabled(true);
+    connect(parent,&QwtPlot::itemAttached,this,&SAEllipseRegionSelectEditor::onItemAttached);
+}
+
+SAEllipseRegionSelectEditor::~SAEllipseRegionSelectEditor()
+{
+
+}
+
+
+
+QPainterPath SAEllipseRegionSelectEditor::getSelectRegion() const
+{
+    SA_DC(SAEllipseRegionSelectEditor);
+    return d->m_lastPainterPath;
+}
+
+void SAEllipseRegionSelectEditor::setSelectRegion(const QPainterPath &shape)
+{
+    SA_D(SAEllipseRegionSelectEditor);
+    d->m_lastPainterPath = shape;
+}
+
+
+void SAEllipseRegionSelectEditor::setSelectionMode(const SAAbstractRegionSelectEditor::SelectionMode &selectionMode)
+{
     SAAbstractRegionSelectEditor::setSelectionMode(selectionMode);
 }
 ///
@@ -91,85 +81,45 @@ int SAEllipseRegionSelectEditor::rtti() const
     return RTTIEllipseRegionSelectEditor;
 }
 
-const QwtPlotShapeItem *SAEllipseRegionSelectEditor::getShapeItem() const
-{
-    return m_shapeItem;
-}
-
-QwtPlotShapeItem *SAEllipseRegionSelectEditor::getShapeItem()
-{
-    return m_shapeItem;
-}
-
+///
+/// \brief 清理数据
+///
 void SAEllipseRegionSelectEditor::clear()
 {
-    if(m_shapeItem)
-    {
-        m_shapeItem->detach();
-        delete m_shapeItem;
-        m_shapeItem = nullptr;
-    }
-    if(m_tmpItem)
-    {
-        m_tmpItem->detach();
-        delete m_tmpItem;
-        m_tmpItem = nullptr;
-    }
-    m_selectedRect = QRectF();
+    SA_D(SAEllipseRegionSelectEditor);
+    d->releaseTmpItem();
+    d->m_selectedRect = QRectF();
+    d->m_lastPainterPath = QPainterPath();
 }
 
 void SAEllipseRegionSelectEditor::onItemAttached(QwtPlotItem *item, bool on)
 {
+    SA_D(SAEllipseRegionSelectEditor);
     if(!on)
     {
-        if(item == m_shapeItem)
+        if(item == d->m_tmpItem)
         {
-            m_shapeItem = nullptr;
-        }
-        if(item == m_tmpItem)
-        {
-            m_tmpItem = nullptr;
+            d->m_tmpItem = nullptr;
         }
     }
 }
 
 bool SAEllipseRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
 {
+    SA_D(SAEllipseRegionSelectEditor);
     if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
     {
         return false;
     }
     QPoint p = e->pos();
-    if(nullptr == m_shapeItem)
-    {
-        m_shapeItem = new SASelectRegionShapeItem("select region");
-        m_shapeItem->attach(plot());
-    }
+    d->m_isStartDrawRegion = true;
+    d->m_pressedPoint = invTransform(p);
+    d->createTmpItem();
     switch(getSelectionMode())
     {
     case SingleSelection://单一选择
     {
-        m_isStartDrawRegion = true;
-        m_pressedPoint = invTransform(p);
-        if(m_tmpItem)
-        {
-            m_tmpItem->detach();
-            delete m_tmpItem;
-            m_tmpItem = nullptr;
-        }
-        break;
-    }
-    case AdditionalSelection:
-    case SubtractionSelection:
-    case IntersectionSelection:
-    {
-        if(nullptr == m_tmpItem)
-        {
-            m_tmpItem = new SASelectRegionShapeItem("temp region");
-            m_tmpItem->attach(plot());
-        }
-        m_isStartDrawRegion = true;
-        m_pressedPoint = invTransform(p);
+        d->m_lastPainterPath = QPainterPath();
         break;
     }
     default:
@@ -180,7 +130,8 @@ bool SAEllipseRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
 
 bool SAEllipseRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
 {
-    if(!m_isStartDrawRegion)
+    SA_D(SAEllipseRegionSelectEditor);
+    if(!d->m_isStartDrawRegion)
     {
         return false;
     }
@@ -189,156 +140,68 @@ bool SAEllipseRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
         return false;
     }
     QPoint p = e->pos();
-    switch(getSelectionMode())
+    QPointF pf = invTransform(p);
+    d->m_selectedRect.setX(d->m_pressedPoint.x());
+    d->m_selectedRect.setY(d->m_pressedPoint.y());
+    d->m_selectedRect.setWidth(pf.x() - d->m_pressedPoint.x());
+    d->m_selectedRect.setHeight(pf.y() - d->m_pressedPoint.y());
+    if(d->m_tmpItem)
     {
-    case SingleSelection:
-    {
-        QPointF pf = invTransform(p);
-        m_selectedRect.setX(m_pressedPoint.x());
-        m_selectedRect.setY(m_pressedPoint.y());
-        m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-        m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-        if(m_shapeItem)
-        {
-            m_shapeItem->setEllipse(m_selectedRect);
-        }
-        break;
-    }
-    case AdditionalSelection:
-    case SubtractionSelection:
-    case IntersectionSelection:
-    {
-        QPointF pf = invTransform(p);
-        m_selectedRect.setX(m_pressedPoint.x());
-        m_selectedRect.setY(m_pressedPoint.y());
-        m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-        m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-        if(m_tmpItem)
-        {
-            m_tmpItem->setEllipse(m_selectedRect);
-        }
-        break;
-    }
-    default:
-        return false;
+        d->m_tmpItem->setEllipse(d->m_selectedRect);
     }
     return true;
 }
 
 bool SAEllipseRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
 {
+    SA_D(SAEllipseRegionSelectEditor);
     if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
     {
         return false;
     }
     QPoint p = e->pos();
+    QPointF pf = invTransform(p);
+    if(pf == d->m_pressedPoint)
+    {
+        //如果点击和松开是一个点，就取消当前的选区
+        d->releaseTmpItem();
+        d->m_isStartDrawRegion = false;
+        return true;
+    }
+    d->m_selectedRect.setX(d->m_pressedPoint.x());
+    d->m_selectedRect.setY(d->m_pressedPoint.y());
+    d->m_selectedRect.setWidth(pf.x() - d->m_pressedPoint.x());
+    d->m_selectedRect.setHeight(pf.y() - d->m_pressedPoint.y());
+    QPainterPath painterPath;
+    painterPath.addEllipse(d->m_selectedRect);
     switch(getSelectionMode())
     {
     case SingleSelection:
     {
-        if(m_isStartDrawRegion)
-        {
-            QPointF pf = invTransform(p);
-            if(pf == m_pressedPoint)
-            {
-                //如果点击和松开是一个点，就取消当前的选区
-                if(m_shapeItem)
-                    m_shapeItem->setRect(QRectF());
-
-                m_isStartDrawRegion = false;
-                return true;
-            }
-            m_selectedRect.setX(m_pressedPoint.x());
-            m_selectedRect.setY(m_pressedPoint.y());
-            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-            if(m_shapeItem)
-            {
-                m_shapeItem->setEllipse(m_selectedRect);
-                emit finishSelection(m_shapeItem->shape());
-            }
-            else
-            {
-                QPainterPath p;
-                p.addEllipse(m_selectedRect);
-                emit finishSelection(p);
-            }
-        }
-        m_isStartDrawRegion = false;
+        d->m_lastPainterPath = painterPath;
         break;
     }
     case AdditionalSelection:
+    {
+        d->m_lastPainterPath = d->m_lastPainterPath.united(painterPath);
+        break;
+    }
     case SubtractionSelection:
+    {
+        d->m_lastPainterPath = d->m_lastPainterPath.subtracted(painterPath);
+        break;
+    }
     case IntersectionSelection:
     {
-        if(m_isStartDrawRegion)
-        {
-            QPointF pf = invTransform(p);
-            if(pf == m_pressedPoint)
-            {
-                //如果点击和松开是一个点，就取消当前的选区
-                if(m_tmpItem)
-                {
-                    m_tmpItem->detach();
-                    delete m_tmpItem;
-                    m_tmpItem = nullptr;
-                }
-                m_isStartDrawRegion = false;
-                return true;
-            }
-            m_selectedRect.setX(m_pressedPoint.x());
-            m_selectedRect.setY(m_pressedPoint.y());
-            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-            QPainterPath shape = m_shapeItem->shape();
-            if(m_shapeItem)
-            {
-                QPainterPath addtion;
-                addtion.addEllipse(m_selectedRect);
-                switch(getSelectionMode())
-                {
-                case AdditionalSelection:
-                {
-                    shape = shape.united(addtion);
-                    break;
-                }
-                case SubtractionSelection:
-                {
-                    shape = shape.subtracted(addtion);
-                    break;
-                }
-                case IntersectionSelection:
-                {
-                    shape = shape.intersected(addtion);
-                    break;
-                }
-                default:
-                    break;
-                }
-                m_shapeItem->setShape(shape);
-            }
-            else
-            {
-                //几乎无可能进入这里
-                m_shapeItem = new SASelectRegionShapeItem("select region");
-                m_shapeItem->attach(plot());
-                m_shapeItem->setShape(shape);
-            }
-
-            emit finishSelection(shape);
-            if(m_tmpItem)
-            {
-                m_tmpItem->detach();
-                delete m_tmpItem;
-                m_tmpItem = nullptr;
-            }
-        }
-        m_isStartDrawRegion = false;
+        d->m_lastPainterPath = d->m_lastPainterPath.intersected(painterPath);
         break;
     }
     default:
-        return false;
+        break;
     }
+    d->releaseTmpItem();
+    d->m_isStartDrawRegion = false;
+    emit finishSelection(d->m_lastPainterPath);
     return true;
 }
 

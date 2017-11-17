@@ -4,14 +4,14 @@
 #include "SAAbstractRegionSelectEditor.h"
 #include "SASelectRegionShapeItem.h"
 #include <QPolygonF>
+class SAPolygonRegionSelectEditorPrivate;
 class SA_CHART_EXPORT SAPolygonRegionSelectEditor : public SAAbstractRegionSelectEditor
 {
     Q_OBJECT
+    SA_IMPL(SAPolygonRegionSelectEditor)
 public:
     SAPolygonRegionSelectEditor(QwtPlot* parent);
     virtual ~SAPolygonRegionSelectEditor();
-    //判断是否显示选区
-    virtual bool isRegionVisible() const;
     //获取选择的数据区域
     virtual QPainterPath getSelectRegion() const;
     //设置选区
@@ -20,9 +20,6 @@ public:
     virtual void setSelectionMode(const SelectionMode &selectionMode);
     //rtti
     virtual int rtti() const;
-    //获取选框区域的item
-    const QwtPlotShapeItem* getShapeItem() const;
-    QwtPlotShapeItem* getShapeItem();
 private slots:
     void onItemAttached(QwtPlotItem* item,bool on);
 protected:
@@ -31,12 +28,6 @@ protected:
     bool keyPressEvent(const QKeyEvent *e);
     bool completeRegion();
     bool backspaceRegion();
-private:
-    bool m_isStartDrawRegion;///< 是否生效
-    SASelectRegionShapeItem* m_shapeItem;
-    SASelectRegionShapeItem* m_tmpItem;
-    QPolygonF m_polygon;///< 多边形
-    bool m_isFinishOneRegion;///< 标定是否已经完成了一次区域，m_tmpItem还是m_shapeItem显示
 };
 
 #endif // SAPOLYGONREGIONSELECTEDITOR_H

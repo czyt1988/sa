@@ -3,13 +3,48 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QKeyEvent>
+class SARectRegionSelectEditorPrivate
+{
+    SA_IMPL_PUBLIC(SARectRegionSelectEditor)
+    bool m_isStartDrawRegion;
+    SASelectRegionShapeItem* m_tmpItem;
+    QPointF m_pressedPoint;
+    QRectF m_selectedRect;
+    QPainterPath m_lastPainterPath;
+public:
+    SARectRegionSelectEditorPrivate(SARectRegionSelectEditor* p):q_ptr(p)
+      ,m_isStartDrawRegion(false)
+      ,m_tmpItem(nullptr)
+      ,m_selectedRect(QRectF())
+    {
+
+    }
+    ~SARectRegionSelectEditorPrivate()
+    {
+        releaseTmpItem();
+    }
+    void releaseTmpItem()
+    {
+        if(m_tmpItem)
+        {
+            m_tmpItem->detach();
+            delete m_tmpItem;
+            m_tmpItem = nullptr;
+        }
+    }
+    void createTmpItem()
+    {
+        if(nullptr == m_tmpItem)
+        {
+            m_tmpItem = new SASelectRegionShapeItem("temp region");
+            m_tmpItem->attach(q_ptr->plot());
+        }
+    }
+};
 
 SARectRegionSelectEditor::SARectRegionSelectEditor(QwtPlot *parent)
     :SAAbstractRegionSelectEditor(parent)
-  ,m_isStartDrawRegion(false)
-  ,m_shapeItem(nullptr)
-  ,m_tmpItem(nullptr)
-  ,m_selectedRect(QRectF())
+    ,d_ptr(new SARectRegionSelectEditorPrivate(this))
 {
     setEnabled(true);
     connect(parent,&QwtPlot::itemAttached,this,&SARectRegionSelectEditor::onItemAttached);
@@ -17,70 +52,38 @@ SARectRegionSelectEditor::SARectRegionSelectEditor(QwtPlot *parent)
 
 SARectRegionSelectEditor::~SARectRegionSelectEditor()
 {
-    if(m_shapeItem)
-    {
-        m_shapeItem->detach();
-        delete m_shapeItem;
-        m_shapeItem = nullptr;
-    }
-    if(m_tmpItem)
-    {
-        m_tmpItem->detach();
-        delete m_tmpItem;
-        m_tmpItem = nullptr;
-    }
+
 }
 
 
 
 bool SARectRegionSelectEditor::mousePressEvent(const QMouseEvent *e)
 {
+    SA_D(SARectRegionSelectEditor);
     if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
     {
         return false;
     }
     QPoint p = e->pos();
-    if(nullptr == m_shapeItem)
-    {
-        m_shapeItem = new SASelectRegionShapeItem("select region");
-        m_shapeItem->attach(plot());
-    }
+    d->createTmpItem();
+    d->m_isStartDrawRegion = true;
+    d->m_pressedPoint = invTransform(p);
     switch(getSelectionMode())
     {
-    case SingleSelection://单一选择
+    case SingleSelection:
     {
-        m_isStartDrawRegion = true;
-        m_pressedPoint = invTransform(p);
-        if(m_tmpItem)
-        {
-            m_tmpItem->detach();
-            delete m_tmpItem;
-            m_tmpItem = nullptr;
-        }
-        break;
-    }
-    case AdditionalSelection:
-    case SubtractionSelection:
-    case IntersectionSelection:
-    {
-        if(nullptr == m_tmpItem)
-        {
-            m_tmpItem = new SASelectRegionShapeItem("temp region");
-            m_tmpItem->attach(plot());
-        }
-        m_isStartDrawRegion = true;
-        m_pressedPoint = invTransform(p);
-        break;
+        d->m_lastPainterPath = QPainterPath();
     }
     default:
-        return false;
+        break;
     }
     return true;
 }
 
 bool SARectRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
 {
-    if(!m_isStartDrawRegion)
+    SA_D(SARectRegionSelectEditor);
+    if(!d->m_isStartDrawRegion)
     {
         return false;
     }
@@ -89,149 +92,68 @@ bool SARectRegionSelectEditor::mouseMovedEvent(const QMouseEvent *e)
         return false;
     }
     QPoint p = e->pos();
-    switch(getSelectionMode())
+    QPointF pf = invTransform(p);
+    d->m_selectedRect.setX(d->m_pressedPoint.x());
+    d->m_selectedRect.setY(d->m_pressedPoint.y());
+    d->m_selectedRect.setWidth(pf.x() - d->m_pressedPoint.x());
+    d->m_selectedRect.setHeight(pf.y() - d->m_pressedPoint.y());
+    if(d->m_tmpItem)
     {
-    case SingleSelection:
-    {
-        QPointF pf = invTransform(p);
-        m_selectedRect.setX(m_pressedPoint.x());
-        m_selectedRect.setY(m_pressedPoint.y());
-        m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-        m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-        if(m_shapeItem)
-        {
-            m_shapeItem->setRect(m_selectedRect);
-        }
-        break;
-    }
-    case AdditionalSelection:
-    case SubtractionSelection:
-    case IntersectionSelection:
-    {
-        QPointF pf = invTransform(p);
-        m_selectedRect.setX(m_pressedPoint.x());
-        m_selectedRect.setY(m_pressedPoint.y());
-        m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-        m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-        if(m_tmpItem)
-        {
-            m_tmpItem->setRect(m_selectedRect);
-        }
-        break;
-    }
-    default:
-        return false;
+        d->m_tmpItem->setRect(d->m_selectedRect);
     }
     return true;
 }
 
 bool SARectRegionSelectEditor::mouseReleasedEvent(const QMouseEvent *e)
 {
+    SA_D(SARectRegionSelectEditor);
     if(Qt::MidButton == e->button() || Qt::RightButton == e->button())
     {
         return false;
     }
     QPoint p = e->pos();
+    QPointF pf = invTransform(p);
+    if(pf == d->m_pressedPoint)
+    {
+        //如果点击和松开是一个点，就取消当前的选区
+        d->releaseTmpItem();
+        d->m_isStartDrawRegion = false;
+        return true;
+    }
+    d->m_selectedRect.setX(d->m_pressedPoint.x());
+    d->m_selectedRect.setY(d->m_pressedPoint.y());
+    d->m_selectedRect.setWidth(pf.x() - d->m_pressedPoint.x());
+    d->m_selectedRect.setHeight(pf.y() - d->m_pressedPoint.y());
+    QPainterPath painterPath;
+    painterPath.addRect(d->m_selectedRect);
     switch(getSelectionMode())
     {
     case SingleSelection:
     {
-        if(m_isStartDrawRegion)
-        {
-            QPointF pf = invTransform(p);
-            if(pf == m_pressedPoint)
-            {
-                //如果点击和松开是一个点，就取消当前的选区
-                if(m_shapeItem)
-                    m_shapeItem->setRect(QRectF());
-
-                m_isStartDrawRegion = false;
-                return true;
-            }
-            m_selectedRect.setX(m_pressedPoint.x());
-            m_selectedRect.setY(m_pressedPoint.y());
-            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-            if(m_shapeItem)
-            {
-                m_shapeItem->setRect(m_selectedRect);
-            }
-            else
-            {
-                //几乎无可能进入这里
-                m_shapeItem = new SASelectRegionShapeItem("select region");
-                m_shapeItem->attach(plot());
-                m_shapeItem->setRect(m_selectedRect);
-            }
-            emit finishSelection(m_shapeItem->shape());
-        }
-        m_isStartDrawRegion = false;
+        d->m_lastPainterPath = painterPath;
         break;
     }
     case AdditionalSelection:
+    {
+        d->m_lastPainterPath = d->m_lastPainterPath.united(painterPath);
+        break;
+    }
     case SubtractionSelection:
+    {
+        d->m_lastPainterPath = d->m_lastPainterPath.subtracted(painterPath);
+        break;
+    }
     case IntersectionSelection:
     {
-        if(m_isStartDrawRegion)
-        {
-            QPointF pf = invTransform(p);
-            if(pf == m_pressedPoint)
-            {
-                //如果点击和松开是一个点，就取消当前的选区
-                if(m_tmpItem)
-                {
-                    m_tmpItem->detach();
-                    delete m_tmpItem;
-                    m_tmpItem = nullptr;
-                }
-                m_isStartDrawRegion = false;
-                return true;
-            }
-            m_selectedRect.setX(m_pressedPoint.x());
-            m_selectedRect.setY(m_pressedPoint.y());
-            m_selectedRect.setWidth(pf.x() - m_pressedPoint.x());
-            m_selectedRect.setHeight(pf.y() - m_pressedPoint.y());
-            QPainterPath shape = m_shapeItem->shape();
-            if(m_shapeItem)
-            {
-                QPainterPath addtion;
-                addtion.addRect(m_selectedRect);
-                switch(getSelectionMode())
-                {
-                case AdditionalSelection:
-                {
-                    shape = shape.united(addtion);
-                    break;
-                }
-                case SubtractionSelection:
-                {
-                    shape = shape.subtracted(addtion);
-                    break;
-                }
-                case IntersectionSelection:
-                {
-                    shape = shape.intersected(addtion);
-                    break;
-                }
-                default:
-                    break;
-                }
-                m_shapeItem->setShape(shape);
-            }
-            emit finishSelection(shape);
-            if(m_tmpItem)
-            {
-                m_tmpItem->detach();
-                delete m_tmpItem;
-                m_tmpItem = nullptr;
-            }
-        }
-        m_isStartDrawRegion = false;
+        d->m_lastPainterPath = d->m_lastPainterPath.intersected(painterPath);
         break;
     }
     default:
-        return false;
+        break;
     }
+    d->releaseTmpItem();
+    d->m_isStartDrawRegion = false;
+    emit finishSelection(d->m_lastPainterPath);
     return true;
 }
 ///
@@ -247,50 +169,15 @@ bool SARectRegionSelectEditor::keyReleaseEvent(const QKeyEvent *e)
     return SAAbstractRegionSelectEditor::keyReleaseEvent(e);
 }
 
-///
-/// \brief 判断当前的选择区域是否显示
-/// \return
-///
-bool SARectRegionSelectEditor::isRegionVisible() const
-{
-    if(m_shapeItem)
-    {
-        if(m_shapeItem->isVisible())
-        {
-            return true;
-        }
-    }
-    return false;
-}
 
-
-///
-/// \brief 获取选框区域的item
-/// \return
-///
-const QwtPlotShapeItem *SARectRegionSelectEditor::getShapeItem() const
-{
-    return m_shapeItem;
-}
-///
-/// \brief 获取选框区域的item
-/// \return
-///
-QwtPlotShapeItem *SARectRegionSelectEditor::getShapeItem()
-{
-    return m_shapeItem;
-}
 ///
 /// \brief 获取选择的数据区域
 /// \return
 ///
 QPainterPath SARectRegionSelectEditor::getSelectRegion() const
 {
-    if(nullptr == m_shapeItem)
-    {
-        return QPainterPath();
-    }
-    return m_shapeItem->shape();
+    SA_DC(SARectRegionSelectEditor);
+    return d->m_lastPainterPath;
 }
 ///
 /// \brief SARectRegionSelectEditor::setSelectRegion
@@ -298,12 +185,8 @@ QPainterPath SARectRegionSelectEditor::getSelectRegion() const
 ///
 void SARectRegionSelectEditor::setSelectRegion(const QPainterPath &shape)
 {
-    if(nullptr == m_shapeItem)
-    {
-        m_shapeItem = new SASelectRegionShapeItem("select region");
-        m_shapeItem->setShape(shape);
-        m_shapeItem->attach(plot());
-    }
+    SA_D(SARectRegionSelectEditor);
+    d->m_lastPainterPath = shape;
 }
 
 ///
@@ -312,21 +195,6 @@ void SARectRegionSelectEditor::setSelectRegion(const QPainterPath &shape)
 ///
 void SARectRegionSelectEditor::setSelectionMode(const SARectRegionSelectEditor::SelectionMode &selectionMode)
 {
-    switch(selectionMode)
-    {
-    case SingleSelection:
-    {
-        if(m_tmpItem)
-        {
-            m_tmpItem->detach();
-            delete m_tmpItem;
-            m_tmpItem = nullptr;
-        }
-    }
-    default:
-        break;
-    }
-
     SAAbstractRegionSelectEditor::setSelectionMode(selectionMode);
 }
 ///
@@ -343,32 +211,20 @@ int SARectRegionSelectEditor::rtti() const
 ///
 void SARectRegionSelectEditor::clear()
 {
-    if(m_shapeItem)
-    {
-        m_shapeItem->detach();
-        delete m_shapeItem;
-        m_shapeItem = nullptr;
-    }
-    if(m_tmpItem)
-    {
-        m_tmpItem->detach();
-        delete m_tmpItem;
-        m_tmpItem = nullptr;
-    }
-    m_selectedRect = QRectF();
+    SA_D(SARectRegionSelectEditor);
+    d->releaseTmpItem();
+    d->m_selectedRect = QRectF();
+    d->m_lastPainterPath = QPainterPath();
 }
 
 void SARectRegionSelectEditor::onItemAttached(QwtPlotItem *item, bool on)
 {
+    SA_D(SARectRegionSelectEditor);
     if(!on)
     {
-        if(item == m_shapeItem)
+        if(item == d->m_tmpItem)
         {
-            m_shapeItem = nullptr;
-        }
-        if(item == m_tmpItem)
-        {
-            m_tmpItem = nullptr;
+            d->m_tmpItem = nullptr;
         }
     }
 }

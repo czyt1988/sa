@@ -21,6 +21,7 @@
 #include <QUndoStack>
 #include "SAFigureOptCommand.h"
 #include "qwt_text.h"
+#include "SASelectRegionShapeItem.h"
 class SAChart2DPrivate
 {
     SA_IMPL_PUBLIC(SAChart2D)
@@ -28,11 +29,14 @@ public:
     QUndoStack m_undoStack;
     SAChart2D::SelectionMode m_selectMode;///< 选择模式
     SAAbstractRegionSelectEditor* m_chartSelectRigionEditor;///< 矩形选择编辑器
-    QMap<QString,QPainterPath> m_selectionMap;///< 此图保存的选区，选区可以保存，并加载
+    QMap<QString,QPainterPath> m_selectionMap;///< 此dict保存的选区，选区可以保存，并加载
+    QPainterPath m_currentSelectionRegion;///< 当前的选区
+    SASelectRegionShapeItem* m_seclectRegionItem;///< 用于显示选区的item
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
       ,m_selectMode(SAChart2D::NoneSelection)
       ,m_chartSelectRigionEditor(nullptr)
+      ,m_seclectRegionItem(nullptr)
     {
 
     }
@@ -48,6 +52,23 @@ public:
     void removeItemCommand(QwtPlotItem* item,const QString& des)
     {
         m_undoStack.push(new SAFigureChartItemDeleteCommand(q_ptr,item,des));
+    }
+    void createRegionShapeItem()
+    {
+        if(nullptr == m_seclectRegionItem)
+        {
+            m_seclectRegionItem = new SASelectRegionShapeItem("region select item");
+            m_seclectRegionItem->attach(q_ptr);
+        }
+    }
+    void releaseRegionShapeItem()
+    {
+        if(nullptr != m_seclectRegionItem)
+        {
+            m_seclectRegionItem->detach();
+            delete m_seclectRegionItem;
+            m_seclectRegionItem = nullptr;
+        }
     }
 };
 
@@ -399,6 +420,21 @@ void SAChart2D::stopSelectMode()
     d->m_selectMode = NoneSelection;
 }
 ///
+/// \brief 选区选择完成
+/// \param shape
+///
+void SAChart2D::onSelectionFinished(const QPainterPath &shape)
+{
+    SA_D(SAChart2D);
+    d->m_currentSelectionRegion = shape;
+    d->createRegionShapeItem();
+    d->m_seclectRegionItem->setShape(shape);
+    if(!d->m_seclectRegionItem->isVisible())
+    {
+        d->m_seclectRegionItem->setVisible(true);
+    }
+}
+///
 /// \brief 清除所有选区
 ///
 void SAChart2D::clearAllSelectedRegion()
@@ -418,11 +454,11 @@ void SAChart2D::clearAllSelectedRegion()
 bool SAChart2D::isRegionVisible() const
 {
     SA_DC(SAChart2D);
-    if(nullptr == d->m_chartSelectRigionEditor)
+    if(nullptr == d->m_seclectRegionItem)
     {
         return false;
     }
-    return d->m_chartSelectRigionEditor->isRegionVisible();
+    return d->m_seclectRegionItem->isVisible();
 }
 ///
 /// \brief 获取当前正在显示的选择区域
@@ -454,15 +490,8 @@ const SAAbstractRegionSelectEditor *SAChart2D::getRegionSelectEditor() const
 ///
 QPainterPath SAChart2D::getSelectionRange() const
 {
-    const SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
-    if(editor)
-    {
-        if(editor->isRegionVisible())
-        {
-            return editor->getSelectRegion();
-        }
-    }
-    return QPainterPath();
+    SA_DC(SAChart2D);
+    return d->m_currentSelectionRegion;
 }
 ///
 /// \brief redo
@@ -484,20 +513,17 @@ void SAChart2D::undo()
 void SAChart2D::startRectSelectMode()
 {
     SA_D(SAChart2D);
-    QPainterPath tmp;
     if(d->m_chartSelectRigionEditor)
     {
-        tmp = d->m_chartSelectRigionEditor->getSelectRegion();
         delete d->m_chartSelectRigionEditor;
         d->m_chartSelectRigionEditor = nullptr;
     }
     if(nullptr == d->m_chartSelectRigionEditor)
     {
         d->m_chartSelectRigionEditor = new SARectRegionSelectEditor(this);
-        if(!tmp.isEmpty())
-        {
-            d->m_chartSelectRigionEditor->setSelectRegion(tmp);
-        }
+        connect(d->m_chartSelectRigionEditor,&SAAbstractRegionSelectEditor::finishSelection
+                ,this,&SAChart2D::onSelectionFinished);
+        d->m_chartSelectRigionEditor->setSelectRegion(d->m_currentSelectionRegion);
     }
     d->m_chartSelectRigionEditor->setEnabled(true);
 }
@@ -507,20 +533,17 @@ void SAChart2D::startRectSelectMode()
 void SAChart2D::startEllipseSelectMode()
 {
     SA_D(SAChart2D);
-    QPainterPath tmp;
     if(d->m_chartSelectRigionEditor)
     {
-        tmp = d->m_chartSelectRigionEditor->getSelectRegion();
         delete d->m_chartSelectRigionEditor;
         d->m_chartSelectRigionEditor = nullptr;
     }
     if(nullptr == d->m_chartSelectRigionEditor)
     {
         d->m_chartSelectRigionEditor = new SAEllipseRegionSelectEditor(this);
-        if(!tmp.isEmpty())
-        {
-            d->m_chartSelectRigionEditor->setSelectRegion(tmp);
-        }
+        connect(d->m_chartSelectRigionEditor,&SAAbstractRegionSelectEditor::finishSelection
+                ,this,&SAChart2D::onSelectionFinished);
+        d->m_chartSelectRigionEditor->setSelectRegion(d->m_currentSelectionRegion);
     }
     d->m_chartSelectRigionEditor->setEnabled(true);
 }
@@ -530,20 +553,17 @@ void SAChart2D::startEllipseSelectMode()
 void SAChart2D::startPolygonSelectMode()
 {
     SA_D(SAChart2D);
-    QPainterPath tmp;
     if(d->m_chartSelectRigionEditor)
     {
-        tmp = d->m_chartSelectRigionEditor->getSelectRegion();
         delete d->m_chartSelectRigionEditor;
         d->m_chartSelectRigionEditor = nullptr;
     }
     if(nullptr == d->m_chartSelectRigionEditor)
     {
         d->m_chartSelectRigionEditor = new SAPolygonRegionSelectEditor(this);
-        if(!tmp.isEmpty())
-        {
-            d->m_chartSelectRigionEditor->setSelectRegion(tmp);
-        }
+        connect(d->m_chartSelectRigionEditor,&SAAbstractRegionSelectEditor::finishSelection
+                ,this,&SAChart2D::onSelectionFinished);
+        d->m_chartSelectRigionEditor->setSelectRegion(d->m_currentSelectionRegion);
     }
     d->m_chartSelectRigionEditor->setEnabled(true);
 }

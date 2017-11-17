@@ -81,6 +81,9 @@ protected:
     void startPolygonSelectMode();
     //结束选区模式但不清空
     void stopSelectMode();
+protected slots:
+    // 选区选择完成
+    void onSelectionFinished(const QPainterPath& shape);
 private:
     QList<SAXYSeries *> addDatas(const QList<SAAbstractDatas*>& datas);
 protected:
