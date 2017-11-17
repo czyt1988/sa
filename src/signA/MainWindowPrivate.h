@@ -125,11 +125,13 @@ public:
 
     //! operate Category Page
     SARibbonCategory* operateRibbonCategory;
-
+    SARibbonMenu *menuSelection;
     SARibbonPannel* operateCategorySelectEditorPannel;
-    SARibbonToolButton* ribbonButtonStartRectSelect;
+    SARibbonToolButton* ribbonButtonStartSelection;
+
     SARibbonToolButton* ribbonButtonStartEllipseSelect;
     SARibbonToolButton* ribbonButtonStartPolygonSelect;
+    SARibbonToolButton* ribbonButtonClearnSelection;
     SARibbonToolButton* ribbonButtonSingleSelection;
     SARibbonToolButton* ribbonButtonAdditionalSelection;
     SARibbonToolButton* ribbonButtonSubtractionSelection;

@@ -57,7 +57,7 @@ public:
     void enableSelection(SelectionMode mode, bool on = true);
     //判断当前的选择模式
     bool isEnableSelection(SelectionMode mode) const;
-    //清除所有选区
+    //清除所有选区以及对应的编辑器
     void clearAllSelectedRegion();
     //判断是否有选区
     bool isRegionVisible() const;

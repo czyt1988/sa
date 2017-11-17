@@ -393,9 +393,20 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     //Selector Editor
     operateCategorySelectEditorPannel = operateRibbonCategory->addPannel(QStringLiteral("Select Editor"));
     operateCategorySelectEditorPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
-    ribbonButtonStartRectSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartRectSelect);
+
+    ribbonButtonStartSelection = operateCategorySelectEditorPannel->addLargeAction(actionStartRectSelect);
+    menuSelection = new SARibbonMenu(Parent);
+    menuSelection->addAction(actionStartRectSelect);
+    menuSelection->addAction(actionStartEllipseSelect);
+    menuSelection->addAction(actionStartPolygonSelect);
+    menuSelection->addSeparator();
+    menuSelection->addAction(actionClearAllSelectiedRegion);
+    ribbonButtonStartSelection->setMenu(menuSelection);
+    ribbonButtonStartSelection->setPopupMode(QToolButton::MenuButtonPopup);
+
     ribbonButtonStartEllipseSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartEllipseSelect);
     ribbonButtonStartPolygonSelect = operateCategorySelectEditorPannel->addSmallAction(actionStartPolygonSelect);
+    ribbonButtonClearnSelection = operateCategorySelectEditorPannel->addSmallAction(actionClearAllSelectiedRegion);
 
     ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget(Parent);
     ribbonButtonSingleSelection = ribbonButtonGroupSelectionMode->addButton(actionSingleSelection);
@@ -853,10 +864,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionZoomIn->setShortcut(QApplication::translate("MainWindow", "Ctrl+=", 0));
     actionZoomOut->setText(QApplication::translate("MainWindow", "Zoom Out", 0));
     actionZoomOut->setShortcut(QApplication::translate("MainWindow", "Ctrl+-", 0));
-    actionStartRectSelect->setText(QApplication::translate("MainWindow", "Rect Select", 0));
-    actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "Ellipse Select", 0));
-    actionStartPolygonSelect->setText(QApplication::translate("MainWindow", "Polygon Select", 0));
-    actionClearAllSelectiedRegion->setText(QApplication::translate("MainWindow", "Clear Select", 0));
+    actionStartRectSelect->setText(QApplication::translate("MainWindow", "Rect\nSelect", 0));
+    actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "Ellipse\nSelect", 0));
+    actionStartPolygonSelect->setText(QApplication::translate("MainWindow", "Polygon\nSelect", 0));
+    actionClearAllSelectiedRegion->setText(QApplication::translate("MainWindow", "Clear\nSelect", 0));
     actionSingleSelection->setText(QApplication::translate("MainWindow", "New Select", 0));
     actionAdditionalSelection->setText(QApplication::translate("MainWindow", "Add Select", 0));
     actionIntersectionSelection->setText(QApplication::translate("MainWindow", "Int Select", 0));

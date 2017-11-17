@@ -454,6 +454,7 @@ void SAChart2D::clearAllSelectedRegion()
     }
     delete d->m_chartSelectRigionEditor;
     d->m_chartSelectRigionEditor = nullptr;
+    d->releaseRegionShapeItem();
 }
 ///
 /// \brief 判断是否有选区

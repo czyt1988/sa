@@ -358,8 +358,8 @@ void MainWindow::initUI()
     ui->actionStartRectSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
     ui->actionStartEllipseSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
     ui->actionStartPolygonSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
-    ui->actionClearAllSelectiedRegion->setActionGroup(m_chartRegionSelectionShapeActionGroup);
-    ui->actionClearAllSelectiedRegion->setChecked(true);
+    //ui->actionClearAllSelectiedRegion->setActionGroup(m_chartRegionSelectionShapeActionGroup);
+    //ui->actionClearAllSelectiedRegion->setChecked(true);
     //矩形选框
     connect(ui->actionStartRectSelect,&QAction::triggered
             ,this,&MainWindow::onActionStartRectSelectTriggered);
@@ -372,7 +372,8 @@ void MainWindow::initUI()
     //清除所有选区
     connect(ui->actionClearAllSelectiedRegion,&QAction::triggered
             ,this,&MainWindow::onActionClearAllSelectiedRegionTriggered);
-
+    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+    ui->ribbonButtonStartSelection->setChecked(false);
     //
     m_chartRegionSelectionModeActionGroup = new QActionGroup(this);
     ui->actionSingleSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
@@ -1015,6 +1016,8 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
         }
     }
     updateChartSetToolBar();
+    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+    ui->ribbonButtonStartSelection->setChecked(true);
 }
 ///
 /// \brief 开始圆形选框工具
@@ -1041,6 +1044,8 @@ void MainWindow::onActionStartEllipseSelectTriggered(bool b)
         }
     }
     updateChartSetToolBar();
+    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartEllipseSelect);
+    ui->ribbonButtonStartSelection->setChecked(true);
 }
 ///
 /// \brief 开始多边形选框工具
@@ -1067,6 +1072,8 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
         }
     }
     updateChartSetToolBar();
+    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartPolygonSelect);
+    ui->ribbonButtonStartSelection->setChecked(true);
 }
 ///
 /// \brief 清除所有选区
@@ -1081,6 +1088,8 @@ void MainWindow::onActionClearAllSelectiedRegionTriggered(bool b)
         chart->clearAllSelectedRegion();
     }
     updateChartSetToolBar();
+    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+    ui->ribbonButtonStartSelection->setChecked(false);
 }
 ///
 /// \brief 选区单选模式
