@@ -26,7 +26,8 @@ public:
         ,EllipseSelection ///< 椭圆选框
         ,PolygonSelection ///< 多边形选框
     };
-
+    //删除图片条目，通过此函数进行删除能实现回退(redo/undo)功能
+    void deletePlotItem(QwtPlotItem *item);
     //添加曲线
     QwtPlotCurve* addCurve(const double *xData, const double *yData, int size);
     QwtPlotCurve* addCurve(const QVector<QPointF>& xyDatas);
@@ -67,6 +68,7 @@ public:
     const SAAbstractRegionSelectEditor* getRegionSelectEditor() const;
     //获取当前可见的选区的范围
     QPainterPath getSelectionRange() const;
+    void setSelectionRange(const QPainterPath& painterPath);
     //ctrl+z || ctrl + y
     void redo();
     void undo();

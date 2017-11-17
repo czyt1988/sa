@@ -10,7 +10,10 @@ class SAAbstractDatas;
 class SAFigureOptCommand : public QUndoCommand
 {
 public:
-    SAFigureOptCommand(const QString &cmdName);
+    SAFigureOptCommand(SAChart2D* chart,const QString &cmdName);
+    SAChart2D* plot();
+protected:
+    SAChart2D* m_chart;
 };
 
 ///
@@ -57,4 +60,20 @@ private:
     SAChart2D* m_chart;
     QwtPlotItem* m_item;
 };
+
+///
+/// \brief 图像添加选区
+///
+class SAFigureChartSelectionRegionAddCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureChartSelectionRegionAddCommand(SAChart2D* chart,const QPainterPath& newRegion,const QString &cmdName);
+    virtual void redo();
+    virtual void undo();
+private:
+    QPainterPath m_newPainterPath;
+    QPainterPath m_oldPainterPath;
+};
+
+
 #endif // SAFIGUREOPTCOMMAND_H

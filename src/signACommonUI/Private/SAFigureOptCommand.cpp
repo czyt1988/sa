@@ -2,16 +2,21 @@
 #include <SAChart2D.h>
 #include "SAXYSeries.h"
 #include "qwt_plot_item.h"
-SAFigureOptCommand::SAFigureOptCommand(const QString &cmdName):QUndoCommand(cmdName)
+SAFigureOptCommand::SAFigureOptCommand(SAChart2D* chart,const QString &cmdName):QUndoCommand(cmdName)
+  ,m_chart(chart)
 {
 
+}
+
+SAChart2D *SAFigureOptCommand::plot()
+{
+    return m_chart;
 }
 
 
 
 SAFigureChartItemAddCommand::SAFigureChartItemAddCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName)
-    :SAFigureOptCommand(cmdName)
-    ,m_chart(chart)
+    :SAFigureOptCommand(chart,cmdName)
     ,m_item(ser)
 {
 
@@ -27,7 +32,7 @@ SAFigureChartItemAddCommand::~SAFigureChartItemAddCommand()
 
 void SAFigureChartItemAddCommand::redo()
 {
-    m_item->attach(m_chart);
+    m_item->attach(plot());
 }
 
 void SAFigureChartItemAddCommand::undo()
@@ -36,8 +41,7 @@ void SAFigureChartItemAddCommand::undo()
 }
 
 SAFigureChartItemDeleteCommand::SAFigureChartItemDeleteCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName)
-    :SAFigureOptCommand(cmdName)
-    ,m_chart(chart)
+    :SAFigureOptCommand(chart,cmdName)
     ,m_item(ser)
 {
 
@@ -58,12 +62,11 @@ void SAFigureChartItemDeleteCommand::redo()
 
 void SAFigureChartItemDeleteCommand::undo()
 {
-    m_item->attach(m_chart);
+    m_item->attach(plot());
 }
 
 SAFigureChartItemListAddCommand::SAFigureChartItemListAddCommand(SAChart2D *chart, const QList<QwtPlotItem *> &itemList, const QString &cmdName)
-    :SAFigureOptCommand(cmdName)
-    ,m_chart(chart)
+    :SAFigureOptCommand(chart,cmdName)
     ,m_itemList(itemList)
 {
 
@@ -85,24 +88,41 @@ SAFigureChartItemListAddCommand::~SAFigureChartItemListAddCommand()
 
 void SAFigureChartItemListAddCommand::redo()
 {
-    m_chart->setAutoReplot(false);
+    plot()->setAutoReplot(false);
     const int size = m_itemList.size();
     for(int i=0;i<size;++i)
     {
-        m_itemList[i]->attach(m_chart);
+        m_itemList[i]->attach(plot());
     }
-    m_chart->setAutoReplot(true);
-    m_chart->replot();
+    plot()->setAutoReplot(true);
+    plot()->replot();
 }
 
 void SAFigureChartItemListAddCommand::undo()
 {
-    m_chart->setAutoReplot(false);
+    plot()->setAutoReplot(false);
     const int size = m_itemList.size();
     for(int i=0;i<size;++i)
     {
         m_itemList[i]->detach();
     }
-    m_chart->setAutoReplot(true);
-    m_chart->replot();
+    plot()->setAutoReplot(true);
+    plot()->replot();
+}
+
+SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(SAChart2D *chart, const QPainterPath &newRegion, const QString &cmdName)
+    :SAFigureOptCommand(chart,cmdName)
+    ,m_newPainterPath(newRegion)
+{
+    m_oldPainterPath = plot()->getSelectionRange();
+}
+
+void SAFigureChartSelectionRegionAddCommand::redo()
+{
+    plot()->setSelectionRange(m_newPainterPath);
+}
+
+void SAFigureChartSelectionRegionAddCommand::undo()
+{
+    plot()->setSelectionRange(m_oldPainterPath);
 }
