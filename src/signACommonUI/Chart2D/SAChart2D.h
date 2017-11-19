@@ -26,9 +26,7 @@ public:
         ,EllipseSelection ///< 椭圆选框
         ,PolygonSelection ///< 多边形选框
     };
-    //删除图片条目，通过此函数进行删除能实现回退(redo/undo)功能
-    void deletePlotItem(QwtPlotItem *item);
-    //添加曲线
+    //添加曲线-支持redo/undo
     QwtPlotCurve* addCurve(const double *xData, const double *yData, int size);
     QwtPlotCurve* addCurve(const QVector<QPointF>& xyDatas);
     QwtPlotCurve* addCurve(const QVector< double > &xData, const QVector< double > &yData);
@@ -38,16 +36,16 @@ public:
     QList<SAXYSeries *> addCurves(QList<SAAbstractDatas*> datas);
     void addCurve(QwtPlotCurve* cur);
     void addCurve(SAXYSeries* cur);
-    //添加bar
+    //添加bar-支持redo/undo
     QwtPlotHistogram* addBar(const QVector< QwtIntervalSample > &sample);
     SABarSeries *addBar(SAAbstractDatas* datas);
     void addBar(QwtPlotHistogram* cur);
     void addBar(SABarSeries* cur);
-    //添加样条线
+    //添加样条线-支持redo/undo
     QwtPlotMarker* addVLine(double val);
     QwtPlotMarker* addHLine(double val);
     void addPlotMarker(QwtPlotMarker* marker);
-    //移除一个对象
+    //移除一个对象-支持redo/undo
     void removeItem(QwtPlotItem* item);
     //移除范围内数据
     void removeDataInRang(QList<QwtPlotCurve *> curves);

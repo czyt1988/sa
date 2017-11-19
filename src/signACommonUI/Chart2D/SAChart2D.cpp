@@ -92,11 +92,6 @@ SAChart2D::~SAChart2D()
 {
 }
 
-void SAChart2D::deletePlotItem(QwtPlotItem *item)
-{
-    d_ptr->appendItemDeleteCommand(item,tr("remove item[%1]").arg(item->title().text()));
-}
-
 QwtPlotCurve *SAChart2D::addCurve(const double *xData, const double *yData, int size)
 {
     if(size<=0)

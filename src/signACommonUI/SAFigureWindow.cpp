@@ -196,7 +196,6 @@ void SAFigureWindow::redo()
     SAChart2D * c = current2DPlot();
     if(c)
     {
-        qDebug() << "void SAFigureWindow::redo()";
         c->redo();
     }
 }
@@ -206,7 +205,6 @@ void SAFigureWindow::undo()
     SAChart2D * c = current2DPlot();
     if(c)
     {
-        qDebug() << "void SAFigureWindow::undo()";
         c->undo();
     }
 }

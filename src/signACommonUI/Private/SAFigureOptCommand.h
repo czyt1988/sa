@@ -5,8 +5,8 @@
 #include "qwt_plot_item.h"
 class SAChart2D;
 class SAAbstractDatas;
-
-
+class QwtPlotCurve;
+class QwtSeriesStore<QPointF>;
 class SAFigureOptCommand : public QUndoCommand
 {
 public:
@@ -73,6 +73,23 @@ public:
 private:
     QPainterPath m_newPainterPath;
     QPainterPath m_oldPainterPath;
+};
+
+///
+/// \brief 移除曲线范围内的数据
+///
+class SAFigureRemoveCurveDataInRangCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureRemoveCurveDataInRangCommand(SAChart2D* chart,QList<QwtPlotCurve *> curves,const QString &cmdName);
+    virtual void redo();
+    virtual void undo();
+private:
+    void recordePlotCureData();
+private:
+    QList<QwtPlotCurve*> m_curveList;
+//    QList<QwtSeriesStore<QPointF>* > m_backupData;
+//    QList<QwtSeriesStore<QPointF>* > m_backupData;
 };
 
 

@@ -402,6 +402,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuSelection->addSeparator();
     menuSelection->addAction(actionClearAllSelectiedRegion);
     ribbonButtonStartSelection->setMenu(menuSelection);
+    ribbonButtonStartSelection->setObjectName(QStringLiteral("ribbonButtonStartSelection"));
     ribbonButtonStartSelection->setPopupMode(QToolButton::MenuButtonPopup);
 
 

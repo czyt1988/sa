@@ -1,5 +1,6 @@
 #include "SAFigureOptCommand.h"
 #include <SAChart2D.h>
+#include "SAChart.h"
 #include "SAXYSeries.h"
 #include "qwt_plot_item.h"
 SAFigureOptCommand::SAFigureOptCommand(SAChart2D* chart,const QString &cmdName):QUndoCommand(cmdName)
@@ -125,4 +126,28 @@ void SAFigureChartSelectionRegionAddCommand::redo()
 void SAFigureChartSelectionRegionAddCommand::undo()
 {
     plot()->setSelectionRange(m_oldPainterPath);
+}
+
+///
+/// \brief 移除曲线范围内的数据
+/// \param chart
+/// \param curves
+/// \param cmdName
+///
+SAFigureRemoveCurveDataInRangCommand::SAFigureRemoveCurveDataInRangCommand(SAChart2D *chart, QList<QwtPlotCurve *> curves, const QString &cmdName)
+    :SAFigureOptCommand(chart,cmdName)
+    ,m_curveList(curves)
+{
+    recordePlotCureData();
+}
+
+void SAFigureRemoveCurveDataInRangCommand::recordePlotCureData()
+{
+    const int count = m_curveList.size();
+    for(int i=0;i<count;++i)
+    {
+        QwtPlotCurve *cur = m_curveList[i];
+        Q_ASSERT_X(cur != nullptr,"recordePlotCureData","null curve ptr");
+        cur->swapData()
+    }
 }
