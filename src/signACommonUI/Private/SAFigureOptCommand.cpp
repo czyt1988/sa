@@ -3,6 +3,7 @@
 #include "SAChart.h"
 #include "SAXYSeries.h"
 #include "qwt_plot_item.h"
+#include "SAAbstractRegionSelectEditor.h"
 SAFigureOptCommand::SAFigureOptCommand(SAChart2D* chart,const QString &cmdName):QUndoCommand(cmdName)
   ,m_chart(chart)
 {
@@ -134,20 +135,92 @@ void SAFigureChartSelectionRegionAddCommand::undo()
 /// \param curves
 /// \param cmdName
 ///
-SAFigureRemoveCurveDataInRangCommand::SAFigureRemoveCurveDataInRangCommand(SAChart2D *chart, QList<QwtPlotCurve *> curves, const QString &cmdName)
+SAFigureRemoveCurveDataInRangCommand::SAFigureRemoveCurveDataInRangCommand(SAChart2D *chart, const QList<QwtPlotCurve *> &curves, const QString &cmdName)
     :SAFigureOptCommand(chart,cmdName)
     ,m_curveList(curves)
+    ,m_redoCount(0)
 {
-    recordePlotCureData();
+    recordPlotCureData(m_backupData);
+
+    plot()->setAutoReplot(false);
+    QPainterPath region = plot()->getSelectionRange();
+    SAAbstractRegionSelectEditor* editor = plot()->getRegionSelectEditor();
+
+    Q_ASSERT_X(editor != nullptr,"SAFigureRemoveCurveDataInRangCommand::redo","null RegionSelectEditor");
+
+    QHash<QPair<int,int>,QPainterPath> otherScaleMap;
+    const int count = m_curveList.size();
+    for(int i=0;i<count;++i)
+    {
+        QwtPlotCurve* curve = m_curveList[i];
+        int xa = curve->xAxis();
+        int ya = curve->yAxis();
+        if(xa == editor->getXAxis() && ya == editor->getYAxis())
+        {
+            SAChart::removeDataInRang(region,curve);
+        }
+        else
+        {
+            QPair<int,int> axiss=qMakePair(xa,ya);
+            if(!otherScaleMap.contains(axiss))
+            {
+                otherScaleMap[axiss] = editor->transformToOtherAxis(xa,ya);
+            }
+            SAChart::removeDataInRang(otherScaleMap.value(axiss)
+                                      ,curve);
+        }
+    }
+    plot()->setAutoReplot(true);
 }
 
-void SAFigureRemoveCurveDataInRangCommand::recordePlotCureData()
+void SAFigureRemoveCurveDataInRangCommand::redo()
+{
+    if(0 == m_redoCount)
+    {
+        //首次进入不进行操作，首次操作在构造函数完成
+        ++m_redoCount;
+        plot()->replot();
+        return;
+    }
+    recover();
+}
+///
+/// \brief 记录现有曲线值，并把原来记录的曲线值还原
+///
+void SAFigureRemoveCurveDataInRangCommand::undo()
+{
+    recover();
+}
+
+void SAFigureRemoveCurveDataInRangCommand::recordPlotCureData(QList<QSharedPointer<QVector<QPointF> > > &recorder)
 {
     const int count = m_curveList.size();
     for(int i=0;i<count;++i)
     {
         QwtPlotCurve *cur = m_curveList[i];
         Q_ASSERT_X(cur != nullptr,"recordePlotCureData","null curve ptr");
-        cur->swapData()
+        QSharedPointer<QVector<QPointF> > vecPtr(new QVector<QPointF>);
+        SAChart::getXYDatas(*vecPtr,cur);
+        recorder.append(vecPtr);
     }
+}
+
+void SAFigureRemoveCurveDataInRangCommand::recover()
+{
+    Q_ASSERT_X(m_curveList.size() == m_backupData.size(),"SAFigureRemoveCurveDataInRangCommand::undo","recorde size not equal");
+    plot()->setAutoReplot(false);
+    const int count = m_curveList.size();
+    //先记录现有的曲线值
+    QList<QSharedPointer<QVector<QPointF> > > recordeCurveData;
+    recordPlotCureData(recordeCurveData);
+    //还原原来的记录
+    for(int i=0;i<count;++i)
+    {
+        QwtPlotCurve *cur = m_curveList[i];
+        cur->setSamples(*m_backupData[i]);
+    }
+    //替换记录
+    m_backupData = recordeCurveData;
+    plot()->setAutoReplot(true);
+    plot()->replot();
 }

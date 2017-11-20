@@ -47,7 +47,7 @@ public:
     void addPlotMarker(QwtPlotMarker* marker);
     //移除一个对象-支持redo/undo
     void removeItem(QwtPlotItem* item);
-    //移除范围内数据
+    //移除范围内数据-支持redo/undo
     void removeDataInRang(QList<QwtPlotCurve *> curves);
     //获取选择范围内的数据,如果当前没有选区，返回false
     bool getDataInSelectRange(QVector<QPointF>& xy,QwtPlotCurve *cur);

@@ -89,14 +89,14 @@ void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
     for ( int i = 0; i < curveItems.size(); ++i )
     {
         QwtPlotCurve * cur = static_cast<QwtPlotCurve *>( curveItems[i] );
-        int index = cur->closestPoint (pos);
+        double dp;
+        int index = cur->closestPoint (pos,&dp);
         if(-1 == index)
             continue;
         QPointF p = cur->sample (index);
-        double dp = distancePower (p,mousePoint);//只计算平方和并没开方
         if(dp < distance)
         {
-            m_closePoint.setDistace(pow(dp,0.5));//实际距离需要开方
+            m_closePoint.setDistace(dp);//实际距离需要开方
             m_closePoint.setIndex(index);
             m_closePoint.setCurve(cur);
             distance = dp;
@@ -246,7 +246,7 @@ void SAXYDataTracker::closePoint::setCurve(QwtPlotCurve* cur)
 
 bool SAXYDataTracker::closePoint::isValid() const
 {
-    return ((this->curve() != nullptr) && (this->index() > 0));
+    return ((this->curve() != nullptr) && (this->index() >= 0));
 }
 
 QPointF SAXYDataTracker::closePoint::getClosePoint() const

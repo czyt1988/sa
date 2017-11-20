@@ -60,7 +60,10 @@ public:
     {
         m_undoStack.push(new SAFigureChartSelectionRegionAddCommand(q_ptr,newRegion,des));
     }
-
+    void appendRemoveCurveDataInRangCommand(const QList<QwtPlotCurve *>& curves,const QString& des)
+    {
+        m_undoStack.push(new SAFigureRemoveCurveDataInRangCommand(q_ptr,curves,des));
+    }
 
 
     void createRegionShapeItem()
@@ -288,7 +291,6 @@ void SAChart2D::removeItem(QwtPlotItem *item)
 ///
 void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
 {
-    setAutoReplot(false);
     QPainterPath region = getSelectionRange();
     if(region.isEmpty())
     {
@@ -299,6 +301,8 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
     {
         return;
     }
+    d_ptr->appendRemoveCurveDataInRangCommand(curves,tr("remove rang data"));
+#if 0
     QHash<QPair<int,int>,QPainterPath> otherScaleMap;
     for(int i=0;i<curves.size();++i)
     {
@@ -322,6 +326,7 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
     }
     setAutoReplot(true);
     replot();
+#endif
 }
 ///
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false

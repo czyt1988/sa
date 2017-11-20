@@ -2,11 +2,13 @@
 #define SAFIGUREOPTCOMMAND_H
 #include <QUndoCommand>
 #include <QList>
+#include <QVector>
+#include <QSharedPointer>
 #include "qwt_plot_item.h"
 class SAChart2D;
 class SAAbstractDatas;
 class QwtPlotCurve;
-class QwtSeriesStore<QPointF>;
+
 class SAFigureOptCommand : public QUndoCommand
 {
 public:
@@ -81,15 +83,16 @@ private:
 class SAFigureRemoveCurveDataInRangCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureRemoveCurveDataInRangCommand(SAChart2D* chart,QList<QwtPlotCurve *> curves,const QString &cmdName);
+    SAFigureRemoveCurveDataInRangCommand(SAChart2D* chart,const QList<QwtPlotCurve *>& curves,const QString &cmdName);
     virtual void redo();
     virtual void undo();
 private:
-    void recordePlotCureData();
+    void recordPlotCureData(QList<QSharedPointer<QVector<QPointF> > >& recorder);
+    void recover();
 private:
+    int m_redoCount;
     QList<QwtPlotCurve*> m_curveList;
-//    QList<QwtSeriesStore<QPointF>* > m_backupData;
-//    QList<QwtSeriesStore<QPointF>* > m_backupData;
+    QList<QSharedPointer<QVector<QPointF> > > m_backupData;///< 保存曲线原来的数据
 };
 
 
