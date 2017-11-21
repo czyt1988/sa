@@ -793,10 +793,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionNewTrend->setToolTip(QApplication::translate("MainWindow", "Plot Trend With User Select Data Value", 0));
 #endif // QT_NO_TOOLTIP
     actionClearProject->setText(QApplication::translate("MainWindow", "Clear", 0));
-    actionInRangDataRemove->setText(QApplication::translate("MainWindow", "remove data\nin rang", 0));
-    actionOutRangDataRemove->setText(QApplication::translate("MainWindow", "remove data\nout rang", 0));
+    actionInRangDataRemove->setText(QApplication::translate("MainWindow", "remove\nin", 0));
+    actionOutRangDataRemove->setText(QApplication::translate("MainWindow", "remove\nout", 0));
 
-    actionSubWindowListDock->setText(QApplication::translate("MainWindow", "Sub Window\nList Dock", 0));
+    actionSubWindowListDock->setText(QApplication::translate("MainWindow", "SubWindow\nList", 0));
     actionEnableChartCrossCursor->setText(QApplication::translate("MainWindow", "Cross", 0));
     actionEnableChartPanner->setText(QApplication::translate("MainWindow", "Panner", 0));
     actionEnableChartZoom->setText(QApplication::translate("MainWindow", "Zoom", 0));
@@ -832,7 +832,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionShowLegendPanel->setText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
     actionShowLegendPanel->setIconText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
     actionChartZoomReset->setText(QApplication::translate("MainWindow", "Zoom Reset", 0));
-    actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick Curve\nTo Data", 0));
+    actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick\nData", 0));
     actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
     actionUndo->setText(QApplication::translate("MainWindow", "Rescind", 0));
     actionUndo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));

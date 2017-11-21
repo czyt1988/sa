@@ -3,7 +3,7 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
     $$PWD/SAQwtPlotItemGroupPropertys.h \
-    $$PWD/SAFigureOptCommand.h
+    $$PWD/SAFigureOptCommands.h
 
 SOURCES += \
-    $$PWD/SAFigureOptCommand.cpp
+    $$PWD/SAFigureOptCommands.cpp

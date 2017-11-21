@@ -5,10 +5,14 @@ HEADERS += \
     $$PWD/SAChart2D.h \
     $$PWD/SAXYSeries.h \
     $$PWD/SABarSeries.h \
-    $$PWD/SASeriesAndDataPtrMapper.h
+    $$PWD/SASeriesAndDataPtrMapper.h \
+    $$PWD/SAFigureOptCommand.h \
+    $$PWD/SASelectRegionEditor.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
     $$PWD/SAXYSeries.cpp \
     $$PWD/SABarSeries.cpp \
-    $$PWD/SASeriesAndDataPtrMapper.cpp
+    $$PWD/SASeriesAndDataPtrMapper.cpp \
+    $$PWD/SAFigureOptCommand.cpp \
+    $$PWD/SASelectRegionEditor.cpp

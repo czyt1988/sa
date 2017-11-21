@@ -20,11 +20,7 @@ void CurveSelectDialog::UI::setupUi(CurveSelectDialog *d)
     tableView->setObjectName(("tableView"));
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableView->setSortingEnabled(true);
-    QHeaderView* header = tableView->horizontalHeader();
-    if(header)
-    {
-        header->setStretchLastSection(true);
-    }
+
     verticalLayout->addWidget(tableView);
 
     horizontalLayout = new QHBoxLayout();
@@ -76,6 +72,12 @@ CurveSelectDialog::CurveSelectDialog(SAChart2D *chart , QWidget *parent) :
         <<tr("color")//颜色
         <<tr("size"));//数据点数
     ui->tableView->setModel(model);
+    QHeaderView* header = ui->tableView->horizontalHeader();
+    if(header)
+    {
+        header->setSectionResizeMode(0,QHeaderView::ResizeToContents);
+        header->setStretchLastSection(true);
+    }
     updateTable();
 
 }

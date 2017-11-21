@@ -19,7 +19,7 @@
 #include "SAEllipseRegionSelectEditor.h"
 #include "SAPolygonRegionSelectEditor.h"
 #include <QUndoStack>
-#include "SAFigureOptCommand.h"
+#include "SAFigureOptCommands.h"
 #include "qwt_text.h"
 #include "SASelectRegionShapeItem.h"
 class SAChart2DPrivate
@@ -31,11 +31,14 @@ public:
     SAAbstractRegionSelectEditor* m_chartSelectRigionEditor;///< 矩形选择编辑器
     QMap<QString,QPainterPath> m_selectionMap;///< 此dict保存的选区，选区可以保存，并加载
     SASelectRegionShapeItem* m_seclectRegionItem;///< 用于显示选区的item
+    SAAbstractPlotEditor* m_editor;///< 额外的编辑器
+    QList<QwtPlotItem*> m_currentSelectItem;///<当前选择的条目
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
       ,m_selectMode(SAChart2D::NoneSelection)
       ,m_chartSelectRigionEditor(nullptr)
       ,m_seclectRegionItem(nullptr)
+      ,m_editor(nullptr)
     {
 
     }
@@ -534,6 +537,59 @@ void SAChart2D::undo()
 {
     d_ptr->m_undoStack.undo();
 }
+
+void SAChart2D::appendCommand(SAFigureOptCommand *cmd)
+{
+    d_ptr->m_undoStack.push(cmd);
+}
+///
+/// \brief 设置一个编辑器，编辑器的内存交由SAChart2D管理，SAChart2D只能存在一个额外的编辑器
+///
+/// \param editor 传入null将解除之前的editor
+///
+void SAChart2D::setEditor(SAAbstractPlotEditor *editor)
+{
+    if(d_ptr->m_editor)
+    {
+        delete (d_ptr->m_editor);
+    }
+    d_ptr->m_editor = editor;
+    if(editor)
+    {
+        installEventFilter(editor);
+    }
+}
+///
+/// \brief 当前选择的条目
+/// \return
+///
+QList<QwtPlotItem *> SAChart2D::getCurrentSelectItems() const
+{
+    SA_DC(SAChart2D);
+    return d->m_currentSelectItem;
+}
+
+QList<QwtPlotCurve *> SAChart2D::getCurrentSelectPlotCurveItems() const
+{
+    SA_DC(SAChart2D);
+    const QList<QwtPlotItem *>& items = getCurrentSelectItems();
+    QList<QwtPlotCurve *> res;
+    for(int i=0;i<items.size();++i)
+    {
+        if(QwtPlotItem::Rtti_PlotCurve == items[i]->rtti())
+        {
+            res.append(static_cast<QwtPlotCurve *>(items[i]));
+        }
+    }
+    return res;
+}
+
+void SAChart2D::setCurrentSelectItems(const QList<QwtPlotItem *> &items)
+{
+    SA_D(SAChart2D);
+    d->m_currentSelectItem = items;
+}
+
 ///
 /// \brief 开始矩形选框模式
 ///

@@ -8,6 +8,7 @@
 #include <vector>
 #include <set>
 #include <QWheelEvent>
+#include <QHeaderView>
 #include "SAValueManager.h"
 #include "SAData.h"
 ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
@@ -18,6 +19,11 @@ ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
     ui->setupUi(this);
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
+    QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
+    if(plotLayerVerticalHeader)
+    {
+        plotLayerVerticalHeader->setDefaultSectionSize(19);
+    }
     m_menu = new QMenu(this);
     QMenu* m = m_menu->addMenu (QStringLiteral("导出选中数据"));
     m->addAction(ui->actionToLinerData);

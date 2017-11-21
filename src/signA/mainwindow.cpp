@@ -223,7 +223,13 @@ void MainWindow::initUI()
     //-------------------------------------
     // - 图层的设置
 	SAPlotLayerModel* layerModel = new SAPlotLayerModel(ui->tableView_layer);
+    QHeaderView* plotLayerVerticalHeader = ui->tableView_layer->verticalHeader();
+    if(plotLayerVerticalHeader)
+    {
+        plotLayerVerticalHeader->setDefaultSectionSize(19);
+    }
 	ui->tableView_layer->setModel(layerModel);
+    ui->tableView_layer->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	auto hh = ui->tableView_layer->horizontalHeader();
 	hh->setSectionResizeMode(0,QHeaderView::ResizeToContents);
 	hh->setSectionResizeMode(1,QHeaderView::ResizeToContents);
@@ -1559,7 +1565,11 @@ void MainWindow::onActionInRangDataRemoveTriggered()
         showWarningMessageInfo(tr("I can not find any chart in figure!"));
         return;
     }
-    QList<QwtPlotCurve*> curs = CurveSelectDialog::getSelCurve(chart,this);
+    QList<QwtPlotCurve*> curs = chart->getCurrentSelectPlotCurveItems();
+    if(curs.size() <= 0)
+    {
+        curs = CurveSelectDialog::getSelCurve(chart,this);
+    }
     if(curs.size() > 0)
     {
         chart->removeDataInRang(curs);
@@ -2227,14 +2237,15 @@ void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
 {
     if(!index.isValid ())
         return;
+
     QColor rgb = index.data (Qt::BackgroundColorRole).value<QColor>();
     ui->tableView_layer->setStyleSheet (getPlotLayerNewItemSelectedQSS(rgb));
+
     SAPlotLayerModel* model=getPlotLayerModel();
+    QwtPlotItem* item = model->getPlotItemFromIndex (index);
     if (1==index.column())
     {
-        QwtPlotItem* item = model->getPlotItemFromIndex (index);
         model->setData (index,!item->isVisible ());
-
     }
     else if(index.column() == 2)
     {//颜色
@@ -2247,7 +2258,19 @@ void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
             model->setData (index,newClr,Qt::BackgroundColorRole);
         }
     }
-
+    //
+    SAChart2D* chart = getCurSubWindowChart();
+    QItemSelectionModel* selMode = ui->tableView_layer->selectionModel();
+    QSet<QwtPlotItem*> itemSets;
+    if(selMode)
+    {
+        QModelIndexList selIndex = selMode->selectedIndexes();
+        for(int i=0;i<selIndex.size();++i)
+        {
+            itemSets.insert( model->getPlotItemFromIndex (selIndex[i]));
+        }
+        chart->setCurrentSelectItems(itemSets.toList());
+    }
 }
 ///
 /// \brief 根据已有的背景颜色来设置选中状态的背景颜色
@@ -2256,20 +2279,16 @@ void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
 ///
 QString MainWindow::getPlotLayerNewItemSelectedQSS(const QColor& rgb)
 {
-    QColor fgrgb;
-    //qDebug()<<"rgb:"<<rgb<<" lightness:"<<rgb.lightness()<<" value:"<<rgb.value();
-    if(rgb.lightness()<128)//根据背景颜色的深浅设置前景颜色
-    {
-        fgrgb.setRgb (255,255,255);
-    }
-    else
-    {
-        fgrgb.setRgb (0,0,0);
-    }
-    QString qss = QString("QTableView::item:selected{selection-background-color:rgb(%1,%2,%3);}"
-                          "QTableView::item:selected{selection-color:rgb(%4,%5,%6);}")
-                  .arg (rgb.red ()).arg (rgb.green ()).arg (rgb.blue ())
-                  .arg (fgrgb.red ()).arg (fgrgb.green ()).arg (fgrgb.blue ());//文字用反色
+#if 1
+    QString qss = QString("QTableView::item:selected{selection-background-color:rgba(%1,%2,%3,100);}"
+                          "QTableView::item:selected{selection-color:rgb(0,0,0);}")
+                  .arg (rgb.red ()).arg (rgb.green ()).arg (rgb.blue ());
+#else
+    QString qss = QString("QTableView::item:selected{selection-background-color:rgba(255,255,255,255);}"
+                          "QTableView::item:selected{border;3px solid %1;}"
+                          "QTableView::item:selected{selection-color:rgb(0,0,0);}")
+                  .arg (rgb.name());
+#endif
     return qss;
 }
 

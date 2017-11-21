@@ -9,6 +9,8 @@ class SAAbstractRegionSelectEditor;
 class SAAbstractDatas;
 class SAXYSeries;
 class SABarSeries;
+class SAFigureOptCommand;
+class SAAbstractPlotEditor;
 ///
 /// \brief sa 2d 曲线绘图的基本窗口封装，包括支持SAAbstractDatas的处理
 ///
@@ -70,8 +72,15 @@ public:
     //ctrl+z || ctrl + y
     void redo();
     void undo();
-    //获取redo undo stack
-    QUndoStack* undoStack();
+    //redo/undo 的command添加操作
+    void appendCommand(SAFigureOptCommand* cmd);
+    //设置一个编辑器，编辑器的内存交由SAChart2D管理，SAChart2D只能存在一个额外的编辑器
+    void setEditor(SAAbstractPlotEditor* editor);
+    //当前选择的条目
+    QList<QwtPlotItem*> getCurrentSelectItems() const;
+    QList<QwtPlotCurve*> getCurrentSelectPlotCurveItems() const;
+    //设置当前选择的条目
+    void setCurrentSelectItems(const QList<QwtPlotItem*>& items);
 protected:
     //开始矩形选框模式
     void startRectSelectMode();
@@ -90,7 +99,6 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
-
 };
 
 #endif // SACHART2D_H
