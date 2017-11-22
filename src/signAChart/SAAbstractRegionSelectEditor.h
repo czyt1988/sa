@@ -38,7 +38,7 @@ public:
     //数据坐标转换为屏幕坐标
     QPointF transform( const QPointF &pos ) const;
     //把当前区域转换为其它轴系
-    QPainterPath transformToOtherAxis(int axisX,int axisY);
+    QPainterPath transformToOtherAxis(int axisX,int axisY) const;
 signals:
     ///
     /// \brief 完成选择发出的信号

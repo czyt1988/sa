@@ -679,6 +679,77 @@ int SAChart::removeDataInRang(const QPainterPath &removeRang, QwtPlotCurve *curv
     curve->setSamples(newLine);
     return newLine.size();
 }
+///
+/// \brief 获取选择范围里的数据索引
+/// \param rang 选择的范围
+/// \param curve 曲线指针
+/// \param index 获取到的索引
+/// \return 获取到的数据个数
+///
+int SAChart::getCurveInSelectRangIndex(const QPainterPath &rang, const QwtPlotCurve *curve, QVector<int> &indexs)
+{
+    size_t length = curve->data()->size();
+    QPointF point;
+    int resCount = 0;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = curve->data()->sample(i);
+        if(rang.contains(point))
+        {
+            ++resCount;
+            indexs.append(i);
+        }
+    }
+    return resCount;
+}
+///
+/// \brief 获取选择范围里的数据和索引
+/// \param rang 选择的范围
+/// \param curve 曲线指针
+/// \param indexs 获取到的索引
+/// \param points 获取到的数据
+/// \return
+///
+int SAChart::getCurveInSelectRangDataAndIndex(const QPainterPath &rang, const QwtPlotCurve *curve, QVector<int> &indexs, QVector<QPointF> &points)
+{
+    size_t length = curve->data()->size();
+    QPointF point;
+    int resCount = 0;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = curve->data()->sample(i);
+        if(rang.contains(point))
+        {
+            ++resCount;
+            indexs.append(i);
+            points.append(point);
+        }
+    }
+    return resCount;
+}
+///
+/// \brief 获取选择范围里的数据
+/// \param rang 选择的范围
+/// \param curve 曲线指针
+/// \param points 获取到的数据
+/// \return
+///
+int SAChart::getCurveInSelectRangData(const QPainterPath &rang, const QwtPlotCurve *curve, QVector<QPointF> &points)
+{
+    size_t length = curve->data()->size();
+    QPointF point;
+    int resCount = 0;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = curve->data()->sample(i);
+        if(rang.contains(point))
+        {
+            ++resCount;
+            points.append(point);
+        }
+    }
+    return resCount;
+}
 
 int SAChart::getDataInRang(const QPainterPath &rang, QwtPlotCurve *curve, QVector<QPointF> &res)
 {

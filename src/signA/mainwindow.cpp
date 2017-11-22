@@ -52,6 +52,7 @@
 #include "SAUI.h"
 #include "SAUIReflection.h"//ui管理器
 #include "SAValueSelectDialog.h"
+#include "SASelectRegionEditor.h"
 //===signALib
 #include "SALocalServerDefine.h"
 #include "SAValueManager.h"//变量管理
@@ -380,6 +381,9 @@ void MainWindow::initUI()
             ,this,&MainWindow::onActionClearAllSelectiedRegionTriggered);
     ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
     ui->ribbonButtonStartSelection->setChecked(false);
+    //选区数据变换
+    connect(ui->actionSelectionRegionDataMove,&QAction::triggered
+            ,this,&MainWindow::onActionSelectionRegionDataMove);
     //
     m_chartRegionSelectionModeActionGroup = new QActionGroup(this);
     ui->actionSingleSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
@@ -1173,6 +1177,39 @@ void MainWindow::onActionIntersectionSelectionTriggered(bool b)
         }
     }
 }
+
+void MainWindow::onActionSelectionRegionDataMove(bool b)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(nullptr == chart)
+    {
+        ui->actionSelectionRegionDataMove->setChecked(false);
+        return;
+    }
+
+    if(b)
+    {
+        if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
+        {
+            selectEditor->setEnabled(false);
+            ui->actionStartRectSelect->setChecked(false);
+            ui->actionStartEllipseSelect->setChecked(false);
+            ui->actionStartPolygonSelect->setChecked(false);
+            ui->ribbonButtonStartSelection->setChecked(false);
+            SASelectRegionEditor* editor = new SASelectRegionEditor(chart);
+            chart->setEditor(editor);
+        }
+        else
+        {
+            ui->actionSelectionRegionDataMove->setChecked(false);
+            return;
+        }
+    }
+    else
+    {
+        chart->setEditor(nullptr);
+    }
+}
 ///
 /// \brief 获取当前ui选择的区域选择模式
 /// \return
@@ -1484,6 +1521,18 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
             if(plot)
             {
                 plotLayerModel->setPlot(plot);
+            }
+            QItemSelectionModel* selectModel = ui->tableView_layer->selectionModel();
+            QList<QwtPlotItem*> selItems = plot->getCurrentSelectItems();
+            if(selectModel)
+            {
+               QModelIndexList indexSel = plotLayerModel->getIndexFromPlotItems(selItems);
+               selectModel->reset();
+               for(int i=0;i<indexSel.size();++i)
+               {
+                   //qDebug() << "indexSel r:"<<indexSel[i].row()<<" c:"<<indexSel[i].column();
+                   selectModel->select(indexSel[i],QItemSelectionModel::Select|QItemSelectionModel::Rows);
+               }
             }
 		}
         QList<SAChart2D*> plotWidgets = getCurSubWindowCharts();
@@ -2239,8 +2288,9 @@ void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
         return;
 
     QColor rgb = index.data (Qt::BackgroundColorRole).value<QColor>();
+#if _CFG_LAYOUT_SELECT_CHANG_QSS
     ui->tableView_layer->setStyleSheet (getPlotLayerNewItemSelectedQSS(rgb));
-
+#endif
     SAPlotLayerModel* model=getPlotLayerModel();
     QwtPlotItem* item = model->getPlotItemFromIndex (index);
     if (1==index.column())
@@ -2254,7 +2304,9 @@ void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
         if(clrDlg.exec() == QDialog::Accepted)
         {
             QColor newClr = clrDlg.selectedColor();
+#if _CFG_LAYOUT_SELECT_CHANG_QSS
             ui->tableView_layer->setStyleSheet (getPlotLayerNewItemSelectedQSS(newClr));
+#endif
             model->setData (index,newClr,Qt::BackgroundColorRole);
         }
     }
@@ -2264,7 +2316,7 @@ void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
     QSet<QwtPlotItem*> itemSets;
     if(selMode)
     {
-        QModelIndexList selIndex = selMode->selectedIndexes();
+        QModelIndexList selIndex = selMode->selectedRows();
         for(int i=0;i<selIndex.size();++i)
         {
             itemSets.insert( model->getPlotItemFromIndex (selIndex[i]));
@@ -2272,6 +2324,7 @@ void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
         chart->setCurrentSelectItems(itemSets.toList());
     }
 }
+#if _CFG_LAYOUT_SELECT_CHANG_QSS
 ///
 /// \brief 根据已有的背景颜色来设置选中状态的背景颜色
 /// \param rgb 已有的背景颜色
@@ -2291,7 +2344,7 @@ QString MainWindow::getPlotLayerNewItemSelectedQSS(const QColor& rgb)
 #endif
     return qss;
 }
-
+#endif
 bool MainWindow::setProjectInfomation()
 {
     SAProjectInfomationSetDialog dlg(this);

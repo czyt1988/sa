@@ -4,6 +4,8 @@
 #ifdef SA_USE_RIBBON_UI
 #include "SARibbonMainWindow.h"
 
+#define _CFG_LAYOUT_SELECT_CHANG_QSS 0
+
 #include <QScopedPointer>
 class MainWindowPrivate;
 #else
@@ -307,6 +309,8 @@ private slots:
     void onActionSubtractionSelectionTriggered(bool b);
     //选区交集模式
     void onActionIntersectionSelectionTriggered(bool b);
+    //选区数据变换
+    void onActionSelectionRegionDataMove(bool b);
     //获取当前ui选择的区域选择模式
     SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
     //开启当前绘图的十字光标
@@ -493,9 +497,10 @@ private:
     void loadSetting();
     void saveWindowState(QSettings& setting);
     void loadWindowState(const QSettings& setting);
-
+#if _CFG_LAYOUT_SELECT_CHANG_QSS
     //图层表格的选择样式生成
     QString getPlotLayerNewItemSelectedQSS(const QColor& rgb);
+#endif
     //设置项目信息
     bool setProjectInfomation();
     //变量管理器的移除控制触发的槽

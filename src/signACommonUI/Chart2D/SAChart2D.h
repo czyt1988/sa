@@ -68,7 +68,12 @@ public:
     const SAAbstractRegionSelectEditor* getRegionSelectEditor() const;
     //获取当前可见的选区的范围
     QPainterPath getSelectionRange() const;
+    QPainterPath getSelectionRange(int xaxis,int yaxis) const;
     void setSelectionRange(const QPainterPath& painterPath);
+    //判断当前的条目的x，y轴关联是否和选区的一致
+    bool isSelectionRangeAxisMatch(const QwtPlotItem* item);
+    //
+
     //ctrl+z || ctrl + y
     void redo();
     void undo();
@@ -90,6 +95,17 @@ protected:
     void startPolygonSelectMode();
     //结束选区模式但不清空
     void stopSelectMode();
+signals:
+    ///
+    /// \brief 选区发生变化发送的信号
+    /// \param shape
+    ///
+    void selectionRegionChanged(const QPainterPath& shape);
+    ///
+    /// \brief 当前选择的条目发生变化触发的信号
+    /// \param items
+    ///
+    void currentSelectItemsChanged(const QList<QwtPlotItem*>& items);
 protected slots:
     // 选区选择完成
     void onSelectionFinished(const QPainterPath& shape);

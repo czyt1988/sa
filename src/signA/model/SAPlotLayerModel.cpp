@@ -193,6 +193,20 @@ QwtPlotItem*SAPlotLayerModel::getPlotItemFromIndex(const QModelIndex& index)
     return itemList[layIndex];
 }
 
+QModelIndexList SAPlotLayerModel::getIndexFromPlotItems(const QList<QwtPlotItem *> &plotItem)
+{
+    QModelIndexList indexList;
+    QwtPlotItemList itemList = m_plot->itemList();
+    for(int i=0;i<itemList.size();++i)
+    {
+        if(plotItem.contains(itemList[i]))
+        {
+            indexList.append(index(itemList.size()-i-1,0));
+        }
+    }
+    return indexList;
+}
+
 QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) const
 {
 	const int rtti = item->rtti();

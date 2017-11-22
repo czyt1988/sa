@@ -11,6 +11,7 @@
 #include "qwt_symbol.h"
 #include "qwt_plot_item.h"
 #include <QPainterPath>
+#include <QList>
 class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
@@ -94,6 +95,10 @@ public:
     //把范围内的数据移除 返回移除的个数
     static int removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtPlotCurve* curve);
+    //获取选择范围里的数据索引
+    static int getCurveInSelectRangIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs);
+    static int getCurveInSelectRangDataAndIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs,QVector<QPointF>& points);
+    static int getCurveInSelectRangData(const QPainterPath& rang, const QwtPlotCurve* curve,QVector<QPointF>& points);
     //获取范围内的数据 返回获取的个数
     static int getDataInRang(const QPainterPath& rang,QwtPlotCurve* curve,QVector<QPointF>& res);
     //获取当前正在显示的区域

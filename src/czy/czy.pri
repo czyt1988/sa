@@ -15,17 +15,16 @@ HEADERS += \
         $$PWD/czyMath.h \
         $$PWD/czyMath_Interpolation.h \
         $$PWD/czyMath_Fit.h \
-        $$PWD/qt_extend/QEmail.h\
         $$PWD/czySA.h \
         $$PWD/czyAlgorithm.h \
-        $$PWD/czyMath_Smooth.h
+        $$PWD/czyMath_Smooth.h \
+    $$PWD/qt_extend/czyQtPointAlgorithm.h
 
 
 SOURCES +=  \
         $$PWD/czyMath_DSP.cpp\
         $$PWD/czyQtUI.cpp \
         $$PWD/czySA.cpp\
-        $$PWD/qt_extend/QEmail.cpp \
         $$PWD/czyAlgorithm.cpp \
         $$PWD/czyMath_Smooth.cpp \
         $$PWD/czyQtApp.cpp

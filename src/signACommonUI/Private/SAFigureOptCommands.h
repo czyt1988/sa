@@ -88,4 +88,5 @@ private:
 };
 
 
+
 #endif // SAFIGUREOPTCOMMAND_H

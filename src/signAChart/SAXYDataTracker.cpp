@@ -81,7 +81,7 @@ void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
     if(curveItems.size () <= 0)
         return;
     //把屏幕坐标转换为图形的数值坐标
-    QPointF mousePoint = invTransform(pos);
+    //QPointF mousePoint = invTransform(pos);
     //记录最短的距离，默认初始化为double的最大值
     double distance = std::numeric_limits<double>::max ();
     //记录前一次最近点的曲线指针
@@ -93,7 +93,7 @@ void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
         int index = cur->closestPoint (pos,&dp);
         if(-1 == index)
             continue;
-        QPointF p = cur->sample (index);
+        //QPointF p = cur->sample (index);
         if(dp < distance)
         {
             m_closePoint.setDistace(dp);//实际距离需要开方

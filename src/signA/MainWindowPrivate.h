@@ -97,7 +97,9 @@ public:
     QAction *actionDrawScatterChart;
     QAction *actionDrawBarChart;
     QAction *actionDrawBoxChart;
+    QAction *actionSelectionRegionDataMove;///<
 
+    QActionGroup* actionGroupSelection;
     QWidget *centralWidget;
 
 
@@ -129,12 +131,13 @@ public:
     SARibbonPannel* operateCategorySelectEditorPannel;
     SARibbonToolButton* ribbonButtonStartSelection;
 
-
     SARibbonToolButton* ribbonButtonSingleSelection;
     SARibbonToolButton* ribbonButtonAdditionalSelection;
     SARibbonToolButton* ribbonButtonSubtractionSelection;
     SARibbonToolButton* ribbonButtonIntersectionSelection;
     SARibbonButtonGroupWidget* ribbonButtonGroupSelectionMode;
+
+    SARibbonToolButton* ribbonButtonSelectionRegionDataMove;
 
     SARibbonPannel* operateCategoryDataViewPannel;
     SARibbonToolButton* ribbonButtonChartCrossCursor;

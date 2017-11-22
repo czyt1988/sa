@@ -222,24 +222,31 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionZoomOut->setObjectName(QStringLiteral("actionZoomOut"));
     actionZoomOut->setIcon(QIcon(":/icons/icons/zoomOut.png"));
 
+    actionGroupSelection = new QActionGroup(mainWinowPtr);
+    actionGroupSelection->setObjectName(QStringLiteral("actionGroupSelection"));
+    actionGroupSelection->setExclusive(true);
+
     actionStartRectSelect = new QAction(mainWinowPtr);
     actionStartRectSelect->setIcon(QIcon(":/icons/icons/StartRectSelect.svg"));
     actionStartRectSelect->setObjectName(QStringLiteral("actionStartRectSelect"));
     actionStartRectSelect->setCheckable(true);
+    actionGroupSelection->addAction(actionStartRectSelect);
 
     actionStartEllipseSelect = new QAction(mainWinowPtr);
     actionStartEllipseSelect->setIcon(QIcon(":/icons/icons/StartEllipseSelect.svg"));
     actionStartEllipseSelect->setObjectName(QStringLiteral("actionStartEllipseSelect"));
     actionStartEllipseSelect->setCheckable(true);
+    actionGroupSelection->addAction(actionStartEllipseSelect);
 
     actionStartPolygonSelect = new QAction(mainWinowPtr);
     actionStartPolygonSelect->setIcon(QIcon(":/icons/icons/StartPolygonSelect.svg"));
     actionStartPolygonSelect->setObjectName(QStringLiteral("actionStartPolygonSelect"));
     actionStartPolygonSelect->setCheckable(true);
+    actionGroupSelection->addAction(actionStartPolygonSelect);
 
     actionClearAllSelectiedRegion = new QAction(mainWinowPtr);
     actionClearAllSelectiedRegion->setObjectName(QStringLiteral("actionClearAllSelectiedRegion"));
-    actionClearAllSelectiedRegion->setCheckable(false);
+
 
     actionSingleSelection = new QAction(mainWinowPtr);
     actionSingleSelection->setObjectName(QStringLiteral("actionSingleSelection"));
@@ -274,6 +281,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionDrawBoxChart = new QAction(mainWinowPtr);
     actionDrawBoxChart->setObjectName(QStringLiteral("actionDrawBoxChart"));
     //actionDrawBoxChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
+
+    actionSelectionRegionDataMove = new QAction(mainWinowPtr);
+    actionSelectionRegionDataMove->setObjectName(QStringLiteral("actionSelectionRegionDataMove"));
+    actionSelectionRegionDataMove->setCheckable(true);
 
     centralWidget = new QWidget(mainWinowPtr);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
@@ -401,6 +412,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuSelection->addAction(actionStartPolygonSelect);
     menuSelection->addSeparator();
     menuSelection->addAction(actionClearAllSelectiedRegion);
+
     ribbonButtonStartSelection->setMenu(menuSelection);
     ribbonButtonStartSelection->setObjectName(QStringLiteral("ribbonButtonStartSelection"));
     ribbonButtonStartSelection->setPopupMode(QToolButton::MenuButtonPopup);
@@ -413,6 +425,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonIntersectionSelection = ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
     operateCategorySelectEditorPannel->addWidget(ribbonButtonGroupSelectionMode
                                                  ,0,3);
+
+    ribbonButtonSelectionRegionDataMove = operateCategorySelectEditorPannel->addLargeAction(actionSelectionRegionDataMove);
 
     //data view editor
     operateCategoryDataViewPannel = operateRibbonCategory->addPannel(QStringLiteral("Data View"));
@@ -873,6 +887,9 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionDrawScatterChart->setText(QApplication::translate("MainWindow", "Scatter", 0));
     actionDrawBarChart->setText(QApplication::translate("MainWindow", "Bar", 0));
     actionDrawBoxChart->setText(QApplication::translate("MainWindow", "Box", 0));
+    actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Transform", 0));
+
+
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));

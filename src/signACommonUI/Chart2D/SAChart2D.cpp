@@ -509,6 +509,40 @@ QPainterPath SAChart2D::getSelectionRange() const
     }
     return d->m_seclectRegionItem->shape();
 }
+///
+/// \brief 获取当前可见的选区的范围,选区范围更加坐标轴进行映射
+/// \param xaxis
+/// \param yaxis
+/// \return
+///
+QPainterPath SAChart2D::getSelectionRange(int xaxis, int yaxis) const
+{
+    QPainterPath shape = getSelectionRange();
+
+    QwtScaleMap xRawMap = canvasMap(axisEnabled(QwtPlot::yLeft) ? QwtPlot::yLeft : QwtPlot::yRight);
+    QwtScaleMap yRawMap = canvasMap(axisEnabled(QwtPlot::xBottom) ? QwtPlot::xBottom : QwtPlot::xTop);
+    const SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
+    if(editor)
+    {
+        if(xaxis == editor->getXAxis() && yaxis == editor->getYAxis())
+        {
+            return shape;
+        }
+        return editor->transformToOtherAxis(xaxis,yaxis);
+    }
+    QwtScaleMap xMap = canvasMap( xaxis );
+    QwtScaleMap yMap = canvasMap( yaxis );
+
+    const int eleCount = shape.elementCount();
+    for(int i=0;i<eleCount;++i)
+    {
+        const QPainterPath::Element &el = shape.elementAt( i );
+        QPointF tmp = QwtScaleMap::transform(xRawMap,yRawMap,QPointF(el.x,el.y));
+        tmp = QwtScaleMap::invTransform(xMap,yMap,tmp);
+        shape.setElementPositionAt( i, tmp.x(), tmp.y() );
+    }
+    return shape;
+}
 
 void SAChart2D::setSelectionRange(const QPainterPath &painterPath)
 {
@@ -522,6 +556,21 @@ void SAChart2D::setSelectionRange(const QPainterPath &painterPath)
     {
         d->m_seclectRegionItem->setVisible(true);
     }
+    emit selectionRegionChanged(painterPath);
+}
+///
+/// \brief 判断当前的条目的x，y轴关联是否和选区的一致
+/// \param item
+/// \return 如果没有选区，或者不一致，返回false
+///
+bool SAChart2D::isSelectionRangeAxisMatch(const QwtPlotItem *item)
+{
+    SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
+    if(!editor)
+    {
+        return false;
+    }
+    return (editor->getXAxis() == item->xAxis()) && (editor->getYAxis() == item->yAxis());
 }
 ///
 /// \brief redo
@@ -554,10 +603,6 @@ void SAChart2D::setEditor(SAAbstractPlotEditor *editor)
         delete (d_ptr->m_editor);
     }
     d_ptr->m_editor = editor;
-    if(editor)
-    {
-        installEventFilter(editor);
-    }
 }
 ///
 /// \brief 当前选择的条目
@@ -588,6 +633,7 @@ void SAChart2D::setCurrentSelectItems(const QList<QwtPlotItem *> &items)
 {
     SA_D(SAChart2D);
     d->m_currentSelectItem = items;
+    emit currentSelectItemsChanged(items);
 }
 
 ///

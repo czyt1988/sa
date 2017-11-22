@@ -109,11 +109,12 @@ QPointF SAAbstractRegionSelectEditor::transform(const QPointF &pos) const
 /// \param axisY
 /// \return
 ///
-QPainterPath SAAbstractRegionSelectEditor::transformToOtherAxis(int axisX, int axisY)
+QPainterPath SAAbstractRegionSelectEditor::transformToOtherAxis(int axisX, int axisY) const
 {
     QPainterPath shape = getSelectRegion();
     QwtScaleMap xMap = plot()->canvasMap( axisX );
     QwtScaleMap yMap = plot()->canvasMap( axisY );
+
     const int eleCount = shape.elementCount();
     for(int i=0;i<eleCount;++i)
     {
@@ -124,6 +125,7 @@ QPainterPath SAAbstractRegionSelectEditor::transformToOtherAxis(int axisX, int a
     }
     return shape;
 }
+
 bool SAAbstractRegionSelectEditor::eventFilter(QObject *object, QEvent *event)
 {
     QwtPlot *plot = qobject_cast<QwtPlot *>( parent() );
