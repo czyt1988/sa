@@ -86,6 +86,9 @@ public:
     QList<QwtPlotCurve*> getCurrentSelectPlotCurveItems() const;
     //设置当前选择的条目
     void setCurrentSelectItems(const QList<QwtPlotItem*>& items);
+    //
+    void unenableEditor();
+
 protected:
     //开始矩形选框模式
     void startRectSelectMode();
@@ -106,6 +109,12 @@ signals:
     /// \param items
     ///
     void currentSelectItemsChanged(const QList<QwtPlotItem*>& items);
+    ///
+    /// \brief 选区工具改变的信号
+    /// \param mode 选区模式
+    /// \param on
+    ///
+    void enableSelectionChanged(SelectionMode mode,bool on);
 protected slots:
     // 选区选择完成
     void onSelectionFinished(const QPainterPath& shape);

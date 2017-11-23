@@ -1205,10 +1205,6 @@ void MainWindow::onActionSelectionRegionDataMove(bool b)
             return;
         }
     }
-    else
-    {
-        chart->setEditor(nullptr);
-    }
 }
 ///
 /// \brief 获取当前ui选择的区域选择模式

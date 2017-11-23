@@ -635,6 +635,13 @@ void SAChart2D::setCurrentSelectItems(const QList<QwtPlotItem *> &items)
     d->m_currentSelectItem = items;
     emit currentSelectItemsChanged(items);
 }
+///
+/// \brief 把当前存在的编辑器禁止
+///
+void SAChart2D::unenableEditor()
+{
+
+}
 
 ///
 /// \brief 开始矩形选框模式

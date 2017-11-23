@@ -24,6 +24,7 @@ public:
     QHash<QPair<int,int>,QPainterPath> m_otherAxisSelectRegionOrigin;//其他坐标轴的选区
     QList<curve_info> m_curListInfo;//保存选中的曲线信息
     QPoint m_firstPressedScreenPoint;//第一次按下的点
+    QPoint m_tmpPoint;//记录临时点
     SASelectRegionEditorPrivate(SASelectRegionEditor* p)
         :q_ptr(p)
         ,m_haveMutiAxis(false)
@@ -192,6 +193,7 @@ bool SASelectRegionEditor::mousePressEvent(const QMouseEvent *e)
 {
     d_ptr->m_isStart = true;
     d_ptr->m_firstPressedScreenPoint = e->pos();
+    d_ptr->m_tmpPoint = e->pos();
     return false;
 }
 
@@ -215,35 +217,38 @@ bool SASelectRegionEditor::mouseMovedEvent(const QMouseEvent *e)
         }
         chart2D()->setAutoReplot(false);
         QPointF currentPoint = editor->invTransform(screenPoint);
-        QPointF originPoint = editor->invTransform(d_ptr->m_firstPressedScreenPoint);
+        QPointF originPoint = editor->invTransform(d_ptr->m_tmpPoint);
         QPointF offset = czy::calcOffset(currentPoint,originPoint);
+        d_ptr->m_tmpPoint = screenPoint;
         qDebug() << "currentPoint:"<<currentPoint<<" originPoint"<<originPoint<<" offset:"<<offset;
         //选区进行移动
-        d_ptr->m_selectRegion = d_ptr->m_selectRegionOrigin.translated(offset.x(),offset.y());
+        d_ptr->m_selectRegion = d_ptr->m_selectRegionOrigin.translated(offset);
         chart2D()->setSelectionRange(d_ptr->m_selectRegion);
         //选中数据进行移动
-        const int count = d_ptr->m_curListInfo.size();
-        for(int i=0;i<count;++i)
-        {
-            const curve_info& curinfo = d_ptr->m_curListInfo[i];
-            const int indexCount = curinfo.inRangIndexs.size();
-            QVector<QPointF> xyData( curinfo.curve->dataSize() );
-            SAChart::getXYDatas(xyData,curinfo.curve);
-            for(int j = 0;j<indexCount;++j)
-            {
-                int index = curinfo.inRangIndexs[j];
-                const QPointF& p = curinfo.inRangOriginData[j];
-                xyData[index] = p + offset;
-            }
-            curinfo.curve->setSamples(xyData);
-        }
+//        const int count = d_ptr->m_curListInfo.size();
+//        for(int i=0;i<count;++i)
+//        {
+//            const curve_info& curinfo = d_ptr->m_curListInfo[i];
+//            const int indexCount = curinfo.inRangIndexs.size();
+//            QVector<QPointF> xyData( curinfo.curve->dataSize() );
+//            SAChart::getXYDatas(xyData,curinfo.curve);
+//            for(int j = 0;j<indexCount;++j)
+//            {
+//                int index = curinfo.inRangIndexs[j];
+//                const QPointF& p = curinfo.inRangOriginData[j];
+//                xyData[index] = p + offset;
+//            }
+//            curinfo.curve->setSamples(xyData);
+//        }
         QwtPlotCanvas *plotCanvas =
                 qobject_cast<QwtPlotCanvas *>( plot()->canvas() );
-
+        chart2D()->setAutoReplot(true);
         plotCanvas->setPaintAttribute( QwtPlotCanvas::ImmediatePaint, true );
         plot()->replot();
         plotCanvas->setPaintAttribute( QwtPlotCanvas::ImmediatePaint, false );
+        return false;
     }
+    return true;
 }
 
 bool SASelectRegionEditor::mouseReleasedEvent(const QMouseEvent *e)
