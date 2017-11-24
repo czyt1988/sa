@@ -5,6 +5,7 @@
 #include "qwt_plot.h"
 ///
 /// \brief 绘图编辑器
+/// 此编辑器会屏蔽长按空格的keyPressEvent和keyReleaseEvent
 ///
 class SA_CHART_EXPORT SAAbstractPlotEditor : public QObject
 {
@@ -36,6 +37,7 @@ protected:
     virtual bool keyReleaseEvent(const QKeyEvent *e);
 private:
     bool m_isEnable;///< 是否生效
+    bool m_isSpaceLongPressed;///< 空格是否长按
 };
 
 #endif // SAABSTRACTPLOTEDITOR_H

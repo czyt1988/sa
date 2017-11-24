@@ -2,9 +2,11 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
+
 SAAbstractPlotEditor::SAAbstractPlotEditor(QwtPlot *parent)
     :QObject(parent)
     ,m_isEnable(false)
+    ,m_isSpaceLongPressed(false)
 {
 
 }
@@ -60,13 +62,18 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
     {
         switch( event->type() )
         {
+        //空格长按下，鼠标事件不处理
             case QEvent::MouseButtonPress:
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast<QMouseEvent* >( event );
-                if(mouseEvent)
+                if(mouseEvent && !m_isSpaceLongPressed)
                 {
                     return mousePressEvent( mouseEvent);
+                }
+                else
+                {
+                    return false;
                 }
                 break;
             }
@@ -74,9 +81,13 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast< QMouseEvent* >( event );
-                if(mouseEvent)
+                if(mouseEvent && !m_isSpaceLongPressed)
                 {
                     return mouseMovedEvent( mouseEvent );
+                }
+                else
+                {
+                    return false;
                 }
                 break;
             }
@@ -84,9 +95,13 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast<QMouseEvent* >( event );
-                if(mouseEvent)
+                if(mouseEvent && !m_isSpaceLongPressed)
                 {
                     return mouseReleasedEvent( mouseEvent );
+                }
+                else
+                {
+                    return false;
                 }
                 break;
             }
@@ -96,7 +111,16 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
                     dynamic_cast<QKeyEvent* >( event );
                 if(keyEvent)
                 {
-                    return keyPressEvent(keyEvent);
+                    if(keyEvent->isAutoRepeat() && Qt::Key_Space == keyEvent->key())
+                    {
+                        m_isSpaceLongPressed = true;
+                        return false;//空格长按键屏蔽
+                    }
+                    else
+                    {
+                        m_isSpaceLongPressed = false;
+                        return keyPressEvent(keyEvent);
+                    }
                 }
                 break;
             }
@@ -106,6 +130,7 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
                     dynamic_cast<QKeyEvent* >( event );
                 if(keyEvent)
                 {
+                    m_isSpaceLongPressed = false;
                     return keyReleaseEvent(keyEvent);
                 }
                 break;
