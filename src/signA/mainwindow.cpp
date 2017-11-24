@@ -53,6 +53,7 @@
 #include "SAUIReflection.h"//ui管理器
 #include "SAValueSelectDialog.h"
 #include "SASelectRegionEditor.h"
+#include "SASelectRegionDataEditor.h"
 //===signALib
 #include "SALocalServerDefine.h"
 #include "SAValueManager.h"//变量管理
@@ -382,8 +383,8 @@ void MainWindow::initUI()
     ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
     ui->ribbonButtonStartSelection->setChecked(false);
     //选区数据变换
-    connect(ui->actionSelectionRegionDataMove,&QAction::triggered
-            ,this,&MainWindow::onActionSelectionRegionDataMove);
+    connect(ui->actionSelectionRegionMove,&QAction::triggered
+            ,this,&MainWindow::onActionSelectionRegionMove);
     //
     m_chartRegionSelectionModeActionGroup = new QActionGroup(this);
     ui->actionSingleSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
@@ -409,6 +410,8 @@ void MainWindow::initUI()
     ui->actionXYDataPicker->setCheckable(true);
     //拾取xy值
     connect(ui->actionXYDataPicker,&QAction::triggered,this,&MainWindow::onActionXYDataPickerTriggered);
+    //选区范围内的数据移动
+    connect(ui->actionSelectionRegionDataMove,&QAction::triggered,this,&MainWindow::onActionSelectionRegionDataMove);
 #ifndef SA_USE_RIBBON_UI
     toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionXYDataPicker));
     if(toolbtn)
@@ -756,6 +759,34 @@ void MainWindow::loadWindowState(const QSettings& setting)
 
 }
 
+void MainWindow::releaseChart2DEditor(SAChart2D* chart)
+{
+    if(chart)
+    {
+        if(chart->getEditor())
+        {
+            chart->setEditor(nullptr);
+        }
+    }
+    ui->actionSelectionRegionMove->setChecked(false);
+    ui->actionSelectionRegionDataMove->setChecked(false);
+}
+
+void MainWindow::releaseChart2DSelectEditor(SAChart2D *chart)
+{
+    ui->actionStartRectSelect->setChecked(false);
+    ui->actionStartEllipseSelect->setChecked(false);
+    ui->actionStartPolygonSelect->setChecked(false);
+    ui->ribbonButtonStartSelection->setChecked(false);
+    if(chart)
+    {
+        if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
+        {
+            selectEditor->setEnabled(false);
+        }
+    }
+}
+
 
 
 ///
@@ -1010,6 +1041,7 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
     {
+        releaseChart2DEditor(chart);
         if(b)
         {
             chart->unenableEditor();
@@ -1028,6 +1060,8 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
     updateChartSetToolBar();
     ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
     ui->ribbonButtonStartSelection->setChecked(true);
+    //互斥的按钮
+    ui->actionSelectionRegionMove->setChecked(false);
 }
 ///
 /// \brief 开始圆形选框工具
@@ -1036,8 +1070,10 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
 void MainWindow::onActionStartEllipseSelectTriggered(bool b)
 {
     SAChart2D* chart = this->getCurSubWindowChart();
+
     if(chart)
     {
+        releaseChart2DEditor(chart);
         if(b)
         {
             chart->unenableEditor();
@@ -1056,6 +1092,8 @@ void MainWindow::onActionStartEllipseSelectTriggered(bool b)
     updateChartSetToolBar();
     ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartEllipseSelect);
     ui->ribbonButtonStartSelection->setChecked(true);
+    //互斥的按钮
+    ui->actionSelectionRegionMove->setChecked(false);
 }
 ///
 /// \brief 开始多边形选框工具
@@ -1066,6 +1104,7 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
     {
+        releaseChart2DEditor(chart);
         if(b)
         {
             chart->unenableEditor();
@@ -1084,6 +1123,8 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
     updateChartSetToolBar();
     ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartPolygonSelect);
     ui->ribbonButtonStartSelection->setChecked(true);
+    //互斥的按钮
+    ui->actionSelectionRegionMove->setChecked(false);
 }
 ///
 /// \brief 清除所有选区
@@ -1096,10 +1137,13 @@ void MainWindow::onActionClearAllSelectiedRegionTriggered(bool b)
     if(chart)
     {
         chart->clearAllSelectedRegion();
+        releaseChart2DEditor(chart);
     }
     updateChartSetToolBar();
     ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
     ui->ribbonButtonStartSelection->setChecked(false);
+    //互斥的按钮
+    ui->actionSelectionRegionMove->setChecked(false);
 }
 ///
 /// \brief 选区单选模式
@@ -1177,13 +1221,16 @@ void MainWindow::onActionIntersectionSelectionTriggered(bool b)
         }
     }
 }
-
-void MainWindow::onActionSelectionRegionDataMove(bool b)
+///
+/// \brief 选区移动
+/// \param b
+///
+void MainWindow::onActionSelectionRegionMove(bool b)
 {
     SAChart2D* chart = getCurSubWindowChart();
     if(nullptr == chart)
     {
-        ui->actionSelectionRegionDataMove->setChecked(false);
+        ui->actionSelectionRegionMove->setChecked(false);
         return;
     }
 
@@ -1191,21 +1238,49 @@ void MainWindow::onActionSelectionRegionDataMove(bool b)
     {
         if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
         {
-            selectEditor->setEnabled(false);
-            ui->actionStartRectSelect->setChecked(false);
-            ui->actionStartEllipseSelect->setChecked(false);
-            ui->actionStartPolygonSelect->setChecked(false);
-            ui->ribbonButtonStartSelection->setChecked(false);
+            saAddLog("Selection Region Move");
+            releaseChart2DSelectEditor(chart);
+            chart->unenableEditor();
             SASelectRegionEditor* editor = new SASelectRegionEditor(chart);
             chart->setEditor(editor);
         }
         else
         {
-            ui->actionSelectionRegionDataMove->setChecked(false);
+            ui->actionSelectionRegionMove->setChecked(false);
             return;
         }
     }
 }
+///
+/// \brief 选区范围内的数据移动
+/// \param on
+///
+void MainWindow::onActionSelectionRegionDataMove(bool on)
+{
+    SAChart2D* chart = getCurSubWindowChart();
+    if(nullptr == chart)
+    {
+        ui->actionSelectionRegionMove->setChecked(false);
+        return;
+    }
+    if(on)
+    {
+        if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
+        {
+            saAddLog("Selection Region Datas Move");
+            releaseChart2DSelectEditor(chart);
+            chart->unenableEditor();
+            SASelectRegionDataEditor* editor = new SASelectRegionDataEditor(chart);
+            chart->setEditor(editor);
+        }
+        else
+        {
+            ui->actionSelectionRegionMove->setChecked(false);
+            return;
+        }
+    }
+}
+
 ///
 /// \brief 获取当前ui选择的区域选择模式
 /// \return
@@ -1245,6 +1320,7 @@ void MainWindow::onActionEnableChartPickerTriggered(bool check)
             c->unenableEditor();
             c->enablePicker(check);
         });
+        releaseChart2DEditor(fig->current2DPlot());
     }
     updateChartSetToolBar(fig);
 }
@@ -1262,6 +1338,7 @@ void MainWindow::onActionEnableChartPannerTriggered(bool check)
             c->unenableEditor();
             c->enablePanner(check);
         });
+        releaseChart2DEditor(fig->current2DPlot());
     }
     updateChartSetToolBar(fig);
 }
@@ -1279,7 +1356,7 @@ void MainWindow::onActionEnableChartZoomTriggered(bool check)
             c->unenableEditor();
             c->enableZoomer(check);
         });
-
+        releaseChart2DEditor(fig->current2DPlot());
     }
     updateChartSetToolBar(fig);
 }
@@ -1339,6 +1416,7 @@ void MainWindow::onActionYDataPickerTriggered(bool on)
         chart->unenableEditor();
         chart->enableYDataPicker(on);
     }
+    releaseChart2DEditor(chart);
     updateChartSetToolBar();
 }
 ///
@@ -1353,6 +1431,7 @@ void MainWindow::onActionXYDataPickerTriggered(bool on)
         chart->unenableEditor();
         chart->enableXYDataPicker(on);
     }
+    releaseChart2DEditor(chart);
     updateChartSetToolBar();
 }
 ///

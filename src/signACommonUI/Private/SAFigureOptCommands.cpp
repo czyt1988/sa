@@ -7,8 +7,8 @@
 
 
 
-SAFigureChartItemAddCommand::SAFigureChartItemAddCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName)
-    :SAFigureOptCommand(chart,cmdName)
+SAFigureChartItemAddCommand::SAFigureChartItemAddCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName,QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
     ,m_item(ser)
 {
 
@@ -32,8 +32,8 @@ void SAFigureChartItemAddCommand::undo()
     m_item->detach();
 }
 
-SAFigureChartItemDeleteCommand::SAFigureChartItemDeleteCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName)
-    :SAFigureOptCommand(chart,cmdName)
+SAFigureChartItemDeleteCommand::SAFigureChartItemDeleteCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName,QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
     ,m_item(ser)
 {
 
@@ -57,8 +57,8 @@ void SAFigureChartItemDeleteCommand::undo()
     m_item->attach(plot());
 }
 
-SAFigureChartItemListAddCommand::SAFigureChartItemListAddCommand(SAChart2D *chart, const QList<QwtPlotItem *> &itemList, const QString &cmdName)
-    :SAFigureOptCommand(chart,cmdName)
+SAFigureChartItemListAddCommand::SAFigureChartItemListAddCommand(SAChart2D *chart, const QList<QwtPlotItem *> &itemList, const QString &cmdName,QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
     ,m_itemList(itemList)
 {
 
@@ -102,11 +102,19 @@ void SAFigureChartItemListAddCommand::undo()
     plot()->replot();
 }
 
-SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(SAChart2D *chart, const QPainterPath &newRegion, const QString &cmdName)
-    :SAFigureOptCommand(chart,cmdName)
+SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(SAChart2D *chart, const QPainterPath &newRegion, const QString &cmdName, QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
     ,m_newPainterPath(newRegion)
 {
     m_oldPainterPath = plot()->getSelectionRange();
+}
+
+SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(SAChart2D *chart, const QPainterPath &oldRegion, const QPainterPath &newRegion, const QString &cmdName, QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_oldPainterPath(oldRegion)
+    ,m_newPainterPath(newRegion)
+{
+
 }
 
 void SAFigureChartSelectionRegionAddCommand::redo()
@@ -125,8 +133,8 @@ void SAFigureChartSelectionRegionAddCommand::undo()
 /// \param curves
 /// \param cmdName
 ///
-SAFigureRemoveCurveDataInRangCommand::SAFigureRemoveCurveDataInRangCommand(SAChart2D *chart, const QList<QwtPlotCurve *> &curves, const QString &cmdName)
-    :SAFigureOptCommand(chart,cmdName)
+SAFigureRemoveCurveDataInRangCommand::SAFigureRemoveCurveDataInRangCommand(SAChart2D *chart, const QList<QwtPlotCurve *> &curves, const QString &cmdName, QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
     ,m_curveList(curves)
     ,m_redoCount(0)
 {
@@ -213,4 +221,50 @@ void SAFigureRemoveCurveDataInRangCommand::recover()
     m_backupData = recordeCurveData;
     plot()->setAutoReplot(true);
     plot()->replot();
+}
+
+SAFigureMoveCurveDataInIndexsCommand::SAFigureMoveCurveDataInIndexsCommand(SAChart2D *chart, const QList<SAFigureMoveCurveDataInIndexsCommandCurveInfo> &curveInfoList, const QString &cmdName, QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_curveInfoList(curveInfoList)
+{
+
+}
+
+void SAFigureMoveCurveDataInIndexsCommand::redo()
+{
+    //数据进行移动
+    const int count = m_curveInfoList.size();
+    for(int i=0;i<count;++i)
+    {
+        const SAFigureMoveCurveDataInIndexsCommandCurveInfo& info = m_curveInfoList[i];
+        QVector<QPointF> xyData;
+        SAChart::getXYDatas(xyData,info.curve);
+        const int indexCount = info.inRangIndexs.size();
+        const int inRangNewDataCount = info.inRangNewData.size();
+        const int curveDataCount = xyData.size();
+        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
+        {
+            xyData[info.inRangIndexs[j]] = info.inRangNewData[j];
+        }
+        info.curve->setSamples(xyData);
+    }
+}
+
+void SAFigureMoveCurveDataInIndexsCommand::undo()
+{
+    const int count = m_curveInfoList.size();
+    for(int i=0;i<count;++i)
+    {
+        const SAFigureMoveCurveDataInIndexsCommandCurveInfo& info = m_curveInfoList[i];
+        QVector<QPointF> xyData;
+        SAChart::getXYDatas(xyData,info.curve);
+        const int indexCount = info.inRangIndexs.size();
+        const int inRangOriginDataCount = info.inRangOriginData.size();
+        const int curveDataCount = xyData.size();
+        for(int j=0;j<indexCount && j<inRangOriginDataCount && j<curveDataCount;++j)
+        {
+            xyData[info.inRangIndexs[j]] = info.inRangOriginData[j];
+        }
+        info.curve->setSamples(xyData);
+    }
 }

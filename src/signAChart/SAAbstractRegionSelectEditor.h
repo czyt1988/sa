@@ -45,13 +45,6 @@ signals:
     /// \param shape 选区的区域
     ///
     void finishSelection(const QPainterPath& shape);
-protected:
-    virtual bool eventFilter(QObject *object, QEvent *event);
-    virtual bool mousePressEvent( const QMouseEvent* e);
-    virtual bool mouseMovedEvent( const QMouseEvent* e);
-    virtual bool mouseReleasedEvent( const QMouseEvent* e);
-    virtual bool keyPressEvent(const QKeyEvent *e);
-    virtual bool keyReleaseEvent(const QKeyEvent *e);
 private:
     SelectionMode m_selectionMode; ///< 选框类型
     int m_xAxis;

@@ -143,6 +143,32 @@ int SAChart::getItemDataSize(QwtPlotItem *item)
     }
     return -1;
 }
+///
+/// \brief 更加强制的replot，就算设置为不实时刷新也能实现重绘
+/// \param chart
+///
+void SAChart::replot(QwtPlot *chart)
+{
+    QwtPlotCanvas *plotCanvas =
+            qobject_cast<QwtPlotCanvas *>( chart->canvas() );
+    if(plotCanvas)
+    {
+        if(!plotCanvas->testPaintAttribute(QwtPlotCanvas::ImmediatePaint))
+        {
+            plotCanvas->setPaintAttribute( QwtPlotCanvas::ImmediatePaint, true );
+            chart->replot();
+            plotCanvas->setPaintAttribute( QwtPlotCanvas::ImmediatePaint, false );
+        }
+        else
+        {
+            chart->replot();
+        }
+    }
+    else
+    {
+        chart->replot();
+    }
+}
 
 ///
 /// \brief 是否允许显示坐标轴

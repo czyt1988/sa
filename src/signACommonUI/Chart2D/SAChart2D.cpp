@@ -22,6 +22,7 @@
 #include "SAFigureOptCommands.h"
 #include "qwt_text.h"
 #include "SASelectRegionShapeItem.h"
+#include <numeric>
 class SAChart2DPrivate
 {
     SA_IMPL_PUBLIC(SAChart2D)
@@ -74,6 +75,7 @@ public:
         if(nullptr == m_seclectRegionItem)
         {
             m_seclectRegionItem = new SASelectRegionShapeItem("region select item");
+            m_seclectRegionItem->setZ(std::numeric_limits<double>::max());
             m_seclectRegionItem->attach(q_ptr);
         }
     }
@@ -605,6 +607,14 @@ void SAChart2D::setEditor(SAAbstractPlotEditor *editor)
     d_ptr->m_editor = editor;
 }
 ///
+/// \brief 获取当前的编辑器
+/// \return
+///
+SAAbstractPlotEditor *SAChart2D::getEditor() const
+{
+    return d_ptr->m_editor;
+}
+///
 /// \brief 当前选择的条目
 /// \return
 ///
@@ -640,7 +650,15 @@ void SAChart2D::setCurrentSelectItems(const QList<QwtPlotItem *> &items)
 ///
 void SAChart2D::unenableEditor()
 {
-
+    if(d_ptr->m_chartSelectRigionEditor)
+    {
+        d_ptr->m_chartSelectRigionEditor->setEnabled(false);
+    }
+    if(SAAbstractPlotEditor* editor = getEditor())
+    {
+        editor->setEnabled(false);
+    }
+    SA2DGraph::unenableEditor();
 }
 
 ///

@@ -38,7 +38,8 @@ public:
     static QColor getItemColor(QwtPlotItem* item);
     //获取item的数据个数，-1为nan
     static int getItemDataSize(QwtPlotItem* item);
-
+    //更加强制的replot，就算设置为不实时刷新也能实现重绘
+    void replot(QwtPlot* chart);
     ////////////////////// 坐标轴相关操作//////////////////////////////
 
     //是否允许显示坐标轴

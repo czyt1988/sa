@@ -1,29 +1,25 @@
-#ifndef SASELECTREGIONEDITOR_H
-#define SASELECTREGIONEDITOR_H
+#ifndef SASELECTREGIONDATAEDITOR_H
+#define SASELECTREGIONDATAEDITOR_H
 #include "SACommonUIGlobal.h"
-#include "SAAbstractPlotEditor.h"
-#include <QPainterPath>
-class SASelectRegionEditorPrivate;
-class SAChart2D;
-///
-/// \brief 用于控制选区移动的编辑器
-///
-class SA_COMMON_UI_EXPORT SASelectRegionEditor : public SAAbstractPlotEditor
+#include "SASelectRegionEditor.h"
+class SASelectRegionDataEditorPrivate;
+class SA_COMMON_UI_EXPORT SASelectRegionDataEditor : public SAAbstractPlotEditor
 {
     Q_OBJECT
-    SA_IMPL(SASelectRegionEditor)
+    SA_IMPL(SASelectRegionDataEditor)
 public:
-
-    SASelectRegionEditor(SAChart2D *parent);
-    ~SASelectRegionEditor();
+    SASelectRegionDataEditor(SAChart2D *parent);
+    ~SASelectRegionDataEditor();
     enum RTTI
     {
-        RTTISelectRegionEditor = (SAAbstractPlotEditor::RTTIUserDefine + 13)
+        RTTISelectDataRegionEditor = (SAAbstractPlotEditor::RTTIUserDefine + 14)
     };
     virtual int rtti() const;
     //
     const SAChart2D* chart2D() const;
     SAChart2D* chart2D();
+private slots:
+    void onCurrentSelectItemsChanged(const QList<QwtPlotItem*>& items);
 private:
     //更新选中的索引
     void updateRegionIndex();
@@ -33,7 +29,6 @@ protected:
     virtual bool mouseReleasedEvent( const QMouseEvent *e);
     virtual bool keyPressEvent(const QKeyEvent *e);
     virtual bool keyReleaseEvent(const QKeyEvent *e);
-
 };
 
-#endif // SASELECTREGIONEDITOR_H
+#endif // SASELECTREGIONDATAEDITOR_H

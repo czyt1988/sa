@@ -164,6 +164,12 @@ POINT pointOffset(const POINT& a,DATA_TYPE offsetX,DATA_TYPE offsetY)
 {
     return POINT((a.x() + offsetX) , (a.y() + offsetY));
 }
+template<typename POINT,typename DATA_TYPE>
+void pointOffseted(POINT& a,DATA_TYPE offsetX,DATA_TYPE offsetY)
+{
+    a.setX(a.x() + offsetX);
+    a.setY(a.y() + offsetY);
+}
 template<typename POINT>
 POINT pointScale(const POINT& a,double scale,const POINT& base = POINT(0,0))
 {

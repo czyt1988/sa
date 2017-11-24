@@ -309,8 +309,11 @@ private slots:
     void onActionSubtractionSelectionTriggered(bool b);
     //选区交集模式
     void onActionIntersectionSelectionTriggered(bool b);
-    //选区数据变换
-    void onActionSelectionRegionDataMove(bool b);
+    //选区移动
+    void onActionSelectionRegionMove(bool b);
+    //选区范围内的数据移动
+    void onActionSelectionRegionDataMove(bool on);
+
     //获取当前ui选择的区域选择模式
     SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
     //开启当前绘图的十字光标
@@ -345,6 +348,7 @@ private slots:
     void onActionShowLegendTriggered(bool on);
     //显示图例选择器
     void onActionShowLegendPanelTriggered(bool on);
+
     /// \}
 
     ///
@@ -497,6 +501,9 @@ private:
     void loadSetting();
     void saveWindowState(QSettings& setting);
     void loadWindowState(const QSettings& setting);
+    //释放chart的附加editor
+    void releaseChart2DEditor(SAChart2D* chart);
+    void releaseChart2DSelectEditor(SAChart2D* chart);
 #if _CFG_LAYOUT_SELECT_CHANG_QSS
     //图层表格的选择样式生成
     QString getPlotLayerNewItemSelectedQSS(const QColor& rgb);

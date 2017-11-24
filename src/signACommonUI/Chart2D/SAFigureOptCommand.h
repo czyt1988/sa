@@ -7,7 +7,7 @@ class SAChart2D;
 class SA_COMMON_UI_EXPORT SAFigureOptCommand : public QUndoCommand
 {
 public:
-    SAFigureOptCommand(SAChart2D* chart,const QString &cmdName);
+    SAFigureOptCommand(SAChart2D* chart,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
     SAChart2D* plot();
 protected:
     SAChart2D* m_chart;

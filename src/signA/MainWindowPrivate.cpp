@@ -282,9 +282,14 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionDrawBoxChart->setObjectName(QStringLiteral("actionDrawBoxChart"));
     //actionDrawBoxChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
 
+    actionSelectionRegionMove = new QAction(mainWinowPtr);
+    actionSelectionRegionMove->setObjectName(QStringLiteral("actionSelectionRegionMove"));
+    actionSelectionRegionMove->setCheckable(true);
+
     actionSelectionRegionDataMove = new QAction(mainWinowPtr);
     actionSelectionRegionDataMove->setObjectName(QStringLiteral("actionSelectionRegionDataMove"));
     actionSelectionRegionDataMove->setCheckable(true);
+
 
     centralWidget = new QWidget(mainWinowPtr);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
@@ -426,7 +431,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     operateCategorySelectEditorPannel->addWidget(ribbonButtonGroupSelectionMode
                                                  ,0,3);
 
-    ribbonButtonSelectionRegionDataMove = operateCategorySelectEditorPannel->addLargeAction(actionSelectionRegionDataMove);
+    SARibbonButtonGroupWidget* tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
+    ribbonButtonSelectionRegionMove = tmpButtonGroup->addButton(actionSelectionRegionMove);
+    operateCategorySelectEditorPannel->addWidget(tmpButtonGroup,3,3);
+
 
     //data view editor
     operateCategoryDataViewPannel = operateRibbonCategory->addPannel(QStringLiteral("Data View"));
@@ -447,6 +455,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonInRangDataRemove->setMenu(menuDataRemove);
     ribbonButtonInRangDataRemove->setPopupMode(QToolButton::MenuButtonPopup);
     ribbonButtonPickCurveToData = operateCategoryDataEditorPannel->addLargeAction(actionPickCurveToData);
+
+    ribbonButtonSelectionRegionDataMove = operateCategoryDataEditorPannel->addLargeAction(actionSelectionRegionDataMove);
     //legend pannel
     chartLegendCategoryWindowPannel = operateRibbonCategory->addPannel("legend");
     ribbonButtonShowLegend = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegend);
@@ -887,8 +897,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionDrawScatterChart->setText(QApplication::translate("MainWindow", "Scatter", 0));
     actionDrawBarChart->setText(QApplication::translate("MainWindow", "Bar", 0));
     actionDrawBoxChart->setText(QApplication::translate("MainWindow", "Box", 0));
-    actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Transform", 0));
-
+    actionSelectionRegionMove->setText(QApplication::translate("MainWindow", "Transform", 0));
+    actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Move\nDatas", 0));
 
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));

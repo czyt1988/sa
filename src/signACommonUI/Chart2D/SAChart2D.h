@@ -81,6 +81,7 @@ public:
     void appendCommand(SAFigureOptCommand* cmd);
     //设置一个编辑器，编辑器的内存交由SAChart2D管理，SAChart2D只能存在一个额外的编辑器
     void setEditor(SAAbstractPlotEditor* editor);
+    SAAbstractPlotEditor* getEditor() const;
     //当前选择的条目
     QList<QwtPlotItem*> getCurrentSelectItems() const;
     QList<QwtPlotCurve*> getCurrentSelectPlotCurveItems() const;

@@ -27,6 +27,13 @@ public:
     virtual void setEnabled( bool on );
     virtual bool isEnabled() const;
     virtual int rtti() const = 0;
+protected:
+    virtual bool eventFilter(QObject *object, QEvent *event);
+    virtual bool mousePressEvent(const QMouseEvent *e);
+    virtual bool mouseMovedEvent( const QMouseEvent *e);
+    virtual bool mouseReleasedEvent( const QMouseEvent *e);
+    virtual bool keyPressEvent(const QKeyEvent *e);
+    virtual bool keyReleaseEvent(const QKeyEvent *e);
 private:
     bool m_isEnable;///< 是否生效
 };

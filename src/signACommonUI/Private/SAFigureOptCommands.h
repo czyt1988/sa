@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QSharedPointer>
 #include "qwt_plot_item.h"
+#include <memory>
 class SAChart2D;
 class SAAbstractDatas;
 class QwtPlotCurve;
@@ -16,7 +17,7 @@ class QwtPlotCurve;
 class SAFigureChartItemAddCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureChartItemAddCommand(SAChart2D* chart,QwtPlotItem *ser,const QString &cmdName);
+    SAFigureChartItemAddCommand(SAChart2D* chart,QwtPlotItem *ser,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
     ~SAFigureChartItemAddCommand();
     virtual void redo();
     virtual void undo();
@@ -31,7 +32,7 @@ private:
 class SAFigureChartItemListAddCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureChartItemListAddCommand(SAChart2D* chart,const QList<QwtPlotItem*>& itemList,const QString &cmdName);
+    SAFigureChartItemListAddCommand(SAChart2D* chart,const QList<QwtPlotItem*>& itemList,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
     ~SAFigureChartItemListAddCommand();
     virtual void redo();
     virtual void undo();
@@ -46,7 +47,7 @@ private:
 class SAFigureChartItemDeleteCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureChartItemDeleteCommand(SAChart2D* chart,QwtPlotItem *ser,const QString &cmdName);
+    SAFigureChartItemDeleteCommand(SAChart2D* chart, QwtPlotItem *ser, const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
     ~SAFigureChartItemDeleteCommand();
     virtual void redo();
     virtual void undo();
@@ -61,7 +62,8 @@ private:
 class SAFigureChartSelectionRegionAddCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureChartSelectionRegionAddCommand(SAChart2D* chart,const QPainterPath& newRegion,const QString &cmdName);
+    SAFigureChartSelectionRegionAddCommand(SAChart2D* chart,const QPainterPath& newRegion,const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
+    SAFigureChartSelectionRegionAddCommand(SAChart2D* chart,const QPainterPath& oldRegion,const QPainterPath& newRegion,const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
     virtual void redo();
     virtual void undo();
 private:
@@ -75,7 +77,7 @@ private:
 class SAFigureRemoveCurveDataInRangCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureRemoveCurveDataInRangCommand(SAChart2D* chart,const QList<QwtPlotCurve *>& curves,const QString &cmdName);
+    SAFigureRemoveCurveDataInRangCommand(SAChart2D* chart,const QList<QwtPlotCurve *>& curves,const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
     virtual void redo();
     virtual void undo();
 private:
@@ -86,7 +88,32 @@ private:
     QList<QwtPlotCurve*> m_curveList;
     QList<QSharedPointer<QVector<QPointF> > > m_backupData;///< 保存曲线原来的数据
 };
+///
+/// \brief 适用于SAFigureMoveCurveDataInIndexsCommand的数据结构
+///
+class SAFigureMoveCurveDataInIndexsCommandCurveInfo
+{
+public:
+    QwtPlotCurve* curve;
+    QVector<int> inRangIndexs;
+    QVector<QPointF> inRangOriginData;
+    QVector<QPointF> inRangNewData;
+};
 
-
+///
+/// \brief 移动某些序号的数据
+///
+class SAFigureMoveCurveDataInIndexsCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureMoveCurveDataInIndexsCommand(SAChart2D* chart
+                                         ,const QList<SAFigureMoveCurveDataInIndexsCommandCurveInfo >& curveInfoList
+                                         ,const QString &cmdName
+                                         , QUndoCommand *parent = Q_NULLPTR);
+    virtual void redo();
+    virtual void undo();
+private:
+    QList<SAFigureMoveCurveDataInIndexsCommandCurveInfo > m_curveInfoList;
+};
 
 #endif // SAFIGUREOPTCOMMAND_H
