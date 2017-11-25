@@ -1056,12 +1056,17 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
         {
             chart->enableSelection(SAChart2D::RectSelection,false);
         }
+        updateChartSetToolBar();
+        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+        ui->ribbonButtonStartSelection->setChecked(true);
+        //互斥的按钮
+        ui->actionSelectionRegionMove->setChecked(false);
     }
-    updateChartSetToolBar();
-    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
-    ui->ribbonButtonStartSelection->setChecked(true);
-    //互斥的按钮
-    ui->actionSelectionRegionMove->setChecked(false);
+    else
+    {
+        ui->ribbonButtonStartSelection->setChecked(false);
+    }
+
 }
 ///
 /// \brief 开始圆形选框工具
@@ -1088,12 +1093,16 @@ void MainWindow::onActionStartEllipseSelectTriggered(bool b)
         {
             chart->enableSelection(SAChart2D::EllipseSelection,false);
         }
+        updateChartSetToolBar();
+        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartEllipseSelect);
+        ui->ribbonButtonStartSelection->setChecked(true);
+        //互斥的按钮
+        ui->actionSelectionRegionMove->setChecked(false);
     }
-    updateChartSetToolBar();
-    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartEllipseSelect);
-    ui->ribbonButtonStartSelection->setChecked(true);
-    //互斥的按钮
-    ui->actionSelectionRegionMove->setChecked(false);
+    else
+    {
+        ui->ribbonButtonStartSelection->setChecked(false);
+    }
 }
 ///
 /// \brief 开始多边形选框工具
@@ -1119,13 +1128,17 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
         {
             chart->enableSelection(SAChart2D::PolygonSelection,false);
         }
+        updateChartSetToolBar();
+        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartPolygonSelect);
+        //互斥的按钮
+        ui->actionSelectionRegionMove->setChecked(false);
     }
-    updateChartSetToolBar();
-    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartPolygonSelect);
-    ui->ribbonButtonStartSelection->setChecked(true);
-    //互斥的按钮
-    ui->actionSelectionRegionMove->setChecked(false);
+    else
+    {
+        ui->ribbonButtonStartSelection->setChecked(false);
+    }
 }
+
 ///
 /// \brief 清除所有选区
 /// \param b
@@ -1138,12 +1151,16 @@ void MainWindow::onActionClearAllSelectiedRegionTriggered(bool b)
     {
         chart->clearAllSelectedRegion();
         releaseChart2DEditor(chart);
+        updateChartSetToolBar();
+        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+        ui->ribbonButtonStartSelection->setChecked(false);
+        //互斥的按钮
+        ui->actionSelectionRegionMove->setChecked(false);
     }
-    updateChartSetToolBar();
-    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
-    ui->ribbonButtonStartSelection->setChecked(false);
-    //互斥的按钮
-    ui->actionSelectionRegionMove->setChecked(false);
+    else
+    {
+        ui->ribbonButtonStartSelection->setChecked(false);
+    }
 }
 ///
 /// \brief 选区单选模式
@@ -1260,7 +1277,7 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
     SAChart2D* chart = getCurSubWindowChart();
     if(nullptr == chart)
     {
-        ui->actionSelectionRegionMove->setChecked(false);
+        ui->actionSelectionRegionDataMove->setChecked(false);
         return;
     }
     if(on)
@@ -1268,6 +1285,12 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
         if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
         {
             saAddLog("Selection Region Datas Move");
+            if(0 == chart->getCurrentSelectPlotCurveItems().size())
+            {
+                QList<QwtPlotCurve*> selCur = CurveSelectDialog::getSelCurve(chart,this);
+                chart->setCurrentSelectPlotCurveItems(selCur);
+            }
+
             releaseChart2DSelectEditor(chart);
             chart->unenableEditor();
             SASelectRegionDataEditor* editor = new SASelectRegionDataEditor(chart);
@@ -1693,6 +1716,7 @@ void MainWindow::onActionInRangDataRemoveTriggered()
     if(curs.size() <= 0)
     {
         curs = CurveSelectDialog::getSelCurve(chart,this);
+        chart->setCurrentSelectPlotCurveItems(curs);
     }
     if(curs.size() > 0)
     {

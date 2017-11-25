@@ -294,7 +294,7 @@ void SAChart2D::removeItem(QwtPlotItem *item)
 /// \brief 移除范围内数据
 /// \param curves 需要移除的曲线列表
 ///
-void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
+void SAChart2D::removeDataInRang(const QList<QwtPlotCurve *>& curves)
 {
     QPainterPath region = getSelectionRange();
     if(region.isEmpty())
@@ -332,6 +332,11 @@ void SAChart2D::removeDataInRang(QList<QwtPlotCurve *> curves)
     setAutoReplot(true);
     replot();
 #endif
+}
+
+void SAChart2D::removeDataInRang()
+{
+    removeDataInRang(getCurrentSelectPlotCurveItems());
 }
 ///
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false
@@ -644,6 +649,17 @@ void SAChart2D::setCurrentSelectItems(const QList<QwtPlotItem *> &items)
     SA_D(SAChart2D);
     d->m_currentSelectItem = items;
     emit currentSelectItemsChanged(items);
+}
+
+void SAChart2D::setCurrentSelectPlotCurveItems(const QList<QwtPlotCurve *> &items)
+{
+    SA_D(SAChart2D);
+    d->m_currentSelectItem.clear();
+    for(int i=0;i<items.size();++i)
+    {
+        d->m_currentSelectItem.append(items[i]);
+    }
+    emit currentSelectItemsChanged(d->m_currentSelectItem);
 }
 ///
 /// \brief 把当前存在的编辑器禁止

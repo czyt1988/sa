@@ -285,11 +285,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSelectionRegionMove = new QAction(mainWinowPtr);
     actionSelectionRegionMove->setObjectName(QStringLiteral("actionSelectionRegionMove"));
     actionSelectionRegionMove->setCheckable(true);
+    actionSelectionRegionMove->setIcon(QIcon(":/icons/icons/selectionRegionMove.png"));
 
     actionSelectionRegionDataMove = new QAction(mainWinowPtr);
     actionSelectionRegionDataMove->setObjectName(QStringLiteral("actionSelectionRegionDataMove"));
     actionSelectionRegionDataMove->setCheckable(true);
-
+    actionSelectionRegionDataMove->setIcon(QIcon(":/icons/icons/selectionRegionDataMove.png"));
 
     centralWidget = new QWidget(mainWinowPtr);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));

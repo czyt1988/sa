@@ -203,7 +203,7 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
     SAFigureMoveCurveDataInIndexsCommandCurveInfo cmdInfo;
     for(int i=0;i<d_ptr->m_curListInfo.size();++i)
     {
-        const curve_info& info = d_ptr->m_curListInfo[i];
+        curve_info& info = d_ptr->m_curListInfo[i];
         cmdInfo.curve = info.curve;
         cmdInfo.inRangIndexs = info.inRangIndexs;
         cmdInfo.inRangOriginData = info.inRangOriginData;
@@ -211,6 +211,7 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
         std::for_each(newData.begin(),newData.end(),czy::OffsetPoints<QPointF>(offset));
         cmdInfo.inRangNewData = newData;
         cmdInfoList.append(cmdInfo);
+        info.inRangOriginData = newData;//保存的原始值进行更新
     }
     SAFigureMoveCurveDataInIndexsCommand* regionDataMove = new SAFigureMoveCurveDataInIndexsCommand(chart2D()
                                                                                                     ,cmdInfoList
