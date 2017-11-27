@@ -36,6 +36,7 @@ public:
     QList<QwtPlotItem*> m_currentSelectItem;///<当前选择的条目
     bool m_isSpaceLongPressed;///<记录空格长按
     bool m_isEnablePannerBeforePressedSpace;///< 记录按下空格前是否处于panner状态
+    bool m_isEnableZoomBeforePressedSpace;///< 记录按下空格前是否处于zoom状态
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
       ,m_selectMode(SAChart2D::NoneSelection)
@@ -44,6 +45,7 @@ public:
       ,m_editor(nullptr)
       ,m_isSpaceLongPressed(false)
       ,m_isEnablePannerBeforePressedSpace(false)
+      ,m_isEnableZoomBeforePressedSpace(false)
     {
 
     }
@@ -54,8 +56,8 @@ public:
             //说明第一次进入
             q_ptr->setCursor(Qt::OpenHandCursor);
             m_isEnablePannerBeforePressedSpace = q_ptr->isEnablePanner();
+            m_isEnableZoomBeforePressedSpace = q_ptr->isEnableZoomer();
             q_ptr->enablePanner(true);
-            qDebug() << "q_ptr enablePanner";
         }
         m_isSpaceLongPressed = true;
     }
@@ -64,9 +66,11 @@ public:
         if(m_isSpaceLongPressed)
         {
             //说明之前处于长按状态
-            qDebug() << "q_ptr->unsetCursor();";
             q_ptr->unsetCursor();
-            q_ptr->enablePanner(m_isEnablePannerBeforePressedSpace);
+            if(m_isEnablePannerBeforePressedSpace)
+                q_ptr->enablePanner(true);
+            if(m_isEnableZoomBeforePressedSpace)
+                q_ptr->enableZoomer(true);
         }
         m_isSpaceLongPressed = false;
     }

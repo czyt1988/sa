@@ -705,13 +705,7 @@ int SAChart::removeDataInRang(const QPainterPath &removeRang, QwtPlotCurve *curv
     curve->setSamples(newLine);
     return newLine.size();
 }
-///
-/// \brief 获取选择范围里的数据索引
-/// \param rang 选择的范围
-/// \param curve 曲线指针
-/// \param index 获取到的索引
-/// \return 获取到的数据个数
-///
+
 int SAChart::getCurveInSelectRangIndex(const QPainterPath &rang, const QwtPlotCurve *curve, QVector<int> &indexs)
 {
     size_t length = curve->data()->size();
@@ -728,6 +722,7 @@ int SAChart::getCurveInSelectRangIndex(const QPainterPath &rang, const QwtPlotCu
     }
     return resCount;
 }
+
 ///
 /// \brief 获取选择范围里的数据和索引
 /// \param rang 选择的范围
@@ -754,6 +749,134 @@ int SAChart::getCurveInSelectRangDataAndIndex(const QPainterPath &rang, const Qw
     return resCount;
 }
 ///
+/// \brief 获取选择范围里的数据索引
+/// \param rang 选择的范围
+/// \param curve 曲线指针
+/// \param index 获取到的索引
+/// \param xRangAxis 选择的范围对应的x轴
+/// \param yRangAxis 选择的范围对应的y轴
+/// \return 获取到的数据个数
+///
+int SAChart::getCurveInSelectRangIndex(const QPainterPath &rang, const QwtPlotCurve *curve, QVector<int> &indexs, const int xRangAxis, const int yRangAxis)
+{
+
+    size_t length = curve->data()->size();
+    int resCount = 0;
+    if(xRangAxis == curve->xAxis() && yRangAxis == curve->yAxis())
+    {
+        QPointF point;
+        for(size_t i = 0;i<length;++i)
+        {
+            point = curve->data()->sample(i);
+            if(rang.contains(point))
+            {
+                ++resCount;
+                indexs.append(i);
+            }
+        }
+        return resCount;
+    }
+    else
+    {
+        QwtPlot* p = curve->plot();
+        if(nullptr == p)
+        {
+            return resCount;
+        }
+        QPointF point,pointScreen;
+        for(size_t i = 0;i<length;++i)
+        {
+            point = curve->data()->sample(i);
+            pointScreen = point;
+            //把曲线坐标转换到和区域坐标一致，再进行判断
+            if(xRangAxis != curve->xAxis())
+            {
+                pointScreen.rx() = p->transform(xRangAxis,point.x());
+                point.rx() = p->invTransform(xRangAxis,pointScreen.x());
+            }
+            if(yRangAxis != curve->yAxis())
+            {
+                pointScreen.ry() = p->transform(yRangAxis,point.y());
+                point.ry() = p->invTransform(yRangAxis,pointScreen.y());
+            }
+            if(rang.contains(point))
+            {
+                ++resCount;
+                indexs.append(i);
+            }
+        }
+        return resCount;
+    }
+}
+///
+/// \brief 获取选择范围里的数据和索引
+/// \param rang 选择的范围
+/// \param curve 曲线指针
+/// \param indexs 获取到的索引
+/// \param points 获取到的数据
+/// \param xRangAxis 选择的范围对应的x轴
+/// \param yRangAxis 选择的范围对应的y轴
+/// \return
+///
+int SAChart::getCurveInSelectRangDataAndIndex(const QPainterPath &rang, const QwtPlotCurve *curve
+                                              , QVector<int> &indexs
+                                              , QVector<QPointF> &points
+                                              , const int xRangAxis
+                                              , const int yRangAxis)
+{
+    int resCount = 0;
+    if(xRangAxis == curve->xAxis() && yRangAxis == curve->yAxis())
+    {
+        size_t length = curve->data()->size();
+        QPointF point;
+        for(size_t i = 0;i<length;++i)
+        {
+            point = curve->data()->sample(i);
+            if(rang.contains(point))
+            {
+                ++resCount;
+                indexs.append(i);
+                points.append(point);
+            }
+        }
+        return resCount;
+    }
+    else
+    {
+        QwtPlot* p = curve->plot();
+        if(nullptr == p)
+        {
+            return resCount;
+        }
+        QPointF point,pointScreen;
+        size_t length = curve->data()->size();
+        for(size_t i = 0;i<length;++i)
+        {
+            point = curve->data()->sample(i);
+            pointScreen = point;
+            //把曲线坐标转换到和区域坐标一致，再进行判断
+            if(xRangAxis != curve->xAxis())
+            {
+                pointScreen.rx() = p->transform(xRangAxis,point.x());
+                point.rx() = p->invTransform(xRangAxis,pointScreen.x());
+            }
+            if(yRangAxis != curve->yAxis())
+            {
+                pointScreen.ry() = p->transform(yRangAxis,point.y());
+                point.ry() = p->invTransform(yRangAxis,pointScreen.y());
+            }
+            if(rang.contains(point))
+            {
+                ++resCount;
+                indexs.append(i);
+                points.append(point);
+            }
+        }
+        return resCount;
+    }
+}
+
+///
 /// \brief 获取选择范围里的数据
 /// \param rang 选择的范围
 /// \param curve 曲线指针
@@ -775,6 +898,65 @@ int SAChart::getCurveInSelectRangData(const QPainterPath &rang, const QwtPlotCur
         }
     }
     return resCount;
+}
+///
+/// \brief 获取选择范围里的数据
+/// \param rang 选择的范围
+/// \param curve 曲线指针
+/// \param points 获取到的数据
+/// \param xRangAxis 选择的范围对应的x轴
+/// \param yRangAxis 选择的范围对应的y轴
+/// \return
+///
+int SAChart::getCurveInSelectRangData(const QPainterPath &rang, const QwtPlotCurve *curve, QVector<QPointF> &points, const int xRangAxis, const int yRangAxis)
+{
+    size_t length = curve->data()->size();
+    int resCount = 0;
+    if(xRangAxis == curve->xAxis() && yRangAxis == curve->yAxis())
+    {
+        QPointF point;
+        for(size_t i = 0;i<length;++i)
+        {
+            point = curve->data()->sample(i);
+            if(rang.contains(point))
+            {
+                ++resCount;
+                points.append(point);
+            }
+        }
+        return resCount;
+    }
+    else
+    {
+        QwtPlot* p = curve->plot();
+        if(nullptr == p)
+        {
+            return resCount;
+        }
+        QPointF point,pointScreen;
+        for(size_t i = 0;i<length;++i)
+        {
+            point = curve->data()->sample(i);
+            pointScreen = point;
+            //把曲线坐标转换到和区域坐标一致，再进行判断
+            if(xRangAxis != curve->xAxis())
+            {
+                pointScreen.rx() = p->transform(xRangAxis,point.x());
+                point.rx() = p->invTransform(xRangAxis,pointScreen.x());
+            }
+            if(yRangAxis != curve->yAxis())
+            {
+                pointScreen.ry() = p->transform(yRangAxis,point.y());
+                point.ry() = p->invTransform(yRangAxis,pointScreen.y());
+            }
+            if(rang.contains(point))
+            {
+                ++resCount;
+                points.append(point);
+            }
+        }
+        return resCount;
+    }
 }
 
 int SAChart::getDataInRang(const QPainterPath &rang, QwtPlotCurve *curve, QVector<QPointF> &res)

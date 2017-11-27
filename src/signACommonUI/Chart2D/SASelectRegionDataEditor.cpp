@@ -17,18 +17,13 @@ class SASelectRegionDataEditorPrivate
 {
     SA_IMPL_PUBLIC(SASelectRegionDataEditor)
 public:
-    bool m_haveMutiAxis;//此标记此时含有多种坐标组合
     bool m_isStart;//是否开始
     QPainterPath m_selectRegionOrigin;//保存选择的原始区域
-    QHash<QPair<int,int>,QPainterPath> m_otherAxisSelectRegion;//其他坐标轴的选区
-    QHash<QPair<int,int>,QPainterPath> m_otherAxisSelectRegionOrigin;//其他坐标轴的选区
     QList<curve_info> m_curListInfo;//保存选中的曲线信息
     QPoint m_firstPressedScreenPoint;//第一次按下的点
     QPoint m_tmpPoint;//记录临时点
     SASelectRegionDataEditorPrivate(SASelectRegionDataEditor* p)
         :q_ptr(p)
-        ,m_haveMutiAxis(false)
-        ,m_isStart(false)
     {
 
     }
@@ -77,37 +72,24 @@ void SASelectRegionDataEditor::updateRegionIndex()
     d_ptr->m_selectRegionOrigin = chart2D()->getSelectionRange();
     QList<QwtPlotCurve*> cursList = chart2D()->getCurrentSelectPlotCurveItems();
     const int count = cursList.size();
+    SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
+    if(!editor)
+    {
+        return;
+    }
     //保存选中的索引号和数据
     d_ptr->m_curListInfo.clear();
-    d_ptr->m_haveMutiAxis = false;
     for(int i=0;i<count;++i)
     {
         curve_info ci;
         d_ptr->m_curListInfo.append(ci);
         d_ptr->m_curListInfo[i].curve = cursList[i];
-        if(chart2D()->isSelectionRangeAxisMatch(d_ptr->m_curListInfo[i].curve))
-        {
-            SAChart::getCurveInSelectRangDataAndIndex(d_ptr->m_selectRegionOrigin
-                                               ,d_ptr->m_curListInfo[i].curve
-                                               ,d_ptr->m_curListInfo[i].inRangIndexs
-                                               ,d_ptr->m_curListInfo[i].inRangOriginData);
-        }
-        else
-        {
-            d_ptr->m_haveMutiAxis = true;
-            //获取别的坐标系
-            QPair<int,int> otherAxisPair = qMakePair(cursList[i]->xAxis(),cursList[i]->yAxis());
-            if(!d_ptr->m_otherAxisSelectRegion.contains(otherAxisPair))
-            {
-                d_ptr->m_otherAxisSelectRegion[otherAxisPair]
-                        = chart2D()->getSelectionRange(otherAxisPair.first,otherAxisPair.second);
-                d_ptr->m_otherAxisSelectRegionOrigin[otherAxisPair] = d_ptr->m_otherAxisSelectRegion[otherAxisPair];
-            }
-            SAChart::getCurveInSelectRangDataAndIndex(d_ptr->m_otherAxisSelectRegion[otherAxisPair]
-                                               ,d_ptr->m_curListInfo[i].curve
-                                               ,d_ptr->m_curListInfo[i].inRangIndexs
-                                               ,d_ptr->m_curListInfo[i].inRangOriginData);
-        }
+        SAChart::getCurveInSelectRangDataAndIndex(d_ptr->m_selectRegionOrigin
+                                           ,d_ptr->m_curListInfo[i].curve
+                                           ,d_ptr->m_curListInfo[i].inRangIndexs
+                                           ,d_ptr->m_curListInfo[i].inRangOriginData
+                                                  ,editor->getXAxis()
+                                                  ,editor->getYAxis());
     }
 }
 
@@ -132,46 +114,52 @@ bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
     {
         return false;
     }
-    if(d_ptr->m_haveMutiAxis)
+    QPoint screenPoint = e->pos();
+    SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
+    if(!editor)
     {
-
+        return false;
     }
-    else
+    chart2D()->setAutoReplot(false);
+    QPointF currentPoint = editor->invTransform(screenPoint);
+    QPointF originPoint = editor->invTransform(d_ptr->m_tmpPoint);
+    QPointF offset = czy::calcOffset(currentPoint,originPoint);
+
+    //选区进行移动
+    QPainterPath p = chart2D()->getSelectionRange();
+    p.translate(offset);
+    chart2D()->setSelectionRange(p);
+    //数据进行移动
+    for(int i=0;i<d_ptr->m_curListInfo.size();++i)
     {
-        QPoint screenPoint = e->pos();
-        SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
-        if(!editor)
+        const curve_info& info = d_ptr->m_curListInfo[i];
+        int xaxis = info.curve->xAxis();
+        int yaxis = info.curve->yAxis();
+#if 0
+        double cx = plot()->canvasMap(xaxis).invTransform(screenPoint.x());
+        double cy = plot()->canvasMap(yaxis).invTransform(screenPoint.y());
+        double ox = plot()->canvasMap(xaxis).invTransform(d_ptr->m_tmpPoint.x());
+        double oy = plot()->canvasMap(yaxis).invTransform(d_ptr->m_tmpPoint.y());
+#else
+        double cx = plot()->invTransform(xaxis,screenPoint.x());
+        double cy = plot()->invTransform(yaxis,screenPoint.y());
+        double ox = plot()->invTransform(xaxis,d_ptr->m_tmpPoint.x());
+        double oy = plot()->invTransform(yaxis,d_ptr->m_tmpPoint.y());
+#endif
+        offset.rx() = cx-ox;
+        offset.ry() = cy-oy;
+        QVector<QPointF> xyData;
+        SAChart::getXYDatas(xyData,info.curve);
+        for(int j=0;j<info.inRangIndexs.size();++j)
         {
-            return false;
+            czy::pointOffseted(xyData[info.inRangIndexs[j]],offset.x(),offset.y());
         }
-        chart2D()->setAutoReplot(false);
-        QPointF currentPoint = editor->invTransform(screenPoint);
-        QPointF originPoint = editor->invTransform(d_ptr->m_tmpPoint);
-        QPointF offset = czy::calcOffset(currentPoint,originPoint);
-        d_ptr->m_tmpPoint = screenPoint;
-        //选区进行移动
-        QPainterPath p = chart2D()->getSelectionRange();
-        p.translate(offset);
-        chart2D()->setSelectionRange(p);
-        //数据进行移动
-        for(int i=0;i<d_ptr->m_curListInfo.size();++i)
-        {
-            const curve_info& info = d_ptr->m_curListInfo[i];
-
-            QVector<QPointF> xyData;
-            SAChart::getXYDatas(xyData,info.curve);
-            for(int j=0;j<info.inRangIndexs.size();++j)
-            {
-                czy::pointOffseted(xyData[info.inRangIndexs[j]],offset.x(),offset.y());
-            }
-            info.curve->setSamples(xyData);
-        }
-
-        chart2D()->setAutoReplot(true);
-        plot()->replot();
-        return true;
+        info.curve->setSamples(xyData);
     }
-    return false;
+    d_ptr->m_tmpPoint = screenPoint;
+    chart2D()->setAutoReplot(true);
+    plot()->replot();
+    return true;
 }
 
 bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
@@ -190,7 +178,8 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
     plot()->unsetCursor();
     d_ptr->m_isStart = false;
     chart2D()->setAutoReplot(false);
-    QPointF currentPoint = editor->invTransform(e->pos());
+    QPoint screenPoint = e->pos();
+    QPointF currentPoint = editor->invTransform(screenPoint);
     QPointF originPoint = editor->invTransform(d_ptr->m_firstPressedScreenPoint);
     QPointF offset = czy::calcOffset(currentPoint,originPoint);
     //
@@ -208,6 +197,21 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
     for(int i=0;i<d_ptr->m_curListInfo.size();++i)
     {
         curve_info& info = d_ptr->m_curListInfo[i];
+        int xaxis = info.curve->xAxis();
+        int yaxis = info.curve->yAxis();
+#if 0
+        double cx = plot()->canvasMap(xaxis).invTransform(screenPoint.x());
+        double cy = plot()->canvasMap(yaxis).invTransform(screenPoint.y());
+        double ox = plot()->canvasMap(xaxis).invTransform(d_ptr->m_firstPressedScreenPoint.x());
+        double oy = plot()->canvasMap(yaxis).invTransform(d_ptr->m_firstPressedScreenPoint.y());
+#else
+        double cx = plot()->invTransform(xaxis,screenPoint.x());
+        double cy = plot()->invTransform(yaxis,screenPoint.y());
+        double ox = plot()->invTransform(xaxis,d_ptr->m_firstPressedScreenPoint.x());
+        double oy = plot()->invTransform(yaxis,d_ptr->m_firstPressedScreenPoint.y());
+#endif
+        QPointF offset(cx-ox,cy-oy);
+
         cmdInfo.curve = info.curve;
         cmdInfo.inRangIndexs = info.inRangIndexs;
         cmdInfo.inRangOriginData = info.inRangOriginData;
@@ -217,6 +221,7 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
         cmdInfoList.append(cmdInfo);
         info.inRangOriginData = newData;//保存的原始值进行更新
     }
+
     SAFigureMoveCurveDataInIndexsCommand* regionDataMove = new SAFigureMoveCurveDataInIndexsCommand(chart2D()
                                                                                                     ,cmdInfoList
                                                                                                     ,tr("move region datas")
