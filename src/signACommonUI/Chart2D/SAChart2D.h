@@ -128,6 +128,8 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 
+    void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
+    void keyReleaseEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
 };
 
 #endif // SACHART2D_H

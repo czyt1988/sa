@@ -2,7 +2,10 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
-
+#define DEBUG_PRINT 1
+#if DEBUG_PRINT
+#include <QDebug>
+#endif
 SAAbstractPlotEditor::SAAbstractPlotEditor(QwtPlot *parent)
     :QObject(parent)
     ,m_isEnable(false)
@@ -113,6 +116,7 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
                 {
                     if(keyEvent->isAutoRepeat() && Qt::Key_Space == keyEvent->key())
                     {
+
                         m_isSpaceLongPressed = true;
                         return false;//空格长按键屏蔽
                     }

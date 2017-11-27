@@ -1317,7 +1317,8 @@ void SA2DGraph::setupPanner()
     if (nullptr == d->m_panner)
 	{
         d->m_panner = new QwtPlotPanner( canvas() );
-        d->m_panner->setMouseButton( Qt::MidButton );
+        d->m_panner->setCursor(QCursor(Qt::ClosedHandCursor));
+        d->m_panner->setMouseButton( Qt::LeftButton );
 	}
 }
 void SA2DGraph::deletePanner()

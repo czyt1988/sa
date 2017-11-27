@@ -68,6 +68,7 @@ bool SASelectRegionEditor::mousePressEvent(const QMouseEvent *e)
     {
         return false;
     }
+    plot()->setCursor(QCursor(Qt::SizeAllCursor));
     d_ptr->m_isStart = true;
     d_ptr->m_firstPressedScreenPoint = e->pos();
     d_ptr->m_tmpPoint = e->pos();
@@ -105,13 +106,16 @@ bool SASelectRegionEditor::mouseReleasedEvent(const QMouseEvent *e)
 {
     if(!d_ptr->m_isStart)
     {
+        plot()->unsetCursor();
         return false;
     }
     SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
     if(!editor)
     {
+        plot()->unsetCursor();
         return false;
     }
+    plot()->unsetCursor();
     chart2D()->setAutoReplot(false);
     QPointF currentPoint = editor->invTransform(e->pos());
     QPointF originPoint = editor->invTransform(d_ptr->m_firstPressedScreenPoint);

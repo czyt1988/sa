@@ -34,14 +34,41 @@ public:
     SASelectRegionShapeItem* m_seclectRegionItem;///< 用于显示选区的item
     SAAbstractPlotEditor* m_editor;///< 额外的编辑器
     QList<QwtPlotItem*> m_currentSelectItem;///<当前选择的条目
+    bool m_isSpaceLongPressed;///<记录空格长按
+    bool m_isEnablePannerBeforePressedSpace;///< 记录按下空格前是否处于panner状态
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
       ,m_selectMode(SAChart2D::NoneSelection)
       ,m_chartSelectRigionEditor(nullptr)
       ,m_seclectRegionItem(nullptr)
       ,m_editor(nullptr)
+      ,m_isSpaceLongPressed(false)
+      ,m_isEnablePannerBeforePressedSpace(false)
     {
 
+    }
+    void setSpaceLongPressed()
+    {
+        if(!m_isSpaceLongPressed)
+        {
+            //说明第一次进入
+            q_ptr->setCursor(Qt::OpenHandCursor);
+            m_isEnablePannerBeforePressedSpace = q_ptr->isEnablePanner();
+            q_ptr->enablePanner(true);
+            qDebug() << "q_ptr enablePanner";
+        }
+        m_isSpaceLongPressed = true;
+    }
+    void setSpaceRelease()
+    {
+        if(m_isSpaceLongPressed)
+        {
+            //说明之前处于长按状态
+            qDebug() << "q_ptr->unsetCursor();";
+            q_ptr->unsetCursor();
+            q_ptr->enablePanner(m_isEnablePannerBeforePressedSpace);
+        }
+        m_isSpaceLongPressed = false;
     }
 
     void appendItemAddCommand(QwtPlotItem* item,const QString& des)
@@ -875,6 +902,38 @@ void SAChart2D::dropEvent(QDropEvent *event)
             addDatas(datas);
         }
     }
+}
+
+
+
+
+void SAChart2D::keyPressEvent(QKeyEvent *e)
+{
+    if(e)
+    {
+        if(e->isAutoRepeat() && Qt::Key_Space == e->key())
+        {
+            //记录空格长按
+            d_ptr->setSpaceLongPressed();
+        }
+    }
+    return SA2DGraph::keyPressEvent(e);
+}
+
+void SAChart2D::keyReleaseEvent(QKeyEvent *e)
+{
+    if(e)
+    {
+        //qDebug() << "keyReleaseEvent isAutoRepeat"<<e->isAutoRepeat()<<" key:"<<e->key();
+        if(d_ptr->m_isSpaceLongPressed)
+        {
+            if(!e->isAutoRepeat() && Qt::Key_Space == e->key())
+            {
+                d_ptr->setSpaceRelease();
+            }
+        }
+    }
+    return SA2DGraph::keyReleaseEvent(e);
 }
 
 
