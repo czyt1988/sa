@@ -12,6 +12,8 @@ class SAAbstractDatas;
 class SAVectorPointF;
 class QMdiSubWindow;
 class SAChart2D;
+class QwtPlotTradingCurve;
+class QwtPlotBarChart;
 ///
 /// \brief 处理绘图函数
 ///
@@ -21,20 +23,24 @@ public:
     SADrawDelegate(MainWindow* wnd);
     virtual ~SADrawDelegate();
     //绘图
-    QList<QwtPlotCurve *> drawLineChart(const QList<SAAbstractDatas*>& datas);
-    QwtPlotCurve* drawLineChart(SAAbstractDatas* data,SAChart2D *chart);
-    QwtPlotCurve* drawLineChart(SAAbstractDatas* x,SAAbstractDatas* y,QString name,SAChart2D *chart);
+    QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas);
+    QwtPlotCurve* drawLine(SAAbstractDatas* data,SAChart2D *chart);
+    QwtPlotCurve* drawLine(SAAbstractDatas* x,SAAbstractDatas* y,QString name,SAChart2D *chart);
+    //统计图
+    QwtPlotHistogram* drawHistogram(SAAbstractDatas* data);
+    QList<QwtPlotHistogram*> drawHistogram(const QList<SAAbstractDatas*>& datas);
     //棒图
-    QwtPlotHistogram* drawBar(SAAbstractDatas* data);
-    QList<QwtPlotHistogram*> drawBar(const QList<SAAbstractDatas*>& datas);
+    QList<QwtPlotBarChart*> drawBar(const QList<SAAbstractDatas*>& datas);
     //散点图
-    QList<QwtPlotCurve *> drawScatterChart(const QList<SAAbstractDatas*>& datas);
+    QList<QwtPlotCurve *> drawScatter(const QList<SAAbstractDatas*>& datas);
+    //箱盒图
+    QList<QwtPlotTradingCurve *> drawBoxChart(const QList<SAAbstractDatas*>& datas);
     //创建绘图窗口
     SAMdiSubWindow* createFigureMdiSubWidget(const QString& title = QString());
     //把QMdiSubWindow的内部SAFigureWidget获取
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* w);
 protected:
-    QwtPlotCurve* drawLineChart(SAChart2D *chart , SAVectorPointF* points);
+    QwtPlotCurve* drawLine(SAChart2D *chart , SAVectorPointF* points);
 private:
     unsigned int m_nUserChartCount;
 };

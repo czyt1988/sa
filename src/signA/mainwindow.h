@@ -295,6 +295,8 @@ private slots:
     void onActionAddLineChartTriggered();
     //bar图
     void onActionAddBarChartTriggered();
+    //Histogram图
+    void onActionAddHistogramChartTriggered();
     //Scatter图
     void onActionAddScatterChartTriggered();
     //Box图

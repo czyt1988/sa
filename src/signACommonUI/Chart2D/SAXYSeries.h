@@ -4,7 +4,7 @@
 #include "SASeriesAndDataPtrMapper.h"
 #include "qwt_plot_curve.h"
 class SAAbstractDatas;
-class SA_COMMON_UI_EXPORT SAXYSeries : public QwtPlotCurve,SASeriesAndDataPtrMapper
+class SA_COMMON_UI_EXPORT SAXYSeries : public QwtPlotCurve,public SASeriesAndDataPtrMapper
 {
 public:
     SAXYSeries();

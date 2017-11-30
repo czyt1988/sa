@@ -4,7 +4,7 @@
 #include "SASeriesAndDataPtrMapper.h"
 #include "SAXYSeries.h"
 class SAAbstractDatas;
-class SA_COMMON_UI_EXPORT SAScatterSeries : public SAXYSeries,SASeriesAndDataPtrMapper
+class SA_COMMON_UI_EXPORT SAScatterSeries : public SAXYSeries
 {
 public:
     SAScatterSeries();

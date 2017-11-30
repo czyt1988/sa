@@ -11,8 +11,11 @@
 #include "czyMath_Fit.h"
 #include "SAValueManagerModel.h"
 #include "SARandColorMaker.h"
+#include "SABarSeries.h"
+#include "SAXYSeries.h"
 #include "SASeries.h"
 #include "SAData.h"
+#include "SAScatterSeries.h"
 SADrawDelegate::SADrawDelegate(MainWindow* wnd):SAMainWindowDelegate(wnd)
   ,m_nUserChartCount(0)
 {
@@ -29,7 +32,7 @@ SADrawDelegate::~SADrawDelegate()
 /// \param datas
 /// \return
 ///
-QList<QwtPlotCurve*> SADrawDelegate::drawLineChart(const QList<SAAbstractDatas *> &datas)
+QList<QwtPlotCurve*> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &datas)
 {
     QList<QwtPlotCurve*> res;
     if(datas.size()<=0)
@@ -55,9 +58,44 @@ QList<QwtPlotCurve*> SADrawDelegate::drawLineChart(const QList<SAAbstractDatas *
         {
             p = (QwtPlotCurve*)chart->addCurve(data);
         }
-        else
+        else if(SA::VectorDouble == data->getType())
         {
             p = (QwtPlotCurve*)chart->addCurve(data,1,1);
+        }
+        else
+        {
+            if(SA::Dim1 == data->getDim())
+            {
+                QVector<double> v;
+                SAAbstractDatas::converToDoubleVector(data,v);
+                if(v.size() > 0)
+                {
+                    QVector<double> x(v.size());
+                    double start = 1;
+                    std::for_each(x.begin(),x.end(),[&start](double& d){
+                        d = start;
+                        start += 1.0;
+                    });
+                    SAXYSeries* serise = new SAXYSeries(data->getName());
+                    serise->setSamples(x,v);
+                    serise->insertData(data);
+                    chart->addItem(serise,tr("add Line %1").arg(data->getName()));
+                    p = static_cast<QwtPlotCurve*>(serise);
+                }
+            }
+            else if(SA::Dim2 == data->getDim())
+            {
+                QVector<QPointF> v;
+                SAAbstractDatas::converToPointFVector(data,v);
+                if(v.size() > 0)
+                {
+                    SAXYSeries* serise = new SAXYSeries(data->getName());
+                    serise->setSamples(v);
+                    serise->insertData(data);
+                    chart->addItem(serise,tr("add Line %1").arg(data->getName()));
+                    p = static_cast<QwtPlotCurve*>(serise);
+                }
+            }
         }
         res.append(p);
     });
@@ -73,7 +111,7 @@ QList<QwtPlotCurve*> SADrawDelegate::drawLineChart(const QList<SAAbstractDatas *
 /// \brief 在已有图上添加曲线
 /// \param data
 ///
-QwtPlotCurve* SADrawDelegate::drawLineChart(SAAbstractDatas* data,SAChart2D* chart)
+QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data,SAChart2D* chart)
 {
     if(nullptr == data || nullptr == chart)
     {
@@ -90,7 +128,7 @@ QwtPlotCurve* SADrawDelegate::drawLineChart(SAAbstractDatas* data,SAChart2D* cha
 /// \param chart
 /// \return
 ///
-QwtPlotCurve *SADrawDelegate::drawLineChart(SAAbstractDatas* x, SAAbstractDatas* y, QString name,SAChart2D *chart)
+QwtPlotCurve *SADrawDelegate::drawLine(SAAbstractDatas* x, SAAbstractDatas* y, QString name,SAChart2D *chart)
 {
     if(nullptr == x || nullptr == y || nullptr == chart)
     {
@@ -104,7 +142,7 @@ QwtPlotCurve *SADrawDelegate::drawLineChart(SAAbstractDatas* x, SAAbstractDatas*
     return cur;
 }
 
-QwtPlotHistogram *SADrawDelegate::drawBar(SAAbstractDatas *data)
+QwtPlotHistogram *SADrawDelegate::drawHistogram(SAAbstractDatas *data)
 {
     if(data->getType () != SA::VectorInterval)
     {
@@ -119,7 +157,7 @@ QwtPlotHistogram *SADrawDelegate::drawBar(SAAbstractDatas *data)
     {
         chart = pFigure->create2DPlot();
     }
-    QwtPlotHistogram* b = (QwtPlotHistogram*)(chart->addBar (intervalSeries));
+    QwtPlotHistogram* b = (QwtPlotHistogram*)(chart->addHistogram (intervalSeries));
     w->show ();
     return b;
 }
@@ -128,7 +166,7 @@ QwtPlotHistogram *SADrawDelegate::drawBar(SAAbstractDatas *data)
 /// \param barSeries 柱状图数据
 /// \return
 ///
-QList<QwtPlotHistogram *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *> &datas)
+QList<QwtPlotHistogram *> SADrawDelegate::drawHistogram(const QList<SAAbstractDatas *> &datas)
 {
     QList<QwtPlotHistogram *> res;
     QList<SAAbstractDatas *> invalidDatas;
@@ -154,7 +192,7 @@ QList<QwtPlotHistogram *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *>
     chart->setAutoReplot(false);
     for(int i=0;i<invalidDatas.size();++i)
     {
-        QwtPlotHistogram* p = (QwtPlotHistogram *)chart->addBar(invalidDatas[i]);
+        QwtPlotHistogram* p = (QwtPlotHistogram *)chart->addHistogram(invalidDatas[i]);
         res.append(p);
     }
     chart->enablePicker(true);
@@ -165,11 +203,86 @@ QList<QwtPlotHistogram *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *>
     return res;
 }
 ///
+/// \brief bar图
+/// \param datas
+/// \return
+///
+QList<QwtPlotBarChart *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *> &datas)
+{
+
+
+
+    QList<QwtPlotBarChart *> res;
+    if(datas.size()<=0)
+    {
+        return res;
+    }
+    SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
+    if(!pSubWnd && !pFigure)
+    {
+        return res;//任何一个指针为0都退出
+    }
+    SAChart2D* chart = pFigure->current2DPlot();
+    if(!chart)
+    {
+        chart = pFigure->create2DPlot();
+    }
+
+
+    std::for_each(datas.begin(),datas.end(),[chart,&res](SAAbstractDatas* data){
+        QwtPlotBarChart* p = nullptr;
+        if(SA::VectorPoint == data->getType())
+        {
+            p = (QwtPlotBarChart*)chart->addBar(data);
+        }
+        else if(SA::VectorDouble == data->getType())
+        {
+            p = (QwtPlotBarChart*)chart->addBar(data);
+        }
+        else
+        {
+            if(SA::Dim1 == data->getDim())
+            {
+                QVector<double> v;
+                SAAbstractDatas::converToDoubleVector(data,v);
+                if(v.size() > 0)
+                {
+                    SABarSeries* barSerise = new SABarSeries(data->getName());
+                    barSerise->setSamples(v);
+                    barSerise->insertData(data);
+                    chart->addItem(barSerise,tr("add Bar %1").arg(data->getName()));
+                    p = static_cast<QwtPlotBarChart*>(barSerise);
+                }
+            }
+            else if(SA::Dim2 == data->getDim())
+            {
+                QVector<QPointF> v;
+                SAAbstractDatas::converToPointFVector(data,v);
+                if(v.size() > 0)
+                {
+                    SABarSeries* barSerise = new SABarSeries(data->getName());
+                    barSerise->setSamples(v);
+                    barSerise->insertData(data);
+                    chart->addItem(barSerise,tr("add Bar %1").arg(data->getName()));
+                    p = static_cast<QwtPlotBarChart*>(barSerise);
+                }
+            }
+        }
+        res.append(p);
+    });
+    chart->enablePicker(true);
+    chart->enableZoomer(false);
+    chart->enableGrid(true);
+    pSubWnd->show();
+    return res;
+}
+///
 /// \brief 散点图
 /// \param datas
 /// \return
 ///
-QList<QwtPlotCurve *> SADrawDelegate::drawScatterChart(const QList<SAAbstractDatas *> &datas)
+QList<QwtPlotCurve *> SADrawDelegate::drawScatter(const QList<SAAbstractDatas *> &datas)
 {
     QList<QwtPlotCurve*> res;
     if(datas.size()<=0)
@@ -195,9 +308,78 @@ QList<QwtPlotCurve *> SADrawDelegate::drawScatterChart(const QList<SAAbstractDat
         {
             p = (QwtPlotCurve*)chart->addScatter(data);
         }
-        else
+        else if(SA::VectorDouble == data->getType() || SA::Dim1 == data->getDim())
         {
-            p = (QwtPlotCurve*)chart->addScatter(data,1,1);
+            QVector<double> v;
+            SAAbstractDatas::converToDoubleVector(data,v);
+            if(v.size() > 0)
+            {
+                QVector<double> x(v.size());
+                double start = 1;
+                std::for_each(x.begin(),x.end(),[&start](double& d){
+                    d = start;
+                    start += 1.0;
+                });
+                SAScatterSeries* serise = new SAScatterSeries(data->getName());
+                serise->setSamples(x,v);
+                serise->insertData(data);
+                chart->addItem(serise,tr("add Scatter %1").arg(data->getName()));
+                p = static_cast<QwtPlotCurve*>(serise);
+            }
+        }
+        else if(SA::Dim2 == data->getDim())
+        {
+            QVector<QPointF> v;
+            SAAbstractDatas::converToPointFVector(data,v);
+            if(v.size() > 0)
+            {
+                SAScatterSeries* serise = new SAScatterSeries(data->getName());
+                serise->setSamples(v);
+                serise->insertData(data);
+                chart->addItem(serise,tr("add Scatter %1").arg(data->getName()));
+                p = static_cast<QwtPlotCurve*>(serise);
+            }
+        }
+        res.append(p);
+    });
+
+    chart->enablePicker(true);
+    chart->enableZoomer(false);
+    chart->enableGrid(true);
+    chart->setAutoReplot(true);
+    pSubWnd->show();
+    return res;
+}
+///
+/// \brief 绘制箱盒图
+/// \param datas
+/// \return
+///
+QList<QwtPlotTradingCurve *> SADrawDelegate::drawBoxChart(const QList<SAAbstractDatas *> &datas)
+{
+    QList<QwtPlotTradingCurve*> res;
+    if(datas.size()<=0)
+    {
+        return res;
+    }
+
+    SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
+    if(!pSubWnd && !pFigure)
+    {
+        return res;//任何一个指针为0都退出
+    }
+    SAChart2D* chart = pFigure->current2DPlot();
+    if(!chart)
+    {
+        chart = pFigure->create2DPlot();
+    }
+    chart->setAutoReplot(false);
+    std::for_each(datas.begin(),datas.end(),[chart,&res](SAAbstractDatas* data){
+        QwtPlotTradingCurve* p = nullptr;
+        if(SA::VectorOHLC == data->getType())
+        {
+            p = (QwtPlotTradingCurve*)chart->addBox(data);
         }
         res.append(p);
     });
@@ -242,7 +424,7 @@ SAMdiSubWindow*SADrawDelegate::createFigureMdiSubWidget(const QString &title)
 }
 
 
-QwtPlotCurve *SADrawDelegate::drawLineChart(SAChart2D *chart , SAVectorPointF* points)
+QwtPlotCurve *SADrawDelegate::drawLine(SAChart2D *chart , SAVectorPointF* points)
 {
     if(nullptr == chart)
     {

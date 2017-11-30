@@ -274,6 +274,7 @@ void MainWindow::initUI()
     connect(ui->actionNewChart,&QAction::triggered,this,&MainWindow::onActionNewChartTriggered);
     connect(ui->actionNewTrend,&QAction::triggered,this,&MainWindow::onActionAddLineChartTriggered);
     connect(ui->actionDrawBarChart,&QAction::triggered,this,&MainWindow::onActionAddBarChartTriggered);
+    connect(ui->actionDrawHistogramChart,&QAction::triggered,this,&MainWindow::onActionAddHistogramChartTriggered);
     connect(ui->actionDrawScatterChart,&QAction::triggered,this,&MainWindow::onActionAddScatterChartTriggered);
     connect(ui->actionDrawBoxChart,&QAction::triggered,this,&MainWindow::onActionAddBoxChartTriggered);
 
@@ -881,7 +882,7 @@ void MainWindow::dropEvent(QDropEvent *event)
             QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
             if(datas.size() > 0)
             {
-                m_drawDelegate->drawLineChart(datas);
+                m_drawDelegate->drawLine(datas);
             }
         }
     }
@@ -993,7 +994,7 @@ void MainWindow::onActionNewChartTriggered()
         for(auto ite = curList.begin();ite != curList.end();++ite)
         {
             (*ite)->detach();//先要和原来的脱离连接才能绑定到新图
-            pC->addCurve(*ite);
+            pC->addItem(*ite);
         }
         bool isDateTime = false;
         QString tf = addChart.isAxisDateTime(&isDateTime,QwtPlot::xBottom);
@@ -1022,7 +1023,7 @@ void MainWindow::onActionAddLineChartTriggered()
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
-        QList<QwtPlotCurve *> res = m_drawDelegate->drawLineChart(datas);
+        QList<QwtPlotCurve *> res = m_drawDelegate->drawLine(datas);
     }
 }
 ///
@@ -1034,7 +1035,17 @@ void MainWindow::onActionAddBarChartTriggered()
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
-        QList<QwtPlotHistogram *> res = m_drawDelegate->drawBar(datas);
+        QList<QwtPlotBarChart *> res = m_drawDelegate->drawBar(datas);
+    }
+}
+
+void MainWindow::onActionAddHistogramChartTriggered()
+{
+    raiseMainDock();
+    QList<SAAbstractDatas*> datas = getSeletedDatas();
+    if(datas.size() != 0)
+    {
+        QList<QwtPlotHistogram *> res = m_drawDelegate->drawHistogram(datas);
     }
 }
 ///
@@ -1046,7 +1057,7 @@ void MainWindow::onActionAddScatterChartTriggered()
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
-        QList<QwtPlotCurve *> res = m_drawDelegate->drawScatterChart(datas);
+        QList<QwtPlotCurve *> res = m_drawDelegate->drawScatter(datas);
     }
 }
 ///
@@ -1054,7 +1065,12 @@ void MainWindow::onActionAddScatterChartTriggered()
 ///
 void MainWindow::onActionAddBoxChartTriggered()
 {
-
+    raiseMainDock();
+    QList<SAAbstractDatas*> datas = getSeletedDatas();
+    if(datas.size() != 0)
+    {
+        QList<QwtPlotCurve *> res = m_drawDelegate->drawScatter(datas);
+    }
 }
 
 ///

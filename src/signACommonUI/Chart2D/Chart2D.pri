@@ -9,7 +9,9 @@ HEADERS += \
     $$PWD/SAFigureOptCommand.h \
     $$PWD/SASelectRegionEditor.h \
     $$PWD/SASelectRegionDataEditor.h \
-    $$PWD/SAScatterSeries.h
+    $$PWD/SAScatterSeries.h \
+    $$PWD/SABoxSeries.h \
+    $$PWD/SAHistogramSeries.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
@@ -19,4 +21,6 @@ SOURCES += \
     $$PWD/SAFigureOptCommand.cpp \
     $$PWD/SASelectRegionEditor.cpp \
     $$PWD/SASelectRegionDataEditor.cpp \
-    $$PWD/SAScatterSeries.cpp
+    $$PWD/SAScatterSeries.cpp \
+    $$PWD/SABoxSeries.cpp \
+    $$PWD/SAHistogramSeries.cpp

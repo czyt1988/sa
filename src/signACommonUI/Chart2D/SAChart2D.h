@@ -12,6 +12,9 @@ class SABarSeries;
 class SAScatterSeries;
 class SAFigureOptCommand;
 class SAAbstractPlotEditor;
+class SABoxSeries;
+class SAHistogramSeries;
+class QwtPlotBarChart;
 ///
 /// \brief sa 2d 曲线绘图的基本窗口封装，包括支持SAAbstractDatas的处理
 ///
@@ -29,6 +32,10 @@ public:
         ,EllipseSelection ///< 椭圆选框
         ,PolygonSelection ///< 多边形选框
     };
+    //添加条目，-支持redo/undo
+    void addItem(QwtPlotItem* item,const QString& des = QString());
+    //移除一个对象-支持redo/undo
+    void removeItem(QwtPlotItem* item);
     //添加曲线-支持redo/undo
     QwtPlotCurve* addCurve(const double *xData, const double *yData, int size);
     QwtPlotCurve* addCurve(const QVector<QPointF>& xyDatas);
@@ -36,26 +43,17 @@ public:
     SAXYSeries *addCurve(SAAbstractDatas* datas);
     SAXYSeries* addCurve(SAAbstractDatas* datas,double xStart,double xDetal);
     SAXYSeries* addCurve(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
-    QList<SAXYSeries *> addCurves(QList<SAAbstractDatas*> datas);
-    void addCurve(QwtPlotCurve* cur);
-    void addCurve(SAXYSeries* cur);
-    //添加bar-支持redo/undo
-    QwtPlotHistogram* addBar(const QVector< QwtIntervalSample > &sample);
+    //添加Histogram-支持redo/undo
+    SAHistogramSeries *addHistogram(SAAbstractDatas* datas);
+    //添加Bar-支持redo/undo
     SABarSeries *addBar(SAAbstractDatas* datas);
-    void addBar(QwtPlotHistogram* cur);
-    void addBar(SABarSeries* cur);
     //绘制散点图-支持redo/undo
     SAScatterSeries* addScatter(SAAbstractDatas* datas);
-    SAScatterSeries* addScatter(SAAbstractDatas* datas,double xStart,double xDetal);
-    SAScatterSeries* addScatter(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
-
-    void addScatter(SAScatterSeries* cur);
+    //绘制箱盒图-支持redo/undo
+    SABoxSeries* addBox(SAAbstractDatas* datas);
     //添加样条线-支持redo/undo
     QwtPlotMarker* addVLine(double val);
     QwtPlotMarker* addHLine(double val);
-    void addPlotMarker(QwtPlotMarker* marker);
-    //移除一个对象-支持redo/undo
-    void removeItem(QwtPlotItem* item);
     //移除范围内数据-支持redo/undo
     void removeDataInRang(const QList<QwtPlotCurve *>& curves);
     void removeDataInRang();

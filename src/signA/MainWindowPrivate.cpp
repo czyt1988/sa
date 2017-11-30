@@ -278,6 +278,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionDrawBarChart->setObjectName(QStringLiteral("actionDrawBarChart"));
     //actionDrawBarChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
 
+    actionDrawHistogramChart = new QAction(mainWinowPtr);
+    actionDrawHistogramChart->setObjectName(QStringLiteral("actionDrawHistogramChart"));
+
     actionDrawBoxChart = new QAction(mainWinowPtr);
     actionDrawBoxChart->setObjectName(QStringLiteral("actionDrawBoxChart"));
     //actionDrawBoxChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
@@ -338,6 +341,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBarChart = new SARibbonMenu(menuBar);
     menuBarChart->setObjectName(QStringLiteral("menuBarChart"));
     menuBarChart->setIcon(QIcon(":/icons/icons/barChart.svg"));
+
+    menuHistogramChart = new SARibbonMenu(menuBar);
+    menuHistogramChart->setObjectName(QStringLiteral("menuHistogramChart"));
+    menuHistogramChart->setIcon(QIcon(":/icons/icons/barChart.svg"));
 
     menuBoxChart = new SARibbonMenu(menuBar);
     menuBoxChart->setObjectName(QStringLiteral("menuBoxChart"));
@@ -406,6 +413,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonLineChart = mainCategoryChartPannel->addLargeMenu(menuLineChart);
     ribbonButtonScatterChart = mainCategoryChartPannel->addLargeMenu(menuScatterChart);
     ribbonButtonBarChart = mainCategoryChartPannel->addLargeMenu(menuBarChart);
+    ribbonButtonHistogramChart = mainCategoryChartPannel->addLargeMenu(menuHistogramChart);
     ribbonButtonBoxChart = mainCategoryChartPannel->addLargeMenu(menuBoxChart);
 
 
@@ -772,6 +780,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuBarChart->addAction(actionDrawBarChart);
 
+    menuHistogramChart->addAction(actionDrawHistogramChart);
+
     menuBoxChart->addAction(actionDrawBoxChart);
 //    toolBar_chart->addAction(actionPickCurveToData);
 //    toolBar_chart->addAction(actionInRangDataRemove);
@@ -902,6 +912,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionSubtractionSelection->setText(QApplication::translate("MainWindow", "Sub Select", 0));
     actionDrawScatterChart->setText(QApplication::translate("MainWindow", "Scatter", 0));
     actionDrawBarChart->setText(QApplication::translate("MainWindow", "Bar", 0));
+    actionDrawHistogramChart->setText(QApplication::translate("MainWindow", "Histogram", 0));
     actionDrawBoxChart->setText(QApplication::translate("MainWindow", "Box", 0));
     actionSelectionRegionMove->setText(QApplication::translate("MainWindow", "Transform", 0));
     actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Move\nDatas", 0));
@@ -926,6 +937,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     menuScatterChart->setTitle(QApplication::translate("MainWindow", "Scatter", 0));
     menuBarChart->setTitle(QApplication::translate("MainWindow", "Bar", 0));
     menuBoxChart->setTitle(QApplication::translate("MainWindow", "Box", 0));
+    menuHistogramChart->setTitle(QApplication::translate("MainWindow", "Histogram", 0));
     dockWidget_DataFeature->setWindowTitle(QApplication::translate("MainWindow", "Data Feature", 0));
 //    toolBar_chart->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 //    toolBar_chartSet->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
@@ -953,6 +965,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonLineChart->setText(menuLineChart->title());
     ribbonButtonBarChart->setText(menuBarChart->title());
     ribbonButtonBoxChart->setText(menuBoxChart->title());
+    ribbonButtonHistogramChart->setText(menuHistogramChart->title());
     ribbonButtonScatterChart->setText(menuScatterChart->title());
     ribbonButtonAllDock->setText(menuWindowsViewSet->title());
     ribbonButtonAllFuntion->setText(menuAnalysis->title());

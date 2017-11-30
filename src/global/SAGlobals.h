@@ -156,7 +156,8 @@ namespace SA {
         ,VectorPoint=200///< 点数组
         ,VectorInt=300///< 数组
         ,VectorVariant=400///< 数组
-        ,VectorInterval=500///< 数组
+        ,VectorInterval=500///< (value,min,max)数组
+        ,VectorOHLC=510///< 股票金融数据Open heigh low close
 
         ,TableBoundaryBegin = 1000///< 表格开始范围
         ,TableVariant = 1001///< 任意类型表格

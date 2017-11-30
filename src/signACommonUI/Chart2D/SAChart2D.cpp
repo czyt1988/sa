@@ -24,6 +24,8 @@
 #include "SASelectRegionShapeItem.h"
 #include <numeric>
 #include "SAScatterSeries.h"
+#include "SABoxSeries.h"
+#include "SAHistogramSeries.h"
 class SAChart2DPrivate
 {
     SA_IMPL_PUBLIC(SAChart2D)
@@ -132,6 +134,11 @@ SAChart2D::~SAChart2D()
 {
 }
 
+void SAChart2D::addItem(QwtPlotItem *item, const QString &des)
+{
+    d_ptr->appendItemAddCommand(item,des);
+}
+
 QwtPlotCurve *SAChart2D::addCurve(const double *xData, const double *yData, int size)
 {
     if(size<=0)
@@ -144,7 +151,7 @@ QwtPlotCurve *SAChart2D::addCurve(const double *xData, const double *yData, int 
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData,size);
-    addCurve(pCurve);
+    addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
     return pCurve;
 }
 
@@ -156,7 +163,7 @@ QwtPlotCurve *SAChart2D::addCurve(const QVector<QPointF> &xyDatas)
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xyDatas);
-    addCurve(pCurve);
+    addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
     return pCurve;
 }
 
@@ -168,7 +175,7 @@ QwtPlotCurve *SAChart2D::addCurve(const QVector<double> &xData, const QVector<do
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData);
-    addCurve(pCurve);
+    addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
     return pCurve;
 }
 
@@ -187,7 +194,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
 
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    addCurve(series.data());
+    addItem(series.data(),tr("add curve:%1").arg(series->title().text()));
     return series.take();
 }
 ///
@@ -207,7 +214,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
     }
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    addCurve(series.data());
+    addItem(series.data(),tr("add curve:%1").arg(series->title().text()));
     return series.take();
 }
 ///
@@ -227,48 +234,22 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QS
     }
     series->setPen(SARandColorMaker::getCurveColor()
                 ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    addCurve(series.data());
+    addItem(series.data(),tr("add curve:%1").arg(series->title().text()));
     return series.take();
 }
 
-QList<SAXYSeries *> SAChart2D::addCurves(QList<SAAbstractDatas *> datas)
-{
-    return addDatas(datas);
-}
 
 
-void SAChart2D::addCurve(QwtPlotCurve *cur)
-{
-    d_ptr->appendItemAddCommand(cur,tr("add curve:%1").arg(cur->title().text()));
-}
 
-void SAChart2D::addCurve(SAXYSeries *cur)
-{
-    d_ptr->appendItemAddCommand(cur,tr("add curve:%1").arg(cur->title().text()));
-}
 
-QwtPlotHistogram *SAChart2D::addBar(const QVector<QwtIntervalSample> &sample)
-{
-    if(sample.size() <= 0)
-    {
-        return nullptr;
-    }
-    QwtPlotHistogram* his = new QwtPlotHistogram();
-    his->setSamples (sample);
-    his->setYAxis(yLeft);
-    his->setXAxis(xBottom);
-    his->setStyle (QwtPlotHistogram::Columns);
-    addBar(his);
-    return his;
-}
 ///
 /// \brief SAChart2D::addBar
 /// \param datas
 /// \return
 ///
-SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
+SAHistogramSeries *SAChart2D::addHistogram(SAAbstractDatas *datas)
 {
-    QScopedPointer<SABarSeries> series(new SABarSeries(datas,datas->getName()));
+    QScopedPointer<SAHistogramSeries> series(new SAHistogramSeries(datas,datas->getName()));
     if(series->dataSize() <= 0)
     {
         return nullptr;
@@ -277,19 +258,27 @@ SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
     series->setBrush(QBrush(clr));
     series->setPen(clr,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
     series->setStyle(QwtPlotHistogram::Columns);
-    addBar(series.data());
+    addItem(series.data(),tr("add Histogram:%1").arg(series->title().text()));
     return series.take();
 }
 
-void SAChart2D::addBar(QwtPlotHistogram *cur)
+
+SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
 {
-    d_ptr->appendItemAddCommand(cur,tr("add bar:%1").arg(cur->title().text()));
+    QScopedPointer<SABarSeries> series(new SABarSeries(datas,datas->getName()));
+    if(series->dataSize() <= 0)
+    {
+        return nullptr;
+    }
+    QColor clr = SARandColorMaker::getCurveColor();
+    QwtColumnSymbol *symbol = new QwtColumnSymbol( QwtColumnSymbol::Box );
+    symbol->setPalette(clr);
+    series->setSymbol(symbol);
+    addItem(series.data(),tr("add bar:%1").arg(series->title().text()));
+    return series.take();
 }
 
-void SAChart2D::addBar(SABarSeries *cur)
-{
-    d_ptr->appendItemAddCommand(cur,tr("add bar:%1").arg(cur->title().text()));
-}
+
 ///
 /// \brief 绘制散点图-支持redo/undo
 /// \param datas
@@ -306,57 +295,28 @@ SAScatterSeries *SAChart2D::addScatter(SAAbstractDatas *datas)
     QPen pen = series->pen();
     pen.setColor(clr);
     series->setPen(pen);
-    addScatter(series.data());
+    addItem(series.data(),tr("add scatter:%1").arg(series->title().text()));
     return series.take();
 }
+
+
 ///
-/// \brief 绘制散点图-支持redo/undo
+/// \brief 绘制箱盒图
 /// \param datas
-/// \param xStart
-/// \param xDetal
 /// \return
 ///
-SAScatterSeries *SAChart2D::addScatter(SAAbstractDatas *datas, double xStart, double xDetal)
+SABoxSeries *SAChart2D::addBox(SAAbstractDatas *datas)
 {
-    QScopedPointer<SAScatterSeries> series(new SAScatterSeries(datas->getName()));
-    series->setSamples(datas,xStart,xDetal);
-    if(series->dataSize() <= 0)
-    {
-        return nullptr;
-    }
-    series->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    addScatter(series.data());
+    QScopedPointer<SABoxSeries> series(new SABoxSeries(datas,datas->getName()));
+//    if(series->dataSize() <= 0)
+//    {
+//        return nullptr;
+//    }
+    addItem(series.data(),tr("add box:%1").arg(series->title().text()));
     return series.take();
 }
-///
-/// \brief 绘制散点图-支持redo/undo
-/// \param x
-/// \param y
-/// \param name
-/// \return
-///
-SAScatterSeries *SAChart2D::addScatter(SAAbstractDatas *x, SAAbstractDatas *y, const QString &name)
-{
-    QScopedPointer<SAScatterSeries> series(new SAScatterSeries(name));
-    series->setSamples(x,y);
-    if(series->dataSize() <= 0)
-    {
-        return nullptr;
-    }
-    series->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
-    addScatter(series.data());
-    return series.take();
-}
-///
-/// \brief 绘制散点图
-/// \param cur
-///
-void SAChart2D::addScatter(SAScatterSeries *cur)
-{
-    d_ptr->appendItemAddCommand(cur,tr("add scatter:%1").arg(cur->title().text()));
-}
+
+
 ///
 /// \brief 添加一条竖直线
 /// \return
@@ -367,7 +327,7 @@ QwtPlotMarker *SAChart2D::addVLine(double val)
     marker->setXValue(val);
     marker->setLineStyle( QwtPlotMarker::VLine );
     marker->setItemAttribute( QwtPlotItem::Legend, true );
-    addPlotMarker(marker);
+    addItem(marker,tr("add VLine %1").arg(marker->title().text()));
     return marker;
 }
 ///
@@ -381,17 +341,10 @@ QwtPlotMarker *SAChart2D::addHLine(double val)
     marker->setYValue(val);
     marker->setLineStyle( QwtPlotMarker::HLine );
     marker->setItemAttribute( QwtPlotItem::Legend, true );
-    addPlotMarker(marker);
+    addItem(marker,tr("add HLine %1").arg(marker->title().text()));
     return marker;
 }
-///
-/// \brief 添加一个marker
-/// \param marker
-///
-void SAChart2D::addPlotMarker(QwtPlotMarker *marker)
-{
-    d_ptr->appendItemAddCommand(marker,tr("add marker:%1").arg(marker->title().text()));
-}
+
 ///
 /// \brief 移除一个对象
 /// \param item

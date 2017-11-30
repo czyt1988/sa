@@ -180,13 +180,14 @@ void SAFigureWindow::dropEvent(QDropEvent *event)
         if(SAValueManagerMimeData::getValueIDsFromMimeData(event->mimeData(),ids))
         {
             QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
-            if(datas.size() > 0)
+            if(SAChart2D * c = current2DPlot())
             {
-                if(SAChart2D * c = current2DPlot())
+                for(int i=0;i<datas.size();++i)
                 {
-                    c->addCurves(datas);
+                    c->addCurve(datas[i]);
                 }
             }
+
         }
     }
 }

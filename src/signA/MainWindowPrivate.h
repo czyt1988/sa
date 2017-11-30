@@ -95,6 +95,7 @@ public:
     QAction *actionIntersectionSelection;
     QAction *actionSubtractionSelection;
     QAction *actionDrawScatterChart;
+    QAction *actionDrawHistogramChart;
     QAction *actionDrawBarChart;
     QAction *actionDrawBoxChart;
     QAction *actionSelectionRegionMove;///<
@@ -119,11 +120,13 @@ public:
     SARibbonToolButton* ribbonButtonNewChart;
     SARibbonToolButton* ribbonButtonLineChart;
     SARibbonToolButton* ribbonButtonBarChart;
+    SARibbonToolButton* ribbonButtonHistogramChart;
     SARibbonToolButton* ribbonButtonBoxChart;
     SARibbonToolButton* ribbonButtonScatterChart;
     SARibbonMenu *menuFile;
     SARibbonMenu *menuLineChart;
     SARibbonMenu *menuBarChart;
+    SARibbonMenu *menuHistogramChart;
     SARibbonMenu *menuBoxChart;
     SARibbonMenu *menuScatterChart;
 
