@@ -98,8 +98,19 @@ public:
     static int removeDataInRang(const QPainterPath& removeRang,QwtPlotCurve* curve);
     //获取选择范围里的数据索引
     static int getCurveInSelectRangIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs);
+    static int getCurveInSelectRangIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs
+                                         ,const int xRangAxis
+                                         ,const int yRangAxis);
     static int getCurveInSelectRangDataAndIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs,QVector<QPointF>& points);
+    static int getCurveInSelectRangDataAndIndex(const QPainterPath& rang, const QwtPlotCurve* curve
+                                                , QVector<int>& indexs
+                                                ,QVector<QPointF>& points
+                                                ,const int xRangAxis
+                                                ,const int yRangAxis);
     static int getCurveInSelectRangData(const QPainterPath& rang, const QwtPlotCurve* curve,QVector<QPointF>& points);
+    static int getCurveInSelectRangData(const QPainterPath& rang, const QwtPlotCurve* curve,QVector<QPointF>& points
+                                        ,const int xRangAxis
+                                        ,const int yRangAxis);
     //获取范围内的数据 返回获取的个数
     static int getDataInRang(const QPainterPath& rang,QwtPlotCurve* curve,QVector<QPointF>& res);
     //获取当前正在显示的区域
