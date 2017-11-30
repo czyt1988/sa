@@ -9,6 +9,7 @@ class SAAbstractRegionSelectEditor;
 class SAAbstractDatas;
 class SAXYSeries;
 class SABarSeries;
+class SAScatterSeries;
 class SAFigureOptCommand;
 class SAAbstractPlotEditor;
 ///
@@ -43,6 +44,12 @@ public:
     SABarSeries *addBar(SAAbstractDatas* datas);
     void addBar(QwtPlotHistogram* cur);
     void addBar(SABarSeries* cur);
+    //绘制散点图-支持redo/undo
+    SAScatterSeries* addScatter(SAAbstractDatas* datas);
+    SAScatterSeries* addScatter(SAAbstractDatas* datas,double xStart,double xDetal);
+    SAScatterSeries* addScatter(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
+
+    void addScatter(SAScatterSeries* cur);
     //添加样条线-支持redo/undo
     QwtPlotMarker* addVLine(double val);
     QwtPlotMarker* addHLine(double val);

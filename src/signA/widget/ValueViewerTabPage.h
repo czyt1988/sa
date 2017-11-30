@@ -15,7 +15,9 @@ class ValueViewerTabPage;
 class SADataTableModel;
 class QTableView;
 class QWheelEvent;
-
+///
+/// \brief sa的表格窗体
+///
 class ValueViewerTabPage : public QWidget
 {
     Q_OBJECT
@@ -27,9 +29,9 @@ public:
     SADataTableModel* getModel() const;
 private slots:
     void on_tableView_customContextMenuRequested(const QPoint &pos);
-
+    //选择的列转换为向量
     void on_actionToLinerData_triggered();
-
+    //选择的列转换为点序列
     void on_actionToPointFVectorData_triggered();
 private:
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;

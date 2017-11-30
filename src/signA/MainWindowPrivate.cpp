@@ -292,6 +292,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSelectionRegionDataMove->setCheckable(true);
     actionSelectionRegionDataMove->setIcon(QIcon(":/icons/icons/selectionRegionDataMove.png"));
 
+    actionChartEditor = new QActionGroup(mainWinowPtr);
+    actionChartEditor->setExclusive(true);
+    actionChartEditor->addAction(actionSelectionRegionMove);
+    actionChartEditor->addAction(actionSelectionRegionDataMove);
+
     centralWidget = new QWidget(mainWinowPtr);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
     centralWidget->setMaximumSize(QSize(0, 0));

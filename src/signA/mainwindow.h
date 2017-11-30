@@ -291,8 +291,14 @@ private slots:
     ///
     //新图例
     void onActionNewChartTriggered();
-    //趋势图
-    void onActionNewTrendTriggered();
+    //趋势线图
+    void onActionAddLineChartTriggered();
+    //bar图
+    void onActionAddBarChartTriggered();
+    //Scatter图
+    void onActionAddScatterChartTriggered();
+    //Box图
+    void onActionAddBoxChartTriggered();
     //开始矩形选框工具
     void onActionStartRectSelectTriggered(bool b);
     //开始圆形选框工具
@@ -503,7 +509,6 @@ private:
     void loadWindowState(const QSettings& setting);
     //释放chart的附加editor
     void releaseChart2DEditor(SAChart2D* chart);
-    void releaseChart2DSelectEditor(SAChart2D* chart);
 #if _CFG_LAYOUT_SELECT_CHANG_QSS
     //图层表格的选择样式生成
     QString getPlotLayerNewItemSelectedQSS(const QColor& rgb);
@@ -514,6 +519,8 @@ private:
     Q_SLOT void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
     //============================================================
     void updateChartGridActionState(SAChart2D *chart);
+    void updateSelectActionState(SAChart2D *chart);
+    void updateChartEditorActionState(SAChart2D *chart);
 private:
 #ifdef SA_USE_RIBBON_UI
     QScopedPointer<MainWindowPrivate> ui;
@@ -533,7 +540,7 @@ private:
 
     SAMdiSubWindowManager m_mdiManager;
 
-    std::unique_ptr<SADrawDelegate> m_drawDelegate;///< 绘图代理
+    QScopedPointer<SADrawDelegate> m_drawDelegate;///< 绘图代理
     SAFigureWindow* m_lastShowFigureWindow;///<记录最后一次显示的figure window
     QActionGroup* m_chartRegionSelectionShapeActionGroup;///<选区选择形状的action group
     QActionGroup* m_chartRegionSelectionModeActionGroup;///<选区选择模式的action group

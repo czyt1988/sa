@@ -83,18 +83,6 @@ void ValueViewerTabPage::on_actionToPointFVectorData_triggered()
     {
         saValueManager->addData(points);
     }
-//    QVector< std::shared_ptr<QVector<QPointF> > > rawData;
-//    getSelectVectorPointData(rawData);
-//    for (auto i = rawData.begin();i != rawData.end();++i)
-//    {
-//        if ((*i)->size() <= 0)
-//            continue;
-//        bool ok = false;
-//        QString name = QInputDialog::getText(this,QStringLiteral("变量名"),QStringLiteral("请输入变量名:")
-//                                             ,QLineEdit::Normal,QStringLiteral("点序列"),&ok);
-//        if (ok)
-//            m_values->addPointDatas(name,*(*i));
-//    }
 }
 ///
 /// \brief 获取选中的线性数据

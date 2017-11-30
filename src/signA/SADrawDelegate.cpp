@@ -23,108 +23,191 @@ SADrawDelegate::~SADrawDelegate()
 
 }
 
-void SADrawDelegate::drawTrend()
-{
-    MainWindow* m = getMainWindow ();
-    QList<SAAbstractDatas*> datas = m->getSeletedDatas();
-    drawTrend(datas);
-}
 
-void SADrawDelegate::drawTrend(const QList<SAAbstractDatas *> &datas)
+///
+/// \brief 绘制线图
+/// \param datas
+/// \return
+///
+QList<QwtPlotCurve*> SADrawDelegate::drawLineChart(const QList<SAAbstractDatas *> &datas)
 {
+    QList<QwtPlotCurve*> res;
     if(datas.size()<=0)
     {
-        return;
+        return res;
     }
+
     SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
     SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
     if(!pSubWnd && !pFigure)
-        return;//任何一个指针为0都退出
+    {
+        return res;//任何一个指针为0都退出
+    }
     SAChart2D* chart = pFigure->current2DPlot();
     if(!chart)
     {
         chart = pFigure->create2DPlot();
     }
-    std::for_each(datas.begin(),datas.end(),[chart](SAAbstractDatas* data){
+    chart->setAutoReplot(false);
+    std::for_each(datas.begin(),datas.end(),[chart,&res](SAAbstractDatas* data){
+        QwtPlotCurve* p = nullptr;
         if(SA::VectorPoint == data->getType())
         {
-            chart->addCurve(data);
+            p = (QwtPlotCurve*)chart->addCurve(data);
         }
         else
         {
-            chart->addCurve(data,1,1);
+            p = (QwtPlotCurve*)chart->addCurve(data,1,1);
         }
+        res.append(p);
     });
 
-    chart->setAutoReplot(false);
     chart->enablePicker(true);
     chart->enableZoomer(false);
     chart->enableGrid(true);
     chart->setAutoReplot(true);
     pSubWnd->show();
+    return res;
 }
 ///
-/// \brief 对数据的绘制
+/// \brief 在已有图上添加曲线
 /// \param data
 ///
-QwtPlotCurve* SADrawDelegate::draw(SAAbstractDatas* data)
+QwtPlotCurve* SADrawDelegate::drawLineChart(SAAbstractDatas* data,SAChart2D* chart)
 {
-    if(nullptr == data)
+    if(nullptr == data || nullptr == chart)
     {
         return nullptr;
     }
+    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(data));
+    return cur;
+}
+///
+/// \brief 在已有图上添加曲线
+/// \param x
+/// \param y
+/// \param name
+/// \param chart
+/// \return
+///
+QwtPlotCurve *SADrawDelegate::drawLineChart(SAAbstractDatas* x, SAAbstractDatas* y, QString name,SAChart2D *chart)
+{
+    if(nullptr == x || nullptr == y || nullptr == chart)
+    {
+        return nullptr;
+    }
+    if(name.isNull () || name.isEmpty ())
+    {
+        name = QStringLiteral("%1-%2").arg(x->getName ()).arg(y->getName ());
+    }
+    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve (x,y,name));
+    return cur;
+}
 
+QwtPlotHistogram *SADrawDelegate::drawBar(SAAbstractDatas *data)
+{
+    if(data->getType () != SA::VectorInterval)
+    {
+        getMainWindow()->showWarningMessageInfo(tr("invalid data type,bar chart accept VectorInterval type"));
+        return nullptr;
+    }
+    SAVectorInterval* intervalSeries = static_cast<SAVectorInterval*>(data);
     SAMdiSubWindow* w = createFigureMdiSubWidget(data->getName ());
     SAFigureWindow* pFigure = getFigureWidgetFromMdiSubWindow(w);
     SAChart2D* chart = pFigure->current2DPlot();
     if(!chart)
     {
-        pFigure->create2DPlot();
+        chart = pFigure->create2DPlot();
     }
-    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(data));
+    QwtPlotHistogram* b = (QwtPlotHistogram*)(chart->addBar (intervalSeries));
     w->show ();
-    return cur;
-}
-
-QwtPlotCurve *SADrawDelegate::draw(SAAbstractDatas* x, SAAbstractDatas* y, QString name)
-{
-    if(name.isNull () || name.isEmpty ())
-    {
-        name = QStringLiteral("%1-%2").arg(x->getName ()).arg(y->getName ());
-    }
-    SAMdiSubWindow* w = createFigureMdiSubWidget(name);
-    SAFigureWindow* pFigure = getFigureWidgetFromMdiSubWindow(w);
-    SAChart2D* chart = pFigure->current2DPlot();
-    if(!chart)
-    {
-        pFigure->create2DPlot();
-    }
-    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve (x,y,name));
-    w->show ();
-    return cur;
+    return b;
 }
 ///
 /// \brief 绘制柱状图
 /// \param barSeries 柱状图数据
 /// \return
 ///
-QwtPlotHistogram *SADrawDelegate::drawBar(SAAbstractDatas* barSeries)
+QList<QwtPlotHistogram *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *> &datas)
 {
-    if(barSeries->getType () != SA::VectorInterval)
+    QList<QwtPlotHistogram *> res;
+    QList<SAAbstractDatas *> invalidDatas;
+    for(int i=0;i<datas.size();++i)
     {
-        return nullptr;
+        if(datas[i]->getType () == SA::VectorInterval)
+        {
+            invalidDatas.append(datas[i]);
+        }
     }
-    SAVectorInterval* intervalSeries = static_cast<SAVectorInterval*>(barSeries);
-    SAMdiSubWindow* w = createFigureMdiSubWidget(barSeries->getName ());
+    if(0 == invalidDatas.size())
+    {
+        getMainWindow()->showWarningMessageInfo(tr("invalid data type,bar chart accept VectorInterval type"));
+        return res;
+    }
+    SAMdiSubWindow* w = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
     SAFigureWindow* pFigure = getFigureWidgetFromMdiSubWindow(w);
     SAChart2D* chart = pFigure->current2DPlot();
     if(!chart)
     {
-        pFigure->create2DPlot();
+        chart = pFigure->create2DPlot();
     }
-    QwtPlotHistogram* b = (QwtPlotHistogram*)(chart->addBar (intervalSeries));
-    w->show ();
-    return b;
+    chart->setAutoReplot(false);
+    for(int i=0;i<invalidDatas.size();++i)
+    {
+        QwtPlotHistogram* p = (QwtPlotHistogram *)chart->addBar(invalidDatas[i]);
+        res.append(p);
+    }
+    chart->enablePicker(true);
+    chart->enableZoomer(false);
+    chart->enableGrid(true);
+    chart->setAutoReplot(true);
+    w->show();
+    return res;
+}
+///
+/// \brief 散点图
+/// \param datas
+/// \return
+///
+QList<QwtPlotCurve *> SADrawDelegate::drawScatterChart(const QList<SAAbstractDatas *> &datas)
+{
+    QList<QwtPlotCurve*> res;
+    if(datas.size()<=0)
+    {
+        return res;
+    }
+
+    SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
+    if(!pSubWnd && !pFigure)
+    {
+        return res;//任何一个指针为0都退出
+    }
+    SAChart2D* chart = pFigure->current2DPlot();
+    if(!chart)
+    {
+        chart = pFigure->create2DPlot();
+    }
+    chart->setAutoReplot(false);
+    std::for_each(datas.begin(),datas.end(),[chart,&res](SAAbstractDatas* data){
+        QwtPlotCurve* p = nullptr;
+        if(SA::VectorPoint == data->getType())
+        {
+            p = (QwtPlotCurve*)chart->addScatter(data);
+        }
+        else
+        {
+            p = (QwtPlotCurve*)chart->addScatter(data,1,1);
+        }
+        res.append(p);
+    });
+
+    chart->enablePicker(true);
+    chart->enableZoomer(false);
+    chart->enableGrid(true);
+    chart->setAutoReplot(true);
+    pSubWnd->show();
+    return res;
 }
 
 
@@ -159,12 +242,11 @@ SAMdiSubWindow*SADrawDelegate::createFigureMdiSubWidget(const QString &title)
 }
 
 
-QwtPlotCurve *SADrawDelegate::drawVPoint(SAFigureWindow *fig , SAVectorPointF* points)
+QwtPlotCurve *SADrawDelegate::drawLineChart(SAChart2D *chart , SAVectorPointF* points)
 {
-    SAChart2D* chart = fig->current2DPlot();
     if(nullptr == chart)
     {
-        chart = fig->create2DPlot();
+        return nullptr;
     }
     return (QwtPlotCurve *)(chart->addCurve(points));
 }

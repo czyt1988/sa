@@ -101,6 +101,7 @@ public:
     QAction *actionSelectionRegionDataMove;///<
 
     QActionGroup* actionGroupSelection;
+    QActionGroup* actionChartEditor;
     QWidget *centralWidget;
 
 

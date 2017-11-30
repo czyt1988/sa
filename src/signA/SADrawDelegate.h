@@ -11,23 +11,30 @@ class QwtPlotHistogram;
 class SAAbstractDatas;
 class SAVectorPointF;
 class QMdiSubWindow;
+class SAChart2D;
+///
+/// \brief 处理绘图函数
+///
 class SADrawDelegate : public SAMainWindowDelegate
 {
 public:
     SADrawDelegate(MainWindow* wnd);
     virtual ~SADrawDelegate();
-    virtual void drawTrend();
-    virtual void drawTrend(const QList<SAAbstractDatas*>& datas);
     //绘图
-    QwtPlotCurve* draw(SAAbstractDatas* data);
-    QwtPlotCurve* draw(SAAbstractDatas* x,SAAbstractDatas* y,QString name);
-    QwtPlotHistogram* drawBar(SAAbstractDatas* barSeries);
+    QList<QwtPlotCurve *> drawLineChart(const QList<SAAbstractDatas*>& datas);
+    QwtPlotCurve* drawLineChart(SAAbstractDatas* data,SAChart2D *chart);
+    QwtPlotCurve* drawLineChart(SAAbstractDatas* x,SAAbstractDatas* y,QString name,SAChart2D *chart);
+    //棒图
+    QwtPlotHistogram* drawBar(SAAbstractDatas* data);
+    QList<QwtPlotHistogram*> drawBar(const QList<SAAbstractDatas*>& datas);
+    //散点图
+    QList<QwtPlotCurve *> drawScatterChart(const QList<SAAbstractDatas*>& datas);
     //创建绘图窗口
-    SAMdiSubWindow* createFigureMdiSubWidget(const QString& title);
+    SAMdiSubWindow* createFigureMdiSubWidget(const QString& title = QString());
     //把QMdiSubWindow的内部SAFigureWidget获取
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* w);
 protected:
-    QwtPlotCurve* drawVPoint(SAFigureWindow* fig, SAVectorPointF* points);
+    QwtPlotCurve* drawLineChart(SAChart2D *chart , SAVectorPointF* points);
 private:
     unsigned int m_nUserChartCount;
 };

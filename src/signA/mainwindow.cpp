@@ -272,7 +272,11 @@ void MainWindow::initUI()
     //-------------------------------------
     // - start chart set menu signal/slots connect
     connect(ui->actionNewChart,&QAction::triggered,this,&MainWindow::onActionNewChartTriggered);
-    connect(ui->actionNewTrend,&QAction::triggered,this,&MainWindow::onActionNewTrendTriggered);
+    connect(ui->actionNewTrend,&QAction::triggered,this,&MainWindow::onActionAddLineChartTriggered);
+    connect(ui->actionDrawBarChart,&QAction::triggered,this,&MainWindow::onActionAddBarChartTriggered);
+    connect(ui->actionDrawScatterChart,&QAction::triggered,this,&MainWindow::onActionAddScatterChartTriggered);
+    connect(ui->actionDrawBoxChart,&QAction::triggered,this,&MainWindow::onActionAddBoxChartTriggered);
+
     //-------------------------------------
     // - menu_chartDataManager menu signal/slots connect
     connect(ui->actionInRangDataRemove,&QAction::triggered,this,&MainWindow::onActionInRangDataRemoveTriggered);
@@ -772,20 +776,6 @@ void MainWindow::releaseChart2DEditor(SAChart2D* chart)
     ui->actionSelectionRegionDataMove->setChecked(false);
 }
 
-void MainWindow::releaseChart2DSelectEditor(SAChart2D *chart)
-{
-    ui->actionStartRectSelect->setChecked(false);
-    ui->actionStartEllipseSelect->setChecked(false);
-    ui->actionStartPolygonSelect->setChecked(false);
-    ui->ribbonButtonStartSelection->setChecked(false);
-    if(chart)
-    {
-        if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
-        {
-            selectEditor->setEnabled(false);
-        }
-    }
-}
 
 
 
@@ -853,7 +843,7 @@ SAValueManagerModel*MainWindow::getValueManagerModel() const
 
 SADrawDelegate*MainWindow::getDrawDelegate() const
 {
-    return m_drawDelegate.get ();
+    return m_drawDelegate.data();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -891,7 +881,7 @@ void MainWindow::dropEvent(QDropEvent *event)
             QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
             if(datas.size() > 0)
             {
-                m_drawDelegate->drawTrend(datas);
+                m_drawDelegate->drawLineChart(datas);
             }
         }
     }
@@ -1024,12 +1014,47 @@ void MainWindow::onActionNewChartTriggered()
     }
 }
 ///
-/// \brief 趋势图
+/// \brief 绘制线图
 ///
-void MainWindow::onActionNewTrendTriggered()
+void MainWindow::onActionAddLineChartTriggered()
 {
     raiseMainDock();
-    m_drawDelegate->drawTrend ();
+    QList<SAAbstractDatas*> datas = getSeletedDatas();
+    if(datas.size() != 0)
+    {
+        QList<QwtPlotCurve *> res = m_drawDelegate->drawLineChart(datas);
+    }
+}
+///
+/// \brief 绘制棒图
+///
+void MainWindow::onActionAddBarChartTriggered()
+{
+    raiseMainDock();
+    QList<SAAbstractDatas*> datas = getSeletedDatas();
+    if(datas.size() != 0)
+    {
+        QList<QwtPlotHistogram *> res = m_drawDelegate->drawBar(datas);
+    }
+}
+///
+/// \brief 绘制散点图
+///
+void MainWindow::onActionAddScatterChartTriggered()
+{
+    raiseMainDock();
+    QList<SAAbstractDatas*> datas = getSeletedDatas();
+    if(datas.size() != 0)
+    {
+        QList<QwtPlotCurve *> res = m_drawDelegate->drawScatterChart(datas);
+    }
+}
+///
+/// \brief  绘制Box图
+///
+void MainWindow::onActionAddBoxChartTriggered()
+{
+
 }
 
 ///
@@ -1056,16 +1081,9 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
         {
             chart->enableSelection(SAChart2D::RectSelection,false);
         }
-        updateChartSetToolBar();
-        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
-        ui->ribbonButtonStartSelection->setChecked(true);
-        //互斥的按钮
-        ui->actionSelectionRegionMove->setChecked(false);
     }
-    else
-    {
-        ui->ribbonButtonStartSelection->setChecked(false);
-    }
+    updateChartSetToolBar();
+
 
 }
 ///
@@ -1093,16 +1111,8 @@ void MainWindow::onActionStartEllipseSelectTriggered(bool b)
         {
             chart->enableSelection(SAChart2D::EllipseSelection,false);
         }
-        updateChartSetToolBar();
-        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartEllipseSelect);
-        ui->ribbonButtonStartSelection->setChecked(true);
-        //互斥的按钮
-        ui->actionSelectionRegionMove->setChecked(false);
     }
-    else
-    {
-        ui->ribbonButtonStartSelection->setChecked(false);
-    }
+    updateChartSetToolBar();
 }
 ///
 /// \brief 开始多边形选框工具
@@ -1128,15 +1138,8 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
         {
             chart->enableSelection(SAChart2D::PolygonSelection,false);
         }
-        updateChartSetToolBar();
-        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartPolygonSelect);
-        //互斥的按钮
-        ui->actionSelectionRegionMove->setChecked(false);
     }
-    else
-    {
-        ui->ribbonButtonStartSelection->setChecked(false);
-    }
+    updateChartSetToolBar();
 }
 
 ///
@@ -1151,16 +1154,8 @@ void MainWindow::onActionClearAllSelectiedRegionTriggered(bool b)
     {
         chart->clearAllSelectedRegion();
         releaseChart2DEditor(chart);
-        updateChartSetToolBar();
-        ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
-        ui->ribbonButtonStartSelection->setChecked(false);
-        //互斥的按钮
-        ui->actionSelectionRegionMove->setChecked(false);
     }
-    else
-    {
-        ui->ribbonButtonStartSelection->setChecked(false);
-    }
+    updateChartSetToolBar();
 }
 ///
 /// \brief 选区单选模式
@@ -1256,9 +1251,10 @@ void MainWindow::onActionSelectionRegionMove(bool b)
         if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
         {
             saAddLog("Selection Region Move");
-            releaseChart2DSelectEditor(chart);
             chart->unenableEditor();
+            selectEditor->setEnabled(false);
             SASelectRegionEditor* editor = new SASelectRegionEditor(chart);
+            editor->setObjectName(QStringLiteral("SASelectRegionEditor"));
             chart->setEditor(editor);
         }
         else
@@ -1267,6 +1263,7 @@ void MainWindow::onActionSelectionRegionMove(bool b)
             return;
         }
     }
+    updateSelectActionState(chart);
 }
 ///
 /// \brief 选区范围内的数据移动
@@ -1290,10 +1287,10 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
                 QList<QwtPlotCurve*> selCur = CurveSelectDialog::getSelCurve(chart,this);
                 chart->setCurrentSelectPlotCurveItems(selCur);
             }
-
-            releaseChart2DSelectEditor(chart);
+            selectEditor->setEnabled(false);
             chart->unenableEditor();
             SASelectRegionDataEditor* editor = new SASelectRegionDataEditor(chart);
+            editor->setObjectName(QStringLiteral("SASelectRegionDataEditor"));
             chart->setEditor(editor);
         }
         else
@@ -1302,6 +1299,7 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
             return;
         }
     }
+    updateSelectActionState(chart);
 }
 
 ///
@@ -1852,10 +1850,9 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
         ui->actionXYDataPicker->setChecked(false);
         ui->actionShowLegend->setChecked(false);
         ui->actionShowLegendPanel->setChecked(false);
-        ui->actionStartRectSelect->setChecked(false);
-        ui->actionStartEllipseSelect->setChecked(false);
-        ui->actionStartPolygonSelect->setChecked(false);
         updateChartGridActionState(nullptr);
+        updateSelectActionState(nullptr);
+        updateChartEditorActionState(nullptr);
         return;
     }
     auto c = w->current2DPlot();
@@ -1870,6 +1867,8 @@ void MainWindow::updateChartSetToolBar(SAFigureWindow *w)
         ui->actionShowLegendPanel->setChecked(c->isEnableLegendPanel());
     }
     updateChartGridActionState(c);
+    updateSelectActionState(c);
+    updateChartEditorActionState(c);
 }
 
 QList<QMdiSubWindow *> MainWindow::getSubWindowList() const
@@ -2484,6 +2483,100 @@ void MainWindow::updateChartGridActionState(SAChart2D *chart)
         ui->actionShowCrowdedHGrid->setChecked(false);
         ui->actionShowCrowdedVGrid->setChecked(false);
     }
+}
+///
+/// \brief 刷新选择工具
+/// \param chart
+///
+void MainWindow::updateSelectActionState(SAChart2D *chart)
+{
+    if(chart)
+    {
+        SAAbstractRegionSelectEditor* editor = chart->getRegionSelectEditor();
+        if(editor)
+        {
+            if(editor->isEnabled())
+            {
+                switch(editor->rtti())
+                {
+                case SAAbstractPlotEditor::RTTIRectRegionSelectEditor:
+                    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+                    break;
+                case SAAbstractPlotEditor::RTTIEllipseRegionSelectEditor:
+                    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartEllipseSelect);
+                    break;
+                case SAAbstractPlotEditor::RTTIPolygonRegionSelectEditor:
+                    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartPolygonSelect);
+                    break;
+                default:
+                    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+                    break;
+                }
+                ui->ribbonButtonStartSelection->setChecked(true);
+            }
+            else
+            {
+                if(ui->ribbonButtonStartSelection->defaultAction()!=ui->actionStartRectSelect)
+                {
+                    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+                }
+                ui->ribbonButtonStartSelection->setChecked(false);
+            }
+            //更新选择模式
+            SAAbstractRegionSelectEditor::SelectionMode selMode = editor->getSelectionMode();
+            switch(selMode)
+            {
+            case SAAbstractRegionSelectEditor::SingleSelection:
+                ui->actionSingleSelection->setChecked(true);break;
+            case SAAbstractRegionSelectEditor::AdditionalSelection:
+                ui->actionAdditionalSelection->setChecked(true);break;
+            case SAAbstractRegionSelectEditor::SubtractionSelection:
+                ui->actionSubtractionSelection->setChecked(true);break;
+            case SAAbstractRegionSelectEditor::IntersectionSelection:
+                ui->actionIntersectionSelection->setChecked(true);break;
+            default:
+                ui->actionSingleSelection->setChecked(true);break;
+            }
+
+        }
+        else
+        {
+            ui->ribbonButtonStartSelection->setChecked(false);
+            ui->actionSingleSelection->setChecked(true);
+        }
+    }
+    else
+    {
+        if(ui->ribbonButtonStartSelection->defaultAction()!=ui->actionStartRectSelect)
+        {
+            ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
+        }
+        ui->ribbonButtonStartSelection->setChecked(false);
+        ui->actionSingleSelection->setChecked(true);
+    }
+}
+
+void MainWindow::updateChartEditorActionState(SAChart2D *chart)
+{
+    if(chart)
+    {
+        SAAbstractPlotEditor* editor = chart->getEditor();
+        if(editor && editor->isEnabled())
+        {
+            switch(editor->rtti())
+            {
+            case SASelectRegionDataEditor::RTTISelectDataRegionEditor:
+                ui->actionSelectionRegionDataMove->setChecked(true);break;
+            case SASelectRegionEditor::RTTISelectRegionEditor:
+                ui->actionSelectionRegionMove->setChecked(true);break;
+            }
+
+            return;
+        }
+    }
+    ui->actionSelectionRegionMove->setChecked(false);
+    ui->actionSelectionRegionDataMove->setChecked(false);
+
 }
 
 
