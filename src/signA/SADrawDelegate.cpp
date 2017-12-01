@@ -209,9 +209,6 @@ QList<QwtPlotHistogram *> SADrawDelegate::drawHistogram(const QList<SAAbstractDa
 ///
 QList<QwtPlotBarChart *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *> &datas)
 {
-
-
-
     QList<QwtPlotBarChart *> res;
     if(datas.size()<=0)
     {

@@ -3,6 +3,7 @@
 #include <qwt_plot_grid.h>
 #include <qwt_plot_marker.h>
 #include <qwt_plot_barchart.h>
+#include <qwt_column_symbol.h>
 #include <QColorDialog>
 //#include <SAChart.h>
 #include <SAPlotMarker.h>
@@ -154,6 +155,7 @@ QVariant SAPlotLayerModel::displayDecorationRole(const QModelIndex &index,const 
 
 bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    Q_UNUSED(role);
     if(!m_plot)
         return false;
     beginResetModel();
@@ -224,7 +226,15 @@ QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) c
 	case QwtPlotItem::Rtti_PlotMarker:
 		c = static_cast<const QwtPlotMarker*>(item)->linePen ().color();
     case QwtPlotItem::Rtti_PlotBarChart://bar没有明确颜色
+    {
+        const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item);
+        const QwtColumnSymbol * sym = bar->symbol();
+        if(sym)
+        {
+            return sym->palette().color(QPalette::Button);
+        }
         return QVariant();
+    }
 	default:
 		return QVariant();
 	}
@@ -259,6 +269,21 @@ void SAPlotLayerModel::setColorForItem(QwtPlotItem *item, QColor clr)
         pen.setColor(clr);
         p->setLinePen(pen);
     }break;
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        QwtPlotBarChart* bar = static_cast<QwtPlotBarChart*>(item);
+        QwtColumnSymbol* newSym = new QwtColumnSymbol();
+        const QwtColumnSymbol * sym = bar->symbol();
+        if(sym)
+        {
+            newSym->setStyle(sym->style());
+            newSym->setFrameStyle(sym->frameStyle());
+            newSym->setLineWidth(sym->lineWidth());
+            newSym->setPalette(sym->palette());
+        }
+        newSym->setPalette(clr);
+        bar->setSymbol(newSym);
+    }
     default:
         return;
     }

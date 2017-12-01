@@ -5,9 +5,11 @@
 #include <qwt_plot_dict.h>
 #include <qwt_plot.h>
 #include <qwt_painter.h>
+#include <qwt_plot_barchart.h>
 #include <algorithm>
 #include <numeric>
 #include <math.h>
+
 SAXYDataTracker::SAXYDataTracker(QWidget* canvas) :
     QwtPlotPicker( canvas )
 {
