@@ -344,7 +344,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuHistogramChart = new SARibbonMenu(menuBar);
     menuHistogramChart->setObjectName(QStringLiteral("menuHistogramChart"));
-    menuHistogramChart->setIcon(QIcon(":/icons/icons/barChart.svg"));
+    menuHistogramChart->setIcon(QIcon(":/icons/icons/histogramChart.svg"));
 
     menuBoxChart = new SARibbonMenu(menuBar);
     menuBoxChart->setObjectName(QStringLiteral("menuBoxChart"));

@@ -64,6 +64,7 @@
         <file>icons/StartPolygonSelect.svg</file>
         <file>icons/selectionRegionDataMove.png</file>
         <file>icons/selectionRegionMove.png</file>
+        <file>icons/histogramChart.svg</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>

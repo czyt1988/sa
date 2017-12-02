@@ -373,11 +373,11 @@ void SATimeFrequencyAnalysis::initChart()
 
     m_wave->setPen(Qt::blue);
     m_spectrum->setPen(Qt::red);
-    ui->waveChart->setAxisTitle (QwtPlot::xBottom,QString("time(s)"));
-    ui->spectrogramChart->setAxisTitle (QwtPlot::yLeft,QString("amplitude"));
-    ui->spectrogramChart->setAxisTitle (QwtPlot::xBottom,QString("frequency(Hz)"));
-    ui->waveChart->addCurve(m_wave.get());
-    ui->spectrogramChart->addCurve(m_spectrum.get());
+    ui->waveChart->setAxisTitle (QwtPlot::xBottom,tr("time(s)"));
+    ui->spectrogramChart->setAxisTitle (QwtPlot::yLeft,tr("amplitude"));
+    ui->spectrogramChart->setAxisTitle (QwtPlot::xBottom,tr("frequency(Hz)"));
+    ui->waveChart->addItem(m_wave.get(),tr("add wave curve"));
+    ui->spectrogramChart->addItem(m_spectrum.get(),tr("add spectrum"));
     m_plotZone = new QwtPlotZoneItem();
     m_plotZone->setPen( Qt::darkGray );
     m_plotZone->setBrush( QColor(247,82,134,80) );
