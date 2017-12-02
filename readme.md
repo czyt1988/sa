@@ -6,3 +6,14 @@ PS:此软件alpha版都还没做好
 
 # 已有的一些功能截图
 
+- 界面总览
+
+![](https://github.com/czyt1988/sa/raw/master/doc/screenshot/01.gif)
+
+- 曲线数据实时抓取
+
+![](https://github.com/czyt1988/sa/raw/master/doc/screenshot/02.gif)
+
+- 曲线区域修正功能
+
+![](https://github.com/czyt1988/sa/raw/master/doc/screenshot/03.gif)
