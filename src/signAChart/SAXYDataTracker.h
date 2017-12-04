@@ -12,6 +12,8 @@ protected:
     virtual QwtText trackerTextF(const QPointF & pos) const;
     virtual QRect trackerRect(const QFont & font) const;
     virtual void drawRubberBand (QPainter *painter) const;
+    //item最近点，如果有新的item，继承此类并重写此函数即可
+    virtual int itemClosedPoint(const QwtPlotItem* item, const QPoint &pos,QPointF* itemPoint, double *dist);
     void calcClosestPoint(const QPoint& pos);
     static double distancePower(const QPointF& p1,const QPointF& p2);
 private:
@@ -22,19 +24,21 @@ private:
     {
     public:
         closePoint();
-        QwtPlotCurve * curve() const{return this->m_curve;}
-        void setCurve(QwtPlotCurve * cur);
+        QwtPlotItem * item() const{return this->m_item;}
+        void setItem(QwtPlotItem * item);
         bool isValid() const;
         QPointF getClosePoint() const;
+        void setClosePoint(const QPointF& p);
         int index() const{return this->m_index;}
         void setIndex(int i){this->m_index = i;}
         double distace() const{return this->m_distace;}
         void setDistace(double d){this->m_distace = d;}
         void setInvalid();
     private:
-        QwtPlotCurve *m_curve;
+        QwtPlotItem *m_item;
         int m_index;
         double m_distace;
+        QPointF m_point;
     };
     closePoint m_closePoint;
 private slots:
@@ -43,11 +47,7 @@ private slots:
 public slots:
     void itemAttached(QwtPlotItem* plotItem,bool on);
 private:
-    //根据刻度坐标查找水平距离最近的曲线点
-    QLineF curveLineAtX( const QwtPlotCurve *curve, double x ) const;
-    int curveLineIndexAtX( const QwtPlotCurve *curve, double x ) const;
-    QPointF closePointX(const QwtPlotCurve *curve, const QPointF & pos) const;
-    QPointF closePointX(const QPointF & pos) const;
+    QPen m_pen;
 };
 
 #endif // SAXYDATATRACKER_H

@@ -16,6 +16,7 @@ class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
 class QwtPlotCurve;
+class QwtPlotBarChart;
 ///
 /// \brief 这是一个辅助类，用于绘图的辅助
 ///
@@ -35,12 +36,12 @@ public:
     //判断是否是关于曲线的item
     static bool isPlotCurveItem(QwtPlotItem* item);
     //获取item的颜色,无法获取单一颜色就返回QColor()
-    static QColor getItemColor(QwtPlotItem* item);
+    static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultClr = QColor(0,0,0));
     //获取item的数据个数，-1为nan
     static int getItemDataSize(QwtPlotItem* item);
     //更加强制的replot，就算设置为不实时刷新也能实现重绘
     void replot(QwtPlot* chart);
-    ////////////////////// 坐标轴相关操作//////////////////////////////
+////////////////////// 坐标轴相关操作//////////////////////////////
 
     //是否允许显示坐标轴
     static void setAxisEnable(QwtPlot*chart, int axisID, bool b);
@@ -74,7 +75,7 @@ public:
     static int otherAxis(int axisID);
 
 
-    ////////////////////// 曲线相关操作//////////////////////////////
+////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
     //获取vector point的y
     static size_t getYDatas(const QVector<QPointF>& xys,QVector<double>& ys);
     //获取vector point的x
@@ -119,6 +120,10 @@ public:
     static QRectF getVisibleRegionRang(QwtPlot* chart,int xAxis,int yAxis);
     //获取当前显示区域的数据
     static QPoint getXInVisibleRegionDatas(QwtPlot* chart,QwtPlotCurve* cur,QVector<QPointF>& out_xys);
+////////////////////// QwtPlotBarChart曲线相关操作//////////////////////////////
+    //获取屏幕位置离bar最近的点，类似于QwtPlotCurve::closestPoint
+    static int closestPoint(const QwtPlotBarChart* bar,const QPoint &pos, double *dist );
+
 };
 
 #endif // SACHART_H

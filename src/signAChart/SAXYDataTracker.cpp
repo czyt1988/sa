@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <numeric>
 #include <math.h>
+#include "SAChart.h"
 
 SAXYDataTracker::SAXYDataTracker(QWidget* canvas) :
     QwtPlotPicker( canvas )
@@ -17,6 +18,7 @@ SAXYDataTracker::SAXYDataTracker(QWidget* canvas) :
     setRubberBand( UserRubberBand  );
     setStateMachine( new QwtPickerTrackerMachine() );
     connect (this,&QwtPicker::moved,this,&SAXYDataTracker::mouseMove);
+    m_pen.setWidth(1);
     if(plot ())
         connect (plot(),&QwtPlot::itemAttached,this,&SAXYDataTracker::itemAttached );
 }
@@ -28,10 +30,10 @@ QwtText SAXYDataTracker::trackerTextF(const QPointF& pos) const
     if(!m_closePoint.isValid ())
         return trackerText;
     trackerText.setColor( Qt::black );
-    QColor lineColor = m_closePoint.curve()->pen ().color ();
+    QColor lineColor = SAChart::getItemColor(m_closePoint.item());
     QColor bkColor(lineColor);
     bkColor.setAlpha (30);
-    trackerText.setBorderPen( m_closePoint.curve()->pen () );
+    //trackerText.setBorderPen( m_closePoint.item()->pen () );
     trackerText.setBackgroundBrush( bkColor );
     QPointF point = m_closePoint.getClosePoint ();
     QString info = QString("<font color=\"%1\">y:%2</font><br>")
@@ -64,12 +66,49 @@ void SAXYDataTracker::drawRubberBand(QPainter* painter) const
     const QPoint pos = trackerPosition ();
     if(pos.isNull ())
         return;
+    painter->setPen(m_pen);
     const QPointF closePoint = m_closePoint.getClosePoint ();
     const QPoint cvp = transform (closePoint);
     QwtPainter::drawLine (painter,pos,cvp);
     QRect r(0,0,10,10);
     r.moveCenter (cvp);
     QwtPainter::drawRect (painter,r);
+}
+
+int SAXYDataTracker::itemClosedPoint(const QwtPlotItem *item, const QPoint &pos, QPointF *itemPoint, double *dist)
+{
+    int index = -1;
+    QPointF point;
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        const QwtPlotCurve * cur = static_cast<const QwtPlotCurve*>(item);
+        index = cur->closestPoint (pos,dist);
+        if(-1 != index)
+        {
+            point = cur->sample(index);
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        const QwtPlotBarChart * bar = static_cast<const QwtPlotBarChart*>(item);
+        index = SAChart::closestPoint(bar,pos,dist);
+        if(-1 != index)
+        {
+            point = bar->sample(index);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+    if(itemPoint)
+    {
+        *itemPoint = point;
+    }
+    return index;
 }
 ///
 /// \brief 遍历所有数据找到最近点
@@ -78,8 +117,7 @@ void SAXYDataTracker::drawRubberBand(QPainter* painter) const
 ///
 void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
 {
-    const QwtPlotItemList curveItems =
-        plot()->itemList( QwtPlotItem::Rtti_PlotCurve );
+    const QwtPlotItemList curveItems = plot()->itemList();
     if(curveItems.size () <= 0)
         return;
     //把屏幕坐标转换为图形的数值坐标
@@ -87,12 +125,15 @@ void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
     //记录最短的距离，默认初始化为double的最大值
     double distance = std::numeric_limits<double>::max ();
     //记录前一次最近点的曲线指针
-    QwtPlotCurve * oldCur = m_closePoint.curve ();
+
+    QPointF point;
+    QwtPlotItem * oldItem = m_closePoint.item ();
     for ( int i = 0; i < curveItems.size(); ++i )
     {
-        QwtPlotCurve * cur = static_cast<QwtPlotCurve *>( curveItems[i] );
         double dp;
-        int index = cur->closestPoint (pos,&dp);
+        int index = -1;
+        QwtPlotItem * item = curveItems[i];
+        index = itemClosedPoint(item,pos,&point,&dp);
         if(-1 == index)
             continue;
         //QPointF p = cur->sample (index);
@@ -100,16 +141,16 @@ void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
         {
             m_closePoint.setDistace(dp);//实际距离需要开方
             m_closePoint.setIndex(index);
-            m_closePoint.setCurve(cur);
+            m_closePoint.setItem(item);
+            m_closePoint.setClosePoint(point);
             distance = dp;
         }
     }
     //说明最近点的曲线更换了，标记线的颜色换为当前曲线的颜色
-    if(m_closePoint.isValid () && oldCur!=m_closePoint.curve ())
+    if(m_closePoint.isValid () && oldItem!=m_closePoint.item ())
     {
-        QPen p(m_closePoint.curve ()->pen ());
-        p.setWidth (1);
-        setRubberBandPen (p);
+        m_pen.setColor(SAChart::getItemColor(m_closePoint.item()));
+        setRubberBandPen (m_pen);
     }
 }
 
@@ -127,140 +168,45 @@ void SAXYDataTracker::itemAttached(QwtPlotItem* plotItem, bool on)
 {
     if(!on)
     {
-        if(QwtPlotItem::Rtti_PlotCurve == plotItem->rtti ())
-        {
-            QwtPlotCurve * cur = static_cast<QwtPlotCurve *>( plotItem);
-            if(cur == m_closePoint.curve())
-                m_closePoint.setInvalid ();
-        }
+        if(plotItem == m_closePoint.item())
+            m_closePoint.setInvalid ();
     }
-}
-
-///
-/// 获取x点对应的curve的间隔线此时x正好位于这两点之间
-/// \param curve
-/// \param x
-/// \return
-///
-QLineF SAXYDataTracker::curveLineAtX(const QwtPlotCurve*curve, double x) const
-{
-    QLineF line;
-    if ( curve->dataSize() <= 2 )
-        return line;
-    int index = curveLineIndexAtX(curve,x);
-    if ( index == -1 &&
-        x == curve->sample( curve->dataSize() - 1 ).x() )
-    {
-        // the last sample is excluded from qwtUpperSampleIndex
-        index = curve->dataSize() - 1;
-    }
-
-    if ( index > 0 )
-    {
-        line.setP1( curve->sample( index - 1 ) );
-        line.setP2( curve->sample( index ) );
-    }
-    return line;
-}
-///
-/// \brief 获取x点对应的curve的上边界索引
-/// \param curve 曲线指针
-/// \param x 搜索数值
-/// \return 索引，如果没有，返回-1
-/// \note 曲线需保证x值是有序曲线
-///
-int SAXYDataTracker::curveLineIndexAtX(const QwtPlotCurve* curve, double x) const
-{
-    int index=-1;
-
-    if ( curve->dataSize() >= 2 )
-    {
-        const QRectF br = curve->boundingRect();
-        if ( br.isValid() && x >= br.left() && x <= br.right() )
-        {
-            index = qwtUpperSampleIndex<QPointF>(
-                            *curve->data(), x
-                            ,[](const double x, const QPointF &pos)->bool{
-                                return ( x < pos.x() );
-                            } );
-        }
-    }
-    return index;
-}
-///
-/// \brief 找到对应curve下pos位置竖直距离最近的点
-/// \param curve 曲线指针
-/// \param pos 绘图坐标
-/// \return 返回最近的曲线上点，若没有，返回QPointF()
-///
-QPointF SAXYDataTracker::closePointX(const QwtPlotCurve* curve, const QPointF& pos) const
-{
-    const QLineF line = curveLineAtX(curve,pos.x ());
-    if ( line.isNull() )
-        return QPointF();
-    //如果pos位于靠近开始点，那么pos.x() - line.p1().x() ) / line.dx()为小于0.5返回开始点，反之亦然
-    return  line.pointAt(
-        ( pos.x() - line.p1().x() ) / line.dx() );
-}
-///
-/// \brief 找到图线中pos位置竖直距离最近的点
-/// \param pos 绘图坐标
-/// \return 返回最近的曲线上点，若没有，返回QPointF()
-///
-QPointF SAXYDataTracker::closePointX(const QPointF& pos) const
-{
-    const QwtPlotItemList curveItems =
-        plot()->itemList( QwtPlotItem::Rtti_PlotCurve );
-    QPointF closePoint = QPointF();
-    double lastLength = std::numeric_limits<double>::max ();
-    QLineF lp;
-    lp.setP1 (pos);
-    double lpLength = 0;
-    for ( int i = 0; i < curveItems.size(); i++ )
-    {
-        const QwtPlotCurve * cur = static_cast<const QwtPlotCurve *>( curveItems[i] );
-        QPointF p = closePointX(cur,pos);
-        if(p.isNull ())
-            continue;
-        lp.setP2 (p);
-        lpLength=lp.length ();
-        if(lpLength<lastLength)
-        {
-            closePoint = p;
-            lastLength = lpLength;
-        }
-    }
-    return closePoint;
 }
 
 SAXYDataTracker::closePoint::closePoint()
-  :m_curve(nullptr)
+  :m_item(nullptr)
   ,m_index(-1)
   ,m_distace(std::numeric_limits<double>::max ())
 {
 
 }
 
-void SAXYDataTracker::closePoint::setCurve(QwtPlotCurve* cur)
+void SAXYDataTracker::closePoint::setItem(QwtPlotItem *item)
 {
-    this->m_curve = cur;
+    this->m_item = item;
 }
 
 bool SAXYDataTracker::closePoint::isValid() const
 {
-    return ((this->curve() != nullptr) && (this->index() >= 0));
+    return ((this->item() != nullptr) && (this->index() >= 0));
 }
 
 QPointF SAXYDataTracker::closePoint::getClosePoint() const
 {
     if(isValid ())
-        return this->curve()->sample (this->index());
+        return m_point;
     return QPointF();
+}
+
+void SAXYDataTracker::closePoint::setClosePoint(const QPointF &p)
+{
+    m_point = p;
 }
 
 void SAXYDataTracker::closePoint::setInvalid()
 {
-    setCurve (nullptr);
+    setItem (nullptr);
     setIndex (-1);
     setDistace (std::numeric_limits<double>::max ());
+    m_point = QPointF();
 }

@@ -11,6 +11,9 @@
 #include "qwt_date_scale_engine.h"
 #include "qwt_date_scale_draw.h"
 #include "qwt_plot_multi_barchart.h"
+#include "qwt_column_symbol.h"
+#include "qwt_plot_grid.h"
+#include "qwt_plot_marker.h"
 #include <numeric>
 ///
 /// \brief item的类型判断，cureve bar 等绘图相关返回true
@@ -54,39 +57,48 @@ bool SAChart::isPlotCurveItem(QwtPlotItem *item)
 /// \param item
 /// \return
 ///
-QColor SAChart::getItemColor(QwtPlotItem *item)
+QColor SAChart::getItemColor(const QwtPlotItem *item, const QColor &defaultClr)
 {
     switch (item->rtti()) {
     case QwtPlotItem::Rtti_PlotCurve:
     {
-        QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
-        if(p)
-        {
-            return p->pen().color();
-        }
-        break;
+        const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
+        return p->pen().color();
     }
     case QwtPlotItem::Rtti_PlotIntervalCurve:
     {
-        QwtPlotIntervalCurve* p = static_cast<QwtPlotIntervalCurve*>(item);
-        if(p)
-        {
-            return p->pen().color();
-        }
-        break;
+        const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
+        return p->pen().color();
     }
     case QwtPlotItem::Rtti_PlotHistogram:
     {
-        QwtPlotHistogram* p = static_cast<QwtPlotHistogram*>(item);
-        if(p)
+        const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
+        return p->brush().color();
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item);
+        const QwtColumnSymbol* symbol =  bar->symbol();
+        if(symbol)
         {
-            return p->brush().color();
+            return symbol->palette().color(QPalette::Button);
         }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotGrid:
+    {
+        const QwtPlotGrid* grid = static_cast<const QwtPlotGrid*>(item);
+        return grid->majorPen().color();
+    }
+    case QwtPlotItem::Rtti_PlotMarker:
+    {
+        const QwtPlotMarker* marker = static_cast<const QwtPlotMarker*>(item);
+        return marker->linePen ().color();
     }
     default:
         break;
     }
-    return QColor();
+    return defaultClr;
 }
 ///
 /// \brief 获取item的数据个数
@@ -1040,3 +1052,45 @@ QPoint SAChart::getXInVisibleRegionDatas(QwtPlot *chart, QwtPlotCurve *cur, QVec
     }
     return boundary;
 }
+///
+/// \brief 获取屏幕位置离bar最近的点，类似于QwtPlotCurve::closestPoint
+/// \param bar
+/// \param pos pos Position, where to look for the closest curve point
+/// \param distdist If dist != NULL, closestPoint() returns the distance between
+/// the position and the closest bar point
+/// \return Index of the closest bar point, or -1 if none can be found
+///
+int SAChart::closestPoint(const QwtPlotBarChart *bar, const QPoint &pos, double *dist)
+{
+    const size_t numSamples = bar->dataSize();
+
+    if ( bar->plot() == NULL || numSamples <= 0 )
+        return -1;
+    const QwtSeriesData<QPointF> *series = bar->data();
+    const QwtScaleMap xMap = bar->plot()->canvasMap( bar->xAxis() );
+    const QwtScaleMap yMap = bar->plot()->canvasMap( bar->yAxis() );
+
+    int index = -1;
+    double dmin = 1.0e10;
+
+    for ( uint i = 0; i < numSamples; i++ )
+    {
+        const QPointF sample = series->sample( i );
+
+        const double cx = xMap.transform( sample.x() ) - pos.x();
+        const double cy = yMap.transform( sample.y() ) - pos.y();
+
+        const double f = qwtSqr( cx ) + qwtSqr( cy );
+        if ( f < dmin )
+        {
+            index = i;
+            dmin = f;
+        }
+    }
+    if ( dist )
+        *dist = qSqrt( dmin );
+
+    return index;
+}
+
+

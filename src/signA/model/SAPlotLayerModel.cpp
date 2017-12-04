@@ -5,6 +5,7 @@
 #include <qwt_plot_barchart.h>
 #include <qwt_column_symbol.h>
 #include <QColorDialog>
+#include "SAChart.h"
 //#include <SAChart.h>
 #include <SAPlotMarker.h>
 #include "SAResourDefine.h"
@@ -215,30 +216,13 @@ QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) c
 	QColor c;
 	switch (rtti)
 	{
-	case QwtPlotItem::Rtti_PlotCurve :
-		c = static_cast<const QwtPlotCurve*>(item)->pen().color();
-		break;
-	case QwtPlotItem::Rtti_PlotGrid:
-		c = static_cast<const QwtPlotGrid*>(item)->majorPen().color();
-		break;
     case SAAbstractPlotMarker::Rtti_SAPointMarker:
     case SAAbstractPlotMarker::Rtti_SAYValueMarker:
-	case QwtPlotItem::Rtti_PlotMarker:
 		c = static_cast<const QwtPlotMarker*>(item)->linePen ().color();
-    case QwtPlotItem::Rtti_PlotBarChart://bar没有明确颜色
-    {
-        const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item);
-        const QwtColumnSymbol * sym = bar->symbol();
-        if(sym)
-        {
-            return sym->palette().color(QPalette::Button);
-        }
-        return QVariant();
-    }
 	default:
-		return QVariant();
+        c = SAChart::getItemColor(item);
 	}
-	if(alpha<255)
+    if(alpha<255)
 		c.setAlpha(alpha);
     return c;
 }

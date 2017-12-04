@@ -20,29 +20,6 @@ QwtPlotPicker( canvas )
 QRect SAYDataTracker::trackerRect( const QFont &font ) const
 {
     QRect r = QwtPlotPicker::trackerRect( font );
-
-    // align r to the first curve
-
-// 	const QwtPlotItemList curves = plot()->itemList( QwtPlotItem::Rtti_PlotCurve );
-// 	if ( curves.size() > 0 )
-// 	{
-// 		QPointF pos = invTransform( trackerPosition() );
-//
-// 		const QLineF line = curveLineAt(
-// 			static_cast<const QwtPlotCurve *>( curves[0] ), pos.x() );
-// 		if ( !line.isNull() )
-// 		{
-// 			const double curveY = line.pointAt(
-// 				( pos.x() - line.p1().x() ) / line.dx() ).y();
-//
-// 			pos.setY( curveY );
-// 			pos = transform( pos );
-//
-// 			r.moveBottom( pos.y() );
-// 		}
-// 	}
-
-//	int heigth = r.height();
     r.moveTop(pickArea().boundingRect().top());
     return r;
 }
