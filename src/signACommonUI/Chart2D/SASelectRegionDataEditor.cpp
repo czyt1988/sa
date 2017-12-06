@@ -62,11 +62,14 @@ class SASelectRegionDataEditorPrivate
     QList<chart2d_base_info*> m_curListInfo;//保存选中的曲线信息
 public:
     bool m_isStart;//是否开始
+    bool m_isStartKeyAction;///< 是否按键激活
     QPainterPath m_selectRegionOrigin;//保存选择的原始区域
     QPoint m_firstPressedScreenPoint;//第一次按下的点
     QPoint m_tmpPoint;//记录临时点
     SASelectRegionDataEditorPrivate(SASelectRegionDataEditor* p)
         :q_ptr(p)
+        ,m_isStart(false)
+        ,m_isStartKeyAction(false)
     {
 
     }
@@ -225,64 +228,19 @@ void SASelectRegionDataEditor::updateRegionIndex()
 
     }
 }
-
-bool SASelectRegionDataEditor::mousePressEvent(const QMouseEvent *e)
+///
+/// \brief SASelectRegionDataEditor::offsetRegionAndData
+/// \param offset
+///
+void SASelectRegionDataEditor::offsetData(const QPointF &offset)
 {
-    SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
-    if(!editor)
-    {
-        return false;
-    }
-    plot()->setCursor(QCursor(Qt::SizeAllCursor));
-    d_ptr->m_isStart = true;
-    d_ptr->m_firstPressedScreenPoint = e->pos();
-    d_ptr->m_tmpPoint = e->pos();
-    d_ptr->m_selectRegionOrigin = chart2D()->getSelectionRange();
-    return true;
-}
-
-bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
-{
-    if(!d_ptr->m_isStart)
-    {
-        return false;
-    }
-    QPoint screenPoint = e->pos();
-    SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
-    if(!editor)
-    {
-        return false;
-    }
+    bool isAutoReplot = chart2D()->autoReplot();
     chart2D()->setAutoReplot(false);
-    QPointF currentPoint = editor->invTransform(screenPoint);
-    QPointF originPoint = editor->invTransform(d_ptr->m_tmpPoint);
-    QPointF offset = czy::calcOffset(currentPoint,originPoint);
-
-    //选区进行移动
-    QPainterPath p = chart2D()->getSelectionRange();
-    p.translate(offset);
-    chart2D()->setSelectionRange(p);
-    //数据进行移动
     int count = d_ptr->infoCount();
     for(int i=0;i<count;++i)
     {
         chart2d_base_info* info = d_ptr->info(i);
         QwtPlotItem* item = info->item();
-        int xaxis = item->xAxis();
-        int yaxis = item->yAxis();
-#if 0
-        double cx = plot()->canvasMap(xaxis).invTransform(screenPoint.x());
-        double cy = plot()->canvasMap(yaxis).invTransform(screenPoint.y());
-        double ox = plot()->canvasMap(xaxis).invTransform(d_ptr->m_tmpPoint.x());
-        double oy = plot()->canvasMap(yaxis).invTransform(d_ptr->m_tmpPoint.y());
-#else
-        double cx = plot()->invTransform(xaxis,screenPoint.x());
-        double cy = plot()->invTransform(yaxis,screenPoint.y());
-        double ox = plot()->invTransform(xaxis,d_ptr->m_tmpPoint.x());
-        double oy = plot()->invTransform(yaxis,d_ptr->m_tmpPoint.y());
-#endif
-        offset.rx() = cx-ox;
-        offset.ry() = cy-oy;
         switch(item->rtti())
         {
         case QwtPlotItem::Rtti_PlotCurve:
@@ -290,7 +248,6 @@ bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
             QVector<QPointF> xyData;
             QwtPlotCurve*cur = static_cast<QwtPlotCurve*>(item);
             SAChart::getXYDatas(xyData,cur);
-            int indexSelCount = info->indexs().size();
             std::for_each(info->indexs().begin(),info->indexs().end()
                           ,[&xyData,offset](int i){
                 if(i >= 0 && i<xyData.size())
@@ -298,7 +255,6 @@ bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
                     xyData[i]+=offset;
                 }
             });
-            //std::for_each(xyData.begin(),xyData.end(),[offset](QPointF& point){point+=offset;});
             cur->setSamples(xyData);
             break;
         }
@@ -314,7 +270,6 @@ bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
                     xyData[i]+=offset;
                 }
             });
-            //std::for_each(xyData.begin(),xyData.end(),[offset](QPointF& point){point+=offset;});
             bar->setSamples(xyData);
             break;
         }
@@ -328,13 +283,21 @@ bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
             break;
         }
     }
-    d_ptr->m_tmpPoint = screenPoint;
-    chart2D()->setAutoReplot(true);
-    plot()->replot();
-    return true;
+    chart2D()->setAutoReplot(isAutoReplot);
 }
 
-bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
+void SASelectRegionDataEditor::offsetRegion(const QPointF &offset)
+{
+    bool isAutoReplot = chart2D()->autoReplot();
+    chart2D()->setAutoReplot(false);
+    //选区进行移动
+    QPainterPath p = chart2D()->getSelectionRange();
+    p.translate(offset);
+    chart2D()->setSelectionRange(p);
+    chart2D()->setAutoReplot(isAutoReplot);
+}
+
+bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
 {
     if(!d_ptr->m_isStart)
     {
@@ -349,21 +312,20 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
     }
     plot()->unsetCursor();
     d_ptr->m_isStart = false;
+    bool isAutoReplot = chart2D()->autoReplot();
     chart2D()->setAutoReplot(false);
-    QPoint screenPoint = e->pos();
+    //选区进行移动
     QPointF currentPoint = editor->invTransform(screenPoint);
     QPointF originPoint = editor->invTransform(d_ptr->m_firstPressedScreenPoint);
     QPointF offset = czy::calcOffset(currentPoint,originPoint);
-    //
     SAFigureOptCommand *removeDataAndRegion = new SAFigureOptCommand(chart2D(),tr("move region datas")); // 创建一个命令集
-    //选区进行移动
     QPainterPath p = d_ptr->m_selectRegionOrigin.translated(offset);
     new SAFigureChartSelectionRegionAddCommand(chart2D()
                                                 ,d_ptr->m_selectRegionOrigin
                                                 ,p
                                                 ,tr("move region")
                                                 ,removeDataAndRegion);
-
+    //
     //数据进行移动
     int count = d_ptr->infoCount();
     for(int i=0;i<count;++i)
@@ -405,13 +367,227 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
         }
     }
     chart2D()->appendCommand(removeDataAndRegion);
-    chart2D()->setAutoReplot(true);
+    chart2D()->setAutoReplot(isAutoReplot);
+    return true;
+}
+
+void SASelectRegionDataEditor::startEdit(const QPoint &screenPoint)
+{
+    plot()->setCursor(QCursor(Qt::SizeAllCursor));
+    d_ptr->m_isStart = true;
+    d_ptr->m_firstPressedScreenPoint = screenPoint;
+    d_ptr->m_tmpPoint = screenPoint;
+    d_ptr->m_selectRegionOrigin = chart2D()->getSelectionRange();
+}
+
+void SASelectRegionDataEditor::moveEdit(const QPoint &toScreenPoint)
+{
+    SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
+    if(!editor)
+    {
+        return;
+    }
+    bool isAutoReplot = chart2D()->autoReplot();
+    chart2D()->setAutoReplot(false);
+    QPointF currentPoint = editor->invTransform(toScreenPoint);
+    QPointF originPoint = editor->invTransform(d_ptr->m_tmpPoint);
+    QPointF offset = czy::calcOffset(currentPoint,originPoint);
+    //选区进行移动
+    offsetRegion(offset);
+    //数据进行移动
+    int count = d_ptr->infoCount();
+    for(int i=0;i<count;++i)
+    {
+        chart2d_base_info* info = d_ptr->info(i);
+        QwtPlotItem* item = info->item();
+        int xaxis = item->xAxis();
+        int yaxis = item->yAxis();
+#if 0
+        double cx = plot()->canvasMap(xaxis).invTransform(screenPoint.x());
+        double cy = plot()->canvasMap(yaxis).invTransform(screenPoint.y());
+        double ox = plot()->canvasMap(xaxis).invTransform(d_ptr->m_tmpPoint.x());
+        double oy = plot()->canvasMap(yaxis).invTransform(d_ptr->m_tmpPoint.y());
+#else
+        double cx = plot()->invTransform(xaxis,toScreenPoint.x());
+        double cy = plot()->invTransform(yaxis,toScreenPoint.y());
+        double ox = plot()->invTransform(xaxis,d_ptr->m_tmpPoint.x());
+        double oy = plot()->invTransform(yaxis,d_ptr->m_tmpPoint.y());
+#endif
+        offset.rx() = cx-ox;
+        offset.ry() = cy-oy;
+        offsetData(offset);
+    }
+    d_ptr->m_tmpPoint = toScreenPoint;
+    chart2D()->setAutoReplot(isAutoReplot);
+}
+
+
+
+bool SASelectRegionDataEditor::mousePressEvent(const QMouseEvent *e)
+{
+    SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
+    if(!editor)
+    {
+        return false;
+    }
+    startEdit(e->pos());
+    return true;
+}
+
+bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
+{
+    if(!d_ptr->m_isStart)
+    {
+        return false;
+    }
+    QPoint screenPoint = e->pos();
+    SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
+    if(!editor)
+    {
+        return false;
+    }
+    moveEdit(e->pos());
     plot()->replot();
     return true;
 }
 
+bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
+{
+    return completeEdit(e->pos());
+}
+
 bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
 {
+    qDebug() << e->key();
+    //响应方向键和回车键
+    if(d_ptr->m_isStart)
+    {
+        return false;
+    }
+    if(Qt::ControlModifier == e->modifiers())
+    {
+        //Ctrl 按下，进行精细移动
+        switch(e->key())
+        {
+        case Qt::Key_Up:
+        case Qt::Key_Right:
+        case Qt::Key_Left:
+        case Qt::Key_Down:
+        {
+            if(!d_ptr->m_isStartKeyAction)
+            {
+                //说明是第一次进行按键操作
+                QPoint virtualScreenPoint = chart2D()->rect().center();
+                startEdit(virtualScreenPoint);
+                d_ptr->m_isStartKeyAction = true;
+            }
+        }
+        default:
+            return false;
+        }
+
+        switch(e->key())
+        {
+        case Qt::Key_Up:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.ry() += 1;
+            moveEdit(toPoint);
+            break;
+        }
+        case Qt::Key_Right:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.rx() += 1;
+            moveEdit(toPoint);
+            break;
+        }
+        case Qt::Key_Left:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.rx() -= 1;
+            moveEdit(toPoint);
+            break;
+        }
+        case Qt::Key_Down:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.ry() -= 1;
+            moveEdit(toPoint);
+            break;
+        }
+        default:
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        //Ctrl没按下，进行粗移动
+        switch(e->key())
+        {
+        case Qt::Key_Up:
+        case Qt::Key_Right:
+        case Qt::Key_Left:
+        case Qt::Key_Down:
+        {
+            if(!d_ptr->m_isStartKeyAction)
+            {
+                //说明是第一次进行按键操作
+                QPoint virtualScreenPoint = chart2D()->rect().center();
+                startEdit(virtualScreenPoint);
+                d_ptr->m_isStartKeyAction = true;
+            }
+        }
+        //case Qt::Key
+        default:
+            return false;
+        }
+        int dw = plot()->width()/20;
+        if(dw<=1)
+        {
+            dw = 1;
+        }
+        int dh = plot()->height()/20;
+        if(dh<=1)
+        {
+            dh = 1;
+        }
+        switch(e->key())
+        {
+        case Qt::Key_Up:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.ry() += dh;
+            moveEdit(toPoint);
+            break;
+        }
+        case Qt::Key_Right:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.rx() += dw;
+            moveEdit(toPoint);
+            break;
+        }
+        case Qt::Key_Left:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.rx() -= dw;
+            moveEdit(toPoint);
+            break;
+        }
+        case Qt::Key_Down:
+        {
+            QPoint toPoint = d_ptr->m_tmpPoint;
+            toPoint.ry() -= dh;
+            moveEdit(toPoint);
+            break;
+        }
+        default:
+            return false;
+        }
+        return true;
+    }
     return false;
 }
 

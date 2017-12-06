@@ -23,6 +23,16 @@ private slots:
 private:
     //更新选中的索引
     void updateRegionIndex();
+    //对区域进行偏移
+    void offsetData(const QPointF& offset);
+    //对数据进行偏移
+    void offsetRegion(const QPointF& offset);
+    //完成编辑
+    bool completeEdit(const QPoint &screenPoint);
+    //开始编辑
+    void startEdit(const QPoint &screenPoint);
+    //移动编辑
+    void moveEdit(const QPoint &toScreenPoint);
 protected:
     virtual bool mousePressEvent(const QMouseEvent *e);
     virtual bool mouseMovedEvent( const QMouseEvent *e);

@@ -252,6 +252,22 @@ QPainterPath SAChart::transformPath(QwtPlot *chart, const QPainterPath &p, int o
     }
     return shape;
 }
+///
+/// \brief 计算在屏幕上移动一个像素，在实际数据需要平移的距离
+/// \param chart 绘图指针
+/// \param xaxis x轴
+/// \param yaxis y轴
+/// \return
+///
+QPointF SAChart::calcOnePixelOffset(QwtPlot *chart, int xaxis, int yaxis)
+{
+    QPoint cen = chart->rect().center();
+    double x1 = chart->invTransform(xaxis,cen.x());
+    double y1 = chart->invTransform(yaxis,cen.y());
+    double x2 = chart->invTransform(xaxis,cen.x()+1);
+    double y2 = chart->invTransform(yaxis,cen.y()+1);
+    return QPointF(x2-x1,y2-y1);
+}
 
 ///
 /// \brief 是否允许显示坐标轴

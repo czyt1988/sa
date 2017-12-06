@@ -53,6 +53,8 @@ public:
     static QPointF transformValue(QwtPlot*chart,const QPointF& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);
     //坐标轴数据互转（把坐标轴转换为另外一个坐标轴数据而保持屏幕位置不变）
     static QPainterPath transformPath(QwtPlot*chart,const QPainterPath& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);
+    //图中1像素在实际数据的偏移(正向)
+    static QPointF calcOnePixelOffset(QwtPlot* chart,int xaxis,int yaxis);
 ////////////////////// 坐标轴相关操作//////////////////////////////
 
     //是否允许显示坐标轴
