@@ -46,6 +46,13 @@ public:
 	}
     //获取xy曲线
     static QList<QwtPlotCurve*> getSelCurve(SAChart2D* chart ,QWidget *par = 0);
+    ///
+    /// \brief 获取所有曲线条目
+    /// \param chart chart
+    /// \param par
+    /// \return
+    ///
+    static QList<QwtPlotItem*> getSelectChartPlotItems(SAChart2D* chart ,QWidget *par = 0);
 private:
     void updateTable();
 

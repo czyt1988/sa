@@ -55,7 +55,7 @@ public:
     QwtPlotMarker* addVLine(double val);
     QwtPlotMarker* addHLine(double val);
     //移除范围内数据-支持redo/undo
-    void removeDataInRang(const QList<QwtPlotCurve *>& curves);
+    void removeDataInRang(const QList<QwtPlotItem *> &chartItems);
     void removeDataInRang();
     //获取选择范围内的数据,如果当前没有选区，返回false
     bool getDataInSelectRange(QVector<QPointF>& xy,QwtPlotCurve *cur);
@@ -89,11 +89,13 @@ public:
     void setEditor(SAAbstractPlotEditor* editor);
     SAAbstractPlotEditor* getEditor() const;
     //当前选择的条目
-    QList<QwtPlotItem*> getCurrentSelectItems() const;
-    QList<QwtPlotCurve*> getCurrentSelectPlotCurveItems() const;
+    const QList<QwtPlotItem*>& getCurrentSelectItems() const;
+    //判断当前选中的条目是否有曲线
+    bool isCurrentSelectItemsHaveChartItem() const;
     //设置当前选择的条目
     void setCurrentSelectItems(const QList<QwtPlotItem*>& items);
     void setCurrentSelectPlotCurveItems(const QList<QwtPlotCurve*>& items);
+
     //
     void unenableEditor();
 

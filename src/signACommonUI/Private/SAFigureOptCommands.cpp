@@ -3,6 +3,7 @@
 #include "SAChart.h"
 #include "SAXYSeries.h"
 #include "qwt_plot_item.h"
+#include "qwt_plot_barchart.h"
 #include "SAAbstractRegionSelectEditor.h"
 
 
@@ -223,48 +224,121 @@ void SAFigureRemoveCurveDataInRangCommand::recover()
     plot()->replot();
 }
 
-SAFigureMoveCurveDataInIndexsCommand::SAFigureMoveCurveDataInIndexsCommand(SAChart2D *chart, const QList<SAFigureMoveCurveDataInIndexsCommandCurveInfo> &curveInfoList, const QString &cmdName, QUndoCommand *parent)
+SAFigureMovePointDataInIndexsCommand::SAFigureMovePointDataInIndexsCommand(SAChart2D *chart
+                                                                           , SAFigureMoveSeriseDataInfoBase* baseInfo
+                                                                           , const QString &cmdName
+                                                                           , QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_curveInfoList(curveInfoList)
+    ,m_baseInfo(baseInfo)
 {
 
 }
 
-void SAFigureMoveCurveDataInIndexsCommand::redo()
+SAFigureMovePointDataInIndexsCommand::~SAFigureMovePointDataInIndexsCommand()
 {
-    //数据进行移动
-    const int count = m_curveInfoList.size();
-    for(int i=0;i<count;++i)
+    if(m_baseInfo)
     {
-        const SAFigureMoveCurveDataInIndexsCommandCurveInfo& info = m_curveInfoList[i];
-        QVector<QPointF> xyData;
-        SAChart::getXYDatas(xyData,info.curve);
-        const int indexCount = info.inRangIndexs.size();
-        const int inRangNewDataCount = info.inRangNewData.size();
-        const int curveDataCount = xyData.size();
-        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
-        {
-            xyData[info.inRangIndexs[j]] = info.inRangNewData[j];
-        }
-        info.curve->setSamples(xyData);
+        delete m_baseInfo;
     }
 }
 
-void SAFigureMoveCurveDataInIndexsCommand::undo()
+void SAFigureMovePointDataInIndexsCommand::redo()
 {
-    const int count = m_curveInfoList.size();
-    for(int i=0;i<count;++i)
+    //数据进行移动
+    QwtPlotItem* item = m_baseInfo->item();
+    switch(item->rtti())
     {
-        const SAFigureMoveCurveDataInIndexsCommandCurveInfo& info = m_curveInfoList[i];
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
         QVector<QPointF> xyData;
-        SAChart::getXYDatas(xyData,info.curve);
-        const int indexCount = info.inRangIndexs.size();
-        const int inRangOriginDataCount = info.inRangOriginData.size();
-        const int curveDataCount = xyData.size();
-        for(int j=0;j<indexCount && j<inRangOriginDataCount && j<curveDataCount;++j)
+        QwtPlotCurve*cur = static_cast<QwtPlotCurve*>(item);
+        SAChart::getXYDatas(xyData,cur);
+        const int indexCount = info->indexs().size();
+        const int inRangNewDataCount = info->newPoints().size();
+        const int curveDataCount = info->originPoints().size();
+        const QVector<int>& indexs = info->indexs();
+        const QVector<QPointF>& newPoints = info->newPoints();
+        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
         {
-            xyData[info.inRangIndexs[j]] = info.inRangOriginData[j];
+            xyData[indexs[j]] = newPoints[j];
         }
-        info.curve->setSamples(xyData);
+        cur->setSamples(xyData);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
+        QVector<QPointF> xyData;
+        QwtPlotBarChart*bar = static_cast<QwtPlotBarChart*>(item);
+        SAChart::getXYDatas(xyData,bar);
+        const int indexCount = info->indexs().size();
+        const int inRangNewDataCount = info->newPoints().size();
+        const int curveDataCount = info->originPoints().size();
+        const QVector<int>& indexs = info->indexs();
+        const QVector<QPointF>& newPoints = info->newPoints();
+        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
+        {
+            xyData[indexs[j]] = newPoints[j];
+        }
+        bar->setSamples(xyData);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case QwtPlotItem::Rtti_PlotSpectrogram:
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    default:
+        break;
+    }
+}
+
+void SAFigureMovePointDataInIndexsCommand::undo()
+{
+    QwtPlotItem* item = m_baseInfo->item();
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
+        QVector<QPointF> xyData;
+        QwtPlotCurve*cur = static_cast<QwtPlotCurve*>(item);
+        SAChart::getXYDatas(xyData,cur);
+        const int indexCount = info->indexs().size();
+        const int inRangNewDataCount = info->newPoints().size();
+        const int curveDataCount = info->originPoints().size();
+        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
+        {
+            xyData[info->indexs()[j]] = info->originPoints()[j];
+        }
+        cur->setSamples(xyData);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
+        QVector<QPointF> xyData;
+        QwtPlotBarChart*bar = static_cast<QwtPlotBarChart*>(item);
+        SAChart::getXYDatas(xyData,bar);
+        const int indexCount = info->indexs().size();
+        const int inRangNewDataCount = info->newPoints().size();
+        const int curveDataCount = info->originPoints().size();
+        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
+        {
+            xyData[info->indexs()[j]] = info->originPoints()[j];
+        }
+        bar->setSamples(xyData);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case QwtPlotItem::Rtti_PlotSpectrogram:
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    default:
+        break;
     }
 }

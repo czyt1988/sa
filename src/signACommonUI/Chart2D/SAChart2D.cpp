@@ -98,9 +98,29 @@ public:
     {
         m_undoStack.push(new SAFigureChartSelectionRegionAddCommand(q_ptr,newRegion,des));
     }
-    void appendRemoveCurveDataInRangCommand(const QList<QwtPlotCurve *>& curves,const QString& des)
+    void appendRemoveChart2DItemDataInRangCommand(const QList<QwtPlotItem *>& items,const QString& des)
     {
-        m_undoStack.push(new SAFigureRemoveCurveDataInRangCommand(q_ptr,curves,des));
+        QList<QwtPlotCurve *> curList;
+        for(int i=0;i<items.size();++i)
+        {
+            switch(items[i]->rtti())
+            {
+            case QwtPlotItem::Rtti_PlotCurve:
+                curList.append(static_cast<QwtPlotCurve*>(items[i]));break;
+            case QwtPlotItem::Rtti_PlotSpectroCurve:
+            case QwtPlotItem::Rtti_PlotIntervalCurve:
+            case QwtPlotItem::Rtti_PlotHistogram:
+            case QwtPlotItem::Rtti_PlotSpectrogram:
+            case QwtPlotItem::Rtti_PlotTradingCurve:
+            case QwtPlotItem::Rtti_PlotBarChart:
+            case QwtPlotItem::Rtti_PlotMultiBarChart:
+            default:
+                break;
+            }
+        }
+        QUndoCommand* cmd = new QUndoCommand(des);
+        new SAFigureRemoveCurveDataInRangCommand(q_ptr,curList,"",cmd);
+        m_undoStack.push(cmd);
     }
 
 
@@ -358,7 +378,7 @@ void SAChart2D::removeItem(QwtPlotItem *item)
 /// \brief 移除范围内数据
 /// \param curves 需要移除的曲线列表
 ///
-void SAChart2D::removeDataInRang(const QList<QwtPlotCurve *>& curves)
+void SAChart2D::removeDataInRang(const QList<QwtPlotItem *>& chartItems)
 {
     QPainterPath region = getSelectionRange();
     if(region.isEmpty())
@@ -370,7 +390,7 @@ void SAChart2D::removeDataInRang(const QList<QwtPlotCurve *>& curves)
     {
         return;
     }
-    d_ptr->appendRemoveCurveDataInRangCommand(curves,tr("remove rang data"));
+    d_ptr->appendRemoveChart2DItemDataInRangCommand(chartItems,tr("remove rang data"));
 #if 0
     QHash<QPair<int,int>,QPainterPath> otherScaleMap;
     for(int i=0;i<curves.size();++i)
@@ -400,7 +420,7 @@ void SAChart2D::removeDataInRang(const QList<QwtPlotCurve *>& curves)
 
 void SAChart2D::removeDataInRang()
 {
-    removeDataInRang(getCurrentSelectPlotCurveItems());
+    removeDataInRang(getCurrentSelectItems());
 }
 ///
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false
@@ -687,25 +707,27 @@ SAAbstractPlotEditor *SAChart2D::getEditor() const
 /// \brief 当前选择的条目
 /// \return
 ///
-QList<QwtPlotItem *> SAChart2D::getCurrentSelectItems() const
+const QList<QwtPlotItem *> &SAChart2D::getCurrentSelectItems() const
 {
     SA_DC(SAChart2D);
     return d->m_currentSelectItem;
 }
 
-QList<QwtPlotCurve *> SAChart2D::getCurrentSelectPlotCurveItems() const
+///
+/// \brief 判断当前选中的条目是否有曲线
+/// \return
+///
+bool SAChart2D::isCurrentSelectItemsHaveChartItem() const
 {
-    SA_DC(SAChart2D);
-    const QList<QwtPlotItem *>& items = getCurrentSelectItems();
-    QList<QwtPlotCurve *> res;
+    const QList<QwtPlotItem *> &items = getCurrentSelectItems();
     for(int i=0;i<items.size();++i)
     {
-        if(QwtPlotItem::Rtti_PlotCurve == items[i]->rtti())
+        if(SAChart::isPlotChartItem(items[i]))
         {
-            res.append(static_cast<QwtPlotCurve *>(items[i]));
+            return true;
         }
     }
-    return res;
+    return false;
 }
 
 void SAChart2D::setCurrentSelectItems(const QList<QwtPlotItem *> &items)

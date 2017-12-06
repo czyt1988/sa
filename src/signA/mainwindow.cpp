@@ -1298,10 +1298,10 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
         if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
         {
             saAddLog("Selection Region Datas Move");
-            if(0 == chart->getCurrentSelectPlotCurveItems().size())
+            if(!chart->isCurrentSelectItemsHaveChartItem())
             {
-                QList<QwtPlotCurve*> selCur = CurveSelectDialog::getSelCurve(chart,this);
-                chart->setCurrentSelectPlotCurveItems(selCur);
+                QList<QwtPlotItem*> selCur = CurveSelectDialog::getSelectChartPlotItems(chart,this);
+                chart->setCurrentSelectItems(selCur);
             }
             selectEditor->setEnabled(false);
             chart->unenableEditor();
@@ -1726,15 +1726,16 @@ void MainWindow::onActionInRangDataRemoveTriggered()
         showWarningMessageInfo(tr("I can not find any chart in figure!"));
         return;
     }
-    QList<QwtPlotCurve*> curs = chart->getCurrentSelectPlotCurveItems();
-    if(curs.size() <= 0)
+
+    if(chart->isCurrentSelectItemsHaveChartItem())
     {
-        curs = CurveSelectDialog::getSelCurve(chart,this);
-        chart->setCurrentSelectPlotCurveItems(curs);
+        QList<QwtPlotItem*> selItems = CurveSelectDialog::getSelectChartPlotItems(chart,this);
+        chart->setCurrentSelectItems(selItems);
+        chart->removeDataInRang();
     }
-    if(curs.size() > 0)
+    else
     {
-        chart->removeDataInRang(curs);
+        chart->removeDataInRang();
     }
 }
 

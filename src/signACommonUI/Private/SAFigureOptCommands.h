@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QSharedPointer>
 #include "qwt_plot_item.h"
+#include "qwt_series_store.h"
 #include <memory>
 class SAChart2D;
 class SAAbstractDatas;
@@ -88,14 +89,68 @@ private:
     QList<QwtPlotCurve*> m_curveList;
     QList<QSharedPointer<QVector<QPointF> > > m_backupData;///< 保存曲线原来的数据
 };
+
 ///
 /// \brief 适用于SAFigureMoveCurveDataInIndexsCommand的数据结构
 ///
-class SAFigureMoveCurveDataInIndexsCommandCurveInfo
+class SAFigureMoveSeriseDataInfoBase
 {
 public:
-    QwtPlotCurve* curve;
+    SAFigureMoveSeriseDataInfoBase(QwtPlotItem* it = nullptr):plotItem(it)
+    {
+
+    }
+    virtual ~SAFigureMoveSeriseDataInfoBase()
+    {
+
+    }
+    virtual int rtti() const = 0;
+    enum RTTI
+    {
+        RTTI_PointInfo
+    };
+    const QVector<int>& indexs() const{return inRangIndexs;}
+    QVector<int>& indexs() {return inRangIndexs;}
+    void setIndexs(const QVector<int>& v){inRangIndexs = v;}
+
+    QwtPlotItem* item(){return plotItem;}
+    void setItem(QwtPlotItem* v){plotItem  =v;}
+protected:
+    QwtPlotItem* plotItem;
     QVector<int> inRangIndexs;
+};
+
+class SAFigureMoveSerisePointDataInfo : public SAFigureMoveSeriseDataInfoBase
+{
+public:
+    SAFigureMoveSerisePointDataInfo(QwtPlotItem* it = nullptr):SAFigureMoveSeriseDataInfoBase(it)
+    {
+
+    }
+    ~SAFigureMoveSerisePointDataInfo(){
+
+    }
+    virtual int rtti() const{return RTTI_PointInfo;}
+    void setOriginPoints(const QVector<QPointF>& p){
+        inRangOriginData = p;
+    }
+    const QVector<QPointF>& originPoints() const{
+        return inRangOriginData;
+    }
+    QVector<QPointF>& originPoints(){
+        return inRangOriginData;
+    }
+
+    void setNewPoints(const QVector<QPointF>& p){
+        inRangNewData = p;
+    }
+    const QVector<QPointF>& newPoints() const{
+        return inRangNewData;
+    }
+    QVector<QPointF>& newPoints(){
+        return inRangNewData;
+    }
+protected:
     QVector<QPointF> inRangOriginData;
     QVector<QPointF> inRangNewData;
 };
@@ -103,17 +158,18 @@ public:
 ///
 /// \brief 移动某些序号的数据
 ///
-class SAFigureMoveCurveDataInIndexsCommand : public SAFigureOptCommand
+class SAFigureMovePointDataInIndexsCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureMoveCurveDataInIndexsCommand(SAChart2D* chart
-                                         ,const QList<SAFigureMoveCurveDataInIndexsCommandCurveInfo >& curveInfoList
+    SAFigureMovePointDataInIndexsCommand(SAChart2D* chart
+                                         ,SAFigureMoveSeriseDataInfoBase* baseInfo
                                          ,const QString &cmdName
                                          , QUndoCommand *parent = Q_NULLPTR);
+    ~SAFigureMovePointDataInIndexsCommand();
     virtual void redo();
     virtual void undo();
 private:
-    QList<SAFigureMoveCurveDataInIndexsCommandCurveInfo > m_curveInfoList;
+    SAFigureMoveSeriseDataInfoBase* m_baseInfo;
 };
 
 #endif // SAFIGUREOPTCOMMAND_H

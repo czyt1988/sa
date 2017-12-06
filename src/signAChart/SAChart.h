@@ -12,6 +12,7 @@
 #include "qwt_plot_item.h"
 #include <QPainterPath>
 #include <QList>
+#include "qwt_series_store.h"
 class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
@@ -31,16 +32,27 @@ public:
     enum Value{
         Nan = -1
     };
+    //获得所有可绘制曲线的rtti
+    static QList<QwtPlotItem::RttiValues> getChartPlotItemRtti();
     //获取曲线相关的items
     static QwtPlotItemList getCurveItemList(QwtPlot* chart);
     //判断是否是关于曲线的item
-    static bool isPlotCurveItem(QwtPlotItem* item);
+    static bool isPlotChartItem(QwtPlotItem* item);
     //获取item的颜色,无法获取单一颜色就返回QColor()
     static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultClr = QColor(0,0,0));
     //获取item的数据个数，-1为nan
     static int getItemDataSize(QwtPlotItem* item);
     //更加强制的replot，就算设置为不实时刷新也能实现重绘
     void replot(QwtPlot* chart);
+    //获取当前正在显示的区域
+    static QRectF getVisibleRegionRang(QwtPlot* chart);
+    //获取当前正在显示的区域
+    static QRectF getVisibleRegionRang(QwtPlot* chart,int xAxis,int yAxis);
+////////////////////// 坐标变换相关操作//////////////////////////////
+    //坐标轴数据互转（把坐标轴转换为另外一个坐标轴数据而保持屏幕位置不变）
+    static QPointF transformValue(QwtPlot*chart,const QPointF& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);
+    //坐标轴数据互转（把坐标轴转换为另外一个坐标轴数据而保持屏幕位置不变）
+    static QPainterPath transformPath(QwtPlot*chart,const QPainterPath& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);
 ////////////////////// 坐标轴相关操作//////////////////////////////
 
     //是否允许显示坐标轴
@@ -73,53 +85,41 @@ public:
     static QwtDateScaleDraw* getAxisDateTimeScale(QwtPlot *chart, int axisID);
     //获取对应坐标轴的id,如 xTop会返回xBottom
     static int otherAxis(int axisID);
-
-
-////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
+////////////////////// 曲线数据相关操作//////////////////////////////
     //获取vector point的y
     static size_t getYDatas(const QVector<QPointF>& xys,QVector<double>& ys);
     //获取vector point的x
     static size_t getXDatas(const QVector<QPointF>& xys,QVector<double>& xs);
     //获取一个曲线的y值
-    static size_t getYDatas(QVector<double>& ys,const QwtPlotCurve* cur,const QRectF& rang = QRectF());
+    static size_t getYDatas(QVector<double>& ys,const QwtSeriesStore<QPointF>* cur,const QRectF& rang = QRectF());
     //获取一个曲线的x值
-    static size_t getXDatas(QVector<double>& xs,const QwtPlotCurve* cur,const QRectF& rang = QRectF());
+    static size_t getXDatas(QVector<double>& xs,const QwtSeriesStore<QPointF>* cur,const QRectF& rang = QRectF());
     //获取一个曲线的xy值
-    static size_t getXYDatas(QVector<QPointF>& xys, const QwtPlotCurve* cur, const QRectF& rang = QRectF());
-    static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys,const QwtPlotCurve* cur, const QRectF& rang = QRectF());
-    static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtPlotCurve* cur, const QRectF& rang = QRectF());
+    static size_t getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
+    static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
+    static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
+
+    //对2d数据点的提取操作
+    static int getSeriesInSelectRangIndex(const QPainterPath& rang, const QwtSeriesStore<QPointF>* series, QVector<int>& indexs);
+    //对2d数据点的提取操作
+    static int getSeriesInSelectRangDataAndIndex(const QPainterPath& rang, const QwtSeriesStore<QPointF>* series, QVector<int>& indexs,QVector<QPointF>& points);
+    //对2d数据点的提取操作
+    static int getSeriesInSelectRangData(const QPainterPath& rang, const QwtSeriesStore<QPointF>* series,QVector<QPointF>& points);
+
+
+    //把范围内的数据移除 返回移除的个数
+    static int removeDataInRang(const QRectF& removeRang,QwtSeriesStore<QPointF>* curve);
+    static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
+    //获取范围内的数据 返回获取的个数
+    static int getDataInRang(const QPainterPath& rang,QwtPlotCurve* curve,QVector<QPointF>& res);
+////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
+
 
     //设置符号
     static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size = QSize(8,8));
     static void setCurveLinePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
     //设置曲线的样式
     static void setCurvePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
-    //把范围内的数据移除 返回移除的个数
-    static int removeDataInRang(const QRectF& removeRang,QwtPlotCurve* curve);
-    static int removeDataInRang(const QPainterPath& removeRang,QwtPlotCurve* curve);
-    //获取选择范围里的数据索引
-    static int getCurveInSelectRangIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs);
-    static int getCurveInSelectRangIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs
-                                         ,const int xRangAxis
-                                         ,const int yRangAxis);
-    static int getCurveInSelectRangDataAndIndex(const QPainterPath& rang, const QwtPlotCurve* curve, QVector<int>& indexs,QVector<QPointF>& points);
-    static int getCurveInSelectRangDataAndIndex(const QPainterPath& rang, const QwtPlotCurve* curve
-                                                , QVector<int>& indexs
-                                                ,QVector<QPointF>& points
-                                                ,const int xRangAxis
-                                                ,const int yRangAxis);
-    static int getCurveInSelectRangData(const QPainterPath& rang, const QwtPlotCurve* curve,QVector<QPointF>& points);
-    static int getCurveInSelectRangData(const QPainterPath& rang, const QwtPlotCurve* curve,QVector<QPointF>& points
-                                        ,const int xRangAxis
-                                        ,const int yRangAxis);
-    //获取范围内的数据 返回获取的个数
-    static int getDataInRang(const QPainterPath& rang,QwtPlotCurve* curve,QVector<QPointF>& res);
-    //获取当前正在显示的区域
-    static QRectF getVisibleRegionRang(QwtPlot* chart);
-    //获取当前正在显示的区域
-    static QRectF getVisibleRegionRang(QwtPlot* chart,int xAxis,int yAxis);
-    //获取当前显示区域的数据
-    static QPoint getXInVisibleRegionDatas(QwtPlot* chart,QwtPlotCurve* cur,QVector<QPointF>& out_xys);
 ////////////////////// QwtPlotBarChart曲线相关操作//////////////////////////////
     //获取屏幕位置离bar最近的点，类似于QwtPlotCurve::closestPoint
     static int closestPoint(const QwtPlotBarChart* bar,const QPoint &pos, double *dist );

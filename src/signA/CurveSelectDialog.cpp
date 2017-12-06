@@ -135,6 +135,24 @@ QList<QwtPlotCurve *> CurveSelectDialog::getSelCurve(SAChart2D *chart, QWidget *
     return res;
 }
 
+QList<QwtPlotItem *> CurveSelectDialog::getSelectChartPlotItems(SAChart2D *chart, QWidget *par)
+{
+    QList<QwtPlotItem *> res;
+    CurveSelectDialog dlg(chart,par);
+    dlg.setItemFilter(SAChart::getChartPlotItemRtti().toSet());
+    if(QDialog::Accepted == dlg.exec())
+    {
+        QList<QwtPlotItem*> items = dlg.getSelItem();
+        std::for_each(items.begin(),items.end(),[&res](QwtPlotItem* p){
+            if(SAChart::isPlotChartItem(p))
+            {
+                res.append(p);
+            }
+        });
+    }
+    return res;
+}
+
 ///
 /// \brief 根据设定的filter显示条目
 ///

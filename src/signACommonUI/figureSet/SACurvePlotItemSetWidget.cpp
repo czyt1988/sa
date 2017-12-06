@@ -67,7 +67,7 @@ public:
     }
     void addPlotItem(QwtPlotItem *item)
     {
-        if(!SAChart::isPlotCurveItem(item))
+        if(!SAChart::isPlotChartItem(item))
         {
             return;
         }

@@ -109,7 +109,7 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
     {
         return;
     }
-    if(SAChart::isPlotCurveItem(item))
+    if(SAChart::isPlotChartItem(item))
     {
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }
