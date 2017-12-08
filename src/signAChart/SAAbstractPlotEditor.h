@@ -28,6 +28,9 @@ public:
     virtual void setEnabled( bool on );
     virtual bool isEnabled() const;
     virtual int rtti() const = 0;
+    //设置是否使用空格，如果这个editor使用了空格，需要设置为true，否则会被屏蔽空格的输入,默认为false
+    void setUseSpaceKey(bool b);
+    bool isUseSpaceKey() const;
 protected:
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual bool mousePressEvent(const QMouseEvent *e);
@@ -37,7 +40,8 @@ protected:
     virtual bool keyReleaseEvent(const QKeyEvent *e);
 private:
     bool m_isEnable;///< 是否生效
-    bool m_isSpaceLongPressed;///< 空格是否长按
+    bool m_isSpacePressed;///< 空格是否长按
+    bool m_isCanUseSpaceKey;///< 标记是否可以使用空格
 };
 
 #endif // SAABSTRACTPLOTEDITOR_H

@@ -37,7 +37,7 @@ public:
     SASelectRegionShapeItem* m_seclectRegionItem;///< 用于显示选区的item
     SAAbstractPlotEditor* m_editor;///< 额外的编辑器
     QList<QwtPlotItem*> m_currentSelectItem;///<当前选择的条目
-    bool m_isSpaceLongPressed;///<记录空格长按
+    bool m_isStartPlotDrag;///<记录空格长按
     bool m_isEnablePannerBeforePressedSpace;///< 记录按下空格前是否处于panner状态
     bool m_isEnableZoomBeforePressedSpace;///< 记录按下空格前是否处于zoom状态
 public:
@@ -46,36 +46,38 @@ public:
       ,m_chartSelectRigionEditor(nullptr)
       ,m_seclectRegionItem(nullptr)
       ,m_editor(nullptr)
-      ,m_isSpaceLongPressed(false)
+      ,m_isStartPlotDrag(false)
       ,m_isEnablePannerBeforePressedSpace(false)
       ,m_isEnableZoomBeforePressedSpace(false)
     {
 
     }
-    void setSpaceLongPressed()
+    void startPlotDrag()
     {
-        if(!m_isSpaceLongPressed)
+        if(!m_isStartPlotDrag)
         {
             //说明第一次进入
             q_ptr->setCursor(Qt::OpenHandCursor);
             m_isEnablePannerBeforePressedSpace = q_ptr->isEnablePanner();
             m_isEnableZoomBeforePressedSpace = q_ptr->isEnableZoomer();
+            q_ptr->enableZoomer(false);
             q_ptr->enablePanner(true);
         }
-        m_isSpaceLongPressed = true;
+        m_isStartPlotDrag = true;
     }
-    void setSpaceRelease()
+    void endPlotDrag()
     {
-        if(m_isSpaceLongPressed)
+        if(m_isStartPlotDrag)
         {
             //说明之前处于长按状态
+            qDebug()<<"m_isEnableZoomBeforePressedSpace"<<m_isEnableZoomBeforePressedSpace;
             q_ptr->unsetCursor();
-            if(m_isEnablePannerBeforePressedSpace)
-                q_ptr->enablePanner(true);
+            if(!m_isEnablePannerBeforePressedSpace)
+                q_ptr->enablePanner(false);
             if(m_isEnableZoomBeforePressedSpace)
                 q_ptr->enableZoomer(true);
         }
-        m_isSpaceLongPressed = false;
+        m_isStartPlotDrag = false;
     }
 
     void appendItemAddCommand(QwtPlotItem* item,const QString& des)
@@ -970,10 +972,10 @@ void SAChart2D::keyPressEvent(QKeyEvent *e)
 {
     if(e)
     {
-        if(e->isAutoRepeat() && Qt::Key_Space == e->key())
+        if(Qt::Key_Space == e->key() && !d_ptr->m_isStartPlotDrag)
         {
             //记录空格长按
-            d_ptr->setSpaceLongPressed();
+            d_ptr->startPlotDrag();
         }
     }
     return SA2DGraph::keyPressEvent(e);
@@ -984,11 +986,11 @@ void SAChart2D::keyReleaseEvent(QKeyEvent *e)
     if(e)
     {
         //qDebug() << "keyReleaseEvent isAutoRepeat"<<e->isAutoRepeat()<<" key:"<<e->key();
-        if(d_ptr->m_isSpaceLongPressed)
+        if(!e->isAutoRepeat() && d_ptr->m_isStartPlotDrag)
         {
-            if(!e->isAutoRepeat() && Qt::Key_Space == e->key())
+            if(Qt::Key_Space == e->key())
             {
-                d_ptr->setSpaceRelease();
+                d_ptr->endPlotDrag();
             }
         }
     }

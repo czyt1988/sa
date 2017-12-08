@@ -9,7 +9,8 @@
 SAAbstractPlotEditor::SAAbstractPlotEditor(QwtPlot *parent)
     :QObject(parent)
     ,m_isEnable(false)
-    ,m_isSpaceLongPressed(false)
+    ,m_isSpacePressed(false)
+    ,m_isCanUseSpaceKey(false)
 {
 
 }
@@ -57,6 +58,22 @@ bool SAAbstractPlotEditor::isEnabled() const
 {
     return m_isEnable;
 }
+///
+/// \brief 设置是否使用空格，如果这个editor使用了空格，需要设置为true，否则会被屏蔽空格的输入,默认为false
+/// \param b
+///
+void SAAbstractPlotEditor::setUseSpaceKey(bool b)
+{
+    m_isCanUseSpaceKey = b;
+}
+///
+/// \brief 设置是否可以使用空格
+/// \return
+///
+bool SAAbstractPlotEditor::isUseSpaceKey() const
+{
+    return m_isCanUseSpaceKey;
+}
 
 bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
 {
@@ -70,7 +87,7 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast<QMouseEvent* >( event );
-                if(mouseEvent && !m_isSpaceLongPressed)
+                if(mouseEvent && !m_isSpacePressed)
                 {
                     return mousePressEvent( mouseEvent);
                 }
@@ -84,7 +101,7 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast< QMouseEvent* >( event );
-                if(mouseEvent && !m_isSpaceLongPressed)
+                if(mouseEvent && !m_isSpacePressed)
                 {
                     return mouseMovedEvent( mouseEvent );
                 }
@@ -98,7 +115,7 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
             {
                 const QMouseEvent* mouseEvent =
                         dynamic_cast<QMouseEvent* >( event );
-                if(mouseEvent && !m_isSpaceLongPressed)
+                if(mouseEvent && !m_isSpacePressed)
                 {
                     return mouseReleasedEvent( mouseEvent );
                 }
@@ -114,17 +131,21 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
                     dynamic_cast<QKeyEvent* >( event );
                 if(keyEvent)
                 {
-                    if(keyEvent->isAutoRepeat() && Qt::Key_Space == keyEvent->key())
+                    if(!m_isCanUseSpaceKey)
                     {
+                        if(Qt::Key_Space == keyEvent->key())
+                        {
 
-                        m_isSpaceLongPressed = true;
-                        return false;//空格长按键屏蔽
+                            m_isSpacePressed = true;
+                            return false;//空格键屏蔽
+                        }
+                        else
+                        {
+                            m_isSpacePressed = false;
+                            return keyPressEvent(keyEvent);
+                        }
                     }
-                    else
-                    {
-                        m_isSpaceLongPressed = false;
-                        return keyPressEvent(keyEvent);
-                    }
+                    return keyPressEvent(keyEvent);
                 }
                 break;
             }
@@ -134,7 +155,10 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
                     dynamic_cast<QKeyEvent* >( event );
                 if(keyEvent)
                 {
-                    m_isSpaceLongPressed = false;
+                    if(!keyEvent->isAutoRepeat() && Qt::Key_Space == keyEvent->key())
+                    {
+                        m_isSpacePressed = false;
+                    }
                     return keyReleaseEvent(keyEvent);
                 }
                 break;

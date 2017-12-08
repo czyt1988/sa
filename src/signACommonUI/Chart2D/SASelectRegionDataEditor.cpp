@@ -66,10 +66,12 @@ public:
     QPainterPath m_selectRegionOrigin;//保存选择的原始区域
     QPoint m_firstPressedScreenPoint;//第一次按下的点
     QPoint m_tmpPoint;//记录临时点
+    bool m_isStartMouseAction;///<
     SASelectRegionDataEditorPrivate(SASelectRegionDataEditor* p)
         :q_ptr(p)
         ,m_isStart(false)
         ,m_isStartKeyAction(false)
+        ,m_isStartMouseAction(false)
     {
 
     }
@@ -312,6 +314,7 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
     }
     plot()->unsetCursor();
     d_ptr->m_isStart = false;
+    d_ptr->m_isStartKeyAction = false;
     bool isAutoReplot = chart2D()->autoReplot();
     chart2D()->setAutoReplot(false);
     //选区进行移动
@@ -430,17 +433,22 @@ bool SASelectRegionDataEditor::mousePressEvent(const QMouseEvent *e)
     {
         return false;
     }
+    if(d_ptr->m_isStartKeyAction)
+    {
+        completeEdit(d_ptr->m_tmpPoint);
+
+    }
+    d_ptr->m_isStartMouseAction = true;
     startEdit(e->pos());
     return true;
 }
 
 bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
 {
-    if(!d_ptr->m_isStart)
+    if(!d_ptr->m_isStart || d_ptr->m_isStartKeyAction)
     {
         return false;
     }
-    QPoint screenPoint = e->pos();
     SAAbstractRegionSelectEditor* editor = chart2D()->getRegionSelectEditor();
     if(!editor)
     {
@@ -453,14 +461,14 @@ bool SASelectRegionDataEditor::mouseMovedEvent(const QMouseEvent *e)
 
 bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
 {
+    d_ptr->m_isStartMouseAction = false;
     return completeEdit(e->pos());
 }
 
 bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
 {
-    qDebug() << e->key();
     //响应方向键和回车键
-    if(d_ptr->m_isStart)
+    if(d_ptr->m_isStartMouseAction)
     {
         return false;
     }
@@ -481,6 +489,7 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
                 startEdit(virtualScreenPoint);
                 d_ptr->m_isStartKeyAction = true;
             }
+            break;
         }
         default:
             return false;
@@ -519,6 +528,7 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
         default:
             return false;
         }
+        plot()->replot();
         return true;
     }
     else
@@ -538,6 +548,7 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
                 startEdit(virtualScreenPoint);
                 d_ptr->m_isStartKeyAction = true;
             }
+            break;
         }
         //case Qt::Key
         default:
@@ -553,12 +564,13 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
         {
             dh = 1;
         }
+
         switch(e->key())
         {
         case Qt::Key_Up:
         {
             QPoint toPoint = d_ptr->m_tmpPoint;
-            toPoint.ry() += dh;
+            toPoint.ry() -= dh;
             moveEdit(toPoint);
             break;
         }
@@ -579,13 +591,14 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
         case Qt::Key_Down:
         {
             QPoint toPoint = d_ptr->m_tmpPoint;
-            toPoint.ry() -= dh;
+            toPoint.ry() += dh;
             moveEdit(toPoint);
             break;
         }
         default:
             return false;
         }
+        plot()->replot();
         return true;
     }
     return false;
