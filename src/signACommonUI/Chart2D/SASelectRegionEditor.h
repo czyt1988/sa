@@ -25,8 +25,16 @@ public:
     const SAChart2D* chart2D() const;
     SAChart2D* chart2D();
 private:
-    //更新选中的索引
-    void updateRegionIndex();
+    //对选区进行偏移
+    void offsetRegion(const QPointF& offset);
+    //完成编辑
+    bool completeEdit(const QPoint &screenPoint);
+    //开始编辑
+    void startEdit(const QPoint &screenPoint);
+    //移动编辑
+    void moveEdit(const QPoint &toScreenPoint);
+    //完成键盘的编辑
+    void completeKeyActionEdit();
 protected:
     virtual bool mousePressEvent(const QMouseEvent *e);
     virtual bool mouseMovedEvent( const QMouseEvent *e);

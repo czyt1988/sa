@@ -62,16 +62,16 @@ class SASelectRegionDataEditorPrivate
     QList<chart2d_base_info*> m_curListInfo;//保存选中的曲线信息
 public:
     bool m_isStart;//是否开始
+    bool m_isStartMouseAction;///< 是否鼠标激活
     bool m_isStartKeyAction;///< 是否按键激活
     QPainterPath m_selectRegionOrigin;//保存选择的原始区域
     QPoint m_firstPressedScreenPoint;//第一次按下的点
     QPoint m_tmpPoint;//记录临时点
-    bool m_isStartMouseAction;///<
     SASelectRegionDataEditorPrivate(SASelectRegionDataEditor* p)
         :q_ptr(p)
         ,m_isStart(false)
-        ,m_isStartKeyAction(false)
         ,m_isStartMouseAction(false)
+        ,m_isStartKeyAction(false)
     {
 
     }
@@ -122,8 +122,10 @@ SASelectRegionDataEditor::SASelectRegionDataEditor(SAChart2D *parent)
 
 SASelectRegionDataEditor::~SASelectRegionDataEditor()
 {
-
+    //说明上次还说处于键盘移动状态
+    completeKeyActionEdit();
 }
+
 
 int SASelectRegionDataEditor::rtti() const
 {
@@ -138,6 +140,13 @@ const SAChart2D *SASelectRegionDataEditor::chart2D() const
 SAChart2D *SASelectRegionDataEditor::chart2D()
 {
     return qobject_cast<SAChart2D*>(plot());
+}
+
+void SASelectRegionDataEditor::setEnabled(bool on)
+{
+    //说明上次还说处于键盘移动状态
+    completeKeyActionEdit();
+    SAAbstractPlotEditor::setEnabled(on);
 }
 
 
@@ -290,13 +299,10 @@ void SASelectRegionDataEditor::offsetData(const QPointF &offset)
 
 void SASelectRegionDataEditor::offsetRegion(const QPointF &offset)
 {
-    bool isAutoReplot = chart2D()->autoReplot();
-    chart2D()->setAutoReplot(false);
     //选区进行移动
     QPainterPath p = chart2D()->getSelectionRange();
     p.translate(offset);
     chart2D()->setSelectionRange(p);
-    chart2D()->setAutoReplot(isAutoReplot);
 }
 
 bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
@@ -315,6 +321,11 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
     plot()->unsetCursor();
     d_ptr->m_isStart = false;
     d_ptr->m_isStartKeyAction = false;
+    if(d_ptr->m_firstPressedScreenPoint == screenPoint)
+    {
+        d_ptr->m_tmpPoint = screenPoint;
+        return true;
+    }
     bool isAutoReplot = chart2D()->autoReplot();
     chart2D()->setAutoReplot(false);
     //选区进行移动
@@ -371,6 +382,8 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
     }
     chart2D()->appendCommand(removeDataAndRegion);
     chart2D()->setAutoReplot(isAutoReplot);
+    d_ptr->m_firstPressedScreenPoint = screenPoint;
+    d_ptr->m_tmpPoint = screenPoint;
     return true;
 }
 
@@ -424,6 +437,14 @@ void SASelectRegionDataEditor::moveEdit(const QPoint &toScreenPoint)
     chart2D()->setAutoReplot(isAutoReplot);
 }
 
+void SASelectRegionDataEditor::completeKeyActionEdit()
+{
+    if(d_ptr->m_isStartKeyAction)
+    {
+        completeEdit(d_ptr->m_tmpPoint);
+    }
+}
+
 
 
 bool SASelectRegionDataEditor::mousePressEvent(const QMouseEvent *e)
@@ -433,11 +454,7 @@ bool SASelectRegionDataEditor::mousePressEvent(const QMouseEvent *e)
     {
         return false;
     }
-    if(d_ptr->m_isStartKeyAction)
-    {
-        completeEdit(d_ptr->m_tmpPoint);
-
-    }
+    completeKeyActionEdit();//如果按键激活过，把激活的记录保存，如果保存了，此函数不做任何处理
     d_ptr->m_isStartMouseAction = true;
     startEdit(e->pos());
     return true;
@@ -491,6 +508,9 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
             }
             break;
         }
+        case Qt::Key_Enter://按下回车键确认键盘的移动
+            completeKeyActionEdit();
+            return true;
         default:
             return false;
         }

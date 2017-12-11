@@ -18,6 +18,8 @@ public:
     //
     const SAChart2D* chart2D() const;
     SAChart2D* chart2D();
+    //
+    virtual void setEnabled( bool on );
 private slots:
     void onCurrentSelectItemsChanged(const QList<QwtPlotItem*>& items);
 private:
@@ -33,6 +35,8 @@ private:
     void startEdit(const QPoint &screenPoint);
     //移动编辑
     void moveEdit(const QPoint &toScreenPoint);
+    //完成键盘的编辑
+    void completeKeyActionEdit();
 protected:
     virtual bool mousePressEvent(const QMouseEvent *e);
     virtual bool mouseMovedEvent( const QMouseEvent *e);

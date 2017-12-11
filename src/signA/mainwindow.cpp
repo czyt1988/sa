@@ -1279,7 +1279,12 @@ void MainWindow::onActionSelectionRegionMove(bool b)
             return;
         }
     }
+    else
+    {
+        chart->setEditor(nullptr);
+    }
     updateSelectActionState(chart);
+    updateChartEditorActionState(chart);
 }
 ///
 /// \brief 选区范围内的数据移动
@@ -1316,6 +1321,7 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
         }
     }
     updateSelectActionState(chart);
+    updateChartEditorActionState(chart);
 }
 
 ///
