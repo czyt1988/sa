@@ -11,7 +11,8 @@ HEADERS += \
     $$PWD/SASelectRegionDataEditor.h \
     $$PWD/SAScatterSeries.h \
     $$PWD/SABoxSeries.h \
-    $$PWD/SAHistogramSeries.h
+    $$PWD/SAHistogramSeries.h \
+    $$PWD/SAChartSerializeHelp.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
@@ -23,4 +24,5 @@ SOURCES += \
     $$PWD/SASelectRegionDataEditor.cpp \
     $$PWD/SAScatterSeries.cpp \
     $$PWD/SABoxSeries.cpp \
-    $$PWD/SAHistogramSeries.cpp
+    $$PWD/SAHistogramSeries.cpp \
+    $$PWD/SAChartSerializeHelp.cpp

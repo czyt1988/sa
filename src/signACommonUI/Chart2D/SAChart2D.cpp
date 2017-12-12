@@ -1,4 +1,4 @@
-#include "SAChart2D.h"
+﻿#include "SAChart2D.h"
 #include "SAChart.h"
 #include "SAAbstractDatas.h"
 #include "SARandColorMaker.h"

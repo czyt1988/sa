@@ -1,4 +1,4 @@
-#include "SAVectorInterval.h"
+﻿#include "SAVectorInterval.h"
 #include "SADataHeader.h"
 
 SAVectorInterval::SAVectorInterval()
@@ -98,4 +98,3 @@ QDataStream &operator>>(QDataStream & in, QwtInterval & item)
     item.setBorderFlags(static_cast<QwtInterval::BorderFlags>(flag));
     return in;
 }
-

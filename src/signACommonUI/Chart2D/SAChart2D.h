@@ -1,4 +1,4 @@
-#ifndef SACHART2D_H
+﻿#ifndef SACHART2D_H
 #define SACHART2D_H
 #include "SA2DGraph.h"
 #include "SACommonUIGlobal.h"

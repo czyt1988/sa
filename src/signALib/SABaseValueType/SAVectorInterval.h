@@ -1,4 +1,4 @@
-#ifndef SAVECTORINTERVAL_H
+﻿#ifndef SAVECTORINTERVAL_H
 #define SAVECTORINTERVAL_H
 
 #define SA_QWT
@@ -6,6 +6,7 @@
 #include "SAVectorDatas.h"
 
 #ifdef SA_QWT
+
 #include "qwt_samples.h"
 #endif
 ///
@@ -28,10 +29,11 @@ public:
 
 };
 Q_DECLARE_METATYPE(QwtIntervalSample)
+///<QwtIntervalSample的序列化
 SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const QwtIntervalSample & item);
 SALIB_EXPORT QDataStream &operator>>(QDataStream & in, QwtIntervalSample & item);
+///<QwtInterval的序列化
 SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const QwtInterval & item);
 SALIB_EXPORT QDataStream &operator>>(QDataStream & in, QwtInterval & item);
-
 
 #endif // SAVECTORINTERVAL_H

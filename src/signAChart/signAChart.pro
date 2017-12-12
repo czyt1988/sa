@@ -41,7 +41,8 @@ HEADERS += \
     SARectRegionSelectEditor.h \
     SAEllipseRegionSelectEditor.h \
     SAPolygonRegionSelectEditor.h \
-    SACrossTracker.h
+    SACrossTracker.h \
+    SAQwtSerialize.h
 
 SOURCES += \
     QwtPlotItemDataModel.cpp \
@@ -60,6 +61,7 @@ SOURCES += \
     SARectRegionSelectEditor.cpp \
     SAEllipseRegionSelectEditor.cpp \
     SAPolygonRegionSelectEditor.cpp \
-    SACrossTracker.cpp
+    SACrossTracker.cpp \
+    SAQwtSerialize.cpp
 
 OTHER_FILES += readme.md

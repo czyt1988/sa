@@ -1,4 +1,4 @@
-#include "SAProjectManager.h"
+﻿#include "SAProjectManager.h"
 #include "SAValueManager.h"
 #include <QDir>
 #include <QTextStream>
@@ -6,6 +6,7 @@
 #define VERSION_STRING "pro.0.0.1"
 #define PROJECT_DES_XML_FILE_NAME "saProject.prodes"
 #define DATA_FOLDER_NAME "DATA"
+#define SUB_WINDOW_FOLDER_NAME "Wind"
 SAProjectManager* SAProjectManager::s_instance = nullptr;
 
 
@@ -22,6 +23,9 @@ public:
     QMap<SAAbstractDatas*,QString> m_dataPtr2DataFileName;///< 记录数据指针对应的保存文件名
     //end
     QSet<QString> m_dataWillBeDeleted;///< 记录将要删除的数据文件
+    //保存其他操作的函数指针
+    QList<SAProjectManager::FunAction> m_funcSaveActionList;///< 保存时的额外动作列表
+    QList<SAProjectManager::FunAction> m_funcLoadActionList;///< 加载是的额外动作列表
     SAProjectManagerPrivate(SAProjectManager* p):q_ptr(p)
     {
 
@@ -308,10 +312,15 @@ QString SAProjectManager::getProjectDescribeFilePath(const QString &projectFolde
 ///
 /// \brief 获取工程的数据文件目录
 /// \param projectFolder 当前工程的顶层目录
+/// \param autoMakePath 此项为true，如果目录不存在会自动创建目录
 /// \return
 ///
 QString SAProjectManager::getProjectDataFolderPath(const QString &projectFolder,bool autoMakePath)
 {
+    if(projectFolder.isEmpty())
+    {
+        return QString();
+    }
     QString dataPath = QDir::cleanPath (projectFolder) + QDir::separator () + DATA_FOLDER_NAME;
     if(autoMakePath)
     {
@@ -327,6 +336,50 @@ QString SAProjectManager::getProjectDataFolderPath(const QString &projectFolder,
     return dataPath;
 }
 ///
+/// \brief  获取工程的数据文件目录
+/// \param autoMakePath 此项为true，如果目录不存在会自动创建目录
+/// \return
+///
+QString SAProjectManager::getProjectDataFolderPath(bool autoMakePath)
+{
+    return getProjectDataFolderPath(getProjectFullPath(),autoMakePath);
+}
+///
+/// \brief 获取工程的图表文件目录
+/// \param projectFolder 当前工程的顶层目录
+/// \param autoMakePath 此项为true，如果目录不存在会自动创建目录
+/// \return
+///
+QString SAProjectManager::getProjectSubWindowFolderPath(const QString &projectFolder, bool autoMakePath)
+{
+    if(projectFolder.isEmpty())
+    {
+        return QString();
+    }
+    QString dataPath = QDir::cleanPath (projectFolder) + QDir::separator () + SUB_WINDOW_FOLDER_NAME;
+    if(autoMakePath)
+    {
+        QDir dir(dataPath);
+        if(!dir.exists())
+        {
+            if(!dir.mkdir (dataPath))
+            {
+                return QString();
+            }
+        }
+    }
+    return dataPath;
+}
+///
+/// \brief 获取工程的图表文件目录
+/// \param autoMakePath 此项为true，如果目录不存在会自动创建目录
+/// \return
+///
+QString SAProjectManager::getProjectSubWindowFolderPath(bool autoMakePath)
+{
+    return getProjectSubWindowFolderPath(getProjectFullPath(),autoMakePath);
+}
+///
 /// \brief 获取数据对应的文件路径,如果已经保存了的话，
 /// \param dataPtr 数据指针
 /// \return 返回的路径，如果没有，返回一个QString()
@@ -336,6 +389,70 @@ QString SAProjectManager::getDataFilePath(const SAAbstractDatas *dataPtr) const
     SA_DC(SAProjectManager);
     return d->m_dataPtr2DataFileName.value(const_cast<SAAbstractDatas *>(dataPtr));
 }
+///
+/// \brief 添加保存时的额外动作
+/// \param fun 函数指针
+///
+void SAProjectManager::addSaveFunctionList(SAProjectManager::FunAction fun)
+{
+    d_ptr->m_funcSaveActionList.append(fun);
+}
+///
+/// \brief 获取保存额外动作的函数指针列表
+/// \return
+///
+const QList<SAProjectManager::FunAction>& SAProjectManager::getSaveFunctionList() const
+{
+    return d_ptr->m_funcSaveActionList;
+}
+///
+/// \brief 移除保存的额外动作函数指针
+/// \param fun
+///
+void SAProjectManager::removeSaveFunctionList(SAProjectManager::FunAction fun)
+{
+    for(int i=0;i<d_ptr->m_funcSaveActionList.size();++i)
+    {
+        if(d_ptr->m_funcSaveActionList[i].target<void(SAProjectManager*)>() == fun.target<void(SAProjectManager*)>())
+        {
+            d_ptr->m_funcSaveActionList.removeAt(i);
+            return;
+        }
+    }
+}
+///
+/// \brief 添加加载时的额外动作
+/// \param fun
+///
+void SAProjectManager::addLoadFunctionList(SAProjectManager::FunAction fun)
+{
+    d_ptr->m_funcLoadActionList.append(fun);
+}
+///
+/// \brief 获取加载额外动作的函数指针列表
+/// \return
+///
+const QList<SAProjectManager::FunAction> &SAProjectManager::getLoadFunctionList() const
+{
+    return d_ptr->m_funcLoadActionList;
+}
+///
+/// \brief  移除加载的额外动作函数指针
+/// \param fun
+///
+void SAProjectManager::removeLoadFunctionList(SAProjectManager::FunAction fun)
+{
+    for(int i=0;i<d_ptr->m_funcLoadActionList.size();++i)
+    {
+        if(d_ptr->m_funcLoadActionList[i].target<void(SAProjectManager*)>() == fun.target<void(SAProjectManager*)>())
+        {
+            d_ptr->m_funcLoadActionList.removeAt(i);
+            return;
+        }
+    }
+}
+
+
 ///
 /// \brief 获取工程的名称
 /// \return
@@ -385,6 +502,10 @@ bool SAProjectManager::saveAs(const QString &savePath)
 
 
     setProjectFullPath(savePath);
+    std::for_each(d_ptr->m_funcSaveActionList.begin(),d_ptr->m_funcSaveActionList.end()
+                  ,[this](FunAction fun){
+        fun(this);
+    });
     setDirty(false);
     emit messageInformation(tr("success save project:\"%1\" ").arg(savePath)
                             ,SA::NormalMessage
@@ -419,6 +540,10 @@ bool SAProjectManager::load(const QString &projectedPath)
 
 
     setProjectFullPath(projectedPath);
+    std::for_each(d_ptr->m_funcLoadActionList.begin(),d_ptr->m_funcLoadActionList.end()
+                  ,[this](FunAction fun){
+       fun(this);
+    });
     setDirty(false);
     return true;
 }
