@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QSet>
 #include "SACommonUIGlobal.h"
+#include "SAUIInterface.h"
 #include <functional>
 class QDomDocument;
 class SAValueManager;
@@ -17,6 +18,8 @@ private:
 public:
     typedef std::function<void(SAProjectManager*)> FunAction;
     ~SAProjectManager();
+    //是否是可用项目
+    bool isValid() const;
     //获取对象
     static SAProjectManager *getInstance();
     //获取当前项目的全称路径
@@ -48,13 +51,16 @@ public:
     //获取每个数据对应的文件路径
     QString getDataFilePath(const SAAbstractDatas* dataPtr) const;
     //添加保存时的额外动作
-    void addSaveFunctionList(FunAction fun);
+    void addSaveFunctionAction(FunAction fun);
     const QList<SAProjectManager::FunAction>& getSaveFunctionList() const;
-    void removeSaveFunctionList(FunAction fun);
+    void removeSaveFunctionAction(FunAction fun);
     //添加加载时的额外动作
-    void addLoadFunctionList(FunAction fun);
+    void addLoadFunctionAction(FunAction fun);
     const QList<SAProjectManager::FunAction>& getLoadFunctionList() const;
-    void removeLoadFunctionList(FunAction fun);
+    void removeLoadFunctionAction(FunAction fun);
+    //建立ui的关联
+    void setupUI(SAUIInterface* ui);
+    SAUIInterface* ui();
 private:
     //设置项目的路径
     void setProjectFullPath(const QString &projectFullPath);

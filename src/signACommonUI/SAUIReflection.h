@@ -36,7 +36,7 @@ public:
     static SAUIReflection *getInstance();
     SAUIInterface* uiInterface();
 private:
-    void setupUIInterface(SAUIInterface* ui);
+    void setupUI(SAUIInterface* ui);
 private:
     SAUIInterface* m_uiInterface;
 };

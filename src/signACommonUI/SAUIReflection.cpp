@@ -40,7 +40,7 @@ SAUIInterface *SAUIReflection::uiInterface()
     return m_uiInterface;
 }
 
-void SAUIReflection::setupUIInterface(SAUIInterface *ui)
+void SAUIReflection::setupUI(SAUIInterface *ui)
 {
     m_uiInterface = ui;
 }

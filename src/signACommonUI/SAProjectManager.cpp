@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <QDomDocument>
+
 #define VERSION_STRING "pro.0.0.1"
 #define PROJECT_DES_XML_FILE_NAME "saProject.prodes"
 #define DATA_FOLDER_NAME "DATA"
@@ -14,6 +15,7 @@ class SAProjectManagerPrivate
 {
     SA_IMPL_PUBLIC(SAProjectManager)
 public:
+    SAUIInterface* m_ui;
     QString m_projectFullPath;///< 项目对应路径
     QString m_projectName;///< 项目名
     QString m_projectDescribe;///< 项目描述
@@ -44,6 +46,11 @@ SAProjectManager::SAProjectManager():QObject(nullptr)
 SAProjectManager::~SAProjectManager()
 {
 
+}
+
+bool SAProjectManager::isValid() const
+{
+    return (!d_ptr->m_projectFullPath.isEmpty());
 }
 ///
 /// \brief 获取SAProjectManager对象
@@ -393,7 +400,7 @@ QString SAProjectManager::getDataFilePath(const SAAbstractDatas *dataPtr) const
 /// \brief 添加保存时的额外动作
 /// \param fun 函数指针
 ///
-void SAProjectManager::addSaveFunctionList(SAProjectManager::FunAction fun)
+void SAProjectManager::addSaveFunctionAction(SAProjectManager::FunAction fun)
 {
     d_ptr->m_funcSaveActionList.append(fun);
 }
@@ -409,7 +416,7 @@ const QList<SAProjectManager::FunAction>& SAProjectManager::getSaveFunctionList(
 /// \brief 移除保存的额外动作函数指针
 /// \param fun
 ///
-void SAProjectManager::removeSaveFunctionList(SAProjectManager::FunAction fun)
+void SAProjectManager::removeSaveFunctionAction(SAProjectManager::FunAction fun)
 {
     for(int i=0;i<d_ptr->m_funcSaveActionList.size();++i)
     {
@@ -424,7 +431,7 @@ void SAProjectManager::removeSaveFunctionList(SAProjectManager::FunAction fun)
 /// \brief 添加加载时的额外动作
 /// \param fun
 ///
-void SAProjectManager::addLoadFunctionList(SAProjectManager::FunAction fun)
+void SAProjectManager::addLoadFunctionAction(SAProjectManager::FunAction fun)
 {
     d_ptr->m_funcLoadActionList.append(fun);
 }
@@ -440,7 +447,7 @@ const QList<SAProjectManager::FunAction> &SAProjectManager::getLoadFunctionList(
 /// \brief  移除加载的额外动作函数指针
 /// \param fun
 ///
-void SAProjectManager::removeLoadFunctionList(SAProjectManager::FunAction fun)
+void SAProjectManager::removeLoadFunctionAction(SAProjectManager::FunAction fun)
 {
     for(int i=0;i<d_ptr->m_funcLoadActionList.size();++i)
     {
@@ -450,6 +457,16 @@ void SAProjectManager::removeLoadFunctionList(SAProjectManager::FunAction fun)
             return;
         }
     }
+}
+
+void SAProjectManager::setupUI(SAUIInterface *ui)
+{
+    d_ptr->m_ui = ui;
+}
+
+SAUIInterface *SAProjectManager::ui()
+{
+    return d_ptr->m_ui;
 }
 
 

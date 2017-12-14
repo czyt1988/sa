@@ -440,6 +440,8 @@ private slots:
     /// \}
 
 
+    //获取ui接口
+    SAUIInterface* uiInterface();
 public slots:
     void onChartDataChanged(QWidget* widget,const QwtPlotItem* pC);
 public:
@@ -529,7 +531,7 @@ private:
 #else
     Ui::MainWindow *ui;
 #endif
-    SAUI* uiInterface;
+    SAUI* m_uiInterface;
     progressStateWidget* ui_status_progress;///< 状态栏上的进度信息
     SAInformationStatusWidget* ui_status_info;///< 状态栏上的特殊信息
     QMenu* m_menuTreeProjectItem;///< 项目树的弹出菜单
@@ -548,9 +550,16 @@ private:
     QActionGroup* m_chartRegionSelectionModeActionGroup;///<选区选择模式的action group
 
 };
-
+///
+/// \brief 根据子窗口类型获取后缀名
+/// \param type 子窗口类型
+/// \return 后缀名
+///
+QString get_sub_window_type_suffix(SA::SubWndType type);
 //保存子窗口到文件
-void save_sub_window(SAMdiSubWindow* w);
+bool save_sub_window(SAMdiSubWindow* w, const QString &folderPath, QString *errString);
 //重文件加载子窗口
-void load_sub_window(const QString& filePath,MainWindow* w);
+bool load_sub_window(SAUIInterface *ui, const QString& filePath, QString *errString);
+//把没能和SubWindowList对应的文件删除
+void remove_figure_file_not_in_sub_window_list(const QString &folderPath,const QList<QMdiSubWindow*>& subWindows);
 #endif // MAINWINDOW_H

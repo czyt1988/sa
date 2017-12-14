@@ -1,4 +1,4 @@
-#ifndef SAGLOBALS_H
+﻿#ifndef SAGLOBALS_H
 #define SAGLOBALS_H
 class SAAbstractDatas;
 #include <QScopedPointer>
@@ -61,23 +61,18 @@ class SAAbstractDatas;
 
 
 namespace SA {
-    enum ThermoChartPARAM{
-        T//< 温度
-        ,P///< 压力
-        ,S///< 熵
-        ,H///< 焓
-    };
-    enum ThermoChartMODE{
-        TS
-        ,HS
-        ,PT
-    };
-//    enum DataMode{
-//        NotData///<不是数据
-//        ,DoubleSeries///<数组
-//        ,PointSeries///<点集
-//        ,TDMSChannel
+//    enum ThermoChartPARAM{
+//        T//< 温度
+//        ,P///< 压力
+//        ,S///< 熵
+//        ,H///< 焓
 //    };
+//    enum ThermoChartMODE{
+//        TS
+//        ,HS
+//        ,PT
+//    };
+
     enum DataSelectRange{
         InSelectionRange = 0x1///<在可视范围内
         ,OutSelectionRange = 0x2///< 不可视范围内
@@ -93,31 +88,14 @@ namespace SA {
         ,XYPoint///< 导出xy值，这样导出的数据为DataMode::PointSeries
     };
 
-    ///
-    /// \brief 此类型用于标定图表的特殊内容，如波形图所包含的采样率采样点这些特殊数据,每个SAChartWidget都会保存有一份
-    /// SAAbstractChartTypeData，SAAbstractChartTypeData里包含了ChartType信息，ChartType是为了方便快速查询
-    /// 类型，而避免经常调用dynamic_cast
-    /// \see SAAbstractChartTypeData::getType
-    ///
-    enum ChartType{
-        NormalChart///< 正常
-        ,WaveChart///< 波形图
-        ,SpectrumChart///< 频谱图
-        ,ThermodynamicsChart///< 热力学图
-    };
+
     ///
     /// \brief 此类型用于标定一个mdi子窗口的属性，属于哪一类型的窗口，在mdi子窗口创建时设定在MdiSubWindow里，
     /// \see MdiSubWindow::setType
     ///
     enum SubWndType{
-        UserChartWnd///< 用户自定义图
-        ,Normal2DChartWnd///< 普通2d图形，不含其他信息
-        ,TendencyChartWnd///< 趋势图
-        ,ThermalDiagramWnd///< 热力学图
-        ,SignalChartWnd///< 信号相关的图
-        ,ThermalPropertiesWnd
-        ,ValueDataView///< 数据表格图
-        ,TimeFrequencyAnalysis///< 时频分析窗口
+        SubWindowUserDefine///< 用户自定义图
+        ,SubWindowFigure///< Figure窗口
     };
 
     enum ProjectTreeMark
@@ -180,17 +158,16 @@ namespace SA {
         ,DataPackageTypeEnd = 2000000
     };
 
-    enum FunType
-    {
-        FunctionBoundaryDataTypeStart = 10000///< 函数类型
-        ,FunctionFFt = 10010 ///< 傅里叶变换函数
-        ,FunctionPolyfit = 10020 ///<多项式拟合函数
-        ,FunctionFilter = 10030 ///<滤波函数
-        ,FunctionStatistics = 10040 ///<统计学相关函数
-        ,FunctionNum = 10050///< 数值计算相关函数
-        ,FunctionBoundaryDataTypeEnd = 90000///< 函数类型结束
-
-    };
+//    enum FunType
+//    {
+//        FunctionBoundaryDataTypeStart = 10000///< 函数类型
+//        ,FunctionFFt = 10010 ///< 傅里叶变换函数
+//        ,FunctionPolyfit = 10020 ///<多项式拟合函数
+//        ,FunctionFilter = 10030 ///<滤波函数
+//        ,FunctionStatistics = 10040 ///<统计学相关函数
+//        ,FunctionNum = 10050///< 数值计算相关函数
+//        ,FunctionBoundaryDataTypeEnd = 90000///< 函数类型结束
+//    };
 
     enum SizeType{
         Row=1
@@ -226,10 +203,10 @@ namespace SA {
 
 #define ICON_folderOriginal QIcon(":/treeItemIcon/res_treeItemIcon/folder_original.png")
 #define ICON_DataItem QIcon(":/treeItemIcon/res_treeItemIcon/dataItem.png")
-#define ICON_Spectrum QIcon(":/treeItemIcon/res_treeItemIcon/spectrum.png")
-#define ICON_UserChart QIcon(":/treeItemIcon/res_treeItemIcon/user_chart.png")
-#define ICON_ThermalProperties QIcon(":/treeItemIcon/res_treeItemIcon/propertySearch.png")
-#define ICON_ThermalTS QIcon(":/treeItemIcon/res_treeItemIcon/ts.png")
+
+
+
+
 #define ICON_CountFrequency  QIcon(":/image/res_image/count_frequency.png")
 #define ICON_TdmsChannel QIcon(":/treeItemIcon/res_treeItemIcon/channel.png")
 #define ICON_ItemDouble QIcon(":/treeItemIcon/res_treeItemIcon/doubles.png")

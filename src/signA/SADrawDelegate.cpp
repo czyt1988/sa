@@ -404,7 +404,7 @@ SAMdiSubWindow*SADrawDelegate::createFigureMdiSubWidget(const QString &title)
     {
         str = tr("figure[%1]").arg(m_nUserChartCount);
     }
-    SAMdiSubWindow* pSubWnd =  m->createMdiSubWindow<SAFigureWindow>(SA::Normal2DChartWnd,str);
+    SAMdiSubWindow* pSubWnd =  m->createMdiSubWindow<SAFigureWindow>(SA::SubWindowFigure,str);
     if(!pSubWnd)
     {
         --m_nUserChartCount;
