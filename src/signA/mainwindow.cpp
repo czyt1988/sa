@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 
 #ifdef SA_USE_RIBBON_UI
 #include "MainWindowPrivate.h"
@@ -2681,3 +2681,12 @@ void MainWindow::onActionDeleteValueTriggered()
 
 
 
+///
+/// \brief 保存子窗口到文件
+/// \param w
+///
+void save_sub_window(SAMdiSubWindow *w)
+{
+    //saProjectManager
+   // QFile file()
+}

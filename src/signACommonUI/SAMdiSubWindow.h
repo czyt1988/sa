@@ -1,4 +1,4 @@
-#ifndef MdiSubWindow_H
+﻿#ifndef MdiSubWindow_H
 #define MdiSubWindow_H
 
 #include <QMdiSubWindow>

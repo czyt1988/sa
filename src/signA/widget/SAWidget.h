@@ -1,7 +1,7 @@
-#ifndef SAWIDGET_H
+﻿#ifndef SAWIDGET_H
 #define SAWIDGET_H
 #include <czyQtUI.h>
-#include "SAGlobals.h"
+#include "../global/SAGlobals.h"
 class SAWidget : public czy::QtUI::QWidgetEx
 {
     Q_OBJECT

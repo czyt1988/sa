@@ -1,4 +1,4 @@
-#include "SABoxSeries.h"
+﻿#include "SABoxSeries.h"
 #include "SAVectorOHLCDatas.h"
 
 
@@ -24,4 +24,9 @@ bool SABoxSeries::setSamples(SAAbstractDatas *dataPoints)
     insertData(dataPoints);
     QwtPlotTradingCurve::setSamples(p->getValueDatas());
     return true;
+}
+
+int SABoxSeries::rtti() const
+{
+    return SA::RTTI_SABoxSeries;
 }

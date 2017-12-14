@@ -1,4 +1,4 @@
-#ifndef SAXYSERIES_H
+﻿#ifndef SAXYSERIES_H
 #define SAXYSERIES_H
 #include "SACommonUIGlobal.h"
 #include "SASeriesAndDataPtrMapper.h"
@@ -10,6 +10,7 @@ public:
     SAXYSeries();
     SAXYSeries(const QString &title);
     SAXYSeries(const QString &title,SAAbstractDatas* dataPoints);
+    virtual int rtti() const Q_DECL_OVERRIDE;
     //跨域重载
     using QwtPlotCurve::setSamples;
     //加载数据

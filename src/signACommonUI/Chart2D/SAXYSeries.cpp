@@ -1,5 +1,6 @@
-#include "SAXYSeries.h"
+﻿#include "SAXYSeries.h"
 #include "SAAbstractDatas.h"
+
 SAXYSeries::SAXYSeries():QwtPlotCurve()
 {
 
@@ -13,6 +14,11 @@ SAXYSeries::SAXYSeries(const QString &title):QwtPlotCurve(title)
 SAXYSeries::SAXYSeries(const QString &title, SAAbstractDatas *dataPoints):QwtPlotCurve(title)
 {
     setSamples(dataPoints);
+}
+
+int SAXYSeries::rtti() const
+{
+    return SA::RTTI_SAXYSeries;
 }
 ///
 /// \brief 加载数据

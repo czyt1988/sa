@@ -28,7 +28,6 @@ HEADERS += \
     SADataTableModel.h \
     SATextReadWriter.h \
     SADataHeader.h \
-    SAProjectManager.h \
     SALibResourDefine.h \
     SAGlobalConfigDefine.h \
     SAVariantCaster.h \
@@ -55,7 +54,6 @@ SOURCES += \
     SADataTableModel.cpp \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
-    SAProjectManager.cpp \
     SAVariantCaster.cpp \
     SAFigureGlobalConfig.cpp \
     SAGUIGlobalConfig.cpp \

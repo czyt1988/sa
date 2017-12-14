@@ -1,4 +1,4 @@
-#ifndef SAFIGUREWINDOW_H
+﻿#ifndef SAFIGUREWINDOW_H
 #define SAFIGUREWINDOW_H
 
 #include <QMainWindow>
@@ -36,10 +36,13 @@ public:
     QList<SAChart2D*> get2DPlots() const;
     //获取当前的2d绘图指针
     SAChart2D* current2DPlot() const;
-
+    //清空所有图
+    void clearAll();
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
     void setBackgroundColor(const QColor& clr);
+    //获取窗口的位置
+    QRectF getWidgetPos(QWidget *w) const;
 protected:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
@@ -57,4 +60,6 @@ signals:
 private:
 };
 
+SA_COMMON_UI_EXPORT QDataStream& operator <<(QDataStream & out,const SAFigureWindow* p);
+SA_COMMON_UI_EXPORT QDataStream& operator >>(QDataStream & in,SAFigureWindow* p);
 #endif // SAFIGUREWINDOW_H

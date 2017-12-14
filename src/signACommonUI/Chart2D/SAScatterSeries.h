@@ -1,4 +1,4 @@
-#ifndef SASCATTERSERIES_H
+﻿#ifndef SASCATTERSERIES_H
 #define SASCATTERSERIES_H
 #include "SACommonUIGlobal.h"
 #include "SASeriesAndDataPtrMapper.h"
@@ -13,6 +13,7 @@ public:
     //跨域重载
     using QwtPlotCurve::setSamples;
     using SAXYSeries::setSamples;
+    virtual int rtti() const Q_DECL_OVERRIDE;
 };
 
 #endif // SASCATTERSERIES_H

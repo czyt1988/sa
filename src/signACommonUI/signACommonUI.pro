@@ -4,7 +4,7 @@
 # sa chart api lib
 #
 #-------------------------------------------------
-QT += core gui
+QT += core gui xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signACommonUI
 TEMPLATE = lib
@@ -56,7 +56,9 @@ HEADERS += \
     SAFontSetWidget.h \
     SAAligmentSetWidget.h \
     SAValueManagerTreeView.h \
-    SATendencyChartDataSelectDialog.h
+    SATendencyChartDataSelectDialog.h \
+    SAMdiSubWindowSerializeHead.h \
+    SAProjectManager.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -77,7 +79,9 @@ SOURCES += \
     SAFontSetWidget.cpp \
     SAAligmentSetWidget.cpp \
     SAValueManagerTreeView.cpp \
-    SATendencyChartDataSelectDialog.cpp
+    SATendencyChartDataSelectDialog.cpp \
+    SAMdiSubWindowSerializeHead.cpp \
+    SAProjectManager.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

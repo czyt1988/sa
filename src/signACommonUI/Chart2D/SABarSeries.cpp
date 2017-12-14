@@ -1,4 +1,4 @@
-#include "SABarSeries.h"
+﻿#include "SABarSeries.h"
 #include "SAVectorInterval.h"
 SABarSeries::SABarSeries(const QString &title):QwtPlotBarChart(title)
 {
@@ -57,4 +57,9 @@ bool SABarSeries::setSamples(SAAbstractDatas *intData)
         return true;
     }
     return false;
+}
+
+int SABarSeries::rtti() const
+{
+    return SA::RTTI_SABarSeries;
 }

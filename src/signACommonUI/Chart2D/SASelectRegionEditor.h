@@ -1,4 +1,4 @@
-#ifndef SASELECTREGIONEDITOR_H
+﻿#ifndef SASELECTREGIONEDITOR_H
 #define SASELECTREGIONEDITOR_H
 #include "SACommonUIGlobal.h"
 #include "SAAbstractPlotEditor.h"
@@ -18,7 +18,7 @@ public:
     ~SASelectRegionEditor();
     enum RTTI
     {
-        RTTISelectRegionEditor = (SAAbstractPlotEditor::RTTIUserDefine + 13)
+        RTTISelectRegionEditor = SA::RTTI_SASelectRegionEditor
     };
     virtual int rtti() const;
     //

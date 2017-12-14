@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "../global/SAGlobals.h"
 #ifdef SA_USE_RIBBON_UI
@@ -549,5 +549,8 @@ private:
 
 };
 
-
+//保存子窗口到文件
+void save_sub_window(SAMdiSubWindow* w);
+//重文件加载子窗口
+void load_sub_window(const QString& filePath,MainWindow* w);
 #endif // MAINWINDOW_H

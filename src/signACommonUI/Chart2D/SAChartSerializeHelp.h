@@ -5,7 +5,8 @@
 #include "SAChart2D.h"
 #include "qwt_plot_item.h"
 #include "qwt_text.h"
-class QwtPlotCurve;
+class SASeriesAndDataPtrMapper;
+class SAXYSeries;
 class QwtPlotCanvas;
 class QFrame;
 class QwtScaleWidget;
@@ -23,7 +24,20 @@ public:
     //序列化SAChart2D -会保存item等额外信息
     static void serializeOut(QDataStream& out,const SAChart2D* chart);
     static void serializeIn(QDataStream& in,SAChart2D* chart);
+private:
+    static void serializeOutChartItem(QDataStream& out,const SAChart2D* chart);
+    static void serializeInChartItem(QDataStream& in,SAChart2D* chart);
 
 };
+
+namespace sa {
+    // SASeriesAndDataPtrMapper的序列化
+    SA_COMMON_UI_EXPORT QDataStream& operator <<(QDataStream & out,const SASeriesAndDataPtrMapper* p);
+    SA_COMMON_UI_EXPORT QDataStream& operator >>(QDataStream & in,SASeriesAndDataPtrMapper* p);
+    // SAXYSeries的序列化
+    SA_COMMON_UI_EXPORT QDataStream& operator <<(QDataStream & out,const SAXYSeries* p);
+    SA_COMMON_UI_EXPORT QDataStream& operator >>(QDataStream & in,SAXYSeries* p);
+}
+
 
 #endif // SACHARTSERIALIZEHELP_H

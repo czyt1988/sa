@@ -1,4 +1,4 @@
-#include "SAFigureWindow.h"
+﻿#include "SAFigureWindow.h"
 #include <QtWidgets/QApplication>
 #include <QMessageBox>
 #include <QGridLayout>
@@ -15,6 +15,7 @@
 #include "SAValueManagerMimeData.h"
 //sa common ui
 #include "SAFigureContainer.h"
+#include "SAChartSerializeHelp.h"
 #define GET_CHART_PTR \
 SAChart2D* chart = current2DPlot();\
 if(nullptr == chart)\
@@ -129,6 +130,16 @@ SAChart2D *SAFigureWindow::current2DPlot() const
     return d_ptr->currentPlot;
 }
 
+void SAFigureWindow::clearAll()
+{
+    QList<SAChart2D*> charts = get2DPlots();
+    while(!charts.isEmpty())
+    {
+        SAChart2D* p = charts.takeLast();
+        delete p;
+    }
+}
+
 
 
 
@@ -148,6 +159,15 @@ void SAFigureWindow::setBackgroundColor(const QColor &clr)
     QPalette p = palette();
     p.setColor(QPalette::Window,clr);
     setPalette(p);
+}
+///
+/// \brief 获取窗口的位置
+/// \param w
+/// \return
+///
+QRectF SAFigureWindow::getWidgetPos(QWidget *w) const
+{
+    return d_ptr->centralwidget->getWidgetPos(w);
 }
 
 void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -234,3 +254,41 @@ void SAFigureWindow::keyPressEvent(QKeyEvent *e)
 
 
 
+
+QDataStream &operator <<(QDataStream &out, const SAFigureWindow *p)
+{
+    out << p->saveGeometry()
+        << p->saveState()
+           ;
+    QList<SAChart2D*> charts = p->get2DPlots();
+    QList<QRectF> pos;
+    for(int i=0;i<charts.size();++i)
+    {
+        pos.append(p->getWidgetPos(charts[i]));
+    }
+    out << pos;
+    for(int i=0;i<charts.size();++i)
+    {
+        SAChartSerializeHelp::serializeOut(out,charts[i]);
+    }
+    return out;
+}
+
+QDataStream &operator >>(QDataStream &in, SAFigureWindow *p)
+{
+    QByteArray geometryData,stateData;
+    in >> geometryData
+            >> stateData
+            ;
+    p->restoreGeometry(geometryData);
+    p->restoreState(stateData);
+    QList<QRectF> pos;
+    in >> pos;
+    for(int i=0;i<pos.size();++i)
+    {
+        const QRectF& r = pos[i];
+        SAChart2D* chart = p->create2DSubPlot(r.x(),r.y(),r.width(),r.height());
+        SAChartSerializeHelp::serializeIn(in,chart);
+    }
+    return in;
+}

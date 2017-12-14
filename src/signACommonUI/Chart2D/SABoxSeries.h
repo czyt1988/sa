@@ -1,4 +1,4 @@
-#ifndef SABOXSERIES_H
+﻿#ifndef SABOXSERIES_H
 #define SABOXSERIES_H
 #include "SACommonUIGlobal.h"
 #include "SASeriesAndDataPtrMapper.h"
@@ -13,6 +13,7 @@ public:
     using QwtPlotTradingCurve::setSamples;
     //using QwtPlotTradingCurve::QwtSeriesStore<QwtOHLCSample>::dataSize;
     bool setSamples(SAAbstractDatas* dataPoints);
+    virtual int rtti() const Q_DECL_OVERRIDE;
 };
 
 #endif // SABOXSERIES_H

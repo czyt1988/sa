@@ -1,4 +1,4 @@
-#include "SAHistogramSeries.h"
+﻿#include "SAHistogramSeries.h"
 #include "SAVectorInterval.h"
 
 SAHistogramSeries::SAHistogramSeries(const QString &title):QwtPlotHistogram(title)
@@ -23,4 +23,9 @@ bool SAHistogramSeries::setSamples(SAAbstractDatas *intData)
     insertData(intData);
     QwtPlotHistogram::setSamples(p->getValueDatas());
     return true;
+}
+
+int SAHistogramSeries::rtti() const
+{
+    return SA::RTTI_SAHistogramSeries;
 }

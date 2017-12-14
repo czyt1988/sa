@@ -1,4 +1,4 @@
-#include "SAScatterSeries.h"
+﻿#include "SAScatterSeries.h"
 
 SAScatterSeries::SAScatterSeries():SAXYSeries()
 {
@@ -14,5 +14,10 @@ SAScatterSeries::SAScatterSeries(const QString &title, SAAbstractDatas *dataPoin
     :SAXYSeries(title)
 {
     setStyle( QwtPlotCurve::Dots );
+}
+
+int SAScatterSeries::rtti() const
+{
+    return SA::RTTI_SAScatterSeries;
 }
 
