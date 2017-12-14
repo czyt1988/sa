@@ -525,6 +525,9 @@ private:
     void updateChartGridActionState(SAChart2D *chart);
     void updateSelectActionState(SAChart2D *chart);
     void updateChartEditorActionState(SAChart2D *chart);
+    //子窗口序列化
+    void __saveSubWindowToFolder(const QString& folderPath);
+    void __loadSubWindowFromFolder(const QString& folderPath);
 private:
 #ifdef SA_USE_RIBBON_UI
     QScopedPointer<MainWindowPrivate> ui;

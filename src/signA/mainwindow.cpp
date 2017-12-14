@@ -531,25 +531,8 @@ void MainWindow::initUIReflection()
         {
             return;
         }
-
         QString folderPath = pm->getProjectSubWindowFolderPath(true);
-        QList<QMdiSubWindow*> subWndList = this->getSubWindowList();
-        //先把名字不对应的删除
-        remove_figure_file_not_in_sub_window_list(folderPath,subWndList);
-        //保存窗口
-        const int count = subWndList.size();
-        QString errString;
-        for(int i=0;i<count;++i)
-        {
-            SAMdiSubWindow* subWnd = qobject_cast<SAMdiSubWindow*>(subWndList[i]);
-            if(subWnd)
-            {
-                if(!save_sub_window(subWnd,folderPath,&errString))
-                {
-                    showMessageInfo(errString,SA::WarningMessage);
-                }
-            }
-        }
+        __saveSubWindowToFolder(folderPath);
     };
     auto funLoadAction = [this](SAProjectManager* pm){
         if(!pm->isValid())
@@ -557,27 +540,7 @@ void MainWindow::initUIReflection()
             return;
         }
         QString folderPath = pm->getProjectSubWindowFolderPath(true);
-        QDir dir(folderPath);
-        if(!dir.exists())
-        {
-            showMessageInfo(tr("project may have not subwindow path :\"%1\"").arg(folderPath),SA::WarningMessage);
-            return;
-        }
-        QString suffix = get_sub_window_type_suffix(SA::SubWindowFigure);
-        QStringList dataFileList = dir.entryList({"*."+suffix},QDir::Files|QDir::NoSymLinks);
-        const int size = dataFileList.size();
-        if(0 == size)
-        {
-            return;
-        }
-        QString errString;
-        for(int i=0;i<size;++i)
-        {
-            if(!load_sub_window(uiInterface(),dir.absoluteFilePath(dataFileList[i]),&errString))
-            {
-                showMessageInfo(errString,SA::WarningMessage);
-            }
-        }
+        __loadSubWindowFromFolder(folderPath);
     };
     saProjectManager->addSaveFunctionAction(funSaveAction);
     saProjectManager->addLoadFunctionAction(funLoadAction);
@@ -2660,6 +2623,56 @@ void MainWindow::updateChartEditorActionState(SAChart2D *chart)
 
 }
 
+///
+/// \brief 把窗口保存到文件夹
+/// \param folder
+///
+void MainWindow::__saveSubWindowToFolder(const QString &folderPath)
+{
+    QList<QMdiSubWindow*> subWndList = this->getSubWindowList();
+    //先把名字不对应的删除
+    remove_figure_file_not_in_sub_window_list(folderPath,subWndList);
+    //保存窗口
+    const int count = subWndList.size();
+    QString errString;
+    for(int i=0;i<count;++i)
+    {
+        SAMdiSubWindow* subWnd = qobject_cast<SAMdiSubWindow*>(subWndList[i]);
+        if(subWnd)
+        {
+            if(!save_sub_window(subWnd,folderPath,&errString))
+            {
+                showMessageInfo(errString,SA::WarningMessage);
+            }
+        }
+    }
+}
+
+void MainWindow::__loadSubWindowFromFolder(const QString &folderPath)
+{
+    QDir dir(folderPath);
+    if(!dir.exists())
+    {
+        showMessageInfo(tr("project may have not subwindow path :\"%1\"").arg(folderPath),SA::WarningMessage);
+        return;
+    }
+    QString suffix = get_sub_window_type_suffix(SA::SubWindowFigure);
+    QStringList dataFileList = dir.entryList({"*."+suffix},QDir::Files|QDir::NoSymLinks);
+    const int size = dataFileList.size();
+    if(0 == size)
+    {
+        return;
+    }
+    QString errString;
+    for(int i=0;i<size;++i)
+    {
+        if(!load_sub_window(uiInterface(),dir.absoluteFilePath(dataFileList[i]),&errString))
+        {
+            showMessageInfo(errString,SA::WarningMessage);
+        }
+    }
+}
+
 
 
 
@@ -2870,16 +2883,14 @@ void remove_figure_file_not_in_sub_window_list(const QString &folderPath, const 
             figureSubWindowFileNames.append(w->windowTitle()+ "." + suffix);
         }
     }
-
+    QString cleanFolderPath = QDir::cleanPath(folderPath);
     QStringList dataFileList = dir.entryList({"*."+suffix},QDir::Files|QDir::NoSymLinks);
     const int fileSize = dataFileList.size();
     for(int i=0;i<fileSize;++i)
     {
-        if(!figureSubWindowFileNames.contains(fileSize[i]))
+        if(!figureSubWindowFileNames.contains(dataFileList[i]))
         {
-            --
+            QFile::remove(cleanFolderPath + QDir::separator() + dataFileList[i]);
         }
     }
-
-
 }

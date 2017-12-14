@@ -6,6 +6,12 @@
 #include <qwt_column_symbol.h>
 #include <QColorDialog>
 #include "SAChart.h"
+#include "SAXYSeries.h"
+#include "SAHistogramSeries.h"
+#include "SABarSeries.h"
+#include "SAScatterSeries.h"
+#include "SABoxSeries.h"
+#include "qwt_column_symbol.h"
 //#include <SAChart.h>
 #include <SAPlotMarker.h>
 #include "SAResourDefine.h"
@@ -164,7 +170,7 @@ bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     if(!item)
         return false;
     if(index.column() == 1)
-    {//颜色
+    {//显示
         bool show = value.toBool ();
         item->setVisible (show);
         return true;
@@ -218,7 +224,29 @@ QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) c
 	{
     case SAAbstractPlotMarker::Rtti_SAPointMarker:
     case SAAbstractPlotMarker::Rtti_SAYValueMarker:
-		c = static_cast<const QwtPlotMarker*>(item)->linePen ().color();
+        c = static_cast<const QwtPlotMarker*>(item)->linePen ().color();
+        break;
+    case SA::RTTI_SAXYSeries:
+        c = static_cast<const SAXYSeries*>(item)->pen().color();
+        break;
+    case SA::RTTI_SAHistogramSeries:
+        c = static_cast<const SAHistogramSeries*>(item)->brush().color();
+        break;
+    case SA::RTTI_SABarSeries:
+    {
+        const QwtColumnSymbol* symbol =  static_cast<const SABarSeries*>(item)->symbol();
+        if(symbol)
+        {
+            c = symbol->palette().color(QPalette::Button);
+        }
+        break;
+    }
+    case SA::RTTI_SAScatterSeries:
+        c = static_cast<const SAScatterSeries*>(item)->pen().color();
+        break;
+    case SA::RTTI_SABoxSeries:
+        c = static_cast<const SABoxSeries*>(item)->symbolPen().color();
+        break;
 	default:
         c = SAChart::getItemColor(item);
 	}
@@ -233,8 +261,16 @@ void SAPlotLayerModel::setColorForItem(QwtPlotItem *item, QColor clr)
     switch (rtti)
     {
     case QwtPlotItem::Rtti_PlotCurve :
+    case SA::RTTI_SAXYSeries:
     {
         QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
+        QPen pen = p->pen();
+        pen.setColor(clr);
+        p->setPen(pen);
+    }break;
+    case SA::RTTI_SAScatterSeries:
+    {
+        SAScatterSeries* p = static_cast<SAScatterSeries*>(item);
         QPen pen = p->pen();
         pen.setColor(clr);
         p->setPen(pen);
@@ -254,6 +290,7 @@ void SAPlotLayerModel::setColorForItem(QwtPlotItem *item, QColor clr)
         p->setLinePen(pen);
     }break;
     case QwtPlotItem::Rtti_PlotBarChart:
+    case SA::RTTI_SABarSeries:
     {
         QwtPlotBarChart* bar = static_cast<QwtPlotBarChart*>(item);
         QwtColumnSymbol* newSym = new QwtColumnSymbol();
@@ -267,6 +304,7 @@ void SAPlotLayerModel::setColorForItem(QwtPlotItem *item, QColor clr)
         }
         newSym->setPalette(clr);
         bar->setSymbol(newSym);
+        break;
     }
     default:
         return;

@@ -73,6 +73,7 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
 
 SAFigureWindow::~SAFigureWindow()
 {
+    qDebug() << "SAFigureWindow destroy";
 }
 
 ///

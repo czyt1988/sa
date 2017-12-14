@@ -1,8 +1,14 @@
 ﻿#include "SAFigureContainer.h"
 #include <QResizeEvent>
+#include <QDebug>
 SAFigureContainer::SAFigureContainer(QWidget *parent):QWidget(parent)
 {
 
+}
+
+SAFigureContainer::~SAFigureContainer()
+{
+    qDebug() <<"SAFigureContainer destroy";
 }
 
 void SAFigureContainer::addWidget(QWidget *widget, const QRectF &pos)
@@ -37,10 +43,11 @@ QRectF SAFigureContainer::getWidgetPos(QWidget *w) const
 {
     return m_widgetPos.value(w);
 }
-
+#include <QDebug>
 void SAFigureContainer::onWidgetDestroy(QObject *obj)
 {
     QWidget* w = (QWidget*)obj;
+    qDebug() << "des";
     m_widgetPos.remove(w);
 }
 

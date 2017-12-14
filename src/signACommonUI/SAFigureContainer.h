@@ -13,6 +13,7 @@ class SA_COMMON_UI_EXPORT SAFigureContainer : public QWidget
     Q_OBJECT
 public:
     SAFigureContainer(QWidget* parent);
+    ~SAFigureContainer();
     //添加窗体
     void addWidget(QWidget* widget, const QRectF &pos);
     //添加窗口
