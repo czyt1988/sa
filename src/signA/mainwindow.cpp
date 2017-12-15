@@ -2278,6 +2278,7 @@ SAAbstractDatas* MainWindow::getSeletedData() const
 }
 ///
 /// \brief 获取选中的数据条目，如果没有选中，将弹出数据选择窗口让用户进行选择
+/// 如果当前焦点是数据窗口会弹出选择数据，如果焦点是绘图窗口，默认选择图线
 /// \param isAutoSelect 若为true时，会先查找变量管理器是否选中了数据，若选中了，直接返回选中的数据，
 /// 默认为false
 /// \return 若用户取消，返回nullptr
