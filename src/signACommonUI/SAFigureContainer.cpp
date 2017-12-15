@@ -1,6 +1,7 @@
 ﻿#include "SAFigureContainer.h"
 #include <QResizeEvent>
 #include <QDebug>
+#include <QChildEvent>
 SAFigureContainer::SAFigureContainer(QWidget *parent):QWidget(parent)
 {
 
@@ -8,7 +9,7 @@ SAFigureContainer::SAFigureContainer(QWidget *parent):QWidget(parent)
 
 SAFigureContainer::~SAFigureContainer()
 {
-    qDebug() <<"SAFigureContainer destroy";
+    //qDebug() <<"SAFigureContainer destroy";
 }
 
 void SAFigureContainer::addWidget(QWidget *widget, const QRectF &pos)
@@ -20,7 +21,7 @@ void SAFigureContainer::addWidget(QWidget *widget, const QRectF &pos)
     QRect widgetSize;
     calcWidgetSize(pos,widgetSize);
     widget->setGeometry(widgetSize);
-    connect(widget,&QObject::destroyed,this,&SAFigureContainer::onWidgetDestroy);
+    //connect(widget,&QObject::destroyed,this,&SAFigureContainer::onWidgetDestroy);
     m_widgetPos[widget] = pos;
 }
 
@@ -43,13 +44,7 @@ QRectF SAFigureContainer::getWidgetPos(QWidget *w) const
 {
     return m_widgetPos.value(w);
 }
-#include <QDebug>
-void SAFigureContainer::onWidgetDestroy(QObject *obj)
-{
-    QWidget* w = (QWidget*)obj;
-    qDebug() << "des";
-    m_widgetPos.remove(w);
-}
+
 
 void SAFigureContainer::resizeEvent(QResizeEvent *event)
 {
@@ -60,8 +55,29 @@ void SAFigureContainer::resizeEvent(QResizeEvent *event)
         QWidget* w = i.key();
         w->setGeometry(subWidgetSize);
     }
-  //  QWidget:resizeEvent(event);
+    //  QWidget:resizeEvent(event);
 }
+
+
+bool SAFigureContainer::event(QEvent *e)
+{
+    if(e)
+    {
+        if(QEvent::ChildRemoved == e->type())
+        {
+            QChildEvent* ce = static_cast<QChildEvent*>(e);
+            QObject* obj = ce->child();
+            if(nullptr != obj && obj->isWidgetType())
+            {
+                QWidget* w = (QWidget*)obj;
+                m_widgetPos.remove(w);
+            }
+        }
+    }
+    return QWidget::event(e);
+}
+
+
 
 void SAFigureContainer::calcWidgetSize(const QRectF &present, QRect &newSize)
 {

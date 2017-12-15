@@ -154,7 +154,7 @@ SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
 
 SAChart2D::~SAChart2D()
 {
-    qDebug() <<"SAChart2D destroy";
+    //qDebug() <<"SAChart2D destroy";
 }
 
 void SAChart2D::addItem(QwtPlotItem *item, const QString &des)

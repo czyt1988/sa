@@ -73,7 +73,7 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
 
 SAFigureWindow::~SAFigureWindow()
 {
-    qDebug() << "SAFigureWindow destroy";
+    //qDebug() << "SAFigureWindow destroy";
 }
 
 ///
@@ -290,6 +290,7 @@ QDataStream &operator >>(QDataStream &in, SAFigureWindow *p)
         const QRectF& r = pos[i];
         SAChart2D* chart = p->create2DSubPlot(r.x(),r.y(),r.width(),r.height());
         SAChartSerializeHelp::serializeIn(in,chart);
+        chart->show();
     }
     return in;
 }

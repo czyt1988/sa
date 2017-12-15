@@ -23,9 +23,10 @@ public:
     //获取窗口的位置信息
     QRectF getWidgetPos(QWidget *w) const;
 private slots:
-    void onWidgetDestroy(QObject* obj);
+    //void onWidgetDestroy(QObject* obj);
 protected:
     void resizeEvent(QResizeEvent *event);
+    bool event(QEvent *e);
 private:
     void calcWidgetSize(const QRectF& present, QRect& newSize);
 private:
