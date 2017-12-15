@@ -1,4 +1,4 @@
-#include "SAPlotItemSetWidget.h"
+﻿#include "SAPlotItemSetWidget.h"
 #include <QApplication>
 #include "qwt_plot_item.h"
 #include "qwt_plot.h"
@@ -7,7 +7,8 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include "SACurvePlotItemSetWidget.h"
-#include "SAChart.h"
+#include "SAChart2D.h"
+
 #define TR(str) QApplication::translate("SAPlotItemSetWidget", str, 0)
 
 class SAPlotItemSetWidget::UI
@@ -93,7 +94,7 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
     }
     else
     {
-        QwtPlotItemList curItems = SAChart::getCurveItemList(chart);
+        QwtPlotItemList curItems = SAChart2D::getCurveItemList(chart);
         ui->curveItemSetWidget->setPlotItems(curItems);
         connect(ui->chartWidget,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
         connect(ui->chartWidget,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
@@ -109,7 +110,7 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
     {
         return;
     }
-    if(SAChart::isPlotChartItem(item))
+    if(SAChart2D::isPlotChartItem(item))
     {
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }

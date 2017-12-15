@@ -1,11 +1,11 @@
-#include "SAPlotLayerModel.h"
+﻿#include "SAPlotLayerModel.h"
 #include <qwt_plot_curve.h>
 #include <qwt_plot_grid.h>
 #include <qwt_plot_marker.h>
 #include <qwt_plot_barchart.h>
 #include <qwt_column_symbol.h>
 #include <QColorDialog>
-#include "SAChart.h"
+#include "SAChart2D.h"
 #include "SAXYSeries.h"
 #include "SAHistogramSeries.h"
 #include "SABarSeries.h"
@@ -248,7 +248,7 @@ QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) c
         c = static_cast<const SABoxSeries*>(item)->symbolPen().color();
         break;
 	default:
-        c = SAChart::getItemColor(item);
+        c = SAChart2D::getItemColor(item);
 	}
     if(alpha<255)
 		c.setAlpha(alpha);

@@ -285,11 +285,13 @@ QDataStream &operator >>(QDataStream &in, SAFigureWindow *p)
     p->restoreState(stateData);
     QList<QRectF> pos;
     in >> pos;
+    qDebug() << "serialize in figure";
     for(int i=0;i<pos.size();++i)
     {
         const QRectF& r = pos[i];
         SAChart2D* chart = p->create2DSubPlot(r.x(),r.y(),r.width(),r.height());
         SAChartSerializeHelp::serializeIn(in,chart);
+        qDebug() << "serialize in figure chart:"<<r;
         chart->show();
     }
     return in;

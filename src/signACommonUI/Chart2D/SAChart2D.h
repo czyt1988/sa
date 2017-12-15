@@ -32,6 +32,18 @@ public:
         ,EllipseSelection ///< 椭圆选框
         ,PolygonSelection ///< 多边形选框
     };
+    //获取所有绘图的条目的rtti
+    static QList<int> getPlotItemsRTTI();
+    //判断是否是绘图条目
+    static bool isPlotChartItem(QwtPlotItem* item);
+    //获取所有绘图条目
+    static QwtPlotItemList getCurveItemList(QwtPlot* chart);
+    //获取item的颜色,无法获取单一颜色就返回QColor()
+    static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultClr = QColor(0,0,0));
+    //获取item的数据个数，-1为nan
+    static int getItemDataSize(QwtPlotItem* item);
+
+
     //添加条目，-支持redo/undo
     void addItem(QwtPlotItem* item,const QString& des = QString());
     //移除一个对象-支持redo/undo

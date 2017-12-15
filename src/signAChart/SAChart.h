@@ -1,4 +1,4 @@
-#ifndef SACHART_H
+﻿#ifndef SACHART_H
 #define SACHART_H
 #include "SAChartGlobals.h"
 #include "SASeries.h"
@@ -32,16 +32,6 @@ public:
     enum Value{
         Nan = -1
     };
-    //获得所有可绘制曲线的rtti
-    static QList<QwtPlotItem::RttiValues> getChartPlotItemRtti();
-    //获取曲线相关的items
-    static QwtPlotItemList getCurveItemList(QwtPlot* chart);
-    //判断是否是关于曲线的item
-    static bool isPlotChartItem(QwtPlotItem* item);
-    //获取item的颜色,无法获取单一颜色就返回QColor()
-    static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultClr = QColor(0,0,0));
-    //获取item的数据个数，-1为nan
-    static int getItemDataSize(QwtPlotItem* item);
     //更加强制的replot，就算设置为不实时刷新也能实现重绘
     void replot(QwtPlot* chart);
     //获取当前正在显示的区域

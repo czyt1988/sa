@@ -1,4 +1,4 @@
-#include "SADataFeatureWidget.h"
+﻿#include "SADataFeatureWidget.h"
 #include "ui_SADataFeatureWidget.h"
 #include <QMainWindow>
 #include <QMdiSubWindow>
@@ -308,7 +308,7 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
                 //设置item的名字
                 item->setName(itemPtr->title().text());
                 //设置item的颜色
-                QColor clr = SAChart::getItemColor( itemPtr);
+                QColor clr = SAChart2D::getItemColor( itemPtr);
                 if(clr.isValid())
                 {
                     clr.setAlpha(100);

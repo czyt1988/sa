@@ -1,4 +1,4 @@
-#include "CurveSelectDialog.h"
+﻿#include "CurveSelectDialog.h"
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <algorithm>
@@ -59,12 +59,7 @@ CurveSelectDialog::CurveSelectDialog(SAChart2D *chart , QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_itemFilter<<QwtPlotItem::Rtti_PlotCurve
-                <<QwtPlotItem::Rtti_PlotSpectroCurve
-                <<QwtPlotItem::Rtti_PlotIntervalCurve
-                <<QwtPlotItem::Rtti_PlotHistogram
-                <<QwtPlotItem::Rtti_PlotBarChart
-                <<QwtPlotItem::Rtti_PlotMultiBarChart;
+    m_itemFilter= SAChart2D::getPlotItemsRTTI().toSet();
 
 	QStandardItemModel* model = new QStandardItemModel(ui->tableView);
     model->setHorizontalHeaderLabels(QStringList()
@@ -72,13 +67,13 @@ CurveSelectDialog::CurveSelectDialog(SAChart2D *chart , QWidget *parent) :
         <<tr("color")//颜色
         <<tr("size"));//数据点数
     ui->tableView->setModel(model);
+    updateTable();
     QHeaderView* header = ui->tableView->horizontalHeader();
     if(header)
     {
-        header->setSectionResizeMode(0,QHeaderView::ResizeToContents);
+        //header->setSectionResizeMode(0,QHeaderView::ResizeToContents);
         header->setStretchLastSection(true);
     }
-    updateTable();
 
 }
 
@@ -98,7 +93,7 @@ CurveSelectDialog::~CurveSelectDialog()
 /// SAPlotItem::Rtti_PlotMultiBarChart
 /// SAPlotItem::Rtti_PlotMultiBarChart;
 ///
-void CurveSelectDialog::setItemFilter(const QSet<QwtPlotItem::RttiValues> &filters)
+void CurveSelectDialog::setItemFilter(const QSet<int> &filters)
 {
     m_itemFilter = filters;
     updateTable();
@@ -107,7 +102,7 @@ void CurveSelectDialog::setItemFilter(const QSet<QwtPlotItem::RttiValues> &filte
 /// \brief 获取设置的条目过滤
 /// \return
 ///
-QSet<QwtPlotItem::RttiValues> CurveSelectDialog::getItemFilter() const
+QSet<int> CurveSelectDialog::getItemFilter() const
 {
     return m_itemFilter;
 }
@@ -121,12 +116,12 @@ QList<QwtPlotCurve *> CurveSelectDialog::getSelCurve(SAChart2D *chart, QWidget *
 {
     QList<QwtPlotCurve *> res;
     CurveSelectDialog dlg(chart,par);
-    dlg.setItemFilter(QSet<QwtPlotItem::RttiValues>()<<QwtPlotItem::Rtti_PlotCurve);
+    dlg.setItemFilter({QwtPlotItem::Rtti_PlotCurve,SA::RTTI_SAXYSeries});
     if(QDialog::Accepted == dlg.exec())
     {
         QList<QwtPlotItem*> items = dlg.getSelItem();
         std::for_each(items.begin(),items.end(),[&res](QwtPlotItem* p){
-            if(p->rtti() == QwtPlotItem::Rtti_PlotCurve)
+            if(p->rtti() == QwtPlotItem::Rtti_PlotCurve || p->rtti() == SA::RTTI_SAXYSeries)
             {
                 res.append(static_cast<QwtPlotCurve*>(p));
             }
@@ -139,12 +134,12 @@ QList<QwtPlotItem *> CurveSelectDialog::getSelectChartPlotItems(SAChart2D *chart
 {
     QList<QwtPlotItem *> res;
     CurveSelectDialog dlg(chart,par);
-    dlg.setItemFilter(SAChart::getChartPlotItemRtti().toSet());
+    dlg.setItemFilter(SAChart2D::getPlotItemsRTTI().toSet());
     if(QDialog::Accepted == dlg.exec())
     {
         QList<QwtPlotItem*> items = dlg.getSelItem();
         std::for_each(items.begin(),items.end(),[&res](QwtPlotItem* p){
-            if(SAChart::isPlotChartItem(p))
+            if(SAChart2D::isPlotChartItem(p))
             {
                 res.append(p);
             }
@@ -173,10 +168,10 @@ void CurveSelectDialog::updateTable()
         model->setItem(i,0,item);
 
         item = new QStandardItem;
-        item->setData(SAChart::getItemColor(plotItem),Qt::BackgroundRole);
+        item->setData(SAChart2D::getItemColor(plotItem),Qt::BackgroundRole);
         model->setItem(i,1,item);
 
-        int size = SAChart::getItemDataSize(plotItem);
+        int size = SAChart2D::getItemDataSize(plotItem);
         if(size > 0)
         {
             item = new QStandardItem(QString("%1").arg(size));
@@ -203,7 +198,7 @@ QList<QwtPlotItem *> CurveSelectDialog::getFilterItems()
     QList<QwtPlotItem*> items = m_chart->itemList();
     QList<QwtPlotItem*> filterItem;
     std::for_each(items.begin(),items.end(),[&](QwtPlotItem* p){
-        if(m_itemFilter.contains(static_cast<QwtPlotItem::RttiValues>(p->rtti())))
+        if(m_itemFilter.contains(p->rtti()))
         {
             filterItem.append(p);
         }

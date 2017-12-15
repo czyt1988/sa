@@ -1,6 +1,6 @@
-#include "SACurvePlotItemSetWidget.h"
+﻿#include "SACurvePlotItemSetWidget.h"
 #include <QApplication>
-
+#include "SAChart2D.h"
 #include <QVBoxLayout>
 #include "SAQwtPlotItemVGroupBox.h"
 
@@ -67,7 +67,7 @@ public:
     }
     void addPlotItem(QwtPlotItem *item)
     {
-        if(!SAChart::isPlotChartItem(item))
+        if(!SAChart2D::isPlotChartItem(item))
         {
             return;
         }

@@ -7,9 +7,13 @@
 #include "qwt_plot_canvas.h"
 #include "qwt_scale_widget.h"
 #include "qwt_color_map.h"
+#include "qwt_plot_barchart.h"
+#include "qwt_column_symbol.h"
 namespace sa {
-    void serialize_out_scale_widge(QDataStream &out, const QwtPlot *chart,int axis);
-    void serialize_in_scale_widge(QDataStream &in, QwtPlot *chart,int axis);
+void serialize_out_scale_widge(QDataStream &out, const QwtPlot *chart,int axis);
+void serialize_in_scale_widge(QDataStream &in, QwtPlot *chart,int axis);
+
+
 }
 
 
@@ -156,6 +160,44 @@ QDataStream &sa::operator >>(QDataStream &in, QwtSymbol *t)
     t->setStyle(static_cast<QwtSymbol::Style>(style));
     t->setPath(path);
     t->setPixmap(pixmap);
+    return in;
+}
+///
+/// \brief QwtColumnSymbol的序列化
+/// \param out
+/// \param t
+/// \return
+///
+QDataStream &sa::operator <<(QDataStream &out, const QwtColumnSymbol *t)
+{
+    out << static_cast<int>(t->frameStyle())
+        << t->lineWidth()
+        << t->palette()
+        << static_cast<int>(t->style())
+           ;
+    return out;
+}
+///
+/// \brief QwtColumnSymbol的序列化
+/// \param in
+/// \param t
+/// \return
+///
+QDataStream &sa::operator >>(QDataStream &in, QwtColumnSymbol *t)
+{
+    int frameStyle;
+    int lineWidth;
+    QPalette palette;
+    int style;
+    in >> frameStyle
+            >> lineWidth
+            >> palette
+            >> style
+            ;
+    t->setFrameStyle(static_cast<QwtColumnSymbol::FrameStyle>(frameStyle));
+    t->setLineWidth(lineWidth);
+    t->setPalette(palette);
+    t->setStyle(static_cast<QwtColumnSymbol::Style>(style));
     return in;
 }
 ///
@@ -332,7 +374,75 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
     return in;
 }
 
-
+///
+/// \brief QwtPlotBarChart指针的序列化
+/// \param out
+/// \param item
+/// \return
+///
+QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
+{
+    out << static_cast<int>(item->layoutPolicy())
+        << item->layoutHint()
+        << item->spacing()
+        << item->margin()
+        << item->baseline()
+        << static_cast<int>(item->legendMode())
+           ;
+    const QwtColumnSymbol*cs = item->symbol();
+    bool isColumnSymbol = (cs != nullptr);
+    out << isColumnSymbol;
+    if(isColumnSymbol)
+    {
+        out << cs;
+    }
+    //save sample
+    QVector<QPointF> sample;
+    SAChart::getXYDatas(sample,item);
+    out << sample;
+    return out;
+}
+///
+/// \brief QwtPlotBarChart指针的序列化
+/// \param in
+/// \param item
+/// \return
+///
+QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
+{
+    int layoutPolicy;
+    double layoutHint;
+    int spacing;
+    int margin;
+    double baseline;
+    int legendMode;
+    in >> layoutPolicy
+            >> layoutHint
+            >> spacing
+            >> margin
+            >> baseline
+            >> legendMode
+            ;
+    item->setLayoutPolicy(static_cast<QwtPlotBarChart::LayoutPolicy>(layoutPolicy));
+    item->setLayoutHint(layoutHint);
+    item->setSpacing(spacing);
+    item->setMargin(margin);
+    item->setBaseline(baseline);
+    item->setLegendMode(static_cast<QwtPlotBarChart::LegendMode>(legendMode));
+    bool isColumnSymbol;
+    in >> isColumnSymbol;
+    if(isColumnSymbol)
+    {
+        QwtColumnSymbol* cs = new QwtColumnSymbol;
+        in >> cs;
+        item->setSymbol(cs);
+    }
+    //load sample
+    QVector<QPointF> sample;
+    in >> sample;
+    item->setSamples(sample);
+    return in;
+}
 ///
 /// \brief QwtScaleWidget指针的序列化
 /// \param out

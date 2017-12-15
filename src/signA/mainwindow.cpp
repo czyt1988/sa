@@ -1762,6 +1762,7 @@ void MainWindow::onActionInRangDataRemoveTriggered()
     if(chart->isCurrentSelectItemsHaveChartItem())
     {
         QList<QwtPlotItem*> selItems = CurveSelectDialog::getSelectChartPlotItems(chart,this);
+        qDebug() << selItems.size();
         chart->setCurrentSelectItems(selItems);
         chart->removeDataInRang();
     }

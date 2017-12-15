@@ -1,4 +1,4 @@
-#include "SASelectRegionDataEditor.h"
+﻿#include "SASelectRegionDataEditor.h"
 #include "SAChart2D.h"
 #include "SAChart.h"
 #include "qwt_plot_barchart.h"
@@ -180,6 +180,8 @@ void SASelectRegionDataEditor::updateRegionIndex()
         switch(item->rtti())
         {
         case QwtPlotItem::Rtti_PlotCurve:
+        case SA::RTTI_SAXYSeries:
+        case SA::RTTI_SAScatterSeries:
         {
             chart2d_points_info* ci = new chart2d_points_info();
             d_ptr->appendInfo(ci);
@@ -203,6 +205,7 @@ void SASelectRegionDataEditor::updateRegionIndex()
             break;
         }
         case QwtPlotItem::Rtti_PlotBarChart:
+        case SA::RTTI_SABarSeries:
         {
             chart2d_points_info* ci = new chart2d_points_info();
             d_ptr->appendInfo(ci);
@@ -255,6 +258,8 @@ void SASelectRegionDataEditor::offsetData(const QPointF &offset)
         switch(item->rtti())
         {
         case QwtPlotItem::Rtti_PlotCurve:
+        case SA::RTTI_SAXYSeries:
+        case SA::RTTI_SAScatterSeries:
         {
             QVector<QPointF> xyData;
             QwtPlotCurve*cur = static_cast<QwtPlotCurve*>(item);
@@ -270,6 +275,7 @@ void SASelectRegionDataEditor::offsetData(const QPointF &offset)
             break;
         }
         case QwtPlotItem::Rtti_PlotBarChart:
+        case SA::RTTI_SABarSeries:
         {
             QVector<QPointF> xyData;
             QwtPlotBarChart*bar = static_cast<QwtPlotBarChart*>(item);

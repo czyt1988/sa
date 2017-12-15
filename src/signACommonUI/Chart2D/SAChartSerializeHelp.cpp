@@ -6,6 +6,9 @@
 #include "qwt_scale_widget.h"
 #include "SAXYSeries.h"
 #include "SAAbstractDatas.h"
+#include "qwt_plot_barchart.h"
+#include "SABarSeries.h"
+#include "SAScatterSeries.h"
 #define VERSION_LEN (32)
 using namespace sa;
 ///
@@ -66,40 +69,7 @@ SAChartSerializeHelp::SAChartSerializeHelp()
 {
 
 }
-///
-/// \brief 序列化QwtPlotItem
-/// \param out
-/// \param item
-///
-void SAChartSerializeHelp::serializeOut(QDataStream &out, const QwtPlotItem *item)
-{
-    switch(item->rtti())
-    {
-    case QwtPlotItem::Rtti_PlotCurve:
-    {
-        const QwtPlotCurve* c = static_cast<const QwtPlotCurve*>(item);
-        out << c;
-        break;
-    }
-    default:
-        break;
-    }
-}
 
-void SAChartSerializeHelp::serializeIn(QDataStream &in, QwtPlotItem *item)
-{
-    switch(item->rtti())
-    {
-    case QwtPlotItem::Rtti_PlotCurve:
-    {
-        QwtPlotCurve* c = static_cast<QwtPlotCurve*>(item);
-        in >> c;
-        break;
-    }
-    default:
-        break;
-    }
-}
 
 void SAChartSerializeHelp::serializeOut(QDataStream &out, const SAChart2D *chart)
 {
@@ -159,7 +129,6 @@ void SAChartSerializeHelp::serializeOutChartItem(QDataStream &out, const SAChart
         {
         case QwtPlotItem::Rtti_PlotCurve://序列化曲线
         {
-
             QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
             out << header << p;
             break;
@@ -170,12 +139,29 @@ void SAChartSerializeHelp::serializeOutChartItem(QDataStream &out, const SAChart
             out << header << p;
             break;
         }
+        case SA::RTTI_SAScatterSeries:
+        {
+            SAScatterSeries* p = static_cast<SAScatterSeries*>(item);
+            out << header << p;
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotBarChart:
+        {
+            QwtPlotBarChart* p = static_cast<QwtPlotBarChart*>(item);
+            out << header << p;
+            break;
+        }
+        case SA::RTTI_SABarSeries:
+        {
+            SABarSeries* p = static_cast<SABarSeries*>(item);
+            out << header << p;
+            break;
+        }
         case QwtPlotItem::Rtti_PlotSpectroCurve:
         case QwtPlotItem::Rtti_PlotIntervalCurve:
         case QwtPlotItem::Rtti_PlotHistogram:
         case QwtPlotItem::Rtti_PlotSpectrogram:
         case QwtPlotItem::Rtti_PlotTradingCurve:
-        case QwtPlotItem::Rtti_PlotBarChart:
         case QwtPlotItem::Rtti_PlotMultiBarChart:
             break;
         default:
@@ -207,6 +193,27 @@ void SAChartSerializeHelp::serializeInChartItem(QDataStream &in, SAChart2D *char
         case SA::RTTI_SAXYSeries:
         {
             SAXYSeries * p = new SAXYSeries;
+            in >> p;
+            p->attach(chart);
+            break;
+        }
+        case SA::RTTI_SAScatterSeries:
+        {
+            SAScatterSeries * p = new SAScatterSeries;
+            in >> p;
+            p->attach(chart);
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotBarChart:
+        {
+            QwtPlotBarChart* p = new SABarSeries;
+            in >> p;
+            p->attach(chart);
+            break;
+        }
+        case SA::RTTI_SABarSeries:
+        {
+            SABarSeries* p = new SABarSeries;
             in >> p;
             p->attach(chart);
             break;
@@ -265,8 +272,9 @@ QDataStream & sa::operator >>(QDataStream &in, SASeriesAndDataPtrMapper *p)
 QDataStream & sa::operator <<(QDataStream &out, const SAXYSeries *p)
 {
     const QwtPlotCurve* c = static_cast<const QwtPlotCurve*>(p);
-    //const SASeriesAndDataPtrMapper *m = static_cast<const SASeriesAndDataPtrMapper*>(p);
-    out << c;
+    const SASeriesAndDataPtrMapper *m = static_cast<const SASeriesAndDataPtrMapper*>(p);
+    out << c
+        << m;
     return out;
 }
 ///
@@ -278,11 +286,63 @@ QDataStream & sa::operator <<(QDataStream &out, const SAXYSeries *p)
 QDataStream & sa::operator >>(QDataStream &in, SAXYSeries *p)
 {
     QwtPlotCurve* c = static_cast<QwtPlotCurve*>(p);
-    //SASeriesAndDataPtrMapper *m = static_cast<SASeriesAndDataPtrMapper*>(p);
-    in >> c ;
+    SASeriesAndDataPtrMapper *m = static_cast<SASeriesAndDataPtrMapper*>(p);
+    in >> c
+       >> m;
     return in;
 }
 
 
 
 
+///
+/// \brief SABarSeries的序列化
+/// \param p
+/// \return
+///
+QDataStream &sa::operator <<(QDataStream &out, const SABarSeries *p)
+{
+    const QwtPlotBarChart* c = static_cast<const QwtPlotBarChart*>(p);
+    const SASeriesAndDataPtrMapper *m = static_cast<const SASeriesAndDataPtrMapper*>(p);
+    out << c << m;
+    return out;
+}
+///
+/// \brief SABarSeries的序列化
+/// \param in
+/// \param p
+/// \return
+///
+QDataStream &sa::operator >>(QDataStream &in, SABarSeries *p)
+{
+    QwtPlotBarChart* c = static_cast<QwtPlotBarChart*>(p);
+    SASeriesAndDataPtrMapper *m = static_cast<SASeriesAndDataPtrMapper*>(p);
+    in >> c >> m;
+    return in;
+}
+///
+/// \brief SAScatterSeries的序列化
+/// \param out
+/// \param p
+/// \return
+///
+QDataStream &sa::operator <<(QDataStream &out, const SAScatterSeries *p)
+{
+    const QwtPlotCurve* c = static_cast<const QwtPlotCurve*>(p);
+    const SASeriesAndDataPtrMapper *m = static_cast<const SASeriesAndDataPtrMapper*>(p);
+    out << c << m;
+    return out;
+}
+///
+/// \brief SAScatterSeries的序列化
+/// \param in
+/// \param p
+/// \return
+///
+QDataStream &sa::operator >>(QDataStream &in, SAScatterSeries *p)
+{
+    QwtPlotCurve* c = static_cast<QwtPlotCurve*>(p);
+    SASeriesAndDataPtrMapper *m = static_cast<SASeriesAndDataPtrMapper*>(p);
+    in >> c >> m;
+    return in;
+}

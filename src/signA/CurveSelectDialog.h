@@ -1,4 +1,4 @@
-#ifndef DIALOG_SELCURVE_H
+﻿#ifndef DIALOG_SELCURVE_H
 #define DIALOG_SELCURVE_H
 // === Qt
 #include <QDialog>
@@ -34,8 +34,8 @@ public:
     explicit CurveSelectDialog(SAChart2D* chart ,QWidget *parent = nullptr);
     ~CurveSelectDialog();
     //设置条目过滤
-    void setItemFilter(const QSet<QwtPlotItem::RttiValues>& filters);
-    QSet<QwtPlotItem::RttiValues> getItemFilter() const;
+    void setItemFilter(const QSet<int> &filters);
+    QSet<int> getItemFilter() const;
     ///
     /// \brief 获取选择的线条目，只会显示曲线相关条目
     /// \return
@@ -76,7 +76,7 @@ private:
     };
     std::unique_ptr<CurveSelectDialog::UI> ui;
     SAChart2D* m_chart;
-    QSet<QwtPlotItem::RttiValues> m_itemFilter;///< 记录需要列举的item
+    QSet<int> m_itemFilter;///< 记录需要列举的item
     QList<QwtPlotItem*> m_selItem;
 
 };

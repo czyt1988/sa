@@ -26,6 +26,8 @@
 #include "SAScatterSeries.h"
 #include "SABoxSeries.h"
 #include "SAHistogramSeries.h"
+#include "qwt_plot_intervalcurve.h"
+#include "qwt_plot_multi_barchart.h"
 class SAChart2DPrivate
 {
     SA_IMPL_PUBLIC(SAChart2D)
@@ -108,6 +110,8 @@ public:
             switch(items[i]->rtti())
             {
             case QwtPlotItem::Rtti_PlotCurve:
+            case SA::RTTI_SAXYSeries:
+            case SA::RTTI_SAScatterSeries:
                 curList.append(static_cast<QwtPlotCurve*>(items[i]));break;
             case QwtPlotItem::Rtti_PlotSpectroCurve:
             case QwtPlotItem::Rtti_PlotIntervalCurve:
@@ -155,6 +159,177 @@ SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
 SAChart2D::~SAChart2D()
 {
     //qDebug() <<"SAChart2D destroy";
+}
+
+QList<int> SAChart2D::getPlotItemsRTTI()
+{
+    QList<int> res;
+    res<<QwtPlotItem::Rtti_PlotCurve
+                <<QwtPlotItem::Rtti_PlotSpectroCurve
+                <<QwtPlotItem::Rtti_PlotIntervalCurve
+                <<QwtPlotItem::Rtti_PlotHistogram
+                <<QwtPlotItem::Rtti_PlotBarChart
+                <<QwtPlotItem::Rtti_PlotMultiBarChart
+               << SA::RTTI_SAXYSeries
+               << SA::RTTI_SABarSeries
+               << SA::RTTI_SABoxSeries
+               << SA::RTTI_SAHistogramSeries
+               << SA::RTTI_SAScatterSeries
+                  ;
+    return res;
+}
+///
+/// \brief item的类型判断，cureve bar 等绘图相关返回true
+/// \param item
+/// \return cureve bar 等绘图相关返回true
+///
+bool SAChart2D::isPlotChartItem(QwtPlotItem *item)
+{
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case QwtPlotItem::Rtti_PlotSpectrogram:
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    case QwtPlotItem::Rtti_PlotBarChart:
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    case SA::RTTI_SAXYSeries:
+    case SA::RTTI_SABarSeries:
+    case SA::RTTI_SABoxSeries:
+    case SA::RTTI_SAHistogramSeries:
+    case SA::RTTI_SAScatterSeries:
+        return true;
+    default:
+        return false;
+    }
+    return false;
+}
+
+QwtPlotItemList SAChart2D::getCurveItemList(QwtPlot *chart)
+{
+    const QwtPlotItemList& items = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<items.size();++i)
+    {
+        if(SAChart2D::isPlotChartItem(items[i]))
+        {
+            res.append(items[i]);
+        }
+    }
+    return res;
+}
+///
+/// \brief 获取item的颜色,无法获取单一颜色就返回QColor()
+/// \param item
+/// \return
+///
+QColor SAChart2D::getItemColor(const QwtPlotItem *item, const QColor &defaultClr)
+{
+    switch (item->rtti()) {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case SA::RTTI_SAXYSeries:
+    case SA::RTTI_SAScatterSeries:
+    {
+        const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
+        return p->pen().color();
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
+        return p->pen().color();
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case SA::RTTI_SAHistogramSeries:
+    {
+        const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
+        return p->brush().color();
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    case SA::RTTI_SABarSeries:
+    {
+        const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item);
+        const QwtColumnSymbol* symbol =  bar->symbol();
+        if(symbol)
+        {
+            return symbol->palette().color(QPalette::Button);
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotGrid:
+    {
+        const QwtPlotGrid* grid = static_cast<const QwtPlotGrid*>(item);
+        return grid->majorPen().color();
+    }
+    case QwtPlotItem::Rtti_PlotMarker:
+    {
+        const QwtPlotMarker* marker = static_cast<const QwtPlotMarker*>(item);
+        return marker->linePen ().color();
+    }
+    default:
+        break;
+    }
+    return defaultClr;
+}
+///
+/// \brief 获取item的数据个数
+/// \param item
+/// \return -1 is meaning nan
+///
+int SAChart2D::getItemDataSize(QwtPlotItem *item)
+{
+    switch (item->rtti()) {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case SA::RTTI_SAXYSeries:
+    case SA::RTTI_SAScatterSeries:
+    {
+        QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        QwtPlotIntervalCurve* p = static_cast<QwtPlotIntervalCurve*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case SA::RTTI_SAHistogramSeries:
+    {
+        QwtPlotHistogram* p = static_cast<QwtPlotHistogram*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    case SA::RTTI_SABarSeries:
+    {
+        QwtPlotBarChart* p = static_cast<QwtPlotBarChart*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+    }
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+        QwtPlotMultiBarChart* p = static_cast<QwtPlotMultiBarChart*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+    }
+    default:
+        break;
+    }
+    return -1;
 }
 
 void SAChart2D::addItem(QwtPlotItem *item, const QString &des)
@@ -725,7 +900,7 @@ bool SAChart2D::isCurrentSelectItemsHaveChartItem() const
     const QList<QwtPlotItem *> &items = getCurrentSelectItems();
     for(int i=0;i<items.size();++i)
     {
-        if(SAChart::isPlotChartItem(items[i]))
+        if(isPlotChartItem(items[i]))
         {
             return true;
         }
