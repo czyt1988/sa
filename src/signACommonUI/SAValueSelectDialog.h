@@ -1,10 +1,9 @@
-﻿#ifndef SAVALUESELECTDIALOG_H
+#ifndef SAVALUESELECTDIALOG_H
 #define SAVALUESELECTDIALOG_H
 
 #include <QDialog>
 #include <QList>
 #include <QSet>
-#include "SAUIInterface.h"
 #include "SACommonUIGlobal.h"
 
 class SADataTableModel;
@@ -21,21 +20,10 @@ class SA_COMMON_UI_EXPORT SAValueSelectDialog : public QDialog
     Q_OBJECT
 
 public:
-    ///
-    /// \brief 选择模式
-    ///
     enum SelectionMode
     {
         SingleSelection
         ,MultiSelection
-    };
-    ///
-    /// \brief 选择界面的显示模式
-    ///
-    enum ViewMode
-    {
-        ValueSelection
-        ,FigureItemSelection
     };
 
     explicit SAValueSelectDialog(QWidget *parent = 0);
@@ -54,11 +42,7 @@ public:
 
     QColor getHightLightColor() const;
     void setHightLightColor(const QColor &hightLightColor);
-    //设置页面显示模式
-    void setViewMode(ViewMode mode);
-    ViewMode currentViewMode() const;
-    //
-    void setUIInterface(SAUIInterface* interface);
+
 private:
     void initUI();
 private slots:
@@ -72,7 +56,6 @@ private:
     SelectionMode m_selectMode;
     QSet<SAAbstractDatas *> m_hightLightData;
     QColor m_hightLightColor;
-    SAUIInterface* m_ui;
 };
 
 #endif // SAVALUESELECTDIALOG_H

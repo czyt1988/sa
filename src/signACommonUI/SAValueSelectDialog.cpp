@@ -1,4 +1,4 @@
-﻿#include "SAValueSelectDialog.h"
+#include "SAValueSelectDialog.h"
 #include "ui_SAValueSelectDialog.h"
 //SALib
 #include "SAValueManagerModel.h"
@@ -9,7 +9,6 @@ SAValueSelectDialog::SAValueSelectDialog(QWidget *parent) :
     ui(new Ui::SAValueSelectDialog)
   ,m_selectMode(SAValueSelectDialog::MultiSelection)
   ,m_hightLightColor(QColor(255,160,206))
-  ,m_ui(nullptr)
 {
     ui->setupUi(this);
     //
@@ -111,39 +110,6 @@ QColor SAValueSelectDialog::getHightLightColor() const
 void SAValueSelectDialog::setHightLightColor(const QColor &hightLightColor)
 {
     m_hightLightColor = hightLightColor;
-}
-///
-/// \brief 设置页面显示模式
-/// \param mode
-///
-void SAValueSelectDialog::setViewMode(SAValueSelectDialog::ViewMode mode)
-{
-    switch (mode) {
-    case ValueSelection:
-        ui->stackedWidget->setCurrentIndex(0);
-        break;
-    case FigureItemSelection:
-        ui->stackedWidget->setCurrentIndex(1);
-        break;
-    default:
-        ui->stackedWidget->setCurrentIndex(0);
-        break;
-    }
-}
-///
-/// \brief 查看当前的显示模式
-/// \return
-///
-SAValueSelectDialog::ViewMode SAValueSelectDialog::currentViewMode() const
-{
-    switch(ui->stackedWidget->currentIndex())
-    {
-    case 0:return ValueSelection;
-    case 1:return FigureItemSelection;
-    default:
-        break;
-    }
-    return ValueSelection;
 }
 ///
 /// \brief 变量选择的树形控件的选择模式
