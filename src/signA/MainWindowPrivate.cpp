@@ -1,4 +1,4 @@
-#include "MainWindowPrivate.h"
+﻿#include "MainWindowPrivate.h"
 #include "mainwindow.h"
 #include <QDebug>
 MainWindowPrivate::MainWindowPrivate(MainWindow* p)
@@ -421,10 +421,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     operateRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Operate"));
     operateRibbonCategory->setObjectName(QStringLiteral("operateRibbonCategory"));
     //Selector Editor
-    operateCategorySelectEditorPannel = operateRibbonCategory->addPannel(QStringLiteral("Select Editor"));
-    operateCategorySelectEditorPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
+    operateCategoryChartEditorPannel = operateRibbonCategory->addPannel(QStringLiteral("Select Editor"));
+    operateCategoryChartEditorPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
 
-    ribbonButtonStartSelection = operateCategorySelectEditorPannel->addLargeAction(actionStartRectSelect);
+    ribbonButtonStartSelection = operateCategoryChartEditorPannel->addLargeAction(actionStartRectSelect);
     menuSelection = new SARibbonMenu(Parent);
     menuSelection->addAction(actionStartRectSelect);
     menuSelection->addAction(actionStartEllipseSelect);
@@ -442,13 +442,23 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonAdditionalSelection = ribbonButtonGroupSelectionMode->addButton(actionAdditionalSelection);
     ribbonButtonSubtractionSelection = ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
     ribbonButtonIntersectionSelection = ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
-    operateCategorySelectEditorPannel->addWidget(ribbonButtonGroupSelectionMode
+    operateCategoryChartEditorPannel->addWidget(ribbonButtonGroupSelectionMode
                                                  ,0,3);
 
     SARibbonButtonGroupWidget* tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
     ribbonButtonSelectionRegionMove = tmpButtonGroup->addButton(actionSelectionRegionMove);
-    operateCategorySelectEditorPannel->addWidget(tmpButtonGroup,3,3);
+    operateCategoryChartEditorPannel->addWidget(tmpButtonGroup,3,3);
 
+    operateCategoryChartEditorPannel->addSeparator();
+
+    menuDataRemove = new SARibbonMenu(Parent);
+    menuDataRemove->addAction(actionOutRangDataRemove);
+    ribbonButtonInRangDataRemove = operateCategoryChartEditorPannel->addLargeAction(actionInRangDataRemove);
+    ribbonButtonInRangDataRemove->setMenu(menuDataRemove);
+    ribbonButtonInRangDataRemove->setPopupMode(QToolButton::MenuButtonPopup);
+    ribbonButtonPickCurveToData = operateCategoryChartEditorPannel->addLargeAction(actionPickCurveToData);
+
+    ribbonButtonSelectionRegionDataMove = operateCategoryChartEditorPannel->addLargeAction(actionSelectionRegionDataMove);
 
     //data view editor
     operateCategoryDataViewPannel = operateRibbonCategory->addPannel(QStringLiteral("Data View"));
@@ -459,18 +469,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonXYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionXYDataPicker);
     ribbonButtonYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionYDataPicker);
 
-    //data editor pannel
-    operateCategoryDataEditorPannel = new SARibbonPannel();
-    operateCategoryDataEditorPannel->setWindowTitle("Data Edit");
-    operateRibbonCategory->addPannel(operateCategoryDataEditorPannel);
-    menuDataRemove = new SARibbonMenu(Parent);
-    menuDataRemove->addAction(actionOutRangDataRemove);
-    ribbonButtonInRangDataRemove = operateCategoryDataEditorPannel->addLargeAction(actionInRangDataRemove);
-    ribbonButtonInRangDataRemove->setMenu(menuDataRemove);
-    ribbonButtonInRangDataRemove->setPopupMode(QToolButton::MenuButtonPopup);
-    ribbonButtonPickCurveToData = operateCategoryDataEditorPannel->addLargeAction(actionPickCurveToData);
-
-    ribbonButtonSelectionRegionDataMove = operateCategoryDataEditorPannel->addLargeAction(actionSelectionRegionDataMove);
     //legend pannel
     chartLegendCategoryWindowPannel = operateRibbonCategory->addPannel("legend");
     ribbonButtonShowLegend = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegend);
@@ -702,6 +700,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     verticalLayout_9->addWidget(saMessageWidget);
 
     dockWidget_message->setWidget(dockWidgetContents_8);
+
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_message);
     dockWidget_plotSet = new QDockWidget(mainWinowPtr);
     dockWidget_plotSet->setObjectName(QStringLiteral("dockWidget_plotSet"));
@@ -797,6 +796,19 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 //    toolBar_plot->addAction(actionNewChart);
 //    toolBar_plot->addAction(actionNewTrend);
 //    toolBar_plot->addSeparator();
+
+
+    dockWidget_message->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_main->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_windowList->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_valueViewer->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_plotSet->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_plotLayer->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_DataFeature->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_chartDataViewer->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_valueManage->setFocusPolicy(Qt::ClickFocus);
+
+
 
     retranslateUi(mainWinowPtr);
     QObject::connect(actionQuit, SIGNAL(triggered()), mainWinowPtr, SLOT(close()));
@@ -961,7 +973,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     viewRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "View", 0));
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
-    operateCategorySelectEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Select Editor", 0));
+    operateCategoryChartEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Editor", 0));
     ribbonButtonLineChart->setText(menuLineChart->title());
     ribbonButtonBarChart->setText(menuBarChart->title());
     ribbonButtonBoxChart->setText(menuBoxChart->title());
@@ -970,7 +982,6 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonAllDock->setText(menuWindowsViewSet->title());
     ribbonButtonAllFuntion->setText(menuAnalysis->title());
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
-    operateCategoryDataEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Data Edit", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
     chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));
     ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));

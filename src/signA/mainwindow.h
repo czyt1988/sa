@@ -231,6 +231,9 @@ signals:
     ///
     void selectDataChanged(SAAbstractDatas* dataPtr);
 private slots:
+    //焦点变换触发的槽
+    void onFocusChanged(QWidget *old, QWidget *now);
+
     ///
     /// \group ValueManager tree view signal/slots（变量管理相关）
     /// \{

@@ -192,15 +192,11 @@ void SASelectRegionDataEditor::updateRegionIndex()
                 QPainterPath otPath = SAChart::transformPath(chart,d_ptr->m_selectRegionOrigin
                                                            ,editor->getXAxis(),editor->getYAxis()
                                                            ,cur->xAxis(),cur->yAxis());
-                SAChart::getSeriesInSelectRangDataAndIndex(otPath,cur
-                                                           ,ci->indexs()
-                                                           ,ci->points());
+                SAChart::getXYDatas(ci->indexs(),ci->points(),cur,otPath);
             }
             else
             {
-                SAChart::getSeriesInSelectRangDataAndIndex(d_ptr->m_selectRegionOrigin,cur
-                                                           ,ci->indexs()
-                                                           ,ci->points());
+                SAChart::getXYDatas(ci->indexs(),ci->points(),cur,d_ptr->m_selectRegionOrigin);
             }
             break;
         }
@@ -216,15 +212,11 @@ void SASelectRegionDataEditor::updateRegionIndex()
                 QPainterPath otPath = SAChart::transformPath(chart,d_ptr->m_selectRegionOrigin
                                                            ,editor->getXAxis(),editor->getYAxis()
                                                            ,bar->xAxis(),bar->yAxis());
-                SAChart::getSeriesInSelectRangDataAndIndex(otPath,bar
-                                                           ,ci->indexs()
-                                                           ,ci->points());
+                SAChart::getXYDatas(ci->indexs(),ci->points(),bar,otPath);
             }
             else
             {
-                SAChart::getSeriesInSelectRangDataAndIndex(d_ptr->m_selectRegionOrigin,bar
-                                                           ,ci->indexs()
-                                                           ,ci->points());
+                SAChart::getXYDatas(ci->indexs(),ci->points(),bar,d_ptr->m_selectRegionOrigin);
             }
             break;
         }

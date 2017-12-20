@@ -623,20 +623,7 @@ int SAChart::removeDataInRang(const QPainterPath &removeRang, QwtSeriesStore<QPo
 }
 
 
-int SAChart::getDataInRang(const QPainterPath &rang, QwtPlotCurve *curve, QVector<QPointF> &res)
-{
-    QPointF point;
-    size_t length = curve->data()->size();
-    for(size_t i = 0;i<length;++i)
-    {
-        point = curve->data()->sample(i);
-        if(rang.contains(point))
-        {
-            res.push_back(point);
-        }
-    }
-    return res.size();
-}
+
 
 QRectF SAChart::getVisibleRegionRang(QwtPlot *chart)
 {
@@ -668,6 +655,43 @@ QRectF SAChart::getVisibleRegionRang(QwtPlot *chart, int xAxis, int yAxis)
     double ymin = inter.minValue();
     double ymax = inter.maxValue();
     return QRectF(xmin,ymin,xmax-xmin,ymax-ymin);
+}
+///
+/// \brief 动态获取item的颜色，使用dynamic_cast,需要注意效率问题
+/// \param item
+/// \return
+///
+QColor SAChart::dynamicGetItemColor(const QwtPlotItem *item, const QColor &defaultColor)
+{
+    if (const QwtPlotCurve* p = dynamic_cast<const QwtPlotCurve*>(item))
+    {
+        return p->pen().color();
+    }
+    else if(const QwtPlotIntervalCurve* p = dynamic_cast<const QwtPlotIntervalCurve*>(item))
+    {
+        return p->pen().color();
+    }
+    else if(const QwtPlotHistogram* p = dynamic_cast<const QwtPlotHistogram*>(item))
+    {
+        return p->brush().color();
+    }
+    else if(const QwtPlotBarChart* bar = dynamic_cast<const QwtPlotBarChart*>(item))
+    {
+        const QwtColumnSymbol* symbol =  bar->symbol();
+        if(symbol)
+        {
+            return symbol->palette().color(QPalette::Button);
+        }
+    }
+    else if(const QwtPlotGrid* grid = dynamic_cast<const QwtPlotGrid*>(item))
+    {
+        return grid->majorPen().color();
+    }
+    else if(const QwtPlotMarker* marker = static_cast<const QwtPlotMarker*>(item))
+    {
+        return marker->linePen ().color();
+    }
+    return defaultColor;
 }
 
 ///
@@ -751,11 +775,11 @@ size_t SAChart::getXDatas(const QVector<QPointF> &xys, QVector<double> &xs)
 /// \param indexs 索引
 /// \return  提取的点数
 ///
-int SAChart::getSeriesInSelectRangIndex(const QPainterPath &rang, const QwtSeriesStore<QPointF> *series, QVector<int> &indexs)
+size_t SAChart::getXYIndex(QVector<int> &indexs, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
 {
     size_t length = series->data()->size();
     QPointF point;
-    int resCount = 0;
+    size_t resCount = 0;
     for(size_t i = 0;i<length;++i)
     {
         point = series->data()->sample(i);
@@ -777,11 +801,11 @@ int SAChart::getSeriesInSelectRangIndex(const QPainterPath &rang, const QwtSerie
 /// \param points 值
 /// \return 提取的点数
 ///
-int SAChart::getSeriesInSelectRangDataAndIndex(const QPainterPath &rang, const QwtSeriesStore<QPointF> *series, QVector<int> &indexs, QVector<QPointF> &points)
+size_t SAChart::getXYDatas(QVector<int>& indexs,QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang)
 {
     size_t length = series->data()->size();
     QPointF point;
-    int resCount = 0;
+    size_t resCount = 0;
     for(size_t i = 0;i<length;++i)
     {
         point = series->data()->sample(i);
@@ -802,11 +826,11 @@ int SAChart::getSeriesInSelectRangDataAndIndex(const QPainterPath &rang, const Q
 /// \param points 值
 /// \return 提取的点数
 ///
-int SAChart::getSeriesInSelectRangData(const QPainterPath &rang, const QwtSeriesStore<QPointF> *series, QVector<QPointF> &points)
+size_t SAChart::getXYDatas(QVector<QPointF> &points, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
 {
     size_t length = series->data()->size();
     QPointF point;
-    int resCount = 0;
+    size_t resCount = 0;
     for(size_t i = 0;i<length;++i)
     {
         point = series->data()->sample(i);
@@ -818,6 +842,31 @@ int SAChart::getSeriesInSelectRangData(const QPainterPath &rang, const QwtSeries
     }
     return resCount;
 }
-
+///
+/// \brief 提取范围里的2d数据点值
+/// \param rang 范围
+/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
+/// \param series 2d数据点
+/// \param xs x值
+/// \param ys y值
+/// \return 提取的点数
+///
+size_t SAChart::getXYDatas(QVector<double> &xs, QVector<double> &ys, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
+{
+    size_t length = series->data()->size();
+    QPointF point;
+    size_t resCount = 0;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = series->data()->sample(i);
+        if(rang.contains(point))
+        {
+            ++resCount;
+            xs.append(point.x());
+            ys.append(point.y());
+        }
+    }
+    return resCount;
+}
 
 

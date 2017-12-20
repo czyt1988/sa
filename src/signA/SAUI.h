@@ -1,4 +1,4 @@
-#ifndef SAUI_H
+﻿#ifndef SAUI_H
 #define SAUI_H
 #include "SAUIInterface.h"
 
@@ -127,7 +127,7 @@ public:
     /// \group 绘图窗口的控制
     /// \{
     //选择曲线
-    QList<QwtPlotCurve*> selectCurves(SAChart2D* chart);
+    virtual QList<QwtPlotItem*> selectPlotItems(SAChart2D* chart,const QSet<int>& filter);
     /// \}
 protected:
     void onSelectDataChanged(SAAbstractDatas* dataPtr);

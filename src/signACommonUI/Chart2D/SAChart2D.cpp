@@ -3,6 +3,8 @@
 #include "SAAbstractDatas.h"
 #include "SARandColorMaker.h"
 #include "SAFigureGlobalConfig.h"
+#include "SAXYDataTracker.h"
+#include "SAYDataTracker.h"
 #include <memory>
 #include "SAXYSeries.h"
 #include "SABarSeries.h"
@@ -28,6 +30,9 @@
 #include "SAHistogramSeries.h"
 #include "qwt_plot_intervalcurve.h"
 #include "qwt_plot_multi_barchart.h"
+
+
+
 class SAChart2DPrivate
 {
     SA_IMPL_PUBLIC(SAChart2D)
@@ -178,12 +183,24 @@ QList<int> SAChart2D::getPlotItemsRTTI()
                   ;
     return res;
 }
+
+QList<int> SAChart2D::getXYSeriesItemsRTTI()
+{
+    QList<int> res;
+    res<<QwtPlotItem::Rtti_PlotCurve
+              <<QwtPlotItem::Rtti_PlotBarChart
+               << SA::RTTI_SAXYSeries
+               << SA::RTTI_SABarSeries
+               << SA::RTTI_SAScatterSeries
+                  ;
+    return res;
+}
 ///
 /// \brief item的类型判断，cureve bar 等绘图相关返回true
 /// \param item
 /// \return cureve bar 等绘图相关返回true
 ///
-bool SAChart2D::isPlotChartItem(QwtPlotItem *item)
+bool SAChart2D::isPlotChartItem(const QwtPlotItem *item)
 {
     switch(item->rtti())
     {
@@ -206,14 +223,51 @@ bool SAChart2D::isPlotChartItem(QwtPlotItem *item)
     }
     return false;
 }
-
-QwtPlotItemList SAChart2D::getCurveItemList(QwtPlot *chart)
+///
+/// \brief 获取所有可支持的绘图条目
+/// \param chart
+/// \return
+///
+QwtPlotItemList SAChart2D::getPlotChartItemList(const QwtPlot *chart)
 {
     const QwtPlotItemList& items = chart->itemList();
     QwtPlotItemList res;
     for(int i=0;i<items.size();++i)
     {
         if(SAChart2D::isPlotChartItem(items[i]))
+        {
+            res.append(items[i]);
+        }
+    }
+    return res;
+}
+////
+/// \brief 获取所有xy点的绘图条目包括QwtPlotCurve和SAXYSeries,SABarSeries,QwtBarChart
+///
+/// \param chart
+/// \return
+///
+QwtPlotItemList SAChart2D::getPlotXYSeriesItemList(const QwtPlot *chart)
+{
+    return filterPlotItem(chart,{QwtPlotItem::Rtti_PlotCurve
+                                ,QwtPlotItem::Rtti_PlotBarChart
+                                ,SA::RTTI_SAXYSeries
+                                ,SA::RTTI_SABarSeries
+                                ,SA::RTTI_SAScatterSeries});
+}
+///
+/// \brief 根据筛选set获取item list
+/// \param chart
+/// \param enableRtti
+/// \return
+///
+QwtPlotItemList SAChart2D::filterPlotItem(const QwtPlot *chart, const QSet<int> &enableRtti)
+{
+    const QwtPlotItemList& items = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<items.size();++i)
+    {
+        if(enableRtti.contains(items[i]->rtti()))
         {
             res.append(items[i]);
         }
@@ -277,14 +331,14 @@ QColor SAChart2D::getItemColor(const QwtPlotItem *item, const QColor &defaultClr
 /// \param item
 /// \return -1 is meaning nan
 ///
-int SAChart2D::getItemDataSize(QwtPlotItem *item)
+int SAChart2D::getItemDataSize(const QwtPlotItem *item)
 {
     switch (item->rtti()) {
     case QwtPlotItem::Rtti_PlotCurve:
     case SA::RTTI_SAXYSeries:
     case SA::RTTI_SAScatterSeries:
     {
-        QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
+        const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
         if(p)
         {
             return p->data()->size();
@@ -293,7 +347,7 @@ int SAChart2D::getItemDataSize(QwtPlotItem *item)
     }
     case QwtPlotItem::Rtti_PlotIntervalCurve:
     {
-        QwtPlotIntervalCurve* p = static_cast<QwtPlotIntervalCurve*>(item);
+        const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
         if(p)
         {
             return p->data()->size();
@@ -303,7 +357,7 @@ int SAChart2D::getItemDataSize(QwtPlotItem *item)
     case QwtPlotItem::Rtti_PlotHistogram:
     case SA::RTTI_SAHistogramSeries:
     {
-        QwtPlotHistogram* p = static_cast<QwtPlotHistogram*>(item);
+        const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
         if(p)
         {
             return p->data()->size();
@@ -312,7 +366,7 @@ int SAChart2D::getItemDataSize(QwtPlotItem *item)
     case QwtPlotItem::Rtti_PlotBarChart:
     case SA::RTTI_SABarSeries:
     {
-        QwtPlotBarChart* p = static_cast<QwtPlotBarChart*>(item);
+        const QwtPlotBarChart* p = static_cast<const QwtPlotBarChart*>(item);
         if(p)
         {
             return p->data()->size();
@@ -320,7 +374,7 @@ int SAChart2D::getItemDataSize(QwtPlotItem *item)
     }
     case QwtPlotItem::Rtti_PlotMultiBarChart:
     {
-        QwtPlotMultiBarChart* p = static_cast<QwtPlotMultiBarChart*>(item);
+        const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
         if(p)
         {
             return p->data()->size();
@@ -604,13 +658,24 @@ void SAChart2D::removeDataInRang()
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false
 /// \param xy
 /// \param cur
+/// \param isNoRegionGetAll 此设置为true，则如果没有选区，会把所有数据获取
 /// \return
 ///
-bool SAChart2D::getDataInSelectRange(QVector<QPointF> &xy, QwtPlotCurve *cur)
+bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, const QwtPlotItem *cur, bool isNoRegionGetAll)
 {
     QPainterPath region = getSelectionRange();
     if(region.isEmpty())
     {
+        if(isNoRegionGetAll)
+        {
+            const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
+            if(nullptr == series)
+            {
+                return false;
+            }
+            SAChart::getXYDatas(xy,series);
+            return true;
+        }
         return false;
     }
     SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
@@ -618,18 +683,74 @@ bool SAChart2D::getDataInSelectRange(QVector<QPointF> &xy, QwtPlotCurve *cur)
     {
         return false;
     }
+    const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
+    if(nullptr == series)
+    {
+        return false;
+    }
     int xa = cur->xAxis();
     int ya = cur->yAxis();
     if(xa == editor->getXAxis() && ya == editor->getYAxis())
     {
-        SAChart::getDataInRang(region,cur,xy);
+        SAChart::getXYDatas(xy,series,region);
     }
     else
     {
         region = editor->transformToOtherAxis(xa,ya);
         if(!region.isEmpty())
         {
-            SAChart::getDataInRang(region,cur,xy);
+            SAChart::getXYDatas(xy,series,region);
+        }
+    }
+    return true;
+}
+///
+/// \brief 获取选择范围内的数据,如果当前没有选区，返回false
+/// \param xs
+/// \param ys
+/// \param cur
+/// \param isNoRegionGetAll 此设置为true，则如果没有选区，会把所有数据获取
+/// \return
+///
+bool SAChart2D::getXYDataInRange(QVector<double> &xs, QVector<double> &ys, const QwtPlotItem *cur, bool isNoRegionGetAll)
+{
+    QPainterPath region = getSelectionRange();
+    if(region.isEmpty())
+    {
+        if(isNoRegionGetAll)
+        {
+            const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
+            if(nullptr == series)
+            {
+                return false;
+            }
+            SAChart::getXYDatas(xs,ys,series);
+            return true;
+        }
+        return false;
+    }
+    SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
+    if(nullptr == editor)
+    {
+        return false;
+    }
+    const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
+    if(nullptr == series)
+    {
+        return false;
+    }
+    int xa = cur->xAxis();
+    int ya = cur->yAxis();
+    if(xa == editor->getXAxis() && ya == editor->getYAxis())
+    {
+        SAChart::getXYDatas(xs,ys,series,region);
+    }
+    else
+    {
+        region = editor->transformToOtherAxis(xa,ya);
+        if(!region.isEmpty())
+        {
+            SAChart::getXYDatas(xs,ys,series,region);
         }
     }
     return true;

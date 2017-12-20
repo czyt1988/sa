@@ -3,7 +3,7 @@
 #include "SAChart2D.h"
 #include <QVBoxLayout>
 #include "SAQwtPlotItemVGroupBox.h"
-
+#include "qwt_plot_item.h"
 #include <functional>
 #include <QHash>
 #include <QList>

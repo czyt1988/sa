@@ -94,7 +94,7 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
     }
     else
     {
-        QwtPlotItemList curItems = SAChart2D::getCurveItemList(chart);
+        QwtPlotItemList curItems = SAChart2D::getPlotChartItemList(chart);
         ui->curveItemSetWidget->setPlotItems(curItems);
         connect(ui->chartWidget,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
         connect(ui->chartWidget,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);

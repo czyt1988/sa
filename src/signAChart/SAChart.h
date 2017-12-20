@@ -38,6 +38,8 @@ public:
     static QRectF getVisibleRegionRang(QwtPlot* chart);
     //获取当前正在显示的区域
     static QRectF getVisibleRegionRang(QwtPlot* chart,int xAxis,int yAxis);
+    //动态获取item的颜色，使用dynamic_cast,需要注意效率问题
+    static QColor dynamicGetItemColor(const QwtPlotItem *item,const QColor& defaultColor = Qt::black);
 ////////////////////// 坐标变换相关操作//////////////////////////////
     //坐标轴数据互转（把坐标轴转换为另外一个坐标轴数据而保持屏幕位置不变）
     static QPointF transformValue(QwtPlot*chart,const QPointF& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);
@@ -90,20 +92,18 @@ public:
     static size_t getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
     static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
     static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
-
     //对2d数据点的提取操作
-    static int getSeriesInSelectRangIndex(const QPainterPath& rang, const QwtSeriesStore<QPointF>* series, QVector<int>& indexs);
+    static size_t getXYDatas(QVector<int>& indexs,QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
     //对2d数据点的提取操作
-    static int getSeriesInSelectRangDataAndIndex(const QPainterPath& rang, const QwtSeriesStore<QPointF>* series, QVector<int>& indexs,QVector<QPointF>& points);
+    static size_t getXYDatas(QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
+    static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
     //对2d数据点的提取操作
-    static int getSeriesInSelectRangData(const QPainterPath& rang, const QwtSeriesStore<QPointF>* series,QVector<QPointF>& points);
-
+    static size_t getXYIndex(QVector<int>& indexs, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang );
 
     //把范围内的数据移除 返回移除的个数
     static int removeDataInRang(const QRectF& removeRang,QwtSeriesStore<QPointF>* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
-    //获取范围内的数据 返回获取的个数
-    static int getDataInRang(const QPainterPath& rang,QwtPlotCurve* curve,QVector<QPointF>& res);
+
 ////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
 
 

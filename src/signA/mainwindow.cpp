@@ -206,7 +206,7 @@ void MainWindow::init()
 ///
 void MainWindow::initUI()
 {
-
+    connect(qApp,&QApplication::focusChanged,this,&MainWindow::onFocusChanged);
     loadSetting();
     setDockNestingEnabled(true);
     setDockOptions(QMainWindow::AnimatedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AllowNestedDocks);
@@ -1293,11 +1293,13 @@ void MainWindow::onActionSelectionRegionMove(bool b)
         if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
         {
             saAddLog("Selection Region Move");
+            raiseMainDock();
             chart->unenableEditor();
             selectEditor->setEnabled(false);
             SASelectRegionEditor* editor = new SASelectRegionEditor(chart);
             editor->setObjectName(QStringLiteral("SASelectRegionEditor"));
             chart->setEditor(editor);
+
         }
         else
         {
@@ -1334,6 +1336,7 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
                 QList<QwtPlotItem*> selCur = CurveSelectDialog::getSelectChartPlotItems(chart,this);
                 chart->setCurrentSelectItems(selCur);
             }
+            raiseMainDock();
             selectEditor->setEnabled(false);
             chart->unenableEditor();
             SASelectRegionDataEditor* editor = new SASelectRegionDataEditor(chart);
@@ -1968,6 +1971,7 @@ bool MainWindow::isHaveSubWnd(QMdiSubWindow* wndToCheck) const
 void MainWindow::raiseMainDock()
 {
     ui->dockWidget_main->raise();
+    ui->mdiArea->setFocus();
 }
 ///
 /// \brief 把信息窗口抬起
@@ -2208,7 +2212,7 @@ void MainWindow::onActionPickCurveToDataTriggered()
         QVector<QPointF> xy;
         if(SA::InSelectionRange == rang)
         {
-            chart->getDataInSelectRange(xy,*i);
+            chart->getXYDataInRange(xy,*i);
             makeValueFromXYSeries(name,pickMode,xy);
         }
         else
@@ -2311,6 +2315,22 @@ SAAbstractDatas *MainWindow::getSelectSingleData(bool isAutoSelect)
         return nullptr;
     }
     return tmp[0];
+}
+///
+/// \brief 焦点变换触发的槽
+/// \param old
+/// \param now
+///
+void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
+{
+    if(old && now)
+    {
+        if(old->metaObject() && now->metaObject())
+        {
+            qDebug() << "old widget:" << old->metaObject()->className()
+                 << " new widget:" << now->metaObject()->className();
+        }
+    }
 }
 
 

@@ -1,4 +1,4 @@
-#include "SAUI.h"
+﻿#include "SAUI.h"
 #include <QDebug>
 #include <QMenu>
 #include <QMdiSubWindow>
@@ -228,16 +228,23 @@ void SAUI::raiseChartSettingDock()
     m_mainWnd->raiseChartSettingDock();
 }
 
-QList<QwtPlotCurve *> SAUI::selectCurves(SAChart2D* chart)
+QList<QwtPlotItem *> SAUI::selectPlotItems(SAChart2D *chart, const QSet<int> &filter)
 {
-    QList<QwtPlotCurve *> res;
+    QList<QwtPlotItem *> res;
     if(nullptr == chart)
     {
         return res;
     }
-    QList<QwtPlotCurve*> curves = CurveSelectDialog::getSelCurve(chart,getMainWindowPtr ());
-    return curves;
+    CurveSelectDialog dlg(chart,getMainWindowPtr ());
+    dlg.setItemFilter(filter);
+    if(QDialog::Accepted == dlg.exec())
+    {
+        return dlg.getSelItem();
+    }
+    return res;
 }
+
+
 
 void SAUI::onSelectDataChanged(SAAbstractDatas *dataPtr)
 {

@@ -1,4 +1,4 @@
-#include "SAXYDataTracker.h"
+﻿#include "SAXYDataTracker.h"
 #include <qwt_plot_item.h>
 #include <qwt_plot_curve.h>
 #include <qwt_picker_machine.h>
@@ -10,7 +10,10 @@
 #include <numeric>
 #include <math.h>
 #include "SAChart.h"
-
+#include "qwt_plot_intervalcurve.h"
+#include "qwt_plot_histogram.h"
+#include "qwt_plot_grid.h"
+#include "qwt_plot_marker.h"
 SAXYDataTracker::SAXYDataTracker(QWidget* canvas) :
     QwtPlotPicker( canvas )
 {
@@ -30,7 +33,7 @@ QwtText SAXYDataTracker::trackerTextF(const QPointF& pos) const
     if(!m_closePoint.isValid ())
         return trackerText;
     trackerText.setColor( Qt::black );
-    QColor lineColor = SAChart::getItemColor(m_closePoint.item());
+    QColor lineColor = getItemColor(m_closePoint.item());
     QColor bkColor(lineColor);
     bkColor.setAlpha (30);
     //trackerText.setBorderPen( m_closePoint.item()->pen () );
@@ -79,6 +82,24 @@ int SAXYDataTracker::itemClosedPoint(const QwtPlotItem *item, const QPoint &pos,
 {
     int index = -1;
     QPointF point;
+#if 1
+    if(const QwtPlotCurve *pc = dynamic_cast<const QwtPlotCurve *>(item))
+    {
+        index = pc->closestPoint (pos,dist);
+        if(-1 != index)
+        {
+            point = pc->sample(index);
+        }
+    }
+    else if(const QwtPlotBarChart * pb = dynamic_cast<const QwtPlotBarChart *>(item))
+    {
+        index = SAChart::closestPoint(pb,pos,dist);
+        if(-1 != index)
+        {
+            point = pb->sample(index);
+        }
+    }
+#else
     switch(item->rtti())
     {
     case QwtPlotItem::Rtti_PlotCurve:
@@ -104,6 +125,7 @@ int SAXYDataTracker::itemClosedPoint(const QwtPlotItem *item, const QPoint &pos,
     default:
         break;
     }
+#endif
     if(itemPoint)
     {
         *itemPoint = point;
@@ -149,7 +171,7 @@ void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
     //说明最近点的曲线更换了，标记线的颜色换为当前曲线的颜色
     if(m_closePoint.isValid () && oldItem!=m_closePoint.item ())
     {
-        m_pen.setColor(SAChart::getItemColor(m_closePoint.item()));
+        m_pen.setColor(getItemColor(m_closePoint.item()));
         setRubberBandPen (m_pen);
     }
 }
@@ -157,6 +179,55 @@ void SAXYDataTracker::calcClosestPoint(const QPoint& pos)
 double SAXYDataTracker::distancePower(const QPointF& p1, const QPointF& p2)
 {
     return pow(p1.x ()-p2.x (),2.0)+pow(p1.y ()-p2.y (),2.0);
+}
+
+QColor SAXYDataTracker::getItemColor(const QwtPlotItem *item) const
+{
+#if 1
+    return SAChart::dynamicGetItemColor(item);
+#else
+    switch (item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
+        return p->pen().color();
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
+        return p->pen().color();
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
+        return p->brush().color();
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item);
+        const QwtColumnSymbol* symbol =  bar->symbol();
+        if(symbol)
+        {
+            return symbol->palette().color(QPalette::Button);
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotGrid:
+    {
+        const QwtPlotGrid* grid = static_cast<const QwtPlotGrid*>(item);
+        return grid->majorPen().color();
+    }
+    case QwtPlotItem::Rtti_PlotMarker:
+    {
+        const QwtPlotMarker* marker = static_cast<const QwtPlotMarker*>(item);
+        return marker->linePen ().color();
+    }
+    default:
+        break;
+    }
+#endif
+    return Qt::black;
 }
 
 void SAXYDataTracker::mouseMove(const QPoint& pos)

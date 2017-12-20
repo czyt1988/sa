@@ -1,4 +1,4 @@
-#include "FunFit.h"
+﻿#include "FunFit.h"
 #include "sa_fun_fit.h"
 #include "SAUIReflection.h"
 #include "SAUIInterface.h"
@@ -11,6 +11,7 @@
 #include "SAChart.h"
 #include <QMdiSubWindow>
 #include "qwt_plot_curve.h"
+#include "qwt_series_store.h"
 #include "SAGUIGlobalConfig.h"
 #define TR(str)\
     QApplication::translate("FunFit", str, 0)
@@ -22,21 +23,18 @@ FunFit::FunFit()
 
 void FunFit::polyfitInChart()
 {
-    SAFigureWindow* fig = saUI->getCurrentFigureWindow();
-    if(nullptr == fig)
-    {
-        saUI->showWarningMessageInfo(TR("you should select a figure at first"));
-        saUI->raiseMessageInfoDock();
-        return;
-    }
-    SAChart2D* chart = fig->current2DPlot();
+    SAChart2D* chart = saUI->getCurSubWindowChart();
     if(!chart)
     {
         saUI->showWarningMessageInfo(TR("you should select a chart at first"));
         saUI->raiseMessageInfoDock();
         return;
     }
-    QList<QwtPlotCurve*> curs = saUI->selectCurves(chart);
+    QList<QwtPlotItem*> curs = chart->getCurrentSelectItems();
+    if(0 == curs.size())
+    {
+        curs = saUI->selectPlotItems(chart,SAChart2D::getXYSeriesItemsRTTI().toSet());
+    }
     if(curs.size() <= 0)
     {
         return;
@@ -57,9 +55,14 @@ void FunFit::polyfitInChart()
     QString strDes("");
     for (int i = 0;i<curs.size();++i)
     {
-        QwtPlotCurve* cur = curs[i];
+        QwtPlotItem* item = curs[i];
         QVector<double> xs,ys;
-        SAChart::getXYDatas(xs,ys,curs[i]);
+        if(!chart->getXYDataInRange(xs,ys,item,true))
+        {
+            continue;
+        }
+        QString title = item->title().text();
+
         std::shared_ptr<SAVectorDouble> factor;//拟合的系数
         std::shared_ptr<SATableVariant> info;//拟合的误差参数
         std::tie(factor,info) = saFun::polyfit(xs,ys,order);
@@ -67,15 +70,15 @@ void FunFit::polyfitInChart()
         {
             continue;
         }
-        info->setName(QString("%1_%2PolyFitInfo").arg(cur->title().text()).arg(order));
-        std::shared_ptr<SAVectorPointF> pfitVal = SAValueManager::makeData<SAVectorPointF>(QString("%1_%2PolyFit").arg(cur->title().text()).arg(order));
+        info->setName(QString("%1_%2PolyFitInfo").arg(title).arg(order));
+        std::shared_ptr<SAVectorPointF> pfitVal = SAValueManager::makeData<SAVectorPointF>(QString("%1_%2PolyFit").arg(title).arg(order));
         saFun::polyval(xs,factor.get(),pfitVal.get());
         saValueManager->addData(info);
         saValueManager->addData(pfitVal);
         //
         strDes += "<p>";
         strDes += TR("%1-Polynomial Fittin, order:%2 ")
-                .arg(cur->title().text()).arg(order);
+                .arg(title).arg(order);
         strDes += "<br/>";
         const int factorSize = factor->getSize();
         QString fun;

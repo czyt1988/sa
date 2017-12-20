@@ -34,14 +34,19 @@ public:
     };
     //获取所有绘图的条目的rtti
     static QList<int> getPlotItemsRTTI();
+    static QList<int> getXYSeriesItemsRTTI();
     //判断是否是绘图条目
-    static bool isPlotChartItem(QwtPlotItem* item);
-    //获取所有绘图条目
-    static QwtPlotItemList getCurveItemList(QwtPlot* chart);
+    static bool isPlotChartItem(const QwtPlotItem* item);
+    //根据筛选set获取item list
+    static QwtPlotItemList filterPlotItem(const QwtPlot* chart,const QSet<int>& enableRtti);
+    //获取所有可支持的绘图条目
+    static QwtPlotItemList getPlotChartItemList(const QwtPlot* chart);
+    //获取所有xy点的绘图条目包括QwtPlotCurve和SAXYSeries,SABarSeries,QwtBarChart
+    static QwtPlotItemList getPlotXYSeriesItemList(const QwtPlot* chart);
     //获取item的颜色,无法获取单一颜色就返回QColor()
     static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultClr = QColor(0,0,0));
     //获取item的数据个数，-1为nan
-    static int getItemDataSize(QwtPlotItem* item);
+    static int getItemDataSize(const QwtPlotItem* item);
 
 
     //添加条目，-支持redo/undo
@@ -70,7 +75,8 @@ public:
     void removeDataInRang(const QList<QwtPlotItem *> &chartItems);
     void removeDataInRang();
     //获取选择范围内的数据,如果当前没有选区，返回false
-    bool getDataInSelectRange(QVector<QPointF>& xy,QwtPlotCurve *cur);
+    bool getXYDataInRange(QVector<QPointF>& xy,const QwtPlotItem *cur,bool isNoRegionGetAll=false);
+    bool getXYDataInRange(QVector<double>& xs, QVector<double>& ys,const QwtPlotItem *cur,bool isNoRegionGetAll=false);
     //开始选择模式
     void enableSelection(SelectionMode mode, bool on = true);
     //判断当前的选择模式
@@ -110,6 +116,7 @@ public:
 
     //
     void unenableEditor();
+    //
 
 protected:
     //开始矩形选框模式

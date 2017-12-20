@@ -1,4 +1,4 @@
-#ifndef SAUIINTERFACE_H
+﻿#ifndef SAUIINTERFACE_H
 #define SAUIINTERFACE_H
 //Qt
 #include <QObject>
@@ -13,6 +13,7 @@ class QMdiSubWindow;
 class QProgressBar;
 //qwt
 class QwtPlotCurve;
+
 //SA
 class MainWindow;
 //SA Lib
@@ -109,7 +110,18 @@ public:
     virtual QMdiSubWindow* getCurrentActiveSubWindow() const = 0;
     //判断mdi中是否存在指定的子窗口
     virtual bool isHaveSubWnd(QMdiSubWindow* wndToCheck) const = 0;
+
     /// \}
+
+
+    ///
+    /// \brief 选择items
+    /// \param chart
+    /// \return
+    ///
+    virtual QList<QwtPlotItem*> selectPlotItems(SAChart2D* chart,const QSet<int>& filter) = 0;
+
+
 
     ///
     /// \group 几个dock窗口的控制
@@ -134,13 +146,7 @@ public:
     virtual void raiseChartSettingDock() = 0;
     /// \}
 
-    ///
-    /// \group 绘图窗口的控制
-    /// \{
-    //选择曲线
-    virtual QList<QwtPlotCurve*> selectCurves(SAChart2D* chart) = 0;
-    /// \}
-    ///
+
 
 
 signals:

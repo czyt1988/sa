@@ -1,4 +1,4 @@
-#ifndef SAXYDATATRACKER_H
+﻿#ifndef SAXYDATATRACKER_H
 #define SAXYDATATRACKER_H
 #include "SAChartGlobals.h"
 #include <qwt_plot_picker.h>
@@ -16,6 +16,8 @@ protected:
     virtual int itemClosedPoint(const QwtPlotItem* item, const QPoint &pos,QPointF* itemPoint, double *dist);
     void calcClosestPoint(const QPoint& pos);
     static double distancePower(const QPointF& p1,const QPointF& p2);
+    //获取item对应的颜色，对应自定义的item，需要重载此函数
+    virtual QColor getItemColor(const QwtPlotItem *item) const;
 private:
     ///
     /// \brief 记录最近点的信息

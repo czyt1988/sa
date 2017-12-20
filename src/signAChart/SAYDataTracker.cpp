@@ -1,4 +1,4 @@
-#include "SAYDataTracker.h"
+﻿#include "SAYDataTracker.h"
 #include <qwt_plot_item.h>
 #include <qwt_plot_curve.h>
 #include <qwt_picker_machine.h>
@@ -24,6 +24,38 @@ QRect SAYDataTracker::trackerRect( const QFont &font ) const
     return r;
 }
 
+QString SAYDataTracker::itemInfoAt(const QwtPlotItem *item, const QPointF &pos) const
+{
+    QString curveInfo;
+#if 1
+    if(const QwtPlotCurve *pc = dynamic_cast<const QwtPlotCurve *>(item))
+    {
+        curveInfo = curveInfoAt(static_cast<const QwtPlotCurve *>( item ), pos );
+    }
+    else if(const QwtPlotBarChart * pb = dynamic_cast<const QwtPlotBarChart *>(item))
+    {
+        curveInfo = barInfoAt(static_cast<const QwtPlotBarChart *>( item ), pos );
+    }
+#else
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        curveInfo = curveInfoAt(static_cast<const QwtPlotCurve *>( item ), pos );
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        curveInfo = barInfoAt(static_cast<const QwtPlotBarChart *>( item ), pos );
+        break;
+    }
+    default:
+        break;
+    }
+#endif
+    return curveInfo;
+}
+
 QwtText SAYDataTracker::trackerTextF( const QPointF &pos ) const
 {
     QwtText trackerText;
@@ -35,43 +67,11 @@ QwtText SAYDataTracker::trackerTextF( const QPointF &pos ) const
     trackerText.setBackgroundBrush( c );
 
     QString info;
-#if 0
-    const QwtPlotItemList curves =
-        plot()->itemList( QwtPlotItem::Rtti_PlotCurve );
 
-    for ( int i = 0; i < curves.size(); i++ )
-    {
-        const QString curveInfo = curveInfoAt(
-            static_cast<const QwtPlotCurve *>( curves[i] ), pos );
-
-        if ( !curveInfo.isEmpty() )
-        {
-            if ( !info.isEmpty() )
-                info += "<br>";
-
-            info += curveInfo;
-        }
-    }
-#else
     const QwtPlotItemList& items = plot()->itemList();
     for ( int i = 0; i < items.size(); i++ )
     {
-        QString curveInfo;
-        switch(items[i]->rtti())
-        {
-        case QwtPlotItem::Rtti_PlotCurve:
-        {
-            curveInfo = curveInfoAt(static_cast<const QwtPlotCurve *>( items[i] ), pos );
-            break;
-        }
-        case QwtPlotItem::Rtti_PlotBarChart:
-        {
-            curveInfo = barInfoAt(static_cast<const QwtPlotBarChart *>( items[i] ), pos );
-            break;
-        }
-        default:
-            break;
-        }
+        QString curveInfo = itemInfoAt(items[i],pos);
         if( !curveInfo.isEmpty() )
         {
             if ( !info.isEmpty() )
@@ -79,7 +79,7 @@ QwtText SAYDataTracker::trackerTextF( const QPointF &pos ) const
             info += curveInfo;
         }
     }
-#endif
+
     trackerText.setText( info );
     return trackerText;
 }

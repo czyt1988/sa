@@ -1,4 +1,4 @@
-#ifndef MAINWINDOWPRIVATE_H
+﻿#ifndef MAINWINDOWPRIVATE_H
 #define MAINWINDOWPRIVATE_H
 #define RIBBON_CONTEXT_CATEGORY_ID_CHART_SET (10)
 #include <QtCore/QVariant>
@@ -102,7 +102,7 @@ public:
     QAction *actionSelectionRegionDataMove;///<
 
     QActionGroup* actionGroupSelection;
-    QActionGroup* actionChartEditor;
+    QActionGroup* actionChartEditor;///< 图像编辑器的互斥
     QWidget *centralWidget;
 
 
@@ -133,7 +133,7 @@ public:
     //! operate Category Page
     SARibbonCategory* operateRibbonCategory;
     SARibbonMenu *menuSelection;
-    SARibbonPannel* operateCategorySelectEditorPannel;
+    SARibbonPannel* operateCategoryChartEditorPannel;
     SARibbonToolButton* ribbonButtonStartSelection;
 
     SARibbonToolButton* ribbonButtonSingleSelection;
@@ -152,7 +152,7 @@ public:
     SARibbonToolButton* ribbonButtonYDataPicker;
     SARibbonMenu *menuZoomSet;
 
-    SARibbonPannel* operateCategoryDataEditorPannel;
+
     SARibbonToolButton* ribbonButtonInRangDataRemove;
     SARibbonToolButton* ribbonButtonPickCurveToData;
     SARibbonToolButton* ribbonButtonSelectionRegionDataMove;
