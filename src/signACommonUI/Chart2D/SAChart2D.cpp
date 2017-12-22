@@ -59,6 +59,15 @@ public:
     {
 
     }
+    ~SAChart2DPrivate(){
+        if(m_editor)
+        {//m_editor有可能调用chart2D，而此时chart2D已经析构了SAChart2DPrivate，出现异常
+          //因此，先析构m_editor
+            delete m_editor;
+            m_editor = nullptr;
+        }
+    }
+
     void startPlotDrag()
     {
         if(!m_isStartPlotDrag)
@@ -179,7 +188,7 @@ SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
 
 SAChart2D::~SAChart2D()
 {
-    //qDebug() <<"SAChart2D destroy";
+    qDebug() <<"SAChart2D destroy";
 }
 
 QList<int> SAChart2D::getPlotItemsRTTI()
@@ -1007,6 +1016,13 @@ void SAChart2D::setEditor(SAAbstractPlotEditor *editor)
     if(d_ptr->m_editor)
     {
         delete (d_ptr->m_editor);
+    }
+    if(editor)
+    {
+        if(this != editor->parent())
+        {
+            editor->setParent(this);
+        }
     }
     d_ptr->m_editor = editor;
 }

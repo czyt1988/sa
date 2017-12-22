@@ -1,4 +1,4 @@
-#include "SADrawDelegate.h"
+﻿#include "SADrawDelegate.h"
 #include "mainwindow.h"
 
 #include <QTime>
@@ -405,6 +405,7 @@ SAMdiSubWindow*SADrawDelegate::createFigureMdiSubWidget(const QString &title)
         str = tr("figure[%1]").arg(m_nUserChartCount);
     }
     SAMdiSubWindow* pSubWnd =  m->createMdiSubWindow<SAFigureWindow>(SA::SubWindowFigure,str);
+    pSubWnd->setWindowIcon(QIcon(":/icons/icons/figureIcon.png"));
     if(!pSubWnd)
     {
         --m_nUserChartCount;

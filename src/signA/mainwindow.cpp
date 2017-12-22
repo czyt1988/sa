@@ -1326,10 +1326,6 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
         ui->actionSelectionRegionDataMove->setChecked(false);
         return;
     }
-    if(chart->canvas())
-    {
-        chart->canvas()->setFocus();
-    }
     if(on)
     {
         if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
@@ -1341,6 +1337,10 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
                 chart->setCurrentSelectItems(selCur);
             }
             raiseMainDock();
+            if(chart->canvas())
+            {
+                chart->canvas()->setFocus();
+            }
             selectEditor->setEnabled(false);
             chart->unenableEditor();
             SASelectRegionDataEditor* editor = new SASelectRegionDataEditor(chart);
@@ -1456,7 +1456,11 @@ void MainWindow::onActionChartZoomInTriggered(bool check)
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
+    {
+        bool isEnableZoomer = chart->isEnableZoomer();
         chart->zoomIn();
+        chart->enableZoomer(isEnableZoomer);
+    }
 }
 ///
 /// \brief 当前绘图缩小
@@ -1467,7 +1471,11 @@ void MainWindow::onActionChartZoomOutTriggered(bool check)
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
+    {
+        bool isEnableZoomer = chart->isEnableZoomer();
         chart->zoomOut();
+        chart->enableZoomer(isEnableZoomer);
+    }
 }
 ///
 /// \brief 当前绘图重置
@@ -2342,14 +2350,9 @@ void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
             qDebug() << "old widget:" << old->metaObject()->className()
                  << " new widget:" << now->metaObject()->className();
         }
-        if(SAChart2D* c = qobject_cast<SAChart2D*>(now))
+        if(QwtPlotCanvas* c = qobject_cast<QwtPlotCanvas*>(now))
         {
             Q_UNUSED(c);
-            m_lastForceType = SAUIInterface::FigureWindowFocus;
-        }
-        else if(SAFigureWindow* f = qobject_cast<SAFigureWindow*>(now))
-        {
-            Q_UNUSED(f);
             m_lastForceType = SAUIInterface::FigureWindowFocus;
         }
         else if(SAValueManagerTreeView* v = qobject_cast<SAValueManagerTreeView*>(now))

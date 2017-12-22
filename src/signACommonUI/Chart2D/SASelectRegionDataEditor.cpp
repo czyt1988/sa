@@ -123,6 +123,7 @@ SASelectRegionDataEditor::SASelectRegionDataEditor(SAChart2D *parent)
 SASelectRegionDataEditor::~SASelectRegionDataEditor()
 {
     //说明上次还说处于键盘移动状态
+    qDebug() <<"SASelectRegionDataEditor destroy";
     completeKeyActionEdit();
 }
 
