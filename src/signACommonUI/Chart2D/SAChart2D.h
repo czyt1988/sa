@@ -48,7 +48,6 @@ public:
     //获取item的数据个数，-1为nan
     static int getItemDataSize(const QwtPlotItem* item);
 
-
     //添加条目，-支持redo/undo
     void addItem(QwtPlotItem* item,const QString& des = QString());
     //移除一个对象-支持redo/undo
@@ -75,8 +74,11 @@ public:
     void removeDataInRang(const QList<QwtPlotItem *> &chartItems);
     void removeDataInRang();
     //获取选择范围内的数据,如果当前没有选区，返回false
-    bool getXYDataInRange(QVector<QPointF>& xy,const QwtPlotItem *cur,bool isNoRegionGetAll=false);
-    bool getXYDataInRange(QVector<double>& xs, QVector<double>& ys,const QwtPlotItem *cur,bool isNoRegionGetAll=false);
+    bool getXYDataInRange(QVector<QPointF>& xy,const QwtPlotItem *cur,QVector<int>* index = nullptr);
+    bool getXYDataInRange(QVector<double>& xs, QVector<double>& ys,const QwtPlotItem *cur,QVector<int>* index = nullptr);
+    //获取item对应的xy数据，如果可以转换的话
+    bool getXYData(QVector<QPointF>& xy,const QwtPlotItem *cur);
+    bool getXYData(QVector<double>& xs, QVector<double>& ys,const QwtPlotItem *cur);
     //开始选择模式
     void enableSelection(SelectionMode mode, bool on = true);
     //判断当前的选择模式

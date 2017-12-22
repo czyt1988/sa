@@ -73,9 +73,19 @@ void FunFit::polyfitInChart()
     {
         QwtPlotItem* item = curs[i];
         QVector<double> xs,ys;
-        if(!chart->getXYDataInRange(xs,ys,item,true))
+        if(chart->isRegionVisible())
         {
-            continue;
+            if(!chart->getXYDataInRange(xs,ys,item))
+            {
+                continue;
+            }
+        }
+        else
+        {
+            if(!chart->getXYData(xs,ys,item))
+            {
+                continue;
+            }
         }
         QString title = item->title().text();
 

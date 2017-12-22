@@ -95,6 +95,7 @@ public:
     static size_t getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur, const QVector<int>& index);
     //对2d数据点的提取操作
     static size_t getXYDatas(QVector<int>& indexs,QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
+    static size_t getXYDatas(QVector<int>& indexs,QVector<double>& xs, QVector<double>& ys, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
     //对2d数据点的提取操作
     static size_t getXYDatas(QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
     static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);

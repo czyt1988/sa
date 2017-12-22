@@ -881,6 +881,34 @@ size_t SAChart::getXYDatas(QVector<int>& indexs,QVector<QPointF>& points, const 
     return resCount;
 }
 ///
+/// \brief 提取范围里的2d数据点索引和值
+/// \param rang 范围
+/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
+/// \param series 2d数据点
+/// \param indexs 索引
+/// \param xs x值
+/// \param ys y值
+/// \return 提取的点数
+///
+size_t SAChart::getXYDatas(QVector<int> &indexs, QVector<double> &xs, QVector<double> &ys, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
+{
+    size_t length = series->data()->size();
+    QPointF point;
+    size_t resCount = 0;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = series->data()->sample(i);
+        if(rang.contains(point))
+        {
+            ++resCount;
+            indexs.append(i);
+            xs.append(point.x());
+            ys.append(point.y());
+        }
+    }
+    return resCount;
+}
+///
 /// \brief 提取范围里的2d数据点值
 /// \param rang 范围
 /// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换

@@ -1,4 +1,4 @@
-#include "sa_fun_dsp.h"
+﻿#include "sa_fun_dsp.h"
 
 #include <QVector>
 #include <iterator>
@@ -29,7 +29,21 @@ std::shared_ptr<SAVectorDouble> _detrendDirect(QVector<double>& wave)
     czy::Math::DSP::detrend(wave.begin(),wave.end());
     return SAValueManager::makeData<SAVectorDouble>(wave);
 }
-
+///
+/// \brief saFun::makeVectorPointF
+/// \param x
+/// \param y
+/// \param xys
+///
+void saFun::makeVectorPointF(const QVector<double> &x, const QVector<double> &y, QVector<QPointF> &xys)
+{
+    const int minSize = qMin(x.size(),y.size());
+    xys.resize(minSize);
+    for(int i=0;i<minSize;++i)
+    {
+        xys[i] = QPointF(x[i],y[i]);
+    }
+}
 ///
 /// \brief 去直流
 /// \param wave 波形
@@ -57,7 +71,14 @@ std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(SAAbstractDatas* wave)
     czy::Math::DSP::detrend(waveData.begin(),waveData.end());
 
 }
-
+///
+/// \brief 去直流
+/// \param y 波形
+///
+void saFun::detrendDirect(QVector<double> &y)
+{
+    czy::Math::DSP::detrend(y.begin(),y.end());
+}
 
 ///
 /// \brief 频谱分析
@@ -208,6 +229,15 @@ std::shared_ptr<SAAbstractDatas> saFun::setWindow(SAAbstractDatas *wave, czy::Ma
     return nullptr;
 }
 
+///
+/// \brief saFun::setWindow
+/// \param input
+/// \param window
+///
+void saFun::setWindow(QVector<double> &input, czy::Math::DSP::WindowType window)
+{
+    czy::Math::DSP::windowed (input.begin (),input.end (),window);
+}
 
 ///
 /// \brief 窗函数名
@@ -226,3 +256,7 @@ QString saFun::windowName(czy::Math::DSP::WindowType window)
     }
     return TR("Rect Window");
 }
+
+
+
+

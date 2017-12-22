@@ -16,7 +16,7 @@ class QwtPlotCurve;
 ///
 /// \brief 绘图元素的添加
 ///
-class SAFigureChartItemAddCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureChartItemAddCommand : public SAFigureOptCommand
 {
 public:
     SAFigureChartItemAddCommand(SAChart2D* chart,QwtPlotItem *ser,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
@@ -31,7 +31,7 @@ private:
 ///
 /// \brief 绘图元素群的添加
 ///
-class SAFigureChartItemListAddCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureChartItemListAddCommand : public SAFigureOptCommand
 {
 public:
     SAFigureChartItemListAddCommand(SAChart2D* chart,const QList<QwtPlotItem*>& itemList,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
@@ -46,7 +46,7 @@ private:
 ///
 /// \brief 绘图元素的删除
 ///
-class SAFigureChartItemDeleteCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureChartItemDeleteCommand : public SAFigureOptCommand
 {
 public:
     SAFigureChartItemDeleteCommand(SAChart2D* chart, QwtPlotItem *ser, const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
@@ -61,7 +61,7 @@ private:
 ///
 /// \brief 图像添加选区
 ///
-class SAFigureChartSelectionRegionAddCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureChartSelectionRegionAddCommand : public SAFigureOptCommand
 {
 public:
     SAFigureChartSelectionRegionAddCommand(SAChart2D* chart,const QPainterPath& newRegion,const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
@@ -76,7 +76,7 @@ private:
 ///
 /// \brief 移除曲线QwtPlotCurve范围内的数据
 ///
-class SAFigureRemoveXYSeriesDataInRangCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureRemoveXYSeriesDataInRangCommand : public SAFigureOptCommand
 {
 public:
     SAFigureRemoveXYSeriesDataInRangCommand(SAChart2D* chart
@@ -95,7 +95,7 @@ private:
 ///
 /// \brief 曲线QwtPlotCurve值变更
 ///
-class SAFigureChangeXYSeriesDataCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureChangeXYSeriesDataCommand : public SAFigureOptCommand
 {
 public:
     SAFigureChangeXYSeriesDataCommand(SAChart2D* chart
@@ -115,7 +115,7 @@ private:
 ///
 /// \brief 移动某些序列的数据
 ///
-class SAFigureMoveXYSeriesDataInIndexsCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureMoveXYSeriesDataInIndexsCommand : public SAFigureOptCommand
 {
 public:
     SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D* chart

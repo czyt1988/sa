@@ -683,24 +683,14 @@ void SAChart2D::removeDataInRang()
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false
 /// \param xy
 /// \param cur
-/// \param isNoRegionGetAll 此设置为true，则如果没有选区，会把所有数据获取
+/// \param index 如果非空，会把对应的索引填入
 /// \return
 ///
-bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, const QwtPlotItem *cur, bool isNoRegionGetAll)
+bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, const QwtPlotItem *cur,QVector<int>* index)
 {
     QPainterPath region = getSelectionRange();
-    if(region.isEmpty())
+    if(!isRegionVisible() || region.isEmpty())
     {
-        if(isNoRegionGetAll)
-        {
-            const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
-            if(nullptr == series)
-            {
-                return false;
-            }
-            SAChart::getXYDatas(xy,series);
-            return true;
-        }
         return false;
     }
     SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
@@ -715,17 +705,17 @@ bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, const QwtPlotItem *cur, b
     }
     int xa = cur->xAxis();
     int ya = cur->yAxis();
-    if(xa == editor->getXAxis() && ya == editor->getYAxis())
+    if(xa != editor->getXAxis() && ya != editor->getYAxis())
     {
-        SAChart::getXYDatas(xy,series,region);
+        region = editor->transformToOtherAxis(xa,ya);
+    }
+    if(index)
+    {
+        SAChart::getXYDatas(*index,xy,series,region);
     }
     else
     {
-        region = editor->transformToOtherAxis(xa,ya);
-        if(!region.isEmpty())
-        {
-            SAChart::getXYDatas(xy,series,region);
-        }
+        SAChart::getXYDatas(xy,series,region);
     }
     return true;
 }
@@ -734,24 +724,14 @@ bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, const QwtPlotItem *cur, b
 /// \param xs
 /// \param ys
 /// \param cur
-/// \param isNoRegionGetAll 此设置为true，则如果没有选区，会把所有数据获取
+/// \param index 如果非空，会把对应的索引填入
 /// \return
 ///
-bool SAChart2D::getXYDataInRange(QVector<double> &xs, QVector<double> &ys, const QwtPlotItem *cur, bool isNoRegionGetAll)
+bool SAChart2D::getXYDataInRange(QVector<double> &xs, QVector<double> &ys, const QwtPlotItem *cur, QVector<int> *index)
 {
     QPainterPath region = getSelectionRange();
-    if(region.isEmpty())
+    if(!isRegionVisible() || region.isEmpty())
     {
-        if(isNoRegionGetAll)
-        {
-            const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
-            if(nullptr == series)
-            {
-                return false;
-            }
-            SAChart::getXYDatas(xs,ys,series);
-            return true;
-        }
         return false;
     }
     SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
@@ -766,20 +746,54 @@ bool SAChart2D::getXYDataInRange(QVector<double> &xs, QVector<double> &ys, const
     }
     int xa = cur->xAxis();
     int ya = cur->yAxis();
-    if(xa == editor->getXAxis() && ya == editor->getYAxis())
+    if(xa != editor->getXAxis() || ya != editor->getYAxis())
     {
-        SAChart::getXYDatas(xs,ys,series,region);
+        region = editor->transformToOtherAxis(xa,ya);
+    }
+    if(index)
+    {
+        SAChart::getXYDatas(*index,xs,ys,series,region);
     }
     else
     {
-        region = editor->transformToOtherAxis(xa,ya);
-        if(!region.isEmpty())
-        {
-            SAChart::getXYDatas(xs,ys,series,region);
-        }
+        SAChart::getXYDatas(xs,ys,series,region);
     }
     return true;
 }
+///
+/// \brief 获取item对应的xy数据，如果可以转换的话
+/// \param xy
+/// \param cur
+/// \return
+///
+bool SAChart2D::getXYData(QVector<QPointF> &xy, const QwtPlotItem *cur)
+{
+    const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
+    if(nullptr == series)
+    {
+        return false;
+    }
+    SAChart::getXYDatas(xy,series);
+    return true;
+}
+///
+/// \brief 获取item对应的xy数据，如果可以转换的话
+/// \param xs
+/// \param ys
+/// \param cur
+/// \return
+///
+bool SAChart2D::getXYData(QVector<double> &xs, QVector<double> &ys, const QwtPlotItem *cur)
+{
+    const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
+    if(nullptr == series)
+    {
+        return false;
+    }
+    SAChart::getXYDatas(xs,ys,series);
+    return true;
+}
+
 ///
 /// \brief 开始选择模式
 /// 选择模式可分为矩形，圆形等，具体见\sa SelectionMode

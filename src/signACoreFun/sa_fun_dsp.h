@@ -1,4 +1,4 @@
-#ifndef SAFUNDSP_H
+﻿#ifndef SAFUNDSP_H
 #define SAFUNDSP_H
 #include "SACoreFunGlobal.h"
 #include "czyMath.h"
@@ -13,6 +13,11 @@ namespace saFun {
 //去直流 to_dc(wave)
 SA_CORE_FUN__EXPORT
 std::shared_ptr<SAAbstractDatas> detrendDirect(SAAbstractDatas* wave);
+SA_CORE_FUN__EXPORT
+void detrendDirect(QVector<double>& y);
+//把x序列和y序列组合成pointF序列
+SA_CORE_FUN__EXPORT
+void makeVectorPointF(const QVector<double>& x,const QVector<double>& y,QVector<QPointF>& xys);
 
 //频谱分析 spectrum(wave,fs,fftSize,ampType)->[fre,amp]
 SA_CORE_FUN__EXPORT
@@ -30,6 +35,8 @@ std::tuple<std::shared_ptr<SAVectorDouble>,std::shared_ptr<SAVectorDouble> > pow
 //设置窗函数
 SA_CORE_FUN__EXPORT
 std::shared_ptr<SAAbstractDatas> setWindow(SAAbstractDatas* wave,czy::Math::DSP::WindowType window);
+SA_CORE_FUN__EXPORT
+void setWindow(QVector<double>& input,czy::Math::DSP::WindowType window);
 //窗函数名
 SA_CORE_FUN__EXPORT
 QString windowName(czy::Math::DSP::WindowType window);

@@ -458,14 +458,14 @@ void SAFunPlugin::on_powerSpectrumAction()
 ///
 void SAFunPlugin::on_detrendDirect()
 {
-    m_funDSP->detrendDirectInValue();
+    m_funDSP->detrendDirect();
 }
 ///
 /// \brief 信号设置窗
 ///
 void SAFunPlugin::on_setWindowToWave()
 {
-    m_funDSP->setWindowToWaveInValue();
+    m_funDSP->setWindow();
 }
 ///
 /// \brief 时频分析工具箱

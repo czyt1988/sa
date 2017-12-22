@@ -13,12 +13,14 @@
 #include "SATimeFrequencyAnalysis.h"
 #include "SAGUIGlobalConfig.h"
 #include "SAChart2D.h"
+#include "SAChart.h"
+#include "SAFigureOptCommands.h"
 #define TR(str)\
     QApplication::translate("FunDSP", str, 0)
 
-SAChart2D* get_xy_series(QList<QwtPlotItem*>& res);
+SAChart2D* filter_xy_series(QList<QwtPlotItem*>& res);
 
-SAChart2D* get_xy_series(QList<QwtPlotItem*>& res)
+SAChart2D* filter_xy_series(QList<QwtPlotItem*>& res)
 {
     SAChart2D* chart = saUI->getCurSubWindowChart();
     if(!chart)
@@ -37,11 +39,40 @@ SAChart2D* get_xy_series(QList<QwtPlotItem*>& res)
         return chart;
     }
     res = curs;
+    return chart;
 }
 
 ///
 /// \brief 去趋势
 ///
+void FunDsp::detrendDirect()
+{
+    SAUIInterface::LastFocusType ft = saUI->lastFocusWidgetType();
+    if(SAUIInterface::FigureWindowFocus == ft)
+    {
+        detrendDirectInChart();
+    }
+    else
+    {
+        detrendDirectInValue();
+    }
+}
+///
+/// \brief 信号设置窗
+///
+void FunDsp::setWindow()
+{
+    SAUIInterface::LastFocusType ft = saUI->lastFocusWidgetType();
+    if(SAUIInterface::FigureWindowFocus == ft)
+    {
+        setWindowToWaveInChart();
+    }
+    else
+    {
+        setWindowToWaveInValue();
+    }
+}
+
 void FunDsp::detrendDirectInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
@@ -55,27 +86,83 @@ void FunDsp::detrendDirectInValue()
         saUI->showErrorMessageInfo(saFun::getLastErrorString());
         return;
     }
+    QString info = TR("direct detrend :%1").arg(data->getName());
     saValueManager->addData(res);
+    saUI->showMessageInfo(info,SA::NormalMessage);
 }
-
+///
+/// \brief FunDsp::detrendDirectInChart
+///
 void FunDsp::detrendDirectInChart()
 {
     QList<QwtPlotItem*> curs;
-    SAChart2D* chart = get_xy_series(curs);
+    SAChart2D* chart = filter_xy_series(curs);
     if(nullptr == chart || curs.size() <= 0)
     {
+        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
         return;
     }
+    QString info = TR("direct detrend :");
+    SAFigureOptCommand* topCmd = new SAFigureOptCommand(chart,TR("detrend Direct"));
     for (int i = 0;i<curs.size();++i)
     {
         QwtPlotItem* item = curs[i];
-        QVector<double> xs,ys;
-        if(!chart->getXYDataInRange(xs,ys,item,true))
+        QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
+        if(nullptr == series)
         {
             continue;
         }
 
+        QVector<QPointF> newData;
+        if(chart->isRegionVisible())
+        {
+            QVector<double> xs,ys;
+            QVector<int> index;
+            if(!chart->getXYDataInRange(xs,ys,item,&index))
+            {
+                continue;
+            }
+
+            if(!chart->getXYData(newData,item))
+            {
+                continue;
+            }
+            const int dataSize = newData.size();
+            const int indexSize = index.size();
+            const int ysSize = ys.size();
+            if(indexSize <= 0)
+            {
+                continue;
+            }
+            saFun::detrendDirect(ys);
+            for(int i=0;i<indexSize && i<ysSize;++i)
+            {
+                if(index[i] < dataSize)
+                {
+                    newData[index[i]].ry() = ys[i];
+                }
+            }
+        }
+        else
+        {
+            QVector<double> xs,ys;
+            if(!chart->getXYData(xs,ys,item))
+            {
+                continue;
+            }
+            saFun::detrendDirect(ys);
+            saFun::makeVectorPointF(xs,ys,newData);
+        }
+        new SAFigureChangeXYSeriesDataCommand(chart
+                                             ,series
+                                             ,TR("detrend Direct %1").arg(item->title().text())
+                                             ,newData
+                                             ,topCmd);
+        info += item->title().text();
+        info += " ";
     }
+    chart->appendCommand(topCmd);
+    saUI->showMessageInfo(info,SA::NormalMessage);
 }
 
 ///
@@ -100,30 +187,11 @@ void FunDsp::setWindowToWaveInValue()
         return;
     }
 
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
-    dlg.appendGroup(TR("property set"));
-    auto tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
-                                                   ,TR("Hanning")
-                                                   ,TR("Hamming")
-                                                   ,TR("Blackman")
-                                                   ,TR("Bartlett")}
-                           ,0
-                           ,TR("set window to wave"));
-    dlg.appendGroup(TR("figure"));
-    tmp = dlg.appendBoolProperty("isplot",TR("is plot"),true,TR("if true,when complete calc,sa will chart the result"));
-    if(QDialog::Accepted != dlg.exec())
+
+    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
+    if(!getWindowProperty(window))
     {
         return;
-    }
-    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
-    switch(dlg.getDataByID<int>("windowtype"))//dlg.getData(2).toInt())
-    {
-        case 0:window = czy::Math::DSP::WindowRect;break;
-        case 1:window = czy::Math::DSP::WindowHanning;break;
-        case 2:window = czy::Math::DSP::WindowHamming;break;
-        case 3:window = czy::Math::DSP::WindowBlackman;break;
-        case 4:window = czy::Math::DSP::WindowBartlett;break;
-        default:window = czy::Math::DSP::WindowRect;break;
     }
     auto res = saFun::setWindow(data,window);
     if(nullptr == res)
@@ -133,18 +201,55 @@ void FunDsp::setWindowToWaveInValue()
         return;
     }
     saValueManager->addData(res);
-    //绘图
-    if(dlg.getDataByID<bool>("isplot"))
+    saUI->showNormalMessageInfo(TR("data:[\"%1\"] set window(%2)] -> [\"%3\"]")
+                                .arg(data->getName())
+                                .arg(windowTypeToString(window))
+                                .arg(res->getName()));
+}
+///
+/// \brief 信号设置窗
+///
+void FunDsp::setWindowToWaveInChart()
+{
+    QList<QwtPlotItem*> curs;
+    SAChart2D* chart = filter_xy_series(curs);
+    if(nullptr == chart || curs.size() <= 0)
     {
-        QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1[%2]")
-                                                      .arg(data->getName())
-                                                      .arg(saFun::windowName(window)));
-        SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        SAChart2D* chart = w->create2DPlot();
-        chart->addCurve(res.get());
-        saUI->raiseMainDock();
-        sub->show();
+        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
+        return;
     }
+    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
+    if(!getWindowProperty(window))
+    {
+        return;
+    }
+    QString windowName = windowTypeToString(window);
+    QString info = TR("Set %1 ").arg(windowName);
+    SAFigureOptCommand* topCmd = new SAFigureOptCommand(chart,info);
+    info += ":";
+    for (int i = 0;i<curs.size();++i)
+    {
+        QwtPlotItem* item = curs[i];
+        QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
+        if(nullptr == series)
+        {
+            continue;
+        }
+        QVector<double> xs,ys;
+        SAChart::getXYDatas(xs,ys,series);
+        saFun::setWindow(ys,window);
+        QVector<QPointF> xys;
+        saFun::makeVectorPointF(xs,ys,xys);
+        new SAFigureChangeXYSeriesDataCommand(chart
+                                             ,series
+                                             ,TR("%1 set %2").arg(item->title().text()).arg(windowName)
+                                             ,xys
+                                             ,topCmd);
+        info += item->title().text();
+        info += " ";
+    }
+    chart->appendCommand(topCmd);
+    saUI->showMessageInfo(info,SA::NormalMessage);
 }
 
 
@@ -429,4 +534,39 @@ void FunDsp::tmeFrequency()
     }
     timeFrequencyWidget->show();
     timeFrequencyWidget->raise();
+}
+///
+/// \brief 获取设置窗的属性
+///
+bool FunDsp::getWindowProperty(czy::Math::DSP::WindowType & windowType)
+{
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    dlg.appendGroup(TR("property set"));
+    auto tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
+                                                   ,TR("Hanning")
+                                                   ,TR("Hamming")
+                                                   ,TR("Blackman")
+                                                   ,TR("Bartlett")}
+                           ,0
+                           ,TR("set window to wave"));
+    if(QDialog::Accepted != dlg.exec())
+    {
+        return false;
+    }
+    windowType = czy::Math::DSP::WindowRect;
+    switch(dlg.getDataByID<int>("windowtype"))//dlg.getData(2).toInt())
+    {
+        case 0:windowType = czy::Math::DSP::WindowRect;break;
+        case 1:windowType = czy::Math::DSP::WindowHanning;break;
+        case 2:windowType = czy::Math::DSP::WindowHamming;break;
+        case 3:windowType = czy::Math::DSP::WindowBlackman;break;
+        case 4:windowType = czy::Math::DSP::WindowBartlett;break;
+        default:windowType = czy::Math::DSP::WindowRect;break;
+    }
+    return true;
+}
+
+QString FunDsp::windowTypeToString(czy::Math::DSP::WindowType windowType)
+{
+    return saFun::windowName(windowType);
 }
