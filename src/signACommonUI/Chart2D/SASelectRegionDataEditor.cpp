@@ -326,17 +326,17 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
     }
     bool isAutoReplot = chart2D()->autoReplot();
     chart2D()->setAutoReplot(false);
+    SAFigureOptCommand *topCmd = new SAFigureOptCommand(chart2D(),tr("move region datas")); // 创建一个命令集
     //选区进行移动
     QPointF currentPoint = editor->invTransform(screenPoint);
     QPointF originPoint = editor->invTransform(d_ptr->m_firstPressedScreenPoint);
     QPointF offset = czy::calcOffset(currentPoint,originPoint);
-    SAFigureOptCommand *removeDataAndRegion = new SAFigureOptCommand(chart2D(),tr("move region datas")); // 创建一个命令集
     QPainterPath p = d_ptr->m_selectRegionOrigin.translated(offset);
     new SAFigureChartSelectionRegionAddCommand(chart2D()
                                                 ,d_ptr->m_selectRegionOrigin
                                                 ,p
                                                 ,tr("move region")
-                                                ,removeDataAndRegion);
+                                                ,topCmd);
     //
     //数据进行移动
     int count = d_ptr->infoCount();
@@ -358,18 +358,30 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
         double oy = plot()->invTransform(yaxis,d_ptr->m_firstPressedScreenPoint.y());
 #endif
         QPointF plotOffset(cx-ox,cy-oy);
-        switch(info->rtti())
+        switch(item->rtti())
         {
-        case chart2d_base_info::RTTI_PointInfo:
+        case QwtPlotItem::Rtti_PlotCurve:
+        case SA::RTTI_SAXYSeries:
+        case SA::RTTI_SAScatterSeries:
+        case QwtPlotItem::Rtti_PlotBarChart:
+        case SA::RTTI_SABarSeries:
         {
+            QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
             chart2d_points_info* pointInfo = static_cast<chart2d_points_info*>(info);
-            SAFigureMoveSerisePointDataInfo* reunInfo = new SAFigureMoveSerisePointDataInfo(item);
-            reunInfo->setIndexs(pointInfo->indexs());
-            reunInfo->setOriginPoints(pointInfo->points());
+            if(nullptr == series || nullptr == pointInfo)
+            {
+                continue;
+            }
             QVector<QPointF> newData = pointInfo->points();
             std::for_each(newData.begin(),newData.end(),[plotOffset](QPointF& point){point+=plotOffset;});
-            reunInfo->setNewPoints(newData);
-            new SAFigureMovePointDataInIndexsCommand(chart2D(),reunInfo,"move datas",removeDataAndRegion);
+
+            new SAFigureMoveXYSeriesDataInIndexsCommand(chart2D()
+                                                ,series
+                                                ,QString("move %1 datas").arg(item->title().text())
+                                                ,pointInfo->indexs()
+                                                ,pointInfo->points()
+                                                ,newData
+                                                ,topCmd);
             //把数据更新
             pointInfo->setPoints(newData);
             break;
@@ -378,7 +390,7 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
             break;
         }
     }
-    chart2D()->appendCommand(removeDataAndRegion);
+    chart2D()->appendCommand(topCmd);
     chart2D()->setAutoReplot(isAutoReplot);
     d_ptr->m_firstPressedScreenPoint = screenPoint;
     d_ptr->m_tmpPoint = screenPoint;
@@ -482,6 +494,7 @@ bool SASelectRegionDataEditor::mouseReleasedEvent(const QMouseEvent *e)
 
 bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
 {
+    qDebug() << "key press";
     //响应方向键和回车键
     if(d_ptr->m_isStartMouseAction)
     {

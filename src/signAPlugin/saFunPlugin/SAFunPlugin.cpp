@@ -1,4 +1,4 @@
-#include "SAFunPlugin.h"
+﻿#include "SAFunPlugin.h"
 #include <QApplication>
 //sa lib
 #include "../global/SAGlobals.h"
@@ -443,14 +443,14 @@ void SAFunPlugin::on_histAction()
 ///
 void SAFunPlugin::on_spectrumAction()
 {
-    m_funDSP->spectrum();
+    m_funDSP->spectrumInValue();
 }
 ///
 /// \brief 功率谱分析 - powerSpectrum
 ///
 void SAFunPlugin::on_powerSpectrumAction()
 {
-    m_funDSP->powerSpectrum();
+    m_funDSP->powerSpectrumInValue();
 }
 
 ///
@@ -458,14 +458,14 @@ void SAFunPlugin::on_powerSpectrumAction()
 ///
 void SAFunPlugin::on_detrendDirect()
 {
-    m_funDSP->detrendDirect();
+    m_funDSP->detrendDirectInValue();
 }
 ///
 /// \brief 信号设置窗
 ///
 void SAFunPlugin::on_setWindowToWave()
 {
-    m_funDSP->setWindowToWave();
+    m_funDSP->setWindowToWaveInValue();
 }
 ///
 /// \brief 时频分析工具箱
@@ -493,7 +493,7 @@ void SAFunPlugin::on_pointSmoothAction()
 ///
 void SAFunPlugin::on_fittingFigureCurveAction()
 {
-    m_funFit->polyfitInChart();
+    m_funFit->polyfit();
 }
 
 

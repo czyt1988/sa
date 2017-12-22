@@ -97,7 +97,11 @@ public:
     }
     void appendItemListAddCommand(QList<QwtPlotItem*> itemList,const QString& des)
     {
+        bool isAutoReplot = q_ptr->autoReplot();
+        q_ptr->setAutoReplot(false);
         m_undoStack.push(new SAFigureChartItemListAddCommand(q_ptr,itemList,des));
+        q_ptr->setAutoReplot(isAutoReplot);
+        q_ptr->replot();
     }
     void appendRemoveItemCommand(QwtPlotItem* item,const QString& des)
     {
@@ -109,29 +113,40 @@ public:
     }
     void appendRemoveChart2DItemDataInRangCommand(const QList<QwtPlotItem *>& items,const QString& des)
     {
-        QList<QwtPlotCurve *> curList;
+        QUndoCommand* cmd = new QUndoCommand(des);
+        cmd->setText(des);
+        bool isAutoReplot = q_ptr->autoReplot();
+        q_ptr->setAutoReplot(false);
         for(int i=0;i<items.size();++i)
         {
+            QwtPlotItem *item = items[i];
             switch(items[i]->rtti())
             {
             case QwtPlotItem::Rtti_PlotCurve:
             case SA::RTTI_SAXYSeries:
             case SA::RTTI_SAScatterSeries:
-                curList.append(static_cast<QwtPlotCurve*>(items[i]));break;
+            case QwtPlotItem::Rtti_PlotBarChart:
+            case SA::RTTI_SABarSeries:
+                if(QwtSeriesStore<QPointF>* cur = dynamic_cast<QwtSeriesStore<QPointF>*>(item))
+                {
+                    new SAFigureRemoveXYSeriesDataInRangCommand(q_ptr,cur,"",item->xAxis(),item->yAxis(),cmd);
+                }
+                break;
             case QwtPlotItem::Rtti_PlotSpectroCurve:
             case QwtPlotItem::Rtti_PlotIntervalCurve:
             case QwtPlotItem::Rtti_PlotHistogram:
             case QwtPlotItem::Rtti_PlotSpectrogram:
             case QwtPlotItem::Rtti_PlotTradingCurve:
-            case QwtPlotItem::Rtti_PlotBarChart:
             case QwtPlotItem::Rtti_PlotMultiBarChart:
             default:
                 break;
             }
         }
-        QUndoCommand* cmd = new QUndoCommand(des);
-        new SAFigureRemoveCurveDataInRangCommand(q_ptr,curList,"",cmd);
+
+
         m_undoStack.push(cmd);
+        q_ptr->setAutoReplot(isAutoReplot);
+        q_ptr->replot();
     }
 
 
@@ -159,6 +174,7 @@ SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
   ,d_ptr(new SAChart2DPrivate(this))
 {
     setAcceptDrops(true);
+    canvas()->setFocusPolicy(Qt::ClickFocus);
 }
 
 SAChart2D::~SAChart2D()

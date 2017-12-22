@@ -1,11 +1,11 @@
-#include "SAFigureOptCommands.h"
+﻿#include "SAFigureOptCommands.h"
 #include <SAChart2D.h>
 #include "SAChart.h"
 #include "SAXYSeries.h"
 #include "qwt_plot_item.h"
 #include "qwt_plot_barchart.h"
 #include "SAAbstractRegionSelectEditor.h"
-
+#include "qwt_series_data.h"
 
 
 SAFigureChartItemAddCommand::SAFigureChartItemAddCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName,QUndoCommand *parent)
@@ -81,26 +81,20 @@ SAFigureChartItemListAddCommand::~SAFigureChartItemListAddCommand()
 
 void SAFigureChartItemListAddCommand::redo()
 {
-    plot()->setAutoReplot(false);
     const int size = m_itemList.size();
     for(int i=0;i<size;++i)
     {
         m_itemList[i]->attach(plot());
     }
-    plot()->setAutoReplot(true);
-    plot()->replot();
 }
 
 void SAFigureChartItemListAddCommand::undo()
 {
-    plot()->setAutoReplot(false);
     const int size = m_itemList.size();
     for(int i=0;i<size;++i)
     {
         m_itemList[i]->detach();
     }
-    plot()->setAutoReplot(true);
-    plot()->replot();
 }
 
 SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(SAChart2D *chart, const QPainterPath &newRegion, const QString &cmdName, QUndoCommand *parent)
@@ -134,211 +128,139 @@ void SAFigureChartSelectionRegionAddCommand::undo()
 /// \param curves
 /// \param cmdName
 ///
-SAFigureRemoveCurveDataInRangCommand::SAFigureRemoveCurveDataInRangCommand(SAChart2D *chart, const QList<QwtPlotCurve *> &curves, const QString &cmdName, QUndoCommand *parent)
+SAFigureRemoveXYSeriesDataInRangCommand::SAFigureRemoveXYSeriesDataInRangCommand(SAChart2D* chart
+                                                                                 , QwtSeriesStore<QPointF>* curve
+                                                                                 , const QString &cmdName
+                                                                                 , int xaxis
+                                                                                 , int yaxis
+                                                                                 , QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_curveList(curves)
-    ,m_redoCount(0)
+    ,m_curve(curve)
 {
-    recordPlotCureData(m_backupData);
-
-    plot()->setAutoReplot(false);
+    SAChart::getXYDatas(m_oldData,m_curve);//记录原有的数据
     QPainterPath region = plot()->getSelectionRange();
     SAAbstractRegionSelectEditor* editor = plot()->getRegionSelectEditor();
-
-    Q_ASSERT_X(editor != nullptr,"SAFigureRemoveCurveDataInRangCommand::redo","null RegionSelectEditor");
-
-    QHash<QPair<int,int>,QPainterPath> otherScaleMap;
-    const int count = m_curveList.size();
-    for(int i=0;i<count;++i)
+    if(editor)
     {
-        QwtPlotCurve* curve = m_curveList[i];
-        int xa = curve->xAxis();
-        int ya = curve->yAxis();
-        if(xa == editor->getXAxis() && ya == editor->getYAxis())
+        if(xaxis != editor->getXAxis() || yaxis != editor->getYAxis())
         {
-            SAChart::removeDataInRang(region,curve);
-        }
-        else
-        {
-            QPair<int,int> axiss=qMakePair(xa,ya);
-            if(!otherScaleMap.contains(axiss))
-            {
-                otherScaleMap[axiss] = editor->transformToOtherAxis(xa,ya);
-            }
-            SAChart::removeDataInRang(otherScaleMap.value(axiss)
-                                      ,curve);
+            region = editor->transformToOtherAxis(xaxis,yaxis);
         }
     }
-    plot()->setAutoReplot(true);
+    SAChart::removeDataInRang(region,m_oldData,m_newData);
 }
 
-void SAFigureRemoveCurveDataInRangCommand::redo()
+void SAFigureRemoveXYSeriesDataInRangCommand::redo()
 {
-    if(0 == m_redoCount)
-    {
-        //首次进入不进行操作，首次操作在构造函数完成
-        ++m_redoCount;
-        plot()->replot();
-        return;
-    }
-    recover();
+   m_curve->setData(new QwtPointSeriesData(m_newData));
 }
+
+void SAFigureRemoveXYSeriesDataInRangCommand::undo()
+{
+    m_curve->setData(new QwtPointSeriesData(m_oldData));
+}
+
+
+
 ///
-/// \brief 记录现有曲线值，并把原来记录的曲线值还原
+/// \brief 曲线QwtPlotCurve值变更
+/// \param chart
+/// \param curve
+/// \param cmdName
+/// \param newPoints
+/// \param parent
 ///
-void SAFigureRemoveCurveDataInRangCommand::undo()
-{
-    recover();
-}
-
-void SAFigureRemoveCurveDataInRangCommand::recordPlotCureData(QList<QSharedPointer<QVector<QPointF> > > &recorder)
-{
-    const int count = m_curveList.size();
-    for(int i=0;i<count;++i)
-    {
-        QwtPlotCurve *cur = m_curveList[i];
-        Q_ASSERT_X(cur != nullptr,"recordePlotCureData","null curve ptr");
-        QSharedPointer<QVector<QPointF> > vecPtr(new QVector<QPointF>);
-        SAChart::getXYDatas(*vecPtr,cur);
-        recorder.append(vecPtr);
-    }
-}
-
-void SAFigureRemoveCurveDataInRangCommand::recover()
-{
-    Q_ASSERT_X(m_curveList.size() == m_backupData.size(),"SAFigureRemoveCurveDataInRangCommand::undo","recorde size not equal");
-    plot()->setAutoReplot(false);
-    const int count = m_curveList.size();
-    //先记录现有的曲线值
-    QList<QSharedPointer<QVector<QPointF> > > recordeCurveData;
-    recordPlotCureData(recordeCurveData);
-    //还原原来的记录
-    for(int i=0;i<count;++i)
-    {
-        QwtPlotCurve *cur = m_curveList[i];
-        cur->setSamples(*m_backupData[i]);
-    }
-    //替换记录
-    m_backupData = recordeCurveData;
-    plot()->setAutoReplot(true);
-    plot()->replot();
-}
-
-SAFigureMovePointDataInIndexsCommand::SAFigureMovePointDataInIndexsCommand(SAChart2D *chart
-                                                                           , SAFigureMoveSeriseDataInfoBase* baseInfo
-                                                                           , const QString &cmdName
-                                                                           , QUndoCommand *parent)
+SAFigureChangeXYSeriesDataCommand::SAFigureChangeXYSeriesDataCommand(SAChart2D *chart
+                                                                     , QwtSeriesStore<QPointF> *curve
+                                                                     , const QString &cmdName
+                                                                     ,const QVector<QPointF>& newPoints
+                                                                     , QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_baseInfo(baseInfo)
+    ,m_curve(curve)
+    ,m_newData(newPoints)
+{
+    SAChart::getXYDatas(m_oldData,m_curve);//记录原有的数据
+}
+
+void SAFigureChangeXYSeriesDataCommand::redo()
+{
+    m_curve->setData(new QwtPointSeriesData(m_newData));
+}
+
+void SAFigureChangeXYSeriesDataCommand::undo()
+{
+    m_curve->setData(new QwtPointSeriesData(m_oldData));
+}
+
+
+
+
+SAFigureMoveXYSeriesDataInIndexsCommand::SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D *chart
+                                                                                 , QwtSeriesStore<QPointF> *curve
+                                                                                 , const QString &cmdName
+                                                                                 , const QVector<int> &inRangIndexs
+                                                                                 , const QVector<QPointF> &inRangNewData
+                                                                                 , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_inRangIndexs(inRangIndexs)
+    ,m_inRangNewData(inRangNewData)
+    ,m_curve(curve)
+{
+    SAChart::getXYDatas(m_inRangOldData,curve,inRangIndexs);//记录原有的数据
+
+}
+
+SAFigureMoveXYSeriesDataInIndexsCommand::SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D *chart
+                                                                                 , QwtSeriesStore<QPointF> *curve
+                                                                                 , const QString &cmdName
+                                                                                 , const QVector<int> &inRangIndexs
+                                                                                 , const QVector<QPointF> &inRangOldData
+                                                                                 , const QVector<QPointF> &inRangNewData
+                                                                                 , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_inRangOldData(inRangOldData)
+    ,m_inRangIndexs(inRangIndexs)
+    ,m_inRangNewData(inRangNewData)
+    ,m_curve(curve)
 {
 
 }
 
-SAFigureMovePointDataInIndexsCommand::~SAFigureMovePointDataInIndexsCommand()
+
+void SAFigureMoveXYSeriesDataInIndexsCommand::redo()
 {
-    if(m_baseInfo)
+    QVector<QPointF> curveDatas;
+    SAChart::getXYDatas(curveDatas,m_curve);
+    const int maxSize = curveDatas.size();
+    const int indexCount = m_inRangIndexs.size();
+    const int inRangDataCount = m_inRangNewData.size();
+
+    for(int i=0;i<indexCount && i<inRangDataCount;++i)
     {
-        delete m_baseInfo;
+        int index = m_inRangIndexs[i];
+        if(index < maxSize)
+        {
+            curveDatas[index] = m_inRangNewData[i];
+        }
     }
+    m_curve->setData(new QwtPointSeriesData(curveDatas));
 }
 
-void SAFigureMovePointDataInIndexsCommand::redo()
+void SAFigureMoveXYSeriesDataInIndexsCommand::undo()
 {
-    //数据进行移动
-    QwtPlotItem* item = m_baseInfo->item();
-    switch(item->rtti())
-    {
-    case QwtPlotItem::Rtti_PlotCurve:
-    {
-        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
-        QVector<QPointF> xyData;
-        QwtPlotCurve*cur = static_cast<QwtPlotCurve*>(item);
-        SAChart::getXYDatas(xyData,cur);
-        const int indexCount = info->indexs().size();
-        const int inRangNewDataCount = info->newPoints().size();
-        const int curveDataCount = info->originPoints().size();
-        const QVector<int>& indexs = info->indexs();
-        const QVector<QPointF>& newPoints = info->newPoints();
-        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
-        {
-            xyData[indexs[j]] = newPoints[j];
-        }
-        cur->setSamples(xyData);
-        break;
-    }
-    case QwtPlotItem::Rtti_PlotBarChart:
-    {
-        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
-        QVector<QPointF> xyData;
-        QwtPlotBarChart*bar = static_cast<QwtPlotBarChart*>(item);
-        SAChart::getXYDatas(xyData,bar);
-        const int indexCount = info->indexs().size();
-        const int inRangNewDataCount = info->newPoints().size();
-        const int curveDataCount = info->originPoints().size();
-        const QVector<int>& indexs = info->indexs();
-        const QVector<QPointF>& newPoints = info->newPoints();
-        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
-        {
-            xyData[indexs[j]] = newPoints[j];
-        }
-        bar->setSamples(xyData);
-        break;
-    }
-    case QwtPlotItem::Rtti_PlotSpectroCurve:
-    case QwtPlotItem::Rtti_PlotIntervalCurve:
-    case QwtPlotItem::Rtti_PlotHistogram:
-    case QwtPlotItem::Rtti_PlotSpectrogram:
-    case QwtPlotItem::Rtti_PlotTradingCurve:
-    case QwtPlotItem::Rtti_PlotMultiBarChart:
-    default:
-        break;
-    }
-}
+    QVector<QPointF> curveDatas;
+    SAChart::getXYDatas(curveDatas,m_curve);
+    const int maxSize = curveDatas.size();
+    const int indexCount = m_inRangIndexs.size();
+    const int inRangDataCount = m_inRangOldData.size();
 
-void SAFigureMovePointDataInIndexsCommand::undo()
-{
-    QwtPlotItem* item = m_baseInfo->item();
-    switch(item->rtti())
+    for(int i=0;i<indexCount && i<inRangDataCount;++i)
     {
-    case QwtPlotItem::Rtti_PlotCurve:
-    {
-        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
-        QVector<QPointF> xyData;
-        QwtPlotCurve*cur = static_cast<QwtPlotCurve*>(item);
-        SAChart::getXYDatas(xyData,cur);
-        const int indexCount = info->indexs().size();
-        const int inRangNewDataCount = info->newPoints().size();
-        const int curveDataCount = info->originPoints().size();
-        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
+        int index = m_inRangIndexs[i];
+        if(index < maxSize)
         {
-            xyData[info->indexs()[j]] = info->originPoints()[j];
+            curveDatas[index] = m_inRangOldData[i];
         }
-        cur->setSamples(xyData);
-        break;
     }
-    case QwtPlotItem::Rtti_PlotBarChart:
-    {
-        SAFigureMoveSerisePointDataInfo* info = static_cast<SAFigureMoveSerisePointDataInfo*>(m_baseInfo);
-        QVector<QPointF> xyData;
-        QwtPlotBarChart*bar = static_cast<QwtPlotBarChart*>(item);
-        SAChart::getXYDatas(xyData,bar);
-        const int indexCount = info->indexs().size();
-        const int inRangNewDataCount = info->newPoints().size();
-        const int curveDataCount = info->originPoints().size();
-        for(int j=0;j<indexCount && j<inRangNewDataCount && j<curveDataCount;++j)
-        {
-            xyData[info->indexs()[j]] = info->originPoints()[j];
-        }
-        bar->setSamples(xyData);
-        break;
-    }
-    case QwtPlotItem::Rtti_PlotSpectroCurve:
-    case QwtPlotItem::Rtti_PlotIntervalCurve:
-    case QwtPlotItem::Rtti_PlotHistogram:
-    case QwtPlotItem::Rtti_PlotSpectrogram:
-    case QwtPlotItem::Rtti_PlotTradingCurve:
-    case QwtPlotItem::Rtti_PlotMultiBarChart:
-    default:
-        break;
-    }
+    m_curve->setData(new QwtPointSeriesData(curveDatas));
 }

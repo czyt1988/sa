@@ -798,15 +798,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 //    toolBar_plot->addSeparator();
 
 
-    dockWidget_message->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_main->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_windowList->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_valueViewer->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_plotSet->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_plotLayer->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_DataFeature->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_chartDataViewer->setFocusPolicy(Qt::ClickFocus);
-    dockWidget_valueManage->setFocusPolicy(Qt::ClickFocus);
 
 
 

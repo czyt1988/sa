@@ -1,4 +1,4 @@
-#ifndef FUNFIT_H
+﻿#ifndef FUNFIT_H
 #define FUNFIT_H
 
 ///
@@ -8,7 +8,11 @@ class FunFit
 {
 public:
     FunFit();
+    static void polyfit();
     static void polyfitInChart();
+    static void polyfitInValue();
+private:
+    static bool getPolyfitConfig(int& order);
 };
 
 #endif // FUNFIT_H

@@ -92,6 +92,7 @@ public:
     static size_t getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
     static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
     static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
+    static size_t getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur, const QVector<int>& index);
     //对2d数据点的提取操作
     static size_t getXYDatas(QVector<int>& indexs,QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
     //对2d数据点的提取操作
@@ -101,6 +102,8 @@ public:
     static size_t getXYIndex(QVector<int>& indexs, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang );
 
     //把范围内的数据移除 返回移除的个数
+    static int removeDataInRang(const QRectF &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
+    static int removeDataInRang(const QPainterPath &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
     static int removeDataInRang(const QRectF& removeRang,QwtSeriesStore<QPointF>* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
 

@@ -7,6 +7,7 @@ HEADERS += \
     $$PWD/SABarSeries.h \
     $$PWD/SASeriesAndDataPtrMapper.h \
     $$PWD/SAFigureOptCommand.h \
+    $$PWD/SAFigureOptCommands.h \
     $$PWD/SASelectRegionEditor.h \
     $$PWD/SASelectRegionDataEditor.h \
     $$PWD/SAScatterSeries.h \
@@ -20,6 +21,7 @@ SOURCES += \
     $$PWD/SABarSeries.cpp \
     $$PWD/SASeriesAndDataPtrMapper.cpp \
     $$PWD/SAFigureOptCommand.cpp \
+    $$PWD/SAFigureOptCommands.cpp \
     $$PWD/SASelectRegionEditor.cpp \
     $$PWD/SASelectRegionDataEditor.cpp \
     $$PWD/SAScatterSeries.cpp \

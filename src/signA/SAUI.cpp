@@ -173,6 +173,11 @@ QList<QMdiSubWindow *> SAUI::getSubWindowList() const
     return m_mainWnd->getSubWindowList();
 }
 
+SAUIInterface::LastFocusType SAUI::lastFocusWidgetType() const
+{
+    return m_mainWnd->lastFocusWidgetType();
+}
+
 QMdiSubWindow *SAUI::getCurrentActiveSubWindow() const
 {
     return m_mainWnd->getCurrentActiveSubWindow();

@@ -1,10 +1,11 @@
-#ifndef SAFIGUREOPTCOMMANDS_H
+﻿#ifndef SAFIGUREOPTCOMMANDS_H
 #define SAFIGUREOPTCOMMANDS_H
 #include "SAFigureOptCommand.h"
 #include <QList>
 #include <QVector>
 #include <QSharedPointer>
 #include "qwt_plot_item.h"
+#include "qwt_series_store.h"
 #include "qwt_series_store.h"
 #include <memory>
 class SAChart2D;
@@ -73,103 +74,70 @@ private:
 };
 
 ///
-/// \brief 移除曲线范围内的数据
+/// \brief 移除曲线QwtPlotCurve范围内的数据
 ///
-class SAFigureRemoveCurveDataInRangCommand : public SAFigureOptCommand
+class SAFigureRemoveXYSeriesDataInRangCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureRemoveCurveDataInRangCommand(SAChart2D* chart,const QList<QwtPlotCurve *>& curves,const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
+    SAFigureRemoveXYSeriesDataInRangCommand(SAChart2D* chart
+                                            , QwtSeriesStore<QPointF> *curve
+                                            , const QString &cmdName
+                                            , int xaxis
+                                            , int yaxis
+                                            , QUndoCommand *parent = Q_NULLPTR);
     virtual void redo();
     virtual void undo();
 private:
-    void recordPlotCureData(QList<QSharedPointer<QVector<QPointF> > >& recorder);
-    void recover();
+    QwtSeriesStore<QPointF>* m_curve;
+    QVector<QPointF> m_newData;
+    QVector<QPointF> m_oldData;
+};
+///
+/// \brief 曲线QwtPlotCurve值变更
+///
+class SAFigureChangeXYSeriesDataCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureChangeXYSeriesDataCommand(SAChart2D* chart
+                                      , QwtSeriesStore<QPointF> *curve
+                                      , const QString &cmdName
+                                      , const QVector<QPointF> &newPoints
+                                      , QUndoCommand *parent = Q_NULLPTR);
+    virtual void redo();
+    virtual void undo();
 private:
-    int m_redoCount;
-    QList<QwtPlotCurve*> m_curveList;
-    QList<QSharedPointer<QVector<QPointF> > > m_backupData;///< 保存曲线原来的数据
+    QwtSeriesStore<QPointF>* m_curve;
+    QVector<QPointF> m_newData;
+    QVector<QPointF> m_oldData;
 };
 
+
 ///
-/// \brief 适用于SAFigureMoveCurveDataInIndexsCommand的数据结构
+/// \brief 移动某些序列的数据
 ///
-class SAFigureMoveSeriseDataInfoBase
+class SAFigureMoveXYSeriesDataInIndexsCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureMoveSeriseDataInfoBase(QwtPlotItem* it = nullptr):plotItem(it)
-    {
-
-    }
-    virtual ~SAFigureMoveSeriseDataInfoBase()
-    {
-
-    }
-    virtual int rtti() const = 0;
-    enum RTTI
-    {
-        RTTI_PointInfo
-    };
-    const QVector<int>& indexs() const{return inRangIndexs;}
-    QVector<int>& indexs() {return inRangIndexs;}
-    void setIndexs(const QVector<int>& v){inRangIndexs = v;}
-
-    QwtPlotItem* item(){return plotItem;}
-    void setItem(QwtPlotItem* v){plotItem  =v;}
-protected:
-    QwtPlotItem* plotItem;
-    QVector<int> inRangIndexs;
-};
-
-class SAFigureMoveSerisePointDataInfo : public SAFigureMoveSeriseDataInfoBase
-{
-public:
-    SAFigureMoveSerisePointDataInfo(QwtPlotItem* it = nullptr):SAFigureMoveSeriseDataInfoBase(it)
-    {
-
-    }
-    ~SAFigureMoveSerisePointDataInfo(){
-
-    }
-    virtual int rtti() const{return RTTI_PointInfo;}
-    void setOriginPoints(const QVector<QPointF>& p){
-        inRangOriginData = p;
-    }
-    const QVector<QPointF>& originPoints() const{
-        return inRangOriginData;
-    }
-    QVector<QPointF>& originPoints(){
-        return inRangOriginData;
-    }
-
-    void setNewPoints(const QVector<QPointF>& p){
-        inRangNewData = p;
-    }
-    const QVector<QPointF>& newPoints() const{
-        return inRangNewData;
-    }
-    QVector<QPointF>& newPoints(){
-        return inRangNewData;
-    }
-protected:
-    QVector<QPointF> inRangOriginData;
-    QVector<QPointF> inRangNewData;
-};
-
-///
-/// \brief 移动某些序号的数据
-///
-class SAFigureMovePointDataInIndexsCommand : public SAFigureOptCommand
-{
-public:
-    SAFigureMovePointDataInIndexsCommand(SAChart2D* chart
-                                         ,SAFigureMoveSeriseDataInfoBase* baseInfo
+    SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D* chart
+                                         ,QwtSeriesStore<QPointF> *curve
                                          ,const QString &cmdName
+                                         ,const QVector<int>& inRangIndexs
+                                         ,const QVector<QPointF>& inRangNewData
                                          , QUndoCommand *parent = Q_NULLPTR);
-    ~SAFigureMovePointDataInIndexsCommand();
+    SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D* chart
+                                         ,QwtSeriesStore<QPointF> *curve
+                                         ,const QString &cmdName
+                                         ,const QVector<int>& inRangIndexs
+                                         ,const QVector<QPointF>& inRangOldData
+                                         ,const QVector<QPointF>& inRangNewData
+                                         , QUndoCommand *parent = Q_NULLPTR);
+
     virtual void redo();
     virtual void undo();
 private:
-    SAFigureMoveSeriseDataInfoBase* m_baseInfo;
+    QVector<QPointF> m_inRangOldData;
+    QVector<int> m_inRangIndexs;
+    QVector<QPointF> m_inRangNewData;
+    QwtSeriesStore<QPointF> *m_curve;
 };
-
 #endif // SAFIGUREOPTCOMMAND_H

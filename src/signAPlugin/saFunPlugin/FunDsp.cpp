@@ -1,4 +1,4 @@
-#include "FunDsp.h"
+﻿#include "FunDsp.h"
 #include <QApplication>
 #include <QVariant>
 #include <QMdiSubWindow>
@@ -16,12 +16,33 @@
 #define TR(str)\
     QApplication::translate("FunDSP", str, 0)
 
+SAChart2D* get_xy_series(QList<QwtPlotItem*>& res);
 
+SAChart2D* get_xy_series(QList<QwtPlotItem*>& res)
+{
+    SAChart2D* chart = saUI->getCurSubWindowChart();
+    if(!chart)
+    {
+        saUI->showWarningMessageInfo(TR("you should select a chart at first"));
+        saUI->raiseMessageInfoDock();
+        return chart;
+    }
+    QList<QwtPlotItem*> curs = chart->getCurrentSelectItems();
+    if(0 == curs.size())
+    {
+        curs = saUI->selectPlotItems(chart,SAChart2D::getXYSeriesItemsRTTI().toSet());
+    }
+    if(curs.size() <= 0)
+    {
+        return chart;
+    }
+    res = curs;
+}
 
 ///
 /// \brief 去趋势
 ///
-void FunDsp::detrendDirect()
+void FunDsp::detrendDirectInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
     if(nullptr == data)
@@ -37,10 +58,30 @@ void FunDsp::detrendDirect()
     saValueManager->addData(res);
 }
 
+void FunDsp::detrendDirectInChart()
+{
+    QList<QwtPlotItem*> curs;
+    SAChart2D* chart = get_xy_series(curs);
+    if(nullptr == chart || curs.size() <= 0)
+    {
+        return;
+    }
+    for (int i = 0;i<curs.size();++i)
+    {
+        QwtPlotItem* item = curs[i];
+        QVector<double> xs,ys;
+        if(!chart->getXYDataInRange(xs,ys,item,true))
+        {
+            continue;
+        }
+
+    }
+}
+
 ///
 /// \brief 信号设置窗
 ///
-void FunDsp::setWindowToWave()
+void FunDsp::setWindowToWaveInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
     if(nullptr == data)
@@ -107,7 +148,7 @@ void FunDsp::setWindowToWave()
 }
 
 
-void FunDsp::spectrum()
+void FunDsp::spectrumInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
     if(nullptr == data)
@@ -240,7 +281,7 @@ void FunDsp::spectrum()
 }
 
 
-void FunDsp::powerSpectrum()
+void FunDsp::powerSpectrumInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
     if(nullptr == data)

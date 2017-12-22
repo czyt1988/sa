@@ -1,4 +1,4 @@
-#ifndef SATEXTDATAIMPORT_H
+﻿#ifndef SATEXTDATAIMPORT_H
 #define SATEXTDATAIMPORT_H
 #include "SAPluginInterface.h"
 #include <QObject>
@@ -6,6 +6,7 @@
 #include <QIcon>
 #include <memory>
 #include "SATimeFrequencyAnalysis.h"
+#include <QScopedPointer>
 class SAAbstractFunctionItem;
 class SAAbstractDatas;
 class QStringList;
@@ -90,6 +91,7 @@ private:
     void setupDataPreprocessingMenu();
     void setupFittingMenu();
 private:
+    SAUIInterface* m_ui;
     std::unique_ptr<QMenu> m_menuDSP;///<信号处理相关菜单
     std::unique_ptr<QMenu> m_menuStatistics;///<统计学相关菜单
     std::unique_ptr<QMenu> m_dataPreprocessing;///< 数据预处理
@@ -112,11 +114,11 @@ private:
     //======统计学相关菜单==========================================
     QAction* m_FittingFigureCurve;///< 拟合图表曲线
     //
-    std::unique_ptr<FunDsp> m_funDSP;///< Dsp相关的函数封装
-    std::unique_ptr<FunDataPreprocessing> m_funDataPreprocessing;///< DataPreprocessing相关的函数封装
-    std::unique_ptr<FunNum> m_funNum;///< num相关的函数封装
-    std::unique_ptr<FunFit> m_funFit;///< Fit相关的函数封装
-    SAUIInterface* m_ui;
+    QScopedPointer<FunDsp> m_funDSP;///< Dsp相关的函数封装
+    QScopedPointer<FunDataPreprocessing> m_funDataPreprocessing;///< DataPreprocessing相关的函数封装
+    QScopedPointer<FunNum> m_funNum;///< num相关的函数封装
+    QScopedPointer<FunFit> m_funFit;///< Fit相关的函数封装
+
     //
     QHash<QString,QList<QAction*> > m_category2actionList;
     bool m_isSetupUI;///< 是否已经完成ui的构建

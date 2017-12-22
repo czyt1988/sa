@@ -28,6 +28,12 @@ class SA_COMMON_UI_EXPORT SAUIInterface : public QObject
 public:
     SAUIInterface();
     virtual ~SAUIInterface();
+    enum LastFocusType
+    {
+        FigureWindowFocus ///< 最后获取焦点的窗口类型是figure窗口
+        ,ValueManagerFocus ///< 最后欧获取焦点的窗口类型是变量管理窗口
+    };
+
 public:
     //获取主界面指针
     virtual QWidget *getMainWindowPtr() = 0;
@@ -111,6 +117,8 @@ public:
     //判断mdi中是否存在指定的子窗口
     virtual bool isHaveSubWnd(QMdiSubWindow* wndToCheck) const = 0;
 
+    //记录最后获取焦点的窗口类型，此函数主要用于函数功能模块判断是对图进行操作还是对数据进行操作
+    virtual LastFocusType lastFocusWidgetType() const = 0;
     /// \}
 
 

@@ -152,6 +152,8 @@ public:
     QList<QMdiSubWindow*> getSubWindowList() const;
     //从subwindow指针中查找是否含有SAFigureWindow
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* sub);
+    //记录最后获取焦点的窗口类型，此函数主要用于函数功能模块判断是对图进行操作还是对数据进行操作
+    SAUIInterface::LastFocusType lastFocusWidgetType() const;
     /// \}
 
     /// \group 子窗口的相关控制
@@ -554,7 +556,7 @@ private:
     SAFigureWindow* m_lastShowFigureWindow;///<记录最后一次显示的figure window
     QActionGroup* m_chartRegionSelectionShapeActionGroup;///<选区选择形状的action group
     QActionGroup* m_chartRegionSelectionModeActionGroup;///<选区选择模式的action group
-
+    int m_lastForceType;///< 记录最后的焦点信息
 };
 ///
 /// \brief 根据子窗口类型获取后缀名

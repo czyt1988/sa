@@ -1,7 +1,6 @@
 *.*~
 *~
 *.jpg
-*.png
 rm.sh
 push.sh
 .*.swp

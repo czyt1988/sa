@@ -2,8 +2,6 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
-    $$PWD/SAQwtPlotItemGroupPropertys.h \
-    $$PWD/SAFigureOptCommands.h
+    $$PWD/SAQwtPlotItemGroupPropertys.h
 
 SOURCES += \
-    $$PWD/SAFigureOptCommands.cpp

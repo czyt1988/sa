@@ -1326,6 +1326,10 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
         ui->actionSelectionRegionDataMove->setChecked(false);
         return;
     }
+    if(chart->canvas())
+    {
+        chart->canvas()->setFocus();
+    }
     if(on)
     {
         if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
@@ -1762,7 +1766,7 @@ void MainWindow::onActionInRangDataRemoveTriggered()
         return;
     }
 
-    if(chart->isCurrentSelectItemsHaveChartItem())
+    if(!chart->isCurrentSelectItemsHaveChartItem())
     {
         QList<QwtPlotItem*> selItems = CurveSelectDialog::getSelectChartPlotItems(chart,this);
         qDebug() << selItems.size();
@@ -1936,6 +1940,14 @@ QList<QMdiSubWindow *> MainWindow::getSubWindowList() const
 SAFigureWindow*MainWindow::getFigureWidgetFromMdiSubWindow(QMdiSubWindow* sub)
 {
     return qobject_cast<SAFigureWindow*>(sub->widget());
+}
+///
+/// \brief 记录最后获取焦点的窗口类型，此函数主要用于函数功能模块判断是对图进行操作还是对数据进行操作
+/// \return
+///
+SAUIInterface::LastFocusType MainWindow::lastFocusWidgetType() const
+{
+    return static_cast<SAUIInterface::LastFocusType>(m_lastForceType);
 }
 
 ///
@@ -2329,6 +2341,21 @@ void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
         {
             qDebug() << "old widget:" << old->metaObject()->className()
                  << " new widget:" << now->metaObject()->className();
+        }
+        if(SAChart2D* c = qobject_cast<SAChart2D*>(now))
+        {
+            Q_UNUSED(c);
+            m_lastForceType = SAUIInterface::FigureWindowFocus;
+        }
+        else if(SAFigureWindow* f = qobject_cast<SAFigureWindow*>(now))
+        {
+            Q_UNUSED(f);
+            m_lastForceType = SAUIInterface::FigureWindowFocus;
+        }
+        else if(SAValueManagerTreeView* v = qobject_cast<SAValueManagerTreeView*>(now))
+        {
+            Q_UNUSED(v);
+            m_lastForceType = SAUIInterface::ValueManagerFocus;
         }
     }
 }

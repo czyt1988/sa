@@ -11,5 +11,6 @@
         <file>icons/axesSet.png</file>
         <file>icons/itemSet.png</file>
         <file>icons/normalSet.png</file>
+        <file>icons/figureWindow.png</file>
     </qresource>
 </RCC>

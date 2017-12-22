@@ -545,6 +545,23 @@ size_t SAChart::getXYDatas(QVector<QPointF> &xys, QVector<double> &xs, QVector<d
     return realSize;
 }
 ///
+/// \brief 更具索引提取xy值
+/// \param xys
+/// \param cur
+/// \param index
+/// \return
+///
+size_t SAChart::getXYDatas(QVector<QPointF> &xys, const QwtSeriesStore<QPointF> *cur, const QVector<int> &index)
+{
+    const int count = cur->dataSize();
+    std::for_each(index.begin(),index.end(),[&](int i){
+        if(i < count && i>=0)
+        {
+            xys.append(cur->sample(i));
+        }
+    });
+}
+///
 /// \brief 设置曲线标识符
 /// \param cur 曲线
 /// \param style 符号类型
@@ -582,6 +599,47 @@ void SAChart::setCurvePenStyle(QwtPlotCurve *cur, Qt::PenStyle style)
     pen.setStyle(style);
     cur->setPen(pen);
 }
+///
+/// \brief 把范围内的数据移除
+/// \param removeRang 需要移除的数据范围
+/// \param rawData 输入的原始数据
+/// \param newData 输出的新数据
+/// \return 移除的个数
+///
+int SAChart::removeDataInRang(const QRectF &removeRang, const QVector<QPointF> &rawData, QVector<QPointF> &newData)
+{
+    size_t length = rawData.size();
+    newData.reserve(length);
+    for(size_t i = 0;i<length;++i)
+    {
+        const QPointF& point = rawData[i];
+        if(removeRang.contains(point))
+            continue;
+        newData.push_back(point);
+    }
+    return newData.size();
+}
+///
+/// \brief 把范围内的数据移除
+/// \param removeRang 需要移除的数据范围
+/// \param rawData 输入的原始数据
+/// \param newData 输出的新数据
+/// \return 移除的个数
+///
+int SAChart::removeDataInRang(const QPainterPath &removeRang, const QVector<QPointF> &rawData, QVector<QPointF> &newData)
+{
+    size_t length = rawData.size();
+    newData.reserve(length);
+    for(size_t i = 0;i<length;++i)
+    {
+        const QPointF& point = rawData[i];
+        if(removeRang.contains(point))
+            continue;
+        newData.push_back(point);
+    }
+    return newData.size();
+}
+
 ///
 /// \brief 把范围内的数据移除
 /// \param removeRang 需要移除的数据范围
@@ -791,6 +849,10 @@ size_t SAChart::getXYIndex(QVector<int> &indexs, const QwtSeriesStore<QPointF> *
     }
     return resCount;
 }
+
+
+
+
 
 ///
 /// \brief 提取范围里的2d数据点索引和值

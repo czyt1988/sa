@@ -1,4 +1,4 @@
-#include "SAAbstractPlotEditor.h"
+﻿#include "SAAbstractPlotEditor.h"
 #include <QEvent>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -82,7 +82,7 @@ bool SAAbstractPlotEditor::eventFilter(QObject *object, QEvent *event)
     {
         switch( event->type() )
         {
-        //空格长按下，鼠标事件不处理
+        //空格按下，鼠标事件不处理
             case QEvent::MouseButtonPress:
             {
                 const QMouseEvent* mouseEvent =
