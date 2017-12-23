@@ -1,6 +1,7 @@
 #include "SAFigureGlobalConfig.h"
 #include "SAGlobalConfig.h"
 #include "SAGlobalConfigDefine.h"
+
 SAFigureGlobalConfig::SAFigureGlobalConfig()
 {
 }

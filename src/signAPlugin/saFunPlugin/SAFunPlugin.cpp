@@ -443,7 +443,7 @@ void SAFunPlugin::on_histAction()
 ///
 void SAFunPlugin::on_spectrumAction()
 {
-    m_funDSP->spectrumInValue();
+    m_funDSP->spectrum();
 }
 ///
 /// \brief 功率谱分析 - powerSpectrum

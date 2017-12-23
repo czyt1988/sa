@@ -319,10 +319,8 @@ public slots:
 	void enableLegend(bool enable = true);
 	void enableLegendPanel(bool enable = true);
 
-    void markPoint(QPointF pos,const QString& strLabel, QColor clr = Qt::black,int type = 0);
     void markYValue(double data,const QString& strLabel, QColor clr = Qt::black,int type = 0);
 
-    void removeAllMarker();
 
 
 	void showItem( const QVariant &itemInfo, bool on );

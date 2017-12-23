@@ -2,6 +2,7 @@
 #define SACHART2D_H
 #include "SA2DGraph.h"
 #include "SACommonUIGlobal.h"
+#include "SAPlotMarker.h"
 #include <memory>
 class QUndoStack;
 class SAChart2DPrivate;
@@ -47,6 +48,11 @@ public:
     static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultClr = QColor(0,0,0));
     //获取item的数据个数，-1为nan
     static int getItemDataSize(const QwtPlotItem* item);
+
+    //根据曲线的size获取曲线的宽度，此函数结果通过setThinLineWidthPointSize设置
+    static int getPlotCurWidth(int size);
+    //设置细线画笔点数阈值，若大于这个值，默认画图的画笔将会为1，此函数设置会影响getPlotCurWidth函数结果
+    static void setThinLineWidthPointSize(int size);
 
     //添加条目，-支持redo/undo
     void addItem(QwtPlotItem* item,const QString& des = QString());
@@ -118,8 +124,11 @@ public:
 
     //
     void unenableEditor();
-    //
-
+    //添加标记 通过此函数添加的标记将会记录到一个列表中
+    void addPlotMarker(SAAbstractPlotMarker* marker);
+    const QList<SAAbstractPlotMarker*>& getPlotMarkers() const;
+    void removePlotMarker(SAAbstractPlotMarker* marker);
+    void removeAllPlotMarker();
 protected:
     //开始矩形选框模式
     void startRectSelectMode();
@@ -158,6 +167,8 @@ protected:
 
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
+private:
+    static int s_size_pen_width2;///< 小于此尺寸将设置画笔为2，大于这个尺寸设置为1
 };
 
 #endif // SACHART2D_H

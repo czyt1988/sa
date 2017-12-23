@@ -12,11 +12,11 @@
     QApplication::translate("sa_fun_dsp", str, 0)
 
 std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::WindowType window);
-std::shared_ptr<SAVectorPointF> _setWindow(SAVectorPointF* wave, czy::Math::DSP::WindowType window);
-std::shared_ptr<SAVectorPointF> _detrendDirect(SAVectorPointF* wave);
+std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF *wave, czy::Math::DSP::WindowType window);
+std::shared_ptr<SAVectorPointF> _detrendDirect(const SAVectorPointF *wave);
 std::shared_ptr<SAVectorDouble> _detrendDirect(QVector<double>& wave);
 
-std::shared_ptr<SAVectorPointF> _detrendDirect(SAVectorPointF* wave)
+std::shared_ptr<SAVectorPointF> _detrendDirect(const SAVectorPointF* wave)
 {
     QVector<double> x,y;
     wave->getYs(y);
@@ -49,12 +49,12 @@ void saFun::makeVectorPointF(const QVector<double> &x, const QVector<double> &y,
 /// \param wave 波形
 /// \return 去直流后波形
 ///
-std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(SAAbstractDatas* wave)
+std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(const SAAbstractDatas *wave)
 {
     QVector<double> waveData;
     if(SA::VectorPoint == wave->getType())
     {
-        std::shared_ptr<SAVectorPointF> res = _detrendDirect(static_cast<SAVectorPointF*>(wave));
+        std::shared_ptr<SAVectorPointF> res = _detrendDirect(static_cast<const SAVectorPointF*>(wave));
         return SAValueManager::castPointToBase(res);
     }
     else if(SAAbstractDatas::converToDoubleVector(wave,waveData))
@@ -91,7 +91,7 @@ void saFun::detrendDirect(QVector<double> &y)
 /// \return output[频率，幅值]
 ///
 std::tuple<std::shared_ptr<SAVectorDouble>,std::shared_ptr<SAVectorDouble> >
-saFun::spectrum(SAAbstractDatas* wave
+saFun::spectrum(const SAAbstractDatas *wave
                                   , double fs
                                   , size_t fftSize
                                   , czy::Math::DSP::SpectrumType ampType)
@@ -99,7 +99,7 @@ saFun::spectrum(SAAbstractDatas* wave
     QVector<double> waveArr;
     if(SA::VectorPoint == wave->getType())
     {
-        SAVectorPointF* pf = static_cast<SAVectorPointF*>(wave);
+        const SAVectorPointF* pf = static_cast<const SAVectorPointF*>(wave);
         pf->getYs(waveArr);
     }
     else if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
@@ -132,6 +132,17 @@ saFun::spectrum(SAAbstractDatas* wave
 }
 
 
+void saFun::spectrum(const QVector<double> &input, double fs, size_t fftSize, czy::Math::DSP::SpectrumType ampType, QVector<double> &out_fre, QVector<double> &out_mag)
+{
+    out_fre.reserve(fftSize/2);
+    out_mag.reserve(fftSize/2);
+    std::back_insert_iterator<QVector<double> > freIte(out_fre);
+    std::back_insert_iterator<QVector<double> > magIte(out_mag);
+    int len = czy::Math::DSP::spectrum(input.cbegin(),input.cend()
+                                   ,freIte,magIte
+                                       ,fs,fftSize
+                                       ,ampType);
+}
 ///
 /// \brief 功率谱分析
 /// \param wave 波形
@@ -143,16 +154,16 @@ saFun::spectrum(SAAbstractDatas* wave
 /// \return output[频率，幅值]
 ///
 std::tuple<std::shared_ptr<SAVectorDouble>, std::shared_ptr<SAVectorDouble> >
-saFun::powerSpectrum(SAAbstractDatas* wave
-                                  ,double fs
-                                  ,size_t fftSize
-                                  ,int pdw
-                                  ,double samplingInterval)
+saFun::powerSpectrum(const SAAbstractDatas *wave
+                                  , double fs
+                                  , size_t fftSize
+                                  , int pdw
+                                  , double samplingInterval)
 {
     QVector<double> waveArr;
     if(SA::VectorPoint == wave->getType())
     {
-        SAVectorPointF* pf = static_cast<SAVectorPointF*>(wave);
+        const SAVectorPointF* pf = static_cast<const SAVectorPointF*>(wave);
         pf->getYs(waveArr);
     }
     else if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
@@ -189,7 +200,7 @@ std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::W
     czy::Math::DSP::windowed (y.begin (),y.end (),window);
     return SAValueManager::makeData<SAVectorDouble>(y);
 }
-std::shared_ptr<SAVectorPointF> _setWindow(SAVectorPointF* wave, czy::Math::DSP::WindowType window)
+std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF* wave, czy::Math::DSP::WindowType window)
 {
     QVector<double> x,y;
     wave->getYs(y);
@@ -203,12 +214,12 @@ std::shared_ptr<SAVectorPointF> _setWindow(SAVectorPointF* wave, czy::Math::DSP:
 /// \param window 窗类型
 /// \return 设置窗后的波形
 ///
-std::shared_ptr<SAAbstractDatas> saFun::setWindow(SAAbstractDatas *wave, czy::Math::DSP::WindowType window)
+std::shared_ptr<SAAbstractDatas> saFun::setWindow(const SAAbstractDatas *wave, czy::Math::DSP::WindowType window)
 {
     QVector<double> waveArr;
     if(SA::VectorPoint == wave->getType())
     {
-        std::shared_ptr<SAVectorPointF> res = _setWindow(static_cast<SAVectorPointF*>(wave),window);
+        std::shared_ptr<SAVectorPointF> res = _setWindow(static_cast<const SAVectorPointF*>(wave),window);
         return SAValueManager::castPointToBase(res);
     }
     else if(SAAbstractDatas::converToDoubleVector(wave,waveArr))
@@ -256,6 +267,7 @@ QString saFun::windowName(czy::Math::DSP::WindowType window)
     }
     return TR("Rect Window");
 }
+
 
 
 

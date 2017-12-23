@@ -1099,31 +1099,6 @@ void SA2DGraph::enableGridYMin(bool enable)
 //========================================================================================
 
 
-
-
-
-
-///
-/// \brief 在图片上标记点
-/// \param pos 点的位置
-/// \param strLabel 说明
-/// \param type 样式，默认为0，就是箭头
-/// \todo type and clr show be use
-///
-void SA2DGraph::markPoint(QPointF pos, const QString& strLabel, QColor clr, int type)
-{
-    SAPointMarker* pointMark = new SAPointMarker(pos);
-    SATriangleMarkSymbol* tra = new SATriangleMarkSymbol();
-    pointMark->setSymbol( tra );
-    pointMark->setLabel(strLabel);
-    pointMark->setLabelAlignment(Qt::AlignTop|Qt::AlignHCenter);
-    pointMark->setSpacing(10);//设置文字和mark的间隔
-    pointMark->attach( this );
-
-    //TODO
-    ///未完成，注意
-}
-
 ///
 /// \brief 设置y值横线标记
 /// \param data 值
@@ -1143,26 +1118,7 @@ void SA2DGraph::markYValue(double data, const QString &strLabel, QColor clr, int
     valueMark->setSpacing(1);//设置文字和mark的间隔
     valueMark->attach( this );
 }
-///
-/// \brief 擦除所有的标记
-///
-void SA2DGraph::removeAllMarker()
-{
-    detachItems(QwtPlotItem::Rtti_PlotMarker);
-    QList<QwtPlotItem*> items = itemList();
-    for(int i=0;i<items.size();++i)
-    {
-        if (items[i]->rtti() > SARttiMarker_LowerBoundary
-                &&
-                items[i]->rtti() < SARttiMarker_UpperBoundary
-                )
-        {
-           items[i]->detach();
-           if(items[i])
-               delete items[i];
-        }
-    }
-}
+
 ///
 /// \brief 根据给定的item进行删除
 /// \param markRtti 标记要删除的item的rtti

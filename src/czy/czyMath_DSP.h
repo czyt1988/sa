@@ -36,7 +36,7 @@ public:
     };
 
     ///
-    /// \brief like matlab nextpow2
+    /// \brief 获取当前数字的下一个2^n基数的n
     /// \param n
     /// \return
     ///
@@ -44,6 +44,17 @@ public:
     static INT_LIKE nextPow2(INT_LIKE n)
     {
         return ceil(log2(n));
+    }
+    ///
+    /// \brief 获取当前数字的下一个2^n数
+    /// \param n
+    /// \return
+    ///
+    template<typename INT_LIKE>
+    static INT_LIKE nextPow2Value(INT_LIKE val)
+    {
+        INT_LIKE n = nextPow2(val);
+        return pow(2,(int)n);
     }
 
     static void windowed(double *x, size_t n, WindowType windowflag);

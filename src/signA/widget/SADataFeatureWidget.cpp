@@ -3,11 +3,12 @@
 #include <QMainWindow>
 #include <QMdiSubWindow>
 #include <QTimer>
-
 #include <SAPlotMarker.h>
 #include <QItemSelectionModel>
 #include <QItemSelection>
 #include "SAChart.h"
+#include "SAPlotMarker.h"
+#include "SAMarkSymbol.h"
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -415,13 +416,25 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
         case QVariant::Point:
         {
             QPointF point = var.toPointF();
-            c->markPoint(point,tr("%1(%2,%3)").arg(item->getName()).arg(point.x()).arg(point.y()));
+            SAPointMarker* pointMark = new SAPointMarker(point);
+            SATriangleMarkSymbol* tra = new SATriangleMarkSymbol();
+            pointMark->setSymbol( tra );
+            pointMark->setLabel(tr("%1(%2,%3)").arg(item->getName()).arg(point.x()).arg(point.y()));
+            pointMark->setLabelAlignment(Qt::AlignTop|Qt::AlignHCenter);
+            pointMark->setSpacing(10);//设置文字和mark的间隔
+            c->addPlotMarker(pointMark);
             c->replot();
         }break;
         case QVariant::Double:
         {
             double data = var.toDouble();
-            c->markYValue(data,tr("%1(%2)").arg(item->getName().arg(data)));
+            SAYValueMarker* valueMark = new SAYValueMarker(data);
+            valueMark->setXValue(c->axisXmax());
+            valueMark->setLinePen(Qt::black,1);
+            valueMark->setLabel(tr("%1(%2)").arg(item->getName().arg(data)));
+            valueMark->setLabelAlignment(Qt::AlignTop|Qt::AlignRight);
+            valueMark->setSpacing(1);//设置文字和mark的间隔
+            c->addPlotMarker(valueMark);
             c->replot();
         }break;
         default:
@@ -441,9 +454,8 @@ void SADataFeatureWidget::on_toolButton_clearDataFeature_clicked()
         return;
     QList<SAChart2D*> charts= figure->get2DPlots();
     std::for_each(charts.begin(),charts.end(),[](SAChart2D* p){
-        p->removeAllMarker();
+        p->removeAllPlotMarker();
     });
-
 }
 
 void SADataFeatureWidget::onShowErrorMessage(const QString &info)

@@ -222,10 +222,6 @@ QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) c
 	QColor c;
 	switch (rtti)
 	{
-    case SAAbstractPlotMarker::Rtti_SAPointMarker:
-    case SAAbstractPlotMarker::Rtti_SAYValueMarker:
-        c = static_cast<const QwtPlotMarker*>(item)->linePen ().color();
-        break;
     case SA::RTTI_SAXYSeries:
         c = static_cast<const SAXYSeries*>(item)->pen().color();
         break;
@@ -337,10 +333,6 @@ QVariant SAPlotLayerModel::getIconFromItem(const QwtPlotItem* item) const
         return ICON_LayoutLegend;
 	case QwtPlotItem::Rtti_PlotMarker:
         return ICON_LayoutMark;
-    case SAAbstractPlotMarker::Rtti_SAPointMarker:
-        return ICON_LayoutPointMarker;
-    case SAAbstractPlotMarker::Rtti_SAYValueMarker:
-        return ICON_LayoutYValueMarker;
 	}
 	return QVariant();
 }

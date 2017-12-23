@@ -31,7 +31,7 @@
 #include "qwt_plot_intervalcurve.h"
 #include "qwt_plot_multi_barchart.h"
 
-
+int SAChart2D::s_size_pen_width2 = 1000;
 
 class SAChart2DPrivate
 {
@@ -47,6 +47,7 @@ public:
     bool m_isStartPlotDrag;///<记录空格长按
     bool m_isEnablePannerBeforePressedSpace;///< 记录按下空格前是否处于panner状态
     bool m_isEnableZoomBeforePressedSpace;///< 记录按下空格前是否处于zoom状态
+    QList<SAAbstractPlotMarker *> m_plotMarkers;
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
       ,m_selectMode(SAChart2D::NoneSelection)
@@ -411,6 +412,20 @@ int SAChart2D::getItemDataSize(const QwtPlotItem *item)
     return -1;
 }
 
+int SAChart2D::getPlotCurWidth(int size)
+{
+    if(size > s_size_pen_width2)
+    {
+        return 1;
+    }
+    return 2;
+}
+
+void SAChart2D::setThinLineWidthPointSize(int size)
+{
+    s_size_pen_width2 = size;
+}
+
 void SAChart2D::addItem(QwtPlotItem *item, const QString &des)
 {
     d_ptr->appendItemAddCommand(item,des);
@@ -428,6 +443,8 @@ QwtPlotCurve *SAChart2D::addCurve(const double *xData, const double *yData, int 
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData,size);
+    pCurve->setPen(SARandColorMaker::getCurveColor()
+                ,getPlotCurWidth(pCurve->dataSize()));
     addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
     return pCurve;
 }
@@ -440,6 +457,8 @@ QwtPlotCurve *SAChart2D::addCurve(const QVector<QPointF> &xyDatas)
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xyDatas);
+    pCurve->setPen(SARandColorMaker::getCurveColor()
+                ,getPlotCurWidth(pCurve->dataSize()));
     addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
     return pCurve;
 }
@@ -452,6 +471,8 @@ QwtPlotCurve *SAChart2D::addCurve(const QVector<double> &xData, const QVector<do
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData);
+    pCurve->setPen(SARandColorMaker::getCurveColor()
+                ,getPlotCurWidth(pCurve->dataSize()));
     addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
     return pCurve;
 }
@@ -470,7 +491,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
     }
 
     series->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
+                ,getPlotCurWidth(series->dataSize()));
     addItem(series.data(),tr("add curve:%1").arg(series->title().text()));
     return series.take();
 }
@@ -490,7 +511,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xD
         return nullptr;
     }
     series->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
+                ,getPlotCurWidth(series->dataSize()));
     addItem(series.data(),tr("add curve:%1").arg(series->title().text()));
     return series.take();
 }
@@ -510,7 +531,7 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *x, SAAbstractDatas *y, const QS
         return nullptr;
     }
     series->setPen(SARandColorMaker::getCurveColor()
-                ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
+                ,getPlotCurWidth(series->dataSize()));
     addItem(series.data(),tr("add curve:%1").arg(series->title().text()));
     return series.take();
 }
@@ -533,7 +554,7 @@ SAHistogramSeries *SAChart2D::addHistogram(SAAbstractDatas *datas)
     }
     QColor clr = SARandColorMaker::getCurveColor();
     series->setBrush(QBrush(clr));
-    series->setPen(clr,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
+    series->setPen(clr,getPlotCurWidth(series->dataSize()));
     series->setStyle(QwtPlotHistogram::Columns);
     addItem(series.data(),tr("add Histogram:%1").arg(series->title().text()));
     return series.take();
@@ -1107,6 +1128,49 @@ void SAChart2D::unenableEditor()
     }
     SA2DGraph::unenableEditor();
 }
+///
+/// \brief 添加标记 通过此函数添加的标记将会记录到一个列表中
+/// \param marker
+///
+void SAChart2D::addPlotMarker(SAAbstractPlotMarker *marker)
+{
+    d_ptr->m_plotMarkers.append(marker);
+    marker->attach(this);
+}
+///
+/// \brief 返回此图记录的标记
+/// \return
+///
+const QList<SAAbstractPlotMarker *> &SAChart2D::getPlotMarkers() const
+{
+    return d_ptr->m_plotMarkers;
+}
+///
+/// \brief 移除此图记录的一个标记
+/// \param marker
+///
+void SAChart2D::removePlotMarker(SAAbstractPlotMarker *marker)
+{
+    int index = d_ptr->m_plotMarkers.indexOf(marker);
+    if(index >= 0)
+    {
+        SAAbstractPlotMarker *m = d_ptr->m_plotMarkers.takeAt(index);
+        m->detach();
+        delete m;
+    }
+}
+///
+/// \brief 移除所有标记
+///
+void SAChart2D::removeAllPlotMarker()
+{
+    std::for_each(d_ptr->m_plotMarkers.begin(),d_ptr->m_plotMarkers.end()
+                  ,[](SAAbstractPlotMarker *marker){
+        marker->detach();
+        delete marker;
+    });
+    d_ptr->m_plotMarkers.clear();
+}
 
 ///
 /// \brief 开始矩形选框模式
@@ -1210,7 +1274,7 @@ QList<SAXYSeries *> SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
                 }
                 series->setSamples(x,y);
                 series->setPen(SARandColorMaker::getCurveColor()
-                            ,SAFigureGlobalConfig::getPlotCurWidth(series->dataSize()));
+                            ,getPlotCurWidth(series->dataSize()));
                 itemList.append(series.release());
             }
             else if(dlg.isSelDef())

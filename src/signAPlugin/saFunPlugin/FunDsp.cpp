@@ -73,6 +73,8 @@ void FunDsp::setWindow()
     }
 }
 
+
+
 void FunDsp::detrendDirectInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
@@ -187,13 +189,23 @@ void FunDsp::setWindowToWaveInValue()
         return;
     }
 
-
+    bool isDetrend = false;
     czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
-    if(!getWindowProperty(window))
+    if(!getWindowProperty(window,isDetrend))
     {
         return;
     }
-    auto res = saFun::setWindow(data,window);
+    std::shared_ptr<SAAbstractDatas> res;
+    if(isDetrend)
+    {
+        res = saFun::detrendDirect(data);
+        res = saFun::setWindow(res.get(),window);
+    }
+    else
+    {
+        res = saFun::setWindow(data,window);
+    }
+
     if(nullptr == res)
     {
         saUI->showErrorMessageInfo(saFun::getLastErrorString());
@@ -218,8 +230,9 @@ void FunDsp::setWindowToWaveInChart()
         saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
         return;
     }
+    bool isDetrend = false;
     czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
-    if(!getWindowProperty(window))
+    if(!getWindowProperty(window,isDetrend))
     {
         return;
     }
@@ -237,6 +250,10 @@ void FunDsp::setWindowToWaveInChart()
         }
         QVector<double> xs,ys;
         SAChart::getXYDatas(xs,ys,series);
+        if(isDetrend)
+        {
+            saFun::detrendDirect(ys);
+        }
         saFun::setWindow(ys,window);
         QVector<QPointF> xys;
         saFun::makeVectorPointF(xs,ys,xys);
@@ -252,6 +269,18 @@ void FunDsp::setWindowToWaveInChart()
     saUI->showMessageInfo(info,SA::NormalMessage);
 }
 
+void FunDsp::spectrum()
+{
+    SAUIInterface::LastFocusType ft = saUI->lastFocusWidgetType();
+    if(SAUIInterface::FigureWindowFocus == ft)
+    {
+        spectrumInChart();
+    }
+    else
+    {
+        spectrumInValue();
+    }
+}
 
 void FunDsp::spectrumInValue()
 {
@@ -273,70 +302,19 @@ void FunDsp::spectrumInValue()
         saUI->raiseMessageInfoDock();
         return;
     }
-
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
-    dlg.appendGroup(TR("property set"));
-    auto tmp = dlg.appendDoubleProperty(TR("sample frequency(Hz)")
-                             ,0,std::numeric_limits<double>::max()
-                             ,1024,TR("sample frequency"));
-    dlg.recorder("fs",tmp);
-
-    tmp = dlg.appendIntProperty(TR("fft size")
-                          ,0,std::numeric_limits<int>::max()
-                          ,dataSize,TR("fft size"));
-    dlg.recorder("fftsize",tmp);
-
-    tmp = dlg.appendEnumProperty(TR("amplitude type"),{TR("Magnitude")
-                                                       ,TR("MagnitudeDB")
-                                                       ,TR("Amplitude")
-                                                       ,TR("AmplitudeDB")}
-                           ,2
-                           ,TR("how to deal amplitude"));
-    dlg.recorder("amptype",tmp);
-
-    tmp = dlg.appendEnumProperty(TR("window type"),{TR("Rect")
-                                                   ,TR("Hanning")
-                                                   ,TR("Hamming")
-                                                   ,TR("Blackman")
-                                                   ,TR("Bartlett")}
-                           ,0
-                           ,TR("set window to wave"));
-    dlg.recorder("windowtype",tmp);
-
-    tmp = dlg.appendBoolProperty(TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
-    dlg.recorder("detrend",tmp);
-
-    dlg.appendGroup(TR("figure"));
-
-    tmp = dlg.appendBoolProperty(TR("is plot"),true,TR("if true,when complete calc,sa will chart the result"));
-    dlg.recorder("isplot",tmp);
-
-    if(QDialog::Accepted != dlg.exec())
+    int fftsize = 100;
+    double fs=100;
+    bool isDetrend = false;
+    czy::Math::DSP::SpectrumType magType = czy::Math::DSP::Amplitude;
+    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
+    if(!getSpectrumProperty(&fs,&fftsize,&magType,&window,&isDetrend,dataSize))
     {
         return;
     }
-    czy::Math::DSP::SpectrumType magType = czy::Math::DSP::Amplitude;
-    switch(dlg.getDataByID<int>("amptype"))//dlg.getData(2).toInt())
-    {
-        case 0:magType = czy::Math::DSP::Magnitude;break;
-        case 1:magType = czy::Math::DSP::MagnitudeDB;break;
-        case 2:magType = czy::Math::DSP::Amplitude;break;
-        case 3:magType = czy::Math::DSP::AmplitudeDB;break;
-        default:magType = czy::Math::DSP::Amplitude;break;
-    }
-    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
-    switch(dlg.getDataByID<int>("windowtype"))//dlg.getData(2).toInt())
-    {
-        case 0:window = czy::Math::DSP::WindowRect;break;
-        case 1:window = czy::Math::DSP::WindowHanning;break;
-        case 2:window = czy::Math::DSP::WindowHamming;break;
-        case 3:window = czy::Math::DSP::WindowBlackman;break;
-        case 4:window = czy::Math::DSP::WindowBartlett;break;
-        default:window = czy::Math::DSP::WindowRect;break;
-    }
+
 
     std::shared_ptr<SAAbstractDatas> preTrendData = nullptr;
-    if(dlg.getDataByID<bool>("detrend"))//dlg.getData(3).toBool())
+    if(isDetrend)//dlg.getData(3).toBool())
     {
         preTrendData = saFun::detrendDirect(preTrendData.get() ? preTrendData.get() : data);
         if(nullptr == preTrendData)
@@ -361,8 +339,8 @@ void FunDsp::spectrumInValue()
     std::shared_ptr<SAVectorDouble> mag = nullptr;
 
     std::tie(fre,mag) = saFun::spectrum( preTrendData.get() ? preTrendData.get() : data
-                                             ,dlg.getDataByID<double>("fs")//dlg.getData(0).toDouble()
-                                             ,dlg.getDataByID<int>("fftsize")//dlg.getData(1).toInt()
+                                             ,fs//dlg.getData(0).toDouble()
+                                             ,fftsize//dlg.getData(1).toInt()
                                              ,magType
                                              );
     if(nullptr == fre || nullptr == mag)
@@ -372,16 +350,167 @@ void FunDsp::spectrumInValue()
     }
     saValueManager->addData(fre);
     saValueManager->addData(mag);
-    //绘图
-    if(dlg.getDataByID<bool>("isplot"))
+    QString info = TR("fft(data=[\"%1\"], fftsize=%2,fs=%3,magType=%4,window=%5) -> [fre=\"%6\",mag=\"%7\"]").arg(data->getName())
+            .arg(fftsize)
+            .arg(fs)
+            .arg(magTypeToString(magType))
+            .arg(windowTypeToString(window))
+            .arg(fre->getName())
+            .arg(mag->getName())
+            ;
+    saUI->showNormalMessageInfo(info);
+}
+
+void FunDsp::spectrumInChart()
+{
+    QList<QwtPlotItem*> curs;
+    SAChart2D* chart = filter_xy_series(curs);
+    if(nullptr == chart || curs.size() <= 0)
     {
-        QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1-spectrum").arg(data->getName()));
-        SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        SAChart2D* chart = w->create2DPlot();
-        chart->addCurve(fre.get(),mag.get());
-        saUI->raiseMainDock();
-        sub->show();
+        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
+        return;
     }
+
+    double fs=100;
+    bool isDetrend = false;
+    czy::Math::DSP::SpectrumType magType = czy::Math::DSP::Amplitude;
+    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
+    //绘图的参数里，没有fftsize
+    if(!getSpectrumProperty(&fs,nullptr,&magType,&window,&isDetrend))
+    {
+        return;
+    }
+    QStringList chartNameList,newChartNameList;
+    saUI->raiseMainDock();
+    QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1-fft").arg(saUI->getCurrentActiveSubWindow()->windowTitle()));
+    SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
+    chart = w->create2DPlot();
+
+
+
+    for (int i = 0;i<curs.size();++i)
+    {
+        QwtPlotItem* item = curs[i];
+        QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
+        if(nullptr == series)
+        {
+            continue;
+        }
+        QString title = item->title().text();
+        QVector<double> ys;
+        SAChart::getYDatas(ys,series);
+        if(isDetrend)
+        {
+            saFun::detrendDirect(ys);
+        }
+        QVector<double> mag,fre;
+        saFun::setWindow(ys,window);
+        int fftsize = czy::Math::DSP::nextPow2Value(ys.size());//获取最优的fft尺寸
+        saFun::spectrum(ys,fs,fftsize,magType,fre,mag);
+        QwtPlotCurve * c = chart->addCurve(fre,mag);
+        if(c)
+        {
+            c->setTitle(QString("%1-fft").arg(title));
+            newChartNameList.append(c->title().text());
+        }
+        chartNameList.append(title);
+    }
+    QString info = TR("fft(data=[\"%1\"],fs=%2,magType=%3,window=%4) -> [figure=\"%5\"]")
+            .arg(chartNameList.join(','))
+            .arg(fs)
+            .arg(magTypeToString(magType))
+            .arg(windowTypeToString(window))
+            .arg(newChartNameList.join(','))
+            ;
+    saUI->showNormalMessageInfo(info);
+    sub->show();
+}
+///
+/// \brief 获取频谱分析的设置
+/// \return
+///
+bool FunDsp::getSpectrumProperty(double* samFre
+                                 ,int* fftsize
+                                 , czy::Math::DSP::SpectrumType* magType
+                                 ,czy::Math::DSP::WindowType* window
+                                 ,bool* isDetrend
+                                 ,size_t dataSize)
+{
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    dlg.appendGroup(TR("property set"));
+    QtVariantProperty* tmp = nullptr;
+    if(samFre)
+    {
+        tmp = dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
+                                 ,0,std::numeric_limits<double>::max()
+                                 ,1024,TR("sample frequency"));
+    }
+    if(fftsize)
+    {
+        tmp = dlg.appendIntProperty("fftsize",TR("fft size")
+                              ,0,std::numeric_limits<int>::max()
+                              ,dataSize,TR("fft size"));
+    }
+    if(magType)
+    {
+        tmp = dlg.appendEnumProperty("amptype",TR("amplitude type"),{TR("Magnitude")
+                                                           ,TR("MagnitudeDB")
+                                                           ,TR("Amplitude")
+                                                           ,TR("AmplitudeDB")}
+                               ,2
+                               ,TR("how to deal amplitude"));
+    }
+    if(window)
+    {
+        tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
+                                                       ,TR("Hanning")
+                                                       ,TR("Hamming")
+                                                       ,TR("Blackman")
+                                                       ,TR("Bartlett")}
+                               ,0
+                               ,TR("set window to wave"));
+    }
+    if(isDetrend)
+    {
+        tmp = dlg.appendBoolProperty("detrend",TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
+    }
+
+    if(QDialog::Accepted != dlg.exec())
+    {
+        return false;
+    }
+    if(magType)
+    {
+        *magType = czy::Math::DSP::Amplitude;
+        switch(dlg.getDataByID<int>("amptype"))//dlg.getData(2).toInt())
+        {
+            case 0:*magType = czy::Math::DSP::Magnitude;break;
+            case 1:*magType = czy::Math::DSP::MagnitudeDB;break;
+            case 2:*magType = czy::Math::DSP::Amplitude;break;
+            case 3:*magType = czy::Math::DSP::AmplitudeDB;break;
+            default:*magType = czy::Math::DSP::Amplitude;break;
+        }
+    }
+    if(window)
+    {
+        *window = czy::Math::DSP::WindowRect;
+        switch(dlg.getDataByID<int>("windowtype"))//dlg.getData(2).toInt())
+        {
+            case 0:*window = czy::Math::DSP::WindowRect;break;
+            case 1:*window = czy::Math::DSP::WindowHanning;break;
+            case 2:*window = czy::Math::DSP::WindowHamming;break;
+            case 3:*window = czy::Math::DSP::WindowBlackman;break;
+            case 4:*window = czy::Math::DSP::WindowBartlett;break;
+            default:*window = czy::Math::DSP::WindowRect;break;
+        }
+    }
+    if(isDetrend)
+        *isDetrend = dlg.getDataByID<bool>("detrend");
+    if(samFre)
+        *samFre = dlg.getDataByID<double>("fs");
+    if(fftsize)
+        *fftsize = dlg.getDataByID<int>("fftsize");
+    return true;
 
 }
 
@@ -535,20 +664,23 @@ void FunDsp::tmeFrequency()
     timeFrequencyWidget->show();
     timeFrequencyWidget->raise();
 }
+
+
 ///
 /// \brief 获取设置窗的属性
 ///
-bool FunDsp::getWindowProperty(czy::Math::DSP::WindowType & windowType)
+bool FunDsp::getWindowProperty(czy::Math::DSP::WindowType & windowType, bool &isDetrend)
 {
     SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
-    auto tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
+    QtVariantProperty* tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
                                                    ,TR("Hanning")
                                                    ,TR("Hamming")
                                                    ,TR("Blackman")
                                                    ,TR("Bartlett")}
                            ,0
                            ,TR("set window to wave"));
+    tmp = dlg.appendBoolProperty("detrend",TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
     if(QDialog::Accepted != dlg.exec())
     {
         return false;
@@ -563,10 +695,24 @@ bool FunDsp::getWindowProperty(czy::Math::DSP::WindowType & windowType)
         case 4:windowType = czy::Math::DSP::WindowBartlett;break;
         default:windowType = czy::Math::DSP::WindowRect;break;
     }
+    isDetrend = dlg.getDataByID<bool>("detrend");
     return true;
 }
 
 QString FunDsp::windowTypeToString(czy::Math::DSP::WindowType windowType)
 {
     return saFun::windowName(windowType);
+}
+
+QString FunDsp::magTypeToString(czy::Math::DSP::SpectrumType magType)
+{
+    switch(magType)//dlg.getData(2).toInt())
+    {
+    case czy::Math::DSP::Magnitude:return "Magnitude";
+    case czy::Math::DSP::MagnitudeDB:return "MagnitudeDB";
+    case czy::Math::DSP::Amplitude:return "Amplitude";
+    case czy::Math::DSP::AmplitudeDB:return "AmplitudeDB";
+    default:return "UnKnow";
+    }
+    return "UnKnow";
 }
