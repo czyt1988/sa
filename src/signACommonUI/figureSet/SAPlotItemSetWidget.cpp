@@ -112,7 +112,6 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
     }
     if(SAChart2D::isPlotChartItem(item))
     {
-        qDebug() << "plot item attached:"<< (qint32)item << " " << on;
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }
 }
