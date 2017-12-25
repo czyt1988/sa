@@ -450,7 +450,7 @@ void SAFunPlugin::on_spectrumAction()
 ///
 void SAFunPlugin::on_powerSpectrumAction()
 {
-    m_funDSP->powerSpectrumInValue();
+    m_funDSP->powerSpectrum();
 }
 
 ///

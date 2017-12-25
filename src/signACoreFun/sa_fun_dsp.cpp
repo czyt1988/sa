@@ -138,10 +138,13 @@ void saFun::spectrum(const QVector<double> &input, double fs, size_t fftSize, cz
     out_mag.reserve(fftSize/2);
     std::back_insert_iterator<QVector<double> > freIte(out_fre);
     std::back_insert_iterator<QVector<double> > magIte(out_mag);
-    int len = czy::Math::DSP::spectrum(input.cbegin(),input.cend()
-                                   ,freIte,magIte
-                                       ,fs,fftSize
-                                       ,ampType);
+    czy::Math::DSP::spectrum(input.cbegin(),input.cend()
+                             ,freIte
+                             ,magIte
+                             ,fs
+                             ,fftSize
+                             ,ampType
+                             );
 }
 ///
 /// \brief 功率谱分析
@@ -193,6 +196,28 @@ saFun::powerSpectrum(const SAAbstractDatas *wave
         return std::make_tuple(nullptr,nullptr);
     }
     return std::make_tuple(fre,mag);
+}
+
+void saFun::powerSpectrum(const QVector<double> &input
+                          , double fs
+                          , size_t fftSize
+                          , czy::Math::DSP::PowerDensityWay pdwType
+                          , QVector<double> &out_fre
+                          , QVector<double> &out_mag
+                          , double ti)
+{
+    out_fre.reserve(fftSize/2);
+    out_mag.reserve(fftSize/2);
+    std::back_insert_iterator<QVector<double> > freIte(out_fre);
+    std::back_insert_iterator<QVector<double> > magIte(out_mag);
+    czy::Math::DSP::powerSpectrum(input.begin(),input.end()
+                                  ,freIte
+                                  ,magIte
+                                  ,fs
+                                  ,fftSize
+                                  ,pdwType
+                                  ,ti
+                                  );
 }
 
 std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::WindowType window)
@@ -267,6 +292,8 @@ QString saFun::windowName(czy::Math::DSP::WindowType window)
     }
     return TR("Rect Window");
 }
+
+
 
 
 

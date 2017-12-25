@@ -39,6 +39,15 @@ std::tuple<std::shared_ptr<SAVectorDouble>,std::shared_ptr<SAVectorDouble> > pow
                                   ,size_t fftSize
                                   ,int pdw
                                   ,double samplingInterval);
+SA_CORE_FUN__EXPORT
+void powerSpectrum(const QVector<double>& input
+              ,double fs
+              ,size_t fftSize
+              ,czy::Math::DSP::PowerDensityWay pdwType
+              ,QVector<double>& out_fre
+              ,QVector<double>& out_mag
+              ,double ti = 0.1
+                   );
 //设置窗函数
 SA_CORE_FUN__EXPORT
 std::shared_ptr<SAAbstractDatas> setWindow(const SAAbstractDatas *wave, czy::Math::DSP::WindowType window);

@@ -282,6 +282,19 @@ void FunDsp::spectrum()
     }
 }
 
+void FunDsp::powerSpectrum()
+{
+    SAUIInterface::LastFocusType ft = saUI->lastFocusWidgetType();
+    if(SAUIInterface::FigureWindowFocus == ft)
+    {
+        powerSpectrumInChart();
+    }
+    else
+    {
+        powerSpectrumInValue();
+    }
+}
+
 void FunDsp::spectrumInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
@@ -350,7 +363,8 @@ void FunDsp::spectrumInValue()
     }
     saValueManager->addData(fre);
     saValueManager->addData(mag);
-    QString info = TR("fft(data=[\"%1\"], fftsize=%2,fs=%3,magType=%4,window=%5) -> [fre=\"%6\",mag=\"%7\"]").arg(data->getName())
+    QString info = TR("fft(data=[\"%1\"], fftsize=%2,fs=%3,magType=%4,window=%5) -> [fre=\"%6\",mag=\"%7\"]")
+            .arg(data->getName())
             .arg(fftsize)
             .arg(fs)
             .arg(magTypeToString(magType))
@@ -380,7 +394,7 @@ void FunDsp::spectrumInChart()
     {
         return;
     }
-    QStringList chartNameList,newChartNameList;
+    QStringList lineNameList,newLineNameList;
     saUI->raiseMainDock();
     QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1-fft").arg(saUI->getCurrentActiveSubWindow()->windowTitle()));
     SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
@@ -411,16 +425,16 @@ void FunDsp::spectrumInChart()
         if(c)
         {
             c->setTitle(QString("%1-fft").arg(title));
-            newChartNameList.append(c->title().text());
+            newLineNameList.append(c->title().text());
         }
-        chartNameList.append(title);
+        lineNameList.append(title);
     }
     QString info = TR("fft(data=[\"%1\"],fs=%2,magType=%3,window=%4) -> [figure=\"%5\"]")
-            .arg(chartNameList.join(','))
+            .arg(lineNameList.join(","))
             .arg(fs)
             .arg(magTypeToString(magType))
             .arg(windowTypeToString(window))
-            .arg(newChartNameList.join(','))
+            .arg(newLineNameList.join(","))
             ;
     saUI->showNormalMessageInfo(info);
     sub->show();
@@ -511,10 +525,11 @@ bool FunDsp::getSpectrumProperty(double* samFre
     if(fftsize)
         *fftsize = dlg.getDataByID<int>("fftsize");
     return true;
-
 }
 
-
+///
+/// \brief FunDsp::powerSpectrumInValue
+///
 void FunDsp::powerSpectrumInValue()
 {
     SAAbstractDatas* data = saUI->getSelectSingleData();
@@ -535,76 +550,21 @@ void FunDsp::powerSpectrumInValue()
         saUI->raiseMessageInfoDock();
         return;
     }
-    QtVariantProperty * enumProp = nullptr;
-    QtVariantProperty * timeInput = nullptr;
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
-    dlg.appendGroup(TR("property set"));
-    auto tmp = dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
-                                        ,0,std::numeric_limits<double>::max()
-                                        ,1024
-                                        ,TR("sample frequency(Hz)"));
-    tmp = dlg.appendIntProperty("fftsize",TR("fft size")
-                                ,-1,std::numeric_limits<int>::max()
-                                ,dataSize
-                                ,TR("fft size,if you do not know how to set the fft size , please set 0,sa will auto set to you "));
 
-    enumProp = dlg.appendEnumProperty("pdw",TR("power density way"),{TR("MSA"),TR("SSA"),TR("TISA")}
-                                      ,0
-                                       ,TR("MSA:mean squared amplitude :(real^2+imag^2)/n^2 \r\n"
-                                           "SSA:sum squared amplitude :(real^2+imag^2)/n \r\n"
-                                           "TISA:time-integral squared amplitude :dT*(real^2+imag^2)/n \r\n"));
-    timeInput = dlg.appendDoubleProperty("ti",TR("sampling interval(s)")
-                             ,1.0/1024.0
-                             ,std::numeric_limits<double>::max()
-                             ,1024,TR("only use TISA should set sampling interval"));
-    timeInput->setEnabled(false);
 
-    tmp = dlg.appendBoolProperty("detrend",TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
-    tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
-                                                   ,TR("Hanning")
-                                                   ,TR("Hamming")
-                                                   ,TR("Blackman")
-                                                   ,TR("Bartlett")}
-                           ,0
-                           ,TR("set window to wave"));
-    dlg.appendGroup(TR("figure"));
-    tmp = dlg.appendBoolProperty("isplot",TR("is plot"),true,TR("if true,when complete calc,sa will chart the result"));
-    dlg.setPropertyChangEvent(enumProp,[timeInput](SAPropertySetDialog* dlg,QtProperty* prop,const QVariant& var){
-        Q_UNUSED(dlg);
-        Q_UNUSED(prop);
-        bool isOK = false;
-        int pdw = var.toInt(&isOK);
-        if(!isOK)
-        {
-            return;
-        }
-        timeInput->setEnabled(2 == pdw);
-    });
 
-    if(QDialog::Accepted != dlg.exec())
+    czy::Math::DSP::PowerDensityWay dspType = czy::Math::DSP::MSA;
+    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
+    double fs=100;
+    double ti=0.01;
+    bool isDetrend = false;
+    int fftsize = 100;
+    if(!getPowerSpectrumProperty(&fs,&fftsize,&window,&dspType,&ti,&isDetrend,dataSize))
     {
         return;
     }
-    int dspType = czy::Math::DSP::MSA;
-    switch(dlg.getDataByID<int>("pdw"))//dlg.getData(2).toInt())
-    {
-        case 0:dspType = (int)czy::Math::DSP::MSA;break;
-        case 1:dspType = (int)czy::Math::DSP::SSA;break;
-        case 2:dspType = (int)czy::Math::DSP::TISA;break;
-        default:dspType = (int)czy::Math::DSP::MSA;break;
-    }
-    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
-    switch(dlg.getDataByID<int>("windowtype"))//dlg.getData(2).toInt())
-    {
-        case 0:window = czy::Math::DSP::WindowRect;break;
-        case 1:window = czy::Math::DSP::WindowHanning;break;
-        case 2:window = czy::Math::DSP::WindowHamming;break;
-        case 3:window = czy::Math::DSP::WindowBlackman;break;
-        case 4:window = czy::Math::DSP::WindowBartlett;break;
-        default:window = czy::Math::DSP::WindowRect;break;
-    }
     std::shared_ptr<SAAbstractDatas> preTrendData = nullptr;
-    if(dlg.getDataByID<bool>("detrend"))
+    if(isDetrend)
     {
         preTrendData = saFun::detrendDirect(preTrendData.get() ? preTrendData.get() : data);
         if(nullptr == preTrendData)
@@ -628,10 +588,10 @@ void FunDsp::powerSpectrumInValue()
     std::shared_ptr<SAVectorDouble> fre = nullptr;
     std::shared_ptr<SAVectorDouble> mag = nullptr;
     std::tie(fre,mag) = saFun::powerSpectrum(preTrendData.get() ? preTrendData.get() : data
-                                             ,dlg.getDataByID<double>("fs")
-                                             ,dlg.getDataByID<int>("fftsize")
+                                             ,fs
+                                             ,fftsize
                                              ,dspType
-                                             ,dlg.getDataByID<double>("ti"));
+                                             ,ti);
     if(nullptr == fre || nullptr == mag)
     {
         saUI->showErrorMessageInfo(saFun::getLastErrorString());
@@ -640,16 +600,221 @@ void FunDsp::powerSpectrumInValue()
     }
     saValueManager->addData(fre);
     saValueManager->addData(mag);
-    //绘图
-    if(dlg.getDataByID<bool>("isplot"))
+    QString info;
+    if(czy::Math::DSP::TISA == dspType)
     {
-        QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1-psd").arg(data->getName()));
-        SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
-        SAChart2D* chart = w->create2DPlot();
-        chart->addCurve(fre.get(),mag.get());
-        saUI->raiseMainDock();
-        sub->show();
+        info = TR("psd(data=[\"%1\"], fftsize=%2,fs=%3,window=%4,psdType=%5,ti=%6) -> [fre=\"%7\",mag=\"%8\"]")
+                .arg(data->getName())
+                .arg(fftsize)
+                .arg(fs)
+                .arg(windowTypeToString(window))
+                .arg(psdTypeToString(dspType))
+                .arg(ti)
+                .arg(fre->getName())
+                .arg(mag->getName())
+                ;
     }
+    else
+    {
+        info = TR("psd(data=[\"%1\"], fftsize=%2,fs=%3,window=%4,psdType=%5) -> [fre=\"%6\",mag=\"%7\"]")
+                .arg(data->getName())
+                .arg(fftsize)
+                .arg(fs)
+                .arg(windowTypeToString(window))
+                .arg(psdTypeToString(dspType))
+                .arg(fre->getName())
+                .arg(mag->getName())
+                ;
+    }
+    saUI->showNormalMessageInfo(info);
+}
+
+void FunDsp::powerSpectrumInChart()
+{
+    QList<QwtPlotItem*> curs;
+    SAChart2D* chart = filter_xy_series(curs);
+    if(nullptr == chart || curs.size() <= 0)
+    {
+        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
+        return;
+    }
+    czy::Math::DSP::PowerDensityWay dspType = czy::Math::DSP::MSA;
+    czy::Math::DSP::WindowType window = czy::Math::DSP::WindowRect;
+    double fs=100;
+    double ti=0.01;
+    bool isDetrend = false;
+    if(!getPowerSpectrumProperty(&fs,nullptr,&window,&dspType,&ti,&isDetrend))
+    {
+        return;
+    }
+    QStringList lineNameList,newLineNameList;
+    saUI->raiseMainDock();
+    QMdiSubWindow* sub = saUI->createFigureWindow(QString("%1-fft").arg(saUI->getCurrentActiveSubWindow()->windowTitle()));
+    SAFigureWindow* w = saUI->getFigureWidgetFromMdiSubWindow(sub);
+    chart = w->create2DPlot();
+    for (int i = 0;i<curs.size();++i)
+    {
+        QwtPlotItem* item = curs[i];
+        QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
+        if(nullptr == series)
+        {
+            continue;
+        }
+        QString title = item->title().text();
+        QVector<double> ys;
+        SAChart::getYDatas(ys,series);
+        if(isDetrend)
+        {
+            saFun::detrendDirect(ys);
+        }
+        QVector<double> mag,fre;
+        saFun::setWindow(ys,window);
+        int fftsize = czy::Math::DSP::nextPow2Value(ys.size());//获取最优的fft尺寸
+        saFun::powerSpectrum(ys,fs,fftsize,dspType,fre,mag,ti);
+        QwtPlotCurve * c = chart->addCurve(fre,mag);
+        if(c)
+        {
+            c->setTitle(QString("%1-psd").arg(title));
+            newLineNameList.append(c->title().text());
+        }
+        lineNameList.append(title);
+    }
+    QString info;
+    if(czy::Math::DSP::TISA == dspType)
+    {
+        info = TR("psd(data=[\"%1\"],fs=%2,window=%3,psdType=%4,ti=%5) -> [figure=\"%6\"]")
+                .arg(lineNameList.join(","))
+                .arg(fs)
+                .arg(windowTypeToString(window))
+                .arg(psdTypeToString(dspType))
+                .arg(ti)
+                .arg(newLineNameList.join(","))
+                ;
+    }
+    else
+    {
+        info = TR("psd(data=[\"%1\"],fs=%2,window=%3,psdType=%4) -> [figure=\"%5\"]")
+                .arg(lineNameList.join(","))
+                .arg(fs)
+                .arg(windowTypeToString(window))
+                .arg(psdTypeToString(dspType))
+                .arg(newLineNameList.join(","))
+                ;
+    }
+    saUI->showNormalMessageInfo(info);
+    sub->show();
+}
+
+bool FunDsp::getPowerSpectrumProperty(double *samFre
+                                      , int *fftsize
+                                      , czy::Math::DSP::WindowType *window
+                                      , czy::Math::DSP::PowerDensityWay *pdw
+                                      , double *ti, bool *isDetrend
+                                      , size_t dataSize)
+{
+
+    QtVariantProperty* tmp = nullptr;
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    dlg.appendGroup(TR("property set"));
+    if(samFre)
+    {
+        tmp = dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
+                                            ,0,std::numeric_limits<double>::max()
+                                            ,1024
+                                            ,TR("sample frequency(Hz)")
+                                       );
+    }
+    if(fftsize)
+    {
+        tmp = dlg.appendIntProperty("fftsize",TR("fft size")
+                                    ,-1,std::numeric_limits<int>::max()
+                                    ,dataSize
+                                    ,TR("fft size,if you do not know how to set the fft size , please set 0,sa will auto set to you ")
+                                    );
+    }
+    if(pdw)
+    {
+        QtVariantProperty * enumProp = nullptr;
+        QtVariantProperty * timeInput = nullptr;
+        enumProp = dlg.appendEnumProperty("pdw",TR("power density way"),{TR("MSA"),TR("SSA"),TR("TISA")}
+                                          ,0
+                                          ,TR("MSA:mean squared amplitude :(real^2+imag^2)/n^2 \r\n"
+                                              "SSA:sum squared amplitude :(real^2+imag^2)/n \r\n"
+                                              "TISA:time-integral squared amplitude :dT*(real^2+imag^2)/n \r\n")
+                                          );
+
+        timeInput = dlg.appendDoubleProperty("ti",TR("sampling interval(s)")
+                                             ,1.0/1024.0
+                                             ,std::numeric_limits<double>::max()
+                                             ,1024,TR("only use TISA should set sampling interval")
+                                             );
+        timeInput->setEnabled(false);
+        dlg.setPropertyChangEvent(enumProp,[timeInput](SAPropertySetDialog* dlg,QtProperty* prop,const QVariant& var){
+            Q_UNUSED(dlg);
+            Q_UNUSED(prop);
+            bool isOK = false;
+            int pdw = var.toInt(&isOK);
+            if(!isOK)
+            {
+                return;
+            }
+            timeInput->setEnabled(2 == pdw);
+        });
+    }
+    if(isDetrend)
+    {
+        tmp = dlg.appendBoolProperty("detrend"
+                                     ,TR("is detrend")
+                                     ,true
+                                     ,TR("if this is set true,the data will sub the mean value")
+                                     );
+    }
+    if(window)
+    {
+        tmp = dlg.appendEnumProperty("windowtype"
+                                     ,TR("window type")
+                                     ,{TR("Rect"),TR("Hanning"),TR("Hamming"),TR("Blackman"),TR("Bartlett")}
+                                     ,0
+                                     ,TR("set window to wave")
+                                     );
+    }
+
+
+    if(QDialog::Accepted != dlg.exec())
+    {
+        return false;
+    }
+    if(pdw)
+    {
+        switch(dlg.getDataByID<int>("pdw"))//dlg.getData(2).toInt())
+        {
+            case 0:*pdw = czy::Math::DSP::MSA;break;
+            case 1:*pdw = czy::Math::DSP::SSA;break;
+            case 2:*pdw = czy::Math::DSP::TISA;break;
+            default:*pdw = czy::Math::DSP::MSA;break;
+        }
+    }
+    if(window)
+    {
+        switch(dlg.getDataByID<int>("windowtype"))//dlg.getData(2).toInt())
+        {
+            case 0:*window = czy::Math::DSP::WindowRect;break;
+            case 1:*window = czy::Math::DSP::WindowHanning;break;
+            case 2:*window = czy::Math::DSP::WindowHamming;break;
+            case 3:*window = czy::Math::DSP::WindowBlackman;break;
+            case 4:*window = czy::Math::DSP::WindowBartlett;break;
+            default:*window = czy::Math::DSP::WindowRect;break;
+        }
+    }
+    if(isDetrend)
+        *isDetrend = dlg.getDataByID<bool>("detrend");
+    if(samFre)
+        *samFre = dlg.getDataByID<double>("fs");
+    if(fftsize)
+        *fftsize = dlg.getDataByID<int>("fftsize");
+    if(ti)
+        *ti = dlg.getDataByID<double>("ti");
+    return true;
 }
 
 ///
@@ -715,4 +880,16 @@ QString FunDsp::magTypeToString(czy::Math::DSP::SpectrumType magType)
     default:return "UnKnow";
     }
     return "UnKnow";
+}
+
+QString FunDsp::psdTypeToString(czy::Math::DSP::PowerDensityWay psd)
+{
+    switch(psd)//dlg.getData(2).toInt())
+    {
+    case czy::Math::DSP::MSA:return QString("MSA");
+    case czy::Math::DSP::SSA:return QString("SSA");
+    case czy::Math::DSP::TISA:return QString("TISA");
+    default: return TR("UnKnow");
+    }
+    return TR("UnKnow");
 }

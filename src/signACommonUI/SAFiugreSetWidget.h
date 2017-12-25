@@ -1,4 +1,4 @@
-#ifndef SAFIUGRESETWIDGET_H
+﻿#ifndef SAFIUGRESETWIDGET_H
 #define SAFIUGRESETWIDGET_H
 
 #include <QWidget>
@@ -16,9 +16,13 @@ public:
     explicit SAFiugreSetWidget(QWidget *parent = nullptr);
     ~SAFiugreSetWidget();
     void setFigureWidget(SAFigureWindow* fig);
+#ifdef SAFiugreSetWidget_USE_COMBOX
+    void clear();
+#endif
 private slots:
     void onChartTitleChanged(const QString& text);
     void onPlotDestroy(QObject* obj);
+    void onFigutrDestroy(QObject* obj);
 #ifdef SAFiugreSetWidget_USE_COMBOX
     void onComboxChanged(int index);
 #else

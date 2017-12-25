@@ -1,4 +1,4 @@
-#include "SAFiugreSetWidget.h"
+﻿#include "SAFiugreSetWidget.h"
 #include "SAFigureWindow.h"
 #include "SAChartSetWidget.h"
 
@@ -90,7 +90,20 @@ SAFiugreSetWidget::~SAFiugreSetWidget()
 void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
 #if SAFiugreSetWidget_USE_COMBOX
-    m_fig = fig;
+    if(m_fig)
+    {
+        disconnect(fig,&QObject::destroyed,this,&SAFiugreSetWidget::onFigutrDestroy);
+    }
+    if(nullptr == fig)
+    {
+        clear();
+        return;
+    }
+    if(nullptr != fig && m_fig != fig)
+    {
+        connect(fig,&QObject::destroyed,this,&SAFiugreSetWidget::onFigutrDestroy);
+    }
+    m_fig = nullptr;
     ui->chartSelectComboBox->clear();
     QList<SAChart2D*> plots = fig->get2DPlots();
     for(int i=0;i<plots.size();++i)
@@ -109,6 +122,8 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
     {
         ui->chartSetWidget->setChart(plots.first());
     }
+
+    m_fig = fig;
 #else
     m_fig = fig;
     disconnectOldFigure();
@@ -189,6 +204,17 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 #endif
 }
 
+#ifdef SAFiugreSetWidget_USE_COMBOX
+void SAFiugreSetWidget::clear()
+{
+    while(ui->chartSelectComboBox->count())
+    {
+        ui->chartSelectComboBox->removeItem(0);
+    }
+    ui->chartSetWidget->setChart(nullptr);
+}
+#endif
+
 void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
 {
 #if SAFiugreSetWidget_USE_COMBOX
@@ -258,12 +284,27 @@ void SAFiugreSetWidget::onPlotDestroy(QObject *obj)
 #endif
 }
 
+void SAFiugreSetWidget::onFigutrDestroy(QObject *obj)
+{
+    Q_UNUSED(obj);
+    m_fig = nullptr;
+}
+
 
 
 #if SAFiugreSetWidget_USE_COMBOX
 void SAFiugreSetWidget::onComboxChanged(int index)
 {
-
+    if(nullptr == m_fig)
+    {
+        return;
+    }
+    QList<SAChart2D*> plots = m_fig->get2DPlots();
+    if(index >= 0 && index < plots.size())
+    {
+        SAChart2D* p = plots[index];
+        ui->chartSetWidget->setChart(p);
+    }
 }
 #else
 void SAFiugreSetWidget::disconnectOldFigure()

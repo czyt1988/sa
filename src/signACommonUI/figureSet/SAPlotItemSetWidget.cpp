@@ -87,18 +87,18 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
         disconnect(ui->chartWidget,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
         disconnect(ui->chartWidget,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
-    ui->chartWidget = chart;
     if(nullptr == chart)
     {
         ui->curveItemSetWidget->setPlotItems(QwtPlotItemList());
     }
-    else
+    else if(ui->chartWidget != chart)
     {
         QwtPlotItemList curItems = SAChart2D::getPlotChartItemList(chart);
         ui->curveItemSetWidget->setPlotItems(curItems);
-        connect(ui->chartWidget,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
-        connect(ui->chartWidget,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
+        connect(chart,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
+        connect(chart,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
+    ui->chartWidget = chart;
 
 }
 
@@ -112,6 +112,7 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
     }
     if(SAChart2D::isPlotChartItem(item))
     {
+        qDebug() << "plot item attached:"<< (qint32)item << " " << on;
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }
 }

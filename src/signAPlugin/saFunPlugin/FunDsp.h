@@ -14,7 +14,7 @@ public:
     //频谱分析
     static void spectrum();
     //功率谱分析
-    static void powerSpectrumInValue();
+    static void powerSpectrum();
     //时频分析工具箱
     void tmeFrequency();
 private:
@@ -27,12 +27,23 @@ private:
                                     , czy::Math::DSP::WindowType *window
                                     , bool *isDetrend
                                     , size_t dataSize=0);
+    //功率谱分析
+    static void powerSpectrumInValue();
+    static void powerSpectrumInChart();
+    static bool getPowerSpectrumProperty(double *samFre
+                                    , int *fftsize
+                                    , czy::Math::DSP::WindowType *window
+                                    , czy::Math::DSP::PowerDensityWay* pdw
+                                    , double* ti
+                                    , bool *isDetrend
+                                    , size_t dataSize=0);
     //信号设置窗
     static void setWindowToWaveInValue();
     static void setWindowToWaveInChart();
     static bool getWindowProperty(czy::Math::DSP::WindowType &windowType,bool& isDetrend);
     static QString windowTypeToString(czy::Math::DSP::WindowType windowType);
     static QString magTypeToString(czy::Math::DSP::SpectrumType magType);
+    static QString psdTypeToString(czy::Math::DSP::PowerDensityWay psd);
     //去趋势
     static void detrendDirectInValue();
     static void detrendDirectInChart();

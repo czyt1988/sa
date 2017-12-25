@@ -38,10 +38,14 @@ public:
             QWidget* w = i->widget();
             if(w)
             {
-                QwtPlotItem* item = this->widget2PlotItem[w];
-                this->widget2PlotItem.remove(w);
-                this->plotItem2Widget.remove(item);
-                delete w;
+                QwtPlotItem* item = this->widget2PlotItem.value(w,nullptr);
+                if(item)
+                {
+                    this->widget2PlotItem.remove(w);
+                    this->plotItem2Widget.remove(item);
+                }
+                w->hide();
+                w->deleteLater();
             }
             if(i)
             {
@@ -62,6 +66,8 @@ public:
         QWidget* itemWidget = plotItem2Widget.value(item,nullptr);
         if(itemWidget)
         {
+            plotItem2Widget.remove(item);
+            widget2PlotItem.remove(itemWidget);
             delete itemWidget;
         }
     }
