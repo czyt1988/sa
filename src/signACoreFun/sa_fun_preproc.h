@@ -1,10 +1,10 @@
-#ifndef SA_FUN_PREPROC_H
+﻿#ifndef SA_FUN_PREPROC_H
 #define SA_FUN_PREPROC_H
 #include "SACoreFunGlobal.h"
 #include <memory>
 #include <algorithm>
 #include <vector>
-
+#include <QPointF>
 class SAAbstractDatas;
 class SAVariantDatas;
 class SAVectorDouble;
@@ -50,6 +50,9 @@ bool pointSmooth(const SAAbstractDatas* wave,int points,int power,SAVectorDouble
 ///
 SA_CORE_FUN__EXPORT
 bool pointSmooth(const SAVectorPointF* wave, int points, int power, SAVectorPointF *output);
+
+SA_CORE_FUN__EXPORT
+bool pointSmooth(const QVector<double>& orData, int points, int power, QVector<double> &smoothY);
 ///
 /// \brief sigma异常值检测
 /// \param wave 传入数据波形，波形可为vectordouble或vectorpoint
@@ -102,6 +105,15 @@ bool sigmaDenoising(const SAVectorPointF* wave,double sigma
         ,SAVectorInt* outRangIndex
         ,SAVectorInt* inRangIndex);
 
+
+
+SA_CORE_FUN__EXPORT
+void sigmaDenoising(const QVector<double>& xs
+                    , const QVector<double>& ys
+                    , double sigma
+                    , QVector<int> &index);
+
 }
+
 
 #endif // SA_FUN_PREPROC_H

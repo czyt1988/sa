@@ -1,4 +1,4 @@
-#include "sa_fun_preproc.h"
+﻿#include "sa_fun_preproc.h"
 #include "sa_fun_core.h"
 #include <QVector>
 #include "czyMath_Smooth.h"
@@ -230,3 +230,43 @@ bool saFun::sigmaDenoising(const SAVectorPointF *wave, double sigma, SAVectorPoi
 }
 
 
+
+void saFun::sigmaDenoising(const QVector<double>& xs
+                           , const QVector<double>& ys
+                           , double sigma
+                           , QVector<int> &index
+                           )
+{
+    czy::Math::get_out_n_sigma_rang(ys.begin (),ys.end ()
+                                    ,sigma
+                                    ,std::back_inserter(index));
+}
+
+
+
+bool saFun::pointSmooth(const QVector<double> &orData, int points, int power, QVector<double>& smoothY)
+{
+    smoothY.resize (orData.size ());
+    if(3 == points && 1 == power)
+        czy::Math::linear_smooth_3 (orData.cbegin (),orData.cend (),smoothY.begin ());
+    else if(5 == points && 1 == power)
+        czy::Math::linear_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
+    else if(7 == points && 1 == power)
+        czy::Math::linear_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
+    else if(5 == points && 2 == power)
+        czy::Math::quadratic_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
+    else if(7 == points && 2 == power)
+        czy::Math::quadratic_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
+    else if(5 == points && 3 == power)
+        czy::Math::cubic_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
+    else if(7 == points && 3 == power)
+        czy::Math::cubic_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
+    else
+    {
+        saFun::setErrorString( (TR("can not deal [%1 points %2 power],"
+                                   "m,n should be set to"
+                                   " [m,n]={[3,1],[5,1],[7,1],[5,2],[7,2],[5,3],[7,3]").arg(points).arg(power)));
+        return false;
+    }
+    return true;
+}

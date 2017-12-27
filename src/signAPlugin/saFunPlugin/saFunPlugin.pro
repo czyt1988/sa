@@ -37,7 +37,8 @@ HEADERS += \
     FunDataPreprocessing.h \
     FunNum.h \
     FunFit.h \
-    FitParamSetDialog.h
+    FitParamSetDialog.h \
+    ui_opt.h
 
 SOURCES += \
     SAFunPlugin.cpp \
@@ -46,7 +47,8 @@ SOURCES += \
     FunDataPreprocessing.cpp \
     FunNum.cpp \
     FunFit.cpp \
-    FitParamSetDialog.cpp
+    FitParamSetDialog.cpp \
+    ui_opt.cpp
 
 include($$PWD/Dialog/Dialog.pri)
 

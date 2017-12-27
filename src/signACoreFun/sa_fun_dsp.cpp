@@ -29,21 +29,7 @@ std::shared_ptr<SAVectorDouble> _detrendDirect(QVector<double>& wave)
     czy::Math::DSP::detrend(wave.begin(),wave.end());
     return SAValueManager::makeData<SAVectorDouble>(wave);
 }
-///
-/// \brief saFun::makeVectorPointF
-/// \param x
-/// \param y
-/// \param xys
-///
-void saFun::makeVectorPointF(const QVector<double> &x, const QVector<double> &y, QVector<QPointF> &xys)
-{
-    const int minSize = qMin(x.size(),y.size());
-    xys.resize(minSize);
-    for(int i=0;i<minSize;++i)
-    {
-        xys[i] = QPointF(x[i],y[i]);
-    }
-}
+
 ///
 /// \brief 去直流
 /// \param wave 波形

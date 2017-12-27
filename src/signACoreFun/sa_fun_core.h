@@ -1,4 +1,4 @@
-#ifndef SACOREFUNCTION_H
+﻿#ifndef SACOREFUNCTION_H
 #define SACOREFUNCTION_H
 ///
 /// \file 这是SA的核心内置函数
@@ -35,6 +35,7 @@ namespace saFun {
     //功率谱分析 powerSpectrum(wave,fs,fftSize,pdw,samplingInterval)->[fre,amp]
     SA_FUNCTION_DEFINE(powerSpectrum);
 #endif
+
     SA_CORE_FUN__EXPORT
     void setErrorString(const QString& str);
     //获取错误信息
@@ -58,6 +59,9 @@ namespace saFun {
     //把x，y数组设置为等长，长度为最小一组的长度
     SA_CORE_FUN__EXPORT
     void fixSizeXYVector(QVector<double>& xs,QVector<double>& ys);
+    //把x序列和y序列组合成pointF序列
+    SA_CORE_FUN__EXPORT
+    void makeVectorPointF(const QVector<double>& x,const QVector<double>& y,QVector<QPointF>& xys);
 }
 
 

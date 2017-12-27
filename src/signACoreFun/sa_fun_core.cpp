@@ -1,4 +1,4 @@
-#include "sa_fun_core.h"
+﻿#include "sa_fun_core.h"
 
 #include <QVector>
 #include <iterator>
@@ -528,5 +528,21 @@ void saFun::fixSizeXYVector(QVector<double> &xs, QVector<double> &ys)
         {
             ys.resize(minSize);
         }
+    }
+}
+
+///
+/// \brief saFun::makeVectorPointF
+/// \param x
+/// \param y
+/// \param xys
+///
+void saFun::makeVectorPointF(const QVector<double> &x, const QVector<double> &y, QVector<QPointF> &xys)
+{
+    const int minSize = qMin(x.size(),y.size());
+    xys.resize(minSize);
+    for(int i=0;i<minSize;++i)
+    {
+        xys[i] = QPointF(x[i],y[i]);
     }
 }

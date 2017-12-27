@@ -1,4 +1,4 @@
-#ifndef DATA_PREPROCESSING_H
+﻿#ifndef DATA_PREPROCESSING_H
 #define DATA_PREPROCESSING_H
 #include <QString>
 class QtVariantProperty;
@@ -12,7 +12,11 @@ public:
     static void pointSmooth();
 
 private:
+    static void pointSmoothInValue();
+    static bool getSigmaDetectPorperty(double &sigma, bool *isMark, bool *isChangPlot);
+    static void sigmaDetectInValue();
     static void sigmaDetectPlotInNewFigure();
+    static bool getPointSmoothPorperty(int &m, int& n);
 };
 
 #endif // DATA_PREPROCESSING_H

@@ -13,8 +13,11 @@
 #include "qwt_plot_curve.h"
 #include "qwt_series_store.h"
 #include "SAGUIGlobalConfig.h"
+#include "ui_opt.h"
+
 #define TR(str)\
     QApplication::translate("FunFit", str, 0)
+
 void splitPointF(const QVector<QPointF>& xys,QVector<double>& xs,QVector<double>& ys);
 void splitPointF(const QVector<QPointF>& xys,QVector<double>& xs,QVector<double>& ys)
 {
@@ -46,20 +49,11 @@ void FunFit::polyfit()
 
 void FunFit::polyfitInChart()
 {
-    SAChart2D* chart = saUI->getCurSubWindowChart();
-    if(!chart)
+    QList<QwtPlotItem*> curs;
+    SAChart2D* chart = filter_xy_series(curs);
+    if(nullptr == chart || curs.size() <= 0)
     {
-        saUI->showWarningMessageInfo(TR("you should select a chart at first"));
-        saUI->raiseMessageInfoDock();
-        return;
-    }
-    QList<QwtPlotItem*> curs = chart->getCurrentSelectItems();
-    if(0 == curs.size())
-    {
-        curs = saUI->selectPlotItems(chart,SAChart2D::getXYSeriesItemsRTTI().toSet());
-    }
-    if(curs.size() <= 0)
-    {
+        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
         return;
     }
     int order = 1;

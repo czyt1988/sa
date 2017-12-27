@@ -1,4 +1,4 @@
-#ifndef CZYALGORITHM_H
+﻿#ifndef CZYALGORITHM_H
 #define CZYALGORITHM_H
 
 #include <czy.h>
@@ -54,7 +54,8 @@ void copy_out_of_indexs(_IT input_begin,_IT input_end,_IT_Index index_begin,_IT_
 /// \param index_begin 索引的起始迭代器
 /// \param index_end 索引的终止迭代器
 /// \param output_begin 结果的起始迭代器
-/// \note 需要保证index_begin到index_end时有序的，如果无序，请先进行sort:
+/// \note 需要保证index_begin到index_end时有序的,如果无序，请先进行sort:
+/// ，此函数支持前向迭代器，如std::list,但性能会有欠缺，如果是自由迭代器，如std::vector,可以用另一个重载版本
 /// \code
 /// std::sort(index_begin,index_end);
 /// \endcode
@@ -83,7 +84,32 @@ void copy_inner_indexs(_IT input_begin,_IT input_end,_IT_Index index_begin,_IT_I
         ++input_begin;
     }
 }
-
+///
+/// \brief 把索引范围之内的内容拷贝
+/// \param input_begin 容器起始迭代器
+/// \param input_end 容器终止迭代器
+/// \param index_begin 索引的起始迭代器
+/// \param index_end 索引的终止迭代器
+/// \param output_begin 结果的起始迭代器
+/// \code
+/// std::sort(index_begin,index_end);
+/// \endcode
+///
+template<typename _IT,typename _IT_Index,typename _IT_RES>
+void copy_inner_indexs(_IT input_begin,_IT_Index index_begin,_IT_Index index_end
+                        ,_IT_RES output_begin)
+{
+    if(index_begin == index_end)
+    {
+        return;
+    }
+    while (index_begin!=index_end)
+    {
+        *output_begin = *(input_begin+*index_begin);
+        ++output_begin;
+        ++index_begin;
+    }
+}
 
 ///
 /// \brief 根据提供的索引把一个序列分解为两个结集

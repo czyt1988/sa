@@ -15,9 +15,7 @@ SA_CORE_FUN__EXPORT
 std::shared_ptr<SAAbstractDatas> detrendDirect(const SAAbstractDatas* wave);
 SA_CORE_FUN__EXPORT
 void detrendDirect(QVector<double>& y);
-//把x序列和y序列组合成pointF序列
-SA_CORE_FUN__EXPORT
-void makeVectorPointF(const QVector<double>& x,const QVector<double>& y,QVector<QPointF>& xys);
+
 
 //频谱分析 spectrum(wave,fs,fftSize,ampType)->[fre,amp]
 SA_CORE_FUN__EXPORT

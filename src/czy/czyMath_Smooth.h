@@ -1,4 +1,4 @@
-#ifndef CZYMATH_SMOOTH_H
+﻿#ifndef CZYMATH_SMOOTH_H
 #define CZYMATH_SMOOTH_H
 #include <czy.h>
 #include <math.h>
@@ -11,14 +11,14 @@ namespace czy{
 namespace Math
 {
 
-void linear_smooth_3 ( double* in, double* out, int N );
+void linear_smooth_3 (const double *in, double* out, int N );
 
-template<typename IT>
-void linear_smooth_3 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
+template<typename IT_C,typename IT>
+void linear_smooth_3 (INPUT IT_C in_begin,INPUT IT_C in_end,OUTPUT IT out_begin)
 {
     size_t N = std::distance(in_begin,in_end);
     IT out = out_begin;
-    IT in = in_begin;
+    IT_C in = in_begin;
     if ( N < 3 )
     {
         for(;in != in_end;++in)
@@ -38,15 +38,15 @@ void linear_smooth_3 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
     }
 }
 
-void linear_smooth_5 ( double in[], double out[], int N );
+void linear_smooth_5 (const double *in, double *out, int N );
 
-template<typename IT>
-void linear_smooth_5 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
+template<typename IT_C,typename IT>
+void linear_smooth_5 (INPUT IT_C in_begin,INPUT IT_C in_end,OUTPUT IT out_begin)
 {
     size_t N = std::distance(in_begin,in_end);
     size_t i=0;
     IT out = out_begin;
-    IT in = in_begin;
+    IT_C in = in_begin;
     if ( N < 5 )
     {
         for(;in != in_end;++in)
@@ -67,15 +67,15 @@ void linear_smooth_5 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
     }
 }
 
-void linear_smooth_7 ( double in[], double out[], int N );
+void linear_smooth_7 (const double* in, double* out, int N );
 
-template<typename IT>
-void linear_smooth_7 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
+template<typename IT_C,typename IT>
+void linear_smooth_7 (INPUT IT_C in_begin,INPUT IT_C in_end,OUTPUT IT out_begin)
 {
     size_t N = std::distance(in_begin,in_end);
     size_t i=0;
     IT out = out_begin;
-    IT in = in_begin;
+    IT_C in = in_begin;
     if ( N < 7 )
     {
         for ( i = 0; i <= N - 1; i++ )
@@ -110,14 +110,14 @@ void linear_smooth_7 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
     }
 }
 //二次
-void quadratic_smooth_5(double in[], double out[], int N);
-template<typename IT>
-void quadratic_smooth_5(INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
+void quadratic_smooth_5(const double* in, double* out, int N);
+template<typename IT_C,typename IT>
+void quadratic_smooth_5(INPUT IT_C in_begin,INPUT IT_C in_end,OUTPUT IT out_begin)
 {
     size_t N = std::distance(in_begin,in_end);
     size_t i=0;
     IT out = out_begin;
-    IT in = in_begin;
+    IT_C in = in_begin;
     if ( N < 5 )
     {
         for ( i = 0; i <= N - 1; i++ )
@@ -139,14 +139,14 @@ void quadratic_smooth_5(INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
     }
 }
 
-void quadratic_smooth_7(double in[], double out[], int N);
-template<typename IT>
-void quadratic_smooth_7(INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
+void quadratic_smooth_7(const double* in, double* out, int N);
+template<typename IT_C,typename IT>
+void quadratic_smooth_7(INPUT IT_C in_begin,INPUT IT_C in_end,OUTPUT IT out_begin)
 {
     size_t N = std::distance(in_begin,in_end);
     size_t i=0;
     IT out = out_begin;
-    IT in = in_begin;
+    IT_C in = in_begin;
     if ( N < 7 )
     {
         for ( i = 0; i <= N - 1; i++ )
@@ -181,15 +181,15 @@ void quadratic_smooth_7(INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
     }
 }
 
-void cubic_smooth_5 ( double in[], double out[], int N );
+void cubic_smooth_5 (const double* in, double* out, int N );
 
-template<typename IT>
-void cubic_smooth_5 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
+template<typename IT_C,typename IT>
+void cubic_smooth_5 (INPUT IT_C in_begin,INPUT IT_C in_end,OUTPUT IT out_begin)
 {
     size_t N = std::distance(in_begin,in_end);
     size_t i=0;
     IT out = out_begin;
-    IT in = in_begin;
+    IT_C in = in_begin;
     if ( N < 5 )
     {
         for ( i = 0; i <= N - 1; i++ )
@@ -209,15 +209,15 @@ void cubic_smooth_5 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
     }
 }
 
-void cubic_smooth_7(double in[], double out[], int N);
+void cubic_smooth_7(const double* in, double* out, int N);
 
-template<typename IT>
-void cubic_smooth_7 (INPUT IT in_begin,INPUT IT in_end,OUTPUT IT out_begin)
+template<typename IT_C,typename IT>
+void cubic_smooth_7 (INPUT IT_C in_begin,INPUT IT_C in_end,OUTPUT IT out_begin)
 {
     size_t N = std::distance(in_begin,in_end);
     size_t i=0;
     IT out = out_begin;
-    IT in = in_begin;
+    IT_C in = in_begin;
     if ( N < 7 )
     {
         for ( i = 0; i <= N - 1; i++ )
