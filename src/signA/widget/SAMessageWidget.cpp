@@ -13,18 +13,18 @@ SAMessageWidget::~SAMessageWidget()
     delete ui;
 }
 
-void SAMessageWidget::addString(const QString &str, QColor clr)
+void SAMessageWidget::addString(const QString &str,QColor clr)
 {  
-    ui->textBrowser->append (QStringLiteral("<span style=\"color:%1;\">%2</span>")
+    ui->textBrowser->append (QStringLiteral("<div style=\"color:%1;\">%2</div>")
                              .arg(clr.name())
                              .arg(str));
 }
 
 void SAMessageWidget::insertTimeLine(QColor clr)
 {
-    QString line = QStringLiteral("<span style=\"color:%1;\">[").arg(clr.name())
+    QString line = QStringLiteral("<div style=\"color:%1;\">[").arg(clr.name())
                    + QDateTime::currentDateTime ().toString ("yyyy-MM-dd HH:mm:ss")
-            +"]</span>";
+            +"]</div>";
     ui->textBrowser->append (line);
 }
 

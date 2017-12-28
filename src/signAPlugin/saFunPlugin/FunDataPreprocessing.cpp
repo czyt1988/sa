@@ -53,7 +53,7 @@ void FunDataPreprocessing::sigmaDetect()
             continue;
         }
         QVector<double> xs,ys;
-        if(!chart->getXYData(xs,ys,item))
+        if(!chart->getXYData(&xs,&ys,item))
         {
             continue;
         }
@@ -143,11 +143,11 @@ void FunDataPreprocessing::pointSmooth()
         }
         QVector<double> xs,ys;
 
-        if(!chart->getXYData(xs,ys,item))
+        if(!chart->getXYData(&xs,&ys,item))
         {
             continue;
         }
-        if(!chart->getXYData(xs,ys,item))
+        if(!chart->getXYData(&xs,&ys,item))
         {
             continue;
         }

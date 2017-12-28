@@ -6,7 +6,7 @@
 #include "qwt_plot_barchart.h"
 #include "SAAbstractRegionSelectEditor.h"
 #include "qwt_series_data.h"
-
+#include "czyAlgorithm.h"
 
 SAFigureChartItemAddCommand::SAFigureChartItemAddCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName,QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
@@ -206,8 +206,10 @@ SAFigureMoveXYSeriesDataInIndexsCommand::SAFigureMoveXYSeriesDataInIndexsCommand
     ,m_inRangNewData(inRangNewData)
     ,m_curve(curve)
 {
-    SAChart::getXYDatas(m_inRangOldData,curve,inRangIndexs);//记录原有的数据
-
+    QVector<QPointF> datas;
+    SAChart::getXYDatas(datas,curve);//记录原有的数据
+    m_inRangOldData.reserve(inRangIndexs.size());
+    czy::copy_inner_indexs(datas.begin(),inRangIndexs.begin(),inRangIndexs.end(),m_inRangOldData.begin());
 }
 
 SAFigureMoveXYSeriesDataInIndexsCommand::SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D *chart

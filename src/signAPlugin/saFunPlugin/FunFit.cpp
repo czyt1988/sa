@@ -69,14 +69,14 @@ void FunFit::polyfitInChart()
         QVector<double> xs,ys;
         if(chart->isRegionVisible())
         {
-            if(!chart->getXYDataInRange(xs,ys,item))
+            if(!chart->getXYDataInRange(&xs,&ys,nullptr,item))
             {
                 continue;
             }
         }
         else
         {
-            if(!chart->getXYData(xs,ys,item))
+            if(!chart->getXYData(&xs,&ys,item))
             {
                 continue;
             }

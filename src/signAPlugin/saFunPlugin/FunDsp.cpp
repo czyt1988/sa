@@ -99,7 +99,7 @@ void FunDsp::detrendDirectInChart()
         {
             QVector<double> xs,ys;
             QVector<int> index;
-            if(!chart->getXYDataInRange(xs,ys,item,&index))
+            if(!chart->getXYDataInRange(&xs,&ys,&index,item))
             {
                 continue;
             }
@@ -127,7 +127,7 @@ void FunDsp::detrendDirectInChart()
         else
         {
             QVector<double> xs,ys;
-            if(!chart->getXYData(xs,ys,item))
+            if(!chart->getXYData(&xs,&ys,item))
             {
                 continue;
             }
@@ -228,7 +228,7 @@ void FunDsp::setWindowToWaveInChart()
             continue;
         }
         QVector<double> xs,ys;
-        SAChart::getXYDatas(xs,ys,series);
+        SAChart::getXYDatas(&xs,&ys,series);
         if(isDetrend)
         {
             saFun::detrendDirect(ys);
@@ -391,7 +391,7 @@ void FunDsp::spectrumInChart()
         }
         QString title = item->title().text();
         QVector<double> ys;
-        SAChart::getYDatas(ys,series);
+        SAChart::getXYDatas(nullptr,&ys,series);
         if(isDetrend)
         {
             saFun::detrendDirect(ys);
@@ -641,7 +641,7 @@ void FunDsp::powerSpectrumInChart()
         }
         QString title = item->title().text();
         QVector<double> ys;
-        SAChart::getYDatas(ys,series);
+        SAChart::getXYDatas(nullptr,&ys,series);
         if(isDetrend)
         {
             saFun::detrendDirect(ys);

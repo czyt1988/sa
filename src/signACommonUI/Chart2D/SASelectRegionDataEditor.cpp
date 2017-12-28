@@ -178,46 +178,33 @@ void SASelectRegionDataEditor::updateRegionIndex()
     for(int i=0;i<count;++i)
     {
         QwtPlotItem* item = plotItems[i];
+
         switch(item->rtti())
         {
         case QwtPlotItem::Rtti_PlotCurve:
+        case QwtPlotItem::Rtti_PlotBarChart:
         case SA::RTTI_SAXYSeries:
         case SA::RTTI_SAScatterSeries:
-        {
-            chart2d_points_info* ci = new chart2d_points_info();
-            d_ptr->appendInfo(ci);
-            ci->setItem(item);
-            QwtPlotCurve* cur = static_cast<QwtPlotCurve*>(item);
-            if(editor->getXAxis() != cur->xAxis() || editor->getYAxis() != cur->yAxis())
-            {
-                QPainterPath otPath = SAChart::transformPath(chart,d_ptr->m_selectRegionOrigin
-                                                           ,editor->getXAxis(),editor->getYAxis()
-                                                           ,cur->xAxis(),cur->yAxis());
-                SAChart::getXYDatas(ci->indexs(),ci->points(),cur,otPath);
-            }
-            else
-            {
-                SAChart::getXYDatas(ci->indexs(),ci->points(),cur,d_ptr->m_selectRegionOrigin);
-            }
-            break;
-        }
-        case QwtPlotItem::Rtti_PlotBarChart:
         case SA::RTTI_SABarSeries:
         {
+            QwtSeriesStore<QPointF>* ser = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
+            if(nullptr == ser)
+            {
+                continue;
+            }
             chart2d_points_info* ci = new chart2d_points_info();
             d_ptr->appendInfo(ci);
             ci->setItem(item);
-            QwtPlotBarChart* bar = static_cast<QwtPlotBarChart*>(item);
-            if(editor->getXAxis() != bar->xAxis() || editor->getYAxis() != bar->yAxis())
+            if(editor->getXAxis() != item->xAxis() || editor->getYAxis() != item->yAxis())
             {
                 QPainterPath otPath = SAChart::transformPath(chart,d_ptr->m_selectRegionOrigin
                                                            ,editor->getXAxis(),editor->getYAxis()
-                                                           ,bar->xAxis(),bar->yAxis());
-                SAChart::getXYDatas(ci->indexs(),ci->points(),bar,otPath);
+                                                           ,item->xAxis(),item->yAxis());
+                SAChart::getXYDatas(ci->points(),&(ci->indexs()),ser,otPath);
             }
             else
             {
-                SAChart::getXYDatas(ci->indexs(),ci->points(),bar,d_ptr->m_selectRegionOrigin);
+                SAChart::getXYDatas(ci->points(),&(ci->indexs()),ser,d_ptr->m_selectRegionOrigin);
             }
             break;
         }
@@ -253,26 +240,16 @@ void SASelectRegionDataEditor::offsetData(const QPointF &offset)
         case QwtPlotItem::Rtti_PlotCurve:
         case SA::RTTI_SAXYSeries:
         case SA::RTTI_SAScatterSeries:
-        {
-            QVector<QPointF> xyData;
-            QwtPlotCurve*cur = static_cast<QwtPlotCurve*>(item);
-            SAChart::getXYDatas(xyData,cur);
-            std::for_each(info->indexs().begin(),info->indexs().end()
-                          ,[&xyData,offset](int i){
-                if(i >= 0 && i<xyData.size())
-                {
-                    xyData[i]+=offset;
-                }
-            });
-            cur->setSamples(xyData);
-            break;
-        }
         case QwtPlotItem::Rtti_PlotBarChart:
         case SA::RTTI_SABarSeries:
         {
+            QwtSeriesStore<QPointF>* ser = dynamic_cast<QwtPlotCurve*>(item);
+            if(nullptr == ser)
+            {
+                continue;
+            }
             QVector<QPointF> xyData;
-            QwtPlotBarChart*bar = static_cast<QwtPlotBarChart*>(item);
-            SAChart::getXYDatas(xyData,bar);
+            SAChart::getXYDatas(xyData,ser);
             std::for_each(info->indexs().begin(),info->indexs().end()
                           ,[&xyData,offset](int i){
                 if(i >= 0 && i<xyData.size())
@@ -280,9 +257,10 @@ void SASelectRegionDataEditor::offsetData(const QPointF &offset)
                     xyData[i]+=offset;
                 }
             });
-            bar->setSamples(xyData);
+            ser->setData(new QwtPointSeriesData( xyData ));
             break;
         }
+
         case QwtPlotItem::Rtti_PlotSpectroCurve:
         case QwtPlotItem::Rtti_PlotIntervalCurve:
         case QwtPlotItem::Rtti_PlotHistogram:
@@ -368,8 +346,12 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
         case SA::RTTI_SABarSeries:
         {
             QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
+            if(nullptr == series)
+            {
+                continue;
+            }
             chart2d_points_info* pointInfo = static_cast<chart2d_points_info*>(info);
-            if(nullptr == series || nullptr == pointInfo)
+            if(nullptr == pointInfo)
             {
                 continue;
             }

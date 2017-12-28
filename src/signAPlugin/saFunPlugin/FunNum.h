@@ -1,4 +1,4 @@
-#ifndef FUNNUM_H
+﻿#ifndef FUNNUM_H
 #define FUNNUM_H
 
 
@@ -16,6 +16,9 @@ public:
     static void sum();
     // 频率统计
     static void hist();
+private:
+    static void statisticsInChart();
+    static void statisticsInValue();
 };
 
 #endif // FUNSTATISTICS_H

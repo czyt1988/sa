@@ -2232,7 +2232,7 @@ void MainWindow::onActionPickCurveToDataTriggered()
         QVector<QPointF> xy;
         if(SA::InSelectionRange == rang)
         {
-            chart->getXYDataInRange(xy,*i);
+            chart->getXYDataInRange(xy,nullptr,*i);
             makeValueFromXYSeries(name,pickMode,xy);
         }
         else
@@ -2391,13 +2391,13 @@ void MainWindow::makeValueFromXYSeries(const QString& name, SA::PickDataMode pic
     if(SA::XOnly == pickMode)
     {
         QVector<double> x;
-        SAChart::getXDatas(xy,x);
+        SAChart::getXYDatas(xy,&x,nullptr);
         p = SAValueManager::makeData<SAVectorDouble>(name,x);//new SAVectorDouble(name,x);
     }
     else if(SA::YOnly == pickMode)
     {
         QVector<double> y;
-        SAChart::getYDatas(xy,y);
+        SAChart::getXYDatas(xy,nullptr,&y);
         p = SAValueManager::makeData<SAVectorDouble>(name,y);//new SAVectorDouble(name,y);
     }
     else if(SA::XYPoint == pickMode)

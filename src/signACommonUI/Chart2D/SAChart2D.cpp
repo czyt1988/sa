@@ -703,11 +703,11 @@ void SAChart2D::removeDataInRang()
 ///
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false
 /// \param xy
-/// \param cur
 /// \param index 如果非空，会把对应的索引填入
-/// \return
+/// \param cur
+/// \return 如果不是xy series会返回false，如果是，会返回true，无论选区里是否有数据都返回true，可以通过xy的size来判断获取了多少数据
 ///
-bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, const QwtPlotItem *cur,QVector<int>* index)
+bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, QVector<int>* index, const QwtPlotItem *cur)
 {
     QPainterPath region = getSelectionRange();
     if(!isRegionVisible() || region.isEmpty())
@@ -730,25 +730,19 @@ bool SAChart2D::getXYDataInRange(QVector<QPointF> &xy, const QwtPlotItem *cur,QV
     {
         region = editor->transformToOtherAxis(xa,ya);
     }
-    if(index)
-    {
-        SAChart::getXYDatas(*index,xy,series,region);
-    }
-    else
-    {
-        SAChart::getXYDatas(xy,series,region);
-    }
+    SAChart::getXYDatas(xy,index,series,region);
     return true;
 }
 ///
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false
 /// \param xs
 /// \param ys
+/// \param index
 /// \param cur
 /// \param index 如果非空，会把对应的索引填入
-/// \return
+/// \return 如果不是xy series会返回false，如果是，会返回true，无论选区里是否有数据都返回true，可以通过x或y的size来判断获取了多少数据
 ///
-bool SAChart2D::getXYDataInRange(QVector<double> &xs, QVector<double> &ys, const QwtPlotItem *cur, QVector<int> *index)
+bool SAChart2D::getXYDataInRange(QVector<double> *xs, QVector<double> *ys, QVector<int> *index, const QwtPlotItem *cur)
 {
     QPainterPath region = getSelectionRange();
     if(!isRegionVisible() || region.isEmpty())
@@ -771,21 +765,14 @@ bool SAChart2D::getXYDataInRange(QVector<double> &xs, QVector<double> &ys, const
     {
         region = editor->transformToOtherAxis(xa,ya);
     }
-    if(index)
-    {
-        SAChart::getXYDatas(*index,xs,ys,series,region);
-    }
-    else
-    {
-        SAChart::getXYDatas(xs,ys,series,region);
-    }
+    SAChart::getXYDatas(xs,ys,index,series,region);
     return true;
 }
 ///
 /// \brief 获取item对应的xy数据，如果可以转换的话
 /// \param xy
 /// \param cur
-/// \return
+/// \return 如果不是xy series会返回false，如果是，会返回true
 ///
 bool SAChart2D::getXYData(QVector<QPointF> &xy, const QwtPlotItem *cur)
 {
@@ -799,12 +786,12 @@ bool SAChart2D::getXYData(QVector<QPointF> &xy, const QwtPlotItem *cur)
 }
 ///
 /// \brief 获取item对应的xy数据，如果可以转换的话
-/// \param xs
-/// \param ys
-/// \param cur
-/// \return
+/// \param xs x值，可为空
+/// \param ys y值，可为空
+/// \param cur item
+/// \return 如果不是xy series会返回false，如果是，会返回true
 ///
-bool SAChart2D::getXYData(QVector<double> &xs, QVector<double> &ys, const QwtPlotItem *cur)
+bool SAChart2D::getXYData(QVector<double> *xs, QVector<double> *ys, const QwtPlotItem *cur)
 {
     const QwtSeriesStore<QPointF>* series = dynamic_cast<const QwtSeriesStore<QPointF>*>(cur);
     if(nullptr == series)
@@ -814,6 +801,7 @@ bool SAChart2D::getXYData(QVector<double> &xs, QVector<double> &ys, const QwtPlo
     SAChart::getXYDatas(xs,ys,series);
     return true;
 }
+
 
 ///
 /// \brief 开始选择模式
@@ -1263,7 +1251,7 @@ QList<SAXYSeries *> SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
                 {
                     return QList<SAXYSeries *>();
                 }
-                SAChart::getXDatas(x,cur);
+                SAChart::getXYDatas(&x,nullptr,cur);
                 if(x.size() < y.size())
                 {
                     y.resize(x.size());

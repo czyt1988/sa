@@ -80,28 +80,15 @@ public:
     //获取对应坐标轴的id,如 xTop会返回xBottom
     static int otherAxis(int axisID);
 ////////////////////// 曲线数据相关操作//////////////////////////////
-    //获取vector point的y
-    static size_t getYDatas(const QVector<QPointF>& xys,QVector<double>& ys);
-    //获取vector point的x
-    static size_t getXDatas(const QVector<QPointF>& xys,QVector<double>& xs);
-    //获取一个曲线的y值
-    static size_t getYDatas(QVector<double>& ys,const QwtSeriesStore<QPointF>* cur,const QRectF& rang = QRectF());
-    //获取一个曲线的x值
-    static size_t getXDatas(QVector<double>& xs,const QwtSeriesStore<QPointF>* cur,const QRectF& rang = QRectF());
     //获取一个曲线的xy值
-    static size_t getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
-    static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
-    static size_t getXYDatas(QVector<QPointF>& xys, QVector<double>& xs, QVector<double>& ys,const QwtSeriesStore<QPointF>* cur, const QRectF& rang = QRectF());
-    static size_t getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur, const QVector<int>& index);
+    static void getXYDatas(const QVector<QPointF>& xys, QVector<double>* xs, QVector<double>* ys);
+    static void getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur);
+    static void getXYDatas(QVector<double>* xs, QVector<double>* ys, const QwtSeriesStore<QPointF>* cur);
+    static size_t getXYDatas(QVector<QPointF>& xys,QVector<int>* indexs, const QwtSeriesStore<QPointF>* cur, const QRectF& rang);
+    static size_t getXYDatas(QVector<double>* xs, QVector<double>* ys,QVector<int>* indexs,const QwtSeriesStore<QPointF>* cur, const QRectF& rang);
     //对2d数据点的提取操作
-    static size_t getXYDatas(QVector<int>& indexs,QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
-    static size_t getXYDatas(QVector<int>& indexs,QVector<double>& xs, QVector<double>& ys, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
-    //对2d数据点的提取操作
-    static size_t getXYDatas(QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
-    static size_t getXYDatas(QVector<double>& xs, QVector<double>& ys, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
-    //对2d数据点的提取操作
-    static size_t getXYIndex(QVector<int>& indexs, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang );
-
+    static size_t getXYDatas(QVector<QPointF>& xys, QVector<int>* indexs, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
+    static size_t getXYDatas(QVector<double>* xs, QVector<double>* ys, QVector<int>* indexs,const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
     //把范围内的数据移除 返回移除的个数
     static int removeDataInRang(const QRectF &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
     static int removeDataInRang(const QPainterPath &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);

@@ -1,4 +1,4 @@
-#include "sa_fun_num.h"
+﻿#include "sa_fun_num.h"
 #include <algorithm>
 #include "sa_fun_core_std.h"
 #include <QVector>
@@ -182,5 +182,23 @@ std::shared_ptr<SAVectorInterval> saFun::hist(const SAAbstractDatas *wave, unsig
     }
     auto res = SAValueManager::makeData<SAVectorInterval>();
     res->setValueDatas (sample);
+    return res;
+}
+
+QMap<QString, double> saFun::statistics(const QVector<double> &data)
+{
+    QMap<QString, double> res;
+    double sum,mean,var,std,skewness,kurtosis;
+    czy::Math::get_statistics(data.begin (),data.end (),sum,mean,var,std,skewness,kurtosis);
+    double ppv;//峰峰值
+    auto minmax = std::minmax_element(data.begin (),data.end ());
+    ppv = *minmax.second - *minmax.first;
+    res[IDS_SUM] = sum;
+    res[IDS_MEAN] = mean;
+    res[IDS_VAR] = var;
+    res[IDS_STD] = std;
+    res[IDS_SKEWNESS] = skewness;
+    res[IDS_KURTOSIS] = kurtosis;
+    res[IDS_PEAK2PEAK] = ppv;
     return res;
 }

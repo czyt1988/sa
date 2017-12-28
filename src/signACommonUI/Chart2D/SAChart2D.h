@@ -80,11 +80,11 @@ public:
     void removeDataInRang(const QList<QwtPlotItem *> &chartItems);
     void removeDataInRang();
     //获取选择范围内的数据,如果当前没有选区，返回false
-    bool getXYDataInRange(QVector<QPointF>& xy,const QwtPlotItem *cur,QVector<int>* index = nullptr);
-    bool getXYDataInRange(QVector<double>& xs, QVector<double>& ys,const QwtPlotItem *cur,QVector<int>* index = nullptr);
+    bool getXYDataInRange(QVector<QPointF>& xy,QVector<int>* index,const QwtPlotItem *cur);
+    bool getXYDataInRange(QVector<double>* xs, QVector<double>* ys,QVector<int>* index,const QwtPlotItem *cur);
     //获取item对应的xy数据，如果可以转换的话
     bool getXYData(QVector<QPointF>& xy,const QwtPlotItem *cur);
-    bool getXYData(QVector<double>& xs, QVector<double>& ys,const QwtPlotItem *cur);
+    bool getXYData(QVector<double>* xs, QVector<double>* ys,const QwtPlotItem *cur);
     //开始选择模式
     void enableSelection(SelectionMode mode, bool on = true);
     //判断当前的选择模式

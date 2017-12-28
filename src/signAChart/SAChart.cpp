@@ -380,72 +380,64 @@ int SAChart::otherAxis(int axisID)
     }
     return QwtPlot::xBottom;
 }
+///
+/// \brief SAChart::getXYDatas
+/// \param xys
+/// \param xs
+/// \param ys
+///
+void SAChart::getXYDatas(const QVector<QPointF> &xys, QVector<double> *xs, QVector<double> *ys)
+{
+    if(nullptr != xs && nullptr == ys)
+    {
+        xs->reserve(xys.size());
+        std::for_each(xys.begin(),xys.end(),[xs](const QPointF& p){
+            xs->append(p.x());
+        });
+    }
+    else if(nullptr == xs && nullptr != ys)
+    {
+        ys->reserve(xys.size());
+        std::for_each(xys.begin(),xys.end(),[ys](const QPointF& p){
+            ys->append(p.x());
+        });
+    }
+    else
+    {
+        xs->reserve(xys.size());
+        ys->reserve(xys.size());
+        std::for_each(xys.begin(),xys.end(),[xs,ys](const QPointF& p){
+            xs->append(p.x());
+            ys->append(p.x());
+        });
+    }
+}
 
 ///
-/// \brief 获取一个曲线的y值
-/// \param ys 结果
-/// \param cur 曲线
-/// \param rang 指定范围
-/// \return
+/// \brief 获取一个曲线的xy值
+/// \param xys
+/// \param cur
 ///
-size_t SAChart::getYDatas(QVector<double> &ys, const QwtSeriesStore<QPointF> *cur, const QRectF &rang)
+void SAChart::getXYDatas(QVector<QPointF> &xys, const QwtSeriesStore<QPointF> *cur)
 {
     const QwtSeriesData<QPointF>* datas = cur->data();
     size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
+    for(size_t i=0;i<size;++i)
     {
-        for(size_t i=0;i<size;++i)
-        {
-            if(rang.contains(datas->sample(i)))
-            {
-                ys.push_back(datas->sample(i).y());
-                ++realSize;
-            }
-        }
+        xys.push_back(datas->sample(i));
     }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            ys.push_back(datas->sample(i).y());
-        }
-        realSize = size;
-    }
-    return realSize;
 }
-///
-/// \brief 获取一个曲线的x值
-/// \param xs 结果
-/// \param cur 曲线
-/// \param rang 指定范围
-/// \return
-///
-size_t SAChart::getXDatas(QVector<double> &xs, const QwtSeriesStore<QPointF> *cur, const QRectF &rang)
+void SAChart::getXYDatas(QVector<double> *xs, QVector<double> *ys, const QwtSeriesStore<QPointF> *cur)
 {
-    const QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
+    size_t size = cur->dataSize();
+    for(size_t i=0;i<size;++i)
     {
-        for(size_t i=0;i<size;++i)
-        {
-            if(rang.contains(datas->sample(i)))
-            {
-                xs.push_back(datas->sample(i).x());
-                ++realSize;
-            }
-        }
+        QPointF p = cur->sample(i);
+        if(ys)
+            (*ys).push_back(p.y());
+        if(xs)
+            (*xs).push_back(p.x());
     }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            xs.push_back(datas->sample(i).x());
-        }
-        realSize = size;
-    }
-    return realSize;
 }
 ///
 /// \brief 获取一个曲线的xy值
@@ -454,7 +446,7 @@ size_t SAChart::getXDatas(QVector<double> &xs, const QwtSeriesStore<QPointF> *cu
 /// \param rang
 /// \return
 ///
-size_t SAChart::getXYDatas(QVector<QPointF> &xys, const QwtSeriesStore<QPointF> *cur, const QRectF &rang)
+size_t SAChart::getXYDatas(QVector<QPointF> &xys,QVector<int>* indexs, const QwtSeriesStore<QPointF> *cur, const QRectF &rang)
 {
     const QwtSeriesData<QPointF>* datas = cur->data();
     size_t size = datas->size();
@@ -467,100 +459,122 @@ size_t SAChart::getXYDatas(QVector<QPointF> &xys, const QwtSeriesStore<QPointF> 
             {
                 xys.push_back(datas->sample(i));
                 ++realSize;
+                if(indexs)
+                {
+                    (*indexs).append(i);
+                }
             }
         }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            xys.push_back(datas->sample(i));
-        }
-        realSize = size;
     }
     return realSize;
 }
 
-size_t SAChart::getXYDatas(QVector<double> &xs, QVector<double> &ys, const QwtSeriesStore<QPointF> *cur, const QRectF &rang)
+
+
+size_t SAChart::getXYDatas(QVector<double> *xs, QVector<double> *ys, QVector<int> *indexs, const QwtSeriesStore<QPointF> *cur, const QRectF &rang)
 {
-    const QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
+    size_t size = cur->dataSize();
     size_t realSize = 0;
     if(!rang.isNull() && rang.isValid())
     {
         for(size_t i=0;i<size;++i)
         {
-            QPointF p = datas->sample(i);
+            QPointF p = cur->sample(i);
             if(rang.contains(p))
             {
-                ys.push_back(p.y());
-                xs.push_back(p.x());
+                if(ys)
+                {
+                    (*ys).push_back(p.y());
+                }
+                if(xs)
+                {
+                    (*xs).push_back(p.x());
+                }
+                if(indexs)
+                {
+                    (*indexs).push_back(i);
+                }
                 ++realSize;
             }
         }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            QPointF p = datas->sample(i);
-            ys.push_back(p.y());
-            xs.push_back(p.x());
-        }
-        realSize = size;
     }
     return realSize;
 }
 
-size_t SAChart::getXYDatas(QVector<QPointF> &xys, QVector<double> &xs, QVector<double> &ys, const QwtSeriesStore<QPointF> *cur, const QRectF &rang)
-{
-    const QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    size_t realSize = 0;
-    if(!rang.isNull() && rang.isValid())
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            QPointF p = datas->sample(i);
-            if(rang.contains(p))
-            {
-                xys.push_back(p);
-                ys.push_back(p.y());
-                xs.push_back(p.x());
-                ++realSize;
-            }
-        }
-    }
-    else
-    {
-        for(size_t i=0;i<size;++i)
-        {
-            QPointF p = datas->sample(i);
-            xys.push_back(p);
-            ys.push_back(p.y());
-            xs.push_back(p.x());
-        }
-        realSize = size;
-    }
-    return realSize;
-}
+
+
 ///
-/// \brief 更具索引提取xy值
-/// \param xys
-/// \param cur
-/// \param index
+/// \brief 提取范围里的2d数据点值
+/// \param points 值
+/// \param indexs 索引，可以设置为nullptr
+/// \param series 2d数据点
+/// \param rang 范围
+/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
+/// \return 提取的点数
+///
+size_t SAChart::getXYDatas(QVector<QPointF> &xys, QVector<int>* indexs, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
+{
+    size_t length = series->data()->size();
+    QPointF point;
+    size_t resCount = 0;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = series->data()->sample(i);
+        if(rang.contains(point))
+        {
+            ++resCount;
+            xys.append(point);
+            if(indexs)
+            {
+                (*indexs).append(i);
+            }
+        }
+    }
+    return resCount;
+}
+
+
+///
+/// \brief 提取范围里的2d数据点值
+/// \param xs x值
+/// \param ys y值
+/// \param indexs
+/// \param series
+/// \param rang 范围
 /// \return
 ///
-size_t SAChart::getXYDatas(QVector<QPointF> &xys, const QwtSeriesStore<QPointF> *cur, const QVector<int> &index)
+size_t SAChart::getXYDatas(QVector<double> *xs
+                           , QVector<double> *ys
+                           , QVector<int> *indexs
+                           , const QwtSeriesStore<QPointF> *series
+                           , const QPainterPath &rang)
 {
-    const int count = cur->dataSize();
-    std::for_each(index.begin(),index.end(),[&](int i){
-        if(i < count && i>=0)
+    size_t length = series->data()->size();
+    QPointF point;
+    size_t resCount = 0;
+    for(size_t i = 0;i<length;++i)
+    {
+        point = series->data()->sample(i);
+        if(rang.contains(point))
         {
-            xys.append(cur->sample(i));
+            ++resCount;
+            if(xs)
+            {
+                (*xs).append(point.x());
+            }
+            if(ys)
+            {
+                (*ys).append(point.y());
+            }
+            if(indexs)
+            {
+                (*indexs).append(i);
+            }
         }
-    });
+    }
+    return resCount;
 }
+
 ///
 /// \brief 设置曲线标识符
 /// \param cur 曲线
@@ -793,170 +807,7 @@ int SAChart::closestPoint(const QwtPlotBarChart *bar, const QPoint &pos, double 
     return index;
 }
 
-///
-/// \brief 获取vector point的y
-/// \param xys vector point
-/// \param ys vector double y
-/// \return 获取的尺寸
-///
-size_t SAChart::getYDatas(const QVector<QPointF> &xys, QVector<double> &ys)
-{
-    auto e = xys.cend();
-    auto s = 0;
-    for(auto i=xys.cbegin();i!=e;++i,++s)
-    {
-        ys.push_back((*i).y());
-    }
-    return s;
-}
-///
-/// \brief 获取vector point的x
-/// \param xys vector point
-/// \param xs vector double x
-/// \return 获取的尺寸
-///
-size_t SAChart::getXDatas(const QVector<QPointF> &xys, QVector<double> &xs)
-{
-    auto e = xys.cend();
-    auto s = 0;
-    for(auto i=xys.cbegin();i!=e;++i,++s)
-    {
-        xs.push_back((*i).x());
-    }
-    return s;
-}
-///
-/// \brief 提取范围里的2d数据点索引
-/// \param rang 范围
-/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
-/// \param series 2d数据点
-/// \param indexs 索引
-/// \return  提取的点数
-///
-size_t SAChart::getXYIndex(QVector<int> &indexs, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
-{
-    size_t length = series->data()->size();
-    QPointF point;
-    size_t resCount = 0;
-    for(size_t i = 0;i<length;++i)
-    {
-        point = series->data()->sample(i);
-        if(rang.contains(point))
-        {
-            ++resCount;
-            indexs.append(i);
-        }
-    }
-    return resCount;
-}
 
 
-
-
-
-///
-/// \brief 提取范围里的2d数据点索引和值
-/// \param rang 范围
-/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
-/// \param series 2d数据点
-/// \param indexs 索引
-/// \param points 值
-/// \return 提取的点数
-///
-size_t SAChart::getXYDatas(QVector<int>& indexs,QVector<QPointF>& points, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang)
-{
-    size_t length = series->data()->size();
-    QPointF point;
-    size_t resCount = 0;
-    for(size_t i = 0;i<length;++i)
-    {
-        point = series->data()->sample(i);
-        if(rang.contains(point))
-        {
-            ++resCount;
-            indexs.append(i);
-            points.append(point);
-        }
-    }
-    return resCount;
-}
-///
-/// \brief 提取范围里的2d数据点索引和值
-/// \param rang 范围
-/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
-/// \param series 2d数据点
-/// \param indexs 索引
-/// \param xs x值
-/// \param ys y值
-/// \return 提取的点数
-///
-size_t SAChart::getXYDatas(QVector<int> &indexs, QVector<double> &xs, QVector<double> &ys, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
-{
-    size_t length = series->data()->size();
-    QPointF point;
-    size_t resCount = 0;
-    for(size_t i = 0;i<length;++i)
-    {
-        point = series->data()->sample(i);
-        if(rang.contains(point))
-        {
-            ++resCount;
-            indexs.append(i);
-            xs.append(point.x());
-            ys.append(point.y());
-        }
-    }
-    return resCount;
-}
-///
-/// \brief 提取范围里的2d数据点值
-/// \param rang 范围
-/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
-/// \param series 2d数据点
-/// \param points 值
-/// \return 提取的点数
-///
-size_t SAChart::getXYDatas(QVector<QPointF> &points, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
-{
-    size_t length = series->data()->size();
-    QPointF point;
-    size_t resCount = 0;
-    for(size_t i = 0;i<length;++i)
-    {
-        point = series->data()->sample(i);
-        if(rang.contains(point))
-        {
-            ++resCount;
-            points.append(point);
-        }
-    }
-    return resCount;
-}
-///
-/// \brief 提取范围里的2d数据点值
-/// \param rang 范围
-/// 如果范围和曲线对应的坐标轴不一致，可以使用\sa transformPath 进行转换
-/// \param series 2d数据点
-/// \param xs x值
-/// \param ys y值
-/// \return 提取的点数
-///
-size_t SAChart::getXYDatas(QVector<double> &xs, QVector<double> &ys, const QwtSeriesStore<QPointF> *series, const QPainterPath &rang)
-{
-    size_t length = series->data()->size();
-    QPointF point;
-    size_t resCount = 0;
-    for(size_t i = 0;i<length;++i)
-    {
-        point = series->data()->sample(i);
-        if(rang.contains(point))
-        {
-            ++resCount;
-            xs.append(point.x());
-            ys.append(point.y());
-        }
-    }
-    return resCount;
-}
 
 
