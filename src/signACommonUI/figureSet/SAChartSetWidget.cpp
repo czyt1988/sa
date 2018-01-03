@@ -1,4 +1,4 @@
-#include "SAChartSetWidget.h"
+﻿#include "SAChartSetWidget.h"
 #include "SAColorSetPropertyItem.h"
 #include "SASpinBoxPropertyItem.h"
 #include <QApplication>
@@ -51,7 +51,7 @@ public:
 
         //Tab 1 -- SAChartNormalSetWidget
         tabScrollArea1 = new QScrollArea();
-        tabWidget->addTab(tabScrollArea1,QStringLiteral("1"));
+        tabWidget->addTab(tabScrollArea1,"");
         tabWidget->setTabIcon(0,QIcon(":/icon/icons/normalSet.png"));
         tabScrollArea1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tabScrollArea1->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -64,7 +64,7 @@ public:
 
         //Tab 2 -- SAChartAxesSetWidget
         tabScrollArea2 = new QScrollArea();
-        tabWidget->addTab(tabScrollArea2,QStringLiteral("2"));
+        tabWidget->addTab(tabScrollArea2,"");
         tabWidget->setTabIcon(1,QIcon(":/icon/icons/axesSet.png"));
         tabScrollArea2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tabScrollArea2->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -74,16 +74,13 @@ public:
         tabScrollArea2->setWidget(plotAxesSetWidget);
         //Tab 3 -- SAPlotItemSetWidget
         plotItemsSetWidget = new SAPlotItemSetWidget();
-        tabWidget->addTab(plotItemsSetWidget,QStringLiteral("3"));
+        tabWidget->addTab(plotItemsSetWidget,"");
         tabWidget->setTabIcon(2,QIcon(":/icon/icons/itemSet.png"));
         retranslateUi(par);
     }
     void retranslateUi(QWidget *w)
     {
         w->setWindowTitle(TR("Figure Canvas Set Widget"));
-        tabWidget->setTabText(0,TR("Chart Normal Set"));
-        tabWidget->setTabText(1,TR("Chart Axes Set"));
-        tabWidget->setTabText(2,TR("Chart Item Set"));
     } // retranslateUi
 };
 
@@ -121,4 +118,7 @@ void SAChartSetWidget::setChart(SAChart2D *chart)
 void SAChartSetWidget::onChartDelete(QObject* obj)
 {
     ui->chartCtrl = nullptr;
+    ui->chartNormalSetWidget->setChart(nullptr);
+    ui->plotAxesSetWidget->setChart(nullptr);
+    ui->plotItemsSetWidget->setChart(nullptr);
 }

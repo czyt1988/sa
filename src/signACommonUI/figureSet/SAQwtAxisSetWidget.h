@@ -1,4 +1,4 @@
-#ifndef SAQWTAXISSETWIDGET_H
+﻿#ifndef SAQWTAXISSETWIDGET_H
 #define SAQWTAXISSETWIDGET_H
 #include "SACommonUIGlobal.h"
 #include <QWidget>
@@ -19,6 +19,7 @@ public:
     void setChart(QwtPlot *chart,int axisID);
     void updateAxisValue();
     void resetAxisValue();
+    void enableWidget(bool enable=true);
 private slots:
     Q_SLOT void onEnableCheckBoxClicked(int state);
     Q_SLOT void onLineEditTextChanged(const QString& text);

@@ -1,4 +1,4 @@
-#include "SAQwtPlotItemSetWidget.h"
+﻿#include "SAQwtPlotItemSetWidget.h"
 #include "SALineEditPropertyItem.h"
 #include "SADoubleSpinBoxPropertyItem.h"
 #include "SACheckBoxPropertyItem.h"
@@ -57,15 +57,9 @@ void SAQwtPlotItemSetWidget::upDateData(bool downLoad)
 
 SAQwtPlotItemSetWidget *SAQwtPlotItemSetWidget::createQwtPlotItemSetWidget(QwtPlotItem *plotItem, QWidget *parent)
 {
-    switch(plotItem->rtti())
+    if(QwtPlotCurve* cur = dynamic_cast<QwtPlotCurve*>(plotItem))
     {
-    case QwtPlotItem::Rtti_PlotCurve:
-    {
-        QwtPlotCurve* cur = static_cast<QwtPlotCurve*>(plotItem);
         return new SAQwtPlotCurveItemSetWidget(cur,parent);
-    }
-    default:
-        return new SAQwtPlotItemSetWidget(plotItem,parent);
     }
 }
 

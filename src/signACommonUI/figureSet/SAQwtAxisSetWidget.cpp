@@ -1,4 +1,4 @@
-#include "SAQwtAxisSetWidget.h"
+﻿#include "SAQwtAxisSetWidget.h"
 #include "ui_SAQwtAxisSetWidget.h"
 #include "qwt_plot.h"
 #include "qwt_scale_div.h"
@@ -38,6 +38,7 @@ SAQwtAxisSetWidget::SAQwtAxisSetWidget(QWidget *parent) :
             ,this,&SAQwtAxisSetWidget::onAxisMinScaleChanged);
     connect(m_buttonGroup,static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked)
             ,this,&SAQwtAxisSetWidget::onScaleStyleChanged);
+    enableWidget(false);
 }
 
 SAQwtAxisSetWidget::~SAQwtAxisSetWidget()
@@ -195,6 +196,7 @@ void SAQwtAxisSetWidget::updateAxisScaleUI()
 
 void SAQwtAxisSetWidget::updateAxisValue(QwtPlot *chart,int axisID)
 {
+    enableWidget(nullptr != chart);
     if(nullptr == chart)
     {
         resetAxisValue();
@@ -251,6 +253,23 @@ void SAQwtAxisSetWidget::resetAxisValue()
     ui->spinBoxMargin->setValue(0);
     ui->radioButtonTimeScale->setChecked(false);
     ui->dateTimeScaleSetWidget->setText("");
+
+
+}
+
+void SAQwtAxisSetWidget::enableWidget(bool enable)
+{
+    ui->checkBoxEnable->setEnabled(enable);
+    ui->lineEditTitle->setEnabled(enable);
+    ui->fontSetWidget->setEnabled(enable);
+    ui->doubleSpinBoxMin->setEnabled(enable);
+    ui->doubleSpinBoxMax->setEnabled(enable);
+    ui->radioButtonNormal->setEnabled(enable);
+    ui->doubleSpinBoxRotation->setEnabled(enable);
+    ui->labelAligment->setEnabled(enable);
+    ui->spinBoxMargin->setEnabled(enable);
+    ui->radioButtonTimeScale->setEnabled(enable);
+    ui->dateTimeScaleSetWidget->setEnabled(enable);
 }
 
 void SAQwtAxisSetWidget::connectChartAxis()

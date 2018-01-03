@@ -1,4 +1,4 @@
-#include "SAChartNormalSetWidget.h"
+﻿#include "SAChartNormalSetWidget.h"
 #include <QApplication>
 #include <QVBoxLayout>
 #include "SAChart2D.h"
@@ -124,6 +124,7 @@ SAChartNormalSetWidget::SAChartNormalSetWidget(QWidget *par):QWidget(par)
   ,ui(new SAChartNormalSetWidget::UI)
 {
     ui->setupUI(this);
+    setEnabled(false);
 }
 
 SAChartNormalSetWidget::~SAChartNormalSetWidget()
