@@ -1,4 +1,4 @@
-#ifndef SASPINBOXPROPERTYITEM_H
+﻿#ifndef SASPINBOXPROPERTYITEM_H
 #define SASPINBOXPROPERTYITEM_H
 
 #include "SAPropertyItemContainer.h"
@@ -19,6 +19,7 @@ public:
     void setMinimum(int v);
 
     void setMaximum(int v);
+    void setMinMax(int min,int max);
 Q_SIGNALS:
     void valueChanged(int v);
 private:

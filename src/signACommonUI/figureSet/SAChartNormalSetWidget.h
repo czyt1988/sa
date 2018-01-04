@@ -1,4 +1,4 @@
-#ifndef SACHARTNORMALSETWIDGET_H
+﻿#ifndef SACHARTNORMALSETWIDGET_H
 #define SACHARTNORMALSETWIDGET_H
 #include <QWidget>
 
@@ -24,7 +24,6 @@ private slots:
     Q_SLOT void onFooterTextChanged(const QString& text);
     Q_SLOT void onCanvasBackgroundColorChanged(const QColor& clr);
     Q_SLOT void onBorderRadiusChanged(double v);
-    Q_SLOT void onChartDelete(QObject *obj);
 signals:
     void chartTitleChanged(const QString& text);
 private:

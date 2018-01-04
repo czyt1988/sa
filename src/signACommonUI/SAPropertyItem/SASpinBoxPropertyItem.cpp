@@ -1,4 +1,4 @@
-#include "SASpinBoxPropertyItem.h"
+﻿#include "SASpinBoxPropertyItem.h"
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
@@ -66,5 +66,11 @@ void SASpinBoxPropertyItem::setMinimum(int v)
 void SASpinBoxPropertyItem::setMaximum(int v)
 {
     ui->spinBox->setMaximum(v);
+}
+
+void SASpinBoxPropertyItem::setMinMax(int min, int max)
+{
+    setMinimum(min);
+    setMaximum(max);
 }
 

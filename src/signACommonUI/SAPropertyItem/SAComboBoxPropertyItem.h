@@ -1,4 +1,4 @@
-#ifndef SACOMBOXPROPERTYITEM_H
+﻿#ifndef SACOMBOXPROPERTYITEM_H
 #define SACOMBOXPROPERTYITEM_H
 #include "SAPropertyItemContainer.h"
 #include <QVariant>
@@ -17,7 +17,10 @@ public:
     void setEditable(bool editable);
 
     QString currentText() const;
+    QVariant currentData(int role = Qt::UserRole) const;
+    int currentIndex() const;
 
+    void clearAllItem();
 public slots:
 
     void setCurrentIndex(int index);

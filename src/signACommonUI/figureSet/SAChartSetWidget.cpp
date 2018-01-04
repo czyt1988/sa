@@ -117,6 +117,7 @@ void SAChartSetWidget::setChart(SAChart2D *chart)
 
 void SAChartSetWidget::onChartDelete(QObject* obj)
 {
+    Q_UNUSED(obj);
     ui->chartCtrl = nullptr;
     ui->chartNormalSetWidget->setChart(nullptr);
     ui->plotAxesSetWidget->setChart(nullptr);

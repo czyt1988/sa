@@ -84,7 +84,6 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
 {
     if(ui->chartWidget && ui->chartWidget != chart)
     {
-        disconnect(ui->chartWidget,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
         disconnect(ui->chartWidget,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
     if(nullptr == chart)
@@ -95,7 +94,6 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
     {
         QwtPlotItemList curItems = SAChart2D::getPlotChartItemList(chart);
         ui->curveItemSetWidget->setPlotItems(curItems);
-        connect(chart,&QObject::destroyed,this,&SAPlotItemSetWidget::onChartDelete);
         connect(chart,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
     ui->chartWidget = chart;
@@ -110,15 +108,14 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
     {
         return;
     }
+    if(nullptr == ui->chartWidget)
+    {
+        return;
+    }
     if(SAChart2D::isPlotChartItem(item))
     {
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }
 }
 
-void SAPlotItemSetWidget::onChartDelete(QObject *obj)
-{
-    Q_UNUSED(obj);
-    ui->chartWidget = nullptr;
-    ui->curveItemSetWidget->setPlotItems(QwtPlotItemList());
-}
+

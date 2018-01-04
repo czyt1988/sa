@@ -1,4 +1,4 @@
-#ifndef SAQWTPLOTCURVEITEMSETWIDGET_H
+﻿#ifndef SAQWTPLOTCURVEITEMSETWIDGET_H
 #define SAQWTPLOTCURVEITEMSETWIDGET_H
 #include "SAQwtPlotItemSetWidget.h"
 #include "qwt_symbol.h"
@@ -12,7 +12,7 @@ class QMenu;
 class SAQwtSymbolSetWidget;
 
 ///
-/// \brief 对应QwtPlotCurveItem的设置窗口
+/// \brief 对应QwtPlotCurve的设置窗口
 ///
 class SAQwtPlotCurveItemSetWidget : public SAQwtPlotItemSetWidget
 {

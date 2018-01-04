@@ -22,7 +22,8 @@ HEADERS += \
     $$PWD/SAQwtSymbolSetWidget.h \
     $$PWD/SAQwtAxisSetWidget.h \
     $$PWD/SAQwtDateScaleSeWidget.h \
-    $$PWD/SAChartAxesSetWidget.h
+    $$PWD/SAChartAxesSetWidget.h \
+    $$PWD/SAQwtPlotBarChartItemSetWidget.h
 
 SOURCES += \
     $$PWD/SAAxisSelectComboBoxPropertyItem.cpp \
@@ -38,4 +39,5 @@ SOURCES += \
     $$PWD/SAQwtSymbolSetWidget.cpp \
     $$PWD/SAQwtAxisSetWidget.cpp \
     $$PWD/SAQwtDateScaleSeWidget.cpp \
-    $$PWD/SAChartAxesSetWidget.cpp
+    $$PWD/SAChartAxesSetWidget.cpp \
+    $$PWD/SAQwtPlotBarChartItemSetWidget.cpp

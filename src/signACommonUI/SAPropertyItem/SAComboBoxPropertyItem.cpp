@@ -1,4 +1,4 @@
-#include "SAComboBoxPropertyItem.h"
+﻿#include "SAComboBoxPropertyItem.h"
 #include <QComboBox>
 
 class SAComboBoxPropertyItem::UI
@@ -63,6 +63,24 @@ void SAComboBoxPropertyItem::setEditable(bool editable)
 QString SAComboBoxPropertyItem::currentText() const
 {
     return ui->comboBox->currentText();
+}
+
+QVariant SAComboBoxPropertyItem::currentData(int role) const
+{
+    return ui->comboBox->currentData(role);
+}
+
+int SAComboBoxPropertyItem::currentIndex() const
+{
+    return ui->comboBox->currentIndex();
+}
+
+void SAComboBoxPropertyItem::clearAllItem()
+{
+    while(ui->comboBox->count())
+    {
+        ui->comboBox->removeItem(0);
+    }
 }
 
 void SAComboBoxPropertyItem::setCurrentIndex(int index)

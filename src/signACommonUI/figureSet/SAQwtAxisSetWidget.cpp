@@ -157,11 +157,7 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
     }
 }
 
-void SAQwtAxisSetWidget::onChartDelete(QObject *obj)
-{
-    m_chart = nullptr;
-    resetAxisValue();
-}
+
 
 void SAQwtAxisSetWidget::updateUI()
 {
@@ -300,26 +296,6 @@ void SAQwtAxisSetWidget::disconnectChartAxis()
     }
 }
 
-void SAQwtAxisSetWidget::connectChart()
-{
-    if(nullptr == m_chart)
-    {
-        return;
-    }
-    connect(m_chart,&QObject::destroyed
-            ,this,&SAQwtAxisSetWidget::onChartDelete);
-}
-
-void SAQwtAxisSetWidget::disconnectChart()
-{
-    if(nullptr == m_chart)
-    {
-        return;
-    }
-    disconnect(m_chart,&QObject::destroyed
-            ,this,&SAQwtAxisSetWidget::onChartDelete);
-}
-
 QwtPlot *SAQwtAxisSetWidget::getChart() const
 {
     return m_chart;
@@ -327,9 +303,8 @@ QwtPlot *SAQwtAxisSetWidget::getChart() const
 
 void SAQwtAxisSetWidget::setChart(QwtPlot *chart, int axisID)
 {
-    if(m_chart && (m_chart != chart))
+    if(chart && m_chart && (m_chart != chart))
     {
-        disconnectChart();
         disconnectChartAxis();
     }
 
@@ -338,7 +313,6 @@ void SAQwtAxisSetWidget::setChart(QwtPlot *chart, int axisID)
     m_chart = chart;
     m_axisID = axisID;
     connectChartAxis();
-    connectChart();
 }
 
 void SAQwtAxisSetWidget::updateAxisValue()

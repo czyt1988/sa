@@ -1,4 +1,4 @@
-#ifndef SAPLOTITEMSETWIDGET_H
+﻿#ifndef SAPLOTITEMSETWIDGET_H
 #define SAPLOTITEMSETWIDGET_H
 #include "qwt_plot.h"
 #include <QWidget>
@@ -15,7 +15,6 @@ public:
     void setChart(QwtPlot* chart);
 private slots:
     void onPlotItemAttached(QwtPlotItem* item, bool on);
-    void onChartDelete(QObject* obj);
 private:
     class UI;
     SAPlotItemSetWidget::UI* ui;
