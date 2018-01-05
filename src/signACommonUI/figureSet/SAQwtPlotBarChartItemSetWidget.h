@@ -20,6 +20,7 @@ private slots:
     void onFrameStyleComboBoxIndexChanged(int v);
     void onSymbolStyleComboBoxIndexChanged(int v);
     void onLineWidthValueChanged(int v);
+    void onBarPaintColorChanged(const QColor& v);
 };
 
 #endif // SAQWTPLOTBARCHARTITEMSETWIDGET_H

@@ -1,4 +1,4 @@
-#include "SAQwtPlotItemVGroupBox.h"
+﻿#include "SAQwtPlotItemVGroupBox.h"
 #include <QApplication>
 #include <QVBoxLayout>
 #include "SAQwtPlotItemSetWidget.h"
@@ -15,12 +15,15 @@ public:
         itemPtr = plotItem;
         QLayout* vlayout = par->layout();
         innerWidget = SAQwtPlotItemSetWidget::createQwtPlotItemSetWidget(plotItem,nullptr);
-        par->setTitle(plotItem->title().text());
-        par->connect(innerWidget,&SAQwtPlotItemSetWidget::plotItemTitleChanged
-                     ,par,[par](const QString& title){
-            par->setTitle(title);
-        });
-        vlayout->addWidget(innerWidget);
+        if(innerWidget)
+        {
+            par->setTitle(plotItem->title().text());
+            par->connect(innerWidget,&SAQwtPlotItemSetWidget::plotItemTitleChanged
+                         ,par,[par](const QString& title){
+                par->setTitle(title);
+            });
+            vlayout->addWidget(innerWidget);
+        }
     }
 };
 

@@ -1,4 +1,4 @@
-#ifndef SAQWTPLOTITEMSETWIDGET_H
+﻿#ifndef SAQWTPLOTITEMSETWIDGET_H
 #define SAQWTPLOTITEMSETWIDGET_H
 
 #include <QWidget>
@@ -7,9 +7,11 @@ class SACheckBoxPropertyItem;
 class SALineEditPropertyItem;
 class SADoubleSpinBoxPropertyItem;
 class SAChartAxisSetSelect;
+class SAQwtPlotBarChartItemSetWidget;
 class QLabel;
 class QHBoxLayout;
 class QVBoxLayout;
+class QwtPlotBarChart;
 ///
 /// \brief 用于设置QwtPlotItem的widget
 ///

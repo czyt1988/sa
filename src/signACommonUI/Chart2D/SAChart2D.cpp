@@ -333,7 +333,7 @@ QColor SAChart2D::getItemColor(const QwtPlotItem *item, const QColor &defaultClr
         const QwtColumnSymbol* symbol =  bar->symbol();
         if(symbol)
         {
-            return symbol->palette().color(QPalette::Button);
+            return symbol->palette().color(QPalette::Window);
         }
         break;
     }
@@ -570,7 +570,9 @@ SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
     }
     QColor clr = SARandColorMaker::getCurveColor();
     QwtColumnSymbol *symbol = new QwtColumnSymbol( QwtColumnSymbol::Box );
-    symbol->setPalette(clr);
+    QPalette p = symbol->palette();
+    p.setColor(QPalette::Window,clr);
+    symbol->setPalette(p);
     series->setSymbol(symbol);
     addItem(series.data(),tr("add bar:%1").arg(series->title().text()));
     return series.take();

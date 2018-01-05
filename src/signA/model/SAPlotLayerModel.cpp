@@ -233,7 +233,7 @@ QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) c
         const QwtColumnSymbol* symbol =  static_cast<const SABarSeries*>(item)->symbol();
         if(symbol)
         {
-            c = symbol->palette().color(QPalette::Button);
+            c = symbol->palette().color(QPalette::Window);
         }
         break;
     }
@@ -298,7 +298,9 @@ void SAPlotLayerModel::setColorForItem(QwtPlotItem *item, QColor clr)
             newSym->setLineWidth(sym->lineWidth());
             newSym->setPalette(sym->palette());
         }
-        newSym->setPalette(clr);
+        QPalette p = sym->palette();
+        p.setColor(QPalette::Window,clr);
+        newSym->setPalette(p);
         bar->setSymbol(newSym);
         break;
     }

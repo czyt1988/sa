@@ -6,8 +6,10 @@
 #include "SAChartAxisSetSelect.h"
 #include "qwt_plot_item.h"
 #include "qwt_plot_curve.h"
+#include "qwt_plot_barchart.h"
 #include <QVBoxLayout>
 #include "SAQwtPlotCurveItemSetWidget.h"
+#include "SAQwtPlotBarChartItemSetWidget.h"
 SAQwtPlotItemSetWidget::SAQwtPlotItemSetWidget(QwtPlotItem *plotItem, QWidget* parent)
     :QWidget(parent)
     ,m_itemPtr(plotItem)
@@ -61,7 +63,13 @@ SAQwtPlotItemSetWidget *SAQwtPlotItemSetWidget::createQwtPlotItemSetWidget(QwtPl
     {
         return new SAQwtPlotCurveItemSetWidget(cur,parent);
     }
+    else if(QwtPlotBarChart* bar = dynamic_cast<QwtPlotBarChart*>(plotItem))
+    {
+        return new SAQwtPlotBarChartItemSetWidget(bar,parent);
+    }
+    return nullptr;
 }
+
 
 void SAQwtPlotItemSetWidget::addWidget(QWidget *w, int stretch, Qt::Alignment alignment)
 {

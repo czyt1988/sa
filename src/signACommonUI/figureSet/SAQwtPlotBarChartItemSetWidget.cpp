@@ -2,6 +2,7 @@
 #include "SASpinBoxPropertyItem.h"
 #include "SAComboBoxPropertyItem.h"
 #include "qwt_column_symbol.h"
+#include "SAColorSetPropertyItem.h"
 #include <QApplication>
 #define TR(str) \
     QApplication::translate("SAQwtPlotBarChartItemSetWidget", str, Q_NULLPTR)
@@ -26,6 +27,7 @@ public:
     SAComboBoxPropertyItem* frameStyleItem;
     SAComboBoxPropertyItem* symbolStyleItem;
     SASpinBoxPropertyItem* lineWidthItem;
+    SAColorSetPropertyItem* barPaintColor;
     SAQwtPlotBarChartItemSetWidgetPrivate(QwtPlotBarChart *bar,SAQwtPlotBarChartItemSetWidget* par)
         :barChart(bar)
         ,q_ptr(par)
@@ -38,23 +40,48 @@ public:
         frameStyleItem = new SAComboBoxPropertyItem(par);
         lineWidthItem = new SASpinBoxPropertyItem(par);
         lineWidthItem->setMinMax(0,999);
+        barPaintColor = new SAColorSetPropertyItem(par);
+
         par->addWidget(spacingItem);
         par->addWidget(marginItem);
         par->addWidget(symbolStyleItem);
         par->addWidget(frameStyleItem);
         par->addWidget(lineWidthItem);
+        par->addWidget(barPaintColor);
 
-        par->connect(spacingItem,&SASpinBoxPropertyItem::valueChanged
-                     ,par,&SAQwtPlotBarChartItemSetWidget::onSpacingValueChanged);
-        par->connect(marginItem,&SASpinBoxPropertyItem::valueChanged
-                     ,par,&SAQwtPlotBarChartItemSetWidget::onMarginValueChanged);
-        par->connect(symbolStyleItem,static_cast<void(SAComboBoxPropertyItem::*)(int)>(&SAComboBoxPropertyItem::currentIndexChanged)
-                     ,par,&SAQwtPlotBarChartItemSetWidget::onSymbolStyleComboBoxIndexChanged);
-        par->connect(frameStyleItem,static_cast<void(SAComboBoxPropertyItem::*)(int)>(&SAComboBoxPropertyItem::currentIndexChanged)
-                     ,par,&SAQwtPlotBarChartItemSetWidget::onFrameStyleComboBoxIndexChanged);
-        par->connect(lineWidthItem,&SASpinBoxPropertyItem::valueChanged
-                     ,par,&SAQwtPlotBarChartItemSetWidget::onLineWidthValueChanged);
         retranslateUI();
+        spacingItem->setValue(bar->spacing());
+        marginItem->setValue(bar->margin());
+        const QwtColumnSymbol* symbol = bar->symbol();
+        if(symbol)
+        {
+            barPaintColor->setCurrentColor(symbol->palette().window().color());
+            lineWidthItem->setValue(symbol->lineWidth());
+            switch(symbol->style())
+            {
+            case QwtColumnSymbol::NoStyle:symbolStyleItem->setCurrentIndex(0);break;
+            case QwtColumnSymbol::Box:symbolStyleItem->setCurrentIndex(1);break;
+            default:symbolStyleItem->setCurrentIndex(0);break;
+            }
+        }
+
+        connect();
+    }
+
+    void connect()
+    {
+        q_ptr->connect(spacingItem,&SASpinBoxPropertyItem::valueChanged
+                     ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onSpacingValueChanged);
+        q_ptr->connect(marginItem,&SASpinBoxPropertyItem::valueChanged
+                     ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onMarginValueChanged);
+        q_ptr->connect(symbolStyleItem,static_cast<void(SAComboBoxPropertyItem::*)(int)>(&SAComboBoxPropertyItem::currentIndexChanged)
+                     ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onSymbolStyleComboBoxIndexChanged);
+        q_ptr->connect(frameStyleItem,static_cast<void(SAComboBoxPropertyItem::*)(int)>(&SAComboBoxPropertyItem::currentIndexChanged)
+                     ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onFrameStyleComboBoxIndexChanged);
+        q_ptr->connect(lineWidthItem,&SASpinBoxPropertyItem::valueChanged
+                     ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onLineWidthValueChanged);
+        q_ptr->connect(barPaintColor,&SAColorSetPropertyItem::colorChanged
+                     ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onBarPaintColorChanged);
     }
 
     void retranslateUI()
@@ -75,6 +102,7 @@ public:
         frameStyleItem->addItem(TR("Plain"),QwtColumnSymbol::Plain);
         frameStyleItem->addItem(TR("Raised"),QwtColumnSymbol::Raised);
         lineWidthItem->setText(TR("Line Width"));
+        barPaintColor->setText(TR("Color"));
     }
 };
 
@@ -163,6 +191,12 @@ void SAQwtPlotBarChartItemSetWidget::onSymbolStyleComboBoxIndexChanged(int v)
         default:
             newSymbol->setFrameStyle(QwtColumnSymbol::Plain);
         }
+        int lw = d_ptr->lineWidthItem->getValue();
+        newSymbol->setLineWidth(lw);
+        QColor clr = d_ptr->barPaintColor->getCurrentColor();
+        QPalette p = newSymbol->palette();
+        p.setColor(QPalette::Window,clr);
+        newSymbol->setPalette(p);
     }
     d_ptr->barChart->setSymbol(newSymbol);
 }
@@ -177,4 +211,19 @@ void SAQwtPlotBarChartItemSetWidget::onLineWidthValueChanged(int v)
     QwtColumnSymbol* newSymbol = new QwtColumnSymbol();
     *newSymbol << *old;
     newSymbol->setLineWidth(v);
+}
+
+void SAQwtPlotBarChartItemSetWidget::onBarPaintColorChanged(const QColor &v)
+{
+    if(nullptr == d_ptr->barChart)
+    {
+        return;
+    }
+    const QwtColumnSymbol* old = d_ptr->barChart->symbol();
+    QwtColumnSymbol* newSymbol = new QwtColumnSymbol();
+    *newSymbol << *old;
+    QPalette p = newSymbol->palette();
+    p.setColor(QPalette::Window,v);
+    newSymbol->setPalette(p);
+    d_ptr->barChart->setSymbol(newSymbol);
 }
