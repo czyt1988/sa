@@ -148,7 +148,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ,ui_status_info(nullptr)
   ,m_menuTreeProjectItem(nullptr)
   ,m_menuValueManagerView(nullptr)
-  ,m_lastActiveWnd(nullptr)
+ // ,m_lastActiveWnd(nullptr)
   ,m_nProjectCount(0)
   ,m_nUserChartCount(0)
   ,m_lastShowFigureWindow(nullptr)
@@ -1653,9 +1653,9 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
 
     if(nullptr == arg1)
         return;
-    if(m_lastActiveWnd == arg1)
-        return;
-    m_lastActiveWnd = arg1;
+//    if(m_lastActiveWnd == arg1)
+//        return;
+//    m_lastActiveWnd = arg1;
 
     SAFigureWindow* fig = getFigureWidgetFromMdiSubWindow(arg1);
     if(fig)
@@ -1956,6 +1956,14 @@ SAFigureWindow*MainWindow::getFigureWidgetFromMdiSubWindow(QMdiSubWindow* sub)
 SAUIInterface::LastFocusType MainWindow::lastFocusWidgetType() const
 {
     return static_cast<SAUIInterface::LastFocusType>(m_lastForceType);
+}
+///
+/// \brief 设置多文档激活的窗口和QMdiArea::setActiveSubWindow一样
+/// \param window
+///
+void MainWindow::setActiveSubWindow(QMdiSubWindow *window)
+{
+    ui->mdiArea->setActiveSubWindow(window);
 }
 
 ///
@@ -2716,12 +2724,21 @@ void MainWindow::__loadSubWindowFromFolder(const QString &folderPath)
         return;
     }
     QString errString;
+    QMdiSubWindow* sub = nullptr;
     for(int i=0;i<size;++i)
     {
-        if(!load_sub_window(uiInterface(),dir.absoluteFilePath(dataFileList[i]),&errString))
+        if(QMdiSubWindow* s = load_sub_window(uiInterface(),dir.absoluteFilePath(dataFileList[i]),&errString))
+        {
+            sub = s;
+        }
+        else
         {
             showMessageInfo(errString,SA::WarningMessage);
         }
+    }
+    if(sub)
+    {
+        setActiveSubWindow(sub);
     }
 }
 
@@ -2855,7 +2872,7 @@ bool save_sub_window(SAMdiSubWindow *w,const QString& folderPath,QString* errStr
 /// \param errString 错误信息
 /// \return
 ///
-bool load_sub_window(SAUIInterface *ui, const QString &filePath, QString *errString)
+QMdiSubWindow* load_sub_window(SAUIInterface *ui, const QString &filePath, QString *errString)
 {
     QFile file(filePath);
     if(!file.open(QIODevice::ReadOnly))
@@ -2864,7 +2881,7 @@ bool load_sub_window(SAUIInterface *ui, const QString &filePath, QString *errStr
         {
             *errString = file.errorString();
         }
-        return false;
+        return nullptr;
     }
     SAMdiSubWindowSerializeHead header;
     QDataStream in(&file);
@@ -2875,15 +2892,16 @@ bool load_sub_window(SAUIInterface *ui, const QString &filePath, QString *errStr
         {
             *errString = QObject::tr("invalid file");
         }
-        return false;
+        return nullptr;
     }
     QString windowTitle;
     in >> windowTitle;
+    QMdiSubWindow* sub = nullptr;
     switch(header.param.type)
     {
     case SA::SubWindowFigure:
     {
-        QMdiSubWindow* sub = ui->createFigureWindow(windowTitle);
+        sub = ui->createFigureWindow(windowTitle);
         SAFigureWindow* fig = qobject_cast<SAFigureWindow*>(sub->widget());
         if(fig)
         {
@@ -2894,7 +2912,7 @@ bool load_sub_window(SAUIInterface *ui, const QString &filePath, QString *errStr
     default:
         break;
     }
-    return true;
+    return sub;
 }
 
 QString get_sub_window_type_suffix(SA::SubWndType type)

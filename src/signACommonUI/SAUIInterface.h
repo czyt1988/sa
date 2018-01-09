@@ -10,6 +10,7 @@ class QWidget;
 class QAction;
 class QMenu;
 class QMdiSubWindow;
+class QMdiArea;
 class QProgressBar;
 //qwt
 class QwtPlotCurve;
@@ -119,6 +120,8 @@ public:
 
     //记录最后获取焦点的窗口类型，此函数主要用于函数功能模块判断是对图进行操作还是对数据进行操作
     virtual LastFocusType lastFocusWidgetType() const = 0;
+    //设置多文档激活的窗口和QMdiArea::setActiveSubWindow一样
+    virtual void setActiveSubWindow(QMdiSubWindow *window) = 0;
     /// \}
 
 

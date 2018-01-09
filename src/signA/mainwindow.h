@@ -154,6 +154,8 @@ public:
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* sub);
     //记录最后获取焦点的窗口类型，此函数主要用于函数功能模块判断是对图进行操作还是对数据进行操作
     SAUIInterface::LastFocusType lastFocusWidgetType() const;
+    //设置多文档激活的窗口和QMdiArea::setActiveSubWindow一样
+    void setActiveSubWindow(QMdiSubWindow *window);
     /// \}
 
     /// \group 子窗口的相关控制
@@ -544,7 +546,7 @@ private:
     SAInformationStatusWidget* ui_status_info;///< 状态栏上的特殊信息
     QMenu* m_menuTreeProjectItem;///< 项目树的弹出菜单
     QMenu* m_menuValueManagerView;///< 变量管理弹出菜单
-    QMdiSubWindow* m_lastActiveWnd;///< 记录最后激活的窗口
+    //QMdiSubWindow* m_lastActiveWnd;///< 记录最后激活的窗口
 
     SAPluginManager* m_pluginManager;///< 插件管理器
     int m_nProjectCount;//记录项目总数
@@ -567,7 +569,7 @@ QString get_sub_window_type_suffix(SA::SubWndType type);
 //保存子窗口到文件
 bool save_sub_window(SAMdiSubWindow* w, const QString &folderPath, QString *errString);
 //重文件加载子窗口
-bool load_sub_window(SAUIInterface *ui, const QString& filePath, QString *errString);
+QMdiSubWindow* load_sub_window(SAUIInterface *ui, const QString& filePath, QString *errString);
 //把没能和SubWindowList对应的文件删除
 void remove_figure_file_not_in_sub_window_list(const QString &folderPath,const QList<QMdiSubWindow*>& subWindows);
 #endif // MAINWINDOW_H

@@ -178,6 +178,11 @@ SAUIInterface::LastFocusType SAUI::lastFocusWidgetType() const
     return m_mainWnd->lastFocusWidgetType();
 }
 
+void SAUI::setActiveSubWindow(QMdiSubWindow *window)
+{
+    m_mainWnd->setActiveSubWindow(window);
+}
+
 QMdiSubWindow *SAUI::getCurrentActiveSubWindow() const
 {
     return m_mainWnd->getCurrentActiveSubWindow();

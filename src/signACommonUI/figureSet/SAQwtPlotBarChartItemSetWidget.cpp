@@ -29,8 +29,8 @@ public:
     SASpinBoxPropertyItem* lineWidthItem;
     SAColorSetPropertyItem* barPaintColor;
     SAQwtPlotBarChartItemSetWidgetPrivate(QwtPlotBarChart *bar,SAQwtPlotBarChartItemSetWidget* par)
-        :barChart(bar)
-        ,q_ptr(par)
+        :q_ptr(par)
+        ,barChart(bar)
     {
         spacingItem = new SASpinBoxPropertyItem(par);
         spacingItem->setMinMax(0,999);

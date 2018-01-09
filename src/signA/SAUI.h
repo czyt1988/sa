@@ -92,6 +92,8 @@ public:
     QList<QMdiSubWindow*> getSubWindowList() const;
     //记录最后获取焦点的窗口类型，此函数主要用于函数功能模块判断是对图进行操作还是对数据进行操作
     LastFocusType lastFocusWidgetType() const;
+    //设置多文档激活的窗口和QMdiArea::setActiveSubWindow一样
+    void setActiveSubWindow(QMdiSubWindow *window);
     /// \}
 
     /// \group 子窗口的相关控制
