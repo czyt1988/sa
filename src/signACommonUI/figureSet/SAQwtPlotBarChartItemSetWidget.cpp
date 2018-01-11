@@ -28,6 +28,7 @@ public:
     SAComboBoxPropertyItem* symbolStyleItem;
     SASpinBoxPropertyItem* lineWidthItem;
     SAColorSetPropertyItem* barPaintColor;
+    SAColorSetPropertyItem* barFrameColor;
     SAQwtPlotBarChartItemSetWidgetPrivate(QwtPlotBarChart *bar,SAQwtPlotBarChartItemSetWidget* par)
         :q_ptr(par)
         ,barChart(bar)
@@ -41,13 +42,15 @@ public:
         lineWidthItem = new SASpinBoxPropertyItem(par);
         lineWidthItem->setMinMax(0,999);
         barPaintColor = new SAColorSetPropertyItem(par);
+        barFrameColor = new SAColorSetPropertyItem(par);
 
         par->addWidget(spacingItem);
         par->addWidget(marginItem);
         par->addWidget(symbolStyleItem);
         par->addWidget(frameStyleItem);
-        par->addWidget(lineWidthItem);
         par->addWidget(barPaintColor);
+        par->addWidget(lineWidthItem);
+        par->addWidget(barFrameColor);
 
         retranslateUI();
         spacingItem->setValue(bar->spacing());
@@ -55,13 +58,41 @@ public:
         const QwtColumnSymbol* symbol = bar->symbol();
         if(symbol)
         {
+            frameStyleItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
+            lineWidthItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
+            barFrameColor->setEnabled(QwtColumnSymbol::Box == symbol->style());
+
             barPaintColor->setCurrentColor(symbol->palette().window().color());
+            barFrameColor->setCurrentColor(symbol->palette().dark().color());
             lineWidthItem->setValue(symbol->lineWidth());
+
             switch(symbol->style())
             {
-            case QwtColumnSymbol::NoStyle:symbolStyleItem->setCurrentIndex(0);break;
-            case QwtColumnSymbol::Box:symbolStyleItem->setCurrentIndex(1);break;
-            default:symbolStyleItem->setCurrentIndex(0);break;
+            case QwtColumnSymbol::NoStyle:
+                symbolStyleItem->setCurrentIndex(0);
+                break;
+            case QwtColumnSymbol::Box:
+                symbolStyleItem->setCurrentIndex(1);
+                break;
+            default:
+                symbolStyleItem->setCurrentIndex(0);
+                break;
+            }
+
+            switch(symbol->frameStyle())
+            {
+            case QwtColumnSymbol::NoFrame:
+                frameStyleItem->setCurrentIndex(0);
+                break;
+            case QwtColumnSymbol::Plain:
+                frameStyleItem->setCurrentIndex(1);
+                break;
+            case QwtColumnSymbol::Raised:
+                frameStyleItem->setCurrentIndex(2);
+                break;
+            default:
+                frameStyleItem->setCurrentIndex(0);
+                break;
             }
         }
 
@@ -82,6 +113,8 @@ public:
                      ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onLineWidthValueChanged);
         q_ptr->connect(barPaintColor,&SAColorSetPropertyItem::colorChanged
                      ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onBarPaintColorChanged);
+        q_ptr->connect(barFrameColor,&SAColorSetPropertyItem::colorChanged
+                     ,q_ptr,&SAQwtPlotBarChartItemSetWidget::onBarFrameColorChanged);
     }
 
     void retranslateUI()
@@ -102,7 +135,8 @@ public:
         frameStyleItem->addItem(TR("Plain"),QwtColumnSymbol::Plain);
         frameStyleItem->addItem(TR("Raised"),QwtColumnSymbol::Raised);
         lineWidthItem->setText(TR("Line Width"));
-        barPaintColor->setText(TR("Color"));
+        barPaintColor->setText(TR("Plain Color"));
+        barFrameColor->setText(TR("Frame Color"));
     }
 };
 
@@ -177,6 +211,8 @@ void SAQwtPlotBarChartItemSetWidget::onSymbolStyleComboBoxIndexChanged(int v)
     default:
         newSymbol->setStyle(QwtColumnSymbol::Box);
     }
+    d_ptr->frameStyleItem->setEnabled(QwtColumnSymbol::Box == newSymbol->style());
+    d_ptr->lineWidthItem->setEnabled(QwtColumnSymbol::Box == newSymbol->style());
     if(QwtColumnSymbol::Box == newSymbol->style())
     {
         int fs = d_ptr->frameStyleItem->currentData().toInt();
@@ -211,6 +247,7 @@ void SAQwtPlotBarChartItemSetWidget::onLineWidthValueChanged(int v)
     QwtColumnSymbol* newSymbol = new QwtColumnSymbol();
     *newSymbol << *old;
     newSymbol->setLineWidth(v);
+    d_ptr->barChart->setSymbol(newSymbol);
 }
 
 void SAQwtPlotBarChartItemSetWidget::onBarPaintColorChanged(const QColor &v)
@@ -224,6 +261,21 @@ void SAQwtPlotBarChartItemSetWidget::onBarPaintColorChanged(const QColor &v)
     *newSymbol << *old;
     QPalette p = newSymbol->palette();
     p.setColor(QPalette::Window,v);
+    newSymbol->setPalette(p);
+    d_ptr->barChart->setSymbol(newSymbol);
+}
+
+void SAQwtPlotBarChartItemSetWidget::onBarFrameColorChanged(const QColor &v)
+{
+    if(nullptr == d_ptr->barChart)
+    {
+        return;
+    }
+    const QwtColumnSymbol* old = d_ptr->barChart->symbol();
+    QwtColumnSymbol* newSymbol = new QwtColumnSymbol();
+    *newSymbol << *old;
+    QPalette p = newSymbol->palette();
+    p.setColor(QPalette::Dark,v);
     newSymbol->setPalette(p);
     d_ptr->barChart->setSymbol(newSymbol);
 }

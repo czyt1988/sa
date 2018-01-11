@@ -12,6 +12,7 @@ SAQwtAxisSetWidget::SAQwtAxisSetWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SAQwtAxisSetWidget)
   ,m_chart(nullptr)
+  ,m_axisID(QwtPlot::axisCnt)
 {
     ui->setupUi(this);
     m_buttonGroup = new QButtonGroup(this);
@@ -61,6 +62,7 @@ void SAQwtAxisSetWidget::onEnableCheckBoxClicked(int state)
     {
         m_chart->enableAxis(m_axisID,enable);
     }
+    emit enableAxis(Qt::Checked == state,m_axisID);
 }
 
 void SAQwtAxisSetWidget::onLineEditTextChanged(const QString &text)

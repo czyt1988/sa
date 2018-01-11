@@ -16,7 +16,17 @@ using namespace sa;
 ///
 struct chart2d_serialize_header
 {
+    int magicStart;
     QString externInfo;
+    chart2d_serialize_header()
+        :magicStart(0xfd3548)
+    {
+
+    }
+    bool isValid() const
+    {
+        return (magicStart == 0xfd3548);
+    }
 };
 
 ///
@@ -24,8 +34,22 @@ struct chart2d_serialize_header
 ///
 struct chart_item_rtti_info
 {
+    int magicStart;
     int rtti;///< item的rtti
     bool isEnd;///< 是否是结束，如果是，将会结束
+    int magicEnd;
+    chart_item_rtti_info()
+        :magicStart(0xabcdf12)
+        ,magicEnd(0x24645f)
+        ,rtti(0)
+        ,isEnd(true)
+    {
+
+    }
+    bool isValid() const
+    {
+        return ((magicStart == 0xabcdf12) && (magicEnd == 0x24645f));
+    }
 };
 
 QDataStream& operator <<(QDataStream & out,const chart2d_serialize_header& header);
@@ -36,30 +60,36 @@ QDataStream& operator >>(QDataStream & in,chart_item_rtti_info& header);
 
 QDataStream& operator <<(QDataStream & out,const chart2d_serialize_header& header)
 {
-    out << header.externInfo
+    out << header.magicStart
+        << header.externInfo
            ;
     return out;
 }
 
 QDataStream& operator >>(QDataStream & in, chart2d_serialize_header &header)
 {
-    in >> header.externInfo
+    in >> header.magicStart
+       >> header.externInfo
             ;
     return in;
 }
 
 QDataStream& operator <<(QDataStream & out,const chart_item_rtti_info& header)
 {
-    out << header.rtti
+    out << header.magicStart
+        << header.rtti
         << header.isEnd
+        << header.magicEnd
            ;
     return out;
 }
 
 QDataStream& operator >>(QDataStream & in,chart_item_rtti_info& header)
 {
-    in >> header.rtti
+    in >> header.magicStart
+       >> header.rtti
        >> header.isEnd
+       >> header.magicEnd
             ;
     return in;
 }
@@ -74,8 +104,12 @@ SAChartSerializeHelp::SAChartSerializeHelp()
 void SAChartSerializeHelp::serializeOut(QDataStream &out, const SAChart2D *chart)
 {
     chart2d_serialize_header header;
+    const unsigned int check0 = 0xd1a23d;
+    const unsigned int check1 = 0xd123d;
     out << header;
+    out << check0;
     out << static_cast<const QwtPlot *>(chart);
+    out << check1;
     out << chart->isEnableGrid()
         << chart->isEnableGridX()
         << chart->isEnableGridY()
@@ -91,8 +125,29 @@ void SAChartSerializeHelp::serializeOut(QDataStream &out, const SAChart2D *chart
 void SAChartSerializeHelp::serializeIn(QDataStream &in, SAChart2D *chart)
 {
     chart2d_serialize_header header;
+    const unsigned int check0 = 0xd1a23d;
+    const unsigned int check1 = 0xd123d;
+    unsigned int tmp;
     in >> header;
+    if(!header.isValid())
+    {
+        throw sa::SABadSerializeExpection();
+        return;
+    }
+
+    in >> tmp;
+    if(check0 != tmp)
+    {
+        throw sa::SABadSerializeExpection();
+        return;
+    }
     in >> static_cast<QwtPlot *>(chart);
+    in >> tmp;
+    if(check1 != tmp)
+    {
+        throw sa::SABadSerializeExpection();
+        return;
+    }
     bool isEnableGrid,isEnableGridX,isEnableGridY
             ,isEnableGridXMin,isEnableGridYMin
             ,isEnableLegend,isEnableLegendPanel;
@@ -119,6 +174,8 @@ void SAChartSerializeHelp::serializeOutChartItem(QDataStream &out, const SAChart
 {
     const QList<QwtPlotItem*> items = chart->itemList();
     const int count = items.size();
+    const unsigned int check0 = 0x8754af;
+    const unsigned int check1 = 0xff323a;
     for(int i=0 ;i<count;++i)
     {
         QwtPlotItem* item = items[i];
@@ -130,31 +187,31 @@ void SAChartSerializeHelp::serializeOutChartItem(QDataStream &out, const SAChart
         case QwtPlotItem::Rtti_PlotCurve://序列化曲线
         {
             QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
-            out << header << p;
+            out << header << check0 << p << check1;
             break;
         }
         case SA::RTTI_SAXYSeries:
         {
             SAXYSeries* p = static_cast<SAXYSeries*>(item);
-            out << header << p;
+            out << header << check0 << p << check1;
             break;
         }
         case SA::RTTI_SAScatterSeries:
         {
             SAScatterSeries* p = static_cast<SAScatterSeries*>(item);
-            out << header << p;
+            out << header << check0 << p << check1;
             break;
         }
         case QwtPlotItem::Rtti_PlotBarChart:
         {
             QwtPlotBarChart* p = static_cast<QwtPlotBarChart*>(item);
-            out << header << p;
+            out << header << check0 << p << check1;
             break;
         }
         case SA::RTTI_SABarSeries:
         {
             SABarSeries* p = static_cast<SABarSeries*>(item);
-            out << header << p;
+            out << header << check0 << p << check1;
             break;
         }
         case QwtPlotItem::Rtti_PlotSpectroCurve:
@@ -179,6 +236,14 @@ void SAChartSerializeHelp::serializeInChartItem(QDataStream &in, SAChart2D *char
 {
     chart_item_rtti_info header;
     in >> header;
+    if(!header.isValid())
+    {
+        throw sa::SABadSerializeExpection();
+        return;
+    }
+    const unsigned int check0 = 0x8754af;
+    const unsigned int check1 = 0xff323a;
+    unsigned int tmp0,tmp1;
     while(!header.isEnd)
     {
         switch(header.rtti)
@@ -186,35 +251,65 @@ void SAChartSerializeHelp::serializeInChartItem(QDataStream &in, SAChart2D *char
         case QwtPlotItem::Rtti_PlotCurve:
         {
             QwtPlotCurve* p = new QwtPlotCurve;
-            in >> p;
+            in >> tmp0 >> p >> tmp1;
+            if(check0 != tmp0 || check1 != tmp1)
+            {
+                delete p;
+                throw sa::SABadSerializeExpection();
+                return;
+            }
             p->attach(chart);
             break;
         }
         case SA::RTTI_SAXYSeries:
         {
             SAXYSeries * p = new SAXYSeries;
-            in >> p;
+            in >> tmp0 >> p >> tmp1;
+            if(check0 != tmp0 || check1 != tmp1)
+            {
+                delete p;
+                throw sa::SABadSerializeExpection();
+                return;
+            }
             p->attach(chart);
             break;
         }
         case SA::RTTI_SAScatterSeries:
         {
             SAScatterSeries * p = new SAScatterSeries;
-            in >> p;
+            in >> tmp0 >> p >> tmp1;
+            if(check0 != tmp0 || check1 != tmp1)
+            {
+                delete p;
+                throw sa::SABadSerializeExpection();
+                return;
+            }
             p->attach(chart);
             break;
         }
         case QwtPlotItem::Rtti_PlotBarChart:
         {
             QwtPlotBarChart* p = new SABarSeries;
-            in >> p;
+            in >> tmp0 >> p >> tmp1;
+            if(check0 != tmp0 || check1 != tmp1)
+            {
+                delete p;
+                throw sa::SABadSerializeExpection();
+                return;
+            }
             p->attach(chart);
             break;
         }
         case SA::RTTI_SABarSeries:
         {
             SABarSeries* p = new SABarSeries;
-            in >> p;
+            in >> tmp0 >> p >> tmp1;
+            if(check0 != tmp0 || check1 != tmp1)
+            {
+                delete p;
+                throw sa::SABadSerializeExpection();
+                return;
+            }
             p->attach(chart);
             break;
         }
@@ -222,7 +317,13 @@ void SAChartSerializeHelp::serializeInChartItem(QDataStream &in, SAChart2D *char
             break;
         }
         in >> header;
+        if(!header.isValid())
+        {
+            throw sa::SABadSerializeExpection();
+            return;
+        }
     }
+    return;
 }
 
 ///
@@ -235,6 +336,8 @@ QDataStream & sa::operator <<(QDataStream &out, const SASeriesAndDataPtrMapper *
 {
     const QSet<SAAbstractDatas*>& linkDatas = p->linkDatas();
     //保存变量名
+    unsigned int c0=0x67fa34;
+    out << c0;
     out << linkDatas.size();
     for(auto i=linkDatas.begin();i!=linkDatas.end();++i)
     {
@@ -250,6 +353,14 @@ QDataStream & sa::operator <<(QDataStream &out, const SASeriesAndDataPtrMapper *
 ///
 QDataStream & sa::operator >>(QDataStream &in, SASeriesAndDataPtrMapper *p)
 {
+    unsigned int c0=0x67fa34;
+    unsigned int tmpCheck;
+    in >> tmpCheck;
+    if(c0 != tmpCheck)
+    {
+        throw sa::SABadSerializeExpection();
+        return in;
+    }
     int count = 0;
     in >> count;
     QStringList valList;

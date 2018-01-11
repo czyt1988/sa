@@ -1,4 +1,4 @@
-#ifndef SACHARTAXESSETWIDGET_H
+﻿#ifndef SACHARTAXESSETWIDGET_H
 #define SACHARTAXESSETWIDGET_H
 
 #include <QWidget>
@@ -20,6 +20,8 @@ public:
     explicit SAChartAxesSetWidget(QWidget *parent = 0);
     ~SAChartAxesSetWidget();
     void setChart(SAChart2D *chart);
+private slots:
+    void onEnableAxis(bool enable,int axis);
 private:
     Ui::SAChartAxesSetWidget *ui;
     SAQwtAxisSetWidget* m_xBottomAxisWidget;
@@ -30,6 +32,7 @@ private:
     QVBoxLayout* m_layoutXTop;
     QVBoxLayout* m_layoutYLeft;
     QVBoxLayout* m_layoutYRight;
+    SAChart2D* m_chart;
 };
 
 #endif // SACHARTAXESSETWIDGET_H

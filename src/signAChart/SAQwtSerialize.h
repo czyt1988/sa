@@ -4,6 +4,7 @@
 #include <QDataStream>
 #include "qwt_text.h"
 #include "qwt_samples.h"
+
 class QwtPlotItem;
 class QwtSymbol;
 class QwtPlotCurve;
@@ -15,7 +16,18 @@ class QwtColorMap;
 class QwtScaleDraw;
 class QwtPlotBarChart;
 class QwtColumnSymbol;
+///
+/// \brief 序列化类都是带异常的，使用中需要处理异常
+///
 namespace sa {
+    class SA_CHART_EXPORT SABadSerializeExpection : public std::exception
+    {
+    public:
+        SABadSerializeExpection();
+        ~SABadSerializeExpection();
+        const char* what() const _GLIBCXX_USE_NOEXCEPT;
+    };
+
     // QFrame的序列化
     SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QFrame* f);
     SA_CHART_EXPORT QDataStream& operator >>(QDataStream & in,QFrame* f);

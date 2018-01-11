@@ -1,4 +1,4 @@
-#include "SAQwtPlotCurveItemSetWidget.h"
+﻿#include "SAQwtPlotCurveItemSetWidget.h"
 #include "qwt_plot_curve.h"
 #include <QLabel>
 #include <QPushButton>
@@ -142,24 +142,17 @@ void SAQwtPlotCurveItemSetWidget::onSymbolComboBoxChanged(QwtSymbol::Style style
 
 void SAQwtPlotCurveItemSetWidget::onSymbolSetButtonClicked()
 {
-    if(nullptr == m_symbolSetMenu)
-    {
-        createSymbolSetWidget();
-    }
-    QScopedPointer<QwtSymbol> symbol;
     const QwtSymbol* oldSymbol = m_curveItem->symbol();
-    if(nullptr == oldSymbol)
+    if(nullptr != oldSymbol)
     {
-        //说明当前没有符号
-        symbol.reset(makeSymbol(m_symbolComboBox->selectedSymbol()));
-        m_symbolSetWidget->setSymbol(symbol.data());
-    }
-    else
-    {
+        if(nullptr == m_symbolSetMenu)
+        {
+            createSymbolSetWidget();
+        }
         //说明当前已经设定符号，就按照当前设定的来
         m_symbolSetWidget->setSymbol(oldSymbol);
+        m_symbolSetMenu->exec(QCursor::pos());
     }
-    m_symbolSetMenu->exec(QCursor::pos());
 }
 
 void SAQwtPlotCurveItemSetWidget::createSymbolSetWidget()

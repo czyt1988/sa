@@ -20,6 +20,7 @@ public:
     SAChartSerializeHelp();
     //序列化SAChart2D -会保存item等额外信息
     static void serializeOut(QDataStream& out,const SAChart2D* chart);
+    //通过异常处理错误
     static void serializeIn(QDataStream& in,SAChart2D* chart);
 private:
     static void serializeOutChartItem(QDataStream& out,const SAChart2D* chart);

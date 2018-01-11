@@ -9,29 +9,60 @@
 #include "qwt_color_map.h"
 #include "qwt_plot_barchart.h"
 #include "qwt_column_symbol.h"
+
 namespace sa {
 void serialize_out_scale_widge(QDataStream &out, const QwtPlot *chart,int axis);
 void serialize_in_scale_widge(QDataStream &in, QwtPlot *chart,int axis);
 
 
+
+
 }
 
+sa::SABadSerializeExpection::SABadSerializeExpection()
+{
+
+}
+
+sa::SABadSerializeExpection::~SABadSerializeExpection()
+{
+
+}
+
+const char *sa::SABadSerializeExpection::what() const _GLIBCXX_USE_NOEXCEPT
+{
+    return "serialize error";
+}
 
 void sa::serialize_out_scale_widge(QDataStream &out, const QwtPlot *chart,int axis)
 {
     const QwtScaleWidget* axisWid = chart->axisWidget(axis);
     bool isaxis = (nullptr != axisWid);
+    unsigned int checkH=0x1234;
+    unsigned int checkB=0x345A;
     out << isaxis;
+    out << checkH;
     if(isaxis)
     {
-        out << axisWid;
+        bool enable = chart->axisEnabled(axis);
+        out << axisWid << enable << checkB;
     }
 }
 
 void sa::serialize_in_scale_widge(QDataStream &in, QwtPlot *chart, int axis)
 {
     bool isaxis;
+    const unsigned int checkH=0x1234;
+    const unsigned int checkB=0x345A;
+    unsigned int H;
+    unsigned int B;
     in >> isaxis;
+    in >> H;
+    if(checkH != H)
+    {
+        throw SABadSerializeExpection();
+        return;
+    }
     if(isaxis)
     {
         QwtScaleWidget* axisWid = chart->axisWidget(axis);
@@ -47,13 +78,23 @@ void sa::serialize_in_scale_widge(QDataStream &in, QwtPlot *chart, int axis)
             in>>pw;
             return;
         }
-        in>>axisWid;
+        bool enable;
+        in >> axisWid >> enable;
+        in >> B;
+        if(checkB != B)
+        {
+            throw SABadSerializeExpection();
+            return;
+        }
+        chart->enableAxis(axis,enable);
     }
 }
 
 QDataStream &sa::operator <<(QDataStream &out, const QwtText &t)
 {
-    out << t.text()
+    unsigned int c0=0x12fa34;
+    out << c0
+        << t.text()
         << t.font()
         << t.renderFlags()
         << t.color()
@@ -70,6 +111,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtText &t)
 
 QDataStream &sa::operator >>(QDataStream &in, QwtText &t)
 {
+    unsigned int c0=0x12fa34;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     QString str;
     QFont font;
     int renderFlags;
@@ -112,6 +161,8 @@ QDataStream &sa::operator >>(QDataStream &in, QwtText &t)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtSymbol *t)
 {
+    unsigned int c0=0x32fa34;
+    out << c0;
     out << static_cast<int>(t->cachePolicy())
         << t->size()
         << t->pinPoint()
@@ -132,6 +183,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtSymbol *t)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtSymbol *t)
 {
+    unsigned int c0=0x32fa34;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     int cachePolicy;
     QSize size;
     QPointF pinPoint;
@@ -155,11 +214,17 @@ QDataStream &sa::operator >>(QDataStream &in, QwtSymbol *t)
     t->setSize(size);
     t->setPinPoint(pinPoint);
     t->setPinPointEnabled(isPinPointEnabled);
+    t->setStyle(static_cast<QwtSymbol::Style>(style));
+    if(!path.isEmpty())
+    {
+        t->setPath(path);
+    }
     t->setBrush(brush);
     t->setPen(pen);
-    t->setStyle(static_cast<QwtSymbol::Style>(style));
-    t->setPath(path);
-    t->setPixmap(pixmap);
+    if(!pixmap.isNull())
+    {
+        t->setPixmap(pixmap);
+    }
     return in;
 }
 ///
@@ -170,6 +235,8 @@ QDataStream &sa::operator >>(QDataStream &in, QwtSymbol *t)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtColumnSymbol *t)
 {
+    unsigned int c0=0x42fa34;
+    out << c0;
     out << static_cast<int>(t->frameStyle())
         << t->lineWidth()
         << t->palette()
@@ -185,6 +252,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtColumnSymbol *t)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtColumnSymbol *t)
 {
+    unsigned int c0=0x42fa34;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     int frameStyle;
     int lineWidth;
     QPalette palette;
@@ -208,6 +283,8 @@ QDataStream &sa::operator >>(QDataStream &in, QwtColumnSymbol *t)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtPlotItem *item)
 {
+    unsigned int c0=0x52fa34;
+    out << c0;
     out << item->title()
         << item->z()
         << item->isVisible()
@@ -232,6 +309,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotItem *item)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtPlotItem *item)
 {
+    unsigned int c0=0x52fa34;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     QwtText title;
     double z;
     bool isVisible;
@@ -292,6 +377,12 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotCurve *item)
         << item->testCurveAttribute(QwtPlotCurve::Inverted)
         << item->testCurveAttribute(QwtPlotCurve::Fitted)
            ;
+    //save sample
+    const unsigned int ck0 = 0xab231f;
+    const unsigned int ck1 = 0x956fda;
+    QVector<QPointF> sample;
+    SAChart::getXYDatas(sample,item);
+    out << ck0 << sample << ck1;
     //QwtSymbol的序列化
     const QwtSymbol* symbol = item->symbol();
     bool isHaveSymbol = (symbol != nullptr);
@@ -300,10 +391,6 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotCurve *item)
     {
         out << symbol;
     }
-    //save sample
-    QVector<QPointF> sample;
-    SAChart::getXYDatas(sample,item);
-    out << sample;
     return out;
 }
 ///
@@ -358,6 +445,24 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
     item->setLegendAttribute(QwtPlotCurve::LegendShowBrush,isLegendShowBrush);
     item->setCurveAttribute(QwtPlotCurve::Inverted,isInverted);
     item->setCurveAttribute(QwtPlotCurve::Fitted,isFitted);
+    //load sample
+    const unsigned int ck0 = 0xab231f;
+    const unsigned int ck1 = 0x956fda;
+    unsigned int tmp0,tmp1;
+    QVector<QPointF> sample;
+    in >> tmp0 ;
+    if(ck0 != tmp0)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    in >> sample >> tmp1;
+    if(ck1 != tmp1)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    item->setSamples(sample);
     // QwtSymbol的序列化
     bool isHaveSymbol;
     in >> isHaveSymbol;
@@ -367,10 +472,6 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
         in >> symbol;
         item->setSymbol(symbol);
     }
-    //load sample
-    QVector<QPointF> sample;
-    in >> sample;
-    item->setSamples(sample);
     return in;
 }
 
@@ -382,6 +483,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
 {
+    out << (const QwtPlotItem*)item;
     out << static_cast<int>(item->layoutPolicy())
         << item->layoutHint()
         << item->spacing()
@@ -389,6 +491,13 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
         << item->baseline()
         << static_cast<int>(item->legendMode())
            ;
+    //save sample
+    const unsigned int ck0 = 0xab231f;
+    const unsigned int ck1 = 0x956fda;
+    QVector<QPointF> sample;
+    SAChart::getXYDatas(sample,item);
+    out << ck0 <<sample << ck1;
+    //Symbol
     const QwtColumnSymbol*cs = item->symbol();
     bool isColumnSymbol = (cs != nullptr);
     out << isColumnSymbol;
@@ -396,10 +505,6 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
     {
         out << cs;
     }
-    //save sample
-    QVector<QPointF> sample;
-    SAChart::getXYDatas(sample,item);
-    out << sample;
     return out;
 }
 ///
@@ -410,6 +515,7 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
 {
+    in >> (QwtPlotItem*)item;
     int layoutPolicy;
     double layoutHint;
     int spacing;
@@ -429,6 +535,25 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
     item->setMargin(margin);
     item->setBaseline(baseline);
     item->setLegendMode(static_cast<QwtPlotBarChart::LegendMode>(legendMode));
+    //load sample
+    const unsigned int ck0 = 0xab231f;
+    const unsigned int ck1 = 0x956fda;
+    unsigned int tmp0,tmp1;
+    in >> tmp0;
+    if(ck0 != tmp0)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    QVector<QPointF> sample;
+    in >> sample >>tmp1;
+    if(ck1 != tmp1)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    item->setSamples(sample);
+    //Symbol
     bool isColumnSymbol;
     in >> isColumnSymbol;
     if(isColumnSymbol)
@@ -437,10 +562,6 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
         in >> cs;
         item->setSymbol(cs);
     }
-    //load sample
-    QVector<QPointF> sample;
-    in >> sample;
-    item->setSamples(sample);
     return in;
 }
 ///
@@ -451,6 +572,8 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtScaleWidget *w)
 {
+    unsigned int c0=0x82fa34;
+    out << c0;
     int minBorderDistStart,minBorderDistEnd;
     w->getMinBorderDist(minBorderDistStart,minBorderDistEnd);
     out << w->title()
@@ -485,6 +608,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtScaleWidget *w)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtScaleWidget *w)
 {
+    unsigned int c0=0x82fa34;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     QwtText title;
     bool isTitleInverted;
     int startBorderDist,endBorderDist;
@@ -539,6 +670,8 @@ QDataStream &sa::operator >>(QDataStream &in, QwtScaleWidget *w)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtScaleDraw *w)
 {
+    unsigned int c0=0x92fa34;
+    out << c0;
     out << static_cast<int>(w->alignment())
         << w->length()
         << static_cast<int>(w->labelAlignment())
@@ -554,6 +687,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtScaleDraw *w)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtScaleDraw *w)
 {
+    unsigned int c0=0x92fa34;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     int alignment;
     double length;
     int labelAlignment;
@@ -578,6 +719,8 @@ QDataStream &sa::operator >>(QDataStream &in, QwtScaleDraw *w)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QFrame *f)
 {
+    unsigned int c0=0x13fa34;
+    out << c0;
     out << static_cast<int>(f->frameShadow())
         << static_cast<int>(f->frameShape())
         << f->frameStyle()
@@ -596,6 +739,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QFrame *f)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QFrame *f)
 {
+    unsigned int c0=0x13fa34;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     int frameShadow;
     int frameShape;
     int frameStyle;

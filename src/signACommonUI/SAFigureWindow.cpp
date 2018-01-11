@@ -7,6 +7,7 @@
 #include <QMimeData>
 //sa chart
 #include "SAChart2D.h"
+#include "SAQwtSerialize.h"
 //sa lib
 #include "SAData.h"
 #include "SARandColorMaker.h"
@@ -259,7 +260,9 @@ void SAFigureWindow::keyPressEvent(QKeyEvent *e)
 
 QDataStream &operator <<(QDataStream &out, const SAFigureWindow *p)
 {
-    out << p->saveGeometry()
+    const int magicStart = 0x1314abc;
+    out << magicStart
+        << p->saveGeometry()
         << p->saveState()
            ;
     QList<SAChart2D*> charts = p->get2DPlots();
@@ -278,6 +281,14 @@ QDataStream &operator <<(QDataStream &out, const SAFigureWindow *p)
 
 QDataStream &operator >>(QDataStream &in, SAFigureWindow *p)
 {
+    const int magicStart = 0x1314abc;
+    int tmp;
+    in >> tmp;
+    if(tmp != magicStart)
+    {
+        throw sa::SABadSerializeExpection();
+        return in;
+    }
     QByteArray geometryData,stateData;
     in >> geometryData
             >> stateData
@@ -286,12 +297,21 @@ QDataStream &operator >>(QDataStream &in, SAFigureWindow *p)
     p->restoreState(stateData);
     QList<QRectF> pos;
     in >> pos;
-    for(int i=0;i<pos.size();++i)
+    try
     {
-        const QRectF& r = pos[i];
-        SAChart2D* chart = p->create2DSubPlot(r.x(),r.y(),r.width(),r.height());
-        SAChartSerializeHelp::serializeIn(in,chart);
-        chart->show();
+        for(int i=0;i<pos.size();++i)
+        {
+            const QRectF& r = pos[i];
+            QScopedPointer<SAChart2D> chart(p->create2DSubPlot(r.x(),r.y(),r.width(),r.height()));
+            SAChartSerializeHelp::serializeIn(in,chart.data());
+            chart->show();
+            chart.take();
+        }
+        return in;
+    }
+    catch(const sa::SABadSerializeExpection& exp)
+    {
+        throw exp;
     }
     return in;
 }

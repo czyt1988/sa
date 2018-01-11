@@ -20,6 +20,13 @@ public:
     void updateAxisValue();
     void resetAxisValue();
     void enableWidget(bool enable=true);
+signals:
+    ///
+    /// \brief 允许或禁止坐标轴时发送的信号
+    /// \param enable
+    /// \param axid
+    ///
+    void enableAxis(bool enable,int axid);
 private slots:
     Q_SLOT void onEnableCheckBoxClicked(int state);
     Q_SLOT void onLineEditTextChanged(const QString& text);

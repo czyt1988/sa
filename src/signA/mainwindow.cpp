@@ -65,7 +65,7 @@
 #include "SAValueManagerMimeData.h"
 //===SAChart
 #include "SAChart.h"
-
+#include "SAQwtSerialize.h"
 
 #include <SAThemeManager.h>
 
@@ -92,7 +92,8 @@
 #include <SACsvFileTableModel.h>
 #include <SAPlotLayerModel.h>
 //--------3thparty-----------
-
+#define TR(str) \
+    QApplication::translate("MainWindow", str, 0)
 
 //
 //--使用策略模式构建sa里的所有方法
@@ -2883,36 +2884,56 @@ QMdiSubWindow* load_sub_window(SAUIInterface *ui, const QString &filePath, QStri
         }
         return nullptr;
     }
-    SAMdiSubWindowSerializeHead header;
-    QDataStream in(&file);
-    in >> header;
-    if(!header.isValid())
+    try
+    {
+        SAMdiSubWindowSerializeHead header;
+        QDataStream in(&file);
+        in >> header;
+        if(!header.isValid())
+        {
+            if(errString)
+            {
+                *errString = QObject::tr("invalid file");
+            }
+            return nullptr;
+        }
+        QString windowTitle;
+        in >> windowTitle;
+        QMdiSubWindow* sub = nullptr;
+        switch(header.param.type)
+        {
+        case SA::SubWindowFigure:
+        {
+            sub = ui->createFigureWindow(windowTitle);
+            SAFigureWindow* fig = qobject_cast<SAFigureWindow*>(sub->widget());
+            if(fig)
+            {
+                in >> fig;
+            }
+            sub->show();
+        }
+        default:
+            break;
+        }
+        return sub;
+    }
+    catch(const sa::SABadSerializeExpection& exp)
     {
         if(errString)
         {
-            *errString = QObject::tr("invalid file");
+            *errString = TR("unable load window:%1").arg(filePath);
         }
-        return nullptr;
+        saWarning("load figure window error:%s",exp.what());
     }
-    QString windowTitle;
-    in >> windowTitle;
-    QMdiSubWindow* sub = nullptr;
-    switch(header.param.type)
+    catch(...)
     {
-    case SA::SubWindowFigure:
-    {
-        sub = ui->createFigureWindow(windowTitle);
-        SAFigureWindow* fig = qobject_cast<SAFigureWindow*>(sub->widget());
-        if(fig)
+        if(errString)
         {
-            in >> fig;
+            *errString = TR("unable load window:%1").arg(filePath);
         }
-        sub->show();
+        saWarning("load figure window error");
     }
-    default:
-        break;
-    }
-    return sub;
+    return nullptr;
 }
 
 QString get_sub_window_type_suffix(SA::SubWndType type)
