@@ -438,6 +438,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
     ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget(Parent);
+    ribbonButtonGroupSelectionMode->setObjectName("ribbonButtonGroupSelectionMode");
     ribbonButtonSingleSelection = ribbonButtonGroupSelectionMode->addButton(actionSingleSelection);
     ribbonButtonAdditionalSelection = ribbonButtonGroupSelectionMode->addButton(actionAdditionalSelection);
     ribbonButtonSubtractionSelection = ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
@@ -446,6 +447,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
                                                  ,0,3);
 
     SARibbonButtonGroupWidget* tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
+    tmpButtonGroup->setObjectName("RegionEditorButtonGroupWidget");
     ribbonButtonSelectionRegionMove = tmpButtonGroup->addButton(actionSelectionRegionMove);
     operateCategoryChartEditorPannel->addWidget(tmpButtonGroup,3,3);
 
@@ -526,6 +528,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBar->quickAccessBar()->addButton(actionUndo);
     menuBar->quickAccessBar()->addButton(actionRedo);
     menuBar->quickAccessBar()->addSeparator();
+    menuBar->setRibbonStyle(SARibbonBar::WpsLiteStyle);
 //=======end ribbon set=======================================================================================
 
     statusBar = new QStatusBar(mainWinowPtr);

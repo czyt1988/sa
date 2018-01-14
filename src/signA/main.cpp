@@ -16,11 +16,11 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 #endif
 #endif
+    QString styleString = SAThemeManager::getDefaultStyleString();
     QApplication a(argc, argv);
+    a.setStyleSheet(styleString);
     //样式设置
     MainWindow w;
-    QString styleString = SAThemeManager::getDefaultStyleString();
-    w.SARibbonMainWindow::setStyleSheet(styleString);
     w.show();
     
     return a.exec();
