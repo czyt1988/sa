@@ -12,14 +12,24 @@ SAThemeManager::SAThemeManager()
 
 }
 
-QString SAThemeManager::getStyleString(const QString &styleName)
+bool SAThemeManager::getStyleString(const QString &styleName, QString &mainStyle, QString &ribbonStyle)
 {
-    QFile file(QApplication::applicationDirPath()+QDir::separator()+"theme"+QDir::separator()+styleName);
+    QString themeFolder = QApplication::applicationDirPath()+QDir::separator()+"theme"+QDir::separator()+styleName;
+    QFile file(themeFolder+QDir::separator()+"mian.qss" );
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
-        return SAThemeManager::getDefaultStyleString();
+        return false;
     }
-    return file.readAll();
+    mainStyle = file.readAll();
+    file.close();
+
+    file.setFileName(themeFolder+QDir::separator()+"ribbon.qss" );
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        return false;
+    }
+    ribbonStyle = file.readAll();
+    file.close();
 }
 
 QString SAThemeManager::getDefaultStyleString()

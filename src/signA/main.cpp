@@ -17,15 +17,20 @@ int main(int argc, char *argv[])
 #endif
 #endif
     QApplication a(argc, argv);
-    QString styleString = SAThemeManager::getDefaultStyleString();
-    a.setStyleSheet(styleString);
+    QString mainSyle;
+    QString ribbonStyle;
+    if(!SAThemeManager::getStyleString("normal",mainSyle,ribbonStyle))
+    {
+        mainSyle = SAThemeManager::getDefaultStyleString();
+    }
+    a.setStyleSheet(mainSyle);
     //样式设置
     MainWindow w;
-    //w.SARibbonMainWindow::setStyleSheet(styleString);
+    if(!ribbonStyle.isEmpty())
+    {
+        w.setStyleSheet(ribbonStyle);
+    }
     w.show();
-    qDebug()<<"a style -------------";
-    qDebug() << a.styleSheet();
-    qDebug()<<"w style -------------";
-    qDebug() << w.styleSheet();
+
     return a.exec();
 }

@@ -8,7 +8,7 @@ class SAThemeManager
 {
 public:
     SAThemeManager();
-    static QString getStyleString(const QString &styleName);
+    static bool getStyleString(const QString &styleName,QString& mainStyle,QString& ribbonStyle);
     static QString getDefaultStyleString();
 private:
 };
