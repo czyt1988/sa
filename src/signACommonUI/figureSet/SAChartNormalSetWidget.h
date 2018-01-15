@@ -19,6 +19,8 @@ public:
     ~SAChartNormalSetWidget();
     void setChart(SAChart2D *chart);
     virtual void retranslateUi();
+protected:
+    void paintEvent(QPaintEvent *e);
 private slots:
     Q_SLOT void onTitleTextChanged(const QString& text);
     Q_SLOT void onFooterTextChanged(const QString& text);

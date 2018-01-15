@@ -23,6 +23,9 @@ int main(int argc, char *argv[])
     MainWindow w;
     //w.SARibbonMainWindow::setStyleSheet(styleString);
     w.show();
-    
+    qDebug()<<"a style -------------";
+    qDebug() << a.styleSheet();
+    qDebug()<<"w style -------------";
+    qDebug() << w.styleSheet();
     return a.exec();
 }

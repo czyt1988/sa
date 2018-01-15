@@ -139,6 +139,11 @@ void SAChartNormalSetWidget::retranslateUi()
     ui->retranslateUi(this);
 }
 
+void SAChartNormalSetWidget::paintEvent(QPaintEvent *e)
+{
+    QWidget::paintEvent(e);
+}
+
 void SAChartNormalSetWidget::onTitleTextChanged(const QString &text)
 {
     if(ui->chart)
