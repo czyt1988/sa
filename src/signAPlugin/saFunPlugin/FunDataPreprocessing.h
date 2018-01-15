@@ -15,7 +15,6 @@ private:
     static void pointSmoothInValue();
     static bool getSigmaDetectPorperty(double &sigma, bool *isMark, bool *isChangPlot);
     static void sigmaDetectInValue();
-    static void sigmaDetectPlotInNewFigure();
     static bool getPointSmoothPorperty(int &m, int& n);
 };
 

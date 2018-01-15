@@ -48,10 +48,6 @@ public:
     void setupUI(SAChartNormalSetWidget* par)
     {
         parentClass = par;
-        if(par->objectName().isNull())
-        {
-            par->setObjectName(QStringLiteral("chartNormalSetWidget"));
-        }
         par->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         chart = nullptr;
         verticalLayout = new QVBoxLayout(par);

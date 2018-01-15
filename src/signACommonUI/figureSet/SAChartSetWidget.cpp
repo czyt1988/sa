@@ -58,6 +58,7 @@ public:
         tabScrollArea1->setWidgetResizable(true);
         tabScrollArea1->setBackgroundRole(QPalette::NoRole);
         chartNormalSetWidget = new SAChartNormalSetWidget();
+        chartNormalSetWidget->setObjectName(QStringLiteral("ChartNormalSetWidget"));
         tabScrollArea1->setWidget(chartNormalSetWidget);
         par->connect(chartNormalSetWidget,&SAChartNormalSetWidget::chartTitleChanged
                      ,par,&SAChartSetWidget::chartTitleChanged);
@@ -71,9 +72,11 @@ public:
         tabScrollArea2->setWidgetResizable(true);
         tabScrollArea2->setBackgroundRole(QPalette::NoRole);
         plotAxesSetWidget = new SAChartAxesSetWidget();
+        plotAxesSetWidget->setObjectName(QStringLiteral("PlotAxesSetWidget"));
         tabScrollArea2->setWidget(plotAxesSetWidget);
         //Tab 3 -- SAPlotItemSetWidget
         plotItemsSetWidget = new SAPlotItemSetWidget();
+        plotItemsSetWidget->setObjectName(QStringLiteral("PlotItemsSetWidget"));
         tabWidget->addTab(plotItemsSetWidget,"");
         tabWidget->setTabIcon(2,QIcon(":/icon/icons/itemSet.png"));
         retranslateUi(par);

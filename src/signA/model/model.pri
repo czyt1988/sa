@@ -2,7 +2,6 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
-    $$PWD/QwtPlotCurveModel.h\
     $$PWD/MdiWindowModel.h \
     $$PWD/SACsvFileTableModel.h \
     $$PWD/SAPlotLayerModel.h \

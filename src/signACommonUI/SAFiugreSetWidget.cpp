@@ -36,6 +36,7 @@ public:
         chartSelectComboBox = new QComboBox(p);
         chartSelectComboBox->setObjectName(QStringLiteral("SAFiugreSetWidgetChartSelectComboBox"));
         chartSetWidget = new SAChartSetWidget(p);
+        chartSetWidget->setObjectName(QStringLiteral("ChartSetWidget"));
         chartSetWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         verticalLayout = new QVBoxLayout;
         verticalLayout->setSpacing(4);

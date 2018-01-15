@@ -234,6 +234,9 @@ void SAQwtPlotBarChartItemSetWidget::onSymbolStyleComboBoxIndexChanged(int v)
         p.setColor(QPalette::Window,clr);
         newSymbol->setPalette(p);
     }
+    d_ptr->frameStyleItem->setEnabled(QwtColumnSymbol::Box == newSymbol->style());
+    d_ptr->lineWidthItem->setEnabled(QwtColumnSymbol::Box == newSymbol->style());
+    d_ptr->barFrameColor->setEnabled(QwtColumnSymbol::Box == newSymbol->style());
     d_ptr->barChart->setSymbol(newSymbol);
 }
 
