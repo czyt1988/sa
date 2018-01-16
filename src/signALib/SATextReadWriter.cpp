@@ -1,4 +1,4 @@
-#include "SATextReadWriter.h"
+﻿#include "SATextReadWriter.h"
 #include <QMutexLocker>
 #include <QTextStream>
 #include <limits>
@@ -7,6 +7,7 @@ class SATextReadWriterPrivate
 {
 public:
     SATextReadWriterPrivate();
+    ~SATextReadWriterPrivate();
     QFile* file;
     int totalReadLineCount;///<设置总共读取的行数，当读取到达此行后会发射readAllComplete
     int readOnceLineCount;///< 设置一次读取的行数，当开始读取时达到这个行数后会发射readComplete，继续往下读取（没有超过m_totalReadLineCount的行数），再次达到m_readOnceLineCount设定值后发射readComplete，继续往下读取，直到到达m_totalReadLineCount的行数(发射readAllComplete)或文件的末尾(发射reachTextEnd和readAllComplete)
@@ -26,6 +27,14 @@ SATextReadWriterPrivate::SATextReadWriterPrivate()
     ,stringFun(nullptr)
 {
 
+}
+
+SATextReadWriterPrivate::~SATextReadWriterPrivate()
+{
+    if(file)
+    {
+        delete file;
+    }
 }
 
 SATextReadWriter::SATextReadWriter(QObject *parent):QObject(parent)
@@ -189,7 +198,7 @@ void SATextReadWriter::appendText(const QString &text)
 {
     if(!isOpen())
     {
-        if(!open(QIODevice::ReadWrite|QIODevice::Text))
+        if(!open(QIODevice::ReadWrite|QIODevice::Append|QIODevice::Text))
         {
             return;
         }
@@ -205,7 +214,7 @@ void SATextReadWriter::appendLine(const QString &text)
 {
     if(!isOpen())
     {
-        if(!open(QIODevice::ReadWrite|QIODevice::Text))
+        if(!open(QIODevice::ReadWrite|QIODevice::Append|QIODevice::Text))
         {
             return;
         }
@@ -242,7 +251,7 @@ void SATextReadWriter::onStartReadText()
     m_stopRead = false;
     if(!isOpen())
     {
-        if(!open())
+        if(!open(QIODevice::ReadWrite|QIODevice::Append|QIODevice::Text))
         {
             return;
         }
