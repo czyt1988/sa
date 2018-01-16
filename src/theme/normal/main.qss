@@ -11,7 +11,7 @@ button focus background-color:FAFAFA
 button border:AAAAAA;
 button disabled border:AAAAAA;
 button disabled background-color:DDDDDD
-
+button hover background-color:#FDECAD
 selection-color: #000;
 selection-background-color:#FDD36A;
 
@@ -50,12 +50,50 @@ QAbstractSpinBox:up-button
     background-color: transparent;
     subcontrol-origin: border;
     subcontrol-position: center right;
+    height: 100%;
+    border-left: 1px solid #AFAFAA;
+    border-top:none;
+    border-right: none;
+    border-bottom: none;
+    padding-left: 2px;
+    padding-right: 2px;
+    width: 15px;
 }
+
 QAbstractSpinBox:down-button
 {
     background-color: transparent;
     subcontrol-origin: border;
     subcontrol-position: center left;
+    height: 100%;
+    border-left: none;
+    border-top:none;
+    border-right: 1px solid #AFAFAA;
+    border-bottom: none;
+    padding-left: 2px;
+    padding-right: 2px;
+    width: 15px;
+}
+
+QAbstractSpinBox::up-arrow,QAbstractSpinBox::up-arrow:disabled,QAbstractSpinBox::up-arrow:off {
+    image: url(./theme/normal/icon/add.png);
+    width: 10px;
+    height: 10px;
+}
+QAbstractSpinBox::up-arrow:hover
+{
+    image: url(./theme/normal/icon/add-hover.png);
+    
+}
+QAbstractSpinBox::down-arrow,QAbstractSpinBox::down-arrow:disabled,QAbstractSpinBox::down-arrow:off
+{
+    image: url(./theme/normal/icon/sub.png);
+    width: 10px;
+    height: 10px;
+}
+QAbstractSpinBox::down-arrow:hover
+{
+    image: url(./theme/normal/icon/sub-hover.png);
 }
 /*================
 QWidget
@@ -392,13 +430,13 @@ QRadioButton:disabled
 }
 QRadioButton::indicator
 {
-    width: 21px;
-    height: 21px;
+    width: 16px;
+    height: 16px;
 }
-/*
+
 QRadioButton::indicator:unchecked
 {
-    image: url(:/qss_icons/rc/radio_unchecked.png);
+    image: url(./theme/normal/icon/radio.png);
 }
 QRadioButton::indicator:unchecked:hover,
 QRadioButton::indicator:unchecked:focus,
@@ -406,13 +444,13 @@ QRadioButton::indicator:unchecked:pressed
 {
     border: none;
     outline: none;
-    image: url(:/qss_icons/rc/radio_unchecked_focus.png);
+    image: url(./theme/normal/icon/radio-hover.png);
 }
 QRadioButton::indicator:checked
 {
     border: none;
     outline: none;
-    image: url(:/qss_icons/rc/radio_checked.png);
+    image: url(./theme/normal/icon/radio-on.png);
 }
 QRadioButton::indicator:checked:hover,
 QRadioButton::indicator:checked:focus,
@@ -420,19 +458,19 @@ QRadioButton::indicator:checked:pressed
 {
     border: none;
     outline: none;
-    image: url(:/qss_icons/rc/radio_checked_focus.png);
+    image: url(./theme/normal/icon/radio-on-hover.png);
 }
 QRadioButton::indicator:checked:disabled
 {
     outline: none;
-    image: url(:/qss_icons/rc/radio_checked_disabled.png);
+    image: url(./theme/normal/icon/radio-on-disable.png);
 }
 
 QRadioButton::indicator:unchecked:disabled
 {
-    image: url(:/qss_icons/rc/radio_unchecked_disabled.png);
+    image: url(./theme/normal/icon/radio-disable.png);
 }
-*/
+
 
 /*================
 QMenu
@@ -713,7 +751,7 @@ QScrollBar::handle:horizontal:hover
 QScrollBar::add-line:horizontal
 {
     margin: 0px 3px 0px 3px;
-   /* border-image: url(:/qss_icons/rc/right_arrow_disabled.png);*/
+    border-image: url(./theme/normal/icon/ArrowRight.png);
     width: 12px;
     height: 12px;
     subcontrol-position: right;
@@ -727,7 +765,7 @@ QScrollBar::add-line:horizontal
 QScrollBar::sub-line:horizontal
 {
     margin: 0px 3px 0px 3px;
-    /*border-image: url(:/qss_icons/rc/left_arrow_disabled.png);*/
+    border-image: url(./theme/normal/icon/ArrowLeft.png);
     height: 12px;
     width: 12px;
     subcontrol-position: left;
@@ -738,23 +776,13 @@ QScrollBar::sub-line:horizontal
 
 QScrollBar::add-line:horizontal:hover,QScrollBar::add-line:horizontal:on
 {
-    height: 12px;
-    width: 12px;
-    background-color: #AAABB3;
-   /* border-image: url(:/qss_icons/rc/right_arrow.png);*/
-    subcontrol-position: right;
-    subcontrol-origin: margin;
+    background-color: #E8E8E8;
     border:1px solid #000;
 }
 
 QScrollBar::sub-line:horizontal:hover, QScrollBar::sub-line:horizontal:on
 {
-    height: 12px;
-    width: 12px;
-    background-color: #AAABB3;
-    /*border-image: url(:/qss_icons/rc/left_arrow.png);*/
-    subcontrol-position: left;
-    subcontrol-origin: margin;
+    background-color: #E8E8E8;
     border:1px solid #000;
 }
 
@@ -785,7 +813,7 @@ QScrollBar::handle:vertical:hover
 QScrollBar::sub-line:vertical
 {
     margin: 3px 0px 3px 0px;
-    /*border-image: url(:/qss_icons/rc/up_arrow_disabled.png);*/
+    border-image: url(./theme/normal/icon/ArrowUp.png);
     height: 12px;
     width: 12px;
     subcontrol-position: top;
@@ -797,7 +825,7 @@ QScrollBar::sub-line:vertical
 QScrollBar::add-line:vertical
 {
     margin: 3px 0px 3px 0px;
-/*    border-image: url(:/qss_icons/rc/down_arrow_disabled.png);*/
+    border-image: url(./theme/normal/icon/ArrowDown.png);
     height: 12px;
     width: 12px;
     subcontrol-position: bottom;
@@ -808,24 +836,13 @@ QScrollBar::add-line:vertical
 
 QScrollBar::sub-line:vertical:hover,QScrollBar::sub-line:vertical:on
 {
-
-/*    border-image: url(:/qss_icons/rc/up_arrow.png);*/
-    height: 12px;
-    width: 12px;
-    subcontrol-position: top;
-    subcontrol-origin: margin;
-    background-color: #AAABB3;
+    background-color: #E8E8E8;
     border:1px solid #000;
 }
 
 
 QScrollBar::add-line:vertical:hover, QScrollBar::add-line:vertical:on
 {
-/*    border-image: url(:/qss_icons/rc/down_arrow.png);*/
-    height: 12px;
-    width: 12px;
-    subcontrol-position: bottom;
-    subcontrol-origin: margin;
-    background-color: #AAABB3;
+    background-color: #E8E8E8;
     border:1px solid #000;
 }
