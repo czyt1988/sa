@@ -300,6 +300,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionChartEditor->addAction(actionSelectionRegionMove);
     actionChartEditor->addAction(actionSelectionRegionDataMove);
 
+    actionSelectSkin = new QAction(mainWinowPtr);
+    actionSelectSkin->setObjectName(QStringLiteral("actionSelectSkin"));
+    actionSelectSkin->setIcon(QIcon(":/icons/icons/skin.png"));
+    actionGroupSkins = new QActionGroup(mainWinowPtr);
+    actionGroupSkins->setObjectName(QStringLiteral("actionGroupSkins"));
+    actionGroupSkins->setExclusive(true);
     centralWidget = new QWidget(mainWinowPtr);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
     centralWidget->setMaximumSize(QSize(0, 0));
@@ -366,6 +372,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuZoomSet = new SARibbonMenu(menuChartSet);
     menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
+
+    menuSkinList = new SARibbonMenu(menuData);
+    menuSkinList->setObjectName(QStringLiteral("menuSkinList"));
 
     menuRegionSelect = new SARibbonMenu(menuChartSet);
     menuRegionSelect->setObjectName(QStringLiteral("menuRegionSelect"));
@@ -526,7 +535,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBar->quickAccessBar()->addButton(actionUndo);
     menuBar->quickAccessBar()->addButton(actionRedo);
     menuBar->quickAccessBar()->addSeparator();
+    SARibbonToolButton* ribbonToobBtnSelectSkin = menuBar->quickAccessBar()->addButton(actionSelectSkin);
+    ribbonToobBtnSelectSkin->setMenu(menuSkinList);
+    ribbonToobBtnSelectSkin->setPopupMode(QToolButton::InstantPopup);
+    menuBar->quickAccessBar()->addSeparator();
     menuBar->setRibbonStyle(SARibbonBar::WpsLiteStyle);
+
 //=======end ribbon set=======================================================================================
 
     statusBar = new QStatusBar(mainWinowPtr);
@@ -897,6 +911,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionDeleteValue->setText(QApplication::translate("MainWindow", "Delete Value", 0));
 #ifndef QT_NO_TOOLTIP
     actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "Delete Value", 0));
+    actionSelectSkin->setToolTip(QApplication::translate("MainWindow", "select skin", 0));
 #endif // QT_NO_TOOLTIP
     actionOpenProject->setText(QApplication::translate("MainWindow", "Open\nProject", 0));
     actionSaveAs->setText(QApplication::translate("MainWindow", "Save As", 0));

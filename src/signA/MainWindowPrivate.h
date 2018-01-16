@@ -101,6 +101,8 @@ public:
     QAction *actionSelectionRegionMove;///<
     QAction *actionSelectionRegionDataMove;///<
 
+    QAction *actionSelectSkin;///<
+    QActionGroup* actionGroupSkins;
     QActionGroup* actionGroupSelection;
     QActionGroup* actionChartEditor;///< 图像编辑器的互斥
     QWidget *centralWidget;
@@ -129,7 +131,7 @@ public:
     SARibbonMenu *menuHistogramChart;
     SARibbonMenu *menuBoxChart;
     SARibbonMenu *menuScatterChart;
-
+    SARibbonMenu *menuSkinList;
     //! operate Category Page
     SARibbonCategory* operateRibbonCategory;
     SARibbonMenu *menuSelection;

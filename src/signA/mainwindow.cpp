@@ -178,6 +178,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initTheme();
     saElapsed("loaded plugins and themes");
     showNormalMessageInfo(QStringLiteral("程序初始化完成"));
+    loadSetting();
 }
 
 
@@ -208,7 +209,7 @@ void MainWindow::init()
 void MainWindow::initUI()
 {
     connect(qApp,&QApplication::focusChanged,this,&MainWindow::onFocusChanged);
-    loadSetting();
+
     setDockNestingEnabled(true);
     setDockOptions(QMainWindow::AnimatedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AllowNestedDocks);
     //mdi窗口管理器关联
@@ -493,6 +494,7 @@ void MainWindow::initUI()
 
 void MainWindow::initMenu()
 {
+    //生成
     //变量管理菜单的初始化
     m_menuValueManagerView = new QMenu(ui->treeView_valueManager);
     //在当前标签中打开
@@ -518,8 +520,16 @@ void MainWindow::initPlugin()
 
 void MainWindow::initTheme()
 {
-    //SAThemeManager themeManager(this);
-    //themeManager.setTableViewLayout (ui->tableView_layer);
+    //皮肤的初始化
+    QStringList skinList = SAThemeManager::getSkinList();
+    foreach (const QString& sk, skinList) {
+        QAction* act = new QAction(sk,this);
+        act->setCheckable(true);
+        ui->menuSkinList->addAction(act);
+        ui->actionGroupSkins->addAction(act);
+    }
+    connect(ui->actionGroupSkins,&QActionGroup::triggered
+            ,this,&MainWindow::onActionSkinChanged);
 }
 
 void MainWindow::initUIReflection()
@@ -724,6 +734,35 @@ void MainWindow::onActionProjectSettingTriggered()
 {
     setProjectInfomation();
 }
+///
+/// \brief 皮肤切换
+/// \param on
+///
+void MainWindow::onActionSkinChanged(QAction* act)
+{
+    if(nullptr == act)
+    {
+        return;
+    }
+    QString name = act->text();
+    setSkin(name);
+}
+
+void MainWindow::setSkin(const QString &name)
+{
+    saStartElapsed(tr("start use skin:%1").arg(name));
+    SAThemeManager::setStyle(name,this);
+    QList<QAction*> acts = ui->actionGroupSkins->actions();
+    for(int i=0;i<acts.size();++i)
+    {
+        if(acts[i]->text() == name)
+        {
+            acts[i]->setChecked(true);
+            break;
+        }
+    }
+    saElapsed(tr("end use skin"));
+}
 
 SAUIInterface *MainWindow::uiInterface()
 {
@@ -768,6 +807,10 @@ void MainWindow::saveWindowState(QSettings& setting)
 	setting.setValue("windowState", saveState());
 	setting.endGroup();
 
+    setting.beginGroup("skin");
+    setting.setValue("name",SAThemeManager::currentStyleName() );
+    setting.endGroup();
+
 }
 void MainWindow::loadWindowState(const QSettings& setting)
 {
@@ -789,6 +832,11 @@ void MainWindow::loadWindowState(const QSettings& setting)
 	if(var.isValid())
 		restoreState(var.toByteArray());
 
+    var = setting.value("skin/name");
+    if(var.isValid())
+        setSkin(var.toString());
+    else
+        setSkin("normal");
 }
 
 void MainWindow::releaseChart2DEditor(SAChart2D* chart)

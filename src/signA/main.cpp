@@ -17,19 +17,8 @@ int main(int argc, char *argv[])
 #endif
 #endif
     QApplication a(argc, argv);
-    QString mainSyle;
-    QString ribbonStyle;
-    if(!SAThemeManager::getStyleString("normal",mainSyle,ribbonStyle))
-    {
-        mainSyle = SAThemeManager::getDefaultStyleString();
-    }
-    a.setStyleSheet(mainSyle);
     //样式设置
     MainWindow w;
-    if(!ribbonStyle.isEmpty())
-    {
-        w.setStyleSheet(ribbonStyle);
-    }
     w.show();
 
     return a.exec();

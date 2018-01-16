@@ -446,6 +446,11 @@ private slots:
     void onActionProjectSettingTriggered();
     /// \}
 
+    ///
+    /// 皮肤切换
+    ///
+    void onActionSkinChanged(QAction* act);
+    void setSkin(const QString& name);
 
     //获取ui接口
     SAUIInterface* uiInterface();

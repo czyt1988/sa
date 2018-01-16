@@ -66,6 +66,7 @@
         <file>icons/selectionRegionMove.png</file>
         <file>icons/histogramChart.svg</file>
         <file>icons/figureIcon.png</file>
+        <file>icons/skin.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>

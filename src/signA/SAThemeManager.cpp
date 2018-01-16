@@ -1,21 +1,36 @@
-#include "SAThemeManager.h"
+﻿#include "SAThemeManager.h"
 #include <QFile>
 #include <QApplication>
 #include <QDir>
 
 
 
-
+QString SAThemeManager::s_currentStyleName = "normal";
 
 SAThemeManager::SAThemeManager()
 {
 
 }
 
+bool SAThemeManager::setStyle(const QString &styleName, QWidget *mainWindow)
+{
+    QString mainStyle;
+    QString ribbonStyle;
+    if(SAThemeManager::getStyleString(styleName,mainStyle,ribbonStyle))
+    {
+        qApp->setStyleSheet(mainStyle);
+        mainWindow->setStyleSheet(ribbonStyle);
+        s_currentStyleName = styleName;
+        mainWindow->repaint();
+        return true;
+    }
+    return false;
+}
+
 bool SAThemeManager::getStyleString(const QString &styleName, QString &mainStyle, QString &ribbonStyle)
 {
-    QString themeFolder = QApplication::applicationDirPath()+QDir::separator()+"theme"+QDir::separator()+styleName;
-    QFile file(themeFolder+QDir::separator()+"mian.qss" );
+    QString themeFolder = getThemeDir()+QDir::separator()+styleName;
+    QFile file(themeFolder+QDir::separator()+"main.qss" );
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
         return false;
@@ -40,6 +55,23 @@ QString SAThemeManager::getDefaultStyleString()
         return "";
     }
     return file.readAll();
+}
+
+QString SAThemeManager::getThemeDir()
+{
+    return QApplication::applicationDirPath()+QDir::separator()+"theme";
+}
+
+QStringList SAThemeManager::getSkinList()
+{
+    QDir dir(SAThemeManager::getThemeDir());
+    QStringList skinList = dir.entryList(QDir::NoDotAndDotDot|QDir::Dirs);
+    return skinList;
+}
+
+QString SAThemeManager::currentStyleName()
+{
+    return s_currentStyleName;
 }
 
 
