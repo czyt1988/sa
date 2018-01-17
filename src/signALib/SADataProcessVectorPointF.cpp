@@ -1,4 +1,4 @@
-#include "SADataProcessVectorPointF.h"
+﻿#include "SADataProcessVectorPointF.h"
 #include "czyMath.h"
 #include <algorithm>
 
@@ -79,6 +79,7 @@ void SADataProcessVectorPointF::sortPeak(QVector<QPointF> &sharpPointsSorted, co
 
 SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF>& orgPoints)
 {
+    qDebug()<<"start analysis data";
 #ifdef _DEBUG_OUTPUT
         QElapsedTimer t;
         t.start();
@@ -142,7 +143,7 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF
     std::copy(datas.rbegin(),datas.rbegin()+sortCount,std::back_inserter(tmps));
     item->appendItem(tr("descending order"),tmps);//降序
 #ifdef _DEBUG_OUTPUT
-    qDebug() << "analysisData points:" << orgPoints.size() << " cost:" << t.elapsed() << " ms";
+    qDebug() << "finish analysis Data,data points:" << orgPoints.size() << " cost:" << t.elapsed() << " ms";
 #endif
     return item;
 }

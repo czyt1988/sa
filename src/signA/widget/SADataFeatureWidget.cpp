@@ -174,20 +174,22 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 ///
 void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const QMdiSubWindow *arg1, const SAChart2D *arg2)
 {
-    if(QwtPlotItem::Rtti_PlotCurve == plotitem->rtti())
+    if( const QwtSeriesStore<QPointF>* cur = dynamic_cast<const QwtSeriesStore<QPointF>*>(plotitem)
+            /*QwtPlotItem::Rtti_PlotCurve == plotitem->rtti()*/
+            )
     {
-        const QwtPlotCurve* cur = static_cast<const QwtPlotCurve*>(plotitem);
+        //const QwtPlotCurve* cur = static_cast<const QwtPlotCurve*>(plotitem);
         const size_t size = cur->dataSize();
         QVector<QPointF> datas;
-        datas.reserve(cur->data()->size());
+        datas.reserve(size);
         for(size_t c = 0;c<size;++c)
         {
             datas.append(cur->sample(c));
         }
         if(m_dataWriter)
         {
-
-            m_dataWriter->sendDoubleVectorData((qintptr)arg1,(qintptr)arg2,(qintptr)cur,datas);
+            qDebug() << "send item:" << plotitem->title().text() << " to calc";
+            m_dataWriter->sendDoubleVectorData((qintptr)arg1,(qintptr)arg2,(qintptr)plotitem,datas);
         }
     }
 }
@@ -396,7 +398,10 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
 
     for(int i=0;i<indexList.size();++i)
     {
-
+        if(1 != indexList[i].column())
+        {
+            continue;
+        }
         SADataFeatureItem* item = static_cast<SADataFeatureItem*>(indexList[i].internalPointer());
         if(nullptr == item)
         {
@@ -423,6 +428,7 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
             pointMark->setLabelAlignment(Qt::AlignTop|Qt::AlignHCenter);
             pointMark->setSpacing(10);//设置文字和mark的间隔
             c->addPlotMarker(pointMark);
+            qDebug() << "add Point";
             c->replot();
         }break;
         case QVariant::Double:

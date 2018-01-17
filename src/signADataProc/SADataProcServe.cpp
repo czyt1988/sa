@@ -1,4 +1,4 @@
-#include "SADataProcServe.h"
+﻿#include "SADataProcServe.h"
 #include "SALocalServerDefine.h"
 #include "SALocalServeBaseHeader.h"
 #include <QCoreApplication>
@@ -8,6 +8,10 @@
 #include <QApplication>
 #include "SADataProcessVectorPointF.h"
 #include "SAXMLTagDefined.h"
+#define _DEBUG_OUTPUT
+#ifdef _DEBUG_OUTPUT
+#include <QElapsedTimer>
+#endif
 SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
   ,m_pid(0)
   ,m_localServer(new QLocalServer(this))
@@ -31,6 +35,7 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
 
 void SADataProcServe::onLocalServeNewConnection()
 {
+    qDebug() << "New Connection";
     QLocalSocket* socket = m_localServer->nextPendingConnection();
     if(nullptr == socket)
     {
@@ -131,8 +136,10 @@ void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, QVa
     QList<QVariant> argList = args.toList();
     if(4 != argList.size())
     {
+        qDebug() << "argList invalid";
         return;
     }
+    qDebug() << "start process vector pointF result";
     quintptr widget,fig,item,client;
     widget = argList[0].value<quintptr>();
     fig = argList[1].value<quintptr>();
@@ -217,6 +224,7 @@ void SADataProcServe::setPid(const uint &pid)
 
 void SADataProcServe::initCalcThread()
 {
+    qDebug() << "init thread";
     m_calcThread = new QThread;
     m_pointFCalctor = new SADataProcessVectorPointF;
     m_pointFCalctor->moveToThread(m_calcThread);
