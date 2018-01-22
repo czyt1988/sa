@@ -71,36 +71,45 @@ void SADataProcServe::errorOccurred(QLocalSocket::LocalSocketError err)
     }
 }
 
-void SADataProcServe::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &datas)
+void SADataProcServe::onReceivedVectorPointFData(const SALocalServeVectorPointProtocol& protocol)
 {
     SALocalServeReader* reader  = qobject_cast<SALocalServeReader*>(sender());
     if(reader)
     {
+        if(!protocol.isValid())
+        {
+            qDebug() << "rec VectorPointProtocol but invalid!";
+            return;
+        }
+        qintptr wndId,figId,itemId;
+        protocol.getIDs(wndId,figId,itemId);
+        QList<QVariant> args;
+        args.append(QVariant::fromValue(wndId));
+        args.append(QVariant::fromValue(figId));
+        args.append(QVariant::fromValue(itemId));
+        args.append(QVariant::fromValue((qintptr)reader->getSocket()));
 #ifdef _DEBUG_OUTPUT
-    qDebug() << "onReceivedVectorPointFData-> data size:"<<datas.size()
-             << " WndPtr:"<<header.getWndPtr()
-             << " FigPtr:"<<header.getFigPtr()
-             << " ItemPtr:"<<header.getItemPtr()
+    qDebug() << "onReceivedVectorPointFData-> data size:"<<protocol.getPoints().size()
+             << " wndId:"<<wndId
+             << " figId:"<<figId
+             << " itemId:"<<itemId
                 ;
 #endif
-        QList<QVariant> args;
-        args.append(QVariant::fromValue(header.getWndPtr()));
-        args.append(QVariant::fromValue(header.getFigPtr()));
-        args.append(QVariant::fromValue(header.getItemPtr()));
-        args.append(QVariant::fromValue((qintptr)reader->getSocket()));
-        emit callVectorPointFProcess(datas,QVariant(args));
+        emit callVectorPointFProcess(protocol.getPoints(),QVariant(args));
     }
 }
 
-void SADataProcServe::onReceivedString(const QString &str)
+void SADataProcServe::onReceivedString(const SALocalServeStringProtocol& protocol)
 {
+    qDebug() << "SADataProcServe::onReceivedString:"<<protocol.string();
     SALocalServeReader* reader  = qobject_cast<SALocalServeReader*>(sender());
     if(nullptr == reader)
     {
         return;
     }
-    if(str == "__test__1m")//这是一个特殊的测试请求，接收到这个字符串后，发送1000,000个点进行计时测试
+    if("__test__1m" == protocol.string())//这是一个特殊的测试请求，接收到这个字符串后，发送1000,000个点进行计时测试
     {
+        qDebug() << "receive __test__1m : start 1m points test";
         SALocalServeWriter* writer =  getWriter(reader);
         if(nullptr == writer)
         {
@@ -116,8 +125,13 @@ void SADataProcServe::onReceivedString(const QString &str)
     }
 }
 
-void SADataProcServe::onRecShakeHand()
+void SADataProcServe::onRecShakeHand(const SALocalServeShakeHandProtocol& protocol)
 {
+    if(!protocol.isValid())
+    {
+        qDebug() << "rec ShakeHand but invalid!";
+        return;
+    }
     SALocalServeReader* reader  = qobject_cast<SALocalServeReader*>(sender());
     SALocalServeWriter* writer =  getWriter(reader);
     if(nullptr == writer)

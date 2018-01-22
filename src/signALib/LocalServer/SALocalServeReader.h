@@ -1,7 +1,8 @@
-#ifndef SALOCALSERVEREADER_H
+﻿#ifndef SALOCALSERVEREADER_H
 #define SALOCALSERVEREADER_H
 
 #include <QObject>
+#include "SALocalServeBaseProtocol.h"
 #include "SALocalServeBaseHeader.h"
 #include "SALocalServeFigureItemProcessHeader.h"
 #include "SALibGlobal.h"
@@ -32,21 +33,25 @@ signals:
     void errorOccure(const QString& info);
     ///
     /// \brief 接收到握手协议
-    /// \param 协议文件头
+    /// \param 握手协议
     ///
-    void receivedShakeHand(const SALocalServeBaseHeader& mainHeader);
+    void receivedShakeHand(const SALocalServeShakeHandProtocol& protocol);
     ///
     /// \brief 接收到线性数组数据
     /// \param header 文件头
     /// \param ys 数据
     ///
-    void receivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
+    void receivedVectorPointFData(const SALocalServeVectorPointProtocol& protocol);
     ///
-    /// \brief 接收到xml字符
-    /// \param 字符
+    /// \brief 接收到字符
+    /// \param 字符协议
     ///
-    void receivedString(const QString& info);
+    void receivedString(const SALocalServeStringProtocol& protocol);
 private:
+    //根据类型分发协议
+    void deal(int type,const QByteArray& datas);
+    //处理握手协议
+    void dealShakeHand(const QByteArray& datas);
     //处理线性数组的数据
     void dealVectorDoubleDataProcData(const QByteArray& datas);
     //处理线性数组的数据
@@ -59,6 +64,8 @@ private:
     QLocalSocket* m_socket;
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
     bool m_isReadedMainHeader;///< 标记是否读取了包头
+    QByteArray m_buffer;
+    int m_index;
 };
 
 Q_DECLARE_METATYPE(QVector<double>)

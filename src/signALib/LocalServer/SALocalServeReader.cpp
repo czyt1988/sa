@@ -1,9 +1,10 @@
-#include "SALocalServeReader.h"
+﻿#include "SALocalServeReader.h"
+
 #include "SALocalServeFigureItemProcessHeader.h"
 #include <QLocalSocket>
 #include <QTextCodec>
 #include <QDebug>
-//#define _DEBUG_PRINT
+#define _DEBUG_PRINT
 #ifdef _DEBUG_PRINT
 #include <QElapsedTimer>
 #include <QDebug>
@@ -14,6 +15,7 @@ QElapsedTimer s__elaspade = QElapsedTimer();
 SALocalServeReader::SALocalServeReader(QLocalSocket* localSocket,QObject *parent):QObject(parent)
   ,m_socket(nullptr)
   ,m_isReadedMainHeader(false)
+  ,m_index(0)
 {
     setSocket(localSocket);
 }
@@ -21,7 +23,9 @@ SALocalServeReader::SALocalServeReader(QLocalSocket* localSocket,QObject *parent
 SALocalServeReader::SALocalServeReader(QObject *parent):QObject(parent)
   ,m_socket(nullptr)
   ,m_isReadedMainHeader(false)
+  ,m_index(0)
 {
+
 }
 
 ///
@@ -49,35 +53,78 @@ bool SALocalServeReader::readFromSocket(void *p, int n)
     }
     return ret;
 }
+///
+/// \brief 根据类型分发协议
+/// \param type
+/// \param datas
+///
+void SALocalServeReader::deal(int type, const QByteArray &datas)
+{
+    switch(type)
+    {
+    case SALocalServeBaseProtocol::TypeShakeHand://握手协议
+        dealShakeHand(datas);
+        break;
+    case SALocalServeBaseProtocol::TypeVectorPointFData:
+        dealVectorDoubleDataProcData(datas);
+        break;
+    case SALocalServeBaseProtocol::TypeString:
+        dealString(datas);
+        break;
+    default:
+    {
+        emit errorOccure(tr("unknow protocol type!"));
+        m_isReadedMainHeader = false;
+        m_socket->reset();
+        break;
+    }
+    }
+}
+///
+/// \brief 处理握手协议
+/// \param header
+/// \param datas
+///
+void SALocalServeReader::dealShakeHand(const QByteArray &datas)
+{
+#ifdef _DEBUG_PRINT
+    qDebug() << "SALocalServeReader::dealShakeHand";
+#endif
+    QDataStream io(datas);
+    SALocalServeShakeHandProtocol pl;
+    io >> pl;
+    emit receivedShakeHand(pl);
+}
 
 
-
+///
+/// \brief 处理线性数组的数据
+/// \param datas
+///
 void SALocalServeReader::dealVectorDoubleDataProcData(const QByteArray &datas)
 {
+#ifdef _DEBUG_PRINT
+    qDebug() << "SALocalServeReader::dealVectorDoubleDataProcData";
+#endif
     QDataStream io(datas);
-    qDebug() << "void SALocalServeReader::dealVectorDoubleDataProcData(const QByteArray &datas)";
-    SALocalServeFigureItemProcessHeader header;
-    io >> header;
-    QVector<QPointF> points;
-    points.reserve(header.getDataVectorNum());
-    double x,y;
-    const size_t doubleSize = sizeof(double);
-    while(!io.atEnd())
-    {
-        io.readRawData((char*)&x,doubleSize);
-        io.readRawData((char*)&y,doubleSize);
-        points.append(QPointF(x,y));
-    }
-    emit receivedVectorPointFData(header,points);
+    SALocalServeVectorPointProtocol pl;
+    io >> pl;
+    emit receivedVectorPointFData(pl);
 }
 
 
 
 void SALocalServeReader::dealString(const QByteArray &datas)
 {
-    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-    QString str = codec->toUnicode(datas);
-    emit receivedString(str);
+#ifdef _DEBUG_PRINT
+    qDebug() << "SALocalServeReader::dealString datas size:"<<datas.size()
+             <<" hex:" << QString(datas.toHex())
+                ;
+#endif
+    QDataStream io(datas);
+    SALocalServeStringProtocol pl;
+    io >> pl;
+    emit receivedString(pl);
 }
 
 
@@ -86,20 +133,23 @@ void SALocalServeReader::dealString(const QByteArray &datas)
 ///
 void SALocalServeReader::onReadyRead()
 {
+    const static unsigned int s_headerSize = sizeof(SALocalServeBaseHeader);
     if(m_isReadedMainHeader)
     {
-        if(m_socket->bytesAvailable() >= m_mainHeader.getDataSize())
+        if(m_socket->bytesAvailable() >= m_mainHeader.dataSize)
         {
             //说明数据接收完
 #ifdef _DEBUG_PRINT
             qDebug() << "rec Data:"<<m_socket->bytesAvailable()
-                     << " bytes \r\n header.getDataSize:"<<m_mainHeader.getDataSize()
-                     << "\r\n header.type:"<<m_mainHeader.getType()
+                     << " bytes \r\n header.getDataSize:"<<m_mainHeader.dataSize
+                     << "\r\n header.type:"<<m_mainHeader.type
                         ;
 #endif
-            QByteArray datas;
-            datas.resize(m_mainHeader.getDataSize());
-            if(!readFromSocket(datas.data(),m_mainHeader.getDataSize()))
+            if(m_buffer.size() < s_headerSize+m_mainHeader.dataSize)
+            {
+                m_buffer.resize(s_headerSize);
+            }
+            if(!readFromSocket(m_buffer.data()+m_index,m_mainHeader.dataSize))
             {
                 emit errorOccure(tr("receive data error"));
                 m_isReadedMainHeader = false;
@@ -110,51 +160,58 @@ void SALocalServeReader::onReadyRead()
 #endif
                 return;
             }
-            switch(m_mainHeader.getType())
-            {
-            case SALocalServeBaseHeader::TypeVectorPointFData:
-                dealVectorDoubleDataProcData(datas);
-                break;
-            case SALocalServeBaseHeader::TypeString:
-                dealString(datas);
-                break;
-            }
+            m_index += m_mainHeader.dataSize;
+#ifdef _DEBUG_PRINT
+            qDebug() << "readed from socket: readed datas size:"<<m_index
+                            ;
+#endif
+            deal(m_mainHeader.type,m_buffer);
             m_isReadedMainHeader = false;
-            if(m_socket->bytesAvailable() >= SALocalServeBaseHeader::sendSize())
+            if(m_socket->bytesAvailable() >= s_headerSize)
             {
-
                 onReadyRead();
             }
         }
     }
-    else if(m_socket->bytesAvailable() >= SALocalServeBaseHeader::sendSize())
+    else if(m_socket->bytesAvailable() >= s_headerSize)
     {
         //说明包头数据接收完
-        QByteArray datas;
-        datas.resize(SALocalServeBaseHeader::sendSize());
-        if(!readFromSocket(datas.data(),SALocalServeBaseHeader::sendSize()))
+#ifdef _DEBUG_PRINT
+    qDebug() <<"main header may receive:"
+            << "\r\n byte available:"<<m_socket->bytesAvailable()
+                ;
+#endif
+        m_index = 0;
+        if(m_buffer.size() < s_headerSize)
+        {
+            m_buffer.resize(s_headerSize);
+        }
+        if(!readFromSocket(m_buffer.data(),s_headerSize))
         {
             emit errorOccure(tr("receive unknow header"));
             m_isReadedMainHeader = false;
             m_socket->reset();
             return;
         }
-        QDataStream io(datas);
+        m_index += s_headerSize;
+        QDataStream io(m_buffer);
         io >> m_mainHeader;
         if(!m_mainHeader.isValid())
         {
             m_isReadedMainHeader = false;
+            qDebug() << "receive unknow header";
             emit errorOccure(tr("receive unknow header"));
             m_socket->reset();
             return;
         }
 #ifdef _DEBUG_PRINT
-    qDebug() << "header.getDataSize:"<<m_mainHeader.getDataSize()
-             << "\r\n header.key:"<<m_mainHeader.getKey()
-             << "\r\n header.type:"<<m_mainHeader.getType()
+    qDebug() << "header.getDataSize:"<<m_mainHeader.dataSize
+             << "\r\n header.key:"<<m_mainHeader.key
+             << "\r\n header.type:"<<m_mainHeader.type
+             << "\r\n byte available:"<<m_socket->bytesAvailable()
                 ;
 #endif
-        if(m_mainHeader.getDataSize() > 0)
+        if(m_mainHeader.dataSize > 0)
         {
             //说明文件头之后有数据
             m_isReadedMainHeader = true;
@@ -162,11 +219,11 @@ void SALocalServeReader::onReadyRead()
         else
         {
             //说明文件头之后无数据
-            switch(m_mainHeader.getType())
-            {
-            case SALocalServeBaseHeader::TypeShakeHand://握手协议
-                emit receivedShakeHand(m_mainHeader);
-            }
+#ifdef _DEBUG_PRINT
+            qDebug() << "!!!!mainHeader dataSize == 0: type:"<<m_mainHeader.type
+                            ;
+#endif
+            deal(m_mainHeader.type,m_buffer);
             m_isReadedMainHeader = false;
         }
 

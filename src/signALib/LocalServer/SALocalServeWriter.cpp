@@ -1,8 +1,13 @@
-#include "SALocalServeWriter.h"
+﻿#include "SALocalServeWriter.h"
 #include <QLocalSocket>
 #include "SALocalServeBaseHeader.h"
 #include "SALocalServeFigureItemProcessHeader.h"
 #include <QTextCodec>
+#include "SALocalServeBaseProtocol.h"
+#define _DEBUG_PRINT
+#ifdef _DEBUG_PRINT
+#include <QDebug>
+#endif
 SALocalServeWriter::SALocalServeWriter(QLocalSocket* localSocket,QObject *parent):QObject(parent)
   ,m_socket(nullptr)
 {
@@ -58,15 +63,13 @@ void SALocalServeWriter::sendShakeHand()
     {
         return;
     }
-
-    SALocalServeBaseHeader data;
-
-    data.setKey(1);
-    data.setType((int)SALocalServeBaseHeader::TypeShakeHand);
-    data.refreshCheck();
+    SALocalServeShakeHandProtocol sh;
     QDataStream out(m_socket);
-    out << data;
+    out << sh;
     m_socket->waitForBytesWritten();
+#ifdef _DEBUG_PRINT
+    qDebug() << "SALocalServeWriter::sendShakeHand:";
+#endif
 }
 ///
 /// \brief 发送线性数组数据，应用于绘图程序绘制完图片后把绘图的点下发给处理进程进行进一步的数据分析
@@ -80,39 +83,15 @@ void SALocalServeWriter::sendDoubleVectorData(qintptr wndPtr,qintptr figPtr,qint
     {
         return;
     }
-    size_t dataTotalSize = SALocalServeFigureItemProcessHeader::sendSize();
-    size_t dataLen = datas.size() * sizeof(double) * 2;
-    dataTotalSize += dataLen;
-
-    SALocalServeBaseHeader mainHeader;
-    mainHeader.setKey(1);
-    mainHeader.setType((int)SALocalServeBaseHeader::TypeVectorPointFData);
-    mainHeader.setDataSize(dataTotalSize);
-    mainHeader.refreshCheck();
-
-    SALocalServeFigureItemProcessHeader subHeader;
-    subHeader.setDataType(SALocalServeFigureItemProcessHeader::CurveData);
-    subHeader.setWndPtr(wndPtr);
-    subHeader.setFigPtr(figPtr);
-    subHeader.setItem(itemPtr);
-    subHeader.setDataLength(dataLen);
-    subHeader.setDataVectorNum(datas.size());
-    subHeader.refreshCheck();
-
+    SALocalServeVectorPointProtocol sh;
+    sh.setPoints(datas);
+    sh.setIDs(wndPtr,figPtr,itemPtr);
     QDataStream out(m_socket);
-    out << mainHeader << subHeader;
-    //写数据
-    const int size = datas.size();
-    double x,y;
-    size_t doubleSize = sizeof(double);
-    for(int i=0;i<size;++i)
-    {
-        x = datas[i].x();
-        y = datas[i].y();
-        out.writeRawData((const char *)&x,doubleSize);
-        out.writeRawData((const char *)&y,doubleSize);
-    }
+    out << sh;
     m_socket->waitForBytesWritten();
+#ifdef _DEBUG_PRINT
+    qDebug() << "SALocalServeWriter::sendDoubleVectorData: dataSize(" << datas.size()<<")";
+#endif
 }
 
 void SALocalServeWriter::sendString(const QString str)
@@ -121,16 +100,12 @@ void SALocalServeWriter::sendString(const QString str)
     {
         return;
     }
-    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-    QByteArray encodedString = codec->fromUnicode(str);
-    SALocalServeBaseHeader mainHeader;
-    mainHeader.setKey(1);
-    mainHeader.setType((int)SALocalServeBaseHeader::TypeString);
-    mainHeader.setDataSize(encodedString.size());
-    mainHeader.refreshCheck();
-
+    SALocalServeStringProtocol sh;
+    sh.setString(str);
     QDataStream out(m_socket);
-    out << mainHeader;
-    out.writeRawData(encodedString.data(),encodedString.size());
+    out << sh;
     m_socket->waitForBytesWritten();
+#ifdef _DEBUG_PRINT
+    qDebug() << "SALocalServeWriter::sendString:" << str;
+#endif
 }

@@ -1,4 +1,4 @@
-#ifndef SADATAFEATUREWIDGET_H
+﻿#ifndef SADATAFEATUREWIDGET_H
 #define SADATAFEATUREWIDGET_H
 
 #include <QWidget>
@@ -6,6 +6,7 @@
 #include <QMap>
 #include "../global/SAGlobals.h"
 #include <memory>
+#include "SALocalServeBaseProtocol.h"
 class QwtPlotItem;
 class QMdiSubWindow;
 class QAbstractItemModel;
@@ -76,11 +77,11 @@ private:
     //尝试连接服务器
     Q_SLOT void tryToConnectServer();
     //接收主包头完毕
-    Q_SLOT void onReceivedShakeHand(const SALocalServeBaseHeader& mainHeader);
+    Q_SLOT void onReceivedShakeHand(const SALocalServeShakeHandProtocol& protocol);
     //接收到xml字符
-    Q_SLOT void onReceivedString(const QString& xmlString);
+    Q_SLOT void onReceivedString(const SALocalServeStringProtocol& protocol);
     //接收到到点数组
-    Q_SLOT void onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& ys);
+    Q_SLOT void onReceivedVectorPointFData(const SALocalServeVectorPointProtocol& protocol);
     //
     Q_SLOT void onLocalSocketDisconnect();
     //

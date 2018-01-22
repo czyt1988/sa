@@ -32,7 +32,7 @@
 #include "DataFeatureTreeModel.h"
 #include "SADataFeatureItem.h"
 
-//#define _DEBUG_OUTPUT
+#define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
     #include <QElapsedTimer>
     #include <QDebug>
@@ -254,9 +254,9 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
 
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
-void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &mainHeader)
+void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeShakeHandProtocol& protocol)
 {
-    Q_UNUSED(mainHeader);
+    Q_UNUSED(protocol);
 #ifdef __SEND_1M_POINTS_TEST__
     if(m_dataWriter)
     {
@@ -271,9 +271,9 @@ void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeBaseHeader &main
 #endif
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
-void SADataFeatureWidget::onReceivedString(const QString &xmlString)
+void SADataFeatureWidget::onReceivedString(const SALocalServeStringProtocol& protocol)
 {
-    SAXMLReadHelper xmlHelper(xmlString);
+    SAXMLReadHelper xmlHelper(protocol.string());
     if(xmlHelper.isValid())
     {
         //说明这个字符串是一个点数组处理的结果
@@ -332,24 +332,22 @@ void SADataFeatureWidget::onReceivedString(const QString &xmlString)
 /// \param header
 /// \param ys
 ///
-void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader &header, QVector<QPointF> &ys)
+void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeVectorPointProtocol& protocol)
 {
 #ifdef _DEBUG_OUTPUT
-    Q_UNUSED(header);
     int costTime = s_vector_send_time_elaspade.restart();
     if(s_send_speed_test)
     {
         s_send_speed_test = false;
-        saDebug(QString("test time cost:%1 \n ys.size:%2").arg(costTime).arg(ys.size()));
-        int byteSize = ys.size() * 2*sizeof(qreal);
-
+        saDebug(QString("test time cost:%1 \n ys.size:%2").arg(costTime).arg(protocol.getPoints().size()));
+        int byteSize = protocol.getPoints().size() * 2*sizeof(qreal);
+        byteSize += 16;
         saDebug(QString("send speed:%1 byte/ms(%2 MB/s)")
                 .arg((byteSize)/costTime)
                 .arg((byteSize/(1024.0*1024)) / (costTime/1000.0)));
     }
 #endif
-    Q_UNUSED(header);
-    Q_UNUSED(ys);
+    Q_UNUSED(protocol);
 
 }
 

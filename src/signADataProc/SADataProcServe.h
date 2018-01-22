@@ -1,4 +1,4 @@
-#ifndef SADATAPROCSERVE_H
+﻿#ifndef SADATAPROCSERVE_H
 #define SADATAPROCSERVE_H
 #include <QObject>
 #include <QLocalSocket>
@@ -7,6 +7,7 @@
 #include "SALocalServeFigureItemProcessHeader.h"
 #include <QSet>
 #include <QTimer>
+#include "SALocalServeBaseProtocol.h"
 class SADataProcessVectorPointF;
 class SADataFeatureItem;
 class QThread;
@@ -38,11 +39,11 @@ private slots:
     //错误发生
     Q_SLOT void errorOccurred(QLocalSocket::LocalSocketError err);
     //接收到客户端发的点数组
-    Q_SLOT void onReceivedVectorPointFData(const SALocalServeFigureItemProcessHeader& header,QVector<QPointF>& datas);
+    Q_SLOT void onReceivedVectorPointFData(const SALocalServeVectorPointProtocol &protocol);
     //接收到客户端的文字
-    Q_SLOT void onReceivedString(const QString& str);
+    Q_SLOT void onReceivedString(const SALocalServeStringProtocol& protocol);
     //接收到握手协议
-    Q_SLOT void onRecShakeHand();
+    Q_SLOT void onRecShakeHand(const SALocalServeShakeHandProtocol& protocol);
 
     //接收到点数组的计算结果
     Q_SLOT void onProcessVectorPointFResult(SADataFeatureItem* result
