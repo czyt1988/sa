@@ -2,9 +2,8 @@
 #define SALOCALSERVEREADER_H
 
 #include <QObject>
-#include "SALocalServeBaseProtocol.h"
+#include "SALocalServeProtocol.h"
 #include "SALocalServeBaseHeader.h"
-#include "SALocalServeFigureItemProcessHeader.h"
 #include "SALibGlobal.h"
 #include <QVector>
 

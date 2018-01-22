@@ -1,5 +1,5 @@
-﻿#ifndef SALOCALSERVEBASEPROTOCOL_H
-#define SALOCALSERVEBASEPROTOCOL_H
+﻿#ifndef SALOCALSERVEPROTOCOL_H
+#define SALOCALSERVEPROTOCOL_H
 #include <QDataStream>
 #include "SALibGlobal.h"
 #include "SALocalServeBaseHeader.h"
@@ -7,6 +7,7 @@
 #include <QPointF>
 /// \def 握手协议数据区字节长度
 #define SA_PROTOCOL_SHAKE_HAND_DATA_LEN (32)
+
 ///
 /// \brief Local Server 传输协议的基类
 ///

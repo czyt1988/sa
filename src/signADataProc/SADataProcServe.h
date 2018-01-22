@@ -4,10 +4,9 @@
 #include <QLocalSocket>
 #include "SALocalServeReader.h"
 #include "SALocalServeWriter.h"
-#include "SALocalServeFigureItemProcessHeader.h"
 #include <QSet>
 #include <QTimer>
-#include "SALocalServeBaseProtocol.h"
+#include "SALocalServeProtocol.h"
 class SADataProcessVectorPointF;
 class SADataFeatureItem;
 class QThread;

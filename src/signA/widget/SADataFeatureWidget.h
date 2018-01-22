@@ -6,7 +6,7 @@
 #include <QMap>
 #include "../global/SAGlobals.h"
 #include <memory>
-#include "SALocalServeBaseProtocol.h"
+#include "SALocalServeProtocol.h"
 class QwtPlotItem;
 class QMdiSubWindow;
 class QAbstractItemModel;
@@ -28,7 +28,6 @@ class SAFiugreSetWidget;
     class SALocalServeReader;
     class SALocalServeWriter;
     #include "SALocalServeBaseHeader.h"
-    #include "SALocalServeFigureItemProcessHeader.h"
 #endif
 
 namespace Ui {

@@ -8,7 +8,7 @@
 #include <QApplication>
 #include "SADataProcessVectorPointF.h"
 #include "SAXMLTagDefined.h"
-#define _DEBUG_OUTPUT
+//#define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
 #endif
@@ -101,7 +101,6 @@ void SADataProcServe::onReceivedVectorPointFData(const SALocalServeVectorPointPr
 
 void SADataProcServe::onReceivedString(const SALocalServeStringProtocol& protocol)
 {
-    qDebug() << "SADataProcServe::onReceivedString:"<<protocol.string();
     SALocalServeReader* reader  = qobject_cast<SALocalServeReader*>(sender());
     if(nullptr == reader)
     {
@@ -153,7 +152,6 @@ void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, QVa
         qDebug() << "argList invalid";
         return;
     }
-    qDebug() << "start process vector pointF result";
     quintptr widget,fig,item,client;
     widget = argList[0].value<quintptr>();
     fig = argList[1].value<quintptr>();

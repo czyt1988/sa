@@ -14,7 +14,6 @@
 #else
     #include <QLocalServer>
     #include <QLocalSocket>
-    #include "SALocalServeFigureItemProcessHeader.h"
     #include "SALocalServerDefine.h"
     #include "SALocalServeReader.h"
     #include "SALocalServeWriter.h"

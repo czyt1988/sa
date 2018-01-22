@@ -1,5 +1,6 @@
-﻿#include "SALocalServeBaseProtocol.h"
+﻿#include "SALocalServeProtocol.h"
 #include <QTextCodec>
+#include <QBuffer>
 #include <QDebug>
 SALocalServeBaseProtocol::SALocalServeBaseProtocol()
 {
@@ -82,11 +83,6 @@ void SALocalServeStringProtocol::serializeIn(QDataStream &st)
 void SALocalServeStringProtocol::serializeOut(QDataStream &st) const
 {
     QByteArray encodedString = m_str.toUtf8();
-//qDebug() << "SALocalServeStringProtocol::serializeOutAll:"
-//         << m_str
-//         << " toUtf8 size:"<<encodedString.size()
-//            << " hex:" << QString(encodedString.toHex())
-//            ;
     SALocalServeBaseHeader header;
     header.init();
     header.type = (int)TypeString;
@@ -129,24 +125,28 @@ SALocalServeVectorPointProtocol::SALocalServeVectorPointProtocol():SALocalServeB
 void SALocalServeVectorPointProtocol::serializeIn(QDataStream &st)
 {
     st >> m_header;
-    QByteArray buffer;
-    buffer.resize(m_header.dataSize);
-    st.readRawData(buffer.data(),m_header.dataSize);
-    QDataStream io(buffer);
+    QByteArray byteArray;
+    byteArray.resize(m_header.dataSize);
+    st.readRawData(byteArray.data(),m_header.dataSize);
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::ReadOnly);
+    QDataStream io(&buffer);
     io >> m_points >> m_winId >> m_figId >> m_itemId;
 }
 
 void SALocalServeVectorPointProtocol::serializeOut(QDataStream &st) const
 {
-    QByteArray buffer;
-    QDataStream io(buffer);
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
+    QDataStream io(&buffer);
     io << m_points << m_winId << m_figId << m_itemId;
     SALocalServeBaseHeader header;
     header.init();
     header.type = (int)TypeVectorPointFData;
-    header.dataSize = buffer.size();
+    header.dataSize = byteArray.size();
     st << header;
-    st.writeRawData(buffer.data(),header.dataSize);
+    st.writeRawData(byteArray.data(),header.dataSize);
 }
 
 

@@ -1,9 +1,8 @@
 ﻿#include "SALocalServeWriter.h"
 #include <QLocalSocket>
 #include "SALocalServeBaseHeader.h"
-#include "SALocalServeFigureItemProcessHeader.h"
 #include <QTextCodec>
-#include "SALocalServeBaseProtocol.h"
+#include "SALocalServeProtocol.h"
 #define _DEBUG_PRINT
 #ifdef _DEBUG_PRINT
 #include <QDebug>

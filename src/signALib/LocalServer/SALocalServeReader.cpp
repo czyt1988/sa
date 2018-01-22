@@ -1,10 +1,9 @@
 ﻿#include "SALocalServeReader.h"
 
-#include "SALocalServeFigureItemProcessHeader.h"
 #include <QLocalSocket>
 #include <QTextCodec>
 #include <QDebug>
-#define _DEBUG_PRINT
+//#define _DEBUG_PRINT
 #ifdef _DEBUG_PRINT
 #include <QElapsedTimer>
 #include <QDebug>
@@ -73,6 +72,7 @@ void SALocalServeReader::deal(int type, const QByteArray &datas)
         break;
     default:
     {
+        qDebug() << "unknow protocol type!";
         emit errorOccure(tr("unknow protocol type!"));
         m_isReadedMainHeader = false;
         m_socket->reset();
@@ -87,9 +87,6 @@ void SALocalServeReader::deal(int type, const QByteArray &datas)
 ///
 void SALocalServeReader::dealShakeHand(const QByteArray &datas)
 {
-#ifdef _DEBUG_PRINT
-    qDebug() << "SALocalServeReader::dealShakeHand";
-#endif
     QDataStream io(datas);
     SALocalServeShakeHandProtocol pl;
     io >> pl;
@@ -116,11 +113,6 @@ void SALocalServeReader::dealVectorDoubleDataProcData(const QByteArray &datas)
 
 void SALocalServeReader::dealString(const QByteArray &datas)
 {
-#ifdef _DEBUG_PRINT
-    qDebug() << "SALocalServeReader::dealString datas size:"<<datas.size()
-             <<" hex:" << QString(datas.toHex())
-                ;
-#endif
     QDataStream io(datas);
     SALocalServeStringProtocol pl;
     io >> pl;
@@ -143,28 +135,22 @@ void SALocalServeReader::onReadyRead()
             qDebug() << "rec Data:"<<m_socket->bytesAvailable()
                      << " bytes \r\n header.getDataSize:"<<m_mainHeader.dataSize
                      << "\r\n header.type:"<<m_mainHeader.type
+                     << "current index:" << m_index
                         ;
 #endif
             if(m_buffer.size() < s_headerSize+m_mainHeader.dataSize)
             {
-                m_buffer.resize(s_headerSize);
+                m_buffer.resize(s_headerSize+m_mainHeader.dataSize);
             }
             if(!readFromSocket(m_buffer.data()+m_index,m_mainHeader.dataSize))
             {
                 emit errorOccure(tr("receive data error"));
                 m_isReadedMainHeader = false;
                 m_socket->reset();
-#ifdef _DEBUG_PRINT
-                qDebug() << "can not read from socket io!"
-                            ;
-#endif
+                qDebug() << __FILE__ <<"[" << __FUNCTION__ << "][" << __LINE__ << "]can not read from socket io!";
                 return;
             }
             m_index += m_mainHeader.dataSize;
-#ifdef _DEBUG_PRINT
-            qDebug() << "readed from socket: readed datas size:"<<m_index
-                            ;
-#endif
             deal(m_mainHeader.type,m_buffer);
             m_isReadedMainHeader = false;
             if(m_socket->bytesAvailable() >= s_headerSize)
