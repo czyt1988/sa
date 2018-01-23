@@ -1,4 +1,4 @@
-#ifndef SAMARKSYMBOL_H
+﻿#ifndef SAMARKSYMBOL_H
 #define SAMARKSYMBOL_H
 #include "SAChartGlobals.h"
 
@@ -26,7 +26,7 @@ class SA_CHART_EXPORT SATriangleMarkSymbol : public SAAbstractMarkSymbol
 {
 public:
     SATriangleMarkSymbol(QColor clr = Qt::blue
-            ,int H = 8,int W = 8);
+            ,int H = 8,int W = 8,bool isReversal=false);
     virtual ~SATriangleMarkSymbol();
     virtual int markType() const
     {

@@ -31,7 +31,7 @@
 #include "DataFeatureTreeModel.h"
 #include "SADataFeatureItem.h"
 
-#define _DEBUG_OUTPUT
+//#define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
     #include <QElapsedTimer>
     #include <QDebug>
@@ -425,7 +425,6 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
             pointMark->setLabelAlignment(Qt::AlignTop|Qt::AlignHCenter);
             pointMark->setSpacing(10);//设置文字和mark的间隔
             c->addPlotMarker(pointMark);
-            qDebug() << "add Point";
             c->replot();
         }break;
         case QVariant::Double:
