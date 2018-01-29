@@ -8,6 +8,12 @@
 #include <QApplication>
 #include "SADataProcessVectorPointF.h"
 #include "SAXMLTagDefined.h"
+
+#define ARG_DES_WND_ID "widgetId"
+#define ARG_DES_FIG_ID "figureId"
+#define ARG_DES_ITEM_ID "itemId"
+#define ARG_DES_SOCKET_DES "socketDes"
+
 //#define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
@@ -61,6 +67,23 @@ void SADataProcServe::onLocalServeNewConnection()
 
 }
 
+void SADataProcServe::initCalcThread()
+{
+    qDebug() << "init thread";
+    m_calcThread = new QThread;
+    m_pointFCalctor = new SADataProcessVectorPointF;
+    m_pointFCalctor->moveToThread(m_calcThread);
+
+    connect(m_calcThread,&QThread::finished,m_calcThread,&QThread::deleteLater);//内存释放
+    connect(m_calcThread,&QThread::finished,m_pointFCalctor,&SADataProcessVectorPointF::deleteLater);//内存释放
+    connect(m_pointFCalctor,&SADataProcessVectorPointF::result
+            ,this,&SADataProcServe::onProcessVectorPointFResult);
+    connect(this,&SADataProcServe::callVectorPointFProcess
+            ,m_pointFCalctor,&SADataProcessVectorPointF::setPoints);
+    m_calcThread->start();
+
+}
+
 void SADataProcServe::errorOccurred(QLocalSocket::LocalSocketError err)
 {
     Q_UNUSED(err);
@@ -81,13 +104,13 @@ void SADataProcServe::onReceivedVectorPointFData(const SALocalServeVectorPointPr
             qDebug() << "rec VectorPointProtocol but invalid!";
             return;
         }
+        QHash<QString, QVariant> args;
         qintptr wndId,figId,itemId;
         protocol.getIDs(wndId,figId,itemId);
-        QList<QVariant> args;
-        args.append(QVariant::fromValue(wndId));
-        args.append(QVariant::fromValue(figId));
-        args.append(QVariant::fromValue(itemId));
-        args.append(QVariant::fromValue((qintptr)reader->getSocket()));
+        args[ARG_DES_WND_ID]=QVariant::fromValue(wndId);
+        args[ARG_DES_FIG_ID]=QVariant::fromValue(figId);
+        args[ARG_DES_ITEM_ID]=QVariant::fromValue(itemId);
+        args[ARG_DES_SOCKET_DES]=QVariant::fromValue((quintptr)reader->getSocket());
 #ifdef _DEBUG_OUTPUT
     qDebug() << "onReceivedVectorPointFData-> data size:"<<protocol.getPoints().size()
              << " wndId:"<<wndId
@@ -95,7 +118,7 @@ void SADataProcServe::onReceivedVectorPointFData(const SALocalServeVectorPointPr
              << " itemId:"<<itemId
                 ;
 #endif
-        emit callVectorPointFProcess(protocol.getPoints(),QVariant(args));
+        emit callVectorPointFProcess(protocol.getPoints(),args);
     }
 }
 
@@ -140,34 +163,35 @@ void SADataProcServe::onRecShakeHand(const SALocalServeShakeHandProtocol& protoc
     writer->sendShakeHand();
 }
 
-void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, QVariant args)
+void SADataProcServe::onProcessVectorPointFResult(const QString& res
+                                                  , const QHash<QString, QVariant>& args)
 {
-    if(nullptr == result)
+    if(res.isEmpty())
     {
         return;
     }
-    QList<QVariant> argList = args.toList();
-    if(4 != argList.size())
+
+    if(4 != args.size())
     {
         qDebug() << "argList invalid";
         return;
     }
     quintptr widget,fig,item,client;
-    widget = argList[0].value<quintptr>();
-    fig = argList[1].value<quintptr>();
-    item = argList[2].value<quintptr>();
-    client = argList[3].value<quintptr>();
+    widget = args[ARG_DES_WND_ID].value<quintptr>();
+    fig = args[ARG_DES_FIG_ID].value<quintptr>();
+    item = args[ARG_DES_ITEM_ID].value<quintptr>();
+    client = args[ARG_DES_SOCKET_DES].value<quintptr>();
 #ifdef _DEBUG_OUTPUT
     QElapsedTimer t;
     t.start();
 #endif
     QString xml;
     QTextStream st(&xml);
-    st << "<" << SA_XML_TAG_SA << " " << SA_XML_ATT_NAME_SA_TYPE << "=\"" <<  SA_XML_ATT_SA_TYPE_VPFR << "\">";
+    st << "<" << SA_XML_TAG_SA << " " << SA_XML_ATT_TYPE << "=\"" <<  ATT_SA_TYPE_VPFR << "\">";
     st << "<" << SA_XML_TAG_QUINTPTR << ">" << widget << "</" << SA_XML_TAG_QUINTPTR << ">";
     st << "<" << SA_XML_TAG_QUINTPTR << ">" << fig << "</" << SA_XML_TAG_QUINTPTR << ">";
     st << "<" << SA_XML_TAG_QUINTPTR << ">" << item << "</" << SA_XML_TAG_QUINTPTR << ">";
-    st << result->toXml();
+    st << res;
     st << "</" << SA_XML_TAG_SA << ">";
     st << endl;
     QLocalSocket * clientPtr = (QLocalSocket *)client;
@@ -186,7 +210,6 @@ void SADataProcServe::onProcessVectorPointFResult(SADataFeatureItem *result, QVa
              << " ItemPtr:"<<item
                 ;
 #endif
-    delete result;
 }
 
 void SADataProcServe::onDisconnected()
@@ -234,22 +257,7 @@ void SADataProcServe::setPid(const uint &pid)
     m_pid = pid;
 }
 
-void SADataProcServe::initCalcThread()
-{
-    qDebug() << "init thread";
-    m_calcThread = new QThread;
-    m_pointFCalctor = new SADataProcessVectorPointF;
-    m_pointFCalctor->moveToThread(m_calcThread);
 
-    connect(m_calcThread,&QThread::finished,m_calcThread,&QThread::deleteLater);//内存释放
-    connect(m_calcThread,&QThread::finished,m_pointFCalctor,&SADataProcessVectorPointF::deleteLater);//内存释放
-    connect(m_pointFCalctor,&SADataProcessVectorPointF::result
-            ,this,&SADataProcServe::onProcessVectorPointFResult);
-    connect(this,&SADataProcServe::callVectorPointFProcess
-            ,m_pointFCalctor,&SADataProcessVectorPointF::setPoints);
-    m_calcThread->start();
-
-}
 
 SALocalServeWriter *SADataProcServe::getWriter(SALocalServeReader *reader)
 {

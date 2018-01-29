@@ -1,11 +1,16 @@
 ﻿#include "SADataProcessVectorPointF.h"
 #include "czyMath.h"
 #include <algorithm>
+#include "SAXMLTagDefined.h"
+#include "SAXMLReadHelper.h"
+#include <QXmlStreamWriter>
+
+
 
 #define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
-#include <QDebug>
+#include "SALog.h"
 #endif
 
 SADataProcessVectorPointF::SADataProcessVectorPointF(QObject *parent):QObject(parent)
@@ -19,7 +24,7 @@ SADataProcessVectorPointF::SADataProcessVectorPointF(QObject *parent):QObject(pa
 /// \param widget 标记1
 /// \param item 标记2
 ///
-void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, QVariant args)
+void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, const QHash<QString, QVariant> &args)
 {
     emit result(analysisData(points),args);
 }
@@ -77,6 +82,7 @@ void SADataProcessVectorPointF::sortPeak(QVector<QPointF> &sharpPointsSorted, co
     std::sort(sharpPointsSorted.begin(),sharpPointsSorted.end(),comparePointY);
 }
 
+#if 0
 SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF>& orgPoints)
 {
     qDebug()<<"start analysis data";
@@ -147,6 +153,83 @@ SADataFeatureItem* SADataProcessVectorPointF::analysisData(const QVector<QPointF
 #endif
     return item;
 }
+#endif
+
+QString SADataProcessVectorPointF::analysisData(const QVector<QPointF> &orgPoints)
+{
+    qDebug()<<"start analysis data";
+#ifdef _DEBUG_OUTPUT
+        QElapsedTimer t;
+        t.start();
+#endif
+    QVector<double> y;
+    getVectorPointY(orgPoints,y);
+    if(orgPoints.size()<=0 || y.size()<=0)
+    {
+        return QString();
+    }
+    QVector<QPointF> datas = orgPoints;
+    double sum;
+    double mean;
+    double var;
+    double stdVar;
+    double skewness;
+    double kurtosis;
+    size_t n = datas.size();
+    czy::Math::get_statistics(y.begin(),y.end(),sum,mean,var
+        ,stdVar,skewness,kurtosis);
+    std::sort(datas.begin(),datas.end()
+              ,[](const QPointF& a,const QPointF& b)->bool{
+        return (a.y() < b.y());
+    });
+    double min = datas.begin()->y();//最小
+    double max = (datas.end()-1)->y();//最大
+    double mid = n>1 ? (datas.begin() + int(n/2))->y() : min;//中位数
+    double peak2peak = max - min;
+    QPointF minPoint = *datas.begin();
+    QPointF maxPoint = *(datas.end()-1);
+    QPointF midPoint = n>1 ? *(datas.begin() + int(n/2)) : minPoint;//中位数
+    //
+    QString xmlString;
+    SADataProcessVectorPointFXMLHelper xmlHelper;
+    xmlHelper.startWrite(&xmlString);
+    
+    xmlHelper.startWriteGroup("param");
+    xmlHelper.writeValue(sum,"sum");
+    xmlHelper.writeValue(min,"min");
+    xmlHelper.writeValue(max,"max");
+    xmlHelper.writeValue(mid,"mid");
+    xmlHelper.writeValue(mean,"mean");
+    xmlHelper.writeValue(var,"var");
+    xmlHelper.writeValue(stdVar,"stdVar");
+    xmlHelper.writeValue(skewness,"skewness");
+    xmlHelper.writeValue(kurtosis,"kurtosis");
+    xmlHelper.writeValue(peak2peak,"peak2peak");
+    xmlHelper.writeValue(minPoint,"minPoint");
+    xmlHelper.writeValue(maxPoint,"maxPoint");
+    xmlHelper.writeValue(midPoint,"midPoint");
+    xmlHelper.endWriteGroup();
+    
+    int sortCount = std::min(m_sortCount,datas.size());
+    const int datasSize = datas.size();
+    xmlHelper.startWriteGroup("top");
+    for(int i=0;i<sortCount;++i)
+    {
+        QPointF top = datas[datasSize-i-1];
+        xmlHelper.writeValue(top,QString("top:%1").arg(i+1));
+    }
+    xmlHelper.endWriteGroup();
+    
+    xmlHelper.startWriteGroup("bottom");
+    for(int i=0;i<sortCount;++i)
+    {
+        QPointF top = datas[i];
+        xmlHelper.writeValue(top,QString("bottom:%1").arg(i+1));
+    }
+    xmlHelper.endWriteGroup();
+    xmlHelper.endWrite();
+    return xmlString;
+}
 
 int SADataProcessVectorPointF::getSortCount() const
 {
@@ -157,3 +240,8 @@ void SADataProcessVectorPointF::setSortCount(int sortCount)
 {
     m_sortCount = sortCount;
 }
+
+
+//========================================
+
+

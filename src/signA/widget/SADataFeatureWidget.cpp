@@ -31,10 +31,10 @@
 #include "DataFeatureTreeModel.h"
 #include "SADataFeatureItem.h"
 
-//#define _DEBUG_OUTPUT
+#define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
+    #include "SALog.h"
     #include <QElapsedTimer>
-    #include <QDebug>
         #ifdef USE_IPC_CALC_FEATURE
             static bool s_send_speed_test = false;
             static QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
@@ -278,6 +278,9 @@ void SADataFeatureWidget::onReceivedString(const SALocalServeStringProtocol& pro
         //说明这个字符串是一个点数组处理的结果
         if(SAXMLReadHelper::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
         {
+#ifdef _DEBUG_OUTPUT
+            saPrint()<<"SAXMLReadHelper::TypeVectorPointFProcessResult";
+#endif
             quintptr w,chart,plotItemPtr;
             std::unique_ptr<SADataFeatureItem> item(new SADataFeatureItem);
             if(xmlHelper.getVectorPointFProcessResult(w,chart,plotItemPtr,item.get()))
@@ -309,6 +312,7 @@ void SADataFeatureWidget::onReceivedString(const SALocalServeStringProtocol& pro
                 }
                 //设置item的名字
                 item->setName(itemPtr->title().text());
+
                 //设置item的颜色
                 QColor clr = SAChart2D::getItemColor( itemPtr);
                 if(clr.isValid())
@@ -382,6 +386,7 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
     SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
     if(nullptr == figure)
     {
+        saPrint() << "can not find FigureWindow";
         return;
     }
     on_toolButton_clearDataFeature_clicked();//先清除标记
@@ -390,7 +395,10 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
     QItemSelectionModel* selModel = ui->treeView->selectionModel();
     DataFeatureTreeModel* curFeatureModel = static_cast<DataFeatureTreeModel*>(ui->treeView->model());
     if(!selModel || !curFeatureModel)
+    {
+        saPrint() << "can not find DataFeatureTreeModel";
         return;
+    }
     QModelIndexList indexList = selModel->selectedIndexes();
 
     for(int i=0;i<indexList.size();++i)
@@ -407,6 +415,11 @@ void SADataFeatureWidget::on_treeView_clicked(const QModelIndex &index)
         SADataFeatureItem* topParent = item->topParent();
         //根据topParent找到对应的SAChart2D;
         SAChart2D* c = DataFeatureTreeModel::getChartPtrFromItem(topParent);
+        if(nullptr == c)
+        {
+            saPrint() << "can not getChartPtrFromItem";
+            continue;
+        }
         if(!chartPlots.contains(c))
         {
             continue;

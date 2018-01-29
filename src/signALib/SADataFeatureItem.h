@@ -1,4 +1,4 @@
-#ifndef SADATAFEATUREITEM_H
+﻿#ifndef SADATAFEATUREITEM_H
 #define SADATAFEATUREITEM_H
 #include "SALibGlobal.h"
 #include <QVariant>
@@ -44,28 +44,11 @@ public:
     //设置子条目指针，返回旧的指针，返回的指针内存交由调用者管理
     SADataFeatureItem* setChild(int index,SADataFeatureItem* newItemPtr);
 public:
-    enum ItemType{
-        UnKnow
-        ,DescribeItem///< 用于描述的条目，和值项目关联
-        ,ValueItem///< 值项目
-        ,PointItem///< 点项目
-    };
     SADataFeatureItem(const QString &name,const QVariant& data);
     //值设置
     void setValue(const QVariant& var);
     QVariant getValue() const;
-    //转换为xml，此转换不是标准xml文件，而是以<fi>打头</fi>结尾的xml文件
-    QString toXml() const;
-    //从xml转换为item
-    bool fromXml(const QString& xml);
-    //转换为xml，此转换不是标准xml文件，而是以<fi>打头</fi>结尾的xml文件
-    static QString toXml(const SADataFeatureItem* item);
-    //从xml转换为item
-    static bool fromXml(const QString& xmlStr, SADataFeatureItem* item);
-    //获取条目类型
-    ItemType getItemType() const;
-    //设置条目类型
-    void setItemType(ItemType type);
+
     //子条目添加点序列条目
     SADataFeatureItem* appendItem(const QString &name, const QVector<QPointF>& datas);
     //子条目添加点序列条目
@@ -77,16 +60,14 @@ public:
     QBrush getBackgroundBrush() const;
     void setBackground(const QBrush& b);
     void setBackgroundColor(const QColor& c);
+    //获取数据类型
+    int getValueType() const;
+    //描述类型，描述类型不显示value，只是作为group
+    bool isGroupType() const;
+    void setToGroup(bool isGroup = true);
 protected:
     void setParent(SADataFeatureItem *parent);
 private:
-    static int getTypeInt(const SADataFeatureItem *item);
-    static void writeItem(QXmlStreamWriter* xml,const SADataFeatureItem* item);
-    static bool readRootItem(QDomElement* xmlItem,SADataFeatureItem *item);
-    static bool readChildItem(QDomElement* xmlItem,SADataFeatureItem *parentItem);
-    static bool getItemInfoFromElement(QDomElement* xmlItem,SADataFeatureItem *item);
-private:
-
 };
 
 

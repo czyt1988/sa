@@ -28,7 +28,7 @@ private:
     /// \brief 私有信号，用于调用数据处理线程
     ///
     Q_SIGNAL void callVectorPointFProcess(const QVector<QPointF>& points
-                                          ,QVariant args);
+                                          ,const QHash<QString, QVariant>& args);
 
     void initCalcThread();
 
@@ -45,8 +45,8 @@ private slots:
     Q_SLOT void onRecShakeHand(const SALocalServeShakeHandProtocol& protocol);
 
     //接收到点数组的计算结果
-    Q_SLOT void onProcessVectorPointFResult(SADataFeatureItem* result
-                                            , QVariant args);
+    Q_SLOT void onProcessVectorPointFResult(const QString& res
+                                            , const QHash<QString, QVariant>& args);
 
     Q_SLOT void onDisconnected();
     //
