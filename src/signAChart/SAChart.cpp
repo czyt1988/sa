@@ -399,7 +399,7 @@ void SAChart::getXYDatas(const QVector<QPointF> &xys, QVector<double> *xs, QVect
     {
         ys->reserve(xys.size());
         std::for_each(xys.begin(),xys.end(),[ys](const QPointF& p){
-            ys->append(p.x());
+            ys->append(p.y());
         });
     }
     else
@@ -408,7 +408,7 @@ void SAChart::getXYDatas(const QVector<QPointF> &xys, QVector<double> *xs, QVect
         ys->reserve(xys.size());
         std::for_each(xys.begin(),xys.end(),[xs,ys](const QPointF& p){
             xs->append(p.x());
-            ys->append(p.x());
+            ys->append(p.y());
         });
     }
 }

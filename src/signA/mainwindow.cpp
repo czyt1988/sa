@@ -151,7 +151,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ,m_menuValueManagerView(nullptr)
  // ,m_lastActiveWnd(nullptr)
   ,m_nProjectCount(0)
-  ,m_nUserChartCount(0)
   ,m_lastShowFigureWindow(nullptr)
 {
     saAddLog("start app");
@@ -1052,18 +1051,13 @@ void MainWindow::onActionNewChartTriggered()
 
     if(QDialog::Accepted == addChart.exec())
     {
-        m_nUserChartCount++;
-        QString chartName = QStringLiteral("新图例-%1").arg(m_nUserChartCount);
-        SAMdiSubWindow* pSubWnd = createMdiSubWindow<SAFigureWindow>(SA::SubWindowUserDefine,chartName);
+        SAMdiSubWindow* pSubWnd = m_drawDelegate->createFigureMdiSubWidget();
         SAFigureWindow* pFigWnd = getFigureWidgetFromMdiSubWindow (pSubWnd);
         if(nullptr == pFigWnd)
         {
             return;
         }
-        connect (pFigWnd,&SAFigureWindow::chartDataChanged
-                 ,this,&MainWindow::onChartDataChanged);
         SAChart2D* pC = pFigWnd->create2DPlot();
-        pC->setTitle(chartName);
         pC->setAutoReplot(false);
         QList<QwtPlotCurve*> curList = addChart.getDrawCurveList();
         for(auto ite = curList.begin();ite != curList.end();++ite)

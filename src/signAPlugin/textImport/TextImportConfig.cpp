@@ -5,7 +5,7 @@
 #include "SAVectorDouble.h"
 #include <QFileInfo>
 #include "SAValueManager.h"
-#include "SAGlobals.h"
+#include "../../global/SAGlobals.h"
 #include "SACsvParser.h"
 #include "SALog.h"
 #include "SAVectorDouble.h"

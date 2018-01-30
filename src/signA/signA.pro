@@ -64,7 +64,7 @@ HEADERS  += mainwindow.h \
 
 
 
-FORMS    += mainwindow.ui \
+FORMS    += \
     progressStateWidget.ui \
     AboutDialog.ui \
     SAInformationStatusWidget.ui

@@ -555,7 +555,6 @@ private:
 
     SAPluginManager* m_pluginManager;///< 插件管理器
     int m_nProjectCount;//记录项目总数
-    int m_nUserChartCount;///< 用户图表标志
 
     SAMdiSubWindowManager m_mdiManager;
 
