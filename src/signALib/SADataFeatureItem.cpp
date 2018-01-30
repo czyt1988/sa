@@ -1,10 +1,11 @@
-#include "SADataFeatureItem.h"
+﻿#include "SADataFeatureItem.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QDomDocument>
 #include <QPointF>
 #include <QDebug>
 #include "SAVariantCaster.h"
+#include "SAXMLTagDefined.h"
 #define ROLE_ITEM_TYPE (Qt::UserRole + 1234)
 #define XML_STR_ROOT__ "dfi"
 #define XML_STR_ITEM__ "item"
@@ -42,7 +43,6 @@ SADataFeatureItem::SADataFeatureItem()
 SADataFeatureItem::SADataFeatureItem(const QString &text)
     :d_ptr(new SADataFeatureItemPrivate(this))
 {
-    setItemType(DescribeItem);
     setName(text);
 }
 
@@ -52,7 +52,6 @@ SADataFeatureItem::SADataFeatureItem(const QString &name, const QVariant &data)
 {
     setName(name);
     setValue(data);
-    setItemType(ValueItem);
 }
 
 void SADataFeatureItem::setValue(const QVariant &var)
@@ -160,30 +159,15 @@ void SADataFeatureItem::setBackgroundColor(const QColor &c)
     setBackground(QBrush(c));
 }
 
-
-
-
-
-SADataFeatureItem::ItemType SADataFeatureItem::getItemType() const
+int SADataFeatureItem::getValueType() const
 {
-    QVariant var = getData(ROLE_ITEM_TYPE);
-    if(!var.isValid())
-    {
-        return UnKnow;
-    }
-    bool isOK = false;
-    int d = var.toInt(&isOK);
-    if(!isOK)
-    {
-        return UnKnow;
-    }
-    return static_cast<SADataFeatureItem::ItemType>(d);
+    return d_ptr->m_value.type();
 }
 
-void SADataFeatureItem::setItemType(SADataFeatureItem::ItemType type)
-{
-    setData((int)type,ROLE_ITEM_TYPE);
-}
+
+
+
+
 
 
 ///
@@ -200,45 +184,6 @@ SADataFeatureItem *SADataFeatureItem::topParent() const
         par = static_cast<SADataFeatureItem *>(cur->getParent());
     }
     return cur;
-}
-///
-/// \brief 转换为xml
-///
-/// 此转换不是标准xml文件，而是以<fi>打头</fi>结尾的xml文件
-/// \return
-///
-QString SADataFeatureItem::toXml() const
-{
-    return toXml(this);
-}
-///
-/// \brief 从xml转换为item
-/// \param xml
-///
-bool SADataFeatureItem::fromXml(const QString &xml)
-{
-    return fromXml(xml,this);
-}
-///
-/// \brief 转换为xml
-///
-/// 此转换不是标准xml文件，而是以<fi>打头</fi>结尾的xml文件
-/// \param item SADataFeatureItem指针
-/// \return
-///
-QString SADataFeatureItem::toXml(const SADataFeatureItem *item)
-{
-    QString str;
-    QXmlStreamWriter xml(&str);
-    //为了便于观察，使用格式化
-    xml.setAutoFormatting(true);
-    xml.setAutoFormattingIndent(2);
-    //
-    xml.setCodec("UTF-8");
-    xml.writeStartElement(XML_STR_ROOT__);
-    writeItem(&xml,item);
-    xml.writeEndElement();
-    return str;
 }
 
 
@@ -268,160 +213,8 @@ void SADataFeatureItem::setData(const QVariant &var, int role)
 
 
 
-int SADataFeatureItem::getTypeInt(const SADataFeatureItem *item)
-{
-    QVariant var = item->getData(ROLE_ITEM_TYPE);
-    if(!var.isValid())
-    {
-        return 0;
-    }
-    bool isOK = false;
-    return var.toInt(&isOK);
-}
-///
-/// \brief 从xml转换为item
-/// \param xml
-/// \param item
-///
-bool SADataFeatureItem::fromXml(const QString &xmlStr, SADataFeatureItem *item)
-{
-    bool isOK = false;
-    QDomDocument doc;
-    isOK = doc.setContent(xmlStr,false);
-    if(!isOK)
-    {
-        return false;
-    }
-    QDomNodeList nodes = doc.elementsByTagName(XML_STR_ROOT__);
-    if(!nodes.isEmpty())
-    {
-        QDomNode nodeRoot = nodes.at(0);
-        //第一个item就是root item
-        QDomElement rootItem = nodeRoot.firstChildElement(XML_STR_ITEM__);
-        isOK = readRootItem(&rootItem,item);
-        //读取子对象
-        if(!rootItem.hasChildNodes())
-        {
-            return isOK;
-        }
-        QDomNodeList childs = rootItem.elementsByTagName(XML_STR_CHILD__);
-        if(!childs.isEmpty())
-        {
-            QDomElement childEle = childs.at(0).toElement();
-            readChildItem(&childEle,item);
-        }
-    }
-    return isOK;
-}
-
-void SADataFeatureItem::writeItem(QXmlStreamWriter *xml, const SADataFeatureItem *item)
-{
-    if(nullptr == item)
-    {
-        return;
-    }
-    xml->writeStartElement(XML_STR_ITEM__);
-    QXmlStreamAttributes attrs;
-    attrs.append(QXmlStreamAttribute(XML_ATT_TYPE__,QString::number(getTypeInt(item))));
-    attrs.append(QXmlStreamAttribute(XML_ATT_NAME__,item->getName()));
-    attrs.append(QXmlStreamAttribute(XML_ATT_VALUE_TYPE__,item->getValue().typeName()));
-    attrs.append(QXmlStreamAttribute(XML_ATT_VALUE__,SAVariantCaster::variantToString(item->getValue())));
-    xml->writeAttributes(attrs);
-    //递归子节点
-    const int subItemCount = item->getChildCount();
-    if(subItemCount>0)
-    {
-        xml->writeStartElement(XML_STR_CHILD__);
-        for(int i=0;i<subItemCount;++i)
-        {
-            writeItem(xml,item->getChild(i));
-        }
-        xml->writeEndElement();
-    }
-    xml->writeEndElement();
-}
 
 
-
-
-bool SADataFeatureItem::readRootItem(QDomElement *xmlItem, SADataFeatureItem *item)
-{
-    return getItemInfoFromElement(xmlItem,item);
-}
-
-bool SADataFeatureItem::readChildItem(QDomElement *xmlItem, SADataFeatureItem *parentItem)
-{
-    if(!xmlItem->hasChildNodes())
-    {
-        return false;
-    }
-    QDomNodeList itemList = xmlItem->childNodes();//(XML_STR_ITEM__);
-    for(int i = 0;i<itemList.size();++i)
-    {
-        if(itemList.at(i).nodeName() != XML_STR_ITEM__)
-        {
-            continue;
-        }
-        SADataFeatureItem* item = new SADataFeatureItem();
-        QDomElement subItemEle = itemList.at(i).toElement();
-        if(!getItemInfoFromElement(&subItemEle,item))
-        {
-            delete item;
-            return false;
-        }
-        //读取子对象
-        if(subItemEle.hasChildNodes())
-        {
-            QDomNodeList childs = subItemEle.elementsByTagName(XML_STR_CHILD__);
-            if(!childs.isEmpty())
-            {
-                QDomElement childEle = childs.at(0).toElement();
-                readChildItem(&childEle,item);
-            }
-        }
-        parentItem->appendItem(item);
-    }
-    return true;
-}
-
-bool SADataFeatureItem::getItemInfoFromElement(QDomElement *xmlItem, SADataFeatureItem *item)
-{
-    if(xmlItem->isNull())
-    {
-        return false;
-    }
-    QDomNamedNodeMap attrs = xmlItem->attributes();
-    QDomNode att = attrs.namedItem(XML_ATT_NAME__);
-    if(!att.isAttr())
-    {
-        return false;
-    }
-    item->setName(att.toAttr().value());
-
-    att = attrs.namedItem(XML_ATT_TYPE__);
-    if(!att.isAttr())
-    {
-        return false;
-    }
-    int type = att.toAttr().value().toInt();
-    item->setItemType(static_cast<SADataFeatureItem::ItemType>(type));
-
-    att = attrs.namedItem(XML_ATT_VALUE_TYPE__);
-    if(!att.isAttr())
-    {
-        return false;
-    }
-    QString varTypeStr = att.toAttr().value();
-    att = attrs.namedItem(XML_ATT_VALUE__);
-    if(!att.isAttr())
-    {
-        return false;
-    }
-    QString varStr = att.toAttr().value();
-    QVariant value = SAVariantCaster::stringToVariant(varStr,varTypeStr);
-    item->setValue(value);
-    return true;
-}
 ///
 /// \brief 获取当前行
 /// \return

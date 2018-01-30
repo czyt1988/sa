@@ -19,19 +19,27 @@ SAAbstractMarkSymbol::~SAAbstractMarkSymbol()
 
 }
 
-SATriangleMarkSymbol::SATriangleMarkSymbol(QColor clr, int H, int W):SAAbstractMarkSymbol()
+SATriangleMarkSymbol::SATriangleMarkSymbol(QColor clr, int H, int W, bool isReversal):SAAbstractMarkSymbol()
 {
     QPen pen(clr,1);
     pen.setJoinStyle( Qt::MiterJoin);
     setPen(pen);
     setBrush(QColor(clr.red(),clr.green(),clr.blue(),30));
     QPainterPath path;
-
-    path.moveTo(0,-H);
-    path.lineTo(-W/2,-H);
-    path.lineTo(0,0);
-    path.lineTo(W/2,-H);
-    path.lineTo(0,-H);
+    if(isReversal)
+    {
+        path.moveTo(0,0);
+        path.lineTo(-W/2,H);
+        path.lineTo(W/2,H);
+        path.lineTo(0,0);
+    }
+    else
+    {
+        path.moveTo(W/2,-H);
+        path.lineTo(-W/2,-H);
+        path.lineTo(0,0);
+        path.lineTo(W/2,-H);
+    }
 
     setPath(path);
     setPinPointEnabled(true);
