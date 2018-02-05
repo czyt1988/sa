@@ -801,6 +801,31 @@ QwtPlotItemList SAChart::dynamicGetXYSeriesItemList(const QwtPlot *chart)
     }
     return res;
 }
+///
+/// \brief 动态获取plot chart item的数据点数，如果不是plot chart item,返回-1，使用dynamic_cast,需要注意效率问题
+/// \param item
+/// \return 返回item的点数，如果不是plot chart item,返回-1
+///
+int SAChart::dynamicGetPlotChartItemDataCount(const QwtPlotItem *item)
+{
+    if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
+    {
+        return p->dataSize();
+    }
+    else if(const QwtSeriesStore<QwtIntervalSample>* p = dynamic_cast<const QwtSeriesStore<QwtIntervalSample>*>(item))
+    {
+        return p->dataSize();
+    }
+    else if(const QwtSeriesStore<QwtSetSample>* p = dynamic_cast<const QwtSeriesStore<QwtSetSample>*>(item))
+    {
+        return p->dataSize();
+    }
+    else if(const QwtSeriesStore<QwtPoint3D>* p = dynamic_cast<const QwtSeriesStore<QwtPoint3D>*>(item))
+    {
+        return p->dataSize();
+    }
+    return -1;
+}
 
 ///
 /// \brief 动态获取可绘图的item，使用dynamic_cast,需要注意效率问题
