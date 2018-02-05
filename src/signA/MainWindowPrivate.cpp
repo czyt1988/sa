@@ -387,6 +387,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 //=======start ribbon set=============================================================================================
+    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton*>(menuBar->applitionButton());
     ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
     ribbonRightTopBar->addButton(actionAbout);
     //![1] Main Category Page
@@ -627,6 +628,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_plotLayer);
     dockWidget_chartDataViewer = new QDockWidget(mainWinowPtr);
     dockWidget_chartDataViewer->setObjectName(QStringLiteral("dockWidget_chartDataViewer"));
+
+    chartDatasViewWidget = new SAChartDatasViewWidget();
+    chartDatasViewWidget->setObjectName(QStringLiteral("chartDatasViewWidget"));
+    dockWidget_chartDataViewer->setWidget(chartDatasViewWidget);
+#if 0
     dockWidgetContents_chartDataViewer = new QWidget();
     dockWidgetContents_chartDataViewer->setObjectName(QStringLiteral("dockWidgetContents_chartDataViewer"));
     verticalLayout_7 = new QVBoxLayout(dockWidgetContents_chartDataViewer);
@@ -655,7 +661,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     verticalLayout_7->addWidget(splitter_chartDataViewer);
 
     dockWidget_chartDataViewer->setWidget(dockWidgetContents_chartDataViewer);
+#endif
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_chartDataViewer);
+
+
     dockWidget_main = new QDockWidget(mainWinowPtr);
     dockWidget_main->setObjectName(QStringLiteral("dockWidget_main"));
     QIcon icon48;
@@ -992,5 +1001,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
     chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));
     ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));
+
+    ribbonApplicationButton->setText(QApplication::translate("MainWindow", "SA", 0));
 
 }

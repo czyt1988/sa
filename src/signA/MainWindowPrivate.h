@@ -33,6 +33,8 @@
 #include "SARibbonContextCategory.h"
 #include "SARibbonQuickAccessBar.h"
 #include "SARibbonGallery.h"
+#include "SARibbonApplicationButton.h"
+#include "SAChartDatasViewWidget.h"
 class MainWindow;
 class MainWindowPrivate
 {
@@ -110,7 +112,9 @@ public:
 
     SARibbonBar *menuBar;
     SARibbonButtonGroupWidget* ribbonRightTopBar;
+    SARibbonApplicationButton* ribbonApplicationButton;
     //!Main Category Page
+
     SARibbonCategory* mainRibbonCategory;
     SARibbonPannel* mainCategoryFilePannel;
     SARibbonToolButton* ribbonButtonFileOpen;
@@ -233,12 +237,18 @@ public:
     QWidget *dockWidgetContents_5;
     QVBoxLayout *verticalLayout_5;
     QTableView *tableView_layer;
+
+
     QDockWidget *dockWidget_chartDataViewer;
+    SAChartDatasViewWidget* chartDatasViewWidget;
+#if 0
     QWidget *dockWidgetContents_chartDataViewer;
     QVBoxLayout *verticalLayout_7;
     QSplitter *splitter_chartDataViewer;
     QTreeView *treeView_curPlotItem;
     QTableView *tableView_curSelItemDatas;
+#endif
+
     QDockWidget *dockWidget_main;
     QWidget *dockWidgetContents_7;
     QVBoxLayout *verticalLayout_4;
