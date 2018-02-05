@@ -221,6 +221,7 @@ QList<int> SAChart2D::getXYSeriesItemsRTTI()
                   ;
     return res;
 }
+#if 0
 ///
 /// \brief item的类型判断，cureve bar 等绘图相关返回true
 /// \param item
@@ -260,7 +261,7 @@ QwtPlotItemList SAChart2D::getPlotChartItemList(const QwtPlot *chart)
     QwtPlotItemList res;
     for(int i=0;i<items.size();++i)
     {
-        if(SAChart2D::isPlotChartItem(items[i]))
+        if(SAChart::dynamicCheckIsPlotChartItem(items[i]))
         {
             res.append(items[i]);
         }
@@ -281,6 +282,7 @@ QwtPlotItemList SAChart2D::getPlotXYSeriesItemList(const QwtPlot *chart)
                                 ,SA::RTTI_SABarSeries
                                 ,SA::RTTI_SAScatterSeries});
 }
+#endif
 ///
 /// \brief 根据筛选set获取item list
 /// \param chart
@@ -1078,7 +1080,7 @@ bool SAChart2D::isCurrentSelectItemsHaveChartItem() const
     const QList<QwtPlotItem *> &items = getCurrentSelectItems();
     for(int i=0;i<items.size();++i)
     {
-        if(isPlotChartItem(items[i]))
+        if(SAChart::dynamicCheckIsPlotChartItem(items[i]))
         {
             return true;
         }

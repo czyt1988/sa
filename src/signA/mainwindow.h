@@ -52,8 +52,6 @@ class QActionGroup;
 class SAInformationStatusWidget;
 class ValueDataViewer;
 class SAPlotLayerModel;
-class QwtPlotItemTreeModel;
-class QwtPlotItemDataModel;
 class DataFeatureTreeModel;
 class SATabValueViewerWidget;
 class SAValueManagerModel;

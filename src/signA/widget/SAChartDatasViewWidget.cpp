@@ -1,6 +1,6 @@
 ﻿#include "SAChartDatasViewWidget.h"
 #include "ui_SAChartDatasViewWidget.h"
-#include "QwtPlotItemTreeModel.h"
+#include "SAPlotItemTreeModel.h"
 #include "QwtPlotItemDataModel.h"
 #include "SAChart2D.h"
 #include "SAFigureWindow.h"
@@ -11,7 +11,7 @@ SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     ui->setupUi(this);
     ui->splitter->setStretchFactor(0,1);
     ui->splitter->setStretchFactor(1,3);
-    m_treeModel = new QwtPlotItemTreeModel(this);
+    m_treeModel = new SAPlotItemTreeModel(this);
     ui->treeView->setModel(m_treeModel);
     m_tableModel = new QwtPlotItemDataModel(this);
     ui->tableView->setModel(m_tableModel);

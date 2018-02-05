@@ -241,13 +241,7 @@ public:
 
     QDockWidget *dockWidget_chartDataViewer;
     SAChartDatasViewWidget* chartDatasViewWidget;
-#if 0
-    QWidget *dockWidgetContents_chartDataViewer;
-    QVBoxLayout *verticalLayout_7;
-    QSplitter *splitter_chartDataViewer;
-    QTreeView *treeView_curPlotItem;
-    QTableView *tableView_curSelItemDatas;
-#endif
+
 
     QDockWidget *dockWidget_main;
     QWidget *dockWidgetContents_7;

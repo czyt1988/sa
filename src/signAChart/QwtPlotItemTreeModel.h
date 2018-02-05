@@ -1,4 +1,4 @@
-#ifndef QWTPLOTITEMTREEMODEL_H
+﻿#ifndef QWTPLOTITEMTREEMODEL_H
 #define QWTPLOTITEMTREEMODEL_H
 #include "SAChartGlobals.h"
 
@@ -10,6 +10,7 @@ class QwtPlot;
 
 class SA_CHART_EXPORT QwtPlotItemTreeModel : public QAbstractItemModel
 {
+    Q_OBJECT
 public:
     QwtPlotItemTreeModel(QObject * parent = 0);
     ~QwtPlotItemTreeModel();
@@ -25,17 +26,13 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     QwtPlot* getQwtPlotFromIndex(const QModelIndex& index) const;
     QwtPlotItem* getQwtPlotItemFromIndex(const QModelIndex& index) const;
-    //设定需要显示的item
-    void setFilter( const QList<QwtPlotItem::RttiValues>& itemShow);
-    //清除设定的过滤项目
-    void clearFilter();
-private:
-    QVariant getColorFromItem(const QwtPlotItem* item,int alpha=255) const;
-    QVariant displayDecorationRole(const QModelIndex &index) const;
-    QList<QwtPlotItem*> getItems(QwtPlot* plot,const QList<QwtPlotItem::RttiValues>& filter=QList<QwtPlotItem::RttiValues>()) const;
+
+protected:
+    virtual QVariant getColorFromItem(const QwtPlotItem* item,int alpha=255) const;
+    virtual QVariant displayDecorationRole(const QModelIndex &index) const;
+    virtual QList<QwtPlotItem*> getItems(QwtPlot* plot) const;
 private:
     QList<QwtPlot*> m_plot;
-    QList<QwtPlotItem::RttiValues> m_showItemType;///< 显示的条目
 };
 
 #endif // QWTPLOTITEMTREEMODEL_H

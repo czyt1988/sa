@@ -86,8 +86,6 @@
 #include <czyMath_Interpolation.h>
 // |-----model class --------------
 #include <MdiWindowModel.h>
-#include <QwtPlotItemDataModel.h>
-#include <QwtPlotItemTreeModel.h>
 #include "DataFeatureTreeModel.h"
 #include <SAVariantHashTableModel.h>
 #include <SACsvFileTableModel.h>
@@ -242,23 +240,6 @@ void MainWindow::initUI()
 	hh->setSectionResizeMode(2,QHeaderView::ResizeToContents);
 	hh->setStretchLastSection(true);
     connect(ui->tableView_layer,&QTableView::pressed,this,&MainWindow::onTableViewLayerPressed);
-    //------------------------------------------------------------
-    //- dataviewer dock 数据观察dock的相关设置
-#if 0
-    QwtPlotItemDataModel* qwtDataModel = new QwtPlotItemDataModel(this);
-    ui->tableView_curSelItemDatas->setModel(qwtDataModel);
-    QwtPlotItemTreeModel* qwtItemTreeModel = new QwtPlotItemTreeModel(this);
-    ui->treeView_curPlotItem->setModel(qwtItemTreeModel);
-    qwtItemTreeModel->setFilter (QList<QwtPlotItem::RttiValues>()
-                          <<QwtPlotItem::Rtti_PlotCurve
-                          <<QwtPlotItem::Rtti_PlotBarChart
-                          <<QwtPlotItem::Rtti_PlotHistogram
-                          <<QwtPlotItem::Rtti_PlotIntervalCurve
-                          <<QwtPlotItem::Rtti_PlotTradingCurve
-                          );
-    ui->splitter_chartDataViewer->setStretchFactor(0,1);
-    ui->splitter_chartDataViewer->setStretchFactor(1,3);
-#endif
     //-------------------------------------
     // - start valueManager signal/slots connect
     connect(ui->treeView_valueManager,&QTreeView::clicked,this,&MainWindow::onTreeViewValueManagerClicked);

@@ -13,7 +13,8 @@ HEADERS += \
     $$PWD/SAScatterSeries.h \
     $$PWD/SABoxSeries.h \
     $$PWD/SAHistogramSeries.h \
-    $$PWD/SAChartSerializeHelp.h
+    $$PWD/SAChartSerializeHelp.h \
+    $$PWD/SAPlotItemTreeModel.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
@@ -27,4 +28,5 @@ SOURCES += \
     $$PWD/SAScatterSeries.cpp \
     $$PWD/SABoxSeries.cpp \
     $$PWD/SAHistogramSeries.cpp \
-    $$PWD/SAChartSerializeHelp.cpp
+    $$PWD/SAChartSerializeHelp.cpp \
+    $$PWD/SAPlotItemTreeModel.cpp
