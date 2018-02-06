@@ -387,6 +387,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 //=======start ribbon set=============================================================================================
+    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton*>(menuBar->applitionButton());
     ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
     ribbonRightTopBar->addButton(actionAbout);
     //![1] Main Category Page
@@ -627,35 +628,14 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_plotLayer);
     dockWidget_chartDataViewer = new QDockWidget(mainWinowPtr);
     dockWidget_chartDataViewer->setObjectName(QStringLiteral("dockWidget_chartDataViewer"));
-    dockWidgetContents_chartDataViewer = new QWidget();
-    dockWidgetContents_chartDataViewer->setObjectName(QStringLiteral("dockWidgetContents_chartDataViewer"));
-    verticalLayout_7 = new QVBoxLayout(dockWidgetContents_chartDataViewer);
-    verticalLayout_7->setSpacing(0);
-    verticalLayout_7->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
-    verticalLayout_7->setContentsMargins(0, 0, 0, 0);
-    splitter_chartDataViewer = new QSplitter(dockWidgetContents_chartDataViewer);
-    splitter_chartDataViewer->setObjectName(QStringLiteral("splitter_chartDataViewer"));
-    splitter_chartDataViewer->setOrientation(Qt::Horizontal);
-    treeView_curPlotItem = new QTreeView(splitter_chartDataViewer);
-    treeView_curPlotItem->setObjectName(QStringLiteral("treeView_curPlotItem"));
-    QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    sizePolicy1.setHorizontalStretch(0);
-    sizePolicy1.setVerticalStretch(0);
-    sizePolicy1.setHeightForWidth(treeView_curPlotItem->sizePolicy().hasHeightForWidth());
-    treeView_curPlotItem->setSizePolicy(sizePolicy1);
-    treeView_curPlotItem->setMinimumSize(QSize(30, 0));
-    treeView_curPlotItem->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    splitter_chartDataViewer->addWidget(treeView_curPlotItem);
-    tableView_curSelItemDatas = new QTableView(splitter_chartDataViewer);
-    tableView_curSelItemDatas->setObjectName(QStringLiteral("tableView_curSelItemDatas"));
-    tableView_curSelItemDatas->setMinimumSize(QSize(50, 0));
-    splitter_chartDataViewer->addWidget(tableView_curSelItemDatas);
 
-    verticalLayout_7->addWidget(splitter_chartDataViewer);
+    chartDatasViewWidget = new SAChartDatasViewWidget();
+    chartDatasViewWidget->setObjectName(QStringLiteral("chartDatasViewWidget"));
+    dockWidget_chartDataViewer->setWidget(chartDatasViewWidget);
 
-    dockWidget_chartDataViewer->setWidget(dockWidgetContents_chartDataViewer);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_chartDataViewer);
+
+
     dockWidget_main = new QDockWidget(mainWinowPtr);
     dockWidget_main->setObjectName(QStringLiteral("dockWidget_main"));
     QIcon icon48;
@@ -992,5 +972,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
     chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));
     ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));
+
+    ribbonApplicationButton->setText(QApplication::translate("MainWindow", "SA", 0));
 
 }

@@ -40,6 +40,14 @@ public:
     static QRectF getVisibleRegionRang(QwtPlot* chart,int xAxis,int yAxis);
     //动态获取item的颜色，使用dynamic_cast,需要注意效率问题
     static QColor dynamicGetItemColor(const QwtPlotItem *item,const QColor& defaultColor = Qt::black);
+    //动态获取可绘图的item，使用dynamic_cast,需要注意效率问题
+    static QwtPlotItemList dynamicGetPlotChartItemList(const QwtPlot* chart);
+    //动态判断是否是绘图item，使用dynamic_cast,需要注意效率问题
+    static bool dynamicCheckIsPlotChartItem(const QwtPlotItem *item);
+    //动态获取XY series item，使用dynamic_cast,需要注意效率问题
+    static QwtPlotItemList dynamicGetXYSeriesItemList(const QwtPlot* chart);
+    //动态获取plot chart item的数据点数，如果不是plot chart item,返回-1，使用dynamic_cast,需要注意效率问题
+    static int dynamicGetPlotChartItemDataCount(const QwtPlotItem* item);
 ////////////////////// 坐标变换相关操作//////////////////////////////
     //坐标轴数据互转（把坐标轴转换为另外一个坐标轴数据而保持屏幕位置不变）
     static QPointF transformValue(QwtPlot*chart,const QPointF& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);

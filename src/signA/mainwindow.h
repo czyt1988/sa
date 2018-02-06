@@ -52,8 +52,6 @@ class QActionGroup;
 class SAInformationStatusWidget;
 class ValueDataViewer;
 class SAPlotLayerModel;
-class QwtPlotItemTreeModel;
-class QwtPlotItemDataModel;
 class DataFeatureTreeModel;
 class SATabValueViewerWidget;
 class SAValueManagerModel;
@@ -392,11 +390,6 @@ private slots:
     void onTableViewLayerPressed(const QModelIndex &index);
     /// \}
 
-    ///
-    /// \group TreeView CurPlotItem slots(曲线条目树形窗口)
-    /// \{
-    void onTreeViewCurPlotItemClicked(const QModelIndex &index);
-    /// \}
 
     ///
     /// \group edit menu(编辑菜单)
@@ -503,9 +496,6 @@ public:
     //-------dock-图层表格相关---------------------
     //图层表格model
 	SAPlotLayerModel* getPlotLayerModel() const;
-    //-------dock-数据预览相关
-    QwtPlotItemTreeModel* getDataViewerPlotItemTreeModel() const;
-    QwtPlotItemDataModel* getDataViewerPlotItemDataModel() const;
 
     //------openfilemanager
     //OpenFileManager* getValueManager() const;

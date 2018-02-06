@@ -31,7 +31,7 @@ include($$PWD/../3rdParty/ctk/ctk.pri)
 #QTI
 include($$PWD/../3rdParty/qti/qti.pri)
 DEFINES += SA_COMMON_UI_MAKE #make dll
-
+DEFINES += SA_COMMON_UI_USE_DYNAMIC #定义使用dynamic_cast 而不是rtti
 
 OTHER_FILES += readme.md
 

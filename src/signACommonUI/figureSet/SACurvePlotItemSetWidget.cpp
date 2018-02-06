@@ -73,7 +73,7 @@ public:
     }
     void addPlotItem(QwtPlotItem *item)
     {
-        if(!SAChart2D::isPlotChartItem(item))
+        if(!SAChart::dynamicCheckIsPlotChartItem(item))
         {
             return;
         }

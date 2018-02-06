@@ -14,6 +14,7 @@
 #include "qwt_column_symbol.h"
 #include "qwt_plot_grid.h"
 #include "qwt_plot_marker.h"
+#include "qwt_plot_rasteritem.h"
 #include <numeric>
 
 
@@ -764,6 +765,85 @@ QColor SAChart::dynamicGetItemColor(const QwtPlotItem *item, const QColor &defau
         return marker->linePen ().color();
     }
     return defaultColor;
+}
+///
+/// \brief 动态判断是否是绘图item，使用dynamic_cast,需要注意效率问题
+/// \param item
+/// \return
+///
+bool SAChart::dynamicCheckIsPlotChartItem(const QwtPlotItem *item)
+{
+    if (dynamic_cast<const QwtPlotSeriesItem*>(item))
+    {
+        return true;
+    }
+    else if(dynamic_cast<const QwtPlotRasterItem*>(item))
+    {
+        return true;
+    }
+    return false;
+}
+///
+/// \brief 动态获取XY series item，使用dynamic_cast,需要注意效率问题
+/// \param chart
+/// \return
+///
+QwtPlotItemList SAChart::dynamicGetXYSeriesItemList(const QwtPlot *chart)
+{
+    QwtPlotItemList itemList = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<itemList.size();++i)
+    {
+        if (dynamic_cast<QwtSeriesStore<QPointF>*>(itemList[i]))
+        {
+            res.append(itemList[i]);
+        }
+    }
+    return res;
+}
+///
+/// \brief 动态获取plot chart item的数据点数，如果不是plot chart item,返回-1，使用dynamic_cast,需要注意效率问题
+/// \param item
+/// \return 返回item的点数，如果不是plot chart item,返回-1
+///
+int SAChart::dynamicGetPlotChartItemDataCount(const QwtPlotItem *item)
+{
+    if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
+    {
+        return p->dataSize();
+    }
+    else if(const QwtSeriesStore<QwtIntervalSample>* p = dynamic_cast<const QwtSeriesStore<QwtIntervalSample>*>(item))
+    {
+        return p->dataSize();
+    }
+    else if(const QwtSeriesStore<QwtSetSample>* p = dynamic_cast<const QwtSeriesStore<QwtSetSample>*>(item))
+    {
+        return p->dataSize();
+    }
+    else if(const QwtSeriesStore<QwtPoint3D>* p = dynamic_cast<const QwtSeriesStore<QwtPoint3D>*>(item))
+    {
+        return p->dataSize();
+    }
+    return -1;
+}
+
+///
+/// \brief 动态获取可绘图的item，使用dynamic_cast,需要注意效率问题
+/// \param chart
+/// \return
+///
+QwtPlotItemList SAChart::dynamicGetPlotChartItemList(const QwtPlot *chart)
+{
+    QwtPlotItemList itemList = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<itemList.size();++i)
+    {
+        if (dynamicCheckIsPlotChartItem(itemList[i]))
+        {
+            res.append(itemList[i]);
+        }
+    }
+    return res;
 }
 
 ///

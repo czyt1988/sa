@@ -1,13 +1,12 @@
-#include "QwtPlotItemTreeModel.h"
+﻿#include "QwtPlotItemTreeModel.h"
+#include "SAChart.h"
 #include <qwt_plot.h>
-
 #include <qwt_plot_curve.h>
 #include <qwt_plot_marker.h>
 #include <qwt_plot_grid.h>
 QwtPlotItemTreeModel::QwtPlotItemTreeModel(QObject* parent):QAbstractItemModel(parent)
 {
     m_plot.clear ();
-    m_showItemType.clear ();
 }
 
 QwtPlotItemTreeModel::~QwtPlotItemTreeModel()
@@ -49,7 +48,7 @@ QModelIndex QwtPlotItemTreeModel::index(int row, int column, const QModelIndex& 
     QwtPlot* qwt = static_cast<QwtPlot*>(parent.internalPointer ());
     if(m_plot.indexOf (qwt) != -1) //顶层是qwtplot
     {
-        QList<QwtPlotItem*> items = getItems(qwt,m_showItemType);
+        QList<QwtPlotItem*> items = getItems(qwt);
         if (row >= items.size ())
             return QModelIndex();
         return createIndex(row, column, items[row]);
@@ -84,7 +83,7 @@ int QwtPlotItemTreeModel::rowCount(const QModelIndex& parent) const
         QwtPlot* qwt = static_cast<QwtPlot*>(parent.internalPointer ());
         int qwtIndex = m_plot.indexOf (qwt);
         if (-1 != qwtIndex)//说明有这个指针
-            return getItems(qwt,m_showItemType).size ();
+            return getItems(qwt).size ();
         return 0;
     }
     return m_plot.size ();
@@ -190,33 +189,11 @@ QwtPlotItem* QwtPlotItemTreeModel::getQwtPlotItemFromIndex(const QModelIndex& in
     return static_cast<QwtPlotItem*>(index.internalPointer ());
 }
 
-void QwtPlotItemTreeModel::setFilter(const QList<QwtPlotItem::RttiValues>& itemShow)
-{
-    m_showItemType = itemShow;
-}
 
-void QwtPlotItemTreeModel::clearFilter()
-{
-    m_showItemType.clear ();
-}
 
 QVariant QwtPlotItemTreeModel::getColorFromItem(const QwtPlotItem* item,int alpha) const
 {
-    const int rtti = item->rtti();
-    QColor c;
-    switch (rtti)
-    {
-    case QwtPlotItem::Rtti_PlotCurve :
-        c = static_cast<const QwtPlotCurve*>(item)->pen().color();
-        break;
-    case QwtPlotItem::Rtti_PlotGrid:
-        c = static_cast<const QwtPlotGrid*>(item)->majorPen().color();
-        break;
-    case QwtPlotItem::Rtti_PlotMarker:
-        c = static_cast<const QwtPlotMarker*>(item)->linePen ().color();
-    default:
-        return QVariant();
-    }
+    QColor c = SAChart::dynamicGetItemColor(item,Qt::transparent);
     if(alpha<255)
         c.setAlpha(alpha);
     return c;
@@ -228,22 +205,14 @@ QVariant QwtPlotItemTreeModel::displayDecorationRole(const QModelIndex& index) c
     return QVariant();
 }
 ///
-/// \brief 根据过滤器来选择条目，若过滤器为空，那么选择所有
+/// \brief 获取plot的所有item，若想过滤不需要的item，可以重载此函数
 /// \param plot
 /// \param filter
 /// \return
 ///
-QList<QwtPlotItem*> QwtPlotItemTreeModel::getItems(QwtPlot* plot, const QList<QwtPlotItem::RttiValues>& filter) const
+QList<QwtPlotItem*> QwtPlotItemTreeModel::getItems(QwtPlot* plot) const
 {
     QList<QwtPlotItem*> items = plot->itemList ();
-    if(filter.size () == 0)
-        return items;
-    QList<QwtPlotItem*> filterItems;
-    for(auto i=items.begin ();i!=items.end ();++i)
-    {
-        if(-1 != filter.indexOf ( static_cast<QwtPlotItem::RttiValues>((*i)->rtti()) ))
-           filterItems.append (*i);
-    }
-    return filterItems;
+    return items;
 }
 

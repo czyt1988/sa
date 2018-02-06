@@ -8,6 +8,7 @@
 #include <QScrollArea>
 #include "SACurvePlotItemSetWidget.h"
 #include "SAChart2D.h"
+#include "SAChart.h"
 
 #define TR(str) QApplication::translate("SAPlotItemSetWidget", str, 0)
 
@@ -92,7 +93,7 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
     }
     else if(ui->chartWidget != chart)
     {
-        QwtPlotItemList curItems = SAChart2D::getPlotChartItemList(chart);
+        QwtPlotItemList curItems = SAChart::dynamicGetPlotChartItemList(chart);
         ui->curveItemSetWidget->setPlotItems(curItems);
         connect(chart,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
@@ -112,7 +113,8 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
     {
         return;
     }
-    if(SAChart2D::isPlotChartItem(item))
+
+    if(SAChart::dynamicCheckIsPlotChartItem(item))
     {
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }

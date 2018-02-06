@@ -43,9 +43,10 @@
 #include <SAPropertySetDialog.h>
 
 // |------widget
-#include <SATabValueViewerWidget.h>
-#include <SAMessageWidget.h>
+#include "SATabValueViewerWidget.h"
+#include "SAMessageWidget.h"
 #include "SAFigureWindow.h"
+#include "SAChartDatasViewWidget.h"
 // |------操作
 
 //===signACommonUI
@@ -85,8 +86,6 @@
 #include <czyMath_Interpolation.h>
 // |-----model class --------------
 #include <MdiWindowModel.h>
-#include <QwtPlotItemDataModel.h>
-#include <QwtPlotItemTreeModel.h>
 #include "DataFeatureTreeModel.h"
 #include <SAVariantHashTableModel.h>
 #include <SACsvFileTableModel.h>
@@ -240,21 +239,6 @@ void MainWindow::initUI()
 	hh->setSectionResizeMode(2,QHeaderView::ResizeToContents);
 	hh->setStretchLastSection(true);
     connect(ui->tableView_layer,&QTableView::pressed,this,&MainWindow::onTableViewLayerPressed);
-    //------------------------------------------------------------
-    //- dataviewer dock 数据观察dock的相关设置
-    QwtPlotItemDataModel* qwtDataModel = new QwtPlotItemDataModel(this);
-    ui->tableView_curSelItemDatas->setModel(qwtDataModel);
-    QwtPlotItemTreeModel* qwtItemTreeModel = new QwtPlotItemTreeModel(this);
-    ui->treeView_curPlotItem->setModel(qwtItemTreeModel);
-    qwtItemTreeModel->setFilter (QList<QwtPlotItem::RttiValues>()
-                          <<QwtPlotItem::Rtti_PlotCurve
-                          <<QwtPlotItem::Rtti_PlotBarChart
-                          <<QwtPlotItem::Rtti_PlotHistogram
-                          <<QwtPlotItem::Rtti_PlotIntervalCurve
-                          <<QwtPlotItem::Rtti_PlotTradingCurve
-                          );
-    ui->splitter_chartDataViewer->setStretchFactor(0,1);
-    ui->splitter_chartDataViewer->setStretchFactor(1,3);
     //-------------------------------------
     // - start valueManager signal/slots connect
     connect(ui->treeView_valueManager,&QTreeView::clicked,this,&MainWindow::onTreeViewValueManagerClicked);
@@ -293,8 +277,8 @@ void MainWindow::initUI()
     // - about menu signal/slots connect
     connect(ui->actionAbout,&QAction::triggered,this,&MainWindow::onActionAboutTriggered);
     //-------------------------------------
-    // - TreeView CurPlotItem slots(曲线条目树形窗口)
-    connect(ui->treeView_curPlotItem,&QTreeView::clicked,this,&MainWindow::onTreeViewCurPlotItemClicked);
+
+
     //-------------------------------------
     // - TreeView CurPlotItem slots(曲线条目树形窗口)
     connect(ui->actionUndo,&QAction::triggered,this,&MainWindow::onActionUndoTriggered);
@@ -1737,25 +1721,11 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
                 }
             }
 		}
-        QList<SAChart2D*> plotWidgets = getCurSubWindowCharts();
-        QList<QwtPlot*> qwtChart;
-        std::for_each(plotWidgets.begin(),plotWidgets.end(),[&](SAChart2D* p){
-            qwtChart.append(static_cast<QwtPlot*>(p));
-        });
-        //更新dock - dataviewer
-        QwtPlotItemTreeModel* qwtItemTreeModel = getDataViewerPlotItemTreeModel();
-        if(qwtItemTreeModel)
-        {
 
-            qwtItemTreeModel->setPlots(qwtChart);
-            ui->treeView_curPlotItem->expandAll();
-        }
-        //新窗口激活后，把原来显示的数据clear
-        QwtPlotItemDataModel* plotItemDataModel = getDataViewerPlotItemDataModel();
-        if(plotItemDataModel)
-        {
-            plotItemDataModel->clear();
-        }
+
+        //更新dock - dataviewer
+        ui->chartDatasViewWidget->setFigure(fig);
+
     }
     else
     {
@@ -1776,18 +1746,7 @@ void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
         }
         //
         getPlotLayerModel()->setPlot(nullptr);
-        //窗口关闭,更新dock - dataviewer
-        QwtPlotItemTreeModel* qwtItemTreeModel = getDataViewerPlotItemTreeModel();
-        if(qwtItemTreeModel)
-        {
-            qwtItemTreeModel->clear();
-        }
-        //窗口关闭，把原来显示的数据clear
-        QwtPlotItemDataModel* plotItemDataModel = getDataViewerPlotItemDataModel();
-        if(plotItemDataModel)
-        {
-            plotItemDataModel->clear();
-        }
+        ui->chartDatasViewWidget->setFigure(nullptr);
     }
     ui->dataFeatureWidget->mdiSubWindowClosed(arg1);
 }
@@ -2788,53 +2747,6 @@ void MainWindow::__loadSubWindowFromFolder(const QString &folderPath)
 
 
 
-
-
-QwtPlotItemTreeModel *MainWindow::getDataViewerPlotItemTreeModel() const
-{
-    return static_cast<QwtPlotItemTreeModel*>(ui->treeView_curPlotItem->model());
-}
-
-QwtPlotItemDataModel *MainWindow::getDataViewerPlotItemDataModel() const
-{
-    return static_cast<QwtPlotItemDataModel*>(ui->tableView_curSelItemDatas->model());
-}
-
-///
-/// \brief 曲线条目树形窗口
-/// \param index
-///
-void MainWindow::onTreeViewCurPlotItemClicked(const QModelIndex &index)
-{
-    Q_UNUSED(index);
-    QItemSelectionModel* sel = ui->treeView_curPlotItem->selectionModel();
-    QModelIndexList indexList = sel->selectedRows();
-    QwtPlotItemTreeModel* treeModel = getDataViewerPlotItemTreeModel();
-    QwtPlotItemDataModel* tableModel = getDataViewerPlotItemDataModel();
-    if(!treeModel)
-        return;
-    QList<QwtPlotItem*> items;
-    for(int i = 0;i<indexList.size ();++i)
-    {
-        if(!indexList[i].parent().isValid())
-        {//说明点击的是父窗口，就是qwtplot,这时显示所有
-            items.clear();
-            int childIndex = 0;
-            while (indexList[i].child(childIndex,0).isValid()) {
-                items.append(treeModel->getQwtPlotItemFromIndex (
-                                 indexList[i].child(childIndex,0)));
-                ++childIndex;
-            }
-            break;
-        }
-        if(indexList[i].column () != 0)
-        {
-            indexList[i] = indexList[i].parent().child(indexList[i].row(),0);
-        }
-        items.append (treeModel->getQwtPlotItemFromIndex (indexList[i]));
-    }
-    tableModel->setQwtPlotItems (items);
-}
 
 
 
