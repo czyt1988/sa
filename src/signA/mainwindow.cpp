@@ -37,7 +37,7 @@
 #include <Dialog_AddChart.h>
 #include "CurveSelectDialog.h"
 #include "SAProjectInfomationSetDialog.h"
-
+#include "SAAddCurveTypeDialog.h"
 
 #include <PickCurveDataModeSetDialog.h>
 #include <SAPropertySetDialog.h>
@@ -732,6 +732,7 @@ void MainWindow::onActionSkinChanged(QAction* act)
     setSkin(name);
 }
 
+
 void MainWindow::setSkin(const QString &name)
 {
     saStartElapsed(tr("start use skin:%1").arg(name));
@@ -1079,10 +1080,52 @@ void MainWindow::onActionNewChartTriggered()
 void MainWindow::onActionAddLineChartTriggered()
 {
     raiseMainDock();
-    QList<SAAbstractDatas*> datas = getSeletedDatas();
-    if(datas.size() != 0)
+    raiseValueManageDock();
+
+
+    QList<SAAbstractDatas *> datas = getSeletedDatas();
+    if(datas.size() > 0)
     {
-        QList<QwtPlotCurve *> res = m_drawDelegate->drawLine(datas);
+        SAAddCurveTypeDialog::AddCurveType type = SAAddCurveTypeDialog::getAddCurveType(this);
+        if(SAAddCurveTypeDialog::Unknow == type)
+        {
+            return;
+        }
+        if(SAAddCurveTypeDialog::AddInCurrentFig == type)
+        {
+           QList<SAChart2D*> charts = getCurSubWindowCharts();
+           if(charts.isEmpty())
+           {
+                m_drawDelegate->drawLine(datas);
+                return;
+           }
+           SAChart2D* chart = nullptr;
+           chart = charts[0];
+           if(nullptr == chart)
+           {
+               return;
+           }
+           m_drawDelegate->drawLine(datas,chart);
+           qDebug("add cut in cur");
+           return;
+        }
+        else if(SAAddCurveTypeDialog::AddInNewFig == type)
+        {
+           m_drawDelegate->drawLine(datas);
+           return;
+        }
+        else if(SAAddCurveTypeDialog::AddInCurrentFigWithSubplot == type)
+        {
+            //TODO
+        }
+    }
+    else
+    {
+        SAAddLineChartSetDialog dlg(this);
+        if(QDialog::Accepted != dlg.exec())
+        {
+            return;
+        }
     }
 }
 ///
@@ -1091,6 +1134,8 @@ void MainWindow::onActionAddLineChartTriggered()
 void MainWindow::onActionAddBarChartTriggered()
 {
     raiseMainDock();
+    raiseValueManageDock();
+
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
@@ -1113,6 +1158,8 @@ void MainWindow::onActionAddHistogramChartTriggered()
 void MainWindow::onActionAddScatterChartTriggered()
 {
     raiseMainDock();
+    raiseValueManageDock();
+
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
@@ -1125,6 +1172,8 @@ void MainWindow::onActionAddScatterChartTriggered()
 void MainWindow::onActionAddBoxChartTriggered()
 {
     raiseMainDock();
+    raiseValueManageDock();
+
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {

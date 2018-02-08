@@ -1,4 +1,4 @@
-#ifndef SAVALUEMANAGERMODEL_H
+﻿#ifndef SAVALUEMANAGERMODEL_H
 #define SAVALUEMANAGERMODEL_H
 #include <QAbstractItemModel>
 #include "SALibGlobal.h"
@@ -7,6 +7,9 @@
 #include <functional>
 #include <QSet>
 class SAAbstractDatas;
+///
+/// \brief 变量树形model
+///
 class SALIB_EXPORT SAValueManagerModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -27,10 +30,8 @@ public:
     //把QModelIndex转为SAAbstractDatas
     SAAbstractDatas* castToDataPtr(const QModelIndex &index) const;
     static SAItem *toItemPtr(const QModelIndex &index);
-    //根据数据类型获取对应的图标
-    static QIcon getDataIcon(const SAAbstractDatas* data);
-    //注册类型对应的图标
-    static void registerDataTypeIcon(int type,const QIcon& ico);
+
+
     //添加背景颜色显示的回调函数
     void setFunBackgroundData(FunBackgroundShowPtr funBackgroundData);
     //迭代所有条目
@@ -48,7 +49,6 @@ private slots:
 private:
     void resetModel();
 private:
-    static QHash<int,QIcon> s_dataType2Icon; ///<保存数据类型对应的图标
     FunBackgroundShowPtr m_funBackgroundData;
 };
 

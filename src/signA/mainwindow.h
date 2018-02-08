@@ -42,7 +42,7 @@ class MainWindow;
 #include "SAPluginManager.h"
 #include "SAUIInterface.h"
 #include "SAAbstractRegionSelectEditor.h"
-
+#include "SAAddLineChartSetDialog.h"
 
 
 class QProgressBar;
@@ -327,8 +327,7 @@ private slots:
     //选区范围内的数据移动
     void onActionSelectionRegionDataMove(bool on);
 
-    //获取当前ui选择的区域选择模式
-    SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
+
     //开启当前绘图的十字光标
     void onActionEnableChartPickerTriggered(bool check);
     //开启当前绘图的拖动
@@ -443,14 +442,16 @@ private slots:
     /// 皮肤切换
     ///
     void onActionSkinChanged(QAction* act);
-    void setSkin(const QString& name);
 
-    //获取ui接口
-    SAUIInterface* uiInterface();
+
 public slots:
     void onChartDataChanged(QWidget* widget,const QwtPlotItem* pC);
 public:
-
+    void setSkin(const QString& name);
+    //获取ui接口
+    SAUIInterface* uiInterface();
+    //获取当前ui选择的区域选择模式
+    SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
     ///
     /// \brief 子窗口的创建
     /// \param type 窗口类型

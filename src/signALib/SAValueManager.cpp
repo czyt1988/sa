@@ -1,4 +1,4 @@
-#include "SAValueManager.h"
+﻿#include "SAValueManager.h"
 #include <QMutexLocker>
 #include <QRegExp>
 #include <QFile>
@@ -7,6 +7,9 @@
 #include <QMutex>
 #include <QRegExp>
 #include "SAValueOptCommand.h"
+#include "SALibResourDefine.h"
+QHash<int,QIcon> SAValueManager::s_dataType2Icon = QHash<int,QIcon>();
+
 QMutex g_mutexSAValueManager;
 SAValueManager* SAValueManager::s_instance = nullptr;
 
@@ -122,6 +125,29 @@ QList<SAAbstractDatas *> SAValueManager::toNormalPtrList(const QList<SAValueMana
     }
     return res;
 }
+///
+/// \brief 获取类型对应图标
+/// \param dtype 数据类型
+/// \return 图标
+///
+QIcon SAValueManager::getDataIcon(int dtype)
+{
+    QIcon ico = s_dataType2Icon.value(dtype,QIcon());
+    if(ico.isNull())
+    {
+        return ICON_DEFAULT_DATA_TYPE;
+    }
+    return ico;
+}
+///
+/// \brief 注册类型对应的图标
+/// \param type
+/// \param ico
+///
+void SAValueManager::registerDataTypeIcon(int type, const QIcon &ico)
+{
+    s_dataType2Icon[type] = ico;
+}
 
 ///
 /// \brief 清空所有数据,同时也会清除内存
@@ -186,6 +212,16 @@ SAAbstractDatas *SAValueManager::findData(const QString &name) const
 SAAbstractDatas *SAValueManager::at(int index) const
 {
     return m_ptrContainer->at(index);
+}
+///
+/// \brief 根据索引获取变量名字
+/// \param index 索引
+/// \return
+///
+QString SAValueManager::nameAt(int index) const
+{
+    SAAbstractDatas* p = at(index);
+    return (p ? p->getName() : QString());
 }
 ///
 /// \brief SAValueManager::indexOf

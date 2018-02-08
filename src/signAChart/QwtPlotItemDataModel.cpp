@@ -101,6 +101,13 @@ QVariant QwtPlotItemDataModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
+Qt::ItemFlags QwtPlotItemDataModel::flags(const QModelIndex &index) const
+{
+    if(!index.isValid())
+        return Qt::NoItemFlags;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+}
+
 void QwtPlotItemDataModel::enableBackgroundColor(bool enable, int alpha)
 {
     beginResetModel();

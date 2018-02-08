@@ -52,6 +52,24 @@ QList<QwtPlotCurve*> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &da
         chart = pFigure->create2DPlot();
     }
     chart->setAutoReplot(false);
+    res = drawLine(datas,chart);
+
+    chart->enablePicker(true);
+    chart->enableZoomer(false);
+    chart->enableGrid(true);
+    chart->setAutoReplot(true);
+    pSubWnd->show();
+    return res;
+}
+
+QList<QwtPlotCurve *> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &datas, SAChart2D *chart)
+{
+    QList<QwtPlotCurve*> res;
+    if(datas.size()<=0)
+    {
+        return res;
+    }
+    chart->setAutoReplot(false);
     std::for_each(datas.begin(),datas.end(),[chart,&res](SAAbstractDatas* data){
         QwtPlotCurve* p = nullptr;
         if(SA::VectorPoint == data->getType())
@@ -99,13 +117,9 @@ QList<QwtPlotCurve*> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &da
         }
         res.append(p);
     });
-
-    chart->enablePicker(true);
-    chart->enableZoomer(false);
-    chart->enableGrid(true);
-    chart->setAutoReplot(true);
-    pSubWnd->show();
+    chart->replot();
     return res;
+
 }
 ///
 /// \brief 在已有图上添加曲线

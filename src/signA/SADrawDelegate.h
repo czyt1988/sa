@@ -1,4 +1,4 @@
-#ifndef SADRAWDELEGATE_H
+﻿#ifndef SADRAWDELEGATE_H
 #define SADRAWDELEGATE_H
 #include <SAMainWindowDelegate.h>
 
@@ -24,6 +24,7 @@ public:
     virtual ~SADrawDelegate();
     //绘图
     QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas);
+    QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas,SAChart2D* chart);
     QwtPlotCurve* drawLine(SAAbstractDatas* data,SAChart2D *chart);
     QwtPlotCurve* drawLine(SAAbstractDatas* x,SAAbstractDatas* y,QString name,SAChart2D *chart);
     //统计图

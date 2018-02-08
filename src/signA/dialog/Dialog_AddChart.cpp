@@ -1,4 +1,4 @@
-#include "Dialog_AddChart.h"
+﻿#include "Dialog_AddChart.h"
 #include "ui_Dialog_AddChart.h"
 #include <memory>
 #include <qmessagebox.h>
@@ -34,7 +34,7 @@ Dialog_AddChart::Dialog_AddChart(QWidget *parent) :
     for(int i=0;i<dataPtrs.size ();++i)
     {
         SAAbstractDatas* data = dataPtrs[i];
-        QStandardItem* item = new QStandardItem(SAValueManagerModel::getDataIcon(data)
+        QStandardItem* item = new QStandardItem(SAValueManager::getDataIcon(data->getType())
                                                 ,data->getName());
         item->setData(data->getID(),ROLE_DATA_ID);
         m_comboModel->appendRow (item);

@@ -1,4 +1,4 @@
-#ifndef SAVALUEMANAGER_H
+﻿#ifndef SAVALUEMANAGER_H
 #define SAVALUEMANAGER_H
 #include "SALibGlobal.h"
 #include "SAData.h"
@@ -61,6 +61,11 @@ public:
         return std::static_pointer_cast<SAAbstractDatas>(r);
     }
 
+    //根据数据类型获取对应的图标
+    static QIcon getDataIcon(int dtype);
+    //注册类型对应的图标
+    static void registerDataTypeIcon(int type,const QIcon& ico);
+
     //清空所有数据
     void clear();
     //根据id查找
@@ -68,10 +73,9 @@ public:
     QList<SAAbstractDatas*> findDatas(const QList<int>& ids) const;
     //根据名字查找
     SAAbstractDatas* findData(const QString& name) const;
-    //根据名字查找
-    //SAAbstractDatas* findData(const QModelIndex index) const;
     //根据添加顺序获取变量的内存地址
     SAAbstractDatas* at(int index) const;
+    QString nameAt(int index) const;
     //
     int indexOf(SAAbstractDatas* dataPtr) const;
     //变量数量
@@ -189,6 +193,7 @@ private:
     std::unique_ptr<PointerContainerPrivate> m_ptrContainer;///< 此数据结构的指针管理容器
     QString m_lastSaveDataFolder;///< 记录最后保存的目录
     QUndoStack m_undoStack;
+    static QHash<int,QIcon> s_dataType2Icon; ///<保存数据类型对应的图标
 };
 
 ///
