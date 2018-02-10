@@ -6,6 +6,9 @@ push.sh
 .*.swp
 *.zip
 *.7z
+*.rar
+*.a
+*.lib
 *.stash
 *.Debug
 *.Release
