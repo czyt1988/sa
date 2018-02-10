@@ -183,51 +183,7 @@ double SAXYDataTracker::distancePower(const QPointF& p1, const QPointF& p2)
 
 QColor SAXYDataTracker::getItemColor(const QwtPlotItem *item) const
 {
-#if 1
-    return SAChart::dynamicGetItemColor(item);
-#else
-    switch (item->rtti())
-    {
-    case QwtPlotItem::Rtti_PlotCurve:
-    {
-        const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
-        return p->pen().color();
-    }
-    case QwtPlotItem::Rtti_PlotIntervalCurve:
-    {
-        const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
-        return p->pen().color();
-    }
-    case QwtPlotItem::Rtti_PlotHistogram:
-    {
-        const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
-        return p->brush().color();
-    }
-    case QwtPlotItem::Rtti_PlotBarChart:
-    {
-        const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item);
-        const QwtColumnSymbol* symbol =  bar->symbol();
-        if(symbol)
-        {
-            return symbol->palette().color(QPalette::Button);
-        }
-        break;
-    }
-    case QwtPlotItem::Rtti_PlotGrid:
-    {
-        const QwtPlotGrid* grid = static_cast<const QwtPlotGrid*>(item);
-        return grid->majorPen().color();
-    }
-    case QwtPlotItem::Rtti_PlotMarker:
-    {
-        const QwtPlotMarker* marker = static_cast<const QwtPlotMarker*>(item);
-        return marker->linePen ().color();
-    }
-    default:
-        break;
-    }
-#endif
-    return Qt::black;
+    return SAChart::getItemColor(item,Qt::black);
 }
 
 void SAXYDataTracker::mouseMove(const QPoint& pos)

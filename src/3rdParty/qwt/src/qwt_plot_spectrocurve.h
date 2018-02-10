@@ -1,4 +1,4 @@
-/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
+﻿/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * Qwt Widget Library
  * Copyright (C) 1997   Josef Wilgen
  * Copyright (C) 2002   Uwe Rathmann
@@ -22,7 +22,7 @@ class QwtColorMap;
            mapped to a color.
 */
 class QWT_EXPORT QwtPlotSpectroCurve: 
-    public QwtPlotSeriesItem, QwtSeriesStore<QwtPoint3D>
+    public QwtPlotSeriesItem, public QwtSeriesStore<QwtPoint3D>
 {
 public:
     //! Paint attributes

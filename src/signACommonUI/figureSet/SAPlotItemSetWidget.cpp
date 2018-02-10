@@ -93,7 +93,7 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
     }
     else if(ui->chartWidget != chart)
     {
-        QwtPlotItemList curItems = SAChart::dynamicGetPlotChartItemList(chart);
+        QwtPlotItemList curItems = SAChart::getPlotChartItemList(chart);
         ui->curveItemSetWidget->setPlotItems(curItems);
         connect(chart,&QwtPlot::itemAttached,this,&SAPlotItemSetWidget::onPlotItemAttached);
     }
@@ -114,7 +114,7 @@ void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)
         return;
     }
 
-    if(SAChart::dynamicCheckIsPlotChartItem(item))
+    if(SAChart::checkIsPlotChartItem(item))
     {
         ui->curveItemSetWidget->plotItemAttached(item,on);
     }

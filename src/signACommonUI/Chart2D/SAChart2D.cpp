@@ -1080,7 +1080,7 @@ bool SAChart2D::isCurrentSelectItemsHaveChartItem() const
     const QList<QwtPlotItem *> &items = getCurrentSelectItems();
     for(int i=0;i<items.size();++i)
     {
-        if(SAChart::dynamicCheckIsPlotChartItem(items[i]))
+        if(SAChart::checkIsPlotChartItem(items[i]))
         {
             return true;
         }

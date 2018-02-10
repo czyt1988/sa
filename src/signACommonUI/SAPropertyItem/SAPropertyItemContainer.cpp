@@ -1,4 +1,4 @@
-#include "SAPropertyItemContainer.h"
+﻿#include "SAPropertyItemContainer.h"
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QPaintEvent>
@@ -39,7 +39,7 @@ SAPropertyItemContainer::SAPropertyItemContainer(QWidget *parent):QWidget(parent
   ,m_iconRect(nullptr)
 {
     ui->setupUi(this);
-    setMinimumSize(200,20);
+    setMinimumSize(100,20);
 }
 
 SAPropertyItemContainer::~SAPropertyItemContainer()

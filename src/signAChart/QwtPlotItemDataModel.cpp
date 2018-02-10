@@ -163,7 +163,7 @@ void QwtPlotItemDataModel::updateItemColor()
     m_itemsColor.clear();
     for(auto i = m_items.begin ();i!=m_items.end ();++i)
     {
-        QColor c = SAChart::dynamicGetItemColor(*i);
+        QColor c = SAChart::getItemColor(*i);
         if(m_bkAlpha < 255)
         {
             c.setAlpha(m_bkAlpha);
@@ -210,7 +210,7 @@ QString QwtPlotItemDataModel::getItemNameFromCol(int col) const
 ///
 int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item)
 {
-    return SAChart::dynamicGetPlotChartItemDataCount(item);
+    return SAChart::getPlotChartItemDataCount(item);
 }
 ///
 /// \brief 获取曲线的维度

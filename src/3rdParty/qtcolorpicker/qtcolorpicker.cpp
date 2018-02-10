@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** This file is part of a Qt Solutions component.
 ** 
@@ -180,7 +180,7 @@ QtColorPicker::QtColorPicker(QWidget *parent,
     // Set text
     setText(tr("Black"));
     firstInserted = false;
-
+    mShowColorText = true;
     // Create and set icon
     col = Qt::black;
     dirty = true;
@@ -276,6 +276,20 @@ void QtColorPicker::popupClosed()
     setFocus();
 }
 
+bool QtColorPicker::isShowColorText() const
+{
+    return mShowColorText;
+}
+
+void QtColorPicker::enableShowColorText(bool showColorText)
+{
+    mShowColorText = showColorText;
+    if(!mShowColorText)
+    {
+        setText("");
+    }
+}
+
 /*!
     Returns the currently selected color.
 
@@ -338,12 +352,15 @@ void QtColorPicker::setCurrentColor(const QColor &color)
 
     ColorPickerItem *item = popup->find(color);
     if (!item) {
-	insertColor(color, tr("Custom"));
+    insertColor(color,tr("Custom"));
 	item = popup->find(color);
     }
 
     col = color;
-    setText(item->text());
+    if(mShowColorText)
+    {
+        setText(item->text());
+    }
 
     dirty = true;
 
@@ -365,7 +382,8 @@ void QtColorPicker::insertColor(const QColor &color, const QString &text, int in
     popup->insertColor(color, text, index);
     if (!firstInserted) {
 	col = color;
-	setText(text);
+    if (mShowColorText)
+        setText(text);
 	firstInserted = true;
     }
 }
@@ -782,6 +800,7 @@ void ColorPickerPopup::regenerateGrid()
     }
     updateGeometry();
 }
+
 
 /*! \internal
 

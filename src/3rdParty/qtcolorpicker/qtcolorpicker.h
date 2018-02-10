@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** This file is part of a Qt Solutions component.
 ** 
@@ -97,6 +97,9 @@ public:
 
     static QColor getColor(const QPoint &pos, bool allowCustomColors = true);
 
+    bool isShowColorText() const;
+    void enableShowColorText(bool showColorText);
+
 public Q_SLOTS:
     void setCurrentColor(const QColor &col);
 
@@ -116,6 +119,7 @@ private:
     bool withColorDialog;
     bool dirty;
     bool firstInserted;
+    bool mShowColorText;
 };
 
 class ColorPickerItem;
@@ -139,6 +143,7 @@ public:
 
     ColorPickerItem *find(const QColor &col) const;
     QColor color(int index) const;
+
 
 signals:
     void selected(const QColor &);
@@ -168,6 +173,7 @@ private:
     int lastPos;
     int cols;
     QColor lastSel;
+
 };
 
 class ColorPickerButton : public QFrame

@@ -71,6 +71,8 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
     static int s_figure_count=0;
     ++s_figure_count;
     setWindowTitle(QString("figure-%1").arg(s_figure_count));
+    setMinimumWidth(100);
+    setMinimumHeight(50);
 }
 
 SAFigureWindow::~SAFigureWindow()

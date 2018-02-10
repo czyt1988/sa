@@ -193,7 +193,7 @@ QwtPlotItem* QwtPlotItemTreeModel::getQwtPlotItemFromIndex(const QModelIndex& in
 
 QVariant QwtPlotItemTreeModel::getColorFromItem(const QwtPlotItem* item,int alpha) const
 {
-    QColor c = SAChart::dynamicGetItemColor(item,Qt::transparent);
+    QColor c = SAChart::getItemColor(item,Qt::transparent);
     if(alpha<255)
         c.setAlpha(alpha);
     return c;
