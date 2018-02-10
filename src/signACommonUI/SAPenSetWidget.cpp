@@ -1,4 +1,4 @@
-#include "SAPenSetWidget.h"
+﻿#include "SAPenSetWidget.h"
 #include <QApplication>
 #include "ui_SAPenSetWidget.h"
 #define TR(str) QApplication::translate("SAPenSetWidget", str, 0)
@@ -47,7 +47,7 @@ public:
 
             pushButtonColor = new SAColorPickerButton(parent);
             pushButtonColor->setObjectName(QStringLiteral("pushButtonColor"));
-            QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+            QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
             sizePolicy.setHorizontalStretch(0);
             sizePolicy.setVerticalStretch(0);
             sizePolicy.setHeightForWidth(pushButtonColor->sizePolicy().hasHeightForWidth());
@@ -60,7 +60,7 @@ public:
 
             horizontalSliderColorAlpha = new QSlider(parent);
             horizontalSliderColorAlpha->setObjectName(QStringLiteral("horizontalSliderColorAlpha"));
-            QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Maximum);
+            QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Maximum);
             sizePolicy1.setHorizontalStretch(0);
             sizePolicy1.setVerticalStretch(0);
             sizePolicy1.setHeightForWidth(horizontalSliderColorAlpha->sizePolicy().hasHeightForWidth());
@@ -114,7 +114,7 @@ public:
 
             pushButtonColor = new SAColorPickerButton(parent);
             pushButtonColor->setObjectName(QStringLiteral("pushButtonColor"));
-            QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+            QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
             sizePolicy.setHorizontalStretch(0);
             sizePolicy.setVerticalStretch(0);
             sizePolicy.setHeightForWidth(pushButtonColor->sizePolicy().hasHeightForWidth());
@@ -124,7 +124,7 @@ public:
 
             horizontalSliderColorAlpha = new QSlider(parent);
             horizontalSliderColorAlpha->setObjectName(QStringLiteral("horizontalSliderColorAlpha"));
-            QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Maximum);
+            QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Maximum);
             sizePolicy1.setHorizontalStretch(0);
             sizePolicy1.setVerticalStretch(0);
             sizePolicy1.setHeightForWidth(horizontalSliderColorAlpha->sizePolicy().hasHeightForWidth());
