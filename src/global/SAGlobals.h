@@ -94,8 +94,8 @@ namespace SA {
     /// \see MdiSubWindow::setType
     ///
     enum SubWndType{
-        SubWindowUserDefine///< 用户自定义图
-        ,SubWindowFigure///< Figure窗口
+        SubWindowFigure///< Figure窗口
+        ,SubWindowUserDefine///< 用户自定义图
     };
 
     enum ProjectTreeMark

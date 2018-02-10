@@ -24,11 +24,6 @@ class QwtPlotBarChart;
 class SA_CHART_EXPORT SAChart
 {
 public:
-    enum RTTI
-    {
-        RTTI_SA_SELECT_REGION_SHAPE = QwtPlotItem::Rtti_PlotUserItem + 100 ///< 区域选择
-    };
-
     enum Value{
         Nan = -1
     };
@@ -38,6 +33,7 @@ public:
     static QRectF getVisibleRegionRang(QwtPlot* chart);
     //获取当前正在显示的区域
     static QRectF getVisibleRegionRang(QwtPlot* chart,int xAxis,int yAxis);
+////////////////////// dynamic 操作//////////////////////////////
     //动态获取item的颜色，使用dynamic_cast,需要注意效率问题
     static QColor dynamicGetItemColor(const QwtPlotItem *item,const QColor& defaultColor = Qt::black);
     //动态获取可绘图的item，使用dynamic_cast,需要注意效率问题
@@ -48,6 +44,19 @@ public:
     static QwtPlotItemList dynamicGetXYSeriesItemList(const QwtPlot* chart);
     //动态获取plot chart item的数据点数，如果不是plot chart item,返回-1，使用dynamic_cast,需要注意效率问题
     static int dynamicGetPlotChartItemDataCount(const QwtPlotItem* item);
+  ////////////////////// rtti 操作//////////////////////////////
+    //通过rtti获取item的颜色
+    static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultColor = Qt::black);
+    //通过rtti获取可绘图的item，
+    static QwtPlotItemList getPlotChartItemList(const QwtPlot* chart);
+    //通过rtti判断是否是绘图item
+    static bool checkIsPlotChartItem(const QwtPlotItem *item);
+    //通过rtti获取XY series item
+    static QwtPlotItemList getXYSeriesItemList(const QwtPlot* chart);
+    //通过rtti判断是否是XY series item
+    static bool checkIsXYSeriesItem(const QwtPlotItem *item);
+    //通过rtti获取plot chart item的数据点数，如果不是plot chart item,返回-1
+    static int getPlotChartItemDataCount(const QwtPlotItem* item);
 ////////////////////// 坐标变换相关操作//////////////////////////////
     //坐标轴数据互转（把坐标轴转换为另外一个坐标轴数据而保持屏幕位置不变）
     static QPointF transformValue(QwtPlot*chart,const QPointF& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);

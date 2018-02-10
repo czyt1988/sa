@@ -1,4 +1,4 @@
-#ifndef SACOLORSETPROPERTYITEM_H
+﻿#ifndef SACOLORSETPROPERTYITEM_H
 #define SACOLORSETPROPERTYITEM_H
 #include "SAPropertyItemContainer.h"
 #include <QWidget>
@@ -18,6 +18,9 @@ public:
     QtColorPicker* getColorPickerButton();
 Q_SIGNALS:
     void colorChanged(const QColor &);
+private slots:
+    void onColorChanged(const QColor &c);
+    void onCurrentPenColorAlphaChanged(int v);
 private:
     class UI;
     SAColorSetPropertyItem::UI *ui;

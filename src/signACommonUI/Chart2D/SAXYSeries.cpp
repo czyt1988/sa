@@ -16,10 +16,6 @@ SAXYSeries::SAXYSeries(const QString &title, SAAbstractDatas *dataPoints):QwtPlo
     setSamples(dataPoints);
 }
 
-int SAXYSeries::rtti() const
-{
-    return SA::RTTI_SAXYSeries;
-}
 ///
 /// \brief 加载数据
 /// \param dataPoints

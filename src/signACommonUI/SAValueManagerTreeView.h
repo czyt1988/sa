@@ -1,4 +1,4 @@
-#ifndef SAVALUEMANAGERTREEVIEW_H
+﻿#ifndef SAVALUEMANAGERTREEVIEW_H
 #define SAVALUEMANAGERTREEVIEW_H
 #include <QTreeView>
 #include "SACommonUIGlobal.h"
@@ -17,6 +17,8 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     void startDrag(Qt::DropActions supportedActions) Q_DECL_OVERRIDE;
+private:
+    static QPixmap makeDragPixmap(const QList<SAAbstractDatas *> datas,const QFont& f,const QPalette& pl, int span=5);
 private:
     SAValueManagerModel* m_modelValueMgr;
 };

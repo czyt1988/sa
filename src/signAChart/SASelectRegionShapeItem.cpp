@@ -1,4 +1,4 @@
-#include "SASelectRegionShapeItem.h"
+﻿#include "SASelectRegionShapeItem.h"
 #include "SAChart.h"
 #include <QPen>
 #include <QBrush>
@@ -16,10 +16,6 @@ SASelectRegionShapeItem::SASelectRegionShapeItem(const QString &title)
     setBrush( fillColor );
 }
 
-int SASelectRegionShapeItem::rtti() const
-{
-    return SAChart::RTTI_SA_SELECT_REGION_SHAPE;
-}
 
 void SASelectRegionShapeItem::draw(QPainter *p, const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &rect) const
 {

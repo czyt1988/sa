@@ -15,6 +15,9 @@
 #include "qwt_plot_grid.h"
 #include "qwt_plot_marker.h"
 #include "qwt_plot_rasteritem.h"
+#include "qwt_plot_spectrocurve.h"
+#include "qwt_plot_tradingcurve.h"
+#include "qwt_plot_spectrogram.h"
 #include <numeric>
 
 
@@ -760,7 +763,7 @@ QColor SAChart::dynamicGetItemColor(const QwtPlotItem *item, const QColor &defau
     {
         return grid->majorPen().color();
     }
-    else if(const QwtPlotMarker* marker = static_cast<const QwtPlotMarker*>(item))
+    else if(const QwtPlotMarker* marker = dynamic_cast<const QwtPlotMarker*>(item))
     {
         return marker->linePen ().color();
     }
@@ -823,6 +826,197 @@ int SAChart::dynamicGetPlotChartItemDataCount(const QwtPlotItem *item)
     else if(const QwtSeriesStore<QwtPoint3D>* p = dynamic_cast<const QwtSeriesStore<QwtPoint3D>*>(item))
     {
         return p->dataSize();
+    }
+    return -1;
+}
+///
+/// \brief 通过rtti获取item的颜色
+/// 此方法需要确保所有继承QwtPlotItem的类不重写rtti，动态获取item的颜色，使用dynamic_cast,需要注意效率问题
+/// \param item
+/// \param defaultColor
+/// \return
+///
+QColor SAChart::getItemColor(const QwtPlotItem *item, const QColor &defaultColor)
+{
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+        if(const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item))
+        {
+            return p->pen().color();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+        if(const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item))
+        {
+            return p->pen().color();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotHistogram:
+        if(const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item))
+        {
+            return p->brush().color();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotBarChart:
+        if(const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item))
+        {
+            const QwtColumnSymbol* symbol =  bar->symbol();
+            if(symbol)
+            {
+                return symbol->palette().color(QPalette::Button);
+            }
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotGrid:
+        if(const QwtPlotGrid* grid = static_cast<const QwtPlotGrid*>(item))
+        {
+            return grid->majorPen().color();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotMarker:
+        if(const QwtPlotMarker* marker = static_cast<const QwtPlotMarker*>(item))
+        {
+            return marker->linePen ().color();
+        }
+        break;
+    default:
+        break;
+    }
+    return defaultColor;
+}
+///
+/// \brief 通过rtti获取可绘图的item，
+/// \see dynamicGetPlotChartItemList
+/// \param chart
+/// \return
+///
+QwtPlotItemList SAChart::getPlotChartItemList(const QwtPlot *chart)
+{
+    QwtPlotItemList itemList = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<itemList.size();++i)
+    {
+        if (checkIsPlotChartItem(itemList[i]))
+        {
+            res.append(itemList[i]);
+        }
+    }
+    return res;
+}
+///
+/// \brief 通过rtti判断是否是绘图item
+/// \see dynamicCheckIsPlotChartItem
+/// \param item
+/// \return
+///
+bool SAChart::checkIsPlotChartItem(const QwtPlotItem *item)
+{
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case QwtPlotItem::Rtti_PlotBarChart:
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotSpectrogram:
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+///
+/// \brief 通过rtti获取XY series item
+/// \param chart
+/// \return
+///
+QwtPlotItemList SAChart::getXYSeriesItemList(const QwtPlot *chart)
+{
+    QwtPlotItemList itemList = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<itemList.size();++i)
+    {
+        if (checkIsXYSeriesItem(itemList[i]))
+        {
+            res.append(itemList[i]);
+        }
+    }
+    return res;
+}
+///
+/// \brief 通过rtti判断是否是XY series item
+/// \param item
+/// \return
+///
+bool SAChart::checkIsXYSeriesItem(const QwtPlotItem *item)
+{
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotBarChart:
+    case QwtPlotItem::Rtti_PlotScale:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+///
+/// \brief 通过rtti获取plot chart item的数据点数，如果不是plot chart item,返回-1
+/// \param item
+/// \return
+///
+int SAChart::getPlotChartItemDataCount(const QwtPlotItem *item)
+{
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+        if(const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item))
+        {
+            return p->dataSize();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+        if(const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item))
+        {
+            return p->dataSize();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotHistogram:
+        if(const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item))
+        {
+            return p->dataSize();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotBarChart:
+        if(const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item))
+        {
+            return bar->dataSize();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+        if(const QwtPlotSpectroCurve* p = static_cast<const QwtPlotSpectroCurve*>(item))
+        {
+            return p->dataSize();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+        if(const QwtPlotTradingCurve* p = static_cast<const QwtPlotTradingCurve*>(item))
+        {
+            return p->dataSize();
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+        if(const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item))
+        {
+            return p->dataSize();
+        }
+        break;
+    default:
+        break;
     }
     return -1;
 }

@@ -16,8 +16,5 @@ SAScatterSeries::SAScatterSeries(const QString &title, SAAbstractDatas *dataPoin
     setStyle( QwtPlotCurve::Dots );
 }
 
-int SAScatterSeries::rtti() const
-{
-    return SA::RTTI_SAScatterSeries;
-}
+
 

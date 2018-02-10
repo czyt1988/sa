@@ -1,4 +1,4 @@
-#include <QtGlobal>
+﻿#include <QtGlobal>
 #include "SAValueManagerModel.h"
 #include "SAValueManager.h"
 #include "SAData.h"
@@ -8,7 +8,6 @@
 #define COL_INDEX_TYPE 1
 #define COL_INDEX_DES 2
 
-QHash<int,QIcon> SAValueManagerModel::s_dataType2Icon = QHash<int,QIcon>();
 
 SAValueManagerModel::SAValueManagerModel(QObject *parent):QAbstractItemModel(parent)
   ,m_funBackgroundData(nullptr)
@@ -231,9 +230,11 @@ QVariant SAValueManagerModel::data(const QModelIndex &index, int role) const
         }
         else if(Qt::DecorationRole == role)
         {
+            if(!data)
+                return QVariant();
             switch(index.column())
             {
-            case COL_INDEX_NAME:return getDataIcon(data);
+            case COL_INDEX_NAME:return SAValueManager::getDataIcon(data->getType());
             default:
                 return QVariant();
             }
@@ -306,31 +307,9 @@ SAItem *SAValueManagerModel::toItemPtr(const QModelIndex &index)
 {
     return static_cast<SAItem *>(index.internalPointer());
 }
-///
-/// \brief 获取数据对应的图标
-/// \param data 数据指针
-/// \return 图标
-///
-QIcon SAValueManagerModel::getDataIcon(const SAAbstractDatas *data)
-{
-    QIcon ico = s_dataType2Icon.value(data->getType(),QIcon());
-    if(ico.isNull())
-    {
-        return ICON_DEFAULT_DATA_TYPE;
-    }
-    return ico;
-}
-///
-/// \brief 注册类型对应的图标
-///
-/// 如果是自定义类型，需要调用这个函数注册特定图标，否则会使用默认图标显示未注册的数据类型
-/// \param type 数据类型
-/// \param ico 图标
-///
-void SAValueManagerModel::registerDataTypeIcon(int type, const QIcon &ico)
-{
-    s_dataType2Icon[type] = ico;
-}
+
+
+
 
 void SAValueManagerModel::onDataAdded(const QList<SAAbstractDatas *> &datas)
 {

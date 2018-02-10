@@ -13,7 +13,7 @@ public:
     using QwtPlotTradingCurve::setSamples;
     //using QwtPlotTradingCurve::QwtSeriesStore<QwtOHLCSample>::dataSize;
     bool setSamples(SAAbstractDatas* dataPoints);
-    virtual int rtti() const Q_DECL_OVERRIDE;
+
 };
 
 #endif // SABOXSERIES_H

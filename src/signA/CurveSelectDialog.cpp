@@ -139,7 +139,7 @@ QList<QwtPlotItem *> CurveSelectDialog::getSelectChartPlotItems(SAChart2D *chart
     {
         QList<QwtPlotItem*> items = dlg.getSelItem();
         std::for_each(items.begin(),items.end(),[&res](QwtPlotItem* p){
-            if(SAChart::dynamicCheckIsPlotChartItem(p))
+            if(SAChart::checkIsPlotChartItem(p))
             {
                 res.append(p);
             }

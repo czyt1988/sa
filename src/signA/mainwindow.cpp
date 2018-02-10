@@ -37,7 +37,7 @@
 #include <Dialog_AddChart.h>
 #include "CurveSelectDialog.h"
 #include "SAProjectInfomationSetDialog.h"
-
+#include "SAAddCurveTypeDialog.h"
 
 #include <PickCurveDataModeSetDialog.h>
 #include <SAPropertySetDialog.h>
@@ -151,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
  // ,m_lastActiveWnd(nullptr)
   ,m_nProjectCount(0)
   ,m_lastShowFigureWindow(nullptr)
+  ,m_nUserChartCount(0)
 {
     saAddLog("start app");
     saStartElapsed("start main app init");
@@ -731,6 +732,7 @@ void MainWindow::onActionSkinChanged(QAction* act)
     setSkin(name);
 }
 
+
 void MainWindow::setSkin(const QString &name)
 {
     saStartElapsed(tr("start use skin:%1").arg(name));
@@ -767,7 +769,9 @@ void MainWindow::loadSetting()
 {
     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                        "CZY", "SA");
-	loadWindowState(settings);
+    loadWindowState(settings);
+    QResizeEvent* rse = new QResizeEvent(ribbonBar()->size(),ribbonBar()->size());
+    QApplication::postEvent(ribbonBar(),rse);
 }
 
 void MainWindow::saveSetting()
@@ -905,46 +909,48 @@ SADrawDelegate*MainWindow::getDrawDelegate() const
     return m_drawDelegate.data();
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent *event)
-{
-    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
-    {
-        saPrint() << "dragEnterEvent SAValueManagerMimeData::valueIDMimeType()";
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    }
-    else
-    {
-        event->ignore();
-    }
-}
+//void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+//{
+////    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+////    {
+////        saPrint() << "dragEnterEvent SAValueManagerMimeData::valueIDMimeType()";
+////        event->setDropAction(Qt::MoveAction);
+////        event->accept();
+////    }
+////    else
+////    {
+//      event->ignore();
+////    }
+//}
 
-void MainWindow::dragMoveEvent(QDragMoveEvent *event)
-{
-    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
-    {
-        saPrint() << "dragMoveEvent SAValueManagerMimeData::valueIDMimeType()";
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    }
-}
+//void MainWindow::dragMoveEvent(QDragMoveEvent *event)
+//{
+////    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+////    {
+////        saPrint() << "dragMoveEvent SAValueManagerMimeData::valueIDMimeType()";
+////        event->setDropAction(Qt::MoveAction);
+////        event->accept();
+////    }
+//    event->ignore();
+//}
 
-void MainWindow::dropEvent(QDropEvent *event)
-{
-    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
-    {
-        QList<int> ids;
-        if(SAValueManagerMimeData::getValueIDsFromMimeData(event->mimeData(),ids))
-        {
-            saPrint() << "dropEvent SAValueManagerMimeData::valueIDMimeType()";
-            QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
-            if(datas.size() > 0)
-            {
-                m_drawDelegate->drawLine(datas);
-            }
-        }
-    }
-}
+//void MainWindow::dropEvent(QDropEvent *event)
+//{
+////    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+////    {
+////        QList<int> ids;
+////        if(SAValueManagerMimeData::getValueIDsFromMimeData(event->mimeData(),ids))
+////        {
+////            saPrint() << "dropEvent SAValueManagerMimeData::valueIDMimeType()";
+////            QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
+////            if(datas.size() > 0)
+////            {
+////                m_drawDelegate->drawLine(datas);
+////            }
+////        }
+////    }
+//    event->ignore();
+//}
 
 ///
 /// \brief 打开action
@@ -1035,7 +1041,10 @@ void MainWindow::onActionNewChartTriggered()
 
     if(QDialog::Accepted == addChart.exec())
     {
-        SAMdiSubWindow* pSubWnd = m_drawDelegate->createFigureMdiSubWidget();
+
+        m_nUserChartCount++;
+        QString chartName = QStringLiteral("新图例-%1").arg(m_nUserChartCount);
+        QMdiSubWindow* pSubWnd = createFigureWindow(chartName);
         SAFigureWindow* pFigWnd = getFigureWidgetFromMdiSubWindow (pSubWnd);
         if(nullptr == pFigWnd)
         {
@@ -1073,10 +1082,52 @@ void MainWindow::onActionNewChartTriggered()
 void MainWindow::onActionAddLineChartTriggered()
 {
     raiseMainDock();
-    QList<SAAbstractDatas*> datas = getSeletedDatas();
-    if(datas.size() != 0)
+    raiseValueManageDock();
+
+
+    QList<SAAbstractDatas *> datas = getSeletedDatas();
+    if(datas.size() > 0)
     {
-        QList<QwtPlotCurve *> res = m_drawDelegate->drawLine(datas);
+        SAAddCurveTypeDialog::AddCurveType type = SAAddCurveTypeDialog::getAddCurveType(this);
+        if(SAAddCurveTypeDialog::Unknow == type)
+        {
+            return;
+        }
+        if(SAAddCurveTypeDialog::AddInCurrentFig == type)
+        {
+           QList<SAChart2D*> charts = getCurSubWindowCharts();
+           if(charts.isEmpty())
+           {
+                m_drawDelegate->drawLine(datas);
+                return;
+           }
+           SAChart2D* chart = nullptr;
+           chart = charts[0];
+           if(nullptr == chart)
+           {
+               return;
+           }
+           m_drawDelegate->drawLine(datas,chart);
+           qDebug("add cut in cur");
+           return;
+        }
+        else if(SAAddCurveTypeDialog::AddInNewFig == type)
+        {
+           m_drawDelegate->drawLine(datas);
+           return;
+        }
+        else if(SAAddCurveTypeDialog::AddInCurrentFigWithSubplot == type)
+        {
+            //TODO
+        }
+    }
+    else
+    {
+        SAAddLineChartSetDialog dlg(this);
+        if(QDialog::Accepted != dlg.exec())
+        {
+            return;
+        }
     }
 }
 ///
@@ -1085,6 +1136,8 @@ void MainWindow::onActionAddLineChartTriggered()
 void MainWindow::onActionAddBarChartTriggered()
 {
     raiseMainDock();
+    raiseValueManageDock();
+
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
@@ -1107,6 +1160,8 @@ void MainWindow::onActionAddHistogramChartTriggered()
 void MainWindow::onActionAddScatterChartTriggered()
 {
     raiseMainDock();
+    raiseValueManageDock();
+
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
@@ -1119,6 +1174,8 @@ void MainWindow::onActionAddScatterChartTriggered()
 void MainWindow::onActionAddBoxChartTriggered()
 {
     raiseMainDock();
+    raiseValueManageDock();
+
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     if(datas.size() != 0)
     {
@@ -1410,6 +1467,20 @@ SAAbstractRegionSelectEditor::SelectionMode MainWindow::getCurrentChartRegionSel
     return SAAbstractRegionSelectEditor::SingleSelection;
 }
 
+SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, QWidget *w, const QString &title)
+{
+    SAMdiSubWindow* pSubw = m_mdiManager.newMdiSubWnd<SAMdiSubWindow>(w);
+    if(nullptr == pSubw)
+        return pSubw;
+    pSubw->setType(type);
+    pSubw->setWindowTitle(title);
+    pSubw->setWindowIcon(getIconByWndType(type));
+    connect(pSubw,&SAMdiSubWindow::closedWindow
+            ,this,&MainWindow::onSubWindowClosed);
+    emit subWindowHaveCreated(pSubw);
+    return pSubw;
+}
+
 ///
 /// \brief 开启当前绘图的十字光标
 ///
@@ -1683,7 +1754,6 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
 //    if(m_lastActiveWnd == arg1)
 //        return;
 //    m_lastActiveWnd = arg1;
-
     SAFigureWindow* fig = getFigureWidgetFromMdiSubWindow(arg1);
     if(fig)
     {
@@ -1729,6 +1799,7 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
     }
     else
     {
+        saPrint() << "sub window active:" << arg1->windowTitle() << " but this window have not figure";
     }
     //设置绘图属性窗口,空指针也接受
     ui->figureSetWidget->setFigureWidget(fig);
@@ -1845,8 +1916,50 @@ QProgressBar *MainWindow::getProgressStatusBar()
 ///
 QMdiSubWindow *MainWindow::createFigureWindow(const QString &title)
 {
-    SAMdiSubWindow* sub = m_drawDelegate->createFigureMdiSubWidget(title);
-    return sub;
+    m_nUserChartCount++;
+    QString str = title;
+    if(title.isNull () || title.isEmpty ())
+    {
+        str = tr("figure[%1]").arg(m_nUserChartCount);
+    }
+    SAMdiSubWindow* pSubWnd =  createMdiSubWindow<SAFigureWindow>(SA::SubWindowFigure,str);
+    if(!pSubWnd)
+    {
+        --m_nUserChartCount;
+        return nullptr;
+    }
+    SAFigureWindow* pChartWnd = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
+    if(!pChartWnd)
+    {
+        --m_nUserChartCount;
+        return nullptr;
+    }
+    connect (pChartWnd,&SAFigureWindow::chartDataChanged,this,&MainWindow::onChartDataChanged);
+    return pSubWnd;
+}
+
+QMdiSubWindow *MainWindow::createFigureWindow(SAFigureWindow *fig, const QString &title)
+{
+    m_nUserChartCount++;
+    QString str = title;
+    if(title.isNull () || title.isEmpty ())
+    {
+        str = tr("figure[%1]").arg(m_nUserChartCount);
+    }
+    SAMdiSubWindow* pSubWnd =  createMdiSubWindow(SA::SubWindowFigure,fig,str);
+    if(!pSubWnd)
+    {
+        --m_nUserChartCount;
+        return nullptr;
+    }
+    SAFigureWindow* pChartWnd = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
+    if(!pChartWnd)
+    {
+        --m_nUserChartCount;
+        return nullptr;
+    }
+    connect (pChartWnd,&SAFigureWindow::chartDataChanged,this,&MainWindow::onChartDataChanged);
+    return pSubWnd;
 }
 
 ///
@@ -2207,8 +2320,9 @@ QIcon MainWindow::getIconByWndType(SA::SubWndType type)
     switch(type)
     {
     case SA::SubWindowUserDefine:
-    case SA::SubWindowFigure:
         return QIcon();
+    case SA::SubWindowFigure:
+        return QIcon(":/icons/icons/figureIcon.png");
     default:
         return QIcon();
     }
@@ -2738,10 +2852,11 @@ void MainWindow::__loadSubWindowFromFolder(const QString &folderPath)
             showMessageInfo(errString,SA::WarningMessage);
         }
     }
-    if(sub)
-    {
-        setActiveSubWindow(sub);
-    }
+//    if(sub)
+//    {
+//        setActiveSubWindow(sub);
+//        //onMdiAreaSubWindowActivated(sub);
+//    }
 }
 
 
@@ -2858,12 +2973,24 @@ QMdiSubWindow* load_sub_window(SAUIInterface *ui, const QString &filePath, QStri
         {
         case SA::SubWindowFigure:
         {
+#if 0
             sub = ui->createFigureWindow(windowTitle);
             SAFigureWindow* fig = qobject_cast<SAFigureWindow*>(sub->widget());
+            
+#else
+            saPrint() << " before create fig";
+            SAFigureWindow* fig = new SAFigureWindow(); 
+#endif
             if(fig)
             {
                 in >> fig;
             }
+#if 0
+#else
+            saPrint() << " before create sub";
+            sub = ui->createFigureWindow(fig,windowTitle);
+            saPrint() << " after create sub";
+#endif
             sub->show();
         }
         default:

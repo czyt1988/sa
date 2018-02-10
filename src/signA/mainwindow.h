@@ -42,7 +42,7 @@ class MainWindow;
 #include "SAPluginManager.h"
 #include "SAUIInterface.h"
 #include "SAAbstractRegionSelectEditor.h"
-
+#include "SAAddLineChartSetDialog.h"
 
 
 class QProgressBar;
@@ -136,6 +136,7 @@ public:
     /// \{
     //创建一个绘图窗口
     QMdiSubWindow* createFigureWindow(const QString& title = QString());
+    QMdiSubWindow* createFigureWindow(SAFigureWindow* fig,const QString& title = QString());
     //获取最后显示的绘图窗口的指针
     SAFigureWindow* getCurrentFigureWindow();
     //获取所有的figure
@@ -327,8 +328,7 @@ private slots:
     //选区范围内的数据移动
     void onActionSelectionRegionDataMove(bool on);
 
-    //获取当前ui选择的区域选择模式
-    SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
+
     //开启当前绘图的十字光标
     void onActionEnableChartPickerTriggered(bool check);
     //开启当前绘图的拖动
@@ -443,50 +443,25 @@ private slots:
     /// 皮肤切换
     ///
     void onActionSkinChanged(QAction* act);
-    void setSkin(const QString& name);
 
-    //获取ui接口
-    SAUIInterface* uiInterface();
+
 public slots:
     void onChartDataChanged(QWidget* widget,const QwtPlotItem* pC);
 public:
+    void setSkin(const QString& name);
+    //获取ui接口
+    SAUIInterface* uiInterface();
+    //获取当前ui选择的区域选择模式
+    SAAbstractRegionSelectEditor::SelectionMode getCurrentChartRegionSelectionMode() const;
 
-    ///
-    /// \brief 子窗口的创建
-    /// \param type 窗口类型
-    /// \param title 窗口标题
-    /// \return MdiSubWindow的指针,若没创建成功返回nullptr
-    ///
+    // 子窗口的创建
     template<typename INNERWIDGET>
-    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,const QString& title)
-    {
-        SAMdiSubWindow* pSubw = m_mdiManager.newMdiSubWnd<SAMdiSubWindow,INNERWIDGET>();
-        if(nullptr == pSubw)
-            return pSubw;
-        pSubw->setType(type);
-        pSubw->setWindowTitle(title);
-        pSubw->setWindowIcon(getIconByWndType(type));
-        connect(pSubw,&SAMdiSubWindow::closedWindow
-                ,this,&MainWindow::onSubWindowClosed);
-        emit subWindowHaveCreated(pSubw);
-        return pSubw;
-    }
-
+    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,const QString& title);
+    // 子窗口的创建
     template<typename INNERWIDGET,typename Arg0>
-    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,const QString& title,Arg0 arg0)
-    {
-        SAMdiSubWindow* pSubw = m_mdiManager.newMdiSubWnd<SAMdiSubWindow,INNERWIDGET>(arg0);
-        if(nullptr == pSubw)
-            return pSubw;
-        pSubw->setType(type);
-        pSubw->setWindowTitle(title);
-        pSubw->setWindowIcon(getIconByWndType(type));
-        connect(pSubw,&SAMdiSubWindow::closedWindow
-                ,this,&MainWindow::onSubWindowClosed);
-        emit subWindowHaveCreated(pSubw);
-        return pSubw;
-    }
-    //MdiSubWindow* createMdiSubWnd_ThermalDiagram(const QString &title);
+    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,const QString& title,Arg0 arg0);
+    // 子窗口的创建
+    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,QWidget* w,const QString& title);
 
 
 
@@ -503,9 +478,9 @@ public:
     //
     SADrawDelegate* getDrawDelegate() const;
 protected:
-    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
-    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
-    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
+//    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+//    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+//    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
     friend class SAUI;
     //配置信息加载
@@ -553,7 +528,47 @@ private:
     QActionGroup* m_chartRegionSelectionShapeActionGroup;///<选区选择形状的action group
     QActionGroup* m_chartRegionSelectionModeActionGroup;///<选区选择模式的action group
     int m_lastForceType;///< 记录最后的焦点信息
+    unsigned int m_nUserChartCount;
+
 };
+
+///
+/// \brief 子窗口的创建
+/// \param type 窗口类型
+/// \param title 窗口标题
+/// \return MdiSubWindow的指针,若没创建成功返回nullptr
+///
+template<typename INNERWIDGET>
+SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QString &title)
+{
+    SAMdiSubWindow* pSubw = m_mdiManager.newMdiSubWnd<SAMdiSubWindow,INNERWIDGET>();
+    if(nullptr == pSubw)
+        return pSubw;
+    pSubw->setType(type);
+    pSubw->setWindowTitle(title);
+    pSubw->setWindowIcon(getIconByWndType(type));
+    connect(pSubw,&SAMdiSubWindow::closedWindow
+            ,this,&MainWindow::onSubWindowClosed);
+    emit subWindowHaveCreated(pSubw);
+    return pSubw;
+}
+
+template<typename INNERWIDGET,typename Arg0>
+SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QString &title, Arg0 arg0)
+{
+    SAMdiSubWindow* pSubw = m_mdiManager.newMdiSubWnd<SAMdiSubWindow,INNERWIDGET>(arg0);
+    if(nullptr == pSubw)
+        return pSubw;
+    pSubw->setType(type);
+    pSubw->setWindowTitle(title);
+    pSubw->setWindowIcon(getIconByWndType(type));
+    connect(pSubw,&SAMdiSubWindow::closedWindow
+            ,this,&MainWindow::onSubWindowClosed);
+    emit subWindowHaveCreated(pSubw);
+    return pSubw;
+}
+
+
 ///
 /// \brief 根据子窗口类型获取后缀名
 /// \param type 子窗口类型

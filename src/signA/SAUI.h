@@ -78,6 +78,7 @@ public:
     /// \{
     //创建一个绘图窗口
     QMdiSubWindow* createFigureWindow(const QString& title = QString());
+    QMdiSubWindow* createFigureWindow(SAFigureWindow *fig,const QString& title = QString());
     //获取最后显示的绘图窗口的指针
     SAFigureWindow* getCurrentFigureWindow();
     //获取所有的figure
@@ -138,5 +139,7 @@ protected:
 private:
     MainWindow* m_mainWnd;
 };
+
+
 
 #endif // SAUI_H

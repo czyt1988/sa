@@ -1,4 +1,4 @@
-/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
+﻿/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * Qwt Widget Library
  * Copyright (C) 1997   Josef Wilgen
  * Copyright (C) 2002   Uwe Rathmann
@@ -36,7 +36,7 @@
   the symbol is fixed. 
 */
 class QWT_EXPORT QwtPlotTradingCurve: 
-    public QwtPlotSeriesItem, QwtSeriesStore<QwtOHLCSample>
+    public QwtPlotSeriesItem, public QwtSeriesStore<QwtOHLCSample>
 {
 public:
     /*!

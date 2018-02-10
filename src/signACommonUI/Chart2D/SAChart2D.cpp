@@ -1080,7 +1080,7 @@ bool SAChart2D::isCurrentSelectItemsHaveChartItem() const
     const QList<QwtPlotItem *> &items = getCurrentSelectItems();
     for(int i=0;i<items.size();++i)
     {
-        if(SAChart::dynamicCheckIsPlotChartItem(items[i]))
+        if(SAChart::checkIsPlotChartItem(items[i]))
         {
             return true;
         }
@@ -1327,10 +1327,12 @@ QList<SAXYSeries *> SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
 
 void SAChart2D::dragEnterEvent(QDragEnterEvent *event)
 {
+    qDebug() << "SAChart2D dragEnterEvent mimeData:"<<event->mimeData()->formats();
     if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
     {
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
+        //event->setDropAction(Qt::MoveAction);
+        event->acceptProposedAction();
+        qDebug() << "SAChart2D dragEnterEvent acceptProposedAction:"<<event->mimeData()->formats();
     }
     else
     {
@@ -1342,8 +1344,9 @@ void SAChart2D::dragMoveEvent(QDragMoveEvent *event)
 {
     if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
     {
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
+        //event->setDropAction(Qt::MoveAction);
+        event->acceptProposedAction();
+        qDebug() << "SAChart2D dragMoveEvent acceptProposedAction";
     }
     else
     {
@@ -1360,7 +1363,12 @@ void SAChart2D::dropEvent(QDropEvent *event)
         {
             QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
             addDatas(datas);
+            event->acceptProposedAction();
         }
+    }
+    else
+    {
+        event->ignore();
     }
 }
 

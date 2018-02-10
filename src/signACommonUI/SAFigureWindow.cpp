@@ -71,6 +71,8 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
     static int s_figure_count=0;
     ++s_figure_count;
     setWindowTitle(QString("figure-%1").arg(s_figure_count));
+    setMinimumWidth(100);
+    setMinimumHeight(50);
 }
 
 SAFigureWindow::~SAFigureWindow()
@@ -173,47 +175,65 @@ QRectF SAFigureWindow::getWidgetPos(QWidget *w) const
     return d_ptr->centralwidget->getWidgetPos(w);
 }
 
-void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)
+///
+/// \brief 设置当前的2dplot
+/// \param p
+///
+void SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
 {
-    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
-    {
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    }
-    else
-    {
-        event->ignore();
-    }
+    d_ptr->currentPlot = p;
 }
 
-void SAFigureWindow::dragMoveEvent(QDragMoveEvent *event)
-{
-    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
-    {
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    }
-}
+//void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)
+//{
+//    qDebug() << "SAFigureWindow dragEnterEvent mimeData:"<<event->mimeData()->formats();
+//    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+//    {
+//        //event->setDropAction(Qt::MoveAction);
+//        event->acceptProposedAction();
+//        qDebug() << "SAFigureWindow dragEnterEvent acceptProposedAction";
+//        return;
+//    }
+////    else
+////    {
+////        qDebug() << "SAFigureWindow dragEnterEvent ignore";
+////        event->ignore();
+////    }
+//    QMainWindow::dragEnterEvent(event);
+//}
 
-void SAFigureWindow::dropEvent(QDropEvent *event)
-{
-    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
-    {
-        QList<int> ids;
-        if(SAValueManagerMimeData::getValueIDsFromMimeData(event->mimeData(),ids))
-        {
-            QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
-            if(SAChart2D * c = current2DPlot())
-            {
-                for(int i=0;i<datas.size();++i)
-                {
-                    c->addCurve(datas[i]);
-                }
-            }
+//void SAFigureWindow::dragMoveEvent(QDragMoveEvent *event)
+//{
+//    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+//    {
+////        event->setDropAction(Qt::MoveAction);
+////        event->accept();
+//        event->acceptProposedAction();
+//        qDebug() << "SAFigureWindow dragMoveEvent acceptProposedAction";
+//        return;
+//    }
+//    QMainWindow::dragMoveEvent(event);
+//}
 
-        }
-    }
-}
+//void SAFigureWindow::dropEvent(QDropEvent *event)
+//{
+//    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
+//    {
+//        qDebug() << "SAFigureWindow::dropEvent";
+//        QList<int> ids;
+//        if(SAValueManagerMimeData::getValueIDsFromMimeData(event->mimeData(),ids))
+//        {
+//            QList<SAAbstractDatas*> datas = saValueManager->findDatas(ids);
+//            if(SAChart2D * c = current2DPlot())
+//            {
+//                for(int i=0;i<datas.size();++i)
+//                {
+//                    c->addCurve(datas[i]);
+//                }
+//            }
+//        }
+//    }
+//}
 
 void SAFigureWindow::redo()
 {
@@ -307,7 +327,6 @@ QDataStream &operator >>(QDataStream &in, SAFigureWindow *p)
             chart->show();
             chart.take();
         }
-        return in;
     }
     catch(const sa::SABadSerializeExpection& exp)
     {

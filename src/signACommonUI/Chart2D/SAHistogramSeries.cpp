@@ -25,7 +25,3 @@ bool SAHistogramSeries::setSamples(SAAbstractDatas *intData)
     return true;
 }
 
-int SAHistogramSeries::rtti() const
-{
-    return SA::RTTI_SAHistogramSeries;
-}

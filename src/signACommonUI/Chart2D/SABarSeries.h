@@ -11,7 +11,6 @@ public:
     SABarSeries(SAAbstractDatas* intData,const QString &title = QString::null);
     using QwtPlotBarChart::setSamples;
     bool setSamples(SAAbstractDatas* intData);
-    virtual int rtti() const Q_DECL_OVERRIDE;
 };
 
 #endif // SABARSERIES_H

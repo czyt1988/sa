@@ -41,6 +41,8 @@ void SAPlotLayerModel::setPlot(QwtPlot* plot)
 
 void SAPlotLayerModel::itemAttached (QwtPlotItem *plotItem, bool on)
 {
+    Q_UNUSED(plotItem);
+    Q_UNUSED(on);
 	updateModel();
 }
 

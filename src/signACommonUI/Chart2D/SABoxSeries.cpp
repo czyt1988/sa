@@ -26,7 +26,4 @@ bool SABoxSeries::setSamples(SAAbstractDatas *dataPoints)
     return true;
 }
 
-int SABoxSeries::rtti() const
-{
-    return SA::RTTI_SABoxSeries;
-}
+

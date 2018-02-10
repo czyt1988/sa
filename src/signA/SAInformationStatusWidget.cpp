@@ -1,4 +1,4 @@
-#include "SAInformationStatusWidget.h"
+﻿#include "SAInformationStatusWidget.h"
 #include "ui_SAInformationStatusWidget.h"
 #include <QPixmap>
 #include <QPalette>
@@ -10,6 +10,7 @@ SAInformationStatusWidget::SAInformationStatusWidget(QWidget *parent) :
     ui(new Ui::SAInformationStatusWidget)
   ,m_fadeInTimer(nullptr)
   ,m_fadeOutTimer(nullptr)
+  ,m_queueTimer(nullptr)
   ,m_fadeInTimeInterval(1000/18)
   ,m_fadeOutTimeInterval(1000/18)
   ,m_inOpacityInterval(0.05555555555555555555555555555556)
@@ -17,7 +18,7 @@ SAInformationStatusWidget::SAInformationStatusWidget(QWidget *parent) :
   ,m_fadeOutCountLimit(100)
   ,m_fadeOutCount(0)
   ,m_startQueue(false)
-  ,m_queueTimer(nullptr)
+  ,m_showing(false)
 {
     ui->setupUi(this);
     m_timer = new QTimer(this);

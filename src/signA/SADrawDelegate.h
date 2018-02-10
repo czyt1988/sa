@@ -1,4 +1,4 @@
-#ifndef SADRAWDELEGATE_H
+﻿#ifndef SADRAWDELEGATE_H
 #define SADRAWDELEGATE_H
 #include <SAMainWindowDelegate.h>
 
@@ -24,6 +24,7 @@ public:
     virtual ~SADrawDelegate();
     //绘图
     QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas);
+    QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas,SAChart2D* chart);
     QwtPlotCurve* drawLine(SAAbstractDatas* data,SAChart2D *chart);
     QwtPlotCurve* drawLine(SAAbstractDatas* x,SAAbstractDatas* y,QString name,SAChart2D *chart);
     //统计图
@@ -36,13 +37,14 @@ public:
     //箱盒图
     QList<QwtPlotTradingCurve *> drawBoxChart(const QList<SAAbstractDatas*>& datas);
     //创建绘图窗口
-    SAMdiSubWindow* createFigureMdiSubWidget(const QString& title = QString());
+    QMdiSubWindow *createFigureMdiSubWidget(const QString& title = QString());
+    QMdiSubWindow* createFigureMdiSubWidget(SAFigureWindow* fig, const QString& title = QString());
     //把QMdiSubWindow的内部SAFigureWidget获取
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* w);
 protected:
     QwtPlotCurve* drawLine(SAChart2D *chart , SAVectorPointF* points);
 private:
-    unsigned int m_nUserChartCount;
+
 };
 
 #endif // SADRAWDELEGATE_H
