@@ -143,6 +143,11 @@ QMdiSubWindow *SAUI::createFigureWindow(const QString &title)
     return m_mainWnd->createFigureWindow(title);
 }
 
+QMdiSubWindow *SAUI::createFigureWindow(SAFigureWindow *fig, const QString &title)
+{
+    return m_mainWnd->createFigureWindow(fig,title);
+}
+
 SAFigureWindow *SAUI::getCurrentFigureWindow()
 {
     return m_mainWnd->getCurrentFigureWindow();

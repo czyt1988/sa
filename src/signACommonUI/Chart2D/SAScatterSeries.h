@@ -13,7 +13,6 @@ public:
     //跨域重载
     using QwtPlotCurve::setSamples;
     using SAXYSeries::setSamples;
-    virtual int rtti() const Q_DECL_OVERRIDE;
 };
 
 #endif // SASCATTERSERIES_H

@@ -99,6 +99,7 @@ public:
     /// \{
     //创建一个绘图窗口
     virtual QMdiSubWindow* createFigureWindow(const QString& title = QString()) = 0;
+    virtual QMdiSubWindow* createFigureWindow(SAFigureWindow *fig,const QString& title = QString()) = 0;
     //获取最后显示的绘图窗口的指针
     virtual SAFigureWindow* getCurrentFigureWindow() = 0;
     //获取所有的figure

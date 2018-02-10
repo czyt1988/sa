@@ -59,7 +59,3 @@ bool SABarSeries::setSamples(SAAbstractDatas *intData)
     return false;
 }
 
-int SABarSeries::rtti() const
-{
-    return SA::RTTI_SABarSeries;
-}

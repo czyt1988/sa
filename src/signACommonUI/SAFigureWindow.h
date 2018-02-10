@@ -43,10 +43,12 @@ public:
     void setBackgroundColor(const QColor& clr);
     //获取窗口的位置
     QRectF getWidgetPos(QWidget *w) const;
+    //设置当前的2dplot
+    void setCurrent2DPlot(SAChart2D* p);
 protected:
-    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
-    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
-    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
+//    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+//    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+//    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 public slots:
     void redo();
     void undo();

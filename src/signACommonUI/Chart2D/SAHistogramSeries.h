@@ -11,7 +11,6 @@ public:
     SAHistogramSeries(SAAbstractDatas* intData,const QString &title = QString::null);
     using QwtPlotHistogram::setSamples;
     bool setSamples(SAAbstractDatas* intData);
-    virtual int rtti() const Q_DECL_OVERRIDE;
 };
 
 #endif // SAHISTOGRAMSERIES_H

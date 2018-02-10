@@ -1,4 +1,4 @@
-#ifndef MDISUBWINDOWMANAGER_H
+﻿#ifndef MDISUBWINDOWMANAGER_H
 #define MDISUBWINDOWMANAGER_H
 #include <QMdiArea>
 #include <QMdiSubWindow>
@@ -80,7 +80,6 @@ public:
         return newSubMdiWnd;
     }
 
-    template <typename SUBWND_CLASS /*= QMdiSubWindow*/,typename T>
     ///
     /// \brief 创建一个subwindow
     ///
@@ -89,6 +88,7 @@ public:
     ///
     /// \return
     ///
+    template <typename SUBWND_CLASS /*= QMdiSubWindow*/,typename T>
     SUBWND_CLASS* newMdiSubWnd()
     {
         std::unique_ptr<SUBWND_CLASS> pSubw(new SUBWND_CLASS);
@@ -102,7 +102,6 @@ public:
         emit subWindowCreated(pSubw.get());
         return pSubw.release();
     }
-    template <typename SUBWND_CLASS /*= QMdiSubWindow*/,typename T,typename Arg1>
     ///
     /// \brief 创建一个subwindow
     ///
@@ -111,11 +110,31 @@ public:
     ///
     /// \return
     ///
+    template <typename SUBWND_CLASS /*= QMdiSubWindow*/,typename T,typename Arg1>
     SUBWND_CLASS* newMdiSubWnd(Arg1 a1)
     {
         std::unique_ptr<SUBWND_CLASS> pSubw(new SUBWND_CLASS);
         pSubw->setAttribute(Qt::WA_DeleteOnClose);
         QWidget* w = qobject_cast<QWidget*>(new T(a1));
+        if(!w)
+            return nullptr;
+        pSubw->setWidget(w);
+        //遍历树形控件的item，找出对应的item,并把窗口指针设置进去
+        m_mdi->addSubWindow(pSubw.get());
+        emit subWindowCreated(pSubw.get());
+        return pSubw.release();
+    }
+
+    ///
+    /// \brief 生成一个子窗口通过已有的inner widget
+    /// \param w
+    /// \return
+    ///
+    template <typename SUBWND_CLASS /*= QMdiSubWindow*/>
+    SUBWND_CLASS* newMdiSubWnd(QWidget* w)
+    {
+        std::unique_ptr<SUBWND_CLASS> pSubw(new SUBWND_CLASS);
+        pSubw->setAttribute(Qt::WA_DeleteOnClose);
         if(!w)
             return nullptr;
         pSubw->setWidget(w);

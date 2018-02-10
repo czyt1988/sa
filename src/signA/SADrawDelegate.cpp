@@ -40,7 +40,7 @@ QList<QwtPlotCurve*> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &da
         return res;
     }
 
-    SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    QMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
     SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
     if(!pSubWnd && !pFigure)
     {
@@ -164,7 +164,7 @@ QwtPlotHistogram *SADrawDelegate::drawHistogram(SAAbstractDatas *data)
         return nullptr;
     }
     SAVectorInterval* intervalSeries = static_cast<SAVectorInterval*>(data);
-    SAMdiSubWindow* w = createFigureMdiSubWidget(data->getName ());
+    QMdiSubWindow* w = createFigureMdiSubWidget(data->getName ());
     SAFigureWindow* pFigure = getFigureWidgetFromMdiSubWindow(w);
     SAChart2D* chart = pFigure->current2DPlot();
     if(!chart)
@@ -196,7 +196,7 @@ QList<QwtPlotHistogram *> SADrawDelegate::drawHistogram(const QList<SAAbstractDa
         getMainWindow()->showWarningMessageInfo(tr("invalid data type,bar chart accept VectorInterval type"));
         return res;
     }
-    SAMdiSubWindow* w = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    QMdiSubWindow* w = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
     SAFigureWindow* pFigure = getFigureWidgetFromMdiSubWindow(w);
     SAChart2D* chart = pFigure->current2DPlot();
     if(!chart)
@@ -228,7 +228,7 @@ QList<QwtPlotBarChart *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *> 
     {
         return res;
     }
-    SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    QMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
     SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
     if(!pSubWnd && !pFigure)
     {
@@ -301,7 +301,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawScatter(const QList<SAAbstractDatas *>
         return res;
     }
 
-    SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    QMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
     SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
     if(!pSubWnd && !pFigure)
     {
@@ -374,7 +374,7 @@ QList<QwtPlotTradingCurve *> SADrawDelegate::drawBoxChart(const QList<SAAbstract
         return res;
     }
 
-    SAMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
+    QMdiSubWindow* pSubWnd = createFigureMdiSubWidget(datas.size()==1 ? datas[0]->getName () : "");
     SAFigureWindow* pFigure = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
     if(!pSubWnd && !pFigure)
     {
@@ -409,30 +409,16 @@ QList<QwtPlotTradingCurve *> SADrawDelegate::drawBoxChart(const QList<SAAbstract
 /// \param title 窗口名字
 /// \return
 ///
-SAMdiSubWindow*SADrawDelegate::createFigureMdiSubWidget(const QString &title)
-{
-    m_nUserChartCount++;
+QMdiSubWindow*SADrawDelegate::createFigureMdiSubWidget(const QString &title)
+{ 
     MainWindow* m = getMainWindow ();
-    QString str = title;
-    if(title.isNull () || title.isEmpty ())
-    {
-        str = tr("figure[%1]").arg(m_nUserChartCount);
-    }
-    SAMdiSubWindow* pSubWnd =  m->createMdiSubWindow<SAFigureWindow>(SA::SubWindowFigure,str);
-    pSubWnd->setWindowIcon(QIcon(":/icons/icons/figureIcon.png"));
-    if(!pSubWnd)
-    {
-        --m_nUserChartCount;
-        return nullptr;
-    }
-    SAFigureWindow* pChartWnd = qobject_cast<SAFigureWindow*>(pSubWnd->widget());
-    if(!pChartWnd)
-    {
-        --m_nUserChartCount;
-        return nullptr;
-    }
-    m->connect (pChartWnd,&SAFigureWindow::chartDataChanged,m,&MainWindow::onChartDataChanged);
-    return pSubWnd;
+    return m->createFigureWindow(title);
+}
+
+QMdiSubWindow *SADrawDelegate::createFigureMdiSubWidget(SAFigureWindow *fig, const QString &title)
+{
+    MainWindow* m = getMainWindow ();
+    return m->createFigureWindow(fig,title);
 }
 
 

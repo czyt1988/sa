@@ -37,7 +37,8 @@ public:
     //箱盒图
     QList<QwtPlotTradingCurve *> drawBoxChart(const QList<SAAbstractDatas*>& datas);
     //创建绘图窗口
-    SAMdiSubWindow* createFigureMdiSubWidget(const QString& title = QString());
+    QMdiSubWindow *createFigureMdiSubWidget(const QString& title = QString());
+    QMdiSubWindow* createFigureMdiSubWidget(SAFigureWindow* fig, const QString& title = QString());
     //把QMdiSubWindow的内部SAFigureWidget获取
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* w);
 protected:
