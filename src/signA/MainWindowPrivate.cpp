@@ -162,9 +162,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionValueManagerDock = new QAction(mainWinowPtr);
     actionValueManagerDock->setObjectName(QStringLiteral("actionValueManagerDock"));
-    actionValueManagerDock->setCheckable(false);
-    actionValueManagerDock->setChecked(false);
     actionValueManagerDock->setIcon(QIcon(":/icons/icons/valueManagerDock.png"));
+
+    actionFigureSetDock = new QAction(mainWinowPtr);
+    actionFigureSetDock->setObjectName(QStringLiteral("actionValueManagerDock"));
+    actionFigureSetDock->setIcon(QIcon(":/icons/icons/figureSet.png"));
 
     actionViewValueInCurrentTab = new QAction(mainWinowPtr);
     actionViewValueInCurrentTab->setObjectName(QStringLiteral("actionViewValueInCurrentTab"));
@@ -507,13 +509,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
     //Window Pannel
     viewCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Window"));
-    ribbonButtonFigureViewer = viewCategoryWindowPannel->addLargeAction(actionFigureViewer);
-    ribbonButtonDataFeatureDock = viewCategoryWindowPannel->addLargeAction(actionDataFeatureDock);
-    ribbonButtonLayerOutDock = viewCategoryWindowPannel->addSmallAction(actionLayerOutDock);
-    ribbonButtonValueViewerDock = viewCategoryWindowPannel->addSmallAction(actionValueViewerDock);
-    ribbonButtonValueManagerDock = viewCategoryWindowPannel->addSmallAction(actionValueManagerDock);
     ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock\nView"),QIcon(":/icons/icons/AllDock.png"),QToolButton::InstantPopup);
     menuWindowsViewSet->addAction(actionFigureViewer);
+    menuWindowsViewSet->addAction(actionFigureSetDock);
     menuWindowsViewSet->addAction(actionDataFeatureDock);
     menuWindowsViewSet->addAction(actionSubWindowListDock);
     menuWindowsViewSet->addAction(actionLayerOutDock);
@@ -521,6 +519,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet->addAction(actionValueViewerDock);
     menuWindowsViewSet->addAction(actionMessageInfoDock);
     ribbonButtonAllDock->setMenu(menuWindowsViewSet);
+    ribbonButtonFigureViewer = viewCategoryWindowPannel->addSmallAction(actionFigureViewer);
+    ribbonButtonFigureSetDock = viewCategoryWindowPannel->addSmallAction(actionFigureSetDock);
+    ribbonButtonDataFeatureDock = viewCategoryWindowPannel->addSmallAction(actionDataFeatureDock);
+    ribbonButtonLayerOutDock = viewCategoryWindowPannel->addSmallAction(actionLayerOutDock);
+    ribbonButtonValueViewerDock = viewCategoryWindowPannel->addSmallAction(actionValueViewerDock);
+    ribbonButtonValueManagerDock = viewCategoryWindowPannel->addSmallAction(actionValueManagerDock);
     ribbonButtonSetDefalutDockPos = viewCategoryWindowPannel->addLargeAction(actionSetDefalutDockPos);
     //sub window mode
     windowModeCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Sub Window Mode"));
@@ -821,7 +825,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
     actionSave->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", 0));
     actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0));
-    actionDataFeatureDock->setText(QApplication::translate("MainWindow", "Data\nFeature", 0));
+    actionDataFeatureDock->setText(QApplication::translate("MainWindow", "Data Feature", 0));
     actionNewChart->setText(QApplication::translate("MainWindow", "New\nChart", 0));
 #ifndef QT_NO_TOOLTIP
     actionNewChart->setToolTip(QApplication::translate("MainWindow", "New Chart with dialog", 0));
@@ -886,8 +890,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 #endif // QT_NO_TOOLTIP
     actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "Defalut\nView", 0));
     actionValueViewerDock->setText(QApplication::translate("MainWindow", "Value View", 0));
-    actionFigureViewer->setText(QApplication::translate("MainWindow", "Figure\nView", 0));
-    actionMessageInfoDock->setText(QApplication::translate("MainWindow", "Message\nView", 0));
+    actionFigureViewer->setText(QApplication::translate("MainWindow", "Figure View", 0));
+    actionMessageInfoDock->setText(QApplication::translate("MainWindow", "Message View", 0));
     actionDeleteValue->setText(QApplication::translate("MainWindow", "Delete Value", 0));
 #ifndef QT_NO_TOOLTIP
     actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "Delete Value", 0));
@@ -915,7 +919,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionDrawBoxChart->setText(QApplication::translate("MainWindow", "Box", 0));
     actionSelectionRegionMove->setText(QApplication::translate("MainWindow", "Transform", 0));
     actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Move\nDatas", 0));
-
+    actionFigureSetDock->setText(QApplication::translate("MainWindow", "Figure Setting", 0));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));

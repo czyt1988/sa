@@ -73,6 +73,7 @@ public:
     QAction *actionRedo;
     QAction *actionValueManagerDock;
     QAction *actionMessageInfoDock;
+    QAction *actionFigureSetDock;
     QAction *actionViewValueInCurrentTab;
     QAction *actionViewValueInNewTab;
     QAction *actionLayerOutDock;
@@ -188,6 +189,7 @@ public:
     SARibbonToolButton* ribbonButtonLayerOutDock;
     SARibbonToolButton* ribbonButtonValueViewerDock;
     SARibbonToolButton* ribbonButtonValueManagerDock;
+    SARibbonToolButton* ribbonButtonFigureSetDock;
     SARibbonToolButton* ribbonButtonAllDock;
     SARibbonToolButton* ribbonButtonSetDefalutDockPos;
     SARibbonPannel* windowModeCategoryWindowPannel;

@@ -315,7 +315,8 @@ void MainWindow::initUI()
     connect(ui->actionFigureViewer,&QAction::triggered,this,&MainWindow::onActionFigureViewerTriggered);
     //显示隐藏message窗口
     connect(ui->actionMessageInfoDock,&QAction::triggered,this,&MainWindow::onActionMessageInfoDockTriggered);
-
+    //显示隐藏figure set窗口
+    connect(ui->actionFigureSetDock,&QAction::triggered,this,&MainWindow::onActionFigureSetDockTriggered);
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
@@ -713,6 +714,16 @@ void MainWindow::onActionMessageInfoDockTriggered(bool on)
     ui->dockWidget_message->show();
     ui->dockWidget_message->raise();
 }
+///
+/// \brief 显示隐藏绘图设置窗口
+/// \param on
+///
+void MainWindow::onActionFigureSetDockTriggered(bool on)
+{
+    Q_UNUSED(on);
+    ui->dockWidget_plotSet->show();
+    ui->dockWidget_plotSet->raise();
+}
 
 void MainWindow::onActionProjectSettingTriggered()
 {
@@ -1081,54 +1092,9 @@ void MainWindow::onActionNewChartTriggered()
 ///
 void MainWindow::onActionAddLineChartTriggered()
 {
+    m_drawDelegate->drawLineWithWizard();
     raiseMainDock();
-    raiseValueManageDock();
 
-
-    QList<SAAbstractDatas *> datas = getSeletedDatas();
-    if(datas.size() > 0)
-    {
-        SAAddCurveTypeDialog::AddCurveType type = SAAddCurveTypeDialog::getAddCurveType(this);
-        if(SAAddCurveTypeDialog::Unknow == type)
-        {
-            return;
-        }
-        if(SAAddCurveTypeDialog::AddInCurrentFig == type)
-        {
-           QList<SAChart2D*> charts = getCurSubWindowCharts();
-           if(charts.isEmpty())
-           {
-                m_drawDelegate->drawLine(datas);
-                return;
-           }
-           SAChart2D* chart = nullptr;
-           chart = charts[0];
-           if(nullptr == chart)
-           {
-               return;
-           }
-           m_drawDelegate->drawLine(datas,chart);
-           qDebug("add cut in cur");
-           return;
-        }
-        else if(SAAddCurveTypeDialog::AddInNewFig == type)
-        {
-           m_drawDelegate->drawLine(datas);
-           return;
-        }
-        else if(SAAddCurveTypeDialog::AddInCurrentFigWithSubplot == type)
-        {
-            //TODO
-        }
-    }
-    else
-    {
-        SAAddLineChartSetDialog dlg(this);
-        if(QDialog::Accepted != dlg.exec())
-        {
-            return;
-        }
-    }
 }
 ///
 /// \brief 绘制棒图
@@ -1966,7 +1932,7 @@ QMdiSubWindow *MainWindow::createFigureWindow(SAFigureWindow *fig, const QString
 /// \brief 获取当前正在显示的图形窗口
 /// \return 如果没有或不是显示图形窗口，则返回nullptr
 ///
-SAFigureWindow *MainWindow::getCurrentFigureWindow()
+SAFigureWindow *MainWindow::getCurrentFigureWindow() const
 {
     return m_lastShowFigureWindow;
 }
@@ -1993,7 +1959,7 @@ QList<SAFigureWindow *> MainWindow::getFigureWindowList() const
 /// \brief 获取当前正在显示的Chart指针
 /// \return 如果没有或不是显示chart，则返回nullptr
 ///
-SAChart2D *MainWindow::getCurSubWindowChart()
+SAChart2D *MainWindow::getCurSubWindowChart() const
 {
     SAFigureWindow* pBase = getCurrentFigureWindow();
     if (nullptr == pBase)
@@ -2005,7 +1971,7 @@ SAChart2D *MainWindow::getCurSubWindowChart()
 /// \param 如果没有或不是显示chart，则返回nullptr
 /// \return
 ///
-QList<SAChart2D*> MainWindow::getCurSubWindowCharts()
+QList<SAChart2D*> MainWindow::getCurSubWindowCharts() const
 {
     SAFigureWindow* pFig = getCurrentFigureWindow();
     if (nullptr == pFig)
@@ -2840,23 +2806,17 @@ void MainWindow::__loadSubWindowFromFolder(const QString &folderPath)
         return;
     }
     QString errString;
-    QMdiSubWindow* sub = nullptr;
     for(int i=0;i<size;++i)
     {
         if(QMdiSubWindow* s = load_sub_window(uiInterface(),dir.absoluteFilePath(dataFileList[i]),&errString))
         {
-            sub = s;
+
         }
         else
         {
             showMessageInfo(errString,SA::WarningMessage);
         }
     }
-//    if(sub)
-//    {
-//        setActiveSubWindow(sub);
-//        //onMdiAreaSubWindowActivated(sub);
-//    }
 }
 
 

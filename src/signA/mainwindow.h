@@ -138,13 +138,13 @@ public:
     QMdiSubWindow* createFigureWindow(const QString& title = QString());
     QMdiSubWindow* createFigureWindow(SAFigureWindow* fig,const QString& title = QString());
     //获取最后显示的绘图窗口的指针
-    SAFigureWindow* getCurrentFigureWindow();
+    SAFigureWindow* getCurrentFigureWindow() const;
     //获取所有的figure
     QList<SAFigureWindow*> getFigureWindowList() const;
     //获取当前正在显示的Chart指针
-    SAChart2D* getCurSubWindowChart();
+    SAChart2D* getCurSubWindowChart() const;
     //获取当前正在显示的Chart指针,如果是一个subplot，返回多个指针
-    QList<SAChart2D *> getCurSubWindowCharts();
+    QList<SAChart2D *> getCurSubWindowCharts() const;
     //用于子窗口激活时刷新“图表设置工具栏的选中状态”
     void updateChartSetToolBar(SAFigureWindow* w=nullptr);
     //获取所有子窗口指针
@@ -430,6 +430,8 @@ private slots:
     void onActionFigureViewerTriggered(bool on);
     //显示隐藏message窗口
     void onActionMessageInfoDockTriggered(bool on);
+    //显示隐藏figure set 窗口
+    void onActionFigureSetDockTriggered(bool on);
     /// \}
 
     ///

@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
-    <height>362</height>
+    <width>484</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QGroupBox" name="groupBoxX">
      <property name="title">
@@ -30,43 +30,34 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButtonXTime">
-          <property name="text">
-           <string>time scale</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButtonXInv">
-          <property name="text">
-           <string>inv</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QRadioButton" name="radioButtonXUseDef">
           <property name="text">
            <string>user define</string>
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
       <item>
-       <widget class="QStackedWidget" name="stackedWidgetX">
-        <property name="currentIndex">
-         <number>-1</number>
-        </property>
-       </widget>
+       <widget class="SAValueSelectComboBox" name="valueComboBoxX" native="true"/>
+      </item>
+      <item>
+       <widget class="SAUserDefineAxisDataWidget" name="userDefineXWidget" native="true"/>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="labelYInfo">
-     <property name="text">
-      <string/>
-     </property>
     </widget>
    </item>
    <item>
@@ -74,7 +65,7 @@
      <property name="title">
       <string>Y</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
@@ -85,30 +76,39 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButtonYTime">
-          <property name="text">
-           <string>time scale</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButtonYInv">
-          <property name="text">
-           <string>inv</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QRadioButton" name="radioButtonYUseDef">
           <property name="text">
            <string>user define</string>
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
       <item>
-       <widget class="QStackedWidget" name="stackedWidgetY"/>
+       <widget class="SAValueSelectComboBox" name="valueComboBoxY" native="true"/>
+      </item>
+      <item>
+       <widget class="SAUserDefineAxisDataWidget" name="userDefineYWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -118,11 +118,28 @@
      <property name="title">
       <string>other set</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QCheckBox" name="checkBoxIsAddInCurFig">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>is add in current figure</string>
+         <string>title</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEditTitle"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Add in current chart</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBoxAddInCur">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -137,7 +154,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>93</height>
+       <height>109</height>
       </size>
      </property>
     </spacer>
@@ -168,6 +185,20 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SAValueSelectComboBox</class>
+   <extends>QWidget</extends>
+   <header>SAValueSelectComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAUserDefineAxisDataWidget</class>
+   <extends>QWidget</extends>
+   <header>SAUserDefineAxisDataWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

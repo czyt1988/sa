@@ -2,12 +2,13 @@
 #define SAADDLINECHARTSETDIALOG_H
 
 #include <QDialog>
-class SATimeFormatSetWidget;
+
 class SAUserDefineAxisDataWidget;
 class QButtonGroup;
 class QComboBox;
-class QStackedWidget;
 class SAValueSelectComboBox;
+class SAAbstractDatas;
+
 namespace Ui {
 class SAAddLineChartSetDialog;
 }
@@ -22,8 +23,6 @@ public:
     enum AsixSet
     {
         NormalSet = 0
-        ,TimeSet
-        ,InvSet
         ,UserDefineSet
     };
     //设置x，y轴当前选中的状态
@@ -38,29 +37,36 @@ public:
     //获取坐标轴的设置
     AsixSet getXAxisSet() const;
     AsixSet getYAxisSet() const;
-    //获取设置的时间格式
-    QString getXTimeFormat() const;
-    QString getYTimeFormat() const;
+
     //获取自定义设置的值
     void getXUserDefineValues(double& start,double& increase) const;
     void getYUserDefineValues(double& start,double& increase) const;
+    //是否添加到当前的chart
+    bool isAddInCurrentChart() const;
+    //曲线的名
+    QString getChartTitle() const;
+    void setChartTitle(const QString& title);
+    //获取最后选择的x，y值
+    SAAbstractDatas* getXDatas() const;
+    SAAbstractDatas* getYDatas() const;
+    //
+
 private slots:
     //radio x more set clicked
     void onXRadioButtonClicked(int id);
     //radio y more set clicked
     void onYRadioButtonClicked(int id);
 private:
-
+    void showValueComboBoxX(bool on);
+    void showValueComboBoxY(bool on);
+    void showUserDefX(bool on);
+    void showUserDefY(bool on);
 private:
     Ui::SAAddLineChartSetDialog *ui;
     QButtonGroup* m_xMoreSetButtonGroup;
     QButtonGroup* m_yMoreSetButtonGroup;
-    SATimeFormatSetWidget* m_xTimeSet;
-    SATimeFormatSetWidget* m_yTimeSet;
     SAUserDefineAxisDataWidget* m_xUsrDef;
     SAUserDefineAxisDataWidget* m_yUsrDef;
-    SAValueSelectComboBox* m_xValueCombox;
-    SAValueSelectComboBox* m_yValueCombox;
 };
 
 #endif // SAADDLINECHARTSETDIALOG_H
