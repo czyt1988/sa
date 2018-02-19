@@ -65,7 +65,7 @@ public:
     QwtPlotCurve* addCurve(const QVector<QPointF>& xyDatas);
     QwtPlotCurve* addCurve(const QVector< double > &xData, const QVector< double > &yData);
     SAXYSeries *addCurve(SAAbstractDatas* datas);
-    SAXYSeries* addCurve(SAAbstractDatas* datas,double xStart,double xDetal);
+    SAXYSeries* addCurve(SAAbstractDatas* datas, double xStart, double xDetal, const QString &name = QString());
     SAXYSeries* addCurve(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
     //添加Histogram-支持redo/undo
     SAHistogramSeries *addHistogram(SAAbstractDatas* datas);

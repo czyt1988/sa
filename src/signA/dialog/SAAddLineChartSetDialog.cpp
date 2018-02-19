@@ -40,22 +40,24 @@ SAAddLineChartSetDialog::~SAAddLineChartSetDialog()
 
 void SAAddLineChartSetDialog::setXAsixSet(SAAddLineChartSetDialog::AsixSet set)
 {
-    QAbstractButton *btn = m_xMoreSetButtonGroup->button(static_cast<int>(set));
+    int id = static_cast<int>(set);
+    QAbstractButton *btn = m_xMoreSetButtonGroup->button(id);
     if(btn)
     {
         btn->setChecked(true);
     }
-    onXRadioButtonClicked(set);
+    onXRadioButtonClicked(id);
 }
 
 void SAAddLineChartSetDialog::setYAsixSet(SAAddLineChartSetDialog::AsixSet set)
 {
-    QAbstractButton *btn = m_yMoreSetButtonGroup->button(static_cast<int>(set));
+    int id = static_cast<int>(set);
+    QAbstractButton *btn = m_yMoreSetButtonGroup->button(id);
     if(btn)
     {
         btn->setChecked(true);
     }
-    onYRadioButtonClicked(set);
+    onYRadioButtonClicked(id);
 }
 
 void SAAddLineChartSetDialog::setXSelectName(const QString &name)
@@ -159,34 +161,22 @@ void SAAddLineChartSetDialog::onYRadioButtonClicked(int id)
 
 void SAAddLineChartSetDialog::showValueComboBoxX(bool on)
 {
-    if(on != ui->valueComboBoxX->isVisible())
-    {
-        ui->valueComboBoxX->setVisible(on);
-    }
+    ui->valueComboBoxX->setVisible(on);
 }
 
 void SAAddLineChartSetDialog::showValueComboBoxY(bool on)
 {
-    if(on != ui->valueComboBoxY->isVisible())
-    {
-        ui->valueComboBoxY->setVisible(on);
-    }
+    ui->valueComboBoxY->setVisible(on);
 }
 
 void SAAddLineChartSetDialog::showUserDefX(bool on)
 {
-    if(on != ui->userDefineXWidget->isVisible())
-    {
-        ui->userDefineXWidget->setVisible(on);
-    }
+    ui->userDefineXWidget->setVisible(on);
 }
 
 void SAAddLineChartSetDialog::showUserDefY(bool on)
 {
-    if(on != ui->userDefineYWidget->isVisible())
-    {
-        ui->userDefineYWidget->setVisible(on);
-    }
+    ui->userDefineYWidget->setVisible(on);
 }
 
 

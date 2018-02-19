@@ -545,7 +545,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonToobBtnSelectSkin->setPopupMode(QToolButton::InstantPopup);
     menuBar->quickAccessBar()->addSeparator();
     menuBar->setRibbonStyle(SARibbonBar::WpsLiteStyle);
-    menuBar->repaint();
+    //menuBar->repaint();
 //=======end ribbon set=======================================================================================
 
     statusBar = new QStatusBar(mainWinowPtr);

@@ -18,6 +18,7 @@
 #include "SAScatterSeries.h"
 #include "SAAddLineChartSetDialog.h"
 #include "SAAddCurveTypeDialog.h"
+#include <QInputDialog>
 SADrawDelegate::SADrawDelegate(MainWindow* wnd):SAMainWindowDelegate(wnd)
 {
 }
@@ -158,7 +159,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &d
 /// \brief 在已有图上添加曲线
 /// \param data
 ///
-QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data,double xStart,double xDetal,SAChart2D* chart)
+QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data, double xStart, double xDetal, SAChart2D* chart, const QString &name)
 {
     if(nullptr == chart)
     {
@@ -170,8 +171,9 @@ QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data,double xStart,doubl
     {
         return nullptr;
     }
+    QString title = (name.isEmpty() ? data->getName() : name);
     chart->setAutoReplot(false);
-    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(data,xStart,xDetal));
+    QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(data,xStart,xDetal,title));
     chart->setAutoReplot(true);
     chart->replot();
     return cur;
@@ -184,7 +186,7 @@ QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data,double xStart,doubl
 /// \param chart 为nullptr时会新创建一个figure并绘图
 /// \return
 ///
-QwtPlotCurve *SADrawDelegate::drawLine(SAAbstractDatas* x, SAAbstractDatas* y,const QString& name,SAChart2D *chart)
+QwtPlotCurve *SADrawDelegate::drawLine(SAAbstractDatas* x, SAAbstractDatas* y, SAChart2D *chart, const QString& name)
 {
     if(nullptr == chart)
     {
@@ -203,6 +205,30 @@ QwtPlotCurve *SADrawDelegate::drawLine(SAAbstractDatas* x, SAAbstractDatas* y,co
     }
     chart->setAutoReplot(false);
     QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve (x,y,title));
+    chart->setAutoReplot(true);
+    chart->updateAxes();
+    chart->replot();
+    return cur;
+}
+
+QwtPlotCurve *SADrawDelegate::drawLine(const QVector<double> &xData, const QVector<double> &yData, SAChart2D *chart, const QString &name)
+{
+    if(nullptr == chart)
+    {
+        QMdiSubWindow* pSubWnd = nullptr;
+        std::tie(chart,std::ignore,pSubWnd) = createFigure();
+        pSubWnd->show();
+    }
+    if(0 == xData.size() || 0 == yData.size())
+    {
+        return nullptr;
+    }
+    chart->setAutoReplot(false);
+    QwtPlotCurve* cur = chart->addCurve (xData,yData);
+    if(cur)
+    {
+        cur->setTitle(name);
+    }
     chart->setAutoReplot(true);
     chart->updateAxes();
     chart->replot();
@@ -235,6 +261,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
         else if(SAAddCurveTypeDialog::AddInCurrentFigWithSubplot == type)
         {
             //TODO
+
         }
         return drawLine(datas,chart);
     }
@@ -269,7 +296,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
         if(SAAddLineChartSetDialog::NormalSet == asX && SAAddLineChartSetDialog::NormalSet == asY)
         {
             SAAbstractDatas* x = dlg.getXDatas();
-            SAAbstractDatas* y = dlg.getXDatas();
+            SAAbstractDatas* y = dlg.getYDatas();
 
 
             if(nullptr == x || nullptr == y)
@@ -277,13 +304,26 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
                 getMainWindow()->showWarningMessageInfo(tr("select invalid x datas or y datas"));
                 return QList<QwtPlotCurve *>();
             }
-            QwtPlotCurve *p = drawLine(x,y,title,chart);
+            QwtPlotCurve *p = drawLine(x,y,chart,title);
             return {p};
 
         }
         else if(SAAddLineChartSetDialog::NormalSet == asX && SAAddLineChartSetDialog::UserDefineSet == asY)
         {
-            //TODO
+            double start,detal;
+            dlg.getYUserDefineValues(start,detal);
+            SAAbstractDatas* x = dlg.getXDatas();
+            QVector<double> xarr,yarr;
+            if(SAAbstractDatas::converToDoubleVector(x,xarr))
+            {
+                yarr.resize(xarr.size());
+                for(int i=0;i<yarr.size();++i)
+                {
+                    yarr[i] = start + i*detal;
+                }
+                QwtPlotCurve *p = drawLine(xarr,yarr,chart,title);
+                return {p};
+            }
         }
         else if(SAAddLineChartSetDialog::UserDefineSet == asX && SAAddLineChartSetDialog::NormalSet == asY)
         {
@@ -296,12 +336,39 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
             }
             double start,detal;
             dlg.getXUserDefineValues(start,detal);
-            QwtPlotCurve *p = drawLine(y,start,detal,chart);
+            QwtPlotCurve *p = drawLine(y,start,detal,chart,title);
             return {p};
         }
         else if(SAAddLineChartSetDialog::UserDefineSet == asX && SAAddLineChartSetDialog::UserDefineSet == asY)
         {
-            //TODO
+            bool isOK = false;
+            int dataSize = QInputDialog::getInt(getMainWindow()
+                                     ,tr("input data size")
+                                     ,tr("input define data size:")
+                                     ,1000
+                                     ,1
+                                     ,99999999
+                                     ,1
+                                     ,&isOK);
+            if(!isOK)
+            {
+                return QList<QwtPlotCurve *>();
+            }
+            double xstart,xdetal;
+            double ystart,ydetal;
+            dlg.getXUserDefineValues(xstart,xdetal);
+            dlg.getYUserDefineValues(ystart,ydetal);
+            QVector<double> xarr,yarr;
+            xarr.resize(dataSize);
+            yarr.resize(dataSize);
+            for(int i=0;i<dataSize;++i)
+            {
+                xarr[i] = xstart + i*xdetal;
+                yarr[i] = ystart + i*ydetal;
+            }
+            QwtPlotCurve *p = drawLine(xarr,yarr,chart,title);
+            return {p};
+
         }
     }
     return QList<QwtPlotCurve *>();
@@ -594,5 +661,13 @@ SAFigureWindow*SADrawDelegate::getFigureWidgetFromMdiSubWindow(QMdiSubWindow *w)
 SAChart2D *SADrawDelegate::getCurSubWindowChart() const
 {
     return getMainWindow()->getCurSubWindowChart();
+}
+///
+/// \brief 获取当前的figure 窗口
+/// \return
+///
+SAFigureWindow *SADrawDelegate::getCurrentFigureWindow() const
+{
+    return getMainWindow()->getCurrentFigureWindow();
 }
 

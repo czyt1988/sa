@@ -31,9 +31,11 @@ public:
     QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas);
     QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas,SAChart2D* chart);
     //添加趋势图，x轴通过xStart和xDetal自动计算
-    QwtPlotCurve* drawLine(SAAbstractDatas* data, double xStart, double xDetal, SAChart2D *chart);
+    QwtPlotCurve* drawLine(SAAbstractDatas* data, double xStart, double xDetal, SAChart2D *chart, const QString &name);
     //添加x,y曲线 chart 为nullptr时会新创建一个figure并绘图
-    QwtPlotCurve* drawLine(SAAbstractDatas* x, SAAbstractDatas* y, const QString &name, SAChart2D *chart);
+    QwtPlotCurve* drawLine(SAAbstractDatas* x, SAAbstractDatas* y, SAChart2D *chart, const QString &name);
+    //添加x,y曲线
+    QwtPlotCurve* drawLine(const QVector< double > &xData, const QVector< double > &yData, SAChart2D *chart, const QString &name);
     QList<QwtPlotCurve *> drawLineWithWizard();
     //统计图
     QwtPlotHistogram* drawHistogram(SAAbstractDatas* data);
@@ -48,6 +50,8 @@ public:
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* w);
     //获取当前可用的绘图
     SAChart2D* getCurSubWindowChart() const;
+    //获取当前的fig窗口
+    SAFigureWindow* getCurrentFigureWindow() const;
 protected:
     QwtPlotCurve* drawLine(SAChart2D *chart , SAVectorPointF* points);
 private:

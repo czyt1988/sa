@@ -24,6 +24,7 @@
 #include <QInputDialog>
 #include <QMdiArea>
 #include <QProcess>
+#include <QTimer>
 //----------STL-------------
 #include <iostream>
 #include <algorithm>
@@ -150,7 +151,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ,m_menuValueManagerView(nullptr)
  // ,m_lastActiveWnd(nullptr)
   ,m_nProjectCount(0)
-  ,m_lastShowFigureWindow(nullptr)
   ,m_nUserChartCount(0)
 {
     saAddLog("start app");
@@ -470,7 +470,6 @@ void MainWindow::initUI()
             ,this,&MainWindow::showMessageInfo);
     //功能性关联
     connect(this,&MainWindow::cleanedProject,ui->tabWidget_valueViewer,&SATabValueViewerWidget::clearAndReleaseAll);
-    showMaximized();
     ui->actionWindowMode->setChecked(QMdiArea::SubWindowView == ui->mdiArea->viewMode());
     ui->actionTabMode->setChecked(QMdiArea::TabbedView == ui->mdiArea->viewMode());
 }
@@ -781,8 +780,10 @@ void MainWindow::loadSetting()
     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                        "CZY", "SA");
     loadWindowState(settings);
-    QResizeEvent* rse = new QResizeEvent(ribbonBar()->size(),ribbonBar()->size());
-    QApplication::postEvent(ribbonBar(),rse);
+//    QEvent e = QEvent(QEvent::LayoutRequest);
+//    QApplication::sendEvent(this,&e);
+//    saPrint() << "isMaximized:" << isMaximized();
+//    showMaximized();
 }
 
 void MainWindow::saveSetting()
@@ -823,13 +824,21 @@ void MainWindow::loadWindowState(const QSettings& setting)
     {
         onActionSetDefalutDockPosTriggered();
     }
-	var = setting.value("mainWindow/geometry");
-	if(var.isValid())
-		restoreGeometry(var.toByteArray());
-	var = setting.value("mainWindow/windowState");
-	if(var.isValid())
-		restoreState(var.toByteArray());
-
+    var = setting.value("mainWindow/geometry");
+    bool isLoadGeometry = false;
+    if(var.isValid())
+    {
+        isLoadGeometry |= restoreGeometry(var.toByteArray());
+    }
+    var = setting.value("mainWindow/windowState");
+    if(var.isValid())
+    {
+        isLoadGeometry |= restoreState(var.toByteArray());
+    }
+    if(!isLoadGeometry)
+    {
+        showMaximized();
+    }
     var = setting.value("skin/name");
     if(var.isValid())
         setSkin(var.toString());
@@ -1728,9 +1737,6 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
 #else
       ui->toolBar_chartSet->setEnabled(true);
 #endif
-        //窗口激活后，把绘图窗口的指针保存
-        m_lastShowFigureWindow = fig;
-
 
         //刷新toolbar
         updateChartSetToolBar(fig);
@@ -1776,12 +1782,6 @@ void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
     SAFigureWindow* fig = getFigureWidgetFromMdiSubWindow(arg1);
     if(fig)
     {
-        //绘图窗口关闭，判断当前记录的绘图窗口指针，若是，就删除
-        if(m_lastShowFigureWindow == fig)
-        {
-            m_lastShowFigureWindow = nullptr;
-        }
-        //
         getPlotLayerModel()->setPlot(nullptr);
         ui->chartDatasViewWidget->setFigure(nullptr);
     }
@@ -1927,14 +1927,26 @@ QMdiSubWindow *MainWindow::createFigureWindow(SAFigureWindow *fig, const QString
     connect (pChartWnd,&SAFigureWindow::chartDataChanged,this,&MainWindow::onChartDataChanged);
     return pSubWnd;
 }
-
+///
+/// \brief 获取当前激活的子窗口
+/// \return 如果窗口没有激活，返回nullptr
+///
+QMdiSubWindow *MainWindow::getCurrentActiveSubWindow() const
+{
+    return ui->mdiArea->activeSubWindow();
+}
 ///
 /// \brief 获取当前正在显示的图形窗口
 /// \return 如果没有或不是显示图形窗口，则返回nullptr
 ///
 SAFigureWindow *MainWindow::getCurrentFigureWindow() const
 {
-    return m_lastShowFigureWindow;
+    QMdiSubWindow* sub = getCurrentActiveSubWindow();
+    if(sub)
+    {
+        return qobject_cast<SAFigureWindow*>(sub->widget());
+    }
+    return nullptr;
 }
 ///
 /// \brief 获取所有的figure
@@ -2047,14 +2059,7 @@ void MainWindow::setActiveSubWindow(QMdiSubWindow *window)
     ui->mdiArea->setActiveSubWindow(window);
 }
 
-///
-/// \brief 获取当前激活的子窗口
-/// \return 如果窗口没有激活，返回nullptr
-///
-QMdiSubWindow *MainWindow::getCurrentActiveSubWindow() const
-{
-    return qobject_cast<SAMdiSubWindow*>(ui->mdiArea->activeSubWindow());
-}
+
 ///
 /// \brief 判断mdi中是否存在指定的子窗口
 /// \param

@@ -504,9 +504,9 @@ SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas)
 /// \param xDetal
 /// \return
 ///
-SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xDetal)
+SAXYSeries *SAChart2D::addCurve(SAAbstractDatas *datas, double xStart, double xDetal, const QString &name)
 {
-    QScopedPointer<SAXYSeries> series(new SAXYSeries(datas->getName()));
+    QScopedPointer<SAXYSeries> series(new SAXYSeries(name));
     series->setSamples(datas,xStart,xDetal);
     if(series->dataSize() <= 0)
     {
