@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>399</width>
+    <width>404</width>
     <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>关于</string>
+   <string>About</string>
   </property>
   <property name="windowIcon">
    <iconset resource="icons.qrc">
@@ -39,7 +39,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;数据查看及分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;个人网站：&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://blog.csdn.net/czyt1988&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;邮箱：czy.t@163.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;Data visualization and analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Website：&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://blog.csdn.net/czyt1988&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#000000;&quot;&gt;Email：czy.t@163.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>

@@ -235,42 +235,52 @@ QwtPlotCurve *SADrawDelegate::drawLine(const QVector<double> &xData, const QVect
     return cur;
 }
 ///
-/// \brief SADrawDelegate::drawLineWithWizard
+/// \brief 通过对话框引导添加图线
 /// \return
 ///
 QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
 {
     QList<SAAbstractDatas *> datas = getMainWindow()->getSeletedDatas();
     SAChart2D* chart = nullptr;
-    if( (datas.size() > 0) && (2 != datas.size()))
-    {
-        //如果选中了1个数据或者多个数据，就绘制0-1的趋势图
-        SAAddCurveTypeDialog::AddCurveType type = SAAddCurveTypeDialog::getAddCurveType(getMainWindow());
-        if(SAAddCurveTypeDialog::Unknow == type)
-        {
-            return QList<QwtPlotCurve *>();
-        }
-        if(SAAddCurveTypeDialog::AddInCurrentFig == type)
-        {
-           chart = getCurSubWindowChart();
-        }
-        else if(SAAddCurveTypeDialog::AddInNewFig == type)
-        {
-            chart = nullptr;//空指针时会自动创建figure
-        }
-        else if(SAAddCurveTypeDialog::AddInCurrentFigWithSubplot == type)
-        {
-            //TODO
+//    if( (datas.size() > 0) && (2 != datas.size()))
+//    {
+//        //如果选中了1个数据或者多个数据，就绘制0-1的趋势图
+//        SAAddCurveTypeDialog::AddCurveType type = SAAddCurveTypeDialog::getAddCurveType(getMainWindow());
+//        if(SAAddCurveTypeDialog::Unknow == type)
+//        {
+//            return QList<QwtPlotCurve *>();
+//        }
+//        if(SAAddCurveTypeDialog::AddInCurrentFig == type)
+//        {
+//           chart = getCurSubWindowChart();
+//        }
+//        else if(SAAddCurveTypeDialog::AddInNewFig == type)
+//        {
+//            chart = nullptr;//空指针时会自动创建figure
+//        }
+//        else if(SAAddCurveTypeDialog::AddInCurrentFigWithSubplot == type)
+//        {
+//            //TODO
 
-        }
-        return drawLine(datas,chart);
-    }
-    else
+//        }
+//        return drawLine(datas,chart);
+//    }
+    if(datas.size() <= 2)
     {
         //如果选中了两个数据或者没有选中数据，使用对话框引导
         SAAddLineChartSetDialog dlg(getMainWindow());
-        if(2 == datas.size())
+        if(1 == datas.size())
         {
+            dlg.setXAsixSet(SAAddLineChartSetDialog::UserDefineSet);
+            dlg.setXUserDefineValues(0,1);
+            dlg.setYAsixSet(SAAddLineChartSetDialog::NormalSet);
+            dlg.setYSelectName(datas[0]->getName());
+            dlg.setChartTitle(datas[0]->getName());
+        }
+        else if(2 == datas.size())
+        {
+            dlg.setXAsixSet(SAAddLineChartSetDialog::NormalSet);
+            dlg.setYAsixSet(SAAddLineChartSetDialog::NormalSet);
             dlg.setXSelectName(datas[0]->getName());
             dlg.setYSelectName(datas[1]->getName());
             dlg.setChartTitle(datas[1]->getName());
@@ -327,7 +337,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
         }
         else if(SAAddLineChartSetDialog::UserDefineSet == asX && SAAddLineChartSetDialog::NormalSet == asY)
         {
-            SAAbstractDatas* y = dlg.getXDatas();
+            SAAbstractDatas* y = dlg.getYDatas();
 
             if(nullptr == y)
             {

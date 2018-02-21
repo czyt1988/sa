@@ -959,9 +959,12 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 //    toolBarChartTools->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 
     mainRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Main", 0));
+    viewRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "View", 0));
+    operateRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Operate", 0));
+    analysisRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Analysis", 0));
+
     mainCategoryFilePannel->setWindowTitle(QApplication::translate("MainWindow", "File", 0));
     mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart", 0));
-    viewRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "View", 0));
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
     operateCategoryChartEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Editor", 0));
@@ -972,6 +975,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonScatterChart->setText(menuScatterChart->title());
     ribbonButtonAllDock->setText(menuWindowsViewSet->title());
     ribbonButtonAllFuntion->setText(menuAnalysis->title());
+
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
     chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));

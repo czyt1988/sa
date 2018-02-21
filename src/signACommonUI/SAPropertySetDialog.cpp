@@ -83,8 +83,8 @@ public:
 
         par->setWindowTitle(QApplication::translate("SAPropertySetDialog", "property set dialog", 0));
         labelTitle->setText(QString());
-        pushButton_ok->setText(QApplication::translate("SAPropertySetDialog", "ok", 0));
-        pushButton_cancle->setText(QApplication::translate("SAPropertySetDialog", "cancle", 0));
+        pushButton_ok->setText(QApplication::translate("SAPropertySetDialog", "Ok", 0));
+        pushButton_cancle->setText(QApplication::translate("SAPropertySetDialog", "Cancel", 0));
 
     }
 };

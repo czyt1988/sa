@@ -173,17 +173,31 @@ void TextFileImportDialog::on_spinBox_toHeader_valueChanged(int arg1)
     SADataTableModel* txtModel = getTableModel ();
     if(!txtModel)
         return;
+    if(arg1 < 0)
+    {
+        ui->spinBox_toHeader->setValue(0);
+    }
     if(arg1 <= 0)
     {
-        ui->spinBox_toHeader->setValue(1);
-    }
-    QStringList rowData = m_config.getRawConfigRow(arg1-1);
-    auto datas = m_config.getData();
-    for(int i=0;i<rowData.size();++i)
-    {
-        if(i < datas.size())
+        auto datas = m_config.getData();
+        for(int i=0;i<datas.size();++i)
         {
-            datas[i]->setName(rowData[i]);
+            if(i < datas.size())
+            {
+                datas[i]->setName(tr("data_%1").arg(i+1));
+            }
+        }
+    }
+    else
+    {
+        QStringList rowData = m_config.getRawConfigRow(arg1-1);
+        auto datas = m_config.getData();
+        for(int i=0;i<rowData.size();++i)
+        {
+            if(i < datas.size())
+            {
+                datas[i]->setName(rowData[i]);
+            }
         }
     }
     getTableModel()->update();
@@ -453,4 +467,11 @@ void TextFileImportDialog::startReadTextThread(const QString &filePath)
 void TextFileImportDialog::onAppendTextTimeOut()
 {
 
+}
+///
+/// \brief 显示数据
+///
+void TextFileImportDialog::on_pushButton_DatasView_clicked()
+{
+    ui->tabWidget->setCurrentIndex(0);
 }

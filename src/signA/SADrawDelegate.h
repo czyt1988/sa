@@ -19,6 +19,7 @@ class QwtPlotBarChart;
 ///
 class SADrawDelegate : public SAMainWindowDelegate
 {
+    Q_OBJECT
 public:
     SADrawDelegate(MainWindow* wnd);
     virtual ~SADrawDelegate();

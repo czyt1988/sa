@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>新图例生成助手</string>
+   <string>Add Chart</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>

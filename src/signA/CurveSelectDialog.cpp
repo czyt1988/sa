@@ -43,9 +43,9 @@ void CurveSelectDialog::UI::setupUi(CurveSelectDialog *d)
     verticalLayout->addLayout(horizontalLayout);
 
 
-    d->setWindowTitle(QApplication::translate("CurveSelectDialog", "\346\233\262\347\272\277\351\200\211\346\213\251", 0));
-    pushButton_reject->setText(QApplication::translate("CurveSelectDialog", "\345\217\226 \346\266\210", 0));
-    pushButton_ok->setText(QApplication::translate("CurveSelectDialog", "\347\241\256 \345\256\232", 0));
+    d->setWindowTitle(QApplication::translate("CurveSelectDialog", "Curve Select Dialog", 0));
+    pushButton_reject->setText(QApplication::translate("CurveSelectDialog", "Cancel", 0));
+    pushButton_ok->setText(QApplication::translate("CurveSelectDialog", "Ok", 0));
 
     QObject::connect(pushButton_reject, SIGNAL(clicked()), d, SLOT(reject()));
 

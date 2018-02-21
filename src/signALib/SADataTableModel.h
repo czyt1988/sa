@@ -12,6 +12,7 @@ class SAAbstractDatas;
 
 class SALIB_EXPORT SADataTableModel : public QAbstractTableModel
 {
+    Q_OBJECT
 public:
     SADataTableModel(QObject *parent = 0);
     void setSADataPtr(SAAbstractDatas* data);

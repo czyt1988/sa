@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Chart Axis Set Select</string>
   </property>
   <widget class="QPushButton" name="pushButtonYLeft">
    <property name="geometry">

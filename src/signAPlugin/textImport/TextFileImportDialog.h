@@ -72,6 +72,8 @@ private slots:
     void startReadTextThread(const QString &filePath);
 
     void onAppendTextTimeOut();
+    void on_pushButton_DatasView_clicked();
+
 private:
     void init();
     void updateData(bool downLoad = true);

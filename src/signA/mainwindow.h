@@ -488,6 +488,7 @@ private:
     void loadSetting();
     void saveWindowState(QSettings& setting);
     void loadWindowState(const QSettings& setting);
+
     //释放chart的附加editor
     void releaseChart2DEditor(SAChart2D* chart);
 #if _CFG_LAYOUT_SELECT_CHANG_QSS
@@ -567,6 +568,8 @@ SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QStrin
     return pSubw;
 }
 
+//按照QLocal加载语言
+void load_local_language();
 
 ///
 /// \brief 根据子窗口类型获取后缀名

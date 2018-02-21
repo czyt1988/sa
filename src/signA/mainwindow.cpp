@@ -25,6 +25,8 @@
 #include <QMdiArea>
 #include <QProcess>
 #include <QTimer>
+#include <QLocale>
+#include <QTranslator>
 //----------STL-------------
 #include <iostream>
 #include <algorithm>
@@ -780,10 +782,6 @@ void MainWindow::loadSetting()
     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                        "CZY", "SA");
     loadWindowState(settings);
-//    QEvent e = QEvent(QEvent::LayoutRequest);
-//    QApplication::sendEvent(this,&e);
-//    saPrint() << "isMaximized:" << isMaximized();
-//    showMaximized();
 }
 
 void MainWindow::saveSetting()
@@ -845,6 +843,7 @@ void MainWindow::loadWindowState(const QSettings& setting)
     else
         setSkin("normal");
 }
+
 
 void MainWindow::releaseChart2DEditor(SAChart2D* chart)
 {
@@ -2852,7 +2851,28 @@ void MainWindow::onActionDeleteValueTriggered()
 }
 
 
+///
+/// \brief 加载语言
+///
+void load_local_language()
+{
+    QScopedPointer<QTranslator> translator(new QTranslator);
+    QLocale loc;
+    qDebug() << loc.uiLanguages();
+    if("zh" == loc.bcp47Name() )
+    {
+        QFont f = qApp->font();
+        f.setFamily(QStringLiteral("微软雅黑"));
+        qApp->setFont(f);
+    }
 
+    QString lngPath = qApp->applicationDirPath();
+    lngPath = lngPath + QDir::separator() + "language";
+    if(translator->load(loc,QString(),QString(),lngPath))
+    {
+        qApp->installTranslator(translator.take());
+    }
+}
 
 
 

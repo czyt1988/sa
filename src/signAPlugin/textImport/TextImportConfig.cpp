@@ -39,89 +39,19 @@ bool TextImportConfig::open(QIODevice::OpenMode openMode)
 ///
 QList<std::shared_ptr<SAAbstractDatas> > TextImportConfig::createResultPtr()
 {
-#if 0
-    QList<std::shared_ptr<SAAbstractDatas> > resPtr;
-    if(isToTable())
+    QList<std::shared_ptr<SAAbstractDatas> > validDatas;
+    for(int i = 0;i<m_data.size();++i)
     {
-        if(isToVarTable())
+        if(m_data[i]->getSize() > 0)
         {
-            auto table = SAValueManager::makeData<SATableVariant>();
-            *table = m_data;
-            resPtr.push_back(std::static_pointer_cast<SAAbstractDatas>(table));
-        }
-        else
-        {
-            auto table = SAValueManager::makeData<SATableDouble>();
-            m_data.toDouble(table.get());
-            resPtr.push_back(table);
-        }
-        //设置变量名字，对于表格就用文件名作为数据名
-        if(resPtr.size() >= 1)
-        {
-            QFileInfo dir(getOpenFilePath ());
-            resPtr[0]->setName(dir.fileName());
+            validDatas.append(m_data[i]);
         }
     }
-    else
+    if(validDatas.size() > 0)
     {
-        if(isToOneColumn())
-        {
-            auto vectorDoublePtr = SAValueManager::makeData<SAVectorDouble>();
-            const int rowCount = m_data.rowCount();
-            for(int i=0;i<rowCount;++i)
-            {
-                m_data.getRowDatas(i,vectorDoublePtr.get());
-            }
-            resPtr.push_back(vectorDoublePtr);
-            //设置变量名字，对于表格就用文件名作为数据名
-            if(resPtr.size() >= 1)
-            {
-                QFileInfo dir(getOpenFilePath ());
-                resPtr[0]->setName(dir.fileName());
-            }
-        }
-        else
-        {
-            const int colCount = m_data.columnCount();
-            QList<bool> colSet = getColumnSets();
-            if(colSet.size () <= 0)
-            {
-                for(int i = 0;i<colCount;++i)
-                {
-                    colSet.push_back (true);
-                }
-            }
-
-            for(int i= 0;i<colSet.size();++i)
-            {
-                if(!colSet[i])
-                {
-                    continue;
-                }
-                auto res = SAValueManager::makeData<SAVectorDouble>();
-                if(!m_data.getColumnDatas(i,res.get()))
-                {
-                    continue;
-                }
-                if(i < m_colName.size())
-                {
-                    res->setName(m_colName[i]);
-                }
-                else
-                {
-                    res->setName(tr("column%1").arg(i));
-                }
-                resPtr.push_back(res);
-
-            }
-        }
+        saValueManager->addDatas(validDatas);
     }
-    saValueManager->addDatas(resPtr);
-    return resPtr;
-#else
-    saValueManager->addDatas(m_data);
-    return m_data;
-#endif
+    return validDatas;
 }
 
 
@@ -211,7 +141,6 @@ bool TextImportConfig::parserToMultColumn()
     m_parser->seek(0);
     QString line;
     int lineCount = 0;
-    int toOneColumnLineCount = 0;
     int startLine = getStartLine();
     int endLine = getEndLine();
     bool isOK = false;
@@ -268,7 +197,6 @@ bool TextImportConfig::parserToMultColumn()
                 std::static_pointer_cast<SAVectorDouble>(m_data[i])->append(d);
             }
         }
-
     }while(!line.isNull ());
     emit dataChanged();
     return true;

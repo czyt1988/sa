@@ -17,6 +17,11 @@ int main(int argc, char *argv[])
 #endif
 #endif
     QApplication a(argc, argv);
+    //
+
+    //加载本地语言
+    load_local_language();
+
     //样式设置
     MainWindow w;
     w.show();

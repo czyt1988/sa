@@ -8,11 +8,6 @@ SUBDIRS = signALib\
           signA
 
 TRANSLATIONS+= \
-            cn.ts\#chinese
-            en.ts\#English
-            ar.ts\#Arabic
-            fr.ts\#French
-            po.ts\#Portuguese
-            ru.ts\#Russian
-            sp.ts\#Spanish
-            tu.ts #Turkish
+            translations/zh.ts\#chinese
+            translations/en.ts #English
+

@@ -11,20 +11,20 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Tendency Chart Data Select</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QRadioButton" name="radioButton_follow">
      <property name="text">
-      <string>跟随现有曲线的x轴</string>
+      <string>follow define curve x values</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>请选择一个需要跟随的曲线:</string>
+      <string>choose a curve to follow</string>
      </property>
     </widget>
    </item>
@@ -34,7 +34,7 @@
    <item>
     <widget class="QRadioButton" name="radioButton_selDef">
      <property name="text">
-      <string>自定义x轴</string>
+      <string>define x value</string>
      </property>
     </widget>
    </item>
@@ -43,7 +43,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>起始值:</string>
+        <string>start:</string>
        </property>
       </widget>
      </item>
@@ -57,7 +57,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>增值:</string>
+        <string>Growth value:</string>
        </property>
       </widget>
      </item>

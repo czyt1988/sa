@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en_US" sourcelanguage="en">
+<TS version="2.1" language="zh_CN" sourcelanguage="en">
 <context>
     <name>AboutDialog</name>
     <message>
         <location filename="signA/AboutDialog.ui" line="14"/>
-        <source>关于</source>
-        <translation type="unfinished"></translation>
+        <source>About</source>
+        <translation>关于</translation>
     </message>
     <message>
         <location filename="signA/AboutDialog.ui" line="42"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;数据查看及分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;个人网站：&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://blog.csdn.net/czyt1988&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;邮箱：czy.t@163.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;Data visualization and analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Website：&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://blog.csdn.net/czyt1988&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#000000;&quot;&gt;Email：czy.t@163.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;数据查看及分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;个人网站：&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://blog.csdn.net/czyt1988&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;邮箱：czy.t@163.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;数据可视化及分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;网站：&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://blog.csdn.net/czyt1988&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/czyt1988&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#000000;&quot;&gt;Email：czy.t@163.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="signA/AboutDialog.cpp" line="9"/>
         <source>version：v0.1
  Author Email：czy.t@163.com</source>
-        <translation>version：v0.1
- Author Email：czy.t@163.com</translation>
+        <translation>版本：v0.1
+作者Email：czy.t@163.com</translation>
     </message>
 </context>
 <context>
@@ -76,99 +77,99 @@
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="36"/>
         <source>open csv file</source>
-        <translation>open csv file</translation>
+        <translation>打开csv文件</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="38"/>
         <source>Ansys CFX csv file(*.csv)</source>
-        <translation>Ansys CFX csv file(*.csv)</translation>
+        <translation>Ansys CFX csv 文件(*.csv)</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="75"/>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="83"/>
         <source>information</source>
-        <translation>information</translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="76"/>
         <source>Please select the analysis mode!</source>
-        <translation>Please select the analysis mode!</translation>
+        <translation>请选择分析模式！</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="84"/>
         <source>faile to parser, please ensure that the data format of the file is correct</source>
-        <translation>faile to parser, please ensure that the data format of the file is correct</translation>
+        <translation>解析错误，请确认文件格式的正确性</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="110"/>
         <source>1 row x,n rows y</source>
-        <translation>1 row x,n rows y</translation>
+        <translation>1 行 x,n 行 y</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="111"/>
         <source>n rows x,1 row y</source>
-        <translation>n rows x,1 row y</translation>
+        <translation>n 行 x,1 行 y</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="112"/>
         <source>n rows x,n rows y</source>
-        <translation>n rows x,n rows y</translation>
+        <translation>n 行 x,n 行 y</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/CFX2DCsvImportDialog.cpp" line="113"/>
         <source>(x,y) point array</source>
-        <translation>(x,y) point array</translation>
+        <translation>(x,y) 点序列y</translation>
     </message>
 </context>
 <context>
     <name>ColorPickerPopup</name>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="799"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="818"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义</translation>
     </message>
 </context>
 <context>
     <name>CurveSelectDialog</name>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="46"/>
-        <source>曲线选择</source>
-        <translation type="unfinished"></translation>
+        <source>Curve Select Dialog</source>
+        <translation>曲线选择对话框</translation>
     </message>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="47"/>
-        <source>取 消</source>
-        <translation type="unfinished"></translation>
+        <source>Cancel</source>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="48"/>
-        <source>确 定</source>
-        <translation type="unfinished"></translation>
+        <source>Ok</source>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="66"/>
         <source>curve name</source>
-        <translation>curve name</translation>
+        <translation>曲线名</translation>
     </message>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="67"/>
         <source>color</source>
-        <translation>color</translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="68"/>
         <source>size</source>
-        <translation>size</translation>
+        <translation>尺寸</translation>
     </message>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="217"/>
         <source>information</source>
-        <translation>information</translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="signA/CurveSelectDialog.cpp" line="217"/>
         <source>please select curve</source>
-        <translation>please select curve</translation>
+        <translation>请选择曲线</translation>
     </message>
 </context>
 <context>
@@ -176,24 +177,24 @@
     <message>
         <location filename="signA/model/DataFeatureTreeModel.cpp" line="105"/>
         <source>property</source>
-        <translation type="unfinished"></translation>
+        <translation>属性</translation>
     </message>
     <message>
         <location filename="signA/model/DataFeatureTreeModel.cpp" line="106"/>
         <source>value</source>
-        <translation type="unfinished"></translation>
+        <translation>值</translation>
     </message>
     <message>
         <location filename="signA/model/DataFeatureTreeModel.cpp" line="142"/>
         <source>chart %1</source>
-        <translation type="unfinished"></translation>
+        <translation>图%1</translation>
     </message>
 </context>
 <context>
     <name>Dialog_AddChart</name>
     <message>
         <location filename="signA/dialog/Dialog_AddChart.ui" line="23"/>
-        <source>新图例生成助手</source>
+        <source>Add Chart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -292,7 +293,7 @@
     <message>
         <location filename="signA/dialog/Dialog_AddChart.cpp" line="53"/>
         <source>color</source>
-        <translation type="unfinished">color</translation>
+        <translation type="unfinished">颜色</translation>
     </message>
     <message>
         <location filename="signA/dialog/Dialog_AddChart.cpp" line="60"/>
@@ -312,7 +313,7 @@
         <location filename="signA/dialog/Dialog_AddChart.cpp" line="345"/>
         <location filename="signA/dialog/Dialog_AddChart.cpp" line="363"/>
         <source>information</source>
-        <translation type="unfinished">information</translation>
+        <translation type="unfinished">信息</translation>
     </message>
     <message>
         <location filename="signA/dialog/Dialog_AddChart.cpp" line="175"/>
@@ -395,7 +396,7 @@
     <name>Dialog_SelDefSeries</name>
     <message>
         <location filename="signA/dialog/Dialog_SelDefSeries.ui" line="14"/>
-        <source>Dialog</source>
+        <source>Select Define Series</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -430,659 +431,684 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="954"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="938"/>
         <source>Tool</source>
-        <translation>Tool</translation>
+        <translation>工具</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="974"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="958"/>
         <source>plot config</source>
-        <translation>plot config</translation>
+        <translation>绘图设置</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="836"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="820"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="842"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="826"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="896"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="880"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="898"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="882"/>
         <source>Ctrl+Shift+Z</source>
         <translation>Ctrl+Shift+Z</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="918"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="902"/>
         <source>Project Setting</source>
-        <translation>Project Setting</translation>
+        <translation>项目设置</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="921"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="905"/>
         <source>Ctrl+=</source>
         <translation>Ctrl+=</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="923"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="907"/>
         <source>Ctrl+-</source>
         <translation>Ctrl+-</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="831"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="815"/>
         <source>SA - Signal Analysis</source>
-        <translation>SA - Signal Analysis</translation>
+        <translation>SA - 数据分析</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="832"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="816"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>打开</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="834"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="818"/>
         <source>Open File</source>
-        <translation>Open File</translation>
+        <translation>打开所支持的文件</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="821"/>
+        <source>Cascade</source>
+        <translation>层叠</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="822"/>
+        <source>Tile</source>
+        <translation>平铺</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="823"/>
+        <source>Window
+Mode</source>
+        <translation>窗口模式</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="824"/>
+        <source>Tab 
+ Mode</source>
+        <translation>标签模式</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="825"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="827"/>
+        <source>Quit</source>
+        <translation>退出</translation>
+    </message>
+    <message>
+        <source>Data
+Feature</source>
+        <translation type="vanished">数据特性</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="829"/>
+        <source>New
+Chart</source>
+        <translation>新绘图</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="831"/>
+        <source>New Chart with dialog</source>
+        <translation>新绘图向导</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="833"/>
+        <source>Trend Chart</source>
+        <translation>趋势图</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="835"/>
+        <source>Plot Trend With User Select Data Value</source>
+        <translation>根据选择数据绘制趋势图</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="837"/>
-        <source>Cascade</source>
-        <translation>Cascade</translation>
+        <source>Clear</source>
+        <translation>清除</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="838"/>
-        <source>Tile</source>
-        <translation>Tile</translation>
+        <source>remove
+in</source>
+        <translation>移除
+范围内</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="839"/>
-        <source>Window
-Mode</source>
-        <translation>Window
-Mode</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="840"/>
-        <source>Tab 
- Mode</source>
-        <translation>Tab 
- Mode</translation>
+        <source>remove
+out</source>
+        <translation>移除
+范围外</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="841"/>
-        <source>Save</source>
-        <translation>Save</translation>
+        <source>SubWindow
+List</source>
+        <translation>子窗口
+列表</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="842"/>
+        <source>Cross</source>
+        <translation>十字线</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="843"/>
-        <source>Quit</source>
-        <translation>Quit</translation>
+        <source>Panner</source>
+        <translation>移动</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="844"/>
-        <source>Data
-Feature</source>
-        <translation>Data
-Feature</translation>
-    </message>
-    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="845"/>
-        <source>New
-Chart</source>
-        <translation>New
-Chart</translation>
+        <source>Zoom</source>
+        <translation>缩放</translation>
     </message>
     <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="846"/>
         <location filename="signA/MainWindowPrivate.cpp" line="847"/>
-        <source>New Chart with dialog</source>
-        <translation>New Chart with dialog</translation>
+        <source>Y Picker</source>
+        <translation>Y值捕获</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="849"/>
-        <source>Trend Chart</source>
-        <translation>Trend Chart</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="848"/>
+        <source>XY Picker</source>
+        <translation>XY值捕获</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="851"/>
-        <source>Plot Trend With User Select Data Value</source>
-        <translation>Plot Trend With User Select Data Value</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="850"/>
+        <source>Pick Y Data in Chart</source>
+        <translation>捕获线图中的Y值</translation>
     </message>
     <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="852"/>
         <location filename="signA/MainWindowPrivate.cpp" line="853"/>
-        <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="932"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="981"/>
+        <source>Grid</source>
+        <translation>网格</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="854"/>
-        <source>remove
-in</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="855"/>
-        <source>remove
-out</source>
-        <translation type="unfinished"></translation>
+        <source>H Grid</source>
+        <translation>水平网格</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="857"/>
-        <source>SubWindow
-List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="858"/>
-        <source>Cross</source>
-        <translation type="unfinished"></translation>
+        <source>Horizontal Grid</source>
+        <translation>水平网格</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="859"/>
-        <source>Panner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="860"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="861"/>
-        <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <source>V Grid</source>
+        <translation>垂直网格</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="862"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="863"/>
-        <source>Y Picker</source>
-        <translation type="unfinished"></translation>
+        <source>Vertical Grid</source>
+        <translation>垂直网格</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="864"/>
-        <source>XY Picker</source>
-        <translation type="unfinished"></translation>
+        <source>Crowded H Grid</source>
+        <translation>密集水平网格</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="866"/>
-        <source>Pick Y Data in Chart</source>
-        <translation type="unfinished"></translation>
+        <source>Crowded
+H Grid</source>
+        <translation>水平网格
+加密</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="868"/>
+        <source>Crowded
+V Grid</source>
+        <translation>垂直网格
+加密</translation>
+    </message>
+    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="869"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="948"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="993"/>
-        <source>Grid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="870"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="871"/>
-        <source>H Grid</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="980"/>
+        <source>Legend</source>
+        <translation>图例</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="873"/>
-        <source>Horizontal Grid</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="872"/>
+        <source>Show/Hide Legend</source>
+        <translation>显示/隐藏图例</translation>
     </message>
     <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="874"/>
         <location filename="signA/MainWindowPrivate.cpp" line="875"/>
+        <source>Legend
+Panel</source>
+        <translation>图例
+面板</translation>
+    </message>
+    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="876"/>
-        <source>V Grid</source>
-        <translation type="unfinished"></translation>
+        <source>Zoom Reset</source>
+        <translation>重置缩放</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="877"/>
+        <source>Pick
+Data</source>
+        <translation>数据提取</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="878"/>
-        <source>Vertical Grid</source>
-        <translation type="unfinished"></translation>
+        <source>About</source>
+        <translation>关于</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="880"/>
-        <source>Crowded H Grid</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="879"/>
+        <source>Rescind</source>
+        <translation>撤销</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="882"/>
-        <source>Crowded
-H Grid</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="881"/>
+        <source>Redo</source>
+        <translation>重做</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="883"/>
+        <source>Value Manager</source>
+        <translation>变量管理</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="884"/>
-        <source>Crowded
-V Grid</source>
-        <translation type="unfinished"></translation>
+        <source>View Value In
+Current Tab</source>
+        <translation>当前标签
+显示值</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="885"/>
+        <source>View Value In
+New Tab</source>
+        <translation>新标签
+显示值</translation>
+    </message>
+    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="886"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="992"/>
-        <source>Legend</source>
-        <translation type="unfinished"></translation>
+        <source>Layerout</source>
+        <translation>图层</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="888"/>
-        <source>Show/Hide Legend</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="887"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="889"/>
+        <source>Rename Value</source>
+        <translation>重命名</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="890"/>
         <location filename="signA/MainWindowPrivate.cpp" line="891"/>
-        <source>Legend
-Panel</source>
-        <translation type="unfinished"></translation>
+        <source>Defalut
+View</source>
+        <translation>默认视图</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="892"/>
-        <source>Zoom Reset</source>
-        <translation type="unfinished"></translation>
+        <source>Value View</source>
+        <translation>变量视图</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="893"/>
-        <source>Pick
-Data</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="963"/>
+        <source>Operate</source>
+        <translation>操作</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="894"/>
-        <source>About</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="984"/>
+        <source>SA</source>
+        <translation>SA</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="895"/>
-        <source>Rescind</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="897"/>
-        <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <source>Delete Value</source>
+        <translation>删除变量</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="899"/>
-        <source>Value Manager</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="898"/>
+        <source>select skin</source>
+        <translation>选择皮肤</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="900"/>
-        <source>View Value In
-Current Tab</source>
-        <translation type="unfinished"></translation>
+        <source>Open
+Project</source>
+        <translation>打开项目</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="901"/>
-        <source>View Value In
-New Tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="902"/>
-        <source>Layerout</source>
-        <translation type="unfinished"></translation>
+        <source>Save As</source>
+        <translation>另存</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="903"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="905"/>
-        <source>Rename Value</source>
-        <translation type="unfinished"></translation>
+        <source>Set Zoom Base</source>
+        <translation>设置缩放基准</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="907"/>
-        <source>Defalut
-View</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="904"/>
+        <source>Zoom In</source>
+        <translation>放大</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="906"/>
+        <source>Zoom Out</source>
+        <translation>缩小</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="908"/>
-        <source>Value View</source>
-        <translation type="unfinished"></translation>
+        <source>Rect
+Select</source>
+        <translation>矩形选框</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="909"/>
-        <source>Figure
-View</source>
-        <translation type="unfinished"></translation>
+        <source>Ellipse
+Select</source>
+        <translation>椭圆选框</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="910"/>
-        <source>Message
-View</source>
-        <translation type="unfinished"></translation>
+        <source>Polygon
+Select</source>
+        <translation>多边形
+选框</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="911"/>
+        <source>Clear
+Select</source>
+        <translation>清除选择</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="912"/>
+        <source>New Select</source>
+        <translation>单选</translation>
+    </message>
+    <message>
         <location filename="signA/MainWindowPrivate.cpp" line="913"/>
-        <source>Delete Value</source>
-        <translation type="unfinished"></translation>
+        <source>Add Select</source>
+        <translation>并集</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="914"/>
-        <source>select skin</source>
-        <translation type="unfinished"></translation>
+        <source>Int Select</source>
+        <translation>交集</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="915"/>
+        <source>Sub Select</source>
+        <translation>差集</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="916"/>
-        <source>Open
-Project</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="940"/>
+        <source>Scatter</source>
+        <translation>散点图</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="917"/>
-        <source>Save As</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="941"/>
+        <source>Bar</source>
+        <translation>条形图</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="918"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="943"/>
+        <source>Histogram</source>
+        <translation>柱形图</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="919"/>
-        <source>Set Zoom Base</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="942"/>
+        <source>Box</source>
+        <translation>箱盒图</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="920"/>
-        <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <source>Transform</source>
+        <translation>移动</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="921"/>
+        <source>Move
+Datas</source>
+        <translation>移动
+数据</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="922"/>
-        <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
+        <source>Figure Setting</source>
+        <translation>绘图设置</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="923"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="966"/>
+        <source>File</source>
+        <translation>文件</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="924"/>
-        <source>Rect
-Select</source>
-        <translation type="unfinished"></translation>
+        <source>Export</source>
+        <translation>导出</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="925"/>
-        <source>Ellipse
-Select</source>
-        <translation type="unfinished"></translation>
+        <source>Import</source>
+        <translation>导入</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="926"/>
-        <source>Polygon
-Select</source>
-        <translation type="unfinished"></translation>
+        <source>Windows
+View</source>
+        <translation>窗口
+视图</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="927"/>
-        <source>Clear
-Select</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="964"/>
+        <source>Analysis</source>
+        <translation>分析</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="928"/>
-        <source>New Select</source>
-        <translation type="unfinished"></translation>
+        <source>Data</source>
+        <translation>数据</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="929"/>
-        <source>Add Select</source>
-        <translation type="unfinished"></translation>
+        <source>Chart Data Manager</source>
+        <translation>绘图数据管理</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="930"/>
-        <source>Int Select</source>
-        <translation type="unfinished"></translation>
+        <source>Data Manager</source>
+        <translation>数据管理</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="931"/>
-        <source>Sub Select</source>
-        <translation type="unfinished">Sub Select</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="932"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="956"/>
-        <source>Scatter</source>
-        <translation>Scatter</translation>
+        <source>Chart Set</source>
+        <translation>绘图设置</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="933"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="957"/>
-        <source>Bar</source>
-        <translation>Bar</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="934"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="959"/>
-        <source>Histogram</source>
-        <translation>Histogram</translation>
+        <source>Zoom Set</source>
+        <translation>缩放设置</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="935"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="958"/>
-        <source>Box</source>
-        <translation>Box</translation>
+        <source>Select</source>
+        <translation>选择</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="936"/>
-        <source>Transform</source>
-        <translation>Transform</translation>
+        <source>Help</source>
+        <translation>帮助</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="937"/>
-        <source>Move
-Datas</source>
-        <translation>Move
-Datas</translation>
+        <source>Edit</source>
+        <translation>编辑器</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="939"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="978"/>
-        <source>File</source>
-        <translation>File</translation>
+        <source>Line</source>
+        <translation>线图</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="940"/>
-        <source>Export</source>
-        <translation>Export</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="941"/>
-        <source>Import</source>
-        <translation>Import</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="942"/>
-        <source>Windows
-View</source>
-        <translation>Windows
-View</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="943"/>
-        <source>Analysis</source>
-        <translation>Analysis</translation>
-    </message>
-    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="828"/>
         <location filename="signA/MainWindowPrivate.cpp" line="944"/>
-        <source>Data</source>
-        <translation>Data</translation>
+        <source>Data Feature</source>
+        <translation>数据特性</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="945"/>
-        <source>Chart Data Manager</source>
-        <translation>Chart Data Manager</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="893"/>
+        <source>Figure View</source>
+        <translation>绘图视图</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="946"/>
-        <source>Data Manager</source>
-        <translation>Data Manager</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="894"/>
+        <source>Message View</source>
+        <translation>消息视图</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="947"/>
-        <source>Chart Set</source>
-        <translation>Chart Set</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="948"/>
+        <source>Window List</source>
+        <translation>窗口列表</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="949"/>
-        <source>Zoom Set</source>
-        <translation>Zoom Set</translation>
+        <source>Value Manage</source>
+        <translation>变量管理</translation>
+    </message>
+    <message>
+        <location filename="signA/MainWindowPrivate.cpp" line="950"/>
+        <source>Layout</source>
+        <translation>图层</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="951"/>
-        <source>Select</source>
-        <translation>Select</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="952"/>
-        <source>Help</source>
-        <translation>Help</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="953"/>
-        <source>Edit</source>
-        <translation>Edit</translation>
+        <source>Chart Data</source>
+        <translation>绘图数据</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="955"/>
-        <source>Line</source>
-        <translation>Line</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="961"/>
+        <source>Main</source>
+        <translation>主页</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="960"/>
-        <source>Data Feature</source>
-        <translation>Data Feature</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="956"/>
+        <source>value View</source>
+        <translation>变量视图</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="964"/>
-        <source>Window List</source>
-        <translation>Window List</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="965"/>
-        <source>Value Manage</source>
-        <translation>Value Manage</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="966"/>
-        <source>Layout</source>
-        <translation>Layout</translation>
+        <location filename="signA/MainWindowPrivate.cpp" line="957"/>
+        <source>Message</source>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="signA/MainWindowPrivate.cpp" line="967"/>
-        <source>Chart Data</source>
-        <translation>Chart Data</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="971"/>
-        <location filename="signA/MainWindowPrivate.cpp" line="977"/>
-        <source>Main</source>
-        <translation>Main</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="972"/>
-        <source>value View</source>
-        <translation>value View</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="973"/>
-        <source>Message</source>
-        <translation>Message</translation>
-    </message>
-    <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="979"/>
         <source>Chart</source>
-        <translation>Chart</translation>
+        <translation>图</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="980"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="962"/>
         <source>View</source>
-        <translation>View</translation>
+        <translation>视图</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="981"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="968"/>
         <source>Window</source>
-        <translation>Window</translation>
+        <translation>窗口</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="982"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="969"/>
         <source>Sub Window Mode</source>
-        <translation>Sub Window Mode</translation>
+        <translation>子窗口模式</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="983"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="970"/>
         <source>Chart Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>绘图编辑</translation>
     </message>
     <message>
         <source>Select Editor</source>
-        <translation type="vanished">Select Editor</translation>
+        <translation type="vanished">选择</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="991"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="979"/>
         <source>Data View</source>
-        <translation>Data View</translation>
+        <translation>数据查看</translation>
     </message>
     <message>
         <source>Data Edit</source>
-        <translation type="vanished">Data Edit</translation>
+        <translation type="vanished">数据操作</translation>
     </message>
     <message>
-        <location filename="signA/MainWindowPrivate.cpp" line="994"/>
+        <location filename="signA/MainWindowPrivate.cpp" line="982"/>
         <source>Crowded</source>
-        <translation>Crowded</translation>
+        <translation>密集网格</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="517"/>
+        <location filename="signA/mainwindow.cpp" line="503"/>
         <source>load %1 plugins</source>
-        <translation>load %1 plugins</translation>
+        <translation>加载 %1 插件</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="753"/>
+        <location filename="signA/mainwindow.cpp" line="750"/>
         <source>start use skin:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>开始使用皮肤:%1</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="764"/>
+        <location filename="signA/mainwindow.cpp" line="761"/>
         <source>end use skin</source>
-        <translation type="unfinished"></translation>
+        <translation>结束皮肤加载</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="974"/>
+        <location filename="signA/mainwindow.cpp" line="982"/>
         <source>all files (*.*)</source>
-        <translation>all files (*.*)</translation>
+        <translation>所有文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="1022"/>
+        <location filename="signA/mainwindow.cpp" line="1030"/>
         <source>you need to set a project name</source>
-        <translation>you need to set a project name</translation>
+        <translation>请设置项目名</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="1816"/>
-        <location filename="signA/mainwindow.cpp" line="2274"/>
+        <location filename="signA/mainwindow.cpp" line="1805"/>
+        <location filename="signA/mainwindow.cpp" line="2311"/>
         <source>you should select a figure window</source>
-        <translation>you should select a figure window</translation>
+        <translation>请选择一个绘图窗口</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="1822"/>
+        <location filename="signA/mainwindow.cpp" line="1811"/>
         <source>I can not find any chart in figure!</source>
-        <translation>I can not find any chart in figure!</translation>
+        <translation>绘图窗口还没存在图!</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="2765"/>
+        <location filename="signA/mainwindow.cpp" line="1888"/>
+        <location filename="signA/mainwindow.cpp" line="1912"/>
+        <source>figure[%1]</source>
+        <translation>图[%1]</translation>
+    </message>
+    <message>
+        <location filename="signA/mainwindow.cpp" line="2802"/>
         <source>project may have not subwindow path :&quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>项目文件夹未发现子窗口目录径:&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="2854"/>
+        <location filename="signA/mainwindow.cpp" line="2839"/>
         <source>Are you sure remove:
 </source>
-        <translation>Are you sure remove:
+        <translation>确定删除变量:
 </translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="2859"/>
+        <location filename="signA/mainwindow.cpp" line="2844"/>
         <source>
  datas?</source>
         <translation>
- datas?</translation>
+ 数据?</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="2860"/>
+        <location filename="signA/mainwindow.cpp" line="2845"/>
         <source>Quesstion</source>
-        <translation>Quesstion</translation>
+        <translation>疑问</translation>
     </message>
 </context>
 <context>
@@ -1105,7 +1131,7 @@ View</translation>
     <message>
         <location filename="3rdParty/qti/PatternBox.cpp" line="86"/>
         <source>Cross</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">十字线</translation>
     </message>
     <message>
         <location filename="3rdParty/qti/PatternBox.cpp" line="92"/>
@@ -1167,43 +1193,43 @@ View</translation>
     <name>PickCurveDataModeSetDialog</name>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="14"/>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <source>Pick Curve Data Mode Set</source>
+        <translation>拾取模式设置</translation>
     </message>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="20"/>
-        <source>选择导出数据范围</source>
-        <translation type="unfinished"></translation>
+        <source>select export datas range</source>
+        <translation>选择导出数据范围</translation>
     </message>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="26"/>
-        <source>导出当前选择范围内数据</source>
-        <translation type="unfinished"></translation>
+        <source>export current select region datas</source>
+        <translation>导出当前选区内数据</translation>
     </message>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="33"/>
-        <source>导出所有数据</source>
-        <translation type="unfinished"></translation>
+        <source>export all datas</source>
+        <translation>导出所有数据</translation>
     </message>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="43"/>
-        <source>选择导出数据类型</source>
-        <translation type="unfinished"></translation>
+        <source>choose export data type</source>
+        <translation>选择导出数据类型</translation>
     </message>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="49"/>
-        <source>只导出x轴数值</source>
-        <translation type="unfinished"></translation>
+        <source>export x value</source>
+        <translation>导出x值</translation>
     </message>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="56"/>
-        <source>只导出y轴数值</source>
-        <translation type="unfinished"></translation>
+        <source>export y value</source>
+        <translation>导出y值</translation>
     </message>
     <message>
         <location filename="signA/dialog/PickCurveDataModeSetDialog.ui" line="63"/>
-        <source>导出x,y轴点序列</source>
-        <translation type="unfinished"></translation>
+        <source>export (x,y) value</source>
+        <translation>导出(x,y)值</translation>
     </message>
 </context>
 <context>
@@ -1211,7 +1237,7 @@ View</translation>
     <message>
         <location filename="signALib/SABaseValueType/SADataReference.cpp" line="62"/>
         <source>unknow ref</source>
-        <translation type="unfinished"></translation>
+        <translation>未知引用</translation>
     </message>
     <message>
         <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="12"/>
@@ -1221,17 +1247,17 @@ View</translation>
     <message>
         <location filename="signA/DebugInfo.h" line="16"/>
         <source>--null ptr:</source>
-        <translation type="unfinished"></translation>
+        <translation>--空指针:</translation>
     </message>
     <message>
         <location filename="signA/DebugInfo.h" line="16"/>
         <source>;line:</source>
-        <translation type="unfinished"></translation>
+        <translation>行:</translation>
     </message>
     <message>
-        <location filename="signA/mainwindow.cpp" line="2944"/>
+        <location filename="signA/mainwindow.cpp" line="2950"/>
         <source>invalid file</source>
-        <translation type="unfinished"></translation>
+        <translation>非法文件</translation>
     </message>
 </context>
 <context>
@@ -1241,13 +1267,13 @@ View</translation>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertybrowserutils.cpp" line="243"/>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertybrowserutils.cpp" line="268"/>
         <source>True</source>
-        <translation type="unfinished"></translation>
+        <translation>是</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertybrowserutils.cpp" line="243"/>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertybrowserutils.cpp" line="268"/>
         <source>False</source>
-        <translation type="unfinished"></translation>
+        <translation>否</translation>
     </message>
 </context>
 <context>
@@ -1255,12 +1281,12 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="1696"/>
         <source>True</source>
-        <translation type="unfinished"></translation>
+        <translation>是</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="1697"/>
         <source>False</source>
-        <translation type="unfinished"></translation>
+        <translation>否</translation>
     </message>
 </context>
 <context>
@@ -1268,7 +1294,7 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qteditorfactory.cpp" line="1700"/>
         <source>Clear Char</source>
-        <translation type="unfinished"></translation>
+        <translation>清除字符</translation>
     </message>
 </context>
 <context>
@@ -1276,118 +1302,118 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qteditorfactory.cpp" line="2314"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>QtColorPicker</name>
     <message>
         <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="181"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="307"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="410"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="321"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="428"/>
         <source>Black</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="308"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="411"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="322"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="429"/>
         <source>White</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="309"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="412"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="323"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="430"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">红</translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="310"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="413"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="324"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="431"/>
         <source>Dark red</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="311"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="414"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="325"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="432"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">绿</translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="312"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="415"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="326"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="433"/>
         <source>Dark green</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="313"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="416"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="327"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="434"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">蓝</translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="314"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="417"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="328"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="435"/>
         <source>Dark blue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="315"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="418"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="329"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="436"/>
         <source>Cyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="316"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="419"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="330"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="437"/>
         <source>Dark cyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="317"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="420"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="331"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="438"/>
         <source>Magenta</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="318"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="421"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="332"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="439"/>
         <source>Dark magenta</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="319"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="422"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="333"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="440"/>
         <source>Yellow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="320"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="423"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="334"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="441"/>
         <source>Dark yellow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="321"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="424"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="335"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="442"/>
         <source>Gray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="322"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="425"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="336"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="443"/>
         <source>Dark gray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="323"/>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="426"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="337"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="444"/>
         <source>Light gray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="341"/>
+        <location filename="3rdParty/qtcolorpicker/qtcolorpicker.cpp" line="355"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">自定义</translation>
     </message>
 </context>
 <context>
@@ -1395,22 +1421,22 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="6421"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>红</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="6429"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>绿</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="6437"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>蓝</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="6445"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>透明度</translation>
     </message>
 </context>
 <context>
@@ -1428,7 +1454,7 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertybrowserutils.cpp" line="62"/>
         <source>Cross</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">十字线</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertybrowserutils.cpp" line="64"/>
@@ -1516,7 +1542,7 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qteditorfactory.cpp" line="2523"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">...</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qteditorfactory.cpp" line="2543"/>
@@ -1598,12 +1624,12 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="3152"/>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">X</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="3160"/>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Y</translation>
     </message>
 </context>
 <context>
@@ -1616,12 +1642,12 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="2878"/>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">X</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="2885"/>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Y</translation>
     </message>
 </context>
 <context>
@@ -1647,17 +1673,17 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4742"/>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">X</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4750"/>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Y</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4758"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">线宽</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4767"/>
@@ -1675,17 +1701,17 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4276"/>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">X</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4283"/>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Y</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4290"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">线宽</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="4298"/>
@@ -1703,7 +1729,7 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="3894"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">线宽</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="3903"/>
@@ -1755,7 +1781,7 @@ View</translation>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="3496"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">线宽</translation>
     </message>
     <message>
         <location filename="3rdParty/qtpropertybrowser/src/qtpropertymanager.cpp" line="3504"/>
@@ -1777,54 +1803,199 @@ View</translation>
     </message>
 </context>
 <context>
+    <name>QwtPlotItemDataModel</name>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="355"/>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="388"/>
+        <source>x</source>
+        <translation>x</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="356"/>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="389"/>
+        <source>y</source>
+        <translation>y</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="365"/>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="376"/>
+        <source>value</source>
+        <translation>值</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="366"/>
+        <source>min</source>
+        <translation>最小</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="367"/>
+        <source>max</source>
+        <translation>最大</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="380"/>
+        <source>set %1</source>
+        <translation>系列 %1</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="390"/>
+        <source>z</source>
+        <translation>z</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="399"/>
+        <source>time</source>
+        <translation>时间</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="400"/>
+        <source>open</source>
+        <translation>开盘</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="401"/>
+        <source>high</source>
+        <translation>高点</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="402"/>
+        <source>low</source>
+        <translation>地点</translation>
+    </message>
+    <message>
+        <location filename="signAChart/QwtPlotItemDataModel.cpp" line="403"/>
+        <source>close</source>
+        <translation>收盘</translation>
+    </message>
+</context>
+<context>
     <name>QwtPlotItemTreeModel</name>
     <message>
-        <location filename="signAChart/QwtPlotItemTreeModel.cpp" line="107"/>
+        <location filename="signAChart/QwtPlotItemTreeModel.cpp" line="106"/>
         <source>item</source>
-        <translation type="unfinished"></translation>
+        <translation>条目</translation>
     </message>
     <message>
-        <location filename="signAChart/QwtPlotItemTreeModel.cpp" line="137"/>
+        <location filename="signAChart/QwtPlotItemTreeModel.cpp" line="136"/>
         <source>figure-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>绘图-%1</translation>
     </message>
     <message>
-        <location filename="signAChart/QwtPlotItemTreeModel.cpp" line="146"/>
+        <location filename="signAChart/QwtPlotItemTreeModel.cpp" line="145"/>
         <source>item-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>条目-%1</translation>
+    </message>
+</context>
+<context>
+    <name>SAAddCurveTypeDialog</name>
+    <message>
+        <location filename="signA/dialog/SAAddCurveTypeDialog.ui" line="14"/>
+        <source>Add Curve Type</source>
+        <translation>添加曲线模式</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddCurveTypeDialog.ui" line="32"/>
+        <source>add in new figure</source>
+        <translation>添加到新的绘图窗口</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddCurveTypeDialog.ui" line="39"/>
+        <source>add in current figure</source>
+        <translation>添加到当前绘图窗口</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddCurveTypeDialog.ui" line="46"/>
+        <source>add in current figure with subplot</source>
+        <translation>作为子图添加到当前绘图窗口</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddCurveTypeDialog.cpp" line="41"/>
+        <source>select add curve type</source>
+        <translation>选择添加的绘图类型</translation>
+    </message>
+</context>
+<context>
+    <name>SAAddLineChartSetDialog</name>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="14"/>
+        <source>Add Line Chart Set</source>
+        <oldsource>Line Chart Set</oldsource>
+        <translation type="unfinished">线图设置</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="17"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This dialog box is used to set the line graph&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;此对话框用于设置添加线图的参数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="23"/>
+        <source>X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="31"/>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="77"/>
+        <source>normal</source>
+        <translation>普通设置</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="38"/>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="84"/>
+        <source>user define</source>
+        <translation>自定义数据</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="69"/>
+        <source>Y</source>
+        <translation>Y</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="122"/>
+        <source>other set</source>
+        <translation>其他设置</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="128"/>
+        <source>title</source>
+        <translation>标题</translation>
+    </message>
+    <message>
+        <location filename="signA/dialog/SAAddLineChartSetDialog.ui" line="138"/>
+        <source>Add in current chart</source>
+        <translation>添加到当前绘图</translation>
     </message>
 </context>
 <context>
     <name>SAAligmentSetWidget</name>
     <message>
-        <location filename="signACommonUI/SAAligmentSetWidget.ui" line="16"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="signACommonUI/SAAligmentSetWidget.cpp" line="56"/>
         <source>Bottom Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>底部对齐</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAAligmentSetWidget.cpp" line="57"/>
         <source>Top Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>顶部对齐</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAAligmentSetWidget.cpp" line="58"/>
         <source>Left Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>左对齐</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAAligmentSetWidget.cpp" line="59"/>
         <source>Right Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>右对齐</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAAligmentSetWidget.cpp" line="60"/>
         <source>Center Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>中间对齐</translation>
+    </message>
+    <message>
+        <location filename="signACommonUI/SAAligmentSetWidget.ui" line="14"/>
+        <source>Aligment Set</source>
+        <translation>对齐设置</translation>
     </message>
 </context>
 <context>
@@ -1833,124 +2004,124 @@ View</translation>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="9"/>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="19"/>
         <source>X Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>X下坐标轴</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="10"/>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="20"/>
         <source>X Top</source>
-        <translation type="unfinished"></translation>
+        <translation>X上坐标轴</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="14"/>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="21"/>
         <source>Y Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Y左坐标轴</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="15"/>
         <location filename="signACommonUI/figureSet/SAAxisSelectComboBoxPropertyItem.cpp" line="22"/>
         <source>Y Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Y右坐标轴</translation>
     </message>
 </context>
 <context>
     <name>SAChart2D</name>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="448"/>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="462"/>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="476"/>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="495"/>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="515"/>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="535"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="450"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="464"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="478"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="497"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="517"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="537"/>
         <source>add curve:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>添加曲线:%1</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="559"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="561"/>
         <source>add Histogram:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>添加分布图:%1</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="577"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="579"/>
         <source>add bar:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>添加柱状图:%1</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="598"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="600"/>
         <source>add scatter:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>添加散点图:%1</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="615"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="617"/>
         <source>add box:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>添加盒图:%1</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="630"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="632"/>
         <source>add VLine %1</source>
-        <translation type="unfinished"></translation>
+        <translation>添加竖直线 %1</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="644"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="646"/>
         <source>add HLine %1</source>
-        <translation type="unfinished"></translation>
+        <translation>添加水平线 %1</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="654"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="656"/>
         <source>delete [%1]</source>
-        <translation type="unfinished"></translation>
+        <translation>删除 [%1]</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="673"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="675"/>
         <source>remove rang data</source>
-        <translation type="unfinished"></translation>
+        <translation>移除范围内数据</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="886"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="888"/>
         <source>add selection region</source>
-        <translation type="unfinished"></translation>
+        <translation>添加选区</translation>
     </message>
     <message>
-        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="1280"/>
+        <location filename="signACommonUI/Chart2D/SAChart2D.cpp" line="1282"/>
         <source>add datas</source>
-        <translation type="unfinished"></translation>
+        <translation>添加数据</translation>
     </message>
 </context>
 <context>
     <name>SAChartAxesSetWidget</name>
     <message>
         <location filename="signACommonUI/figureSet/SAChartAxesSetWidget.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Chart Axes Set</source>
+        <translation>坐标系设置</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartAxesSetWidget.ui" line="20"/>
         <source>X Bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>X下坐标轴</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartAxesSetWidget.ui" line="27"/>
         <source>Y Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Y左坐标轴</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartAxesSetWidget.ui" line="34"/>
         <source>X Top</source>
-        <translation type="unfinished"></translation>
+        <translation>X上坐标轴</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartAxesSetWidget.ui" line="41"/>
         <source>Y Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Y右坐标轴</translation>
     </message>
 </context>
 <context>
     <name>SAChartAxisSetSelect</name>
     <message>
         <location filename="signACommonUI/figureSet/SAChartAxisSetSelect.ui" line="32"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Chart Axis Set Select</source>
+        <translation>坐标轴选择</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartAxisSetSelect.ui" line="111"/>
@@ -1960,160 +2131,173 @@ View</translation>
     </message>
 </context>
 <context>
+    <name>SAChartDatasViewWidget</name>
+    <message>
+        <location filename="signA/widget/SAChartDatasViewWidget.ui" line="14"/>
+        <source>Chart Datas View</source>
+        <translation>绘图数据视图</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SAChartDatasViewWidget.ui" line="42"/>
+        <source>plot items:</source>
+        <translation>绘图对象:</translation>
+    </message>
+</context>
+<context>
     <name>SAChartNormalSetWidget</name>
     <message>
         <location filename="signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="87"/>
         <source>normal set</source>
-        <translation type="unfinished"></translation>
+        <translation>常规设置</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="88"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="89"/>
         <source>Footer</source>
-        <translation type="unfinished"></translation>
+        <translation>脚注</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="90"/>
         <source>canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation>画布背景颜色</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="91"/>
         <source>Border Radius</source>
-        <translation type="unfinished"></translation>
+        <translation>边界圆角</translation>
     </message>
 </context>
 <context>
     <name>SADataFeatureWidget</name>
     <message>
         <location filename="signA/widget/SADataFeatureWidget.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Data Feature</source>
+        <translation>数据特性</translation>
     </message>
     <message>
         <location filename="signA/widget/SADataFeatureWidget.ui" line="52"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="signA/widget/SADataFeatureWidget.cpp" line="85"/>
         <source>data feature[%1]</source>
-        <translation type="unfinished"></translation>
+        <translation>数据特性[%1]</translation>
     </message>
     <message>
         <location filename="signA/widget/SADataFeatureWidget.cpp" line="268"/>
         <source>data process connect sucess!</source>
-        <translation type="unfinished"></translation>
+        <translation>数据处理服务器连接成功!</translation>
     </message>
     <message>
-        <location filename="signA/widget/SADataFeatureWidget.cpp" line="291"/>
+        <location filename="signA/widget/SADataFeatureWidget.cpp" line="294"/>
         <source>sa can not find subWind,subWind ptr:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>没有找到子窗口,子窗口指针:%1</translation>
     </message>
     <message>
-        <location filename="signA/widget/SADataFeatureWidget.cpp" line="299"/>
+        <location filename="signA/widget/SADataFeatureWidget.cpp" line="302"/>
         <source>can not find figure in cur sub window:%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="signA/widget/SADataFeatureWidget.cpp" line="424"/>
-        <source>%1(%2,%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>当前子窗口没有绘图窗口:%1</translation>
     </message>
     <message>
         <location filename="signA/widget/SADataFeatureWidget.cpp" line="437"/>
-        <source>%1(%2)</source>
-        <translation type="unfinished"></translation>
+        <source>%1(%2,%3)</source>
+        <translation>%1(%2,%3)</translation>
     </message>
     <message>
-        <location filename="signA/widget/SADataFeatureWidget.cpp" line="525"/>
+        <location filename="signA/widget/SADataFeatureWidget.cpp" line="449"/>
+        <source>%1(%2)</source>
+        <translation>%1(%2)</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SADataFeatureWidget.cpp" line="537"/>
         <source>can not connect dataProc Serve!%1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法连接dataProc服务器!%1</translation>
     </message>
 </context>
 <context>
     <name>SADataProcessVectorPointF</name>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="121"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="127"/>
         <source>point num</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="122"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="128"/>
         <source>y min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="123"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="129"/>
         <source>y max</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="124"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="130"/>
         <source>y mid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="125"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="131"/>
         <source>y peak2peak</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="126"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="132"/>
         <source>y sum</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="127"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="133"/>
         <source>y mean</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="128"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="134"/>
         <source>y var</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="129"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="135"/>
         <source>y stdVar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="130"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="136"/>
         <source>y skewness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="131"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="137"/>
         <source>y kurtosis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="132"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="138"/>
         <source>min Point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="133"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="139"/>
         <source>max Point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="134"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="140"/>
         <source>mid Point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="140"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="146"/>
         <source>ascending order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SADataProcessVectorPointF.cpp" line="144"/>
+        <location filename="signALib/SADataProcessVectorPointF.cpp" line="150"/>
         <source>descending order</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2123,43 +2307,59 @@ View</translation>
     <message>
         <location filename="signALib/SADataTableModel.cpp" line="74"/>
         <source>information</source>
-        <translation type="unfinished">information</translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="signALib/SADataTableModel.cpp" line="75"/>
         <source>can not create file</source>
-        <translation type="unfinished"></translation>
+        <translation>无法创建文件</translation>
     </message>
 </context>
 <context>
     <name>SADrawDelegate</name>
     <message>
-        <location filename="signA/SADrawDelegate.cpp" line="82"/>
-        <location filename="signA/SADrawDelegate.cpp" line="95"/>
+        <location filename="signA/SADrawDelegate.cpp" line="102"/>
+        <source>can not create chart</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="signA/SADrawDelegate.cpp" line="133"/>
+        <location filename="signA/SADrawDelegate.cpp" line="146"/>
         <source>add Line %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signA/SADrawDelegate.cpp" line="149"/>
-        <location filename="signA/SADrawDelegate.cpp" line="182"/>
+        <location filename="signA/SADrawDelegate.cpp" line="314"/>
+        <location filename="signA/SADrawDelegate.cpp" line="344"/>
+        <source>select invalid x datas or y datas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="signA/SADrawDelegate.cpp" line="356"/>
+        <source>input data size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="signA/SADrawDelegate.cpp" line="357"/>
+        <source>input define data size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="signA/SADrawDelegate.cpp" line="391"/>
+        <location filename="signA/SADrawDelegate.cpp" line="424"/>
         <source>invalid data type,bar chart accept VectorInterval type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signA/SADrawDelegate.cpp" line="251"/>
-        <location filename="signA/SADrawDelegate.cpp" line="264"/>
+        <location filename="signA/SADrawDelegate.cpp" line="493"/>
+        <location filename="signA/SADrawDelegate.cpp" line="506"/>
         <source>add Bar %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signA/SADrawDelegate.cpp" line="323"/>
-        <location filename="signA/SADrawDelegate.cpp" line="336"/>
+        <location filename="signA/SADrawDelegate.cpp" line="565"/>
+        <location filename="signA/SADrawDelegate.cpp" line="578"/>
         <source>add Scatter %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="signA/SADrawDelegate.cpp" line="405"/>
-        <source>figure[%1]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2168,12 +2368,12 @@ View</translation>
     <message>
         <location filename="signACommonUI/SAFigureWindow.cpp" line="60"/>
         <source>Figure</source>
-        <translation type="unfinished"></translation>
+        <translation>绘图</translation>
     </message>
     <message>
-        <location filename="signACommonUI/SAFigureWindow.cpp" line="102"/>
+        <location filename="signACommonUI/SAFigureWindow.cpp" line="104"/>
         <source>memory out</source>
-        <translation type="unfinished"></translation>
+        <translation>内存不足</translation>
     </message>
 </context>
 <context>
@@ -2181,27 +2381,27 @@ View</translation>
     <message>
         <location filename="signACommonUI/SAFiugreSetWidget.cpp" line="74"/>
         <source>Fiugre Set</source>
-        <translation type="unfinished"></translation>
+        <translation>绘图设置</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAFiugreSetWidget.cpp" line="115"/>
         <location filename="signACommonUI/SAFiugreSetWidget.cpp" line="197"/>
         <location filename="signACommonUI/SAFiugreSetWidget.cpp" line="236"/>
         <source>chart %1</source>
-        <translation type="unfinished"></translation>
+        <translation>图%1</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAFiugreSetWidget.cpp" line="158"/>
         <source>none figure</source>
-        <translation type="unfinished"></translation>
+        <translation>无绘图</translation>
     </message>
 </context>
 <context>
     <name>SAFontSetWidget</name>
     <message>
         <location filename="signACommonUI/SAFontSetWidget.ui" line="20"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Font Set</source>
+        <translation>字体设置</translation>
     </message>
 </context>
 <context>
@@ -2210,174 +2410,174 @@ View</translation>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="170"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="342"/>
         <source>spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>频谱分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="175"/>
         <source>PSD(power Spectrum)</source>
-        <translation type="unfinished"></translation>
+        <translation>PSD(功率谱)</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="180"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="347"/>
         <source>tme frequency toolbox</source>
-        <translation type="unfinished"></translation>
+        <translation>时频分析工具</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="194"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="350"/>
         <source>sum</source>
-        <translation type="unfinished"></translation>
+        <translation>求和分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="198"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="352"/>
         <source>mean</source>
-        <translation type="unfinished"></translation>
+        <translation>均值</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="202"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="354"/>
         <source>diff</source>
-        <translation type="unfinished"></translation>
+        <translation>差分</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="206"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="356"/>
         <source>statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>统计分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="210"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="358"/>
         <source>hist</source>
-        <translation type="unfinished"></translation>
+        <translation>频次分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="225"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="362"/>
         <source>sigma detect</source>
-        <translation type="unfinished"></translation>
+        <translation>sigma异常值检查</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="230"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="364"/>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="365"/>
         <source>m points n pow smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>m点n次平滑</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="245"/>
         <source>Fitting Curve in Fig</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前绘图拟合</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="337"/>
         <source>Signal processing</source>
-        <translation type="unfinished"></translation>
+        <translation>信号处理</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="338"/>
         <source>detrend(direct)</source>
-        <translation type="unfinished"></translation>
+        <translation>去趋势(直流)</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="339"/>
         <source>direct detrend for signal</source>
-        <translation type="unfinished"></translation>
+        <translation>对数据进行直流去趋势</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="340"/>
         <source>set window</source>
-        <translation type="unfinished"></translation>
+        <translation>设置窗函数</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="341"/>
         <source>set the window to the wave</source>
-        <translation type="unfinished"></translation>
+        <translation>对信号设置窗函数</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="343"/>
         <source>make spectrum for signal</source>
-        <translation type="unfinished"></translation>
+        <translation>进行频谱分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="344"/>
         <source>power spectrum</source>
-        <translation type="unfinished"></translation>
+        <translation>功率谱估计</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="345"/>
         <source>make power spectrum for signal</source>
-        <translation type="unfinished"></translation>
+        <translation>进行功率谱分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="346"/>
         <source>tme frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>时频分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="349"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>统计分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="351"/>
         <source>sum datas</source>
-        <translation type="unfinished"></translation>
+        <translation>对数据进行求和</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="353"/>
         <source>mean datas</source>
-        <translation type="unfinished"></translation>
+        <translation>对数据计算均值</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="355"/>
         <source>diff datas</source>
-        <translation type="unfinished"></translation>
+        <translation>对数据进行差分计算</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="357"/>
         <source>statistics datas</source>
-        <translation type="unfinished"></translation>
+        <translation>对数据进行统计分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="359"/>
         <source>hist datas</source>
-        <translation type="unfinished"></translation>
+        <translation>对数据进行频次分析</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="361"/>
         <source>data preprocessing</source>
-        <translation type="unfinished"></translation>
+        <translation>数据处理</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="363"/>
         <source>detect the datas out of sigma rang</source>
-        <translation type="unfinished"></translation>
+        <translation>查找超出sigma范围的数据</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="367"/>
         <source>fitting</source>
-        <translation type="unfinished"></translation>
+        <translation>拟合</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="368"/>
         <source>Fitting</source>
-        <translation type="unfinished"></translation>
+        <translation>拟合</translation>
     </message>
     <message>
         <location filename="signAPlugin/saFunPlugin/SAFunPlugin.cpp" line="369"/>
         <source>Fitting the Curves in Current Figure</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前绘图拟合</translation>
     </message>
 </context>
 <context>
     <name>SAInformationStatusWidget</name>
     <message>
         <location filename="signA/SAInformationStatusWidget.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Information Status</source>
+        <translation>信息</translation>
     </message>
 </context>
 <context>
@@ -2431,8 +2631,8 @@ View</translation>
     <name>SAMessageWidget</name>
     <message>
         <location filename="signA/widget/SAMessageWidget.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Message</source>
+        <translation>信息</translation>
     </message>
 </context>
 <context>
@@ -2445,7 +2645,7 @@ View</translation>
     <message>
         <location filename="signACommonUI/SAPenSetWidget.cpp" line="184"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAPenSetWidget.cpp" line="186"/>
@@ -2455,7 +2655,7 @@ View</translation>
     <message>
         <location filename="signACommonUI/SAPenSetWidget.cpp" line="189"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>线宽</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAPenSetWidget.cpp" line="191"/>
@@ -2465,7 +2665,7 @@ View</translation>
     <message>
         <location filename="signACommonUI/SAPenSetWidget.cpp" line="193"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>样式</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAPenSetWidget.cpp" line="195"/>
@@ -2507,22 +2707,22 @@ View</translation>
     <message>
         <location filename="signA/dialog/SAProjectInfomationSetDialog.ui" line="14"/>
         <source>project infomation set dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>项目信息设置对话框</translation>
     </message>
     <message>
         <location filename="signA/dialog/SAProjectInfomationSetDialog.ui" line="21"/>
         <source>set project information</source>
-        <translation type="unfinished"></translation>
+        <translation>设置项目信息</translation>
     </message>
     <message>
         <location filename="signA/dialog/SAProjectInfomationSetDialog.ui" line="29"/>
         <source>project name:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目名:</translation>
     </message>
     <message>
         <location filename="signA/dialog/SAProjectInfomationSetDialog.ui" line="45"/>
         <source>project describe:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目描述:</translation>
     </message>
 </context>
 <context>
@@ -2530,24 +2730,24 @@ View</translation>
     <message>
         <location filename="signACommonUI/SAProjectManager.cpp" line="179"/>
         <source>project may have not datas path :&quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>项目目录没有发现数据文件夹 &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAProjectManager.cpp" line="202"/>
         <location filename="signACommonUI/SAProjectManager.cpp" line="284"/>
         <location filename="signACommonUI/SAProjectManager.cpp" line="506"/>
         <source>can not make dir:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法创建路径:%1</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAProjectManager.cpp" line="527"/>
         <source>success save project:&quot;%1&quot; </source>
-        <translation type="unfinished"></translation>
+        <translation>成功保存项目: &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAProjectManager.cpp" line="544"/>
         <source>can not find dir:%1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法找到路径:%1</translation>
     </message>
 </context>
 <context>
@@ -2556,88 +2756,97 @@ View</translation>
         <location filename="signACommonUI/SAPropertySetDialog.cpp" line="84"/>
         <location filename="signACommonUI/SAPropertySetWidget.cpp" line="69"/>
         <source>property set dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>属性设置窗口</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAPropertySetDialog.cpp" line="86"/>
-        <source>ok</source>
-        <translation type="unfinished"></translation>
+        <source>Ok</source>
+        <oldsource>ok</oldsource>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAPropertySetDialog.cpp" line="87"/>
-        <source>cancle</source>
-        <translation type="unfinished"></translation>
+        <source>Cancel</source>
+        <oldsource>cancle</oldsource>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
     <name>SAQwtAxisSetWidget</name>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="14"/>
-        <source>Form</source>
+        <source>Axis Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="35"/>
         <source>enable</source>
-        <translation type="unfinished"></translation>
+        <translation>允许</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="47"/>
         <source>title</source>
-        <translation type="unfinished"></translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="64"/>
         <source>font</source>
-        <translation type="unfinished"></translation>
+        <translation>字体</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="94"/>
         <source>label Aligment</source>
-        <translation type="unfinished"></translation>
+        <translation>文本对齐方式</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="108"/>
         <source>label Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>文本旋转</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="118"/>
         <source>margin</source>
-        <translation type="unfinished"></translation>
+        <translation>边距</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="128"/>
         <source>min scale</source>
-        <translation type="unfinished"></translation>
+        <translation>最小刻度</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="148"/>
         <source>max scale</source>
-        <translation type="unfinished"></translation>
+        <translation>最大刻度</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="170"/>
         <source>normal</source>
-        <translation type="unfinished"></translation>
+        <translation>普通坐标轴</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtAxisSetWidget.ui" line="177"/>
         <source>Time Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>时间坐标轴</translation>
     </message>
 </context>
 <context>
     <name>SAQwtDateScaleSeWidget</name>
     <message>
+        <source>Time Format</source>
+        <translation type="vanished">时间格式</translation>
+    </message>
+</context>
+<context>
+    <name>SAQwtDateScaleSetWidget</name>
+    <message>
         <location filename="signACommonUI/figureSet/SAQwtDateScaleSeWidget.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>t Date Scale Set Widget</source>
+        <translation>时间格式选择</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtDateScaleSeWidget.ui" line="35"/>
         <source>Time Format</source>
-        <translation type="unfinished"></translation>
+        <translation>时间格式</translation>
     </message>
 </context>
 <context>
@@ -2645,17 +2854,17 @@ View</translation>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtPlotCurveItemSetWidget.cpp" line="58"/>
         <source>Symbol Style</source>
-        <translation type="unfinished"></translation>
+        <translation>符号样式</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtPlotCurveItemSetWidget.cpp" line="61"/>
         <source>fitter curve</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑曲线</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtPlotCurveItemSetWidget.cpp" line="62"/>
         <source>base line</source>
-        <translation type="unfinished"></translation>
+        <translation>基线</translation>
     </message>
 </context>
 <context>
@@ -2663,45 +2872,45 @@ View</translation>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtPlotItemSetWidget.cpp" line="42"/>
         <source>Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>可见</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtPlotItemSetWidget.cpp" line="43"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>标题</translation>
     </message>
 </context>
 <context>
     <name>SAQwtSymbolSetWidget</name>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtSymbolSetWidget.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
+        <source>Symbol Set Widget</source>
+        <translation>标记设置窗口</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtSymbolSetWidget.ui" line="40"/>
         <source>style:</source>
-        <translation type="unfinished"></translation>
+        <translation>样式:</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtSymbolSetWidget.ui" line="69"/>
         <source>size:</source>
-        <translation type="unfinished"></translation>
+        <translation>尺寸:</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtSymbolSetWidget.ui" line="146"/>
         <source>Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>边线</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtSymbolSetWidget.ui" line="192"/>
         <source>Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>填充</translation>
     </message>
     <message>
         <location filename="signACommonUI/figureSet/SAQwtSymbolSetWidget.ui" line="227"/>
         <source>preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>预览:</translation>
     </message>
 </context>
 <context>
@@ -2709,12 +2918,12 @@ View</translation>
     <message>
         <location filename="signACommonUI/Chart2D/SASelectRegionDataEditor.cpp" line="308"/>
         <source>move region datas</source>
-        <translation type="unfinished"></translation>
+        <translation>移动选区数据</translation>
     </message>
     <message>
         <location filename="signACommonUI/Chart2D/SASelectRegionDataEditor.cpp" line="317"/>
         <source>move region</source>
-        <translation type="unfinished"></translation>
+        <translation>移动选区</translation>
     </message>
 </context>
 <context>
@@ -2722,7 +2931,7 @@ View</translation>
     <message>
         <location filename="signACommonUI/Chart2D/SASelectRegionEditor.cpp" line="100"/>
         <source>move region</source>
-        <translation type="unfinished"></translation>
+        <translation>移动选区</translation>
     </message>
 </context>
 <context>
@@ -2730,98 +2939,98 @@ View</translation>
     <message>
         <location filename="signA/SATabValueViewerWidget.cpp" line="15"/>
         <source>table operation</source>
-        <translation type="unfinished"></translation>
+        <translation>表格操作</translation>
     </message>
     <message>
         <location filename="signA/SATabValueViewerWidget.cpp" line="16"/>
         <location filename="signA/SATabValueViewerWidget.cpp" line="160"/>
         <source>save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="signA/SATabValueViewerWidget.cpp" line="19"/>
         <source>save as csv</source>
-        <translation type="unfinished"></translation>
+        <translation>另存为csv</translation>
     </message>
     <message>
         <location filename="signA/SATabValueViewerWidget.cpp" line="98"/>
         <source>  table-%1  </source>
-        <translation type="unfinished"></translation>
+        <translation>表-%1</translation>
     </message>
     <message>
         <location filename="signA/SATabValueViewerWidget.cpp" line="161"/>
         <source>csv file(*.csv)</source>
-        <translation type="unfinished"></translation>
+        <translation>csv文件(*.csv)</translation>
     </message>
     <message>
         <location filename="signA/SATabValueViewerWidget.cpp" line="230"/>
         <source>table value</source>
-        <translation type="unfinished"></translation>
+        <translation>表格数据</translation>
     </message>
 </context>
 <context>
     <name>SATendencyChartDataSelectDialog</name>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="14"/>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <source>Tendency Chart Data Select</source>
+        <translation>趋势图曲线设置</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="20"/>
-        <source>跟随现有曲线的x轴</source>
-        <translation type="unfinished"></translation>
+        <source>follow define curve x values</source>
+        <translation>跟随指定曲线x值</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="27"/>
-        <source>请选择一个需要跟随的曲线:</source>
-        <translation type="unfinished"></translation>
+        <source>choose a curve to follow</source>
+        <translation>选择一个曲线跟随</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="37"/>
-        <source>自定义x轴</source>
-        <translation type="unfinished"></translation>
+        <source>define x value</source>
+        <translation>自定义x值</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="46"/>
-        <source>起始值:</source>
-        <translation type="unfinished"></translation>
+        <source>start:</source>
+        <translation>开始值:</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="53"/>
         <source>0.0</source>
-        <translation type="unfinished"></translation>
+        <translation>0.0</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="60"/>
-        <source>增值:</source>
-        <translation type="unfinished"></translation>
+        <source>Growth value:</source>
+        <translation>增加值:</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.ui" line="67"/>
         <source>1.0</source>
-        <translation type="unfinished"></translation>
+        <translation>1.0</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.cpp" line="66"/>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.cpp" line="74"/>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.cpp" line="83"/>
         <source>information</source>
-        <translation type="unfinished">information</translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.cpp" line="67"/>
         <source>Please select at least one X axis generating method</source>
-        <translation type="unfinished"></translation>
+        <translation>请选择至少一种x值生成方式</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.cpp" line="75"/>
         <source>Please set the start and interval values of the coordinate axes to generate the data</source>
-        <translation type="unfinished"></translation>
+        <translation>请设置起始值和增加值以生成x轴数据</translation>
     </message>
     <message>
         <location filename="signACommonUI/SATendencyChartDataSelectDialog.cpp" line="84"/>
         <source>Select 1 curves to follow</source>
-        <translation type="unfinished"></translation>
+        <translation>选择一条曲线进行跟随</translation>
     </message>
 </context>
 <context>
@@ -2888,6 +3097,79 @@ View</translation>
         <location filename="signAPlugin/textImport/SATextDataImport.cpp" line="265"/>
         <source>can not open file</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SATimeFormatSetWidget</name>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.ui" line="20"/>
+        <source>Time Format Set</source>
+        <translation>时间格式设置</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.ui" line="28"/>
+        <source>select time format：</source>
+        <translation>选择时间格式:</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.ui" line="44"/>
+        <source>example:</source>
+        <translation>示例:</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.ui" line="72"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="35"/>
+        <source>example: 8:5</source>
+        <translation>示例:6:5</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="38"/>
+        <source>example: 08:05</source>
+        <translation>示例:08:05</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="41"/>
+        <source>example: 8:5:12</source>
+        <translation>示例:8:5:12</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="44"/>
+        <source>example: 08:05:12</source>
+        <translation>示例:08:05:12</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="47"/>
+        <source>example: 2017-8-1</source>
+        <translation>示例:2017-8-1</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="50"/>
+        <source>example: 2017-8-1 8:5</source>
+        <translation>示例:2017-8-1 6:5</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="53"/>
+        <source>example: 2017-8-1 8:5:12</source>
+        <translation>示例:2017-8-1 6:5:12</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="56"/>
+        <source>example: 2017-08-01</source>
+        <translation>示例:2017-08-01</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="59"/>
+        <source>example: 2017-08-01 08:05</source>
+        <translation>示例:2017-08-01 08:05</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SATimeFormatSetWidget.cpp" line="62"/>
+        <source>example: 2017-08-01 08:05:12</source>
+        <translation>示例:2017-08-01 08:05:12</translation>
     </message>
 </context>
 <context>
@@ -3065,74 +3347,92 @@ View</translation>
     </message>
 </context>
 <context>
+    <name>SAUserDefineAxisDataWidget</name>
+    <message>
+        <location filename="signA/widget/SAUserDefineAxisDataWidget.ui" line="20"/>
+        <source>User Define Axis Data</source>
+        <translation>自定义数据</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SAUserDefineAxisDataWidget.ui" line="28"/>
+        <source>start:</source>
+        <translation>开始:</translation>
+    </message>
+    <message>
+        <location filename="signA/widget/SAUserDefineAxisDataWidget.ui" line="45"/>
+        <source>increase:</source>
+        <translation>增值:</translation>
+    </message>
+</context>
+<context>
     <name>SAValueManager</name>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="263"/>
+        <location filename="signALib/SAValueManager.cpp" line="299"/>
         <source>value remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="279"/>
+        <location filename="signALib/SAValueManager.cpp" line="315"/>
         <source>values remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="304"/>
+        <location filename="signALib/SAValueManager.cpp" line="340"/>
         <source>rename value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="377"/>
+        <location filename="signALib/SAValueManager.cpp" line="413"/>
         <source>write data file error:%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="395"/>
+        <location filename="signALib/SAValueManager.cpp" line="431"/>
         <source>can not find dir:%1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">无法找到路径:%1</translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="426"/>
+        <location filename="signALib/SAValueManager.cpp" line="462"/>
         <source>path :&quot;%1&quot; may not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="442"/>
+        <location filename="signALib/SAValueManager.cpp" line="478"/>
         <source>file:&quot;%1&quot; may not incorrect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="521"/>
+        <location filename="signALib/SAValueManager.cpp" line="557"/>
         <source>value add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="530"/>
+        <location filename="signALib/SAValueManager.cpp" line="566"/>
         <source>value name:%1 is not correct!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="545"/>
+        <location filename="signALib/SAValueManager.cpp" line="581"/>
         <source>values add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="754"/>
+        <location filename="signALib/SAValueManager.cpp" line="790"/>
         <source>can not open file:&quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="762"/>
+        <location filename="signALib/SAValueManager.cpp" line="798"/>
         <source>file:&quot;%1&quot; may be incorrect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="768"/>
+        <location filename="signALib/SAValueManager.cpp" line="804"/>
         <source>file:&quot;%1&quot; failed to reflect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManager.cpp" line="776"/>
+        <location filename="signALib/SAValueManager.cpp" line="812"/>
         <source>file:&quot;%1&quot; failed to read</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3140,26 +3440,39 @@ View</translation>
 <context>
     <name>SAValueManagerModel</name>
     <message>
-        <location filename="signALib/SAValueManagerModel.cpp" line="166"/>
+        <location filename="signALib/SAValueManagerModel.cpp" line="165"/>
         <source>name</source>
-        <translation type="unfinished"></translation>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <location filename="signALib/SAValueManagerModel.cpp" line="166"/>
+        <source>type</source>
+        <translation>类型</translation>
     </message>
     <message>
         <location filename="signALib/SAValueManagerModel.cpp" line="167"/>
-        <source>type</source>
-        <translation type="unfinished"></translation>
+        <source>describe</source>
+        <translation>描述</translation>
+    </message>
+</context>
+<context>
+    <name>SAValueSelectComboBox</name>
+    <message>
+        <location filename="signA/widget/SAValueSelectComboBox.ui" line="20"/>
+        <source>Value Select ComboBox</source>
+        <translation>数据选择</translation>
     </message>
     <message>
-        <location filename="signALib/SAValueManagerModel.cpp" line="168"/>
-        <source>describe</source>
-        <translation type="unfinished"></translation>
+        <location filename="signA/widget/SAValueSelectComboBox.ui" line="41"/>
+        <source>select value:</source>
+        <translation>选择数据:</translation>
     </message>
 </context>
 <context>
     <name>SAValueSelectDialog</name>
     <message>
         <location filename="signACommonUI/SAValueSelectDialog.ui" line="14"/>
-        <source>Dialog</source>
+        <source>Value Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3170,7 +3483,7 @@ View</translation>
     <message>
         <location filename="signACommonUI/SAValueSelectDialog.ui" line="42"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">...</translation>
     </message>
     <message>
         <location filename="signACommonUI/SAValueSelectDialog.ui" line="53"/>
@@ -3261,7 +3574,7 @@ View</translation>
     <message>
         <location filename="3rdParty/qti/SymbolBox.cpp" line="115"/>
         <source>Cross</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">十字线</translation>
     </message>
     <message>
         <location filename="3rdParty/qti/SymbolBox.cpp" line="120"/>
@@ -3378,47 +3691,52 @@ View</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="336"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="364"/>
+        <source>datas view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="373"/>
         <source>提取数据</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="350"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="387"/>
         <source>按列提取</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="362"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="399"/>
         <source>所有数据作为一列</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="391"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="415"/>
         <source>数据预览</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="416"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="440"/>
         <source>文本预览</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="462"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="486"/>
         <source>更多设置</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="488"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="512"/>
         <source>上一步</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="495"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="519"/>
         <source>下一步</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="505"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.ui" line="529"/>
         <source>取 消</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3458,27 +3776,32 @@ View</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="212"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="187"/>
+        <source>data_%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="226"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="213"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="227"/>
         <source>Please enter a separator:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="246"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="260"/>
         <source>finish</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="253"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="267"/>
         <source>next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="277"/>
+        <location filename="signAPlugin/textImport/TextFileImportDialog.cpp" line="291"/>
         <source>import data from:&quot;%1&quot; 
 create data:%2</source>
         <oldsource>import data from:&quot;%1&quot; 
@@ -3487,18 +3810,10 @@ create data:%2</oldsource>
     </message>
 </context>
 <context>
-    <name>TextImportConfig</name>
-    <message>
-        <location filename="signAPlugin/textImport/TextImportConfig.cpp" line="112"/>
-        <source>column%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ValueViewerTabPage</name>
     <message>
         <location filename="signA/widget/ValueViewerTabPage.ui" line="14"/>
-        <source>Form</source>
+        <source>Value Viewer Tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3526,13 +3841,8 @@ create data:%2</oldsource>
     <name>progressStateWidget</name>
     <message>
         <location filename="signA/progressStateWidget.ui" line="26"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="signA/progressStateWidget.ui" line="72"/>
-        <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <source>Progress State</source>
+        <translation>进度</translation>
     </message>
 </context>
 </TS>

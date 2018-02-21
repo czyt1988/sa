@@ -11,26 +11,26 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Pick Curve Data Mode Set</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QGroupBox" name="groupBox_range">
      <property name="title">
-      <string>选择导出数据范围</string>
+      <string>select export datas range</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QRadioButton" name="radioButton_viewRange">
         <property name="text">
-         <string>导出当前选择范围内数据</string>
+         <string>export current select region datas</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton_allRange">
         <property name="text">
-         <string>导出所有数据</string>
+         <string>export all datas</string>
         </property>
        </widget>
       </item>
@@ -40,27 +40,27 @@
    <item>
     <widget class="QGroupBox" name="groupBox_type">
      <property name="title">
-      <string>选择导出数据类型</string>
+      <string>choose export data type</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QRadioButton" name="radioButton_xOnly">
         <property name="text">
-         <string>只导出x轴数值</string>
+         <string>export x value</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton_yOnly">
         <property name="text">
-         <string>只导出y轴数值</string>
+         <string>export y value</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton_point">
         <property name="text">
-         <string>导出x,y轴点序列</string>
+         <string>export (x,y) value</string>
         </property>
        </widget>
       </item>
