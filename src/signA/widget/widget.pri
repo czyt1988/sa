@@ -7,7 +7,6 @@ HEADERS += \
     $$PWD/SAMessageWidget.h \
     $$PWD/SADataFeatureWidget.h \
     $$PWD/SAChartDatasViewWidget.h \
-    $$PWD/SATimeFormatSetWidget.h \
     $$PWD/SAUserDefineAxisDataWidget.h \
     $$PWD/SAValueSelectComboBox.h
 
@@ -17,7 +16,6 @@ SOURCES += \
     $$PWD/SAMessageWidget.cpp \
     $$PWD/SADataFeatureWidget.cpp \
     $$PWD/SAChartDatasViewWidget.cpp \
-    $$PWD/SATimeFormatSetWidget.cpp \
     $$PWD/SAUserDefineAxisDataWidget.cpp \
     $$PWD/SAValueSelectComboBox.cpp
 
@@ -26,7 +24,6 @@ FORMS += \
     $$PWD/SAMessageWidget.ui \
     $$PWD/SADataFeatureWidget.ui \
     $$PWD/SAChartDatasViewWidget.ui \
-    $$PWD/SATimeFormatSetWidget.ui \
     $$PWD/SAUserDefineAxisDataWidget.ui \
     $$PWD/SAValueSelectComboBox.ui
 

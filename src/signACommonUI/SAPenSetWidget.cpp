@@ -1,6 +1,12 @@
 ﻿#include "SAPenSetWidget.h"
 #include <QApplication>
-#include "ui_SAPenSetWidget.h"
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QSlider>
+#include <QSpinBox>
+#include "SAColorPickerButton.h"
+#include "SAPenStyleComboBox.h"
 #define TR(str) QApplication::translate("SAPenSetWidget", str, 0)
 class SAPenSetWidget::UI
 {

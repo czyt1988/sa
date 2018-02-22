@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>文本数据导入向导</string>
+   <string>Text Import Wizard</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -42,7 +42,7 @@
        <enum>QFrame::Plain</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_1">
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -55,7 +55,7 @@
            </size>
           </property>
           <property name="title">
-           <string>基本信息</string>
+           <string>Information</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <item>
@@ -63,7 +63,7 @@
              <item>
               <widget class="QLabel" name="label_6">
                <property name="text">
-                <string>编码：</string>
+                <string>Encoding：</string>
                </property>
               </widget>
              </item>
@@ -119,7 +119,7 @@
            </size>
           </property>
           <property name="title">
-           <string>是否需要忽略文件头</string>
+           <string>Read settings</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -130,7 +130,7 @@
              <item>
               <widget class="QLabel" name="label_IgnoreHead">
                <property name="text">
-                <string>数据开始行数</string>
+                <string>Start line</string>
                </property>
               </widget>
              </item>
@@ -154,16 +154,12 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_Line">
-               <property name="text">
-                <string>行</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>        把第</string>
+                <string>The number of rows as the header</string>
+               </property>
+               <property name="indent">
+                <number>15</number>
                </property>
               </widget>
              </item>
@@ -177,13 +173,6 @@
                </property>
                <property name="value">
                 <number>0</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_5">
-               <property name="text">
-                <string>行作为表头</string>
                </property>
               </widget>
              </item>
@@ -207,7 +196,7 @@
              <item>
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>数据结束行数</string>
+                <string>End line</string>
                </property>
               </widget>
              </item>
@@ -227,13 +216,6 @@
                </property>
                <property name="value">
                 <number>0</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_Line_2">
-               <property name="text">
-                <string>行</string>
                </property>
               </widget>
              </item>
@@ -264,7 +246,7 @@
            </size>
           </property>
           <property name="title">
-           <string>文本中需要导入的变量是如何排列的</string>
+           <string>How the text is arranged</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
@@ -272,7 +254,7 @@
              <item>
               <widget class="QRadioButton" name="radioButton_Separator">
                <property name="text">
-                <string>通过分隔符隔开</string>
+                <string>Separated by delimiters</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -282,7 +264,10 @@
              <item>
               <widget class="QLabel" name="label_Separator">
                <property name="text">
-                <string>    分隔符:</string>
+                <string>Separator:</string>
+               </property>
+               <property name="indent">
+                <number>15</number>
                </property>
               </widget>
              </item>
@@ -370,7 +355,7 @@
         <item row="0" column="0">
          <widget class="QGroupBox" name="groupBox_noTable">
           <property name="title">
-           <string>提取数据</string>
+           <string>Data extraction method</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -384,7 +369,7 @@
              <item>
               <widget class="QRadioButton" name="radioButton_1D">
                <property name="text">
-                <string>按列提取</string>
+                <string>Extract by column</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -396,7 +381,7 @@
            <item>
             <widget class="QRadioButton" name="radioButton_oneColumn">
              <property name="text">
-              <string>所有数据作为一列</string>
+              <string>All data as a column</string>
              </property>
             </widget>
            </item>
@@ -407,12 +392,15 @@
       </widget>
      </widget>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::South</enum>
+      </property>
       <property name="currentIndex">
        <number>1</number>
       </property>
       <widget class="QWidget" name="tabData">
        <attribute name="title">
-        <string>数据预览</string>
+        <string>Data preview</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
@@ -437,7 +425,7 @@
       </widget>
       <widget class="QWidget" name="tabText">
        <attribute name="title">
-        <string>文本预览</string>
+        <string>Text preview</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <property name="spacing">
@@ -483,7 +471,7 @@
         </size>
        </property>
        <property name="text">
-        <string>更多设置</string>
+        <string>More...</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -509,14 +497,14 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>上一步</string>
+        <string>Previous</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_Next">
        <property name="text">
-        <string>下一步</string>
+        <string>Next</string>
        </property>
        <property name="default">
         <bool>true</bool>
@@ -526,7 +514,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_Cancel">
        <property name="text">
-        <string>取 消</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>

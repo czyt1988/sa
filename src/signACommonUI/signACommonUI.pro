@@ -58,7 +58,8 @@ HEADERS += \
     SAValueManagerTreeView.h \
     SATendencyChartDataSelectDialog.h \
     SAMdiSubWindowSerializeHead.h \
-    SAProjectManager.h
+    SAProjectManager.h \
+    SATimeFormatSetWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -81,14 +82,16 @@ SOURCES += \
     SAValueManagerTreeView.cpp \
     SATendencyChartDataSelectDialog.cpp \
     SAMdiSubWindowSerializeHead.cpp \
-    SAProjectManager.cpp
+    SAProjectManager.cpp \
+    SATimeFormatSetWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
     TestWidget.ui \
     SAFontSetWidget.ui \
     SAAligmentSetWidget.ui \
-    SATendencyChartDataSelectDialog.ui
+    SATendencyChartDataSelectDialog.ui \
+    SATimeFormatSetWidget.ui
 
 #Chart2D
 include($$PWD/Chart2D/Chart2D.pri)

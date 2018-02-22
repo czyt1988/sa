@@ -179,9 +179,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QStackedWidget" name="stackedWidget">
-     <widget class="SAQwtDateScaleSeWidget" name="dateTimeScaleSetWidget"/>
-    </widget>
+    <widget class="SATimeFormatSetWidget" name="dateTimeScaleSetWidget" native="true"/>
    </item>
   </layout>
  </widget>
@@ -199,12 +197,29 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SAQwtDateScaleSeWidget</class>
+   <class>SATimeFormatSetWidget</class>
    <extends>QWidget</extends>
-   <header>SAQwtDateScaleSeWidget.h</header>
+   <header>SATimeFormatSetWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>radioButtonTimeScale</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>dateTimeScaleSetWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>251</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>148</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

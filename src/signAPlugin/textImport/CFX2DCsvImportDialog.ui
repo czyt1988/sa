@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CFX 2D Csv文件解析</string>
+   <string>CFX 2D Csv File Import</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -23,7 +23,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;1.选择文件:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;1.Select the file:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -43,7 +43,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>字符编码:</string>
+        <string>Encoding:</string>
        </property>
       </widget>
      </item>
@@ -167,7 +167,7 @@
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>解析设置</string>
+              <string>Parse set</string>
              </property>
             </widget>
            </item>
@@ -201,7 +201,7 @@
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;预览:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Preview:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -231,7 +231,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>解析</string>
+          <string>Parse</string>
          </property>
          <property name="icon">
           <iconset resource="icon.qrc">
@@ -270,7 +270,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_cancel">
        <property name="text">
-        <string>退出</string>
+        <string>Cancel</string>
        </property>
        <property name="icon">
         <iconset resource="icon.qrc">
@@ -281,7 +281,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_ok">
        <property name="text">
-        <string>完成</string>
+        <string>Ok</string>
        </property>
        <property name="icon">
         <iconset resource="icon.qrc">

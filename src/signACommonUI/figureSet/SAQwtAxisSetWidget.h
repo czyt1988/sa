@@ -41,7 +41,6 @@ private slots:
 
 private:
     void updateUI();
-    void updateAxisScaleUI();
     void updateAxisValue(QwtPlot *chart,int axisID);
 private:
     enum ScaleStyle

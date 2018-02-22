@@ -19,7 +19,6 @@ SAQwtAxisSetWidget::SAQwtAxisSetWidget(QWidget *parent) :
     m_buttonGroup->addButton(ui->radioButtonNormal,NormalScale);
     m_buttonGroup->addButton(ui->radioButtonTimeScale,DateTimeScale);
     ui->radioButtonNormal->setChecked(true);
-    ui->stackedWidget->hide();
 
     connect(ui->checkBoxEnable,&QCheckBox::stateChanged
             ,this,&SAQwtAxisSetWidget::onEnableCheckBoxClicked);
@@ -137,7 +136,6 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
 {
     if(NormalScale == id)
     {
-        ui->stackedWidget->hide();
         if(m_chart)
         {
             SAChart::setAxisNormalScale(m_chart,m_axisID);
@@ -147,14 +145,12 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
     {
         if(DateTimeScale == id)
         {
-            ui->stackedWidget->setCurrentWidget(ui->dateTimeScaleSetWidget);
             if(m_chart)
             {
-                QString format = ui->dateTimeScaleSetWidget->text();
+                QString format = ui->dateTimeScaleSetWidget->getTimeFormat();
                 SAChart::setAxisDateTimeScale(m_chart,m_axisID,format);
             }
         }
-        ui->stackedWidget->show();
 
     }
 }
@@ -172,25 +168,8 @@ void SAQwtAxisSetWidget::updateUI()
         }
     }
     ui->checkBoxEnable->setEnabled(true);
-    updateAxisScaleUI();
 }
 
-void SAQwtAxisSetWidget::updateAxisScaleUI()
-{
-
-    if(ui->radioButtonNormal->isChecked())
-    {
-        ui->stackedWidget->hide();
-    }
-    else
-    {
-        ui->stackedWidget->show();
-        if(ui->radioButtonTimeScale->isChecked())
-        {
-            ui->stackedWidget->setCurrentWidget(ui->dateTimeScaleSetWidget);
-        }
-    }
-}
 
 void SAQwtAxisSetWidget::updateAxisValue(QwtPlot *chart,int axisID)
 {
@@ -230,7 +209,7 @@ void SAQwtAxisSetWidget::updateAxisValue(QwtPlot *chart,int axisID)
     if(dsd)
     {
         ui->radioButtonTimeScale->setChecked(true);
-        ui->dateTimeScaleSetWidget->setText(dsd->dateFormat(QwtDate::Second));
+        ui->dateTimeScaleSetWidget->setTimeFormatText(dsd->dateFormat(QwtDate::Second));
     }
     else
     {
@@ -250,7 +229,7 @@ void SAQwtAxisSetWidget::resetAxisValue()
     ui->labelAligment->setAlignment(Qt::AlignLeft);
     ui->spinBoxMargin->setValue(0);
     ui->radioButtonTimeScale->setChecked(false);
-    ui->dateTimeScaleSetWidget->setText("");
+    ui->dateTimeScaleSetWidget->setTimeFormatText("");
 
 
 }

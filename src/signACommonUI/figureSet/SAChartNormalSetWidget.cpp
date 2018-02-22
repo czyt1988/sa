@@ -179,6 +179,7 @@ void SAChartNormalSetWidget::onBorderRadiusChanged(double v)
         if(canvas)
         {
             canvas->setBorderRadius(v);
+            ui->chart->replot();
         }
     }
 }
