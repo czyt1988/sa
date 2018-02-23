@@ -8,7 +8,8 @@ HEADERS += \
     $$PWD/SADataFeatureWidget.h \
     $$PWD/SAChartDatasViewWidget.h \
     $$PWD/SAUserDefineAxisDataWidget.h \
-    $$PWD/SAValueSelectComboBox.h
+    $$PWD/SAValueSelectComboBox.h \
+    $$PWD/SAFigureLayoutWidget.h
 
 SOURCES += \
     $$PWD/ValueViewerTabPage.cpp \
@@ -17,7 +18,8 @@ SOURCES += \
     $$PWD/SADataFeatureWidget.cpp \
     $$PWD/SAChartDatasViewWidget.cpp \
     $$PWD/SAUserDefineAxisDataWidget.cpp \
-    $$PWD/SAValueSelectComboBox.cpp
+    $$PWD/SAValueSelectComboBox.cpp \
+    $$PWD/SAFigureLayoutWidget.cpp
 
 FORMS += \
     $$PWD/ValueViewerTabPage.ui \
@@ -25,7 +27,8 @@ FORMS += \
     $$PWD/SADataFeatureWidget.ui \
     $$PWD/SAChartDatasViewWidget.ui \
     $$PWD/SAUserDefineAxisDataWidget.ui \
-    $$PWD/SAValueSelectComboBox.ui
+    $$PWD/SAValueSelectComboBox.ui \
+    $$PWD/SAFigureLayoutWidget.ui
 
 
 

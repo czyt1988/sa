@@ -162,9 +162,6 @@ MainWindow::MainWindow(QWidget *parent) :
 #else
     ui->setupUi(this);
 #endif
-    QWidget* p = takeCentralWidget();
-    if(p)
-        delete p;//移除中央窗口
     init();
     initUI();
     initMenu();
@@ -226,22 +223,6 @@ void MainWindow::initUI()
     ui->listView_window->setModel(mdiListModel);
     connect(ui->listView_window,&QAbstractItemView::clicked,mdiListModel,&MdiWindowModel::onItemClick);
     connect(ui->listView_window,&QAbstractItemView::doubleClicked,mdiListModel,&MdiWindowModel::onItemDoubleClick);
-    //-------------------------------------
-    // - 图层的设置
-	SAPlotLayerModel* layerModel = new SAPlotLayerModel(ui->tableView_layer);
-    QHeaderView* plotLayerVerticalHeader = ui->tableView_layer->verticalHeader();
-    if(plotLayerVerticalHeader)
-    {
-        plotLayerVerticalHeader->setDefaultSectionSize(19);
-    }
-	ui->tableView_layer->setModel(layerModel);
-    ui->tableView_layer->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	auto hh = ui->tableView_layer->horizontalHeader();
-	hh->setSectionResizeMode(0,QHeaderView::ResizeToContents);
-	hh->setSectionResizeMode(1,QHeaderView::ResizeToContents);
-	hh->setSectionResizeMode(2,QHeaderView::ResizeToContents);
-	hh->setStretchLastSection(true);
-    connect(ui->tableView_layer,&QTableView::pressed,this,&MainWindow::onTableViewLayerPressed);
     //-------------------------------------
     // - start valueManager signal/slots connect
     connect(ui->treeView_valueManager,&QTreeView::clicked,this,&MainWindow::onTreeViewValueManagerClicked);
@@ -1741,28 +1722,7 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
         updateChartSetToolBar(fig);
 
         //更新dock - plotLayer 图层
-		SAPlotLayerModel* plotLayerModel = getPlotLayerModel();
-		if(plotLayerModel)
-		{
-            SAChart2D* plot = fig->current2DPlot();
-            if(plot)
-            {
-                plotLayerModel->setPlot(plot);
-                QItemSelectionModel* selectModel = ui->tableView_layer->selectionModel();
-                QList<QwtPlotItem*> selItems = plot->getCurrentSelectItems();
-                if(selectModel)
-                {
-                   QModelIndexList indexSel = plotLayerModel->getIndexFromPlotItems(selItems);
-                   selectModel->reset();
-                   for(int i=0;i<indexSel.size();++i)
-                   {
-                       //qDebug() << "indexSel r:"<<indexSel[i].row()<<" c:"<<indexSel[i].column();
-                       selectModel->select(indexSel[i],QItemSelectionModel::Select|QItemSelectionModel::Rows);
-                   }
-                }
-            }
-		}
-
+        ui->figureLayoutWidget->setFigure(fig);
 
         //更新dock - dataviewer
         ui->chartDatasViewWidget->setFigure(fig);
@@ -2471,7 +2431,7 @@ QList<SAAbstractDatas*> MainWindow::getSeletedDatas() const
 
 SAPlotLayerModel* MainWindow::getPlotLayerModel() const
 {
-	return static_cast<SAPlotLayerModel*>(ui->tableView_layer->model());
+    return ui->figureLayoutWidget->getLayoutModel();
 }
 ///
 /// \brief 把一个XYSeries转换为value
@@ -2566,73 +2526,7 @@ void MainWindow::onActionRedoTriggered()
     }
 }
 
-///
-/// \brief 图层视图的点击
-/// \param index
-///
-void MainWindow::onTableViewLayerPressed(const QModelIndex &index)
-{
-    if(!index.isValid ())
-        return;
 
-    QColor rgb = index.data (Qt::BackgroundColorRole).value<QColor>();
-#if _CFG_LAYOUT_SELECT_CHANG_QSS
-    ui->tableView_layer->setStyleSheet (getPlotLayerNewItemSelectedQSS(rgb));
-#endif
-    SAPlotLayerModel* model=getPlotLayerModel();
-    QwtPlotItem* item = model->getPlotItemFromIndex (index);
-    if (1==index.column())
-    {
-        model->setData (index,!item->isVisible ());
-    }
-    else if(index.column() == 2)
-    {//颜色
-        QColorDialog clrDlg;
-        clrDlg.setCurrentColor(rgb);
-        if(clrDlg.exec() == QDialog::Accepted)
-        {
-            QColor newClr = clrDlg.selectedColor();
-#if _CFG_LAYOUT_SELECT_CHANG_QSS
-            ui->tableView_layer->setStyleSheet (getPlotLayerNewItemSelectedQSS(newClr));
-#endif
-            model->setData (index,newClr,Qt::BackgroundColorRole);
-        }
-    }
-    //
-    SAChart2D* chart = getCurSubWindowChart();
-    QItemSelectionModel* selMode = ui->tableView_layer->selectionModel();
-    QSet<QwtPlotItem*> itemSets;
-    if(selMode)
-    {
-        QModelIndexList selIndex = selMode->selectedRows();
-        for(int i=0;i<selIndex.size();++i)
-        {
-            itemSets.insert( model->getPlotItemFromIndex (selIndex[i]));
-        }
-        chart->setCurrentSelectItems(itemSets.toList());
-    }
-}
-#if _CFG_LAYOUT_SELECT_CHANG_QSS
-///
-/// \brief 根据已有的背景颜色来设置选中状态的背景颜色
-/// \param rgb 已有的背景颜色
-/// \return 设置的qss字符串
-///
-QString MainWindow::getPlotLayerNewItemSelectedQSS(const QColor& rgb)
-{
-#if 1
-    QString qss = QString("QTableView::item:selected{selection-background-color:rgba(%1,%2,%3,100);}"
-                          "QTableView::item:selected{selection-color:rgb(0,0,0);}")
-                  .arg (rgb.red ()).arg (rgb.green ()).arg (rgb.blue ());
-#else
-    QString qss = QString("QTableView::item:selected{selection-background-color:rgba(255,255,255,255);}"
-                          "QTableView::item:selected{border;3px solid %1;}"
-                          "QTableView::item:selected{selection-color:rgb(0,0,0);}")
-                  .arg (rgb.name());
-#endif
-    return qss;
-}
-#endif
 bool MainWindow::setProjectInfomation()
 {
     SAProjectInfomationSetDialog dlg(this);

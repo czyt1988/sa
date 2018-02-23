@@ -35,6 +35,7 @@
 #include "SARibbonGallery.h"
 #include "SARibbonApplicationButton.h"
 #include "SAChartDatasViewWidget.h"
+#include "SAFigureLayoutWidget.h"
 class MainWindow;
 class MainWindowPrivate
 {
@@ -108,7 +109,7 @@ public:
     QActionGroup* actionGroupSkins;
     QActionGroup* actionGroupSelection;
     QActionGroup* actionChartEditor;///< 图像编辑器的互斥
-    QWidget *centralWidget;
+
 
 
     SARibbonBar *menuBar;
@@ -235,14 +236,16 @@ public:
     QWidget *dockWidgetContents_3;
     QVBoxLayout *verticalLayout_3;
     SAValueManagerTreeView *treeView_valueManager;
-    QDockWidget *dockWidget_plotLayer;
-    QWidget *dockWidgetContents_5;
-    QVBoxLayout *verticalLayout_5;
-    QTableView *tableView_layer;
 
 
+    //dock chartDataViewer
     QDockWidget *dockWidget_chartDataViewer;
     SAChartDatasViewWidget* chartDatasViewWidget;
+    //dock plotLayer
+    QDockWidget *dockWidget_plotLayer;
+    SAFigureLayoutWidget* figureLayoutWidget;
+
+
 
 
     QDockWidget *dockWidget_main;

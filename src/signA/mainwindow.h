@@ -381,12 +381,7 @@ private slots:
     void onActionAboutTriggered();
     /// \}
 
-    ///
-    /// \group layout table slots(图层表格相关)
-    /// \{
-    //图层表格鼠标的点击
-    void onTableViewLayerPressed(const QModelIndex &index);
-    /// \}
+
 
 
     ///
@@ -491,10 +486,7 @@ private:
 
     //释放chart的附加editor
     void releaseChart2DEditor(SAChart2D* chart);
-#if _CFG_LAYOUT_SELECT_CHANG_QSS
-    //图层表格的选择样式生成
-    QString getPlotLayerNewItemSelectedQSS(const QColor& rgb);
-#endif
+
     //设置项目信息
     bool setProjectInfomation();
     //变量管理器的移除控制触发的槽

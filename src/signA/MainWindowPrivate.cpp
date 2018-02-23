@@ -308,10 +308,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionGroupSkins = new QActionGroup(mainWinowPtr);
     actionGroupSkins->setObjectName(QStringLiteral("actionGroupSkins"));
     actionGroupSkins->setExclusive(true);
-    centralWidget = new QWidget(mainWinowPtr);
-    centralWidget->setObjectName(QStringLiteral("centralWidget"));
-    centralWidget->setMaximumSize(QSize(0, 0));
-    mainWinowPtr->setCentralWidget(centralWidget);
+
 
     menuBar = mainWinowPtr->ribbonBar();
     menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -614,21 +611,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget_valueManage);
     dockWidget_plotLayer = new QDockWidget(mainWinowPtr);
     dockWidget_plotLayer->setObjectName(QStringLiteral("dockWidget_plotLayer"));
-    dockWidgetContents_5 = new QWidget();
-    dockWidgetContents_5->setObjectName(QStringLiteral("dockWidgetContents_5"));
-    verticalLayout_5 = new QVBoxLayout(dockWidgetContents_5);
-    verticalLayout_5->setSpacing(1);
-    verticalLayout_5->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
-    verticalLayout_5->setContentsMargins(1, 1, 1, 1);
-    tableView_layer = new QTableView(dockWidgetContents_5);
-    tableView_layer->setObjectName(QStringLiteral("tableView_layer"));
-    tableView_layer->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableView_layer->setSelectionBehavior(QAbstractItemView::SelectRows);
+    figureLayoutWidget = new SAFigureLayoutWidget(dockWidget_plotLayer);
+    figureLayoutWidget->setObjectName(QStringLiteral("SAFigureLayoutWidget"));
+    dockWidget_plotLayer->setWidget(figureLayoutWidget);
 
-    verticalLayout_5->addWidget(tableView_layer);
-
-    dockWidget_plotLayer->setWidget(dockWidgetContents_5);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_plotLayer);
     dockWidget_chartDataViewer = new QDockWidget(mainWinowPtr);
     dockWidget_chartDataViewer->setObjectName(QStringLiteral("dockWidget_chartDataViewer"));
