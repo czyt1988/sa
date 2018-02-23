@@ -55,11 +55,18 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTableView" name="tableView"/>
+     <widget class="SAChartDataTableView" name="tableView"/>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SAChartDataTableView</class>
+   <extends>QTableView</extends>
+   <header>SAChartDataTableView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

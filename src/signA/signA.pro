@@ -44,7 +44,9 @@ SOURCES += main.cpp\
     CurveSelectDialog.cpp \
     SAPluginManager.cpp \
     SAUI.cpp \
-    MainWindowPrivate.cpp
+    MainWindowPrivate.cpp \
+    SAValueDataTableView.cpp \
+    SAChartDataTableView.cpp
 
 HEADERS  += mainwindow.h \
     DebugInfo.h \
@@ -60,7 +62,9 @@ HEADERS  += mainwindow.h \
     SAPluginManager.h \
     SAUI.h \
     SAResourDefine.h \
-    MainWindowPrivate.h
+    MainWindowPrivate.h \
+    SAValueDataTableView.h \
+    SAChartDataTableView.h
 
 
 

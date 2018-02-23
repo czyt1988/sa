@@ -59,7 +59,8 @@ HEADERS += \
     SATendencyChartDataSelectDialog.h \
     SAMdiSubWindowSerializeHead.h \
     SAProjectManager.h \
-    SATimeFormatSetWidget.h
+    SATimeFormatSetWidget.h \
+    SATableView.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -83,7 +84,8 @@ SOURCES += \
     SATendencyChartDataSelectDialog.cpp \
     SAMdiSubWindowSerializeHead.cpp \
     SAProjectManager.cpp \
-    SATimeFormatSetWidget.cpp
+    SATimeFormatSetWidget.cpp \
+    SATableView.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

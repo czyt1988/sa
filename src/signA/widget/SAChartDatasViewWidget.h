@@ -8,7 +8,9 @@ class SAFigureWindow;
 namespace Ui {
 class SAChartDatasViewWidget;
 }
-
+///
+/// \brief 曲线数据查看窗口
+///
 class SAChartDatasViewWidget : public QWidget
 {
     Q_OBJECT

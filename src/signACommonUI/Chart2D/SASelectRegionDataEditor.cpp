@@ -514,7 +514,7 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
         case Qt::Key_Up:
         {
             QPoint toPoint = d_ptr->m_tmpPoint;
-            toPoint.ry() += 1;
+            toPoint.ry() -= 1;
             moveEdit(toPoint);
             break;
         }
@@ -535,7 +535,7 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
         case Qt::Key_Down:
         {
             QPoint toPoint = d_ptr->m_tmpPoint;
-            toPoint.ry() -= 1;
+            toPoint.ry() += 1;
             moveEdit(toPoint);
             break;
         }

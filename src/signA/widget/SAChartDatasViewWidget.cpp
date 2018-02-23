@@ -15,7 +15,11 @@ SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     ui->treeView->setModel(m_treeModel);
     m_tableModel = new QwtPlotItemDataModel(this);
     ui->tableView->setModel(m_tableModel);
-
+    QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
+    if(plotLayerVerticalHeader)
+    {
+        plotLayerVerticalHeader->setDefaultSectionSize(19);
+    }
     // - TreeView CurPlotItem slots(曲线条目树形窗口)
     connect(ui->treeView,&QTreeView::clicked,this,&SAChartDatasViewWidget::onTreeViewCurPlotItemClicked);
 }
