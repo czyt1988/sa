@@ -214,6 +214,26 @@ void SAFiugreSetWidget::clear()
     }
     ui->chartSetWidget->setChart(nullptr);
 }
+
+void SAFiugreSetWidget::updateData()
+{
+    ui->chartSetWidget->updateAll();
+}
+
+void SAFiugreSetWidget::updatePlotItemsSet()
+{
+    ui->chartSetWidget->updatePlotItemsSet();
+}
+
+void SAFiugreSetWidget::updateAxesSet()
+{
+    ui->chartSetWidget->updateAxesSet();
+}
+
+void SAFiugreSetWidget::updateNormalSet()
+{
+    ui->chartSetWidget->updateNormalSet();
+}
 #endif
 
 void SAFiugreSetWidget::onChartTitleChanged(const QString &text)

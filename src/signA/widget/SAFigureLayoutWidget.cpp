@@ -4,6 +4,7 @@
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include <QColorDialog>
+#include "SAChart.h"
 SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SAFigureLayoutWidget)
@@ -23,6 +24,7 @@ SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     hh->setSectionResizeMode(2,QHeaderView::ResizeToContents);
     hh->setStretchLastSection(true);
     connect(ui->tableView,&QTableView::pressed,this,&SAFigureLayoutWidget::onTableViewLayerPressed);
+    connect(ui->toolButtonDelete,&QToolButton::clicked,this,&SAFigureLayoutWidget::onToolButtonDeleteClicked);
 }
 
 SAFigureLayoutWidget::~SAFigureLayoutWidget()
@@ -46,11 +48,10 @@ SAFigureWindow *SAFigureLayoutWidget::currentFigure() const
     return m_figure;
 }
 
-SAPlotLayerModel *SAFigureLayoutWidget::getPlotLayerModel() const
-{
-    return m_layoutModel;
-}
 
+///
+/// \brief 更新图层
+///
 void SAFigureLayoutWidget::updateLayout()
 {
     if(nullptr == m_figure)
@@ -75,7 +76,10 @@ void SAFigureLayoutWidget::updateLayout()
         }
     }
 }
-
+///
+/// \brief 表格点击
+/// \param index
+///
 void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
 {
     if(!index.isValid ())
@@ -83,11 +87,17 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
 
     QColor rgb = index.data (Qt::BackgroundColorRole).value<QColor>();
 
-    SAPlotLayerModel* model=getPlotLayerModel();
+    SAPlotLayerModel* model=getLayoutModel();
     QwtPlotItem* item = model->getPlotItemFromIndex (index);
-    if (1==index.column())
+    SAChart2D* plot = qobject_cast<SAChart2D*>(model->getPlot());
+    if(!plot)
     {
+       return;
+    }
+    if (1==index.column())
+    {//可见性
         model->setData (index,!item->isVisible ());
+        emit itemVisibleChanged(plot,item,item->isVisible());
     }
     else if(index.column() == 2)
     {//颜色
@@ -97,14 +107,11 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
         {
             QColor newClr = clrDlg.selectedColor();
             model->setData (index,newClr,Qt::BackgroundColorRole);
+            emit itemColorChanged(plot,item,newClr);
         }
     }
     //
-    SAChart2D* plot = m_figure->current2DPlot();
-    if(!plot)
-    {
-       return;
-    }
+
     QItemSelectionModel* selMode = ui->tableView->selectionModel();
     QSet<QwtPlotItem*> itemSets;
     if(selMode)
@@ -116,6 +123,28 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
         }
         plot->setCurrentSelectItems(itemSets.toList());
     }
+}
+
+void SAFigureLayoutWidget::onToolButtonDeleteClicked(bool on)
+{
+    Q_UNUSED(on);
+    QItemSelectionModel* selectModel = ui->tableView->selectionModel();
+    SAChart2D* plot = qobject_cast<SAChart2D*>(m_layoutModel->getPlot());
+    if(!selectModel || !plot)
+    {
+        return;
+    }
+    QModelIndexList indexs = selectModel->selectedIndexes();
+    for(int i=0;i<indexs.size();++i)
+    {
+        QwtPlotItem* item = m_layoutModel->getPlotItemFromIndex(indexs[i]);
+        if(SAChart::checkIsPlotChartItem(item))
+        {
+            plot->removeItem(item);
+            emit itemRemoved(plot,item);
+        }
+    }
+    m_layoutModel->updateModel();
 }
 
 

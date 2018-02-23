@@ -439,7 +439,13 @@ private slots:
     ///
     void onActionSkinChanged(QAction* act);
 
-
+    ///
+    //图层管理窗口改变了条目的可见性
+    void onLayoutWidgetItemVisibleChanged(SAChart2D* chart,QwtPlotItem* item,bool on);
+    //图层管理窗口改变了条目的颜色
+    void onLayoutWidgetItemColorChanged(SAChart2D* chart,QwtPlotItem* item,QColor clr);
+    //图层管理窗口删除了条目
+    void onLayoutWidgetItemRemoved(SAChart2D* chart,QwtPlotItem* item);
 public slots:
     void onChartDataChanged(QWidget* widget,const QwtPlotItem* pC);
 public:

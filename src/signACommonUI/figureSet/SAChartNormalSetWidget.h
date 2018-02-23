@@ -19,6 +19,7 @@ public:
     ~SAChartNormalSetWidget();
     void setChart(SAChart2D *chart);
     virtual void retranslateUi();
+    void updateData();
 protected:
     void paintEvent(QPaintEvent *e);
 private slots:

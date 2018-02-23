@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QAbstractTableModel>
 #include <qwt_plot.h>
 #include <QIcon>
@@ -17,9 +17,11 @@ public:
 	virtual QVariant data(const QModelIndex &index, int role) const;
 	virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 	void setPlot(QwtPlot* plot);
+    QwtPlot* getPlot() const;
 	void updateModel();
     QwtPlotItem* getPlotItemFromIndex(const QModelIndex &index);
     QModelIndexList getIndexFromPlotItems(const QList<QwtPlotItem*>& plotItem);
+
 private slots:
 	void itemAttached (QwtPlotItem *plotItem, bool on);
 private:

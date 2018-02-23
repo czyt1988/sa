@@ -261,8 +261,16 @@ void MainWindow::initUI()
     // - about menu signal/slots connect
     connect(ui->actionAbout,&QAction::triggered,this,&MainWindow::onActionAboutTriggered);
     //-------------------------------------
-
-
+    //图层管理窗口相关槽
+    //图层管理窗口改变了条目的颜色
+    connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemColorChanged
+            ,this,&MainWindow::onLayoutWidgetItemColorChanged);
+    //图层管理窗口改变了条目的可见性
+    connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemVisibleChanged
+            ,this,&MainWindow::onLayoutWidgetItemVisibleChanged);
+    //图层管理窗口删除了条目
+    connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemRemoved
+            ,this,&MainWindow::onLayoutWidgetItemRemoved);
     //-------------------------------------
     // - TreeView CurPlotItem slots(曲线条目树形窗口)
     connect(ui->actionUndo,&QAction::triggered,this,&MainWindow::onActionUndoTriggered);
@@ -723,6 +731,43 @@ void MainWindow::onActionSkinChanged(QAction* act)
     }
     QString name = act->text();
     setSkin(name);
+}
+///
+/// \brief 图层管理窗口改变了条目的可见性
+/// \param chart
+/// \param item
+/// \param on
+///
+void MainWindow::onLayoutWidgetItemVisibleChanged(SAChart2D *chart, QwtPlotItem *item, bool on)
+{
+    Q_UNUSED(chart);
+    Q_UNUSED(item);
+    Q_UNUSED(on);
+    ui->figureSetWidget->updatePlotItemsSet();
+}
+///
+/// \brief 图层管理窗口改变了条目的颜色
+/// \param chart
+/// \param item
+/// \param clr
+///
+void MainWindow::onLayoutWidgetItemColorChanged(SAChart2D *chart, QwtPlotItem *item, QColor clr)
+{
+    Q_UNUSED(chart);
+    Q_UNUSED(item);
+    Q_UNUSED(clr);
+    ui->figureSetWidget->updatePlotItemsSet();
+}
+///
+/// \brief 图层管理窗口删除了条目
+/// \param chart
+/// \param item
+///
+void MainWindow::onLayoutWidgetItemRemoved(SAChart2D *chart, QwtPlotItem *item)
+{
+    Q_UNUSED(chart);
+    Q_UNUSED(item);
+    ui->figureSetWidget->updatePlotItemsSet();
 }
 
 
@@ -1717,16 +1762,8 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
 #else
       ui->toolBar_chartSet->setEnabled(true);
 #endif
-
         //刷新toolbar
         updateChartSetToolBar(fig);
-
-        //更新dock - plotLayer 图层
-        ui->figureLayoutWidget->setFigure(fig);
-
-        //更新dock - dataviewer
-        ui->chartDatasViewWidget->setFigure(fig);
-
     }
     else
     {
@@ -1734,16 +1771,16 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
     }
     //设置绘图属性窗口,空指针也接受
     ui->figureSetWidget->setFigureWidget(fig);
+    //更新dock - plotLayer 图层
+    ui->figureLayoutWidget->setFigure(fig);
+    //更新dock - dataviewer
+    ui->chartDatasViewWidget->setFigure(fig);
 }
 
 void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
 {
-    SAFigureWindow* fig = getFigureWidgetFromMdiSubWindow(arg1);
-    if(fig)
-    {
-        getPlotLayerModel()->setPlot(nullptr);
-        ui->chartDatasViewWidget->setFigure(nullptr);
-    }
+    ui->figureLayoutWidget->setFigure(nullptr);
+    ui->chartDatasViewWidget->setFigure(nullptr);
     ui->dataFeatureWidget->mdiSubWindowClosed(arg1);
 }
 

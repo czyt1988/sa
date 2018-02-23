@@ -94,24 +94,28 @@ public:
     void setChart(SAChart2D *c)
     {
         this->chart = c;
-        if(nullptr == c)
+        updateData();
+    }
+
+    void updateData()
+    {
+        if(nullptr == this->chart)
         {
             titleEdit->setEditText("");
             footerEdit->setEditText("");
             borderRadiusEdit->setValue(0);
             return;
         }
-        titleEdit->setEditText(c->title().text());
-        footerEdit->setEditText(c->footer().text());
-        canvasBackgroundEdit->setCurrentColor(c->canvasBackground().color());
-        QWidget* w = c->canvas();
+        titleEdit->setEditText(this->chart->title().text());
+        footerEdit->setEditText(this->chart->footer().text());
+        canvasBackgroundEdit->setCurrentColor(this->chart->canvasBackground().color());
+        QWidget* w = this->chart->canvas();
         QwtPlotCanvas* canvas = qobject_cast<QwtPlotCanvas*>(w);
         if(canvas)
         {
             borderRadiusEdit->setValue(canvas->borderRadius());
         }
     }
-
 };
 
 //-----------------------------------------------------
@@ -137,6 +141,11 @@ void SAChartNormalSetWidget::setChart(SAChart2D *chart)
 void SAChartNormalSetWidget::retranslateUi()
 {
     ui->retranslateUi(this);
+}
+
+void SAChartNormalSetWidget::updateData()
+{
+    ui->updateData();
 }
 
 void SAChartNormalSetWidget::paintEvent(QPaintEvent *e)

@@ -82,6 +82,17 @@ public:
         this->plotItem2Widget[item] = group;
         this->widget2PlotItem[group] = item;
     }
+    void updataData()
+    {
+        for(auto i = widget2PlotItem.begin();i != widget2PlotItem.end();++i)
+        {
+            SAQwtPlotItemVGroupBox* vw = qobject_cast<SAQwtPlotItemVGroupBox*>(i.key());
+            if(vw)
+            {
+                vw->updateData();
+            }
+        }
+    }
 };
 
 
@@ -102,6 +113,11 @@ SACurvePlotItemSetWidget::~SACurvePlotItemSetWidget()
 void SACurvePlotItemSetWidget::setPlotItems(const QwtPlotItemList &items)
 {
     ui->setPlotItems(items);
+}
+
+void SACurvePlotItemSetWidget::updateData()
+{
+    ui->updataData();
 }
 
 void SACurvePlotItemSetWidget::plotItemAttached(QwtPlotItem *item, bool on)

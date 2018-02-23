@@ -5,6 +5,7 @@
 class SAPlotLayerModel;
 class SAFigureWindow;
 class SAChart2D;
+class QwtPlotItem;
 namespace Ui {
 class SAFigureLayoutWidget;
 }
@@ -18,16 +19,41 @@ class SAFigureLayoutWidget : public QWidget
 public:
     explicit SAFigureLayoutWidget(QWidget *parent = 0);
     ~SAFigureLayoutWidget();
-
+    //获取model
     SAPlotLayerModel *getLayoutModel() const;
+    //设置figure
     void setFigure(SAFigureWindow* fig);
+    //获取当前的figure
     SAFigureWindow* currentFigure() const;
-    SAPlotLayerModel* getPlotLayerModel() const;
+signals:
+    ///
+    /// \brief 图层修改item的可见性
+    /// \param chart 图指针
+    /// \param item item指针
+    /// \param visible 可见性
+    ///
+    void itemVisibleChanged(SAChart2D* chart,QwtPlotItem* item,bool visible);
+    ///
+    /// \brief 图层修改item颜色发送的信号
+    /// \param chart 图指针
+    /// \param item item指针
+    /// \param clr 颜色
+    ///
+    void itemColorChanged(SAChart2D* chart,QwtPlotItem* item,QColor clr);
+    ///
+    /// \brief item删除发送的信号
+    /// \param chart
+    /// \param item
+    ///
+    void itemRemoved(SAChart2D* chart,QwtPlotItem* item);
 public slots:
+    //更新图层
     void updateLayout();
 private slots:
+    //表格点击
     void onTableViewLayerPressed(const QModelIndex &index);
-
+    //清除按钮点击
+    void onToolButtonDeleteClicked(bool on);
 private:
     Ui::SAFigureLayoutWidget *ui;
     SAPlotLayerModel* m_layoutModel;

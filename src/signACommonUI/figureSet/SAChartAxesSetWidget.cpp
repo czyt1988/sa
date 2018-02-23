@@ -54,6 +54,15 @@ void SAChartAxesSetWidget::setChart(SAChart2D *chart)
     m_yLeftAxisWidget->setChart(chart,QwtPlot::yLeft);
     m_yRightAxisWidget->setChart(chart,QwtPlot::yRight);
 }
+
+void SAChartAxesSetWidget::updateData()
+{
+    m_xBottomAxisWidget->updateAxisValue();
+    m_xTopAxisWidget->updateAxisValue();
+    m_yLeftAxisWidget->updateAxisValue();
+    m_yRightAxisWidget->updateAxisValue();
+
+}
 ///
 /// \brief 坐标轴激活
 ///

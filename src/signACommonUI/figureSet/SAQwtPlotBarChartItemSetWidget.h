@@ -14,6 +14,7 @@ class SAQwtPlotBarChartItemSetWidget : public SAQwtPlotItemSetWidget
 public:
     SAQwtPlotBarChartItemSetWidget(QwtPlotBarChart* bar,QWidget* par = nullptr);
     ~SAQwtPlotBarChartItemSetWidget();
+    virtual void upDateData(bool downLoad = true);
 private slots:
     void onSpacingValueChanged(int v);
     void onMarginValueChanged(int v);

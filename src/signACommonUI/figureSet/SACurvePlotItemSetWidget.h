@@ -1,4 +1,4 @@
-#ifndef SACURVEPLOTITEMSETWIDGET_H
+﻿#ifndef SACURVEPLOTITEMSETWIDGET_H
 #define SACURVEPLOTITEMSETWIDGET_H
 #include "qwt_plot.h"
 #include <QWidget>
@@ -11,6 +11,7 @@ public:
     SACurvePlotItemSetWidget(QWidget* par = nullptr);
     ~SACurvePlotItemSetWidget();
     void setPlotItems(const QwtPlotItemList& items);
+    void updateData();
 public slots:
     void plotItemAttached(QwtPlotItem* item, bool on);
 private:

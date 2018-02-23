@@ -20,6 +20,7 @@ public:
     explicit SAChartAxesSetWidget(QWidget *parent = 0);
     ~SAChartAxesSetWidget();
     void setChart(SAChart2D *chart);
+    void updateData();
 private slots:
     void onEnableAxis(bool enable,int axis);
 private:

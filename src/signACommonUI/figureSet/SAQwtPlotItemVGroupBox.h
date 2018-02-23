@@ -1,4 +1,4 @@
-#ifndef SAQWTPLOTITEMVGROUPBOXPROPERTYITEM_H
+﻿#ifndef SAQWTPLOTITEMVGROUPBOXPROPERTYITEM_H
 #define SAQWTPLOTITEMVGROUPBOXPROPERTYITEM_H
 #include "SAVCollapsibleGroupBox.h"
 #include "qwt_symbol.h"
@@ -16,6 +16,7 @@ public:
     ~SAQwtPlotItemVGroupBox();
     QwtPlotItem *getPlotItem() const;
     SAQwtPlotItemSetWidget* getQwtPlotItemSetWidget() const;
+    void updateData();
 private:
     class UI;
     SAQwtPlotItemVGroupBox::UI* ui;

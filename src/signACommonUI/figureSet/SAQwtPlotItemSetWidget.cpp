@@ -45,6 +45,13 @@ void SAQwtPlotItemSetWidget::retranslateUi()
 
 void SAQwtPlotItemSetWidget::upDateData(bool downLoad)
 {
+    if(nullptr==m_itemPtr)
+    {
+        m_visibleItem->setCheckState(Qt::Unchecked);
+        m_titleItem->setEditText("");
+        return;
+    }
+
     if(downLoad)
     {
         m_visibleItem->setCheckState(m_itemPtr->isVisible() ? Qt::Checked : Qt::Unchecked);

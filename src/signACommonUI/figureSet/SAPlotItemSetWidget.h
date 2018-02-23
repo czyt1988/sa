@@ -13,6 +13,7 @@ public:
     explicit SAPlotItemSetWidget(QWidget* par = nullptr);
     ~SAPlotItemSetWidget();
     void setChart(QwtPlot* chart);
+    void updateData();
 private slots:
     void onPlotItemAttached(QwtPlotItem* item, bool on);
 private:

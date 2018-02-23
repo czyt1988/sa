@@ -1,4 +1,4 @@
-#ifndef SACHARTSETWIDGET_H
+﻿#ifndef SACHARTSETWIDGET_H
 #define SACHARTSETWIDGET_H
 
 #include <QWidget>
@@ -14,6 +14,10 @@ public:
     SAChartSetWidget(QWidget* parent = nullptr);
     ~SAChartSetWidget();
     void setChart(SAChart2D *chart);
+    void updateAll();
+    void updatePlotItemsSet();
+    void updateAxesSet();
+    void updateNormalSet();
 signals:
     void chartTitleChanged(const QString& text);
 private slots:

@@ -66,6 +66,16 @@ void SAQwtPlotCurveItemSetWidget::retranslateUi()
 void SAQwtPlotCurveItemSetWidget::upDateData(bool downLoad)
 {
     SAQwtPlotItemSetWidget::upDateData(downLoad);
+    if(nullptr == m_curveItem)
+    {
+        m_symbolComboBox->setStyle(QwtSymbol::NoSymbol);
+        if(m_showAll)
+        {
+            m_isSPlineCheckBox->setChecked(false);
+            m_baseLineSpinBox->setValue(0);
+        }
+        return;
+    }
     if(downLoad)
     {
         m_PenStyle->setPen(m_curveItem->pen());

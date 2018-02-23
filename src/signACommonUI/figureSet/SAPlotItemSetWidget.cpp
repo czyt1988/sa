@@ -101,6 +101,11 @@ void SAPlotItemSetWidget::setChart(QwtPlot *chart)
 
 }
 
+void SAPlotItemSetWidget::updateData()
+{
+    ui->curveItemSetWidget->updateData();
+}
+
 
 
 void SAPlotItemSetWidget::onPlotItemAttached(QwtPlotItem *item,bool on)

@@ -19,6 +19,11 @@ public:
 #ifdef SAFiugreSetWidget_USE_COMBOX
     void clear();
 #endif
+    //更新内容
+    void updateData();
+    void updatePlotItemsSet();
+    void updateAxesSet();
+    void updateNormalSet();
 private slots:
     void onChartTitleChanged(const QString& text);
     void onPlotDestroy(QObject* obj);

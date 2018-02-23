@@ -36,7 +36,12 @@ void SAPlotLayerModel::setPlot(QwtPlot* plot)
     {
         connect(m_plot,&QwtPlot::itemAttached,this,&SAPlotLayerModel::itemAttached);
     }
-	endResetModel();
+    endResetModel();
+}
+
+QwtPlot *SAPlotLayerModel::getPlot() const
+{
+    return m_plot;
 }
 
 void SAPlotLayerModel::itemAttached (QwtPlotItem *plotItem, bool on)

@@ -51,6 +51,14 @@ SAQwtPlotItemSetWidget *SAQwtPlotItemVGroupBox::getQwtPlotItemSetWidget() const
     return ui->innerWidget;
 }
 
+void SAQwtPlotItemVGroupBox::updateData()
+{
+    if(ui->innerWidget)
+    {
+        ui->innerWidget->upDateData(true);
+    }
+}
+
 
 
 

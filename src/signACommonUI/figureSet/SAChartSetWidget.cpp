@@ -118,6 +118,28 @@ void SAChartSetWidget::setChart(SAChart2D *chart)
     }
 }
 
+void SAChartSetWidget::updateAll()
+{
+    updateNormalSet();
+    updateAxesSet();
+    updatePlotItemsSet();
+}
+
+void SAChartSetWidget::updatePlotItemsSet()
+{
+    ui->plotItemsSetWidget->updateData();
+}
+
+void SAChartSetWidget::updateAxesSet()
+{
+    ui->plotAxesSetWidget->updateData();
+}
+
+void SAChartSetWidget::updateNormalSet()
+{
+    ui->chartNormalSetWidget->updateData();
+}
+
 void SAChartSetWidget::onChartDelete(QObject* obj)
 {
     Q_UNUSED(obj);

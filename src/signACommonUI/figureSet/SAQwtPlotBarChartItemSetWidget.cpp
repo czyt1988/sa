@@ -53,48 +53,49 @@ public:
         par->addWidget(barFrameColor);
 
         retranslateUI();
-        spacingItem->setValue(bar->spacing());
-        marginItem->setValue(bar->margin());
-        const QwtColumnSymbol* symbol = bar->symbol();
-        if(symbol)
-        {
-            frameStyleItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
-            lineWidthItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
-            barFrameColor->setEnabled(QwtColumnSymbol::Box == symbol->style());
+        updateData(true);
+//        spacingItem->setValue(bar->spacing());
+//        marginItem->setValue(bar->margin());
+//        const QwtColumnSymbol* symbol = bar->symbol();
+//        if(symbol)
+//        {
+//            frameStyleItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
+//            lineWidthItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
+//            barFrameColor->setEnabled(QwtColumnSymbol::Box == symbol->style());
 
-            barPaintColor->setCurrentColor(symbol->palette().window().color());
-            barFrameColor->setCurrentColor(symbol->palette().dark().color());
-            lineWidthItem->setValue(symbol->lineWidth());
+//            barPaintColor->setCurrentColor(symbol->palette().window().color());
+//            barFrameColor->setCurrentColor(symbol->palette().dark().color());
+//            lineWidthItem->setValue(symbol->lineWidth());
 
-            switch(symbol->style())
-            {
-            case QwtColumnSymbol::NoStyle:
-                symbolStyleItem->setCurrentIndex(0);
-                break;
-            case QwtColumnSymbol::Box:
-                symbolStyleItem->setCurrentIndex(1);
-                break;
-            default:
-                symbolStyleItem->setCurrentIndex(0);
-                break;
-            }
+//            switch(symbol->style())
+//            {
+//            case QwtColumnSymbol::NoStyle:
+//                symbolStyleItem->setCurrentIndex(0);
+//                break;
+//            case QwtColumnSymbol::Box:
+//                symbolStyleItem->setCurrentIndex(1);
+//                break;
+//            default:
+//                symbolStyleItem->setCurrentIndex(0);
+//                break;
+//            }
 
-            switch(symbol->frameStyle())
-            {
-            case QwtColumnSymbol::NoFrame:
-                frameStyleItem->setCurrentIndex(0);
-                break;
-            case QwtColumnSymbol::Plain:
-                frameStyleItem->setCurrentIndex(1);
-                break;
-            case QwtColumnSymbol::Raised:
-                frameStyleItem->setCurrentIndex(2);
-                break;
-            default:
-                frameStyleItem->setCurrentIndex(0);
-                break;
-            }
-        }
+//            switch(symbol->frameStyle())
+//            {
+//            case QwtColumnSymbol::NoFrame:
+//                frameStyleItem->setCurrentIndex(0);
+//                break;
+//            case QwtColumnSymbol::Plain:
+//                frameStyleItem->setCurrentIndex(1);
+//                break;
+//            case QwtColumnSymbol::Raised:
+//                frameStyleItem->setCurrentIndex(2);
+//                break;
+//            default:
+//                frameStyleItem->setCurrentIndex(0);
+//                break;
+//            }
+//        }
 
         connect();
     }
@@ -138,6 +139,84 @@ public:
         barPaintColor->setText(TR("Plain Color"));
         barFrameColor->setText(TR("Frame Color"));
     }
+
+    void updateData(bool downLoad)
+    {
+        if(nullptr == this->barChart)
+        {
+            spacingItem->setValue(0);
+            marginItem->setValue(0);
+            frameStyleItem->setEnabled(false);
+            lineWidthItem->setEnabled(false);
+            barFrameColor->setEnabled(false);
+            lineWidthItem->setValue(1);
+            symbolStyleItem->setCurrentIndex(0);
+            frameStyleItem->setCurrentIndex(0);
+            return;
+        }
+        if(downLoad)
+        {
+            spacingItem->setValue(barChart->spacing());
+            marginItem->setValue(barChart->margin());
+            const QwtColumnSymbol* symbol = barChart->symbol();
+            if(symbol)
+            {
+                frameStyleItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
+                lineWidthItem->setEnabled(QwtColumnSymbol::Box == symbol->style());
+                barFrameColor->setEnabled(QwtColumnSymbol::Box == symbol->style());
+
+                barPaintColor->setCurrentColor(symbol->palette().window().color());
+                qDebug() << "before";
+                const QBrush& b = symbol->palette().dark();
+                qDebug() << "get b:";
+                qDebug() << "b.color()"<<b.color();
+                if(Qt::NoBrush != b.style())
+                {
+                    barFrameColor->setCurrentColor(b.color());
+                }
+                qDebug() << "set";
+                lineWidthItem->setValue(symbol->lineWidth());
+                switch(symbol->style())
+                {
+                case QwtColumnSymbol::NoStyle:
+                    symbolStyleItem->setCurrentIndex(0);
+                    break;
+                case QwtColumnSymbol::Box:
+                    symbolStyleItem->setCurrentIndex(1);
+                    break;
+                default:
+                    symbolStyleItem->setCurrentIndex(0);
+                    break;
+                }
+
+                switch(symbol->frameStyle())
+                {
+                case QwtColumnSymbol::NoFrame:
+                    frameStyleItem->setCurrentIndex(0);
+                    break;
+                case QwtColumnSymbol::Plain:
+                    frameStyleItem->setCurrentIndex(1);
+                    break;
+                case QwtColumnSymbol::Raised:
+                    frameStyleItem->setCurrentIndex(2);
+                    break;
+                default:
+                    frameStyleItem->setCurrentIndex(0);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            q_ptr->onSpacingValueChanged(spacingItem->getValue());
+            q_ptr->onMarginValueChanged(marginItem->getValue());
+            q_ptr->onFrameStyleComboBoxIndexChanged(frameStyleItem->currentIndex());
+            q_ptr->onSymbolStyleComboBoxIndexChanged(symbolStyleItem->currentIndex());
+            q_ptr->onLineWidthValueChanged(lineWidthItem->getValue());
+            q_ptr->onBarPaintColorChanged(barPaintColor->getCurrentColor());
+            q_ptr->onBarFrameColorChanged(barFrameColor->getCurrentColor());
+        }
+    }
 };
 
 
@@ -151,6 +230,12 @@ SAQwtPlotBarChartItemSetWidget::SAQwtPlotBarChartItemSetWidget(QwtPlotBarChart *
 SAQwtPlotBarChartItemSetWidget::~SAQwtPlotBarChartItemSetWidget()
 {
 
+}
+
+void SAQwtPlotBarChartItemSetWidget::upDateData(bool downLoad)
+{
+    SAQwtPlotItemSetWidget::upDateData(downLoad);
+    d_ptr->updateData(downLoad);
 }
 
 void SAQwtPlotBarChartItemSetWidget::onSpacingValueChanged(int v)
