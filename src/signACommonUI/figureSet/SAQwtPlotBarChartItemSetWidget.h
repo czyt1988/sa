@@ -3,6 +3,7 @@
 #include "SAQwtPlotItemSetWidget.h"
 #include "qwt_plot_barchart.h"
 #include "SACommonUIGlobal.h"
+#define SAQwtPlotBarChartItemSetWidget_Show_SymbolStyle 0
 class SAQwtPlotBarChartItemSetWidgetPrivate;
 ///
 /// \brief The SAQwtPlotBarChartItemSetWidget class
@@ -19,7 +20,9 @@ private slots:
     void onSpacingValueChanged(int v);
     void onMarginValueChanged(int v);
     void onFrameStyleComboBoxIndexChanged(int v);
+#if SAQwtPlotBarChartItemSetWidget_Show_SymbolStyle
     void onSymbolStyleComboBoxIndexChanged(int v);
+#endif
     void onLineWidthValueChanged(int v);
     void onBarPaintColorChanged(const QColor& v);
     void onBarFrameColorChanged(const QColor& v);
