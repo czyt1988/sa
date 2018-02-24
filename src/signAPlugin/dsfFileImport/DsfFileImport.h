@@ -1,10 +1,11 @@
-#ifndef SADSFFILEIMPORT_H
+﻿#ifndef SADSFFILEIMPORT_H
 #define SADSFFILEIMPORT_H
 #include "SAPluginInterface.h"
 #include <QObject>
 #include <QtPlugin>
 #include <QIcon>
 #include "SAUIInterface.h"
+#include <memory>
 class SAAbstractDatas;
 class QStringList;
 class QAction;
@@ -31,6 +32,7 @@ public:
     virtual void setupUI(SAUIInterface* ui);
     //isUseSAOpenFile返回false调用的打开文件接口函数
     virtual bool openFile();
+    virtual bool openFile(const QStringList &filePaths);
     //是否打开了文件
     virtual bool isOpenFile();
     //是通过SA系统自带的OpenFile还是使用自身openFile
@@ -39,8 +41,11 @@ public:
     virtual void getSAOpenFileInfo(QStringList& nameFileter,QStringList& suffixKey) const;
     //创建导出的数据
     virtual QList<SAAbstractDatas*> getResultPtr();
+
 private:
     SAUIInterface* m_ui;
+    bool m_isOpenFile;
+    QList<std::shared_ptr<SAAbstractDatas> > m_resPtr;///< 保存生成的数据指针
 };
 
 #endif // SAABSTRACTDATAIMPORT

@@ -139,6 +139,8 @@ public:
     QMdiSubWindow* createFigureWindow(SAFigureWindow* fig,const QString& title = QString());
     //判断mdi中是否存在指定的子窗口
     bool isHaveSubWnd(QMdiSubWindow* wndToCheck) const;
+    //判断是否存在绘图窗口
+    bool isHaveFigureWindow() const;
     //获取当前激活的子窗口
     QMdiSubWindow* getCurrentActiveSubWindow() const;
     //获取最后显示的绘图窗口的指针

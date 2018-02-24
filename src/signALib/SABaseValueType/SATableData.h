@@ -1,4 +1,4 @@
-#ifndef SATABLEDATA_H
+﻿#ifndef SATABLEDATA_H
 #define SATABLEDATA_H
 
 #include "SAAbstractDatas.h"

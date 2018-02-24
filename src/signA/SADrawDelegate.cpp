@@ -52,45 +52,12 @@ std::tuple<SAChart2D *, SAFigureWindow *, QMdiSubWindow *> SADrawDelegate::creat
 }
 
 
-///
-/// \brief 创建一个figure并绘制线图
-/// \param datas
-/// \return
-///
-QList<QwtPlotCurve*> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &datas)
-{
-    QList<QwtPlotCurve*> res;
-    if(datas.size()<=0)
-    {
-        return res;
-    }
-    QMdiSubWindow* pSubWnd = nullptr;
-    SAChart2D* chart = nullptr;
-    std::tie(chart,std::ignore,pSubWnd) = createFigure();
-
-    if(nullptr == chart)
-    {
-        return res;
-    }
-    chart->setAutoReplot(false);
-    res = drawLine(datas,chart);
-
-    chart->enablePicker(true);
-    chart->enableZoomer(false);
-    chart->enableGrid(true);
-    chart->setAutoReplot(true);
-    chart->replot();
-    pSubWnd->show();
-    return res;
-}
-
 QList<QwtPlotCurve *> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &datas, SAChart2D *chart)
 {
+    QMdiSubWindow* pSubWnd = nullptr;
     if(nullptr == chart)
     {
-        QMdiSubWindow* pSubWnd = nullptr;
         std::tie(chart,std::ignore,pSubWnd) = createFigure();
-        pSubWnd->show();
     }
     QList<QwtPlotCurve*> res;
     if(datas.size()<=0)
@@ -151,7 +118,12 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &d
         res.append(p);
     });
     chart->setAutoReplot(true);
+    chart->updateAxes();
     chart->replot();
+    if(pSubWnd)
+    {
+        pSubWnd->show();
+    }
     return res;
 
 }
@@ -161,11 +133,10 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &d
 ///
 QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data, double xStart, double xDetal, SAChart2D* chart, const QString &name)
 {
+    QMdiSubWindow* pSubWnd = nullptr;
     if(nullptr == chart)
     {
-        QMdiSubWindow* pSubWnd = nullptr;
         std::tie(chart,std::ignore,pSubWnd) = createFigure();
-        pSubWnd->show();
     }
     if(nullptr == data || nullptr == chart)
     {
@@ -175,7 +146,12 @@ QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data, double xStart, dou
     chart->setAutoReplot(false);
     QwtPlotCurve* cur = (QwtPlotCurve*)(chart->addCurve(data,xStart,xDetal,title));
     chart->setAutoReplot(true);
+    chart->updateAxes();
     chart->replot();
+    if(pSubWnd)
+    {
+        pSubWnd->show();
+    }
     return cur;
 }
 ///
@@ -188,11 +164,10 @@ QwtPlotCurve* SADrawDelegate::drawLine(SAAbstractDatas* data, double xStart, dou
 ///
 QwtPlotCurve *SADrawDelegate::drawLine(SAAbstractDatas* x, SAAbstractDatas* y, SAChart2D *chart, const QString& name)
 {
+    QMdiSubWindow* pSubWnd = nullptr;
     if(nullptr == chart)
     {
-        QMdiSubWindow* pSubWnd = nullptr;
         std::tie(chart,std::ignore,pSubWnd) = createFigure();
-        pSubWnd->show();
     }
     if(nullptr == x || nullptr == y || nullptr == chart)
     {
@@ -208,16 +183,19 @@ QwtPlotCurve *SADrawDelegate::drawLine(SAAbstractDatas* x, SAAbstractDatas* y, S
     chart->setAutoReplot(true);
     chart->updateAxes();
     chart->replot();
+    if(pSubWnd)
+    {
+        pSubWnd->show();
+    }
     return cur;
 }
 
 QwtPlotCurve *SADrawDelegate::drawLine(const QVector<double> &xData, const QVector<double> &yData, SAChart2D *chart, const QString &name)
 {
+    QMdiSubWindow* pSubWnd = nullptr;
     if(nullptr == chart)
     {
-        QMdiSubWindow* pSubWnd = nullptr;
         std::tie(chart,std::ignore,pSubWnd) = createFigure();
-        pSubWnd->show();
     }
     if(0 == xData.size() || 0 == yData.size())
     {
@@ -232,6 +210,10 @@ QwtPlotCurve *SADrawDelegate::drawLine(const QVector<double> &xData, const QVect
     chart->setAutoReplot(true);
     chart->updateAxes();
     chart->replot();
+    if(pSubWnd)
+    {
+        pSubWnd->show();
+    }
     return cur;
 }
 ///
@@ -242,31 +224,19 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
 {
     QList<SAAbstractDatas *> datas = getMainWindow()->getSeletedDatas();
     SAChart2D* chart = nullptr;
-//    if( (datas.size() > 0) && (2 != datas.size()))
-//    {
-//        //如果选中了1个数据或者多个数据，就绘制0-1的趋势图
-//        SAAddCurveTypeDialog::AddCurveType type = SAAddCurveTypeDialog::getAddCurveType(getMainWindow());
-//        if(SAAddCurveTypeDialog::Unknow == type)
-//        {
-//            return QList<QwtPlotCurve *>();
-//        }
-//        if(SAAddCurveTypeDialog::AddInCurrentFig == type)
-//        {
-//           chart = getCurSubWindowChart();
-//        }
-//        else if(SAAddCurveTypeDialog::AddInNewFig == type)
-//        {
-//            chart = nullptr;//空指针时会自动创建figure
-//        }
-//        else if(SAAddCurveTypeDialog::AddInCurrentFigWithSubplot == type)
-//        {
-//            //TODO
-
-//        }
-//        return drawLine(datas,chart);
-//    }
     if(datas.size() <= 2)
     {
+        //如果datas是点序列直接绘制
+        if(1 == datas.size())
+        {
+            if(SA::VectorPoint == datas[0]->getType())
+            {
+               QwtPlotCurve *p = drawLineWithWizard(datas[0]);
+               if(p)
+                   return {p};
+               return QList<QwtPlotCurve *>();
+            }
+        }
         //如果选中了两个数据或者没有选中数据，使用对话框引导
         SAAddLineChartSetDialog dlg(getMainWindow());
         if(1 == datas.size())
@@ -382,6 +352,36 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
         }
     }
     return QList<QwtPlotCurve *>();
+}
+
+QwtPlotCurve *SADrawDelegate::drawLineWithWizard(SAAbstractDatas *pointVector)
+{
+    if(SA::VectorPoint == pointVector->getType())
+    {
+        //如果当前有窗口，弹出询问添加方式
+        if(getMainWindow()->isHaveFigureWindow())
+        {
+            SAAddCurveTypeDialog::AddCurveType type = SAAddCurveTypeDialog::getAddCurveType(getMainWindow());
+            QList<QwtPlotCurve *> res;
+            if(SAAddCurveTypeDialog::AddInNewFig == type)
+            {
+                res = drawLine({pointVector},nullptr);
+
+            }
+            else if(SAAddCurveTypeDialog::AddInCurrentFig == type)
+            {
+                SAChart2D* chart = getCurSubWindowChart();
+                res = drawLine({pointVector},chart);
+            }
+            return ((res.size() > 0) ? res[0] : nullptr);
+        }
+        else
+        {
+            QList<QwtPlotCurve *> res = drawLine({pointVector},nullptr);
+            return ((res.size() > 0) ? res[0] : nullptr);
+        }
+    }
+    return nullptr;
 }
 
 QwtPlotHistogram *SADrawDelegate::drawHistogram(SAAbstractDatas *data)

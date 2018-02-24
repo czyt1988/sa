@@ -1006,7 +1006,7 @@ void MainWindow::onActionOpenTriggered()
     QStringList strNFilter = m_pluginManager->getOpenFileNameFilters();
 
     strNFilter.push_back(tr("all files (*.*)"));
-    openDlg.setFileMode(QFileDialog::ExistingFile);
+    openDlg.setFileMode(QFileDialog::ExistingFiles);
     openDlg.setNameFilters(strNFilter);
     if (QDialog::Accepted == openDlg.exec())
     {
@@ -2069,6 +2069,27 @@ bool MainWindow::isHaveSubWnd(QMdiSubWindow* wndToCheck) const
     for (auto ite = subs.begin();ite != subs.end();++ite)
     {
         if (*ite == wndToCheck)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+///
+/// \brief 判断是否存在绘图窗口
+/// \return
+///
+bool MainWindow::isHaveFigureWindow() const
+{
+    QList<QMdiSubWindow*> subs = ui->mdiArea->subWindowList();
+    if(subs.size() <= 0)
+    {
+        return false;
+    }
+    for(int i=0;i<subs.size();++i)
+    {
+        SAFigureWindow* fig = qobject_cast<SAFigureWindow*>(subs[i]->widget());
+        if(fig)
         {
             return true;
         }

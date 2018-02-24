@@ -1,4 +1,4 @@
-#include "SATextDataImport.h"
+﻿#include "SATextDataImport.h"
 #include "SADataImportFactory.h"
 #include "TextFileImportDialog.h"
 #include <QApplication>
@@ -135,9 +135,9 @@ bool SATextDataImport::openFile()
 {
     QFileDialog dlg(m_ui->getMainWindowPtr());
     QStringList strNFilter;
-    strNFilter.push_back(tr("文本文件 (*.txt)"));
-    strNFilter.push_back(tr("逗号分隔文件 (*.csv)"));
-    strNFilter.push_back(tr("所有文件 (*.*)"));
+    strNFilter.push_back(tr("text file(*.txt)"));
+    strNFilter.push_back(tr("csv fila (*.csv)"));
+    strNFilter.push_back(tr("all file (*.*)"));
     dlg.setFileMode(QFileDialog::ExistingFile);
     dlg.setNameFilters(strNFilter);
     if (QDialog::Accepted == dlg.exec())
@@ -216,9 +216,9 @@ void SATextDataImport::on_actionTextImport()
 {
     QFileDialog dlg(m_ui->getMainWindowPtr());
     QStringList strNFilter;
-    strNFilter.push_back(tr("文本文件 (*.txt)"));
-    strNFilter.push_back(tr("逗号分隔文件 (*.csv)"));
-    strNFilter.push_back(tr("所有文件 (*.*)"));
+    strNFilter.push_back(tr("text file(*.txt)"));
+    strNFilter.push_back(tr("csv file (*.csv)"));
+    strNFilter.push_back(tr("all file (*.*)"));
     dlg.setFileMode(QFileDialog::ExistingFile);
     dlg.setNameFilters(strNFilter);
     if (QDialog::Accepted == dlg.exec())
@@ -232,8 +232,8 @@ void SATextDataImport::on_actionCsvImport()
 {
     QFileDialog dlg(m_ui->getMainWindowPtr());
     QStringList strNFilter;
-    strNFilter.push_back(tr("逗号分隔文件 (*.csv)"));
-    strNFilter.push_back(tr("所有文件 (*.*)"));
+    strNFilter.push_back(tr("csv file (*.csv)"));
+    strNFilter.push_back(tr("all file (*.*)"));
     dlg.setFileMode(QFileDialog::ExistingFile);
     dlg.setNameFilters(strNFilter);
     if (QDialog::Accepted == dlg.exec())
