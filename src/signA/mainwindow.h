@@ -448,8 +448,6 @@ private slots:
     void onLayoutWidgetItemColorChanged(SAChart2D* chart,QwtPlotItem* item,QColor clr);
     //图层管理窗口删除了条目
     void onLayoutWidgetItemRemoved(SAChart2D* chart,QwtPlotItem* item);
-public slots:
-    void onChartDataChanged(QWidget* widget,const QwtPlotItem* pC);
 public:
     void setSkin(const QString& name);
     //获取ui接口

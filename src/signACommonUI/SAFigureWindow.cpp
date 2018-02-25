@@ -96,6 +96,7 @@ SAChart2D *SAFigureWindow::create2DSubPlot(float xPresent, float yPresent, float
         SAChart2D* plot = new SAChart2D(d_ptr->centralwidget);
         d_ptr->centralwidget->addWidget (plot,xPresent,yPresent,wPresent,hPresent);
         d_ptr->currentPlot = plot;
+        emit chartAdded(plot);
         return plot;
     }
     catch(std::bad_alloc& b)
@@ -141,6 +142,7 @@ void SAFigureWindow::clearAll()
     while(!charts.isEmpty())
     {
         SAChart2D* p = charts.takeLast();
+        emit chartRemoved(p);
         delete p;
     }
 }
@@ -252,6 +254,7 @@ void SAFigureWindow::undo()
         c->undo();
     }
 }
+
 #if 0
 void SAFigureWindow::keyPressEvent(QKeyEvent *e)
 {

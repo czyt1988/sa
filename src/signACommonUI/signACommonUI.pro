@@ -49,7 +49,6 @@ HEADERS += \
     SAFigureContainer.h \
     SAFiugreSetWidget.h \
     SAPropertySetWidget.h \
-    TestWidget.h \
     SAPenSetWidget.h \
     SAColorPickerButton.h \
     SAPenStyleComboBox.h \
@@ -74,7 +73,6 @@ SOURCES += \
     SAFigureContainer.cpp \
     SAFiugreSetWidget.cpp \
     SAPropertySetWidget.cpp \
-    TestWidget.cpp \
     SAPenSetWidget.cpp \
     SAColorPickerButton.cpp \
     SAPenStyleComboBox.cpp \
@@ -89,7 +87,6 @@ SOURCES += \
 
 FORMS += \
     SAValueSelectDialog.ui \
-    TestWidget.ui \
     SAFontSetWidget.ui \
     SAAligmentSetWidget.ui \
     SATendencyChartDataSelectDialog.ui \

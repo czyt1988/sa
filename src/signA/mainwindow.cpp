@@ -885,23 +885,6 @@ void MainWindow::releaseChart2DEditor(SAChart2D* chart)
 }
 
 
-
-
-///
-/// \brief 曲线数据发生变动
-/// NOTE: 此函数还未完成，需要注意
-/// \param widget
-/// \param pC
-/// TODO:
-void MainWindow::onChartDataChanged(QWidget *widget,const QwtPlotItem *pC)
-{
-    Q_UNUSED(pC)
-    Q_UNUSED(widget)
-    //TODO
-
-}
-
-
 ///
 /// \brief 变量管理树形视图的单击触发
 /// \param index
@@ -1896,7 +1879,6 @@ QMdiSubWindow *MainWindow::createFigureWindow(const QString &title)
         --m_nUserChartCount;
         return nullptr;
     }
-    connect (pChartWnd,&SAFigureWindow::chartDataChanged,this,&MainWindow::onChartDataChanged);
     return pSubWnd;
 }
 
@@ -1920,7 +1902,6 @@ QMdiSubWindow *MainWindow::createFigureWindow(SAFigureWindow *fig, const QString
         --m_nUserChartCount;
         return nullptr;
     }
-    connect (pChartWnd,&SAFigureWindow::chartDataChanged,this,&MainWindow::onChartDataChanged);
     return pSubWnd;
 }
 ///

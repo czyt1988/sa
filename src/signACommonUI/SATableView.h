@@ -22,7 +22,9 @@ protected:
     //处理ctrl+v事件
     virtual void onCtrlVPressed();
 private:
+    //获取选中的表格范围和四个端点的行列号
     static QSize getSelectSize(const QModelIndexList& indexs, int* minRow, int* maxRow, int *minCol, int *maxCol);
+    //把二维字符串表转换为tab分隔的单一字符串
     static QString toTabString(QString **tableString, const int r, const int c);
 };
 

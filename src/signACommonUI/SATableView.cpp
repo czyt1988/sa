@@ -3,7 +3,8 @@
 #include <QClipboard>
 #include <QItemSelectionModel>
 #include <QApplication>
-#include "SALog.h"
+#include <QTextStream>
+
 SATableView::SATableView(QWidget *par):QTableView(par)
 {
 
@@ -72,9 +73,45 @@ void SATableView::onCtrlCPressed()
 ///
 /// \brief 处理ctrl+v事件
 ///
+/// 从函数将会调用model的setData进行赋值
+///
 void SATableView::onCtrlVPressed()
 {
-
+    QClipboard *clipboard = QApplication::clipboard();
+    if(nullptr == clipboard)
+    {
+        return;
+    }
+    QString str = clipboard->text();
+    if(str.isEmpty())
+    {
+        return;
+    }
+    QAbstractItemModel* itemModel = model();
+    if(nullptr == itemModel)
+    {
+        return;
+    }
+    //获取当前选中的单元格的行、列
+    int rowStart=0,colStart=0;
+    QModelIndex curIndex = currentIndex();
+    if(curIndex.isValid())
+    {
+        rowStart = curIndex.row();
+        colStart = curIndex.column();
+    }
+    QTextStream st(&str);
+    int r = 0;
+    while(!st.atEnd())
+    {
+        QString lineStr = st.readLine();
+        QStringList sp = lineStr.split('\t');
+        for(int c=0;c<sp.size();++c)
+        {
+            itemModel->setData(itemModel->index(r+rowStart,c+colStart),sp[c]);
+        }
+        ++r;
+    }
 }
 ///
 /// \brief 获取一系列选择的范围，就是行数和列数
@@ -123,6 +160,13 @@ QSize SATableView::getSelectSize(const QModelIndexList &indexs, int *minRow, int
     return QSize(maxC-minC+1,maxR-minR+1);//宽对应的是列数
 }
 
+///
+/// \brief 把二维字符串表转换为tab分隔的单一字符串
+/// \param tableString 字符串表格
+/// \param r 字符串二维数组的行数 table[r][c]
+/// \param c 字符串数组的列数 table[r][c]
+/// \return
+///
 QString SATableView::toTabString(QString **tableString, const int r, const int c)
 {
     QString res;
