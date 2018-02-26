@@ -224,6 +224,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionZoomOut->setObjectName(QStringLiteral("actionZoomOut"));
     actionZoomOut->setIcon(QIcon(":/icons/icons/zoomOut.png"));
 
+    actionZoomInBestView = new QAction(mainWinowPtr);
+    actionZoomInBestView->setObjectName(QStringLiteral("actionZoomInBestView"));
+    //actionZoomInBestView->setIcon(QIcon(":/icons/icons/zoomOut.png"));
+
     actionGroupSelection = new QActionGroup(mainWinowPtr);
     actionGroupSelection->setObjectName(QStringLiteral("actionGroupSelection"));
     actionGroupSelection->setExclusive(true);
@@ -737,9 +741,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuGrid->addAction(actionShowCrowdedVGrid);
 
     menuZoomSet->addAction(actionEnableChartZoom);
-    menuZoomSet->addAction(actionChartZoomReset);
+    menuZoomSet->addSeparator();
     menuZoomSet->addAction(actionZoomIn);
     menuZoomSet->addAction(actionZoomOut);
+    menuZoomSet->addAction(actionChartZoomReset);
+    menuZoomSet->addAction(actionZoomInBestView);
     menuZoomSet->addSeparator();
     menuZoomSet->addAction(actionSetZoomBase);
 
@@ -891,6 +897,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionZoomIn->setShortcut(QApplication::translate("MainWindow", "Ctrl+=", 0));
     actionZoomOut->setText(QApplication::translate("MainWindow", "Zoom Out", 0));
     actionZoomOut->setShortcut(QApplication::translate("MainWindow", "Ctrl+-", 0));
+    actionZoomInBestView->setText(QApplication::translate("MainWindow", "Best View", 0));
     actionStartRectSelect->setText(QApplication::translate("MainWindow", "Rect\nSelect", 0));
     actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "Ellipse\nSelect", 0));
     actionStartPolygonSelect->setText(QApplication::translate("MainWindow", "Polygon\nSelect", 0));

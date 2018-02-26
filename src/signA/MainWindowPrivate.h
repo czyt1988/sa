@@ -87,6 +87,7 @@ public:
     QAction *actionOpenProject;
     QAction *actionSaveAs;
     QAction *actionProjectSetting;
+    QAction *actionZoomInBestView;
     QAction *actionSetZoomBase;
     QAction *actionZoomIn;
     QAction *actionZoomOut;

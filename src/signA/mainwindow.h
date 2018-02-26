@@ -341,6 +341,8 @@ private slots:
     void onActionChartZoomInTriggered(bool check);
     //当前绘图缩小
     void onActionChartZoomOutTriggered(bool check);
+    //缩放到最佳视图
+    void actionZoomInBestView(bool check);
     //当前绘图重置
     void onActionChartZoomResetTriggered(bool check);
     //拾取y值

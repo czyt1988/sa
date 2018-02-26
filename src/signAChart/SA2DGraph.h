@@ -1,4 +1,4 @@
-#ifndef SA2DGRAPH_H
+﻿#ifndef SA2DGRAPH_H
 #define SA2DGRAPH_H
 #include "SAChartGlobals.h"
 
@@ -253,42 +253,12 @@ public:
     /// \return
     ///
     QList<QwtPlotCurve*> getCurveList();
-    ///
-    /// \brief getMakerList 获取所有标记
-    /// \return
-    ///
+    //获取所有标记
     QList<QwtPlotMarker*> getMakerList();
-    ///
-    /// \brief 根据曲线名称获取曲线
-    /// \param strName
-    /// \return
-    ///
-    QwtPlotCurve* getCurveByTitle(const QString& strName);
-
-
-	enum AxisDateScaleType{
-        h_m=0,
-        hh_mm=1,
-        h_m_s=2,
-        hh_mm_ss=3,
-        yyyy_M_d=4,
-        yyyy_M_d_h_m=5,
-        yyyy_M_d_h_m_s=6,
-        yyyy_MM_dd=7,
-        yyyy_MM_dd_hh_mm=8,
-        yyyy_MM_dd_hh_mm_ss=9
-	};
-
-	static QString axisDateScaleType2String(AxisDateScaleType type);
-    static QStringList axisDateScaleTypes2StringList();
-
-    void setAxisDateTimeScale(AxisDateScaleType type,int axisID = xBottom,QwtDate::IntervalType intType = QwtDate::Second);
+    //设置为时间坐标轴
     QwtDateScaleDraw *setAxisDateTimeScale(const QString& format, int axisID, QwtDate::IntervalType intType = QwtDate::Second);
     QwtDateScaleDraw *setAxisDateTimeScale(int axisID);
-    void setAxisDateFormat(QwtPlot::Axis axis, AxisDateScaleType format,QwtDate::IntervalType intType = QwtDate::Second );
-
-
-    void deleteItems(const QList<int> markRtti);
+    //坐标的极值
     double axisXmin(int axisId = QwtPlot::xBottom) const;
     double axisXmax(int axisId = QwtPlot::xBottom) const;
     double axisYmin(int axisId = QwtPlot::yLeft) const;

@@ -1,4 +1,4 @@
-#include "SA2DGraph.h"
+﻿#include "SA2DGraph.h"
 #include "SAChart.h"
 #include <qstyle.h>
 #include <qstyleoption.h>
@@ -1119,25 +1119,6 @@ void SA2DGraph::markYValue(double data, const QString &strLabel, QColor clr, int
     valueMark->attach( this );
 }
 
-///
-/// \brief 根据给定的item进行删除
-/// \param markRtti 标记要删除的item的rtti
-///
-void SA2DGraph::deleteItems(const QList<int> markRtti)
-{
-    QList<QwtPlotItem*> items = itemList();
-    for(auto i=items.begin();i!=items.end();++i)
-    {
-        if(markRtti.contains((*i)->rtti()))
-        {
-            if((*i))
-            {
-                (*i)->detach();
-                delete (*i);
-            }
-        }
-    }
-}
 
 double SA2DGraph::axisXmin(int axisId) const
 {
@@ -1670,6 +1651,10 @@ QList<QwtPlotCurve*> SA2DGraph::getCurveList()
     }
     return curves;
 }
+///
+/// \brief getMakerList 获取所有标记
+/// \return
+///
 QList<QwtPlotMarker*> SA2DGraph::getMakerList()
 {
     QList<QwtPlotMarker*> list;
@@ -1680,63 +1665,8 @@ QList<QwtPlotMarker*> SA2DGraph::getMakerList()
     return list;
 }
 
-QwtPlotCurve* SA2DGraph::getCurveByTitle(const QString& strName)
-{
-    QList<QwtPlotCurve*> curs = getCurveList();
-    QwtPlotCurve* cur(nullptr);
-    for(int i(0);i<curs.size();++i){
-        cur = curs[i];
-        if(cur)
-        {
-            if(strName == cur->title().text())
-                return cur;
-        }
-    }
-    return nullptr;
-}
 
 
-
-///
-/// \brief 把AxisDateScaleType转换为字符
-/// \param type 类型
-/// \return
-///
-QString SA2DGraph::axisDateScaleType2String(AxisDateScaleType type)
-{
-	switch (type)
-	{
-    case SA2DGraph::h_m: return QString("h:m");
-    case SA2DGraph::hh_mm: return QString("hh:mm");
-    case SA2DGraph::h_m_s: return QString("h:m:s");
-    case SA2DGraph::hh_mm_ss: return QString("hh:mm:ss");
-    case SA2DGraph::yyyy_M_d: return QString("yyyy-M-d");
-    case SA2DGraph::yyyy_M_d_h_m: return QString("yyyy-M-d h:m");
-    case SA2DGraph::yyyy_M_d_h_m_s: return QString("yyyy-M-d h:m:s");
-    case SA2DGraph::yyyy_MM_dd: return QString("yyyy-MM-dd");
-    case SA2DGraph::yyyy_MM_dd_hh_mm: return QString("yyyy-MM-dd hh:mm");
-    case SA2DGraph::yyyy_MM_dd_hh_mm_ss: return QString("yyyy-MM-dd hh:mm:ss");
-	}
-    return QString("yyyy-MM-dd hh:mm:ss");
-}
-
-QStringList SA2DGraph::axisDateScaleTypes2StringList()
-{
-    return QStringList()<<"h:m"<<"hh:mm"<<"h:m:s"<<"hh:mm:ss"
-                       <<"yyyy-M-d"<<"yyyy-M-d h:m"<<"yyyy-M-d h:m:s"
-                      <<"yyyy-MM-dd"<<"yyyy-MM-dd hh:mm"<<"yyyy-MM-dd hh:mm:ss";
-}
-///
-/// \brief 设置坐标轴为时间坐标轴
-/// \param axisID 轴的类型 
-/// \param 时间显示的类型 
-/// \param type 类型 
-///
-void SA2DGraph::setAxisDateTimeScale(AxisDateScaleType type,int axisID,QwtDate::IntervalType intType)
-{
-	QString strDateFormat = axisDateScaleType2String(type);
-    setAxisDateTimeScale(strDateFormat,axisID,intType);
-}
 
 QwtDateScaleDraw* SA2DGraph::setAxisDateTimeScale(const QString &format, int axisID , QwtDate::IntervalType intType)
 {
@@ -1752,16 +1682,4 @@ QwtDateScaleDraw *SA2DGraph::setAxisDateTimeScale(int axisID)
     setAxisScaleDraw(axisID,dateScale);
     return dateScale;
 }
-///
-/// \brief 改变时间轴的时间显示格式，如果
-/// \param axis
-/// \param format
-/// \param intType
-///
-void SA2DGraph::setAxisDateFormat(QwtPlot::Axis axis, AxisDateScaleType format, QwtDate::IntervalType intType)
-{
-    QwtDateScaleDraw* dateScale = dynamic_cast<QwtDateScaleDraw*>(axisScaleDraw(axis));
-    if(!dateScale)
-        return;
-    setAxisDateTimeScale(axisDateScaleType2String(format),axis,intType);
-}
+

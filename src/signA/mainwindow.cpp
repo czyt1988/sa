@@ -345,6 +345,9 @@ void MainWindow::initUI()
             ,this,&MainWindow::onActionChartZoomInTriggered);
     connect(ui->actionZoomOut,&QAction::triggered
             ,this,&MainWindow::onActionChartZoomOutTriggered);
+    connect(ui->actionZoomInBestView,&QAction::triggered
+            ,this,&MainWindow::actionZoomInBestView);
+
     //选区菜单
     m_chartRegionSelectionShapeActionGroup = new QActionGroup(this);
     ui->actionStartRectSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
@@ -1573,6 +1576,19 @@ void MainWindow::onActionChartZoomOutTriggered(bool check)
         bool isEnableZoomer = chart->isEnableZoomer();
         chart->zoomOut();
         chart->enableZoomer(isEnableZoomer);
+    }
+}
+///
+/// \brief 缩放到最佳视图
+/// \param check
+///
+void MainWindow::actionZoomInBestView(bool check)
+{
+    SAChart2D* chart = this->getCurSubWindowChart();
+    if(chart)
+    {
+//TODO
+        chart->setZoomReset();
     }
 }
 ///
