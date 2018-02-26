@@ -57,9 +57,7 @@ private:
 //    QMap <SAAbstractDatas*,int> m_ptrListSet;///< 用于快速判断是否存在
 
     QList<std::shared_ptr<SAAbstractDatas> > m_smrPtrList;///< 指针队列,此队列通过智能指针添加，可以记录添加的顺序
-    QMap <std::shared_ptr<SAAbstractDatas>,int> m_smrPtrListSet;///< 智能指针对应m_smrPtrList的索引字典，快速索引可以先搜索这个字典再索引,用于快速删除m_smrPtrList
     QMap <SAAbstractDatas*,std::shared_ptr<SAAbstractDatas> > m_norPtr2smrPtr;///< 普通指针和智能指针的映射
-
     QMap<int,SAAbstractDatas*> m_id2data;///<记录变量的id和内存地址，通过此可以快速查找
     QMap<QString,SAAbstractDatas*> m_dataName2DataPtr;///< 记录变量名对应的数据类型
 };
@@ -877,7 +875,6 @@ std::shared_ptr<SAVectorDouble> SAValueManager::createVectorDoubleFromData(const
 PointerContainerPrivate::PointerContainerPrivate()
 {
     m_smrPtrList.clear();
-    m_smrPtrListSet.clear();
     m_norPtr2smrPtr.clear();
     m_id2data.clear();
     m_dataName2DataPtr.clear();
@@ -910,7 +907,6 @@ QList<std::shared_ptr<SAAbstractDatas> > PointerContainerPrivate::fromNormalPtr(
 void PointerContainerPrivate::append(std::shared_ptr<SAAbstractDatas> data)
 {
     m_smrPtrList.append(data);
-    m_smrPtrListSet.insert(data,m_smrPtrList.size()-1);
     m_norPtr2smrPtr[data.get()] = data;
     m_id2data[data->getID()] = data.get();
     m_dataName2DataPtr[data->getName()] = data.get();
@@ -928,7 +924,8 @@ SAAbstractDatas *PointerContainerPrivate::at(int index) const
 ///
 int PointerContainerPrivate::indexOf(SAAbstractDatas *dataPtr) const
 {
-    return m_smrPtrListSet.value(fromNormalPtr(dataPtr),-1);
+    auto smptr = fromNormalPtr(dataPtr);
+    return m_smrPtrList.indexOf(smptr);
 }
 
 SAAbstractDatas *PointerContainerPrivate::findData(int id) const
@@ -944,7 +941,6 @@ SAAbstractDatas *PointerContainerPrivate::findData(const QString &name) const
 void PointerContainerPrivate::clear()
 {
     m_smrPtrList.clear();
-    m_smrPtrListSet.clear();
     m_norPtr2smrPtr.clear();
     m_id2data.clear();
     m_dataName2DataPtr.clear();
@@ -964,26 +960,10 @@ void PointerContainerPrivate::removeData(SAAbstractDatas *data)
     }
     //总队列里查找指针
     auto smpt = fromNormalPtr(data);
-    auto ite = m_smrPtrListSet.find(smpt);
-    if(ite != m_smrPtrListSet.end())
-    {
-        int index = ite.value();
-        m_smrPtrList.removeAt(index);
-
-        m_id2data.remove(data->getID());
-        m_dataName2DataPtr.remove(data->getName());
-        m_norPtr2smrPtr.remove(data);
-
-        m_smrPtrListSet.erase(ite);
-    }
-
-//    std::shared_ptr<SAAbstractDatas> smr(data,[](SAAbstractDatas* p){Q_UNUSED(p);});
-//    auto iteSmr = m_smrPtrListSet.find(smr);
-//    if(iteSmr != m_smrPtrListSet.end())
-//    {
-//        m_smrPtrListSet.erase(iteSmr);
-//    }
-
+    m_smrPtrList.removeOne(smpt);
+    m_id2data.remove(data->getID());
+    m_dataName2DataPtr.remove(data->getName());
+    m_norPtr2smrPtr.remove(data);
 }
 
 bool PointerContainerPrivate::isHaveDataName(const QString &name) const

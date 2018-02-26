@@ -1567,6 +1567,7 @@ void MainWindow::onActionChartZoomOutTriggered(bool check)
 ///
 void MainWindow::actionZoomInBestView(bool check)
 {
+    Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
     {
