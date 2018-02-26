@@ -1570,8 +1570,8 @@ void MainWindow::actionZoomInBestView(bool check)
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
     {
-//TODO
-        chart->setZoomReset();
+        chart->zoomInCompatible();
+        //chart->setZoomReset();
     }
 }
 ///

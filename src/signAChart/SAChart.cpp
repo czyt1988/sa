@@ -1020,6 +1020,84 @@ int SAChart::getPlotChartItemDataCount(const QwtPlotItem *item)
     }
     return -1;
 }
+///
+/// \brief 通过rtti获取所有plot的数据范围，并做并集
+/// 也就是最大的数据范围
+/// \param chart
+/// \return
+///
+void SAChart::dataRange(const QwtPlot *chart, QwtInterval* yLeft, QwtInterval* yRight, QwtInterval* xBottom, QwtInterval* xTop)
+{
+    QwtInterval intv[QwtPlot::axisCnt];
+    const QwtPlotItemList& itmList = SAChart::getPlotChartItemList(chart);
+    QwtPlotItemIterator it;
+    for ( it = itmList.begin(); it != itmList.end(); ++it )
+    {
+        const QwtPlotItem *item = *it;
+        if ( !item->isVisible() )
+            continue;
+        QRectF rect;
+        switch(item->rtti())
+        {
+        case QwtPlotItem::Rtti_PlotCurve:
+        {
+            const QwtPlotCurve *p = static_cast<const QwtPlotCurve *>(item);
+            rect=p->dataRect();
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotHistogram:
+        {
+            const QwtPlotHistogram *p = static_cast<const QwtPlotHistogram *>(item);
+            rect=p->dataRect();
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotBarChart:
+        {
+            const QwtPlotBarChart *p = static_cast<const QwtPlotBarChart *>(item);
+            rect=p->dataRect();
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotIntervalCurve:
+        {
+            const QwtPlotIntervalCurve *p = static_cast<const QwtPlotIntervalCurve *>(item);
+            rect=p->dataRect();
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotMultiBarChart:
+        {
+            const QwtPlotMultiBarChart *p = static_cast<const QwtPlotMultiBarChart *>(item);
+            rect=p->dataRect();
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotTradingCurve:
+        {
+            const QwtPlotTradingCurve *p = static_cast<const QwtPlotTradingCurve *>(item);
+            rect=p->dataRect();
+            break;
+        }
+        case QwtPlotItem::Rtti_PlotSpectroCurve:
+        {
+            const QwtPlotSpectroCurve *p = static_cast<const QwtPlotSpectroCurve *>(item);
+            rect=p->dataRect();
+            break;
+        }
+        default:
+            break;
+        }
+        if ( rect.width() >= 0.0 )
+            intv[item->xAxis()] |= QwtInterval( rect.left(), rect.right() );
+        if ( rect.height() >= 0.0 )
+            intv[item->yAxis()] |= QwtInterval( rect.top(), rect.bottom() );
+    }
+    if(yLeft)
+        *yLeft = intv[QwtPlot::yLeft];
+    if(yRight)
+        *yRight = intv[QwtPlot::yRight];
+    if(xTop)
+        *xTop = intv[QwtPlot::xTop];
+    if(xBottom)
+        *xBottom = intv[QwtPlot::xBottom];
+}
 
 ///
 /// \brief 动态获取可绘图的item，使用dynamic_cast,需要注意效率问题

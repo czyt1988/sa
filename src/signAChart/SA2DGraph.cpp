@@ -3,12 +3,18 @@
 #include <qstyle.h>
 #include <qstyleoption.h>
 
-#include <qwt_interval.h>
-#include <qwt_picker_machine.h>
+#include "qwt_interval.h"
+#include "qwt_picker_machine.h"
 #include <algorithm>
-#include <qwt_legend_label.h>
-#include <qwt_date_scale_draw.h>
-
+#include "qwt_legend_label.h"
+#include "qwt_date_scale_draw.h"
+#include "qwt_plot_histogram.h"
+#include "qwt_plot_barchart.h"
+#include "qwt_plot_intervalcurve.h"
+#include "qwt_plot_multi_barchart.h"
+#include "qwt_plot_tradingcurve.h"
+#include "qwt_plot_spectrocurve.h"
+#include "qwt_plot_spectrogram.h"
 #include "SAPlotMarker.h"
 #include "SAYDataTracker.h"
 #include "SAXYDataTracker.h"
@@ -1463,6 +1469,49 @@ void SA2DGraph::zoomOut()
     rect.setHeight(h);
     d->m_zoomer->zoom(rect);
 
+}
+
+///
+/// \brief 缩放到最适合比例，就是可以把所有图都能看清的比例
+///
+void SA2DGraph::zoomInCompatible()
+{
+    SA_D(SA2DGraph);
+    QwtInterval intv[axisCnt];
+    SAChart::dataRange(this,intv+yLeft,intv+yRight,intv+xBottom,intv+xTop);
+    if(!d->m_zoomer.isNull())
+    {
+        int axx = d->m_zoomer->xAxis();
+        int axy = d->m_zoomer->yAxis();
+        QRectF rect1;
+        rect1.setRect(intv[axx].minValue(),intv[axy].minValue(),intv[axx].width(),intv[axy].width());
+        qDebug()<<rect1;
+        d->m_zoomer->zoom(rect1);
+    }
+    if(!d->m_zoomerSecond.isNull())
+    {
+        int axx = d->m_zoomerSecond->xAxis();
+        int axy = d->m_zoomerSecond->yAxis();
+        QRectF rect1;
+        rect1.setRect(intv[axx].minValue(),intv[axy].minValue(),intv[axx].width(),intv[axy].width());
+        qDebug()<<rect1;
+        d->m_zoomerSecond->zoom(rect1);
+    }
+    /* !此方法不行
+    if(!d->m_zoomer.isNull())
+    {
+        int axx = d->m_zoomer->xAxis();
+        int axy = d->m_zoomer->yAxis();
+        double xmin = axisScaleEngine(axx)->lowerMargin();
+        double xmax = axisScaleEngine(axx)->upperMargin();
+        double ymin = axisScaleEngine(axy)->lowerMargin();
+        double ymax = axisScaleEngine(axy)->upperMargin();
+        QRectF rect1;
+        rect1.setRect(xmin,ymin,xmax-xmin,ymax-ymin);
+        qDebug()<<rect1;
+        d->m_zoomer->zoom(rect1);
+    }
+    */
 }
 
 void SA2DGraph::setupLegend()

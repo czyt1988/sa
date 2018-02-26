@@ -276,6 +276,8 @@ public slots:
     void zoomIn();
     //缩小1.6 相当于乘以1.6
     void zoomOut();
+    //缩放到最适合比例，就是可以把所有图都能看清的比例
+    void zoomInCompatible();
 
     void enablePicker(bool enable = true );
 	void enableGrid(bool isShow = true);

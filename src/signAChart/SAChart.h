@@ -57,6 +57,8 @@ public:
     static bool checkIsXYSeriesItem(const QwtPlotItem *item);
     //通过rtti获取plot chart item的数据点数，如果不是plot chart item,返回-1
     static int getPlotChartItemDataCount(const QwtPlotItem* item);
+    //通过rtti获取所有plot的数据范围，并做并集
+    static void dataRange(const QwtPlot* chart, QwtInterval *yLeft, QwtInterval *yRight, QwtInterval *xBottom, QwtInterval *xTop);
 ////////////////////// 坐标变换相关操作//////////////////////////////
     //坐标轴数据互转（把坐标轴转换为另外一个坐标轴数据而保持屏幕位置不变）
     static QPointF transformValue(QwtPlot*chart,const QPointF& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);
@@ -96,6 +98,7 @@ public:
     static QwtDateScaleDraw* getAxisDateTimeScale(QwtPlot *chart, int axisID);
     //获取对应坐标轴的id,如 xTop会返回xBottom
     static int otherAxis(int axisID);
+
 ////////////////////// 曲线数据相关操作//////////////////////////////
     //获取一个曲线的xy值
     static void getXYDatas(const QVector<QPointF>& xys, QVector<double>* xs, QVector<double>* ys);
