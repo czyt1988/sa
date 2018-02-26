@@ -5,6 +5,7 @@
 class QwtPlotItemTreeModel;
 class QwtPlotItemDataModel;
 class SAFigureWindow;
+class QwtPlot;
 namespace Ui {
 class SAChartDatasViewWidget;
 }
@@ -21,6 +22,10 @@ public:
     void setFigure(SAFigureWindow *fig);
 private slots:
     void onTreeViewCurPlotItemClicked(const QModelIndex& index);
+    //figure有图添加发送的信号
+    void onChartAdded(QwtPlot* plot);
+    //figure销毁
+    void onFigureDestroy(QObject* obj);
 private:
     Ui::SAChartDatasViewWidget *ui;
     QwtPlotItemTreeModel* m_treeModel;

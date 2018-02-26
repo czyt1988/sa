@@ -7,6 +7,9 @@
 #include <vector>
 #include <qwt_plot_item.h>
 #include <limits>
+///
+/// \brief 显示item数据的tablemodel
+///
 class SA_CHART_EXPORT QwtPlotItemDataModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -14,13 +17,13 @@ public:
     QwtPlotItemDataModel(QObject *p = 0);
     void setQwtPlotItems(const QList<QwtPlotItem*>& items);
     void clear();
+    void enableBackgroundColor(bool enable, int alpha = 30);
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     QVariant data(const QModelIndex &index, int role) const;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
-    void enableBackgroundColor(bool enable, int alpha = 30);
 
     static double nan();
 

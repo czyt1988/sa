@@ -5,8 +5,9 @@
 #include "SAChart2D.h"
 #include "SAFigureWindow.h"
 SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SAChartDatasViewWidget)
+    QWidget(parent)
+    ,ui(new Ui::SAChartDatasViewWidget)
+    ,m_figure(nullptr)
 {
     ui->setupUi(this);
     ui->splitter->setStretchFactor(0,1);
@@ -39,6 +40,17 @@ QwtPlotItemTreeModel *SAChartDatasViewWidget::getTreeModel() const
 ///
 void SAChartDatasViewWidget::setFigure(SAFigureWindow *fig)
 {
+    if(m_figure)
+    {
+        if(m_figure == fig)
+        {
+            return;
+        }
+        disconnect(m_figure,&SAFigureWindow::chartAdded
+                   ,this,&SAChartDatasViewWidget::onChartAdded);
+        disconnect(m_figure,&SAFigureWindow::destroyed
+                   ,this,&SAChartDatasViewWidget::onFigureDestroy);
+    }
     m_figure = fig;
     if(fig)
     {
@@ -49,7 +61,10 @@ void SAChartDatasViewWidget::setFigure(SAFigureWindow *fig)
         });
         m_treeModel->setPlots(qwtChart);
         ui->treeView->expandAll();
-
+        connect(m_figure,&SAFigureWindow::chartAdded
+                   ,this,&SAChartDatasViewWidget::onChartAdded);
+        connect(m_figure,&SAFigureWindow::destroyed
+                   ,this,&SAChartDatasViewWidget::onFigureDestroy);
     }
     else
     {
@@ -88,4 +103,14 @@ void SAChartDatasViewWidget::onTreeViewCurPlotItemClicked(const QModelIndex &ind
         items.append (m_treeModel->getQwtPlotItemFromIndex (indexList[i]));
     }
     m_tableModel->setQwtPlotItems (items);
+}
+
+void SAChartDatasViewWidget::onChartAdded(QwtPlot *plot)
+{
+    m_treeModel->addPlot(plot);
+}
+
+void SAChartDatasViewWidget::onFigureDestroy(QObject *obj)
+{
+    setFigure(nullptr);
 }

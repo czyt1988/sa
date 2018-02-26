@@ -19,6 +19,7 @@ public:
     virtual QList<SAChart2D*> get2DPlots() const = 0;
     //获取当前的2d绘图指针
     virtual SAChart2D* current2DPlot() const = 0;
+
 };
 
 #endif // SAFIGURE_H

@@ -36,7 +36,7 @@ public:
     QList<SAChart2D*> get2DPlots() const;
     //获取当前的2d绘图指针
     SAChart2D* current2DPlot() const;
-    //清空所有图
+    //清空所有图 会连续发送chartRemoved信号
     void clearAll();
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
@@ -54,9 +54,10 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 #endif
 signals:
-    //绘图数据变更消息
-    void chartDataChanged(QwtPlot* plot,QwtPlotItem* item);
-private:
+    //添加了一个绘图发送的信号
+    void chartAdded(QwtPlot* plot);
+    //删除了一个绘图发送的信号
+    void chartRemoved(QwtPlot* plot);
 };
 
 SA_COMMON_UI_EXPORT QDataStream& operator <<(QDataStream & out,const SAFigureWindow* p);
