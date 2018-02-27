@@ -77,6 +77,7 @@ public:
     QAction *actionFigureSetDock;
     QAction *actionViewValueInCurrentTab;
     QAction *actionViewValueInNewTab;
+    QAction *actionViewValueAppendInCurrentTab;
     QAction *actionLayerOutDock;
     QAction *actionRenameValue;
     QAction *actionSetDefalutDockPos;
@@ -213,8 +214,6 @@ public:
     SARibbonMenu *menuImport;
 
     SARibbonMenu *menuAnalysis;
-    SARibbonMenu *menuData;
-    SARibbonMenu *menuChartDataManager;
     SARibbonMenu *menuDataManager;
     SARibbonMenu *menuChartSet;
     SARibbonMenu *menuGrid;

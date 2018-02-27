@@ -172,9 +172,14 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionViewValueInCurrentTab->setObjectName(QStringLiteral("actionViewValueInCurrentTab"));
     actionViewValueInCurrentTab->setIcon(QIcon(":/icons/icons/viewValueInCurrentTab.png"));
 
+    actionViewValueAppendInCurrentTab = new QAction(mainWinowPtr);
+    actionViewValueAppendInCurrentTab->setObjectName(QStringLiteral("actionViewValueAppendInCurrentTab"));
+    actionViewValueAppendInCurrentTab->setIcon(QIcon(":/icons/icons/viewValueInCurrentTab.png"));
+
     actionViewValueInNewTab = new QAction(mainWinowPtr);
     actionViewValueInNewTab->setObjectName(QStringLiteral("actionViewValueInNewTab"));
     actionViewValueInNewTab->setIcon(QIcon(":/icons/icons/viewValueInNewTab.png"));
+
 
     actionLayerOutDock = new QAction(mainWinowPtr);
     actionLayerOutDock->setObjectName(QStringLiteral("actionLayerOutDock"));
@@ -359,27 +364,21 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBoxChart->setObjectName(QStringLiteral("menuBoxChart"));
     menuBoxChart->setIcon(QIcon(":/icons/icons/boxChart.svg"));
 
-    menuData = new SARibbonMenu(menuBar);
-    menuData->setObjectName(QStringLiteral("menuData"));
-    menuChartDataManager = new SARibbonMenu(menuData);
-    menuChartDataManager->setObjectName(QStringLiteral("menu_chartDataManager"));
-    menuChartDataManager->setIcon(QIcon(":/icons/icons/chartDataManager.png"));
-
-    menuDataManager = new SARibbonMenu(menuData);
+    menuDataManager = new SARibbonMenu(menuBar);
     menuDataManager->setObjectName(QStringLiteral("menu_dataManager"));
     menuChartSet = new SARibbonMenu(menuBar);
     menuChartSet->setObjectName(QStringLiteral("menu_chartSet"));
-    menuGrid = new SARibbonMenu(menuChartSet);
+    menuGrid = new SARibbonMenu(menuBar);
     menuGrid->setObjectName(QStringLiteral("menu_grid"));
     //menuGrid->setIcon(icon18);
 
-    menuZoomSet = new SARibbonMenu(menuChartSet);
+    menuZoomSet = new SARibbonMenu(menuBar);
     menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
 
-    menuSkinList = new SARibbonMenu(menuData);
+    menuSkinList = new SARibbonMenu(menuBar);
     menuSkinList->setObjectName(QStringLiteral("menuSkinList"));
 
-    menuRegionSelect = new SARibbonMenu(menuChartSet);
+    menuRegionSelect = new SARibbonMenu(menuBar);
     menuRegionSelect->setObjectName(QStringLiteral("menuRegionSelect"));
     menuHelp = new SARibbonMenu(menuBar);
     menuHelp->setObjectName(QStringLiteral("menuHelp"));
@@ -714,15 +713,13 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 
-    menuData->addAction(menuChartDataManager->menuAction());
-    menuData->addAction(menuDataManager->menuAction());
 
-    menuChartDataManager->addAction(actionInRangDataRemove);
-    menuChartDataManager->addAction(actionOutRangDataRemove);
-    menuChartDataManager->addAction(actionPickCurveToData);
+
 
     menuDataManager->addAction(actionViewValueInCurrentTab);
+    menuDataManager->addAction(actionViewValueAppendInCurrentTab);
     menuDataManager->addAction(actionViewValueInNewTab);
+    menuDataManager->addSeparator();
     menuDataManager->addAction(actionDeleteValue);
     menuDataManager->addAction(actionRenameValue);
 
@@ -874,6 +871,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
     actionValueManagerDock->setText(QApplication::translate("MainWindow", "Value Manager", 0));
     actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "View Value In\nCurrent Tab", 0));
+    actionViewValueAppendInCurrentTab->setText(QApplication::translate("MainWindow", "View Value Append\nIn Current Tab", 0));
     actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "View Value In\nNew Tab", 0));
     actionLayerOutDock->setText(QApplication::translate("MainWindow", "Layerout", 0));
     actionRenameValue->setText(QApplication::translate("MainWindow", "Rename Value", 0));
@@ -918,8 +916,6 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
     menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "Windows\nView", 0));
     menuAnalysis->setTitle(QApplication::translate("MainWindow", "Analysis", 0));
-    menuData->setTitle(QApplication::translate("MainWindow", "Data", 0));
-    menuChartDataManager->setTitle(QApplication::translate("MainWindow", "Chart Data Manager", 0));
     menuDataManager->setTitle(QApplication::translate("MainWindow", "Data Manager", 0));
     menuChartSet->setTitle(QApplication::translate("MainWindow", "Chart Set", 0));
     menuGrid->setTitle(QApplication::translate("MainWindow", "Grid", 0));

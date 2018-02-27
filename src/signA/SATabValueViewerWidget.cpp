@@ -1,4 +1,4 @@
-#include "SATabValueViewerWidget.h"
+﻿#include "SATabValueViewerWidget.h"
 #include <SADataTableModel.h>
 //#include <ValueDataViewerTabWidgetPage.h>
 #include <ValueViewerTabPage.h>
@@ -10,17 +10,11 @@
 SATabValueViewerWidget::SATabValueViewerWidget(QWidget *parent):
     QTabWidget(parent)
   ,m_count(0)
+  ,m_menuTab(nullptr)
 {
     setTabsClosable(true);
-    m_menuTab = new QMenu(tr("table operation"),this);//表格操作
-    QMenu* save=new  QMenu(tr("save"),m_menuTab);
-    save->setIcon (ICON_Save);
-    QAction* actSave2csv = new QAction(this);
-    actSave2csv->setText(tr("save as csv"));
-    save->addAction(actSave2csv);
-    m_menuTab->addMenu (save);
+
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(actSave2csv,&QAction::triggered,this,&SATabValueViewerWidget::action_saveToCsv_triggered);
     connect(this,&QWidget::customContextMenuRequested,this,&SATabValueViewerWidget::tabBarCustomContextMenuRequested);
     connect(this,&QTabWidget::tabCloseRequested,this,&SATabValueViewerWidget::on_tab_closed);
 }
@@ -34,59 +28,31 @@ SATabValueViewerWidget::~SATabValueViewerWidget()
 /// \brief SATabValueViewerWidget::setDataInCurrentTab
 /// \param datas
 ///
-void SATabValueViewerWidget::setDataInCurrentTab(QList<SAAbstractDatas *> datas)
+void SATabValueViewerWidget::setDataInCurrentTab(const QList<SAAbstractDatas *> &datas)
 {
-    QList<SAAbstractDatas*> tables;
-    takeTableValue (datas,tables);
-    if(datas.size () > 0)
-    {
-        SADataTableModel* model = getCurrentTabModel();
-        if(!model)
-            return;
-        model->setSADataPtrs (datas);
-    }
-    if(tables.size ()>0)
-    {//有表格数据
-        setTableData (tables);
-    }
+    SADataTableModel* model = getCurrentTabModel();
+    if(!model)
+        return;
+    model->setSADataPtrs (datas);
 }
 
 void SATabValueViewerWidget::setDataInNewTab(QList<SAAbstractDatas *> datas)
 {
-    QList<SAAbstractDatas*> tables;
-    takeTableValue (datas,tables);
-    if(datas.size () > 0)
-    {
-        QString strName;
-        if(datas.size () == 1)
-            strName = datas[0]->getName ();
-        SADataTableModel* model = createValueViewerTab(strName);
-        if(!model)
-            return;
-        model->setSADataPtrs (datas);
-    }
-    if(tables.size ()>0)
-    {//有表格数据
-        setTableData (tables);
-    }
+    QString strName;
+    if(datas.size () == 1)
+        strName = datas[0]->getName ();
+    SADataTableModel* model = createValueViewerTab(strName);
+    if(!model)
+        return;
+    model->setSADataPtrs (datas);
 }
 
 void SATabValueViewerWidget::appendDataInCurrentTab(QList<SAAbstractDatas *> datas)
 {
-    QList<SAAbstractDatas*> tables;
-    takeTableValue (datas,tables);
-    if(datas.size () > 0)
-    {
-        SADataTableModel* model = getCurrentTabModel();
-        if(!model)
-            return;
-        model->appendSADataPtrs (datas);
-        model->update ();
-    }
-    if(tables.size ()>0)
-    {//有表格数据
-        setTableData (tables);
-    }
+    SADataTableModel* model = getCurrentTabModel();
+    if(!model)
+        return;
+    model->appendSADataPtrs (datas);
 }
 
 SADataTableModel *SATabValueViewerWidget::createValueViewerTab(const QString &title)
@@ -150,8 +116,18 @@ void SATabValueViewerWidget::tabBarCustomContextMenuRequested(const QPoint &pos)
 {
     if(tabBar ()->tabAt (pos) == currentIndex ())
     {
-        if(m_menuTab)
-            m_menuTab->exec (QCursor::pos());
+        if(nullptr == m_menuTab)
+        {
+            m_menuTab = new QMenu(tr("table operation"),this);//表格操作
+            QMenu* save=new  QMenu(tr("save"),m_menuTab);
+            save->setIcon (ICON_Save);
+            QAction* actSave2csv = new QAction(this);
+            actSave2csv->setText(tr("save as csv"));
+            save->addAction(actSave2csv);
+            m_menuTab->addMenu (save);
+            connect(actSave2csv,&QAction::triggered,this,&SATabValueViewerWidget::action_saveToCsv_triggered);
+        }
+        m_menuTab->exec (QCursor::pos());
     }
 }
 

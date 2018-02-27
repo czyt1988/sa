@@ -1,4 +1,4 @@
-#include "SADataTableModel.h"
+﻿#include "SADataTableModel.h"
 #include <QDebug>
 #include <QFile>
 #include <QMessageBox>
@@ -48,6 +48,7 @@ void SADataTableModel::appendSADataPtrs(QList<SAAbstractDatas*> datas)
     {
         return;
     }
+    beginResetModel();
     for(auto i=datas.begin();i!=datas.end();++i)
     {
         if((*i)->getDim()<=2)
@@ -55,8 +56,8 @@ void SADataTableModel::appendSADataPtrs(QList<SAAbstractDatas*> datas)
             m_datas.append(*i);
         }
     }
-    m_datas.append (datas);
     reCalcRowAndColumnCount();
+    endResetModel();
 }
 
 void SADataTableModel::update()

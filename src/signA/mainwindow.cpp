@@ -150,8 +150,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ,ui_status_progress(nullptr)
   ,ui_status_info(nullptr)
   ,m_menuTreeProjectItem(nullptr)
-  ,m_menuValueManagerView(nullptr)
- // ,m_lastActiveWnd(nullptr)
   ,m_nProjectCount(0)
   ,m_nUserChartCount(0)
 {
@@ -255,6 +253,7 @@ void MainWindow::initUI()
     //-------------------------------------
     // - menu_dataManager menu signal/slots connect
     connect(ui->actionViewValueInCurrentTab,&QAction::triggered,this,&MainWindow::onActionViewValueInCurrentTabTriggered);
+    connect(ui->actionViewValueAppendInCurrentTab,&QAction::triggered,this,&MainWindow::onActionViewValueAppendInCurrentTabTriggered);
     connect(ui->actionViewValueInNewTab,&QAction::triggered,this,&MainWindow::onActionViewValueInNewTabTriggered);
     connect(ui->actionDeleteValue,&QAction::triggered,this,&MainWindow::onActionDeleteValueTriggered);
     //-------------------------------------
@@ -472,16 +471,7 @@ void MainWindow::initUI()
 
 void MainWindow::initMenu()
 {
-    //生成
-    //变量管理菜单的初始化
-    m_menuValueManagerView = new QMenu(ui->treeView_valueManager);
-    //在当前标签中打开
-    m_menuValueManagerView->addAction(ui->actionViewValueInCurrentTab);
-    //在新建标签中打开
-    m_menuValueManagerView->addAction(ui->actionViewValueInNewTab);
-    m_menuValueManagerView->addSeparator();
-    m_menuValueManagerView->addAction(ui->actionRenameValue);//重命名变量
-    m_menuValueManagerView->addAction(ui->actionDeleteValue);//删除变量
+
 }
 
 void MainWindow::initPlugin()
@@ -913,7 +903,7 @@ void MainWindow::onTreeViewValueManagerDoubleClicked(const QModelIndex &index)
     QList<SAAbstractDatas*> datas=getSeletedDatas();
     if(datas.size ()<=0)
         return;
-    ui->tabWidget_valueViewer->setDataInNewTab(datas);
+    ui->tabWidget_valueViewer->setDataInCurrentTab(datas);
     if (ui->dockWidget_valueViewer->isHidden())
         ui->dockWidget_valueViewer->show();
     ui->dockWidget_valueViewer->raise();
@@ -925,8 +915,7 @@ void MainWindow::onTreeViewValueManagerDoubleClicked(const QModelIndex &index)
 void MainWindow::onTreeViewValueManagerCustomContextMenuRequested(const QPoint &pos)
 {
     Q_UNUSED(pos);
-    if(m_menuValueManagerView)
-        m_menuValueManagerView->exec (QCursor::pos());
+    ui->menuDataManager->exec (QCursor::pos());
 }
 
 SAValueManagerModel*MainWindow::getValueManagerModel() const
@@ -2362,6 +2351,18 @@ void MainWindow::onActionViewValueInCurrentTabTriggered()
         return;
     ui->tabWidget_valueViewer->setDataInCurrentTab(datas);
 }
+
+///
+/// \brief 在当前标签中显示数据内容
+///
+void MainWindow::onActionViewValueAppendInCurrentTabTriggered()
+{
+    QList<SAAbstractDatas*> datas=getSeletedDatas();
+    if(datas.size ()<=0)
+        return;
+    ui->tabWidget_valueViewer->appendDataInCurrentTab(datas);
+}
+
 ///
 /// \brief 在新标签中显示数据内容
 ///

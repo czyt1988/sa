@@ -1,4 +1,4 @@
-#ifndef SATABVALUEVIEWERWIDGET_H
+﻿#ifndef SATABVALUEVIEWERWIDGET_H
 #define SATABVALUEVIEWERWIDGET_H
 #include <QTabWidget>
 #include <QMenu>
@@ -13,7 +13,7 @@ public:
     SATabValueViewerWidget(QWidget *parent = 0);
     ~SATabValueViewerWidget();
     //显示数据在当前tab
-    void setDataInCurrentTab(QList<SAAbstractDatas*> datas);
+    void setDataInCurrentTab(const QList<SAAbstractDatas*>& datas);
     //显示数据在新的标签页
     void setDataInNewTab(QList<SAAbstractDatas*> datas);
     //在当前标签中添加新的数据

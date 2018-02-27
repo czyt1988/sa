@@ -285,6 +285,8 @@ private slots:
     ///
     //变量管理treeView-菜单-当前选择的数据在当前的tab里浏览
     void onActionViewValueInCurrentTabTriggered();
+    //变量管理treeView-菜单-当前选择的数据在当前的tab里追加浏览
+    void onActionViewValueAppendInCurrentTabTriggered();
     //变量管理treeView-菜单-当前选择的数据在新标签页里浏览
     void onActionViewValueInNewTabTriggered();
     //变量删除
@@ -516,9 +518,6 @@ private:
     progressStateWidget* ui_status_progress;///< 状态栏上的进度信息
     SAInformationStatusWidget* ui_status_info;///< 状态栏上的特殊信息
     QMenu* m_menuTreeProjectItem;///< 项目树的弹出菜单
-    QMenu* m_menuValueManagerView;///< 变量管理弹出菜单
-    //QMdiSubWindow* m_lastActiveWnd;///< 记录最后激活的窗口
-
     SAPluginManager* m_pluginManager;///< 插件管理器
     int m_nProjectCount;//记录项目总数
 
