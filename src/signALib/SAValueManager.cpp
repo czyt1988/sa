@@ -51,7 +51,8 @@ public:
     QList<SAAbstractDatas*> getVectorDataPtrs() const;
     //判断数据是否处于管理状态
     bool isDataInManager(const SAAbstractDatas* data) const;
-
+    //
+    QList<SAAbstractDatas*> allDatas() const;
 private:
 //    QList<SAAbstractDatas*> m_ptrList;///< 总指针队列
 //    QMap <SAAbstractDatas*,int> m_ptrListSet;///< 用于快速判断是否存在
@@ -181,6 +182,14 @@ QList<SAAbstractDatas*> SAValueManager::findDatas(const QList<int> &ids) const
         }
     });
     return res;
+}
+///
+/// \brief 获取所有数据
+/// \return
+///
+QList<SAAbstractDatas *> SAValueManager::allDatas() const
+{
+    return m_ptrContainer->allDatas();
 }
 ///
 /// \brief 根据名字查找变量，所有变量管理器管理的变量都只有唯一名字
@@ -357,155 +366,7 @@ bool SAValueManager::__renameData(SAAbstractDatas *data, const QString &name)
     }
     return false;
 }
-///
-/// \brief 保存变量到文件
-/// \param data 数据的指针
-/// \param path 要保存的目录
-/// \param file QFile文件指针
-/// \return 返回QFileDevice::FileError,其中0代表成功
-/// QFileDevice::NoError	0	No error occurred.
-/// QFileDevice::ReadError	1	An error occurred when reading from the file.
-/// QFileDevice::WriteError	2	An error occurred when writing to the file.
-/// QFileDevice::FatalError	3	A fatal error occurred.
-/// QFileDevice::ResourceError	4	Out of resources (e.g., too many open files, out of memory, etc.)
-/// QFileDevice::OpenError	5	The file could not be opened.
-/// QFileDevice::AbortError	6	The operation was aborted.
-/// QFileDevice::TimeOutError	7	A timeout occurred.
-/// QFileDevice::UnspecifiedError	8	An unspecified error occurred.
-/// QFileDevice::RemoveError	9	The file could not be removed.
-/// QFileDevice::RenameError	10	The file could not be renamed.
-/// QFileDevice::PositionError	11	The position in the file could not be changed.
-/// QFileDevice::ResizeError	12	The file could not be resized.
-/// QFileDevice::PermissionsError	13	The file could not be accessed.
-/// QFileDevice::CopyError	14	The file could not be copied.
-///
-int SAValueManager::saveAs(const SAAbstractDatas *data, const QString &path, QFile *file)
-{
-    if(nullptr == file)
-    {
-        return -1;
-    }
 
-    if(data->getType() == SA::DataLink)
-    {//引用数据变量，后缀为sadref
-        file->setFileName(QStringLiteral("%1%2%3.sadref")
-                         .arg(path)
-                         .arg(QDir::separator())
-                         .arg(data->getName()));
-    }
-    else
-    {
-        file->setFileName(QStringLiteral("%1%2%3.sad")
-                         .arg(path)
-                         .arg(QDir::separator())
-                         .arg(data->getName()));
-    }
-
-    if(file->open(QIODevice::WriteOnly))
-    {
-        QDataStream out(file);
-        data->write(out);
-    }
-    else
-    {
-        emit messageInformation(tr("write data file error:%1")
-                                .arg(file->errorString())
-                                ,SA::ErrorMessage
-                                );
-    }
-    return static_cast<int>(file->error());
-}
-///
-/// \brief 保存数据到文件系统
-/// \param path 指定的路径
-/// \return 成功返回0,否则返回失败的个数，如果一个变量失败返回1，以此类推
-///
-int SAValueManager::saveAs(const QString &path)
-{
-    m_lastSaveDataFolder = path;
-    //-----创建数据文件夹
-    if(!QFileInfo::exists(m_lastSaveDataFolder))
-    {
-        emit messageInformation(tr("can not find dir:%1").arg(m_lastSaveDataFolder)
-                                ,SA::ErrorMessage
-                                );
-        return -1;
-    }
-    //-----保存数据文件，同时更新数据对应文件索引
-    const int size = count();
-    int errCount = 0;
-    QFile file;
-    for(int i=0;i<size;++i)
-    {
-        SAAbstractDatas* data = m_ptrContainer->at(i);
-        if(saveAs(data,path,&file) != static_cast<int>(QFileDevice::NoError))
-        {
-            ++errCount;
-            continue;
-        }
-    }
-    return errCount;
-}
-///
-/// \brief 从文件系统中加载数据
-/// \param path 指定的路径
-/// \return 成功返回0,否则返回失败的个数，如果一个变量失败返回1，以此类推,-1代表路径不正确
-///
-int SAValueManager::load(const QString &path, QMap<SAAbstractDatas *, QString> &dataPtr2DataFileName)
-{
-    QDir dir(path);
-    int errCount = 0;
-    if(!dir.exists())
-    {
-        emit messageInformation(tr("path :\"%1\" may not exist").arg(path),SA::ErrorMessage);
-        return -1;
-    }
-    QStringList dataFileList = dir.entryList({"*.sad"},QDir::Files|QDir::NoSymLinks);
-    const int size = dataFileList.size();
-    if(0 == size)
-    {
-        return 0;
-    }
-    QList<SAAbstractDatas*> datasBeLoad;
-    for(int i=0;i<size;++i)
-    {
-        QString fileName = dataFileList[i];
-        int index = fileName.lastIndexOf(".");
-        if(index < 0)
-        {
-            emit messageInformation(tr("file:\"%1\" may not incorrect").arg(fileName),SA::WarningMessage);
-            continue;
-        }
-        QString suffix = fileName.mid(index+1);
-        QString fullFilePath = path + QDir::separator() + fileName;
-        //处理sad文件
-        if("sad" == suffix)
-        {
-            //说明是sad数据格式
-
-            std::shared_ptr<SAAbstractDatas> data = loadSad(fullFilePath);
-            if(nullptr == data)
-            {//说明没有读取成功
-                ++errCount;
-                continue;
-            }
-            //说明读取成功
-            //记录id映射
-            if(toCorrectName(data.get()))
-            {
-                m_ptrContainer->append(data);
-                dataPtr2DataFileName[data.get()] = fullFilePath;
-                datasBeLoad.append(data.get());
-            }
-        }
-        else if("sadref" == suffix)
-        {
-
-        }
-    }
-    emit dataAdded(datasBeLoad);
-    return errCount;
-}
 ///
 /// \brief 判断数据是否处于管理状态
 /// \param data
@@ -677,7 +538,7 @@ bool SAValueManager::toCorrectName(SAAbstractDatas *data)
 /// \return 如果没有对应，返回nullptr
 /// \see SA::DataType
 ///
-SAValueManager::IDATA_PTR SAValueManager::createDataByType(SA::DataType type)
+SAValueManager::IDATA_PTR SAValueManager::makeDataByType(SA::DataType type)
 {
     if(SA::VectorInt == type)
     {
@@ -772,99 +633,7 @@ void SAValueManager::undo()
 
 
 
-///
-/// \brief 加载一个sad文件
-/// \param filePath 文件路径
-/// \param typeInfo 文件的信息
-/// \param err 错误信息
-/// \return 返回SAAbstractDatas 指针,需要手动addData,否则不在manager管理下
-///
-SAValueManager::IDATA_PTR SAValueManager::loadSad(const QString &filePath)
-{
-    SADataHeader typeInfo;
-    QFile file(filePath);
-    if(!file.open(QIODevice::ReadOnly))
-    {
-        emit messageInformation(tr("can not open file:\"%1\"").arg(filePath),SA::WarningMessage);
-        return nullptr;
-    }
-    QDataStream in(&file);
-    try{
-        in >> typeInfo;
-        if(!typeInfo.isValid())
-        {
-            emit messageInformation(tr("file:\"%1\" may be incorrect").arg(filePath),SA::WarningMessage);
-            return nullptr;
-        }
-        std::shared_ptr<SAAbstractDatas> data = createDataByType(static_cast<SA::DataType>(typeInfo.getDataType()));
-        if(nullptr == data)
-        {
-            emit messageInformation(tr("file:\"%1\" failed to reflect").arg(filePath),SA::WarningMessage);
-            return nullptr;
-        }
-        data->read(in);
-        return data;
-    }
-    catch(...)
-    {
-        emit messageInformation(tr("file:\"%1\" failed to read").arg(filePath),SA::ErrorMessage);
-        return nullptr;
-    }
-    return nullptr;
-}
 
-
-
-
-///
-/// \brief 转换为double vector
-/// \param data 输入的数据
-/// \return 如果转换失败，返回nullptr，如果成功，返回一个指针，此指针需要无拥有者，需要交给saValueManager或者其他进行管理
-///
-std::shared_ptr<SAVectorDouble> SAValueManager::createVectorDoubleFromData(const SAAbstractDatas *data)
-{
-    if(data->getDim() != 1)
-    {
-        return nullptr;
-    }
-    std::shared_ptr<SAVectorDouble> res = SAValueManager::makeData<SAVectorDouble>();
-    if(data->getType() == SA::VectorDouble)
-    {
-        *res = *(static_cast<const SAVectorDouble*>(data));
-        return res;
-    }
-    else
-    {
-        const int size = data->getSize(SA::Dim1);
-        res->reserve(size);
-        double d;
-        bool isOK = false;
-        QVariant var;
-        for(int i=0;i<size;++i)
-        {
-            var = data->getAt(SA::Dim1);
-            d = var.toDouble(&isOK);
-            if(isOK)
-            {
-                res->append(d);
-            }
-        }
-        if(res->getSize(0) > 0)
-        {
-            return res;
-        }
-    }
-    return nullptr;
-}
-/////
-///// \brief SAValueManager::findDataByType
-///// \param type
-///// \return
-/////
-//QList<SAAbstractDatas *> SAValueManager::findDataByType(SA::DataType type) const
-//{
-
-//}
 
 
 //============================================================
@@ -987,6 +756,16 @@ QList<SAAbstractDatas *> PointerContainerPrivate::getVectorDataPtrs() const
 bool PointerContainerPrivate::isDataInManager(const SAAbstractDatas *data) const
 {
     return m_norPtr2smrPtr.contains(const_cast<SAAbstractDatas *>(data));
+}
+
+QList<SAAbstractDatas *> PointerContainerPrivate::allDatas() const
+{
+    QList<SAAbstractDatas*> res;
+    auto fun = [&res](const std::shared_ptr<SAAbstractDatas>& p){
+        res.append(p.get());
+    };
+    std::for_each(m_smrPtrList.begin(),m_smrPtrList.end(),fun);
+    return res;
 }
 
 

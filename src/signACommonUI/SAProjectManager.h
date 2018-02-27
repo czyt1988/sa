@@ -6,6 +6,7 @@
 #include "SACommonUIGlobal.h"
 #include "SAUIInterface.h"
 #include <functional>
+#include "SAValueManager.h"
 class QDomDocument;
 class SAValueManager;
 class SAProjectManagerPrivate;
@@ -48,8 +49,11 @@ public:
     //获取工程的数据文件目录
     static QString getProjectSubWindowFolderPath(const QString &projectFolder, bool autoMakePath= true);
     QString getProjectSubWindowFolderPath(bool autoMakePath= true);
+    //获取工程的临时文件目录
+    static QString getProjectTempFolderPath(const QString &projectFolder, bool autoMakePath= true);
+    QString getProjectTempFolderPath(bool autoMakePath= true);
     //获取每个数据对应的文件路径
-    QString getDataFilePath(const SAAbstractDatas* dataPtr) const;
+    //QString getDataFilePath(const SAAbstractDatas* dataPtr) const;
     //添加保存时的额外动作
     void addSaveFunctionAction(FunAction fun);
     const QList<SAProjectManager::FunAction>& getSaveFunctionList() const;
@@ -62,6 +66,7 @@ public:
     void setupUI(SAUIInterface* ui);
     SAUIInterface* ui();
 private:
+    static QString getProjectSubFolderPath(const QString &projectFolder,const QString& sub, bool autoMakePath= true);
     //设置项目的路径
     void setProjectFullPath(const QString &projectFullPath);
     //保存项目的描述信息
@@ -71,9 +76,13 @@ private:
     //加载变量
     void loadValues(const QString &projectFullPath);
     //保存变量
-    bool saveValues(const QString &projectFullPath);
+    void saveValues(const QString &projectFullPath);
     //移除记录的要删除的数据
-    void removeWillDeletedFiles();
+    void removeNonExistDatas(const QString &projectFullPath);
+    //加载一个sad文件
+    SAValueManager::IDATA_PTR loadSad(const QString &filePath);
+    //保存一个数据
+    bool saveOneValue(const SAAbstractDatas *data, const QString &path, QString *errString);
 signals:
     ///
     /// \brief 信息，对于一些操作的错误等内容，通过message信号发射，信息的类型通过type进行筛选

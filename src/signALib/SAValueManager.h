@@ -46,6 +46,8 @@ public:
     //用于生成数据的工厂函数
     template<typename DataType, typename... _Args>
     static std::shared_ptr<DataType> makeData(_Args&&... __args);
+    // 根据类型，创建数据
+    static IDATA_PTR makeDataByType(SA::DataType type);
     //创建一个引用数据,引用和原始数据有一样的功能，但引用删除原始不删除，原始删除引用都会删除
     static IDATA_PTR makeRefData(SAAbstractDatas* data);
     //把智能指针列表转换为普通指针列表
@@ -65,12 +67,18 @@ public:
     static QIcon getDataIcon(int dtype);
     //注册类型对应的图标
     static void registerDataTypeIcon(int type,const QIcon& ico);
+    //判断是否是有效名字
+    static bool isValidName(const QString& name);
+
+
 
     //清空所有数据
     void clear();
     //根据id查找
     SAAbstractDatas* findData(int id) const;
     QList<SAAbstractDatas*> findDatas(const QList<int>& ids) const;
+    //获取所有数据
+    QList<SAAbstractDatas*> allDatas() const;
     //根据名字查找
     SAAbstractDatas* findData(const QString& name) const;
     //根据添加顺序获取变量的内存地址
@@ -80,8 +88,6 @@ public:
     int indexOf(SAAbstractDatas* dataPtr) const;
     //变量数量
     int count() const;
-    //判断是否是有效名字
-    static bool isValidName(const QString& name);
     //判断变量的名字是否有冲突，无冲突返回true
     bool isNameNotConflict(const QString& name,const SAAbstractDatas* ignoreDataPtr = nullptr) const;
     //删除数据
@@ -90,18 +96,11 @@ public:
     void removeData(SAAbstractDatas* datas);
     //更改变量名字，变量如果不通过SAValueManager更改名字，将无法获得管理权
     bool renameData(SAAbstractDatas* data, const QString& name);
-    //保存数据到文件系统
-    int saveAs(const SAAbstractDatas* data, const QString& path,QFile* file);
-    //保存数据到文件系统
-    int saveAs(const QString& path);
-    //从文件系统中加载数据
-    int load(const QString& path,QMap<SAAbstractDatas*,QString>& dataPtr2DataFileName);
+
     //判断数据是否处于管理状态
     bool isDataInManager(const SAAbstractDatas* data) const;
-    //从任意数据转换为double vector，如果可以转换的话
-    static std::shared_ptr<SAVectorDouble> createVectorDoubleFromData(const SAAbstractDatas *data);
-    // 根据类型，创建数据
-    IDATA_PTR createDataByType(SA::DataType type);
+
+
     // 判断变量是否有更改而没保存
     bool isDirty() const;
     //把普通指针转换为智能指针
@@ -171,8 +170,6 @@ signals:
 private:
     //自动转换为正确的变量名，若变量名重复或冲突，会自动把输入的名字后加上其他内容改为正确的变量名
     bool toCorrectName(SAAbstractDatas* data);
-    //加载一个sad文件
-    IDATA_PTR loadSad(const QString &filePath);
     //删除数据
     void __removeData(SAAbstractDatas* datas);
     void __removeDatas(QList<SAAbstractDatas*> datas);
