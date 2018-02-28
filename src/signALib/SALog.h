@@ -1,4 +1,4 @@
-#ifndef DGLOBALLOG_H
+﻿#ifndef DGLOBALLOG_H
 #define DGLOBALLOG_H
 
 #include <QObject>
@@ -10,7 +10,7 @@
 #include <QFile>
 #include <QElapsedTimer>
 
-#include "SACsvWriter.h"
+
 #include "SALibGlobal.h"
 
 class SALogPrivate;

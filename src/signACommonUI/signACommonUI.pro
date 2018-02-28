@@ -59,7 +59,8 @@ HEADERS += \
     SAMdiSubWindowSerializeHead.h \
     SAProjectManager.h \
     SATimeFormatSetWidget.h \
-    SATableView.h
+    SATableView.h \
+    SADataTableModel.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -83,7 +84,8 @@ SOURCES += \
     SAMdiSubWindowSerializeHead.cpp \
     SAProjectManager.cpp \
     SATimeFormatSetWidget.cpp \
-    SATableView.cpp
+    SATableView.cpp \
+    SADataTableModel.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

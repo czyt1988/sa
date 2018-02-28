@@ -7,6 +7,8 @@
 #pragma execution_character_set("utf-8")
 #endif
 
+
+
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
@@ -18,6 +20,7 @@ int main(int argc, char *argv[])
 #endif
     QApplication a(argc, argv);
     //
+
 
     //加载本地语言
     load_local_language();

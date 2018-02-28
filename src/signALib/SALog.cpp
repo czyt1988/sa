@@ -1,12 +1,11 @@
-#include "SALog.h"
+﻿#include "SALog.h"
 #include <QMutexLocker>
 #include <QDebug>
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
 #include <QTextCodec>
-#include "SACsvWriter.h"
-
+#include "SACsvStream.h"
 #include "SATextReadWriter.h"
 #include "QThread"
 
@@ -639,7 +638,7 @@ bool SALog::appendInFile(const SALogInfo &info)
                << info.getFunctionName()
                << QString::number(info.getLineNum())
                << QString::number(info.getType());
-    str = SACsvWriter::toCsvStringLine(csvSection);
+    str = SACsvStream::toCsvStringLine(csvSection);
     emit appendLogInfoToFile(str);
     return true;
 }

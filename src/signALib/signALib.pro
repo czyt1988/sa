@@ -21,11 +21,10 @@ HEADERS += \
     SAValueManager.h \
     SAValueManagerModel.h \
     SARandColorMaker.h \
-    SACsvWriter.h \
+    SACsvStream.h \
     SALog.h \
     SAGlobalConfig.h \
     SAPluginInterface.h \
-    SADataTableModel.h \
     SATextReadWriter.h \
     SADataHeader.h \
     SALibResourDefine.h \
@@ -49,10 +48,9 @@ SOURCES += \
     SAValueManager.cpp \
     SAValueManagerModel.cpp \
     SARandColorMaker.cpp \
-    SACsvWriter.cpp \
+    SACsvStream.cpp \
     SALog.cpp \
     SAGlobalConfig.cpp \
-    SADataTableModel.cpp \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
     SAVariantCaster.cpp \

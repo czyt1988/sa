@@ -34,7 +34,7 @@ private slots:
 private:
     SADataTableModel* getCurrentTabModel();
     //把表格保存到csv
-    void saveTableToCsv(QAbstractTableModel *model, const QString &fullFilePath);
+    void saveTableToCsv(SADataTableModel *model, const QString &fullFilePath);
 private:
     //OpenFileManager* m_values;
     QMenu* m_menuTab;

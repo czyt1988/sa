@@ -6,7 +6,8 @@
 #include <QTabBar>
 #include <QTableView>
 #include "SAResourDefine.h"
-
+#include <QMessageBox>
+#include "SACsvStream.h"
 SATabValueViewerWidget::SATabValueViewerWidget(QWidget *parent):
     QTabWidget(parent)
   ,m_count(0)
@@ -165,12 +166,11 @@ SADataTableModel *SATabValueViewerWidget::getCurrentTabModel()
         model = getTabModel(index);
     return model;
 }
-#include <QMessageBox>
-#include "SACsvWriter.h"
+
 ///
 /// \brief 把表格保存到csv
 ///
-void SATabValueViewerWidget::saveTableToCsv(QAbstractTableModel* model,const QString& fullFilePath)
+void SATabValueViewerWidget::saveTableToCsv(SADataTableModel *model, const QString& fullFilePath)
 {
     QFile file;
     file.setFileName (fullFilePath);
@@ -179,10 +179,9 @@ void SATabValueViewerWidget::saveTableToCsv(QAbstractTableModel* model,const QSt
                               , tr("can not create file"));
         return;
     }
-    QTextStream out(&file);
-    SACsvWriter csv(&out);
-    const int rows = model->rowCount();
-    const int columns = model->columnCount();
+    SACsvStream csv(&file);
+    const int rows = model->dataRowCount();
+    const int columns = model->dataColumnCount();
     for(int r=0;r<rows;++r)
     {
         for(int c=0;c<columns;++c)
