@@ -1,4 +1,4 @@
-#ifndef SADATATABLEMODEL_H
+﻿#ifndef SADATATABLEMODEL_H
 #define SADATATABLEMODEL_H
 #include <QObject>
 #include <QAbstractTableModel>
@@ -22,21 +22,23 @@ public:
     void getSADataPtrs(QList<SAAbstractDatas*>& data) const;
 
     void update();
-    void saveToCsv(const QString& path);
+
 
     void removeDatas(const QList<SAAbstractDatas*>& datas);
     bool isEmpty() const;
 public:
-    int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent=QModelIndex()) const;
+    int columnCount(const QModelIndex &parent=QModelIndex()) const;
     QVariant headerData(int section, Qt::Orientation orientation,int role) const;
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     Qt::ItemFlags flags(const QModelIndex &index) const;
+    //数据区的行号 区别于rowCount是显示区的
+    int dataRowCount() const;
+    //数据区的列号 区别于columnCount是显示区的
+    int dataColumnCount() const;
 private:
     void reCalcRowAndColumnCount();
-
-    void toCsvCellString(QString& str);
 private:
     QVariant dataToDim0(int row,int col, SAAbstractDatas* d) const;
     QVariant dataToDim1(int row,int col, SAAbstractDatas* d) const;

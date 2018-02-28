@@ -1,4 +1,4 @@
-#ifndef SAABSTRACTDATAS_H
+﻿#ifndef SAABSTRACTDATAS_H
 #define SAABSTRACTDATAS_H
 
 #include "SALibGlobal.h"
@@ -30,7 +30,12 @@ public:
     virtual int getSize(int dim=SA::Dim1) const = 0;
     //获取维度 0代表点数，1代表向量，2代表表……
     virtual int getDim() const = 0;
-    //获取对应索引的内容
+
+
+    ///
+    /// \brief 获取对应索引的内容
+    /// \return
+    ///
     virtual QVariant getAt(const std::initializer_list<size_t>& index) const = 0;
     //相当于getAt({});适用0维单一数据
     QVariant getAt() const;
@@ -38,7 +43,13 @@ public:
     QVariant getAt(size_t dim1) const;
     //相当于getAt({dim1,dim2});适用2维表数据
     QVariant getAt(size_t dim1,size_t dim2) const;
-    //用于显示
+
+
+    ///
+    /// \brief 用于显示对应的内容
+    /// \param index
+    /// \return
+    ///
     virtual QString displayAt(const std::initializer_list<size_t>& index) const = 0;
     //用于显示,相当于displayAt({});适用0维单一数据
     QString displayAt() const;
@@ -46,12 +57,17 @@ public:
     QString displayAt(size_t dim1) const;
     //用于显示,相当于displayAt({dim1,dim2});适用2维表数据
     QString displayAt(size_t dim1,size_t dim2) const;
+
+    //用于编辑-返回true设置成功，返回false设置失败，默认SAAbstractDatas返回false不接受编辑
+    virtual bool setAt(const QVariant& val,const std::initializer_list<size_t>& index);
+
     //根据类型判断是否是数据,如nan就返回true，如空的一维数据都返回true
     virtual bool isEmpty() const = 0;
     //从文件读取
     virtual void read(QDataStream & in);
     //写入文件
     virtual void write(QDataStream & out) const;
+
     //判断该数据在上次write之后是否内存有变更
     virtual bool isDirty() const = 0;
     //设置内存有变更

@@ -1705,14 +1705,16 @@ void MainWindow::onActionShowLegendPanelTriggered(bool on)
 void MainWindow::onActionClearProjectTriggered()
 {
     if(QMessageBox::No == QMessageBox::question(this
-                                                ,QStringLiteral("通知")
-                                                ,QStringLiteral("确认清除项目？\n清楚项目将会把当前所有操作清空")
+                                                ,tr("Question")
+                                                ,tr("Are you sure clean project？\n this operator will clean all datas and view")
                                                 ))
     {
         return;
     }
-    emit cleaningProject();
-    saValueManager->clear();
+    emit startCleanProject();
+    //数据预览窗口清空
+    ui->tabWidget_valueViewer->clearAndReleaseAll();
+    //窗口关闭
     QList<QMdiSubWindow*> subWindows = ui->mdiArea->subWindowList();
     for (auto ite = subWindows.begin();ite != subWindows.end();++ite)
     {
@@ -1720,10 +1722,10 @@ void MainWindow::onActionClearProjectTriggered()
         wnd->askOnCloseEvent(false);
     }
     ui->mdiArea->closeAllSubWindows();
-    showNormalMessageInfo(QStringLiteral("清除方案"),0);
+    showNormalMessageInfo(tr("clean project"),0);
     updateChartSetToolBar();
-    //数据预览窗口清空
-
+    //数据清除
+    saValueManager->clear();
     emit cleanedProject();
 }
 

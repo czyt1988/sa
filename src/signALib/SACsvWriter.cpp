@@ -1,7 +1,76 @@
-#include "SACsvWriter.h"
+﻿#include "SACsvWriter.h"
 #include <QTextStream>
+#include <QFile>
+class SACsvWriterPrivate
+{
+    SACsvWriter* Parent;
+    QTextStream* m_txt;
+    QScopedPointer<QTextStream> m_pfile;
+    bool m_isStartLine;
+public:
+    SACsvWriterPrivate(SACsvWriter* p):Parent(p)
+      ,m_txt(nullptr)
+      ,m_pfile(nullptr)
+      ,m_isStartLine(true)
+    {
+
+    }
+    void setTextStream(QTextStream* st)
+    {
+        m_txt = st;
+    }
+    QTextStream* stream()
+    {
+        return m_txt;
+    }
+    QTextStream& streamRef()
+    {
+        return (*m_txt);
+    }
+    bool isStartLine() const
+    {
+        return m_isStartLine;
+    }
+    void setStartLine(bool on)
+    {
+        m_isStartLine = on;
+    }
+
+    void setFile(QFile *txt)
+    {
+        m_pfile.reset(new QTextStream(txt));
+        m_txt = m_pfile.data();
+    }
+
+    QTextStream& formatTextStream()
+    {
+        if(!isStartLine())
+        {
+            streamRef()<<',';
+        }
+        else
+        {
+            setStartLine(false);
+        }
+        return streamRef();
+    }
+};
+
+
+
 SACsvWriter::SACsvWriter(QTextStream* txt)
-    :m_txt(txt)
+    :d_p(new SACsvWriterPrivate(this))
+{
+    d_p->setTextStream(txt);
+}
+
+SACsvWriter::SACsvWriter(QFile *txt)
+    :d_p(new SACsvWriterPrivate(this))
+{
+    d_p->setFile(txt);
+}
+
+SACsvWriter::~SACsvWriter()
 {
 
 }
@@ -71,54 +140,49 @@ QString SACsvWriter::toCsvStringLine(const QStringList &sectionLine)
 ///
 SACsvWriter &SACsvWriter::operator <<(const QString &str)
 {
-    (*m_txt)<<toCsvString(str)<<',';
+    d_p->formatTextStream()<<toCsvString(str);
     return *this;
 }
 
 SACsvWriter &SACsvWriter::operator <<(int d)
 {
-    (*m_txt)<<d<<',';
+    d_p->formatTextStream()<<d;
     return *this;
 }
 
 SACsvWriter &SACsvWriter::operator <<(double d)
 {
-    (*m_txt)<<d<<',';
+    d_p->formatTextStream()<<d;
     return *this;
 }
 
 SACsvWriter &SACsvWriter::operator <<(float d)
 {
-    (*m_txt)<<d<<',';
+    d_p->formatTextStream()<<d;
     return *this;
 }
-#include <QDebug>
+
 ///
 /// \brief 换行
 ///
-void SACsvWriter::endLine()
+void SACsvWriter::newLine()
 {
-    (*m_txt)<<endl;
-}
-///
-/// \brief 以字符串作为结尾
-/// \param str 会自动转换为csv支持的字符串
-///
-void SACsvWriter::endLine(const QString &str)
-{
-    (*m_txt)<<toCsvString(str)<<endl;
-}
-void SACsvWriter::endLine(int d)
-{
-    (*m_txt)<<d<<endl;
+    d_p->setStartLine(true);
+    d_p->streamRef()<<endl;
 }
 
-void SACsvWriter::endLine(double d)
+QTextStream *SACsvWriter::stream() const
 {
-    (*m_txt)<<d<<endl;
+    return d_p->stream();
 }
 
-void SACsvWriter::endLine(float d)
+///
+/// \brief endl
+/// \param s
+/// \return
+///
+SACsvWriter &endl(SACsvWriter &s)
 {
-    (*m_txt)<<d<<endl;
+    s.newLine();
+    return s;
 }

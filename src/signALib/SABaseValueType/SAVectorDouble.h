@@ -1,4 +1,4 @@
-#ifndef SAVECTORDOUBLE_H
+﻿#ifndef SAVECTORDOUBLE_H
 #define SAVECTORDOUBLE_H
 
 #include "SAVectorDatas.h"

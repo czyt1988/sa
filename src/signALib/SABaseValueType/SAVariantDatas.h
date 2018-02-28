@@ -1,4 +1,4 @@
-#ifndef SAVARIANTDATAS_H
+﻿#ifndef SAVARIANTDATAS_H
 #define SAVARIANTDATAS_H
 #include "SASingleDatas.h"
 #include <QVariant>
@@ -55,6 +55,9 @@ public:
     ///
     template<typename DATA_TYPE>
     bool canConvert() const;
+
+
+    bool setAt(const QVariant &val, const std::initializer_list<size_t> &index);
 
 
 };

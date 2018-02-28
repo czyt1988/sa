@@ -33,8 +33,8 @@ private slots:
     void on_tab_closed(int index);
 private:
     SADataTableModel* getCurrentTabModel();
-    void takeTableValue(QList<SAAbstractDatas*>& originDatas,QList<SAAbstractDatas*>& tableValue);
-    void setTableData(QList<SAAbstractDatas*> tableDatas);
+    //把表格保存到csv
+    void saveTableToCsv(QAbstractTableModel *model, const QString &fullFilePath);
 private:
     //OpenFileManager* m_values;
     QMenu* m_menuTab;

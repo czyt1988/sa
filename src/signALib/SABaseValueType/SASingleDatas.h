@@ -1,4 +1,4 @@
-#ifndef SASINGLEDATAS
+﻿#ifndef SASINGLEDATAS
 #define SASINGLEDATAS
 #include "SAAbstractDatas.h"
 
@@ -26,6 +26,9 @@ public:
     virtual bool isDirty() const;
     //设置内存有变更
     virtual void setDirty(bool dirty);
+    //用于编辑-返回true设置成功，返回false设置失败，默认SAAbstractDatas返回false不接受编辑
+    virtual bool setAt(const QVariant& val,const std::initializer_list<size_t>& index);
+
 public:
     const DATA_TYPE& innerData() const;
 protected:
@@ -108,6 +111,25 @@ template<typename DATA_TYPE>
 void SASingleDatas<DATA_TYPE>::setDirty(bool dirty)
 {
     m_isDirty = dirty;
+}
+
+template<typename DATA_TYPE>
+bool SASingleDatas<DATA_TYPE>::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    for(auto i = index.begin();i!=index.end();++i)
+    {
+        if(*i != 0)
+        {
+            return false;
+        }
+    }
+    if(val.canConvert<DATA_TYPE>())
+    {
+        m_d = val.value<DATA_TYPE>();
+        setDirty(true);
+        return true;
+    }
+    return false;
 }
 
 

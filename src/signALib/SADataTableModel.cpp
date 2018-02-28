@@ -67,68 +67,6 @@ void SADataTableModel::update()
     endResetModel();
 }
 
-void SADataTableModel::saveToCsv(const QString& path)
-{
-    QFile file;
-    file.setFileName (path);
-    if (!file.open(QIODevice::WriteOnly|QIODevice::Text)) {
-        QMessageBox::critical(nullptr, tr("information")
-                              , tr("can not create file"));
-        return;
-    }
-#if 0
-    QTextStream out(&file);
-    QVariant var;
-    QString str;
-    if(m_table)
-    {//非表格
-        int col = m_datas.size ();
-        std::vector<int> rowCounts(col,0);
-        for(int i=0;i<col;++i)
-        {
-            rowCounts[i] = m_datas[i]->getSize ();
-            out<<m_datas[i]->getName ();
-            if(i != col-1)
-                out<<",";
-        }
-        out<<endl;
-        QVariant var;
-        QString str;
-        int row = *(std::max_element(rowCounts.begin (),rowCounts.end ()));
-
-        for(int i=0;i<row;++i)
-        {
-            for(int j=0;j<col;++j)
-            {
-                qDebug()<<"rowCounts["<<j<<"]="<<rowCounts[j]<<"，i="<<i;
-                if(i<rowCounts[j])//当前行对应的列有数据
-                {
-                    var = m_datas[j]->getAt (i);
-                    qDebug()<<var;
-                    if(var.isValid ())
-                    {
-                        str = var.toString ();
-                        toCsvCellString(str);
-                        out<<str;
-                        if(j != col-1)
-                             out<<",";
-                    }
-                    else if(j != col-1)
-                        out<<",";
-                }
-                else//当前行对应的列没有数据
-                {
-                    if(j != col-1)
-                        out<<",";
-                }
-            }
-            out<<endl;
-        }
-
-    }
-    file.close();
-#endif
-}
 
 ///
 /// \brief 删除数据
@@ -160,7 +98,7 @@ void SADataTableModel::getSADataPtrs(QList<SAAbstractDatas*>& data) const
 int SADataTableModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return m_rowCount > m_rowShowMin ? m_rowCount : m_rowShowMin;
+    return m_rowCount > m_rowShowMin ? m_rowCount+m_rowShowMin : m_rowShowMin;
 }
 
 int SADataTableModel::columnCount(const QModelIndex& parent) const
@@ -311,15 +249,68 @@ QVariant SADataTableModel::horizontalHeaderToDim2(int section, SAAbstractDatas *
 
 bool SADataTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    //TODO 未完成
-    return false;
+    if(!index.isValid())
+    {
+        return false;
+    }
+    if(!value.isValid() || value.isNull())
+    {
+        return false;
+    }
+    const int col = index.column();
+    const int row = index.row();
+    if(col >= m_col2Ptr.size ())
+    {
+        return false;
+    }
+    SAAbstractDatas* d = m_col2Ptr.value(col,nullptr);
+    if(nullptr == d)
+    {
+        return false;
+    }
+    if(d->getDim() < SA::Dim2)
+    {
+        //对于小于2维的直接设置
+        bool isOK = d->setAt(value,{row,col});
+        if(isOK && row==rowCount()-1)
+        {
+            beginResetModel();
+            reCalcRowAndColumnCount();
+            endResetModel();
+        }
+        return isOK;
+    }
+    else
+    {
+        //对于2维数据要特殊处理
+        if(d->getDim() == SA::Dim2)
+        {
+
+        }
+    }
 }
 
 Qt::ItemFlags SADataTableModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid())
         return Qt::NoItemFlags;
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+}
+///
+/// \brief 数据区的行号 区别于rowCount是显示区的
+/// \return
+///
+int SADataTableModel::dataRowCount() const
+{
+    return m_rowCount;
+}
+///
+/// \brief 数据区的列号 区别于columnCount是显示区的
+/// \return
+///
+int SADataTableModel::dataColumnCount() const
+{
+    return m_columnCount;
 }
 
 void SADataTableModel::reCalcRowAndColumnCount()
@@ -327,25 +318,6 @@ void SADataTableModel::reCalcRowAndColumnCount()
     //计算最大行数
     m_rowCount = 0;
     m_columnCount = 0;
-#if 0
-    if(m_table)
-    {
-        m_rowCount= m_table->getSize (SA::Row);
-        m_columnCount =  m_table->getSize (SA::Column);
-    }
-    else
-    {
-        for(auto i = m_datas.begin ();i!=m_datas.end ();++i)
-        {
-            int size = (*i)->getSize(SA::Dim1);
-            if(size<0)
-                continue;
-            if(size > m_rowCount)
-                m_rowCount = size;
-        }
-        m_columnCount = m_datas.size ();
-    }
-#else
     m_col2Ptr.clear();
     m_ptr2ColMap.clear();
     m_ptr2Col.clear();
@@ -401,45 +373,11 @@ void SADataTableModel::reCalcRowAndColumnCount()
 
     }
     m_columnCount = col;
-#endif
+
 }
 
 
-#if 0
-bool SADataTableModel::canBeshowInOneTable(SAAbstractDatas *data)
-{
-    if(data->getSize(SA::Row) > 0 && data->getSize(SA::Column) == 1)
-        return true;
-    return false;
-}
 
-void SADataTableModel::eraseCanNotShowData(QList<SAAbstractDatas*>& datas)
-{
-    for(auto i=datas.begin ();i!=datas.end ();)
-    {
-        if(!canBeshowInOneTable(*i))
-        {
-            i = datas.erase (i);
-        }
-        else
-        {
-            ++i;
-        }
-    }
-}
-#endif
 
-void SADataTableModel::toCsvCellString(QString& str)
-{
-    bool c1,c2;
-    c1 = str.contains ("\"");
-    c2 = str.contains (",");
-    if(c1)
-    {
-        str.replace ("\"","\"\"");
-    }
-    if(c1 || c2)
-        str = "\"" + str + "\"";
-}
 
 

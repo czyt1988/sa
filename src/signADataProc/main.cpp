@@ -45,8 +45,8 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
           << context.function
           << msg
           << context.file
+          << endl;
       ;
-      csv.endLine(context.line);
   }
 }
 

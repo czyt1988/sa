@@ -1,4 +1,4 @@
-#include "SAVariantDatas.h"
+﻿#include "SAVariantDatas.h"
 
 
 SAVariantDatas::SAVariantDatas(const QVariant &d):SASingleDatas<QVariant>()
@@ -79,6 +79,20 @@ QString SAVariantDatas::getTypeName() const
 bool SAVariantDatas::isEmpty() const
 {
     return m_d.isValid();
+}
+
+bool SAVariantDatas::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    for(auto i = index.begin();i!=index.end();++i)
+    {
+        if(*i != 0)
+        {
+            return false;
+        }
+    }
+    m_d = val;
+    setDirty(true);
+    return true;
 }
 
 

@@ -135,10 +135,12 @@ void SATabValueViewerWidget::action_saveToCsv_triggered()
 {
     QString path = QFileDialog::getSaveFileName(this,tr("save"),QString()
                                  ,tr("csv file(*.csv)"));
+    if(path.isEmpty())
+        return;
     SADataTableModel* model = getTabModel(currentIndex ());
     if(!model)
         return;
-    model->saveToCsv (path);
+    saveTableToCsv(model,path);
 }
 
 void SATabValueViewerWidget::on_tab_closed(int index)
@@ -163,49 +165,35 @@ SADataTableModel *SATabValueViewerWidget::getCurrentTabModel()
         model = getTabModel(index);
     return model;
 }
-
-void SATabValueViewerWidget::takeTableValue(QList<SAAbstractDatas *> &originDatas, QList<SAAbstractDatas *> &tableValue)
+#include <QMessageBox>
+#include "SACsvWriter.h"
+///
+/// \brief 把表格保存到csv
+///
+void SATabValueViewerWidget::saveTableToCsv(QAbstractTableModel* model,const QString& fullFilePath)
 {
-    for(auto i=originDatas.begin ();i!= originDatas.end ();)
-    {
-        if((*i)->getDim() == 2)
-        {
-            tableValue.push_back (*i);
-            i = originDatas.erase (i);
-        }
-        else
-            ++i;
-    }
-}
-
-void SATabValueViewerWidget::setTableData(QList<SAAbstractDatas *> tableDatas)
-{
-#if 0
-    for(int i=0;i<tableDatas.size ();++i)
-    {
-        if((tableDatas[i])->getDim() != 2)
-            continue;
-        SADataTableModel* model = createValueViewerTab (tableDatas[i]->getName ());
-        if(!model)
-            continue;
-
-        model->setSATableData(tableDatas[i]);
-    }
-#else
-    if(tableDatas.size() <= 0)
-    {
+    QFile file;
+    file.setFileName (fullFilePath);
+    if (!file.open(QIODevice::WriteOnly|QIODevice::Text)) {
+        QMessageBox::critical(nullptr, tr("information")
+                              , tr("can not create file"));
         return;
     }
-    SADataTableModel* model = nullptr;
-    if(1 == tableDatas.size())
+    QTextStream out(&file);
+    SACsvWriter csv(&out);
+    const int rows = model->rowCount();
+    const int columns = model->columnCount();
+    for(int r=0;r<rows;++r)
     {
-        model = createValueViewerTab (tableDatas[0]->getName ());
+        for(int c=0;c<columns;++c)
+        {
+            QVariant var = model->data(model->index(r,c));
+            csv << var.toString();
+        }
+        csv<<endl;
     }
-    else
-    {
-        model = createValueViewerTab (tr("table value"));
-    }
-    model->setSADataPtrs(tableDatas);
-#endif
+
 }
+
+
 

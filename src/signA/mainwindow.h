@@ -218,7 +218,7 @@ signals:
 	/// 
 	/// \brief 准备清理项目
 	///
-	void cleaningProject();
+	void startCleanProject();
 	/// 
 	/// \brief 已经清理项目
 	///

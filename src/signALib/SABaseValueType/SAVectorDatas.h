@@ -1,4 +1,4 @@
-#ifndef SAVECTORDATAS_H
+﻿#ifndef SAVECTORDATAS_H
 #define SAVECTORDATAS_H
 
 #include "SAAbstractDatas.h"
@@ -66,6 +66,8 @@ public:
     T &operator[](int i);
     const T &operator[](int i) const;
     void clear();
+
+    bool setAt(const QVariant &val, const std::initializer_list<size_t> &index);
 protected:
     QVector<T> m_datas;
     mutable bool m_isDirty;
@@ -295,6 +297,43 @@ void SAVectorDatas<T>::clear()
 {
     m_datas.clear();
     setDirty(true);
+}
+
+template<typename T>
+bool SAVectorDatas<T>::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    const int dimsize = index.size();
+    if(dimsize > 2)
+    {
+        return false;
+    }
+    if(2 == dimsize)
+    {
+        if(0 != *(index.begin()+1))
+        {
+            return false;
+        }
+    }
+    int r = *(index.begin());
+    if(r < 0 || r >  getValueDatas().size())
+    {
+        return false;
+    }
+    if(val.canConvert<T>())
+    {
+        T v = val.value<T>();
+        if(r != getValueDatas().size())
+        {
+            getValueDatas()[r] = v;
+        }
+        else
+        {
+            getValueDatas().append(v);
+        }
+        setDirty(true);
+        return true;
+    }
+    return false;
 }
 
 
