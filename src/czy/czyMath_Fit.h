@@ -1,4 +1,4 @@
-#ifndef CZYMATH_FIT_H
+﻿#ifndef CZYMATH_FIT_H
 #define CZYMATH_FIT_H
 
 #include <czyMath.h>
@@ -142,13 +142,7 @@ namespace czy {
                 }
                 return true;
             }
-#if 0
-            bool linearFit(const std::vector<double>& x,const std::vector<double>& y)
-            {
-                size_t n = x.size() > y.size() ? y.size() :x.size();
-                return linearFit(&x[0],&y[0],n);
-            }
-#endif
+
             ///
             /// \brief 线性拟合
             /// \param x_begin 拟合的x值开始迭代器

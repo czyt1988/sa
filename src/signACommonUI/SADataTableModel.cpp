@@ -5,12 +5,13 @@
 #include <iostream>
 #include <vector>
 #include "SAAbstractDatas.h"
-
+#include "SAPropertySetDialog.h"
 SADataTableModel::SADataTableModel(QObject* parent):QAbstractTableModel(parent)
   ,m_rowCount(0)
   ,m_columnCount(0)
   ,m_columnShowMin(15)
   ,m_rowShowMin(35)
+  ,m_funSetData(nullptr)
 {
 }
 
@@ -89,6 +90,37 @@ void SADataTableModel::removeDatas(const QList<SAAbstractDatas *> &datas)
 bool SADataTableModel::isEmpty() const
 {
     return (0 == m_datas.size());
+}
+
+void SADataTableModel::setupSetDataFun(SADataTableModel::FUN_SET_DATA p)
+{
+    m_funSetData = p;
+}
+///
+/// \brief 根据列号获取对应数据指针
+/// \param c
+/// \return
+///
+SAAbstractDatas *SADataTableModel::columnToData(int c)
+{
+    return m_col2Ptr.value(c,nullptr);
+}
+///
+/// \brief 根据数据获取对应的列范围
+/// \param p
+/// \param start
+/// \param end
+/// \return
+///
+void SADataTableModel::dataColumnRange(SAAbstractDatas *p, int &start, int &end)
+{
+    QList<int> cols = m_ptr2Col.values(p);
+    std::sort(cols.begin(),cols.end());
+    if(cols.size() > 0)
+    {
+        start = *(cols.begin());
+        end = *(cols.end()-1);
+    }
 }
 
 void SADataTableModel::getSADataPtrs(QList<SAAbstractDatas*>& data) const
@@ -250,49 +282,19 @@ QVariant SADataTableModel::horizontalHeaderToDim2(int section, SAAbstractDatas *
 
 bool SADataTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(!index.isValid())
-    {
-        return false;
-    }
-    if(role != Qt::EditRole)
-    {
-        return false;
-    }
-    if(!value.isValid() || value.isNull())
+    if(!index.isValid() || nullptr == m_funSetData || role != Qt::EditRole)
     {
         return false;
     }
     const int col = index.column();
     const int row = index.row();
+    return m_funSetData(row,col,value);
+
     if(col >= m_col2Ptr.size ())
     {
         return false;
     }
-    SAAbstractDatas* d = m_col2Ptr.value(col,nullptr);
-    if(nullptr == d)
-    {
-        return false;
-    }
-    if(d->getDim() < SA::Dim2)
-    {
-        //对于小于2维的直接设置
-        bool isOK = d->setAt(value,{row,col});
-        if(isOK && row==rowCount()-1)
-        {
-            beginResetModel();
-            reCalcRowAndColumnCount();
-            endResetModel();
-        }
-        return isOK;
-    }
-    else
-    {
-        //对于2维数据要特殊处理
-        if(d->getDim() == SA::Dim2)
-        {
 
-        }
-    }
 }
 
 Qt::ItemFlags SADataTableModel::flags(const QModelIndex& index) const

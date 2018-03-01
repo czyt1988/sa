@@ -8,12 +8,14 @@
 #include "SACommonUIGlobal.h"
 #include <QHash>
 #include <QMultiHash>
+#include <functional>
 class SAAbstractDatas;
 
 class SA_COMMON_UI_EXPORT SADataTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
+    typedef std::function<bool(int,int,const QVariant&)> FUN_SET_DATA;
     SADataTableModel(QObject *parent = 0);
     void setSADataPtr(SAAbstractDatas* data);
     void setSADataPtrs(const QList<SAAbstractDatas*>& datas);
@@ -26,6 +28,11 @@ public:
 
     void removeDatas(const QList<SAAbstractDatas*>& datas);
     bool isEmpty() const;
+    void setupSetDataFun(FUN_SET_DATA p);
+    //根据列号获取对应的数据
+    SAAbstractDatas* columnToData(int c);
+    //根据数据获取对应的列范围
+    void dataColumnRange(SAAbstractDatas* p,int& start,int &end);
 public:
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
     int columnCount(const QModelIndex &parent=QModelIndex()) const;
@@ -52,7 +59,7 @@ private:
     int m_columnCount;
     int m_columnShowMin;
     int m_rowShowMin;
-
+    FUN_SET_DATA m_funSetData;
     QList<SAAbstractDatas*> m_datas;
     QHash<int,SAAbstractDatas*> m_col2Ptr;
     QMultiHash<SAAbstractDatas*,int> m_ptr2Col;///记录指针对应的列表的所有列号，此用来加快删除速度

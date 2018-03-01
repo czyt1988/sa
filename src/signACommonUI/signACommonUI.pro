@@ -60,7 +60,8 @@ HEADERS += \
     SAProjectManager.h \
     SATimeFormatSetWidget.h \
     SATableView.h \
-    SADataTableModel.h
+    SADataTableModel.h \
+    SAPopupWidget.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -85,7 +86,8 @@ SOURCES += \
     SAProjectManager.cpp \
     SATimeFormatSetWidget.cpp \
     SATableView.cpp \
-    SADataTableModel.cpp
+    SADataTableModel.cpp \
+    SAPopupWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

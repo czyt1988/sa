@@ -1,4 +1,4 @@
-#ifndef VALUEVIEWERTABPAGE_H
+﻿#ifndef VALUEVIEWERTABPAGE_H
 #define VALUEVIEWERTABPAGE_H
 
 #include <QWidget>
@@ -33,7 +33,10 @@ private slots:
     void on_actionToLinerData_triggered();
     //选择的列转换为点序列
     void on_actionToPointFVectorData_triggered();
+    //
+    void onTableViewDoubleClicked(const QModelIndex& index);
 private:
+    bool setData(int r,int c,const QVariant& v);
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
     bool getSelectVectorPointData(SAVectorPointF* data);

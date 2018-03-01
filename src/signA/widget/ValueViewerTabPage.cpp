@@ -1,6 +1,6 @@
-#include "ValueViewerTabPage.h"
+﻿#include "ValueViewerTabPage.h"
 #include "ui_ValueViewerTabPage.h"
-#include <SADataTableModel.h>
+#include "SADataTableModel.h"
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QDebug>
@@ -11,10 +11,13 @@
 #include <QHeaderView>
 #include "SAValueManager.h"
 #include "SAData.h"
+#include <QDebug>
+#include "SACellInputWidget.h"
 ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ValueViewerTabPage)
   ,m_countNewData(0)
+  ,m_menu(nullptr)
 {
     ui->setupUi(this);
     SADataTableModel* model = new SADataTableModel(ui->tableView);
@@ -24,11 +27,11 @@ ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
     {
         plotLayerVerticalHeader->setDefaultSectionSize(19);
     }
-    m_menu = new QMenu(this);
-    QMenu* m = m_menu->addMenu (QStringLiteral("导出选中数据"));
-    m->addAction(ui->actionToLinerData);
-    m->addAction(ui->actionToPointFVectorData);
-   // ui->tableView->verticalHeader()->setDefaultSectionSize(12);
+
+//    model->setupSetDataFun([&](int r,int c,const QVariant& v)->bool{
+//        return this->setData(r,c,v);
+//    });
+    connect(ui->tableView,&QTableView::doubleClicked,this,&ValueViewerTabPage::onTableViewDoubleClicked);
 }
 
 ValueViewerTabPage::~ValueViewerTabPage()
@@ -48,8 +51,14 @@ SADataTableModel *ValueViewerTabPage::getModel() const
 
 void ValueViewerTabPage::on_tableView_customContextMenuRequested(const QPoint &pos)
 {
-    if(m_menu)
-        m_menu->exec (QCursor::pos());
+    if(nullptr == m_menu)
+    {
+        m_menu = new QMenu(this);
+        QMenu* m = m_menu->addMenu (tr("export select datas"));
+        m->addAction(ui->actionToLinerData);
+        m->addAction(ui->actionToPointFVectorData);
+    }
+    m_menu->exec (QCursor::pos());
 }
 
 void ValueViewerTabPage::on_actionToLinerData_triggered()
@@ -83,6 +92,217 @@ void ValueViewerTabPage::on_actionToPointFVectorData_triggered()
     {
         saValueManager->addData(points);
     }
+}
+
+void ValueViewerTabPage::onTableViewDoubleClicked(const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    SADataTableModel* model = getModel();
+    SAAbstractDatas* data = model->columnToData(c);
+    QHeaderView* verticalHeader = ui->tableView->verticalHeader();
+    QHeaderView* horizontalHeader = ui->tableView->horizontalHeader();
+    QPoint offset(verticalHeader->width(),horizontalHeader->height());
+    if(nullptr == data)
+    {
+        return;
+    }
+    int colStart=-1,colEnd=-1;
+    model->dataColumnRange(data,colStart,colEnd);
+    if(-1 == colStart || -1 == colEnd)
+    {
+        return;
+    }
+    qDebug() << colStart << colEnd;
+    QPoint leftTop,rightBottom;
+    leftTop.setX(ui->tableView->columnViewportPosition(colStart));
+    leftTop.setY(ui->tableView->rowViewportPosition(r));
+    rightBottom.setX(ui->tableView->columnViewportPosition(colEnd)+ui->tableView->columnWidth(colEnd));
+    rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(colEnd));
+    int tmp = ui->tableView->rowHeight(r);
+    if(tmp < 16 || tmp > 30)
+    {
+        tmp = 16;
+    }
+    leftTop.ry() -= tmp;
+    leftTop = ui->tableView->mapToGlobal(leftTop);
+    rightBottom = ui->tableView->mapToGlobal(rightBottom);
+    leftTop += offset;
+    rightBottom += offset;
+
+    SACellInputWidget cellInput;
+    int buttonAreaWidth = cellInput.buttonAreaWidth();
+    rightBottom.rx() += buttonAreaWidth;
+    cellInput.setGeometry(QRect(leftTop,rightBottom));
+    if(data->getDim() < SA::Dim2)
+    {
+        //对于小于2维的直接设置
+        QVariant var = model->data(index);
+        cellInput.resizeCells(1);
+        cellInput.setCellTitleText(0,tr("value"));
+        cellInput.setCellEditText(0,var.toString());
+        cellInput.exec();
+        if(!cellInput.isAcceptInput())
+        {
+            return;
+        }
+        bool isOK = false;
+        double d = cellInput.cellEditText(0).toDouble(&isOK);
+        if(!isOK)
+        {
+            return;
+        }
+        isOK = data->setAt(d,{index.row(),index.column()});
+        if(isOK && r==model->dataRowCount()-1)
+        {
+            model->update();
+        }
+        return;
+    }
+    else if(data->getDim() == SA::Dim2)
+    {
+
+        //对于2维数据要特殊处理
+        if(SA::TableVariant == data->getType() || SA::TableDouble == data->getType())
+        {
+            //表格
+            QVariant var = model->data(index);
+            cellInput.resizeCells(1);
+            cellInput.setCellTitleText(0,tr("value"));
+            cellInput.setCellEditText(0,var.toString());
+            cellInput.exec();
+            if(!cellInput.isAcceptInput())
+            {
+                return;
+            }
+            bool isOK = false;
+            QString str = cellInput.cellEditText(0);
+            isOK = data->setAt(str,{index.row(),index.column()});
+            if(isOK && (r>=model->dataRowCount() || c>=model->dataColumnCount()) )
+            {
+                model->update();
+            }
+            return;
+        }
+        else
+        {
+            int dataDim2Size = data->getSize(SA::Dim2);
+            cellInput.resizeCells(dataDim2Size);
+            //根据类型设定文字显示
+            switch(data->getType())
+            {
+            case SA::VectorPoint:
+            {
+                if(2 != dataDim2Size)
+                    return;
+                cellInput.setCellTitleText(0,tr("x"));
+                cellInput.setCellTitleText(1,tr("y"));
+                cellInput.setCellEditText(0,model->data(model->index(colStart,r)).toString());
+                cellInput.setCellEditText(1,model->data(model->index(colStart+1,r)).toString());
+                cellInput.exec();
+                if(!cellInput.isAcceptInput())
+                {
+                    return;
+                }
+                bool isOK = false;
+                double x = cellInput.cellEditText(0).toDouble(&isOK);
+                if(!isOK)
+                {
+                    return;
+                }
+                double y = cellInput.cellEditText(1).toDouble(&isOK);
+                if(!isOK)
+                {
+                    return;
+                }
+                SAVectorPointF* vd = static_cast<SAVectorPointF*>(data);
+                vd->set(r,QPointF(x,y));
+                break;
+            }
+            default:
+                return;
+            }
+
+
+
+            return;
+        }
+
+    }
+
+}
+///
+/// \brief 设置数据
+/// \param r
+/// \param c
+/// \param v
+/// \return
+///
+bool ValueViewerTabPage::setData(int r, int c, const QVariant &v)
+{
+    qDebug() << "setData";
+    SADataTableModel* model = getModel();
+    SAAbstractDatas* d = model->columnToData(c);
+    if(nullptr == d)
+    {
+        return false;
+    }
+    if(d->getDim() < SA::Dim2)
+    {
+        //对于小于2维的直接设置
+        bool isOK = d->setAt(v,{r,c});
+        if(isOK && r==model->rowCount()-1)
+        {
+            model->update();
+        }
+        return isOK;
+    }
+    else
+    {
+        //对于2维数据要特殊处理
+        if(d->getDim() == SA::Dim2)
+        {
+            if(SA::TableVariant == d->getType() || SA::TableDouble == d->getType())
+            {
+                //表格
+            }
+            else
+            {
+                qDebug() << "============";
+                int colStart=-1,colEnd=-1;
+                model->dataColumnRange(d,colStart,colEnd);
+                if(-1 == colStart || -1 == colEnd)
+                {
+                    return false;
+                }
+                QPoint leftTop,rightBottom;
+                leftTop.rx() = ui->tableView->columnViewportPosition(colStart);
+                rightBottom.rx() = ui->tableView->columnViewportPosition(colEnd);
+                int tmp = ui->tableView->columnWidth(colEnd);
+                rightBottom.rx() += tmp;
+                leftTop.ry() = ui->tableView->rowViewportPosition(r);
+                tmp = ui->tableView->rowHeight(r);
+                rightBottom.ry() = leftTop.y() + tmp;
+                if(tmp < 16 || tmp > 30)
+                {
+                    tmp = 16;
+                }
+                leftTop.ry() -= tmp;
+                leftTop = ui->tableView->mapToGlobal(leftTop);
+                rightBottom = ui->tableView->mapToGlobal(rightBottom);
+                int dataDim2Size = d->getSize(SA::Dim2);
+                SACellInputWidget cellInput;
+                cellInput.resizeCells(dataDim2Size);
+                cellInput.setGeometry(QRect(leftTop,rightBottom));
+
+                qDebug() << "SACellInputWidget Geometry"<<cellInput.geometry();
+                cellInput.exec();
+                return false;
+            }
+
+        }
+    }
+    return false;
 }
 ///
 /// \brief 获取选中的线性数据
@@ -264,7 +484,7 @@ void ValueViewerTabPage::getQItemSelectionColumns(QItemSelectionModel *selModel,
         res[c]->append(i->data());
     }
 }
-#include <QDebug>
+
 void ValueViewerTabPage::wheelEvent(QWheelEvent *event)
 {
     QPoint numDegrees = event->angleDelta() / 8;

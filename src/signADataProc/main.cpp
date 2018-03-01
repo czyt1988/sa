@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <QFile>
 #include <QDateTime>
-#include "SACsvWriter.h"
+#include "SACsvStream.h"
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
   static QFile s_log_file("saDataProcDebug.csv");
@@ -39,8 +39,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
   }
   if(s_log_file.isOpen())
   {
-      QTextStream txt(&s_log_file);
-      SACsvWriter csv(&txt);
+      SACsvStream csv(&s_log_file);
       csv << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
           << context.function
           << msg
