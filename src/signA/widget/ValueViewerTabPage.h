@@ -37,6 +37,7 @@ private slots:
     void onTableViewDoubleClicked(const QModelIndex& index);
 private:
     bool setData(int r,int c,const QVariant& v);
+    void ctrlV();
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
     bool getSelectVectorPointData(SAVectorPointF* data);

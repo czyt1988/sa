@@ -31,15 +31,18 @@ public:
     //移除最右边的cell
     void removeBackCell();
     //设置标题
-    void setCellTitleText(int index,const QString& cellTitleText);
-    QString cellTitleText(int index) const;
+    void setCellTitleText(int index,const QString& getCellTitleText);
+    QString getCellTitleText(int index) const;
     //设置编辑内容
-    void setCellEditText(int index,const QString& cellTitleText);
-    QString cellEditText(int index) const;
+    void setCellEditText(int index,const QString& getCellTitleText);
+    QString getCellEditText(int index) const;
     //输入是否有效
     bool isAcceptInput() const;
     //返回按钮区的大小
-    int buttonAreaWidth() const;
+    int getButtonAreaWidth() const;
+    //设置单元格的宽度
+    void setCellWidth(int index,int w);
+    int getCellWidth(int index) const;
 private slots:
     void onButtonOkPressed();
     void onButtonCancelClicked();

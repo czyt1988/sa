@@ -94,7 +94,7 @@ void SACellInputWidget::setCellTitleText(int index, const QString &text)
     p.first->setText(text);
 }
 
-QString SACellInputWidget::cellTitleText(int index) const
+QString SACellInputWidget::getCellTitleText(int index) const
 {
     QPair<QLabel*,QLineEdit*> p = m_cellInfos[index];
     return p.first->text();
@@ -106,7 +106,7 @@ void SACellInputWidget::setCellEditText(int index, const QString &text)
     p.second->setText(text);
 }
 
-QString SACellInputWidget::cellEditText(int index) const
+QString SACellInputWidget::getCellEditText(int index) const
 {
     QPair<QLabel*,QLineEdit*> p = m_cellInfos[index];
     return p.second->text();
@@ -117,9 +117,33 @@ bool SACellInputWidget::isAcceptInput() const
     return m_isAccept;
 }
 
-int SACellInputWidget::buttonAreaWidth() const
+int SACellInputWidget::getButtonAreaWidth() const
 {
     return ui->toolButtonOk->width()*2+1;
+}
+
+void SACellInputWidget::setCellWidth(int index, int w)
+{
+    QLayoutItem* i = ui->horizontalLayoutEdit->itemAt(index);
+    if(nullptr == i)
+        return;
+    QWidget* widget = i->widget();
+    if(nullptr == widget)
+        return;
+    widget->setFixedWidth(w);
+
+    i = ui->horizontalLayoutLabel->itemAt(index);
+    if(nullptr == i)
+        return;
+    widget = i->widget();
+    if(nullptr == widget)
+        return;
+    widget->setFixedWidth(w);
+}
+
+int SACellInputWidget::getCellWidth(int index) const
+{
+
 }
 
 
