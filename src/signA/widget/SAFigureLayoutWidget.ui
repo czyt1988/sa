@@ -41,7 +41,7 @@
        </property>
        <property name="icon">
         <iconset resource="../icons.qrc">
-         <normaloff>:/icons/icons/clearProject.png</normaloff>:/icons/icons/clearProject.png</iconset>
+         <normaloff>:/icons/icons/delete.png</normaloff>:/icons/icons/delete.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>

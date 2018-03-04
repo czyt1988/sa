@@ -37,7 +37,7 @@ private slots:
     void onTableViewDoubleClicked(const QModelIndex& index);
 private:
     bool setData(int r,int c,const QVariant& v);
-    void ctrlV();
+    void onTableViewCtrlV();
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
     bool getSelectVectorPointData(SAVectorPointF* data);
@@ -46,6 +46,8 @@ private:
     static void getQItemSelectionColumns(QItemSelectionModel* selModel
                                          ,QMap<int,std::shared_ptr<QVector<QVariant> > >& res);
     void wheelEvent(QWheelEvent * event);
+    //解析剪切板的数据 返回按照tab分隔解析的字符表的尺寸
+    QSize getClipboardTextTable(QVector<QStringList> &res);
 private:
     Ui::ValueViewerTabPage *ui;
     //OpenFileManager* m_values;

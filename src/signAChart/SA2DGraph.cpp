@@ -866,8 +866,8 @@ SA2DGraph::SA2DGraph(QWidget *parent):QwtPlot(parent)
 
     QwtPlotCanvas* pCanvas = new QwtPlotCanvas();
     //pCanvas->setLineWidth( 0 );
-	pCanvas->setAutoFillBackground(false);
-    pCanvas->setFrameStyle( QFrame::NoFrame );
+    pCanvas->setAutoFillBackground(true);
+    pCanvas->setFrameStyle( QFrame::Box );
     //pCanvas->setBorderRadius( 0 );//设置圆角为0
 
     QPalette canvasPalette( Qt::white );

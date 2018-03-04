@@ -19,6 +19,7 @@ SAQwtAxisSetWidget::SAQwtAxisSetWidget(QWidget *parent) :
     m_buttonGroup->addButton(ui->radioButtonNormal,NormalScale);
     m_buttonGroup->addButton(ui->radioButtonTimeScale,DateTimeScale);
     ui->radioButtonNormal->setChecked(true);
+    ui->dateTimeScaleSetWidget->hide();
 
     connect(ui->checkBoxEnable,&QCheckBox::stateChanged
             ,this,&SAQwtAxisSetWidget::onEnableCheckBoxClicked);
@@ -136,6 +137,7 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
 {
     if(NormalScale == id)
     {
+        ui->dateTimeScaleSetWidget->hide();
         if(m_chart)
         {
             SAChart::setAxisNormalScale(m_chart,m_axisID);
@@ -145,6 +147,7 @@ void SAQwtAxisSetWidget::onScaleStyleChanged(int id)
     {
         if(DateTimeScale == id)
         {
+            ui->dateTimeScaleSetWidget->show();
             if(m_chart)
             {
                 QString format = ui->dateTimeScaleSetWidget->getTimeFormat();

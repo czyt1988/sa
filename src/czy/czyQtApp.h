@@ -13,30 +13,6 @@
 #include <QDataStream>
 namespace czy{
     namespace QtApp{
-		class QWaitCursor
-		{
-		public:
-			QWaitCursor()
-			{
-				 QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-			}
-			~QWaitCursor()
-			{
-				QApplication::restoreOverrideCursor();
-			}
-			void setWaitCursor()
-			{
-				QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-			}
-			void setCursor(QCursor cur = QCursor(Qt::WaitCursor))
-			{
-				QApplication::setOverrideCursor(cur);
-			}
-			void release()
-			{
-				QApplication::restoreOverrideCursor();
-			}
-		};
 	
 		/// 
 		/// \brief 字符串扩展

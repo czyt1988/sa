@@ -12,5 +12,8 @@
         <file>icons/itemSet.png</file>
         <file>icons/normalSet.png</file>
         <file>icons/figureWindow.png</file>
+        <file>icons/bold.png</file>
+        <file>icons/fontSet.png</file>
+        <file>icons/italic.png</file>
     </qresource>
 </RCC>

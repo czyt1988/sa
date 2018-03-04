@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>259</width>
+    <width>282</width>
     <height>22</height>
    </rect>
   </property>
@@ -43,6 +43,19 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset resource="icon.qrc">
+       <normaloff>:/icon/icons/bold.png</normaloff>:/icon/icons/bold.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -50,10 +63,36 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset resource="icon.qrc">
+       <normaloff>:/icon/icons/italic.png</normaloff>:/icon/icons/italic.png</iconset>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="toolButtonFontSet">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="icon.qrc">
+       <normaloff>:/icon/icons/fontSet.png</normaloff>:/icon/icons/fontSet.png</iconset>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="icon.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -192,10 +192,9 @@ QGroupBox::indicator
     margin-left: 2px;
 }
 
-
-/*QCheckBox::indicator:unchecked
+QCheckBox::indicator:unchecked
 {
-    image: url(:/qss_icons/rc/checkbox_unchecked.png);
+    image: url(./theme/normal/icon/unchecked.png);
 }
 
 QCheckBox::indicator:unchecked:hover,
@@ -206,34 +205,33 @@ QGroupBox::indicator:unchecked:focus,
 QGroupBox::indicator:unchecked:pressed
 {
   border: none;
-    image: url(:/qss_icons/rc/checkbox_unchecked_focus.png);
+    image: url(./theme/normal/icon/unchecked-hover.png);
 }
 
 QCheckBox::indicator:checked
 {
-    image: url(:/qss_icons/rc/checkbox_checked.png);
+    image: url(./theme/normal/icon/checked.png);
 }
 
 QCheckBox::indicator:indeterminate:focus,
 QCheckBox::indicator:indeterminate:hover,
 QCheckBox::indicator:indeterminate:pressed
 {
-    image: url(:/qss_icons/rc/checkbox_indeterminate_focus.png);
+    image: url(./theme/normal/icon/checked-hover.png);
 }
 
 QCheckBox::indicator:checked:disabled,
 QGroupBox::indicator:checked:disabled
 {
-    image: url(:/qss_icons/rc/checkbox_checked_disabled.png);
+    image: url(./theme/normal/icon/checked-disable.png);
 }
 
 QCheckBox::indicator:unchecked:disabled,
 QGroupBox::indicator:unchecked:disabled
 {
-    image: url(:/qss_icons/rc/checkbox_unchecked_disabled.png);
+    image: url(./theme/normal/icon/unchecked-disable.png);
 }
 
-*/
 
 /*================
 QPushButton
@@ -549,46 +547,44 @@ QMenu::indicator {
     height: 18px;
 }
 
-/*
 QMenu::indicator:non-exclusive:unchecked {
-    image: url(:/qss_icons/rc/checkbox_unchecked.png);
+    image: url(./theme/normal/icon/unchecked.png);
 }
 
 QMenu::indicator:non-exclusive:unchecked:selected {
-    image: url(:/qss_icons/rc/checkbox_unchecked_disabled.png);
+    image: url(./theme/normal/icon/unchecked-disable.png);
 }
 
 QMenu::indicator:non-exclusive:checked {
-    image: url(:/qss_icons/rc/checkbox_checked.png);
+    image: url(./theme/normal/icon/checked.png);
 }
 
 QMenu::indicator:non-exclusive:checked:selected {
-    image: url(:/qss_icons/rc/checkbox_checked_disabled.png);
+    image: url(./theme/normal/icon/checked-hover.png);
 }
 
 
 QMenu::indicator:exclusive:unchecked {
-    image: url(:/qss_icons/rc/radio_unchecked.png);
+    image: url(./theme/normal/icon/radio.png);
 }
 
 QMenu::indicator:exclusive:unchecked:selected {
-    image: url(:/qss_icons/rc/radio_unchecked_disabled.png);
+    image: url(./theme/normal/icon/radio-disable.png);
 }
 
 QMenu::indicator:exclusive:checked {
-    image: url(:/qss_icons/rc/radio_checked.png);
+    image: url(./theme/normal/icon/radio-on.png);
 }
 
 QMenu::indicator:exclusive:checked:selected {
-    image: url(:/qss_icons/rc/radio_checked_disabled.png);
+    image: url(./theme/normal/icon/radio-on-disable.png);
 }
-
+/*
 QMenu::right-arrow {
     margin: 5px;
     image: url(:/qss_icons/rc/right_arrow.png)
 }
 */
-
 
 /*================
 QAbstractItemView

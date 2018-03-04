@@ -15,9 +15,11 @@ public:
     explicit SAFontSetWidget(QWidget *parent = 0);
     ~SAFontSetWidget();
     void setCurrentFont(const QFont& font);
+    QFont getFont() const;
 private slots:
     Q_SLOT void onToolButtonBoldToggled(bool checked);
     Q_SLOT void onToolButtonItalicToggled(bool checked);
+    Q_SLOT void onToolButtonFontSetPressed();
     Q_SLOT void onFontChanged(const QFont& newfont);
 signals:
     void fontChanged(const QFont& font);

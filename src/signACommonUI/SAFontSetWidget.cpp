@@ -1,6 +1,6 @@
 #include "SAFontSetWidget.h"
 #include "ui_SAFontSetWidget.h"
-
+#include <QFontDialog>
 SAFontSetWidget::SAFontSetWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SAFontSetWidget)
@@ -10,6 +10,8 @@ SAFontSetWidget::SAFontSetWidget(QWidget *parent) :
             ,this,&SAFontSetWidget::onToolButtonBoldToggled);
     connect(ui->toolButtonItalic,&QToolButton::toggled
             ,this,&SAFontSetWidget::onToolButtonItalicToggled);
+    connect(ui->toolButtonFontSet,&QToolButton::pressed
+            ,this,&SAFontSetWidget::onToolButtonFontSetPressed);
     connect(ui->fontComboBox,&QFontComboBox::currentFontChanged
             ,this,&SAFontSetWidget::onFontChanged);
 }
@@ -26,26 +28,39 @@ void SAFontSetWidget::setCurrentFont(const QFont &font)
     ui->toolButtonItalic->setChecked(font.italic());
 }
 
-void SAFontSetWidget::onToolButtonBoldToggled(bool checked)
+QFont SAFontSetWidget::getFont() const
 {
     QFont font = ui->fontComboBox->currentFont();
-    font.setBold(checked);
+    font.setBold(ui->toolButtonBold->isChecked());
     font.setItalic(ui->toolButtonItalic->isChecked());
-    emit fontChanged(font);
+    return font;
+}
+
+void SAFontSetWidget::onToolButtonBoldToggled(bool checked)
+{
+    Q_UNUSED(checked);
+    emit fontChanged(getFont());
 }
 
 void SAFontSetWidget::onToolButtonItalicToggled(bool checked)
 {
-    QFont font = ui->fontComboBox->currentFont();
-    font.setBold(ui->toolButtonBold->isChecked());
-    font.setItalic(checked);
-    emit fontChanged(font);
+    Q_UNUSED(checked);
+    emit fontChanged(getFont());
+}
+
+void SAFontSetWidget::onToolButtonFontSetPressed()
+{
+    bool isOK = false;
+    QFont font = QFontDialog::getFont(&isOK,getFont(),this);
+    if(isOK)
+    {
+        setCurrentFont(font);
+        emit fontChanged(font);
+    }
 }
 
 void SAFontSetWidget::onFontChanged(const QFont &newfont)
 {
-    QFont font = newfont;
-    font.setBold(ui->toolButtonBold->isChecked());
-    font.setItalic(ui->toolButtonItalic->isChecked());
-    emit fontChanged(font);
+    Q_UNUSED(newfont);
+    emit fontChanged(getFont());
 }

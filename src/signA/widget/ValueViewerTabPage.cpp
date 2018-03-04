@@ -13,6 +13,8 @@
 #include "SAData.h"
 #include <QDebug>
 #include "SACellInputWidget.h"
+#include <QClipboard>
+#include "SAWaitCursor.h"
 ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ValueViewerTabPage)
@@ -28,7 +30,7 @@ ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
         plotLayerVerticalHeader->setDefaultSectionSize(19);
     }
     ui->tableView->setCtrlVFunPtr([&](){
-        this->ctrlV();
+        this->onTableViewCtrlV();
     });
 //    model->setupSetDataFun([&](int r,int c,const QVariant& v)->bool{
 //        return this->setData(r,c,v);
@@ -102,13 +104,11 @@ void ValueViewerTabPage::onTableViewDoubleClicked(const QModelIndex &index)
     int c = index.column();
     SADataTableModel* model = getModel();
     SAAbstractDatas* data = model->columnToData(c);
+    if(nullptr == data)
+        return;
     QHeaderView* verticalHeader = ui->tableView->verticalHeader();
     QHeaderView* horizontalHeader = ui->tableView->horizontalHeader();
     QPoint offset(verticalHeader->width(),horizontalHeader->height());
-    if(nullptr == data)
-    {
-        return;
-    }
     int colStart=-1,colEnd=-1;
     model->dataColumnRange(data,colStart,colEnd);
     if(-1 == colStart || -1 == colEnd)
@@ -333,10 +333,27 @@ bool ValueViewerTabPage::setData(int r, int c, const QVariant &v)
     return false;
 }
 ///
-/// \brief 处理按下ctrl + v
+/// \brief 表格控件处理按下ctrl + v
 ///
-void ValueViewerTabPage::ctrlV()
+void ValueViewerTabPage::onTableViewCtrlV()
 {
+    SAWaitCursor waitCursor;
+    QVector<QStringList> paseredStringTable;
+    QSize tableSize = getClipboardTextTable(paseredStringTable);
+    if(!tableSize.isValid())
+        return;
+    QModelIndex curIndex = ui->tableView->currentIndex();
+    if(!curIndex.isValid())
+        return;
+    SADataTableModel* model = getModel();
+
+    //情况1 复制的内长度小于数据的第二维度，且小于第一维度
+    //考虑到使用ctrl+z 用命令模式
+//    SAAbstractDatas* data = model->columnToData(curIndex.column());
+//    if(nullptr == data)
+//        return;
+//    int colStart=-1,colEnd=-1;
+//    model->dataColumnRange(data,colStart,colEnd);
 
 }
 ///
@@ -528,4 +545,26 @@ void ValueViewerTabPage::wheelEvent(QWheelEvent *event)
         qDebug()<<numSteps;
     }
     event->accept();
+}
+
+QSize ValueViewerTabPage::getClipboardTextTable(QVector<QStringList > &res)
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    QString clipboardText = clipboard->text();
+    if(clipboardText.isEmpty())
+        return QSize();
+    //解析复制的数据
+    QTextStream ts(&clipboardText);
+    int maxColumn = 0;
+    int maxRow = 0;
+    while(!ts.atEnd())
+    {
+        QString line = ts.readLine();
+        QStringList listStr = line.split('\t');
+        if(listStr.size() > maxColumn)
+            maxColumn = listStr.size();
+        res.append(listStr);
+        ++maxRow;
+    }
+    return QSize(maxColumn,maxRow);
 }

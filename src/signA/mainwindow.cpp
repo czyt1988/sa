@@ -59,6 +59,7 @@
 #include "SASelectRegionEditor.h"
 #include "SASelectRegionDataEditor.h"
 #include "SAMdiSubWindowSerializeHead.h"
+#include "SAWaitCursor.h"
 //===signALib
 #include "SALocalServerDefine.h"
 #include "SAValueManager.h"//变量管理
@@ -480,7 +481,8 @@ void MainWindow::initPlugin()
     connect(m_pluginManager,&SAPluginManager::postInfoMessage
             ,this,&MainWindow::showMessageInfo);
 
-    czy::QtApp::QWaitCursor wait;
+    SA_SET_AUTO_WAIT_CURSOR();
+
     int count = m_pluginManager->loadPlugins();
     QString str = tr("load %1 plugins").arg(count);
     showNormalMessageInfo(str);
@@ -568,8 +570,7 @@ void MainWindow::onActionSetDefalutDockPosTriggered()
 ///
 void MainWindow::onActionTabModeTriggered(bool on)
 {
-    czy::QtApp::QWaitCursor waitCur;
-    Q_UNUSED(waitCur);
+    SA_SET_AUTO_WAIT_CURSOR();
     ui->actionWindowMode->setChecked(!on);
 
     if(on){
@@ -588,8 +589,7 @@ void MainWindow::onActionTabModeTriggered(bool on)
 ///
 void MainWindow::onActionWindowModeTriggered(bool on)
 {
-    czy::QtApp::QWaitCursor waitCur;
-    Q_UNUSED(waitCur);
+    SA_SET_AUTO_WAIT_CURSOR();
     ui->actionTabMode->setChecked(!on);
     if(on){
         if(QMdiArea::SubWindowView != this->ui->mdiArea->viewMode()){
@@ -608,8 +608,7 @@ void MainWindow::onActionWindowModeTriggered(bool on)
 void MainWindow::onActionWindowCascadeTriggered(bool on)
 {
     Q_UNUSED(on);
-    czy::QtApp::QWaitCursor waitCur;
-    Q_UNUSED(waitCur);
+    SA_SET_AUTO_WAIT_CURSOR();
     if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
         ui->mdiArea->cascadeSubWindows();
     }
@@ -621,8 +620,7 @@ void MainWindow::onActionWindowCascadeTriggered(bool on)
 void MainWindow::onActionWindowTileTriggered(bool on)
 {
     Q_UNUSED(on);
-    czy::QtApp::QWaitCursor waitCur;
-    Q_UNUSED(waitCur);
+    SA_SET_AUTO_WAIT_CURSOR();
     if(QMdiArea::SubWindowView == ui->mdiArea->viewMode()){
         ui->mdiArea->tileSubWindows();
     }

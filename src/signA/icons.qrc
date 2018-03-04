@@ -68,6 +68,9 @@
         <file>icons/figureIcon.png</file>
         <file>icons/skin.png</file>
         <file>icons/figureSet.png</file>
+        <file>icons/no.png</file>
+        <file>icons/yes.png</file>
+        <file>icons/delete.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>

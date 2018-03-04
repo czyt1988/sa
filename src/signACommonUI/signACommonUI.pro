@@ -61,7 +61,8 @@ HEADERS += \
     SATimeFormatSetWidget.h \
     SATableView.h \
     SADataTableModel.h \
-    SAPopupWidget.h
+    SAPopupWidget.h \
+    SAWaitCursor.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
