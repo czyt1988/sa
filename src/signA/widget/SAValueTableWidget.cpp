@@ -1,5 +1,5 @@
-﻿#include "ValueViewerTabPage.h"
-#include "ui_ValueViewerTabPage.h"
+﻿#include "SAValueTableWidget.h"
+#include "ui_SAValueTableWidget.h"
 #include "SADataTableModel.h"
 #include <QMessageBox>
 #include <QInputDialog>
@@ -16,119 +16,14 @@
 #include <QClipboard>
 #include "SAWaitCursor.h"
 #include "SACsvStream.h"
-class SAValueTableWidgetBaseCommand : public QUndoCommand
-{
-public:
-    SAValueTableWidgetBaseCommand(SAAbstractDatas* data,SADataTableModel* model,QUndoCommand* par = Q_NULLPTR)
-        :m_data(data)
-        ,m_model(model)
-    {
-    }
-    SAAbstractDatas* data() const
-    {
-        return m_data;
-    }
-    SADataTableModel* model() const
-    {
-        return m_model;
-    }
-private:
-    SAAbstractDatas* m_data;
-    SADataTableModel* m_model;
-};
-
-///
-/// \brief 编辑命令
-///
-class SAValueTableWidgetEditValueCommand : public SAValueTableWidgetBaseCommand
-{
-public:
-    SAValueTableWidgetEditValueCommand(SAAbstractDatas* data
-                                       ,SADataTableModel* model
-                                       ,const QVariantList& oldDatas
-                                       ,const QVariantList& newDatas
-                                       ,int row
-                                       ,int col
-                                       ,QUndoCommand* par = Q_NULLPTR);
-    void redo();
-    void undo();
-private:
-    QVariantList m_oldDatas;
-    QVariantList m_newDatas;
-    int m_row;
-    int m_col;
-};
-SAValueTableWidgetEditValueCommand::SAValueTableWidgetEditValueCommand(SAAbstractDatas *data
-                                                                       ,SADataTableModel* model
-                                                                       , const QVariantList &oldDatas
-                                                                       , const QVariantList &newDatas
-                                                                       ,int row
-                                                                       ,int col
-                                                                       , QUndoCommand *par
-                                                                       )
-    :SAValueTableWidgetBaseCommand(data,model,par)
-    ,m_oldDatas(oldDatas)
-    ,m_newDatas(newDatas)
-    ,m_row(row)
-    ,m_col(col)
-{
-
-}
-
-void SAValueTableWidgetEditValueCommand::redo()
-{
-    SAAbstractDatas* d = data();
-    SADataTableModel* m = model();
-    if(SA::TableVariant == d->getType() || SA::TableDouble == d->getType())
-    {
-        bool isOK = d->setAt(m_newDatas[0],{m_row,m_col});
-        if(isOK && (m_row>=m->dataRowCount() || m_col>=m->dataColumnCount()) )
-        {
-            m->update();
-        }
-    }
-    else if(d->getDim() < SA::Dim2)
-    {
-        d->setAt(m_newDatas[0],{m_row});
-        if(m_row==m->dataRowCount()-1)
-        {
-            m->update();
-        }
-    }
-}
-
-void SAValueTableWidgetEditValueCommand::undo()
-{
-    SAAbstractDatas* d = data();
-    SADataTableModel* m = model();
-    if(SA::TableVariant == d->getType() || SA::TableDouble == d->getType())
-    {
-        bool isOK = d->setAt(m_oldDatas[0],{m_row,m_col});
-        if(isOK && (m_row>=m->dataRowCount() || m_col>=m->dataColumnCount()) )
-        {
-            m->update();
-        }
-    }
-    if(d->getDim() < SA::Dim2)
-    {
-        d->setAt(m_oldDatas[0],{m_row});
-        if(m_row==m->dataRowCount()-1)
-        {
-            m->update();
-        }
-    }
-}
-
-
-
-
+#include "SAValueTableOptCommands.h"
 
 
 /////////////////////////////////////////////////
 
 SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ValueViewerTabPage)
+    ui(new Ui::SAValueTableWidget)
   ,m_countNewData(0)
   ,m_menu(nullptr)
 {
@@ -330,7 +225,7 @@ void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
             return;
         }
         QString str = cellInput.getCellEditText(0);
-        SAValueTableWidgetEditValueCommand* cmd = new SAValueTableWidgetEditValueCommand(data
+        SAValueTableOptEditValueCommand* cmd = new SAValueTableOptEditValueCommand(data
                                                                                          ,model
                                                                                          ,{var}
                                                                                          ,{str}
@@ -388,7 +283,7 @@ void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
                 return;
             }
 
-            SAValueTableWidgetEditValueCommand* cmd = new SAValueTableWidgetEditValueCommand(data
+            SAValueTableOptEditValueCommand* cmd = new SAValueTableOptEditValueCommand(data
                                                                                              ,model
                                                                                              ,{var}
                                                                                              ,{d}

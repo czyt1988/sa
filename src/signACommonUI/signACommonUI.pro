@@ -62,7 +62,8 @@ HEADERS += \
     SATableView.h \
     SADataTableModel.h \
     SAPopupWidget.h \
-    SAWaitCursor.h
+    SAWaitCursor.h \
+    SAValueTableOptCommands.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -88,7 +89,8 @@ SOURCES += \
     SATimeFormatSetWidget.cpp \
     SATableView.cpp \
     SADataTableModel.cpp \
-    SAPopupWidget.cpp
+    SAPopupWidget.cpp \
+    SAValueTableOptCommands.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

@@ -1,7 +1,7 @@
 ﻿#include "SATabValueViewerWidget.h"
 #include <SADataTableModel.h>
 //#include <ValueDataViewerTabWidgetPage.h>
-#include <ValueViewerTabPage.h>
+#include <SAValueTableWidget.h>
 #include <QFileDialog>
 #include <QTabBar>
 #include <QTableView>

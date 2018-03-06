@@ -1,5 +1,5 @@
-﻿#ifndef VALUEVIEWERTABPAGE_H
-#define VALUEVIEWERTABPAGE_H
+﻿#ifndef SAVALUTABLEWIDGET_H
+#define SAVALUTABLEWIDGET_H
 
 #include <QWidget>
 #include <SAData.h>
@@ -10,7 +10,7 @@
 #include <QItemSelectionModel>
 #include <QUndoStack>
 namespace Ui {
-class ValueViewerTabPage;
+class SAValueTableWidget;
 }
 
 class SADataTableModel;
@@ -68,7 +68,7 @@ private:
     //解析剪切板的数据 返回按照tab分隔解析的字符表的尺寸
     QSize getClipboardTextTable(QVector<QStringList> &res);
 private:
-    Ui::ValueViewerTabPage *ui;
+    Ui::SAValueTableWidget *ui;
     //OpenFileManager* m_values;
     uint m_countNewData;
     QMenu* m_menu;
