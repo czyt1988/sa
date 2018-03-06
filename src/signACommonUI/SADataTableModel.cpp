@@ -17,6 +17,11 @@ SADataTableModel::SADataTableModel(QObject* parent):QAbstractTableModel(parent)
 
 void SADataTableModel::setSADataPtr(SAAbstractDatas *data)
 {
+    if(nullptr == data)
+    {
+        clear();
+        return;
+    }
     setSADataPtrs({data});
 }
 
@@ -24,6 +29,7 @@ void SADataTableModel::setSADataPtrs(const QList<SAAbstractDatas *> &datas)
 {
     if(datas.size() <= 0)
     {
+        clear();
         return;
     }
 	beginResetModel();
@@ -41,6 +47,10 @@ void SADataTableModel::setSADataPtrs(const QList<SAAbstractDatas *> &datas)
 
 void SADataTableModel::appendSADataPtr(SAAbstractDatas *data)
 {
+    if(nullptr == data)
+    {
+        return;
+    }
     appendSADataPtrs({data});
 }
 
@@ -61,7 +71,24 @@ void SADataTableModel::appendSADataPtrs(QList<SAAbstractDatas*> datas)
     reCalcRowAndColumnCount();
     endResetModel();
 }
+///
+/// \brief 移除显示的数据
+/// \param datas
+///
+void SADataTableModel::removeDatas(const QList<SAAbstractDatas *> &datas)
+{
+    QList<SAAbstractDatas *> newData;
+    for(int i=0;i<m_datas.size();++i)
+    {
+        SAAbstractDatas * d = m_datas[i];
+        if(!datas.contains(d))
+        {
+            newData.append(d);
+        }
+    }
+    setSADataPtrs(newData);
 
+}
 void SADataTableModel::update()
 {
     beginResetModel();
@@ -69,23 +96,18 @@ void SADataTableModel::update()
     endResetModel();
 }
 
-
-///
-/// \brief 删除数据
-/// \param datas 需要删除的数据
-///
-void SADataTableModel::removeDatas(const QList<SAAbstractDatas *> &datas)
+void SADataTableModel::clear()
 {
-    std::for_each(datas.begin(),datas.end(),[&](SAAbstractDatas *d){
-         m_datas.removeOne(d);
-         m_ptr2ColMap.remove(d);
-         auto indexs = m_ptr2Col.values(d);
-         std::for_each(indexs.begin(),indexs.end(),[this](int i){
-             this->m_col2Ptr.remove(i);
-         });
-         m_ptr2Col.remove(d);
-    });
+    beginResetModel();
+    m_rowCount = 0;
+    m_columnCount = 0;
+    m_datas.clear();
+    m_col2Ptr.clear();
+    m_ptr2Col.clear();
+    m_ptr2ColMap.clear();
+    endResetModel();
 }
+
 
 bool SADataTableModel::isEmpty() const
 {
@@ -123,9 +145,9 @@ void SADataTableModel::dataColumnRange(SAAbstractDatas *p, int &start, int &end)
     }
 }
 
-void SADataTableModel::getSADataPtrs(QList<SAAbstractDatas*>& data) const
+const QList<SAAbstractDatas *> &SADataTableModel::getSADataPtrs() const
 {
-    data = m_datas;
+    return m_datas;
 }
 
 int SADataTableModel::rowCount(const QModelIndex& parent) const
@@ -382,6 +404,7 @@ void SADataTableModel::reCalcRowAndColumnCount()
     m_columnCount = col;
 
 }
+
 
 
 

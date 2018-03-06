@@ -31,10 +31,10 @@ SATabValueViewerWidget::~SATabValueViewerWidget()
 ///
 void SATabValueViewerWidget::setDataInCurrentTab(const QList<SAAbstractDatas *> &datas)
 {
-    SADataTableModel* model = getCurrentTabModel();
-    if(!model)
+    SAValueTableWidget* w = getCurrentTablePage();
+    if(!w)
         return;
-    model->setSADataPtrs (datas);
+    w->setSADataPtrs (datas);
 }
 
 void SATabValueViewerWidget::setDataInNewTab(QList<SAAbstractDatas *> datas)
@@ -42,41 +42,41 @@ void SATabValueViewerWidget::setDataInNewTab(QList<SAAbstractDatas *> datas)
     QString strName;
     if(datas.size () == 1)
         strName = datas[0]->getName ();
-    SADataTableModel* model = createValueViewerTab(strName);
-    if(!model)
+    SAValueTableWidget* w = createValueViewerTab(strName);
+    if(!w)
         return;
-    model->setSADataPtrs (datas);
+    w->setSADataPtrs (datas);
 }
 
 void SATabValueViewerWidget::appendDataInCurrentTab(QList<SAAbstractDatas *> datas)
 {
-    SADataTableModel* model = getCurrentTabModel();
-    if(!model)
+    SAValueTableWidget* w = getCurrentTablePage();
+    if(!w)
         return;
-    model->appendSADataPtrs (datas);
+    w->appendSADataPtrs (datas);
 }
 
-SADataTableModel *SATabValueViewerWidget::createValueViewerTab(const QString &title)
+SAValueTableWidget *SATabValueViewerWidget::createValueViewerTab(const QString &title)
 {
     ++m_count;
-    ValueViewerTabPage* w = new ValueViewerTabPage(this);
+    SAValueTableWidget* w = new SAValueTableWidget(this);
     QString t = title;
     if(t.isEmpty ())
         t = tr("  table-%1  ").arg(m_count);
     int index = addTab (w,t);
     setCurrentIndex(index);
-    return w->getModel ();
+    return w;
 }
 
-SADataTableModel *SATabValueViewerWidget::getTabModel(int index)
+SAValueTableWidget *SATabValueViewerWidget::getTablePage(int index)
 {
     QWidget* w = widget (index);
     if(!w)
         return nullptr;
-    ValueViewerTabPage* tw = qobject_cast<ValueViewerTabPage*>(w);
+    SAValueTableWidget* tw = qobject_cast<SAValueTableWidget*>(w);
     if (!tw)
         return nullptr;
-    return tw->getModel ();
+    return tw;
 }
 ///
 /// \brief 数据删除
@@ -89,12 +89,12 @@ void SATabValueViewerWidget::removeDatas(const QList<SAAbstractDatas *> &datas)
     const int size = count();
     for(int i=0;i<size;++i)
     {
-        SADataTableModel* tabModel = getTabModel(i);
-        if(nullptr == tabModel)
+        SAValueTableWidget* w = getTablePage(i);
+        if(nullptr == w)
         {
             continue;
         }
-        tabModel->removeDatas(datas);
+        w->removeDatas(datas);
     }
 }
 ///
@@ -138,10 +138,10 @@ void SATabValueViewerWidget::action_saveToCsv_triggered()
                                  ,tr("csv file(*.csv)"));
     if(path.isEmpty())
         return;
-    SADataTableModel* model = getTabModel(currentIndex ());
-    if(!model)
+    SAValueTableWidget* w = getTablePage(currentIndex ());
+    if(!w)
         return;
-    saveTableToCsv(model,path);
+    w->saveTableToCsv(path);
 }
 
 void SATabValueViewerWidget::on_tab_closed(int index)
@@ -150,49 +150,24 @@ void SATabValueViewerWidget::on_tab_closed(int index)
     removeTab (index);
     if(w)
     {
-        ValueViewerTabPage* t = qobject_cast<ValueViewerTabPage*>(w);
+        SAValueTableWidget* t = qobject_cast<SAValueTableWidget*>(w);
         if(t)
             delete t;
     }
 }
 
-SADataTableModel *SATabValueViewerWidget::getCurrentTabModel()
+SAValueTableWidget *SATabValueViewerWidget::getCurrentTablePage()
 {
     int index = currentIndex ();
-    SADataTableModel* model = nullptr;
+    SAValueTableWidget* w = nullptr;
     if(-1 == index)
-        model = createValueViewerTab(QString());
+        w = createValueViewerTab(QString());
     else
-        model = getTabModel(index);
-    return model;
+        w = getTablePage(index);
+    return w;
 }
 
-///
-/// \brief 把表格保存到csv
-///
-void SATabValueViewerWidget::saveTableToCsv(SADataTableModel *model, const QString& fullFilePath)
-{
-    QFile file;
-    file.setFileName (fullFilePath);
-    if (!file.open(QIODevice::WriteOnly|QIODevice::Text)) {
-        QMessageBox::critical(nullptr, tr("information")
-                              , tr("can not create file"));
-        return;
-    }
-    SACsvStream csv(&file);
-    const int rows = model->dataRowCount();
-    const int columns = model->dataColumnCount();
-    for(int r=0;r<rows;++r)
-    {
-        for(int c=0;c<columns;++c)
-        {
-            QVariant var = model->data(model->index(r,c));
-            csv << var.toString();
-        }
-        csv<<endl;
-    }
 
-}
 
 
 

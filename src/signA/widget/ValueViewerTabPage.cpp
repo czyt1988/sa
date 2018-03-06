@@ -15,13 +15,126 @@
 #include "SACellInputWidget.h"
 #include <QClipboard>
 #include "SAWaitCursor.h"
-ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
+#include "SACsvStream.h"
+class SAValueTableWidgetBaseCommand : public QUndoCommand
+{
+public:
+    SAValueTableWidgetBaseCommand(SAAbstractDatas* data,SADataTableModel* model,QUndoCommand* par = Q_NULLPTR)
+        :m_data(data)
+        ,m_model(model)
+    {
+    }
+    SAAbstractDatas* data() const
+    {
+        return m_data;
+    }
+    SADataTableModel* model() const
+    {
+        return m_model;
+    }
+private:
+    SAAbstractDatas* m_data;
+    SADataTableModel* m_model;
+};
+
+///
+/// \brief 编辑命令
+///
+class SAValueTableWidgetEditValueCommand : public SAValueTableWidgetBaseCommand
+{
+public:
+    SAValueTableWidgetEditValueCommand(SAAbstractDatas* data
+                                       ,SADataTableModel* model
+                                       ,const QVariantList& oldDatas
+                                       ,const QVariantList& newDatas
+                                       ,int row
+                                       ,int col
+                                       ,QUndoCommand* par = Q_NULLPTR);
+    void redo();
+    void undo();
+private:
+    QVariantList m_oldDatas;
+    QVariantList m_newDatas;
+    int m_row;
+    int m_col;
+};
+SAValueTableWidgetEditValueCommand::SAValueTableWidgetEditValueCommand(SAAbstractDatas *data
+                                                                       ,SADataTableModel* model
+                                                                       , const QVariantList &oldDatas
+                                                                       , const QVariantList &newDatas
+                                                                       ,int row
+                                                                       ,int col
+                                                                       , QUndoCommand *par
+                                                                       )
+    :SAValueTableWidgetBaseCommand(data,model,par)
+    ,m_oldDatas(oldDatas)
+    ,m_newDatas(newDatas)
+    ,m_row(row)
+    ,m_col(col)
+{
+
+}
+
+void SAValueTableWidgetEditValueCommand::redo()
+{
+    SAAbstractDatas* d = data();
+    SADataTableModel* m = model();
+    if(SA::TableVariant == d->getType() || SA::TableDouble == d->getType())
+    {
+        bool isOK = d->setAt(m_newDatas[0],{m_row,m_col});
+        if(isOK && (m_row>=m->dataRowCount() || m_col>=m->dataColumnCount()) )
+        {
+            m->update();
+        }
+    }
+    else if(d->getDim() < SA::Dim2)
+    {
+        d->setAt(m_newDatas[0],{m_row});
+        if(m_row==m->dataRowCount()-1)
+        {
+            m->update();
+        }
+    }
+}
+
+void SAValueTableWidgetEditValueCommand::undo()
+{
+    SAAbstractDatas* d = data();
+    SADataTableModel* m = model();
+    if(SA::TableVariant == d->getType() || SA::TableDouble == d->getType())
+    {
+        bool isOK = d->setAt(m_oldDatas[0],{m_row,m_col});
+        if(isOK && (m_row>=m->dataRowCount() || m_col>=m->dataColumnCount()) )
+        {
+            m->update();
+        }
+    }
+    if(d->getDim() < SA::Dim2)
+    {
+        d->setAt(m_oldDatas[0],{m_row});
+        if(m_row==m->dataRowCount()-1)
+        {
+            m->update();
+        }
+    }
+}
+
+
+
+
+
+
+/////////////////////////////////////////////////
+
+SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ValueViewerTabPage)
   ,m_countNewData(0)
   ,m_menu(nullptr)
 {
     ui->setupUi(this);
+    m_undoStack = new QUndoStack(this);
+    m_undoStack->setUndoLimit(20);
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
     QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
@@ -32,32 +145,96 @@ ValueViewerTabPage::ValueViewerTabPage(QWidget *parent) :
     ui->tableView->setCtrlVFunPtr([&](){
         this->onTableViewCtrlV();
     });
-//    model->setupSetDataFun([&](int r,int c,const QVariant& v)->bool{
-//        return this->setData(r,c,v);
-//    });
-    connect(ui->tableView,&QTableView::doubleClicked,this,&ValueViewerTabPage::onTableViewDoubleClicked);
+    connect(ui->tableView,&QTableView::customContextMenuRequested
+            ,this,&SAValueTableWidget::onTableViewCustomContextMenuRequested);
+    connect(ui->actionToLinerData,&QAction::triggered
+            ,this,&SAValueTableWidget::onActionToLinerDataTriggered);
+    connect(ui->actionToPointFVectorData,&QAction::triggered
+            ,this,&SAValueTableWidget::onActionToPointFVectorDataTriggered);
+    connect(ui->tableView,&QTableView::doubleClicked,this,&SAValueTableWidget::onTableViewDoubleClicked);
+    connect(saValueManager,&SAValueManager::dataRemoved
+            ,this,&SAValueTableWidget::onDataRemoved);
 }
 
-ValueViewerTabPage::~ValueViewerTabPage()
+SAValueTableWidget::~SAValueTableWidget()
 {
     delete ui;
 }
 
-QTableView *ValueViewerTabPage::getTableView()
+QTableView *SAValueTableWidget::getTableView()
 {
     return ui->tableView;
 }
 
-SADataTableModel *ValueViewerTabPage::getModel() const
+SADataTableModel *SAValueTableWidget::getDataModel() const
 {
     return static_cast<SADataTableModel*>(ui->tableView->model ());
 }
 
-void ValueViewerTabPage::on_tableView_customContextMenuRequested(const QPoint &pos)
+void SAValueTableWidget::setSADataPtr(SAAbstractDatas *data)
+{
+    m_undoStack->clear();
+    getDataModel()->setSADataPtr(data);
+}
+
+void SAValueTableWidget::setSADataPtrs(const QList<SAAbstractDatas *> &datas)
+{
+    m_undoStack->clear();
+    getDataModel()->setSADataPtrs(datas);
+}
+
+void SAValueTableWidget::appendSADataPtr(SAAbstractDatas *data)
+{
+    m_undoStack->clear();
+    getDataModel()->appendSADataPtr(data);
+}
+
+void SAValueTableWidget::appendSADataPtrs(QList<SAAbstractDatas *> datas)
+{
+    m_undoStack->clear();
+    getDataModel()->appendSADataPtrs(datas);
+}
+
+void SAValueTableWidget::removeDatas(const QList<SAAbstractDatas *> &datas)
+{
+    m_undoStack->clear();
+    getDataModel()->removeDatas(datas);
+}
+
+void SAValueTableWidget::saveTableToCsv(const QString &fullFilePath)
+{
+    SADataTableModel* model = getDataModel();
+    QFile file;
+    file.setFileName (fullFilePath);
+    if (!file.open(QIODevice::WriteOnly|QIODevice::Text)) {
+        QMessageBox::critical(nullptr, tr("information")
+                              , tr("can not create file"));
+        return;
+    }
+    SACsvStream csv(&file);
+    const int rows = model->dataRowCount();
+    const int columns = model->dataColumnCount();
+    for(int r=0;r<rows;++r)
+    {
+        for(int c=0;c<columns;++c)
+        {
+            QVariant var = model->data(model->index(r,c));
+            csv << var.toString();
+        }
+        csv<<endl;
+    }
+}
+
+void SAValueTableWidget::onTableViewCustomContextMenuRequested(const QPoint &pos)
 {
     if(nullptr == m_menu)
     {
         m_menu = new QMenu(this);
+        QAction* act = nullptr;
+        act = m_undoStack->createUndoAction(m_menu,tr("undo"));
+        m_menu->addAction(act);
+        act = m_undoStack->createRedoAction(m_menu,tr("redo"));
+        m_menu->addAction(act);
         QMenu* m = m_menu->addMenu (tr("export select datas"));
         m->addAction(ui->actionToLinerData);
         m->addAction(ui->actionToPointFVectorData);
@@ -65,7 +242,7 @@ void ValueViewerTabPage::on_tableView_customContextMenuRequested(const QPoint &p
     m_menu->exec (QCursor::pos());
 }
 
-void ValueViewerTabPage::on_actionToLinerData_triggered()
+void SAValueTableWidget::onActionToLinerDataTriggered()
 {
     ++m_countNewData;
     QHash<int,QVector<double> > rawData;
@@ -75,7 +252,7 @@ void ValueViewerTabPage::on_actionToLinerData_triggered()
     {
         if(i.value ().size() <= 0)
             continue;
-        QVariant var = getModel()->headerData (i.key (),Qt::Horizontal,Qt::DisplayRole);
+        QVariant var = getDataModel()->headerData (i.key (),Qt::Horizontal,Qt::DisplayRole);
         QString name = var.toString ();
         name += QStringLiteral(" - %1").arg(m_countNewData);
         auto data = SAValueManager::makeData<SAVectorDouble>(name,i.value());
@@ -83,7 +260,7 @@ void ValueViewerTabPage::on_actionToLinerData_triggered()
     }
 }
 
-void ValueViewerTabPage::on_actionToPointFVectorData_triggered()
+void SAValueTableWidget::onActionToPointFVectorDataTriggered()
 {
     auto points = SAValueManager::makeData<SAVectorPointF>();
     if(!getSelectVectorPointData(points.get ()))
@@ -98,11 +275,11 @@ void ValueViewerTabPage::on_actionToPointFVectorData_triggered()
     }
 }
 
-void ValueViewerTabPage::onTableViewDoubleClicked(const QModelIndex &index)
+void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
 {
     int r = index.row();
     int c = index.column();
-    SADataTableModel* model = getModel();
+    SADataTableModel* model = getDataModel();
     SAAbstractDatas* data = model->columnToData(c);
     if(nullptr == data)
         return;
@@ -143,6 +320,7 @@ void ValueViewerTabPage::onTableViewDoubleClicked(const QModelIndex &index)
         rightBottom.rx() += buttonAreaWidth;
         cellInput.setGeometry(QRect(leftTop,rightBottom));
         cellInput.resizeCells(1);
+
         QVariant var = model->data(index);
         cellInput.setCellTitleText(0,tr("value:"));
         cellInput.setCellEditText(0,var.toString());
@@ -151,13 +329,18 @@ void ValueViewerTabPage::onTableViewDoubleClicked(const QModelIndex &index)
         {
             return;
         }
-        bool isOK = false;
         QString str = cellInput.getCellEditText(0);
-        isOK = data->setAt(str,{index.row(),index.column()});
-        if(isOK && (r>=model->dataRowCount() || c>=model->dataColumnCount()) )
-        {
-            model->update();
-        }
+        SAValueTableWidgetEditValueCommand* cmd = new SAValueTableWidgetEditValueCommand(data
+                                                                                         ,model
+                                                                                         ,{var}
+                                                                                         ,{str}
+                                                                                         ,r,c);
+        cmd->setText(tr("edit table:%1").arg(data->getName()));
+        m_undoStack->push(cmd);
+//        if(isOK && (r>=model->dataRowCount() || c>=model->dataColumnCount()) )
+//        {
+//            model->update();
+//        }
         return;
     }
     else
@@ -197,17 +380,27 @@ void ValueViewerTabPage::onTableViewDoubleClicked(const QModelIndex &index)
             {
                 return;
             }
+
             bool isOK = false;
             double d = cellInput.getCellEditText(0).toDouble(&isOK);
             if(!isOK)
             {
                 return;
             }
-            isOK = data->setAt(d,{index.row(),index.column()});
-            if(isOK && r==model->dataRowCount()-1)
-            {
-                model->update();
-            }
+
+            SAValueTableWidgetEditValueCommand* cmd = new SAValueTableWidgetEditValueCommand(data
+                                                                                             ,model
+                                                                                             ,{var}
+                                                                                             ,{d}
+                                                                                             ,r
+                                                                                             ,c);
+            cmd->setText(tr("edit value:%1").arg(data->getName()));
+            m_undoStack->push(cmd);
+
+//            if(r==model->dataRowCount()-1)
+//            {
+//                model->update();
+//            }
             return;
         }
         else
@@ -260,16 +453,25 @@ void ValueViewerTabPage::onTableViewDoubleClicked(const QModelIndex &index)
     }
 }
 ///
+/// \brief 变量删除发出的信号
+/// \param dataBeDeletedPtr
+///
+void SAValueTableWidget::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
+{
+    SADataTableModel* model = getDataModel();
+    model->removeDatas(dataBeDeletedPtr);
+}
+///
 /// \brief 设置数据
 /// \param r
 /// \param c
 /// \param v
 /// \return
 ///
-bool ValueViewerTabPage::setData(int r, int c, const QVariant &v)
+bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
 {
     qDebug() << "setData";
-    SADataTableModel* model = getModel();
+    SADataTableModel* model = getDataModel();
     SAAbstractDatas* d = model->columnToData(c);
     if(nullptr == d)
     {
@@ -335,7 +537,7 @@ bool ValueViewerTabPage::setData(int r, int c, const QVariant &v)
 ///
 /// \brief 表格控件处理按下ctrl + v
 ///
-void ValueViewerTabPage::onTableViewCtrlV()
+void SAValueTableWidget::onTableViewCtrlV()
 {
     SAWaitCursor waitCursor;
     QVector<QStringList> paseredStringTable;
@@ -345,7 +547,7 @@ void ValueViewerTabPage::onTableViewCtrlV()
     QModelIndex curIndex = ui->tableView->currentIndex();
     if(!curIndex.isValid())
         return;
-    SADataTableModel* model = getModel();
+    SADataTableModel* model = getDataModel();
 
     //情况1 复制的内长度小于数据的第二维度，且小于第一维度
     //考虑到使用ctrl+z 用命令模式
@@ -360,7 +562,7 @@ void ValueViewerTabPage::onTableViewCtrlV()
 /// \brief 获取选中的线性数据
 /// \param rawData 数据的列存放在hash的key，数据值存放在hash的value
 ///
-void ValueViewerTabPage::getSelectLinerData(QHash<int, QVector<double> > &rawData) const
+void SAValueTableWidget::getSelectLinerData(QHash<int, QVector<double> > &rawData) const
 {
     QItemSelectionModel* sel = ui->tableView->selectionModel ();
     QModelIndexList indexs = sel->selectedIndexes ();
@@ -386,13 +588,13 @@ void ValueViewerTabPage::getSelectLinerData(QHash<int, QVector<double> > &rawDat
 /// \param rawData 输出rawData
 /// \param dim 选择数据的方向，0为向下，即为选择列，1为横向选择
 ///
-void ValueViewerTabPage::getSelectVectorPointData(QVector<std::shared_ptr<QVector<QPointF> > > &rawData, int dim)
+void SAValueTableWidget::getSelectVectorPointData(QVector<std::shared_ptr<QVector<QPointF> > > &rawData, int dim)
 {
     QItemSelectionModel* selModel = ui->tableView->selectionModel ();
     if(0 == dim)
     {
         QMap<int, std::shared_ptr<QVector<QVariant> > > colVals;
-        getQItemSelectionColumns(selModel,colVals);
+        getItemSelectionColumns(selModel,colVals);
         if(colVals.size() == 0)
         {
             QMessageBox::warning(this,QStringLiteral("通知"),QStringLiteral("未获得有效的列"));
@@ -435,7 +637,7 @@ void ValueViewerTabPage::getSelectVectorPointData(QVector<std::shared_ptr<QVecto
 /// \param data 获取的结果
 /// \return  成功获取返回true
 ///
-bool ValueViewerTabPage::getSelectVectorPointData(SAVectorPointF* data)
+bool SAValueTableWidget::getSelectVectorPointData(SAVectorPointF* data)
 {
     QItemSelectionModel* selModel = ui->tableView->selectionModel ();
     int xcolumn(0),ycolumn(0);
@@ -469,10 +671,10 @@ bool ValueViewerTabPage::getSelectVectorPointData(SAVectorPointF* data)
     else if(xrows.size ()<yrows.size ())
         yrows.resize (xrows.size ());
 
-    SADataTableModel* model = getModel ();
+    SADataTableModel* model = getDataModel ();
 
     QList<SAAbstractDatas*> datasPtr;
-    model->getSADataPtrs (datasPtr);
+    datasPtr = model->getSADataPtrs ();
     if(datasPtr.size ()<std::max(xcolumn,ycolumn))
         return false;
     SAAbstractDatas* xPtr = datasPtr[xcolumn];
@@ -507,7 +709,7 @@ bool ValueViewerTabPage::getSelectVectorPointData(SAVectorPointF* data)
     return (data->getSize ())>0;
 }
 
-void ValueViewerTabPage::appendDataFromVariant(const QVariant &var, QVector<double> &data) const
+void SAValueTableWidget::appendDataFromVariant(const QVariant &var, QVector<double> &data) const
 {
     bool isOk = false;
     double d = var.toDouble (&isOk);
@@ -521,7 +723,7 @@ void ValueViewerTabPage::appendDataFromVariant(const QVariant &var, QVector<doub
 /// \param selModel QItemSelectionModel指针
 /// \param res 获取的结果
 ///
-void ValueViewerTabPage::getQItemSelectionColumns(QItemSelectionModel *selModel, QMap<int, std::shared_ptr<QVector<QVariant> > > &res)
+void SAValueTableWidget::getItemSelectionColumns(QItemSelectionModel *selModel, QMap<int, std::shared_ptr<QVector<QVariant> > > &res)
 {
     QModelIndexList indexs = selModel->selectedIndexes ();
     for(auto i = indexs.begin();i!=indexs.end();++i)
@@ -537,7 +739,7 @@ void ValueViewerTabPage::getQItemSelectionColumns(QItemSelectionModel *selModel,
     }
 }
 
-void ValueViewerTabPage::wheelEvent(QWheelEvent *event)
+void SAValueTableWidget::wheelEvent(QWheelEvent *event)
 {
     QPoint numDegrees = event->angleDelta() / 8;
     if (!numDegrees.isNull()) {
@@ -547,7 +749,7 @@ void ValueViewerTabPage::wheelEvent(QWheelEvent *event)
     event->accept();
 }
 
-QSize ValueViewerTabPage::getClipboardTextTable(QVector<QStringList > &res)
+QSize SAValueTableWidget::getClipboardTextTable(QVector<QStringList > &res)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString clipboardText = clipboard->text();
@@ -568,3 +770,5 @@ QSize ValueViewerTabPage::getClipboardTextTable(QVector<QStringList > &res)
     }
     return QSize(maxColumn,maxRow);
 }
+
+

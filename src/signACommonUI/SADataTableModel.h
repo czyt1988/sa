@@ -17,17 +17,23 @@ class SA_COMMON_UI_EXPORT SADataTableModel : public QAbstractTableModel
 public:
     typedef std::function<bool(int,int,const QVariant&)> FUN_SET_DATA;
     SADataTableModel(QObject *parent = 0);
+    //设置数据
     void setSADataPtr(SAAbstractDatas* data);
     void setSADataPtrs(const QList<SAAbstractDatas*>& datas);
+    //插入数据
     void appendSADataPtr(SAAbstractDatas* data);
     void appendSADataPtrs(QList<SAAbstractDatas*> datas);
-    void getSADataPtrs(QList<SAAbstractDatas*>& data) const;
-
+    //获取数据
+    const QList<SAAbstractDatas*>& getSADataPtrs() const;
+    //更新模型
     void update();
-
-
+    //清空
+    void clear();
+    //移除显示的数据
     void removeDatas(const QList<SAAbstractDatas*>& datas);
+    //判断是否为空
     bool isEmpty() const;
+    //设置处理setData时的函数指针
     void setupSetDataFun(FUN_SET_DATA p);
     //根据列号获取对应的数据
     SAAbstractDatas* columnToData(int c);

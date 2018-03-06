@@ -111,6 +111,20 @@ QString SACellInputWidget::getCellEditText(int index) const
     QPair<QLabel*,QLineEdit*> p = m_cellInfos[index];
     return p.second->text();
 }
+///
+/// \brief 获取所有的数据
+/// \return
+///
+QStringList SACellInputWidget::getCellEditTexts() const
+{
+    QStringList strList;
+    const int size = cellsCount();
+    for(int i=0;i<size;++i)
+    {
+        strList.append(getCellEditText(i));
+    }
+    return strList;
+}
 
 bool SACellInputWidget::isAcceptInput() const
 {

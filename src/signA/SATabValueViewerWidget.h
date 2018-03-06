@@ -5,7 +5,7 @@
 #include <QAction>
 #include <SAData.h>
 
-class SADataTableModel;
+class SAValueTableWidget;
 class SATabValueViewerWidget : public QTabWidget
 {
     Q_OBJECT
@@ -19,9 +19,9 @@ public:
     //在当前标签中添加新的数据
     void appendDataInCurrentTab(QList<SAAbstractDatas*> datas);
     //新建一个数据表
-    SADataTableModel* createValueViewerTab(const QString& title);
+    SAValueTableWidget *createValueViewerTab(const QString& title);
     //获取对应数据表的model
-    SADataTableModel* getTabModel(int index);
+    SAValueTableWidget *getTablePage(int index);
     //数据要删除，先把显示的内容擦除
     void removeDatas(const QList<SAAbstractDatas*>& datas);
 public slots:
@@ -32,9 +32,7 @@ private slots:
     void action_saveToCsv_triggered();
     void on_tab_closed(int index);
 private:
-    SADataTableModel* getCurrentTabModel();
-    //把表格保存到csv
-    void saveTableToCsv(SADataTableModel *model, const QString &fullFilePath);
+    SAValueTableWidget* getCurrentTablePage();
 private:
     //OpenFileManager* m_values;
     QMenu* m_menuTab;

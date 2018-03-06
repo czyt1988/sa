@@ -36,6 +36,7 @@ public:
     //设置编辑内容
     void setCellEditText(int index,const QString& getCellTitleText);
     QString getCellEditText(int index) const;
+    QStringList getCellEditTexts() const;
     //输入是否有效
     bool isAcceptInput() const;
     //返回按钮区的大小
