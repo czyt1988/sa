@@ -32,6 +32,10 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     m_undoStack->setUndoLimit(20);
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
+    model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool{
+        this->setData(r,c,v);
+    };
+
     QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
     if(plotLayerVerticalHeader)
     {
@@ -40,6 +44,7 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     ui->tableView->setCtrlVFunPtr([&](){
         this->onTableViewCtrlV();
     });
+
     connect(ui->tableView,&QTableView::customContextMenuRequested
             ,this,&SAValueTableWidget::onTableViewCustomContextMenuRequested);
     connect(ui->actionToLinerData,&QAction::triggered
@@ -172,180 +177,27 @@ void SAValueTableWidget::onActionToPointFVectorDataTriggered()
 
 void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
 {
-    int r = index.row();
-    int c = index.column();
     SADataTableModel* model = getDataModel();
-    SAAbstractDatas* data = model->columnToData(c);
+    if(model->isInDataRange(index.row(),index.column()))
+    {
+        return;
+    }
+    SAAbstractDatas* data = model->columnToData(index.column());
     if(nullptr == data)
         return;
-    QHeaderView* verticalHeader = ui->tableView->verticalHeader();
-    QHeaderView* horizontalHeader = ui->tableView->horizontalHeader();
-    QPoint offset(verticalHeader->width(),horizontalHeader->height());
-    int colStart=-1,colEnd=-1;
-    model->dataColumnRange(data,colStart,colEnd);
-    if(-1 == colStart || -1 == colEnd)
+
+
+    switch(data->getType())
     {
+    case SA::VectorPoint:
+    {
+        appendVectorPointFData(data,index);
+        break;
+    }
+    default:
         return;
-    }
+ }
 
-
-
-    //对于2维数据要特殊处理
-    if(SA::TableVariant == data->getType() || SA::TableDouble == data->getType())
-    {
-        //表格
-        QPoint leftTop,rightBottom;
-        leftTop.setX(ui->tableView->columnViewportPosition(c));
-        leftTop.setY(ui->tableView->rowViewportPosition(r));
-        rightBottom.setX(leftTop.x()+ui->tableView->columnWidth(c));
-        rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
-        int tmp = ui->tableView->rowHeight(r);
-        if(tmp < 20 || tmp > 30)
-        {
-            tmp = 20;
-        }
-        leftTop.ry() -= tmp;
-        leftTop = ui->tableView->mapToGlobal(leftTop);
-        rightBottom = ui->tableView->mapToGlobal(rightBottom);
-        leftTop += offset;
-        rightBottom += offset;
-
-        SACellInputWidget cellInput;
-        int buttonAreaWidth = cellInput.getButtonAreaWidth();
-        rightBottom.rx() += buttonAreaWidth;
-        cellInput.setGeometry(QRect(leftTop,rightBottom));
-        cellInput.resizeCells(1);
-
-        QVariant var = model->data(index);
-        cellInput.setCellTitleText(0,tr("value:"));
-        cellInput.setCellEditText(0,var.toString());
-        cellInput.exec();
-        if(!cellInput.isAcceptInput())
-        {
-            return;
-        }
-        QString str = cellInput.getCellEditText(0);
-        SAValueTableOptEditValueCommand* cmd = new SAValueTableOptEditValueCommand(data
-                                                                                         ,model
-                                                                                         ,{var}
-                                                                                         ,{str}
-                                                                                         ,r,c);
-        cmd->setText(tr("edit table:%1").arg(data->getName()));
-        m_undoStack->push(cmd);
-//        if(isOK && (r>=model->dataRowCount() || c>=model->dataColumnCount()) )
-//        {
-//            model->update();
-//        }
-        return;
-    }
-    else
-    {
-        QPoint leftTop,rightBottom;
-        leftTop.setX(ui->tableView->columnViewportPosition(colStart));
-        leftTop.setY(ui->tableView->rowViewportPosition(r));
-        rightBottom.setX(ui->tableView->columnViewportPosition(colEnd)+ui->tableView->columnWidth(colEnd));
-        rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
-        int tmp = ui->tableView->rowHeight(r);
-        if(tmp < 20 || tmp > 30)
-        {
-            tmp = 20;
-        }
-        leftTop.ry() -= tmp;
-        leftTop = ui->tableView->mapToGlobal(leftTop);
-        rightBottom = ui->tableView->mapToGlobal(rightBottom);
-        leftTop += offset;
-        rightBottom += offset;
-
-        SACellInputWidget cellInput;
-        int buttonAreaWidth = cellInput.getButtonAreaWidth();
-        rightBottom.rx() += buttonAreaWidth;
-        cellInput.setGeometry(QRect(leftTop,rightBottom));
-
-        int dataDim2Size = data->getSize(SA::Dim2);
-        cellInput.resizeCells(dataDim2Size);
-        if(data->getDim() < SA::Dim2)
-        {
-            //对于小于2维的直接设置
-            QVariant var = model->data(index);
-            cellInput.resizeCells(1);
-            cellInput.setCellTitleText(0,tr("value"));
-            cellInput.setCellEditText(0,var.toString());
-            cellInput.exec();
-            if(!cellInput.isAcceptInput())
-            {
-                return;
-            }
-
-            bool isOK = false;
-            double d = cellInput.getCellEditText(0).toDouble(&isOK);
-            if(!isOK)
-            {
-                return;
-            }
-
-            SAValueTableOptEditValueCommand* cmd = new SAValueTableOptEditValueCommand(data
-                                                                                             ,model
-                                                                                             ,{var}
-                                                                                             ,{d}
-                                                                                             ,r
-                                                                                             ,c);
-            cmd->setText(tr("edit value:%1").arg(data->getName()));
-            m_undoStack->push(cmd);
-
-//            if(r==model->dataRowCount()-1)
-//            {
-//                model->update();
-//            }
-            return;
-        }
-        else
-        {
-            //根据类型设定文字显示
-            switch(data->getType())
-            {
-            case SA::VectorPoint:
-            {
-                if(2 != dataDim2Size)
-                    return;
-                cellInput.setCellTitleText(0,tr("x"));
-                cellInput.setCellTitleText(1,tr("y"));
-                cellInput.setCellEditText(0,model->data(model->index(r,colStart)).toString());
-                cellInput.setCellEditText(1,model->data(model->index(r,colStart+1)).toString());
-                cellInput.setCellWidth(0,ui->tableView->columnWidth(colStart));
-                cellInput.setCellWidth(1,ui->tableView->columnWidth(colStart+1));
-                cellInput.exec();
-                if(!cellInput.isAcceptInput())
-                {
-                    return;
-                }
-                bool isOK = false;
-                double x = cellInput.getCellEditText(0).toDouble(&isOK);
-                if(!isOK)
-                {
-                    return;
-                }
-                double y = cellInput.getCellEditText(1).toDouble(&isOK);
-                if(!isOK)
-                {
-                    return;
-                }
-                SAVectorPointF* vd = static_cast<SAVectorPointF*>(data);
-                if(r < vd->getSize())
-                {
-                    vd->set(r,QPointF(x,y));
-                }
-                else if(r == vd->getSize())
-                {
-                    vd->append(QPointF(x,y));
-                }
-
-                break;
-            }
-            default:
-                return;
-            }
-        }
-    }
 }
 ///
 /// \brief 变量删除发出的信号
@@ -365,69 +217,140 @@ void SAValueTableWidget::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDel
 ///
 bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
 {
-    qDebug() << "setData";
     SADataTableModel* model = getDataModel();
     SAAbstractDatas* d = model->columnToData(c);
+
     if(nullptr == d)
     {
         return false;
     }
-    if(d->getDim() < SA::Dim2)
-    {
-        //对于小于2维的直接设置
-        bool isOK = d->setAt(v,{r,c});
-        if(isOK && r==model->rowCount()-1)
-        {
-            model->update();
-        }
-        return isOK;
-    }
-    else
-    {
-        //对于2维数据要特殊处理
-        if(d->getDim() == SA::Dim2)
-        {
-            if(SA::TableVariant == d->getType() || SA::TableDouble == d->getType())
-            {
-                //表格
-            }
-            else
-            {
-                qDebug() << "============";
-                int colStart=-1,colEnd=-1;
-                model->dataColumnRange(d,colStart,colEnd);
-                if(-1 == colStart || -1 == colEnd)
-                {
-                    return false;
-                }
-                QPoint leftTop,rightBottom;
-                leftTop.rx() = ui->tableView->columnViewportPosition(colStart);
-                rightBottom.rx() = ui->tableView->columnViewportPosition(colEnd);
-                int tmp = ui->tableView->columnWidth(colEnd);
-                rightBottom.rx() += tmp;
-                leftTop.ry() = ui->tableView->rowViewportPosition(r);
-                tmp = ui->tableView->rowHeight(r);
-                rightBottom.ry() = leftTop.y() + tmp;
-                if(tmp < 16 || tmp > 30)
-                {
-                    tmp = 16;
-                }
-                leftTop.ry() -= tmp;
-                leftTop = ui->tableView->mapToGlobal(leftTop);
-                rightBottom = ui->tableView->mapToGlobal(rightBottom);
-                int dataDim2Size = d->getSize(SA::Dim2);
-                SACellInputWidget cellInput;
-                cellInput.resizeCells(dataDim2Size);
-                cellInput.setGeometry(QRect(leftTop,rightBottom));
 
-                qDebug() << "SACellInputWidget Geometry"<<cellInput.geometry();
-                cellInput.exec();
-                return false;
-            }
+    SAValueTableOptEditValueCommand* cmd = new SAValueTableOptEditValueCommand(d
+                                                                               ,model
+                                                                               ,{v}
+                                                                               ,r
+                                                                               ,c
+                                                                               );
+    cmd->setText(tr("[\"%1\"]set data").arg(d->getName()));
+    m_undoStack->push(cmd);
+    return true;
+}
 
-        }
+void SAValueTableWidget::appendVectorPointFData(SAAbstractDatas* data,const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    if(r != data->getSize(SA::Dim1))
+    {
+        return;
     }
-    return false;
+    SADataTableModel* model = getDataModel();
+    SACellInputWidget cellInput;
+    initCellInputWidget(&cellInput,data,index);
+    cellInput.exec();
+    if(!cellInput.isAcceptInput())
+    {
+        return;
+    }
+    bool isOK = false;
+    double x = cellInput.getCellEditText(0).toDouble(&isOK);
+    if(!isOK)
+    {
+        return;
+    }
+    double y = cellInput.getCellEditText(1).toDouble(&isOK);
+    if(!isOK)
+    {
+        return;
+    }
+    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
+                ,model
+                ,{x,y}
+                ,r
+                ,c
+                );
+    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
+    m_undoStack->push(cmd);
+}
+
+void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractDatas* data,const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    SADataTableModel* model = getDataModel();
+    QHeaderView* verticalHeader = ui->tableView->verticalHeader();
+    QHeaderView* horizontalHeader = ui->tableView->horizontalHeader();
+    QPoint offset(verticalHeader->width(),horizontalHeader->height());
+    int colStart=-1,colEnd=-1;
+    model->dataColumnRange(data,colStart,colEnd);
+    if(-1 == colStart || -1 == colEnd)
+    {
+        return;
+    }
+    //特殊的处理
+    if(SA::TableVariant == data->getType() || SA::TableDouble == data->getType())
+    {
+        QPoint leftTop,rightBottom;
+        leftTop.setX(ui->tableView->columnViewportPosition(c));
+        leftTop.setY(ui->tableView->rowViewportPosition(r));
+        rightBottom.setX(leftTop.x()+ui->tableView->columnWidth(c));
+        rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
+        int tmp = ui->tableView->rowHeight(r);
+        if(tmp < 20 || tmp > 30)
+        {
+            tmp = 20;
+        }
+        leftTop.ry() -= tmp;
+        leftTop = ui->tableView->mapToGlobal(leftTop);
+        rightBottom = ui->tableView->mapToGlobal(rightBottom);
+        leftTop += offset;
+        rightBottom += offset;
+        int buttonAreaWidth = w->getButtonAreaWidth();
+        rightBottom.rx() += buttonAreaWidth;
+        w->setGeometry(QRect(leftTop,rightBottom));
+        w->resizeCells(1);
+        return;
+    }
+
+    QPoint leftTop,rightBottom;
+    leftTop.setX(ui->tableView->columnViewportPosition(colStart));
+    leftTop.setY(ui->tableView->rowViewportPosition(r));
+    rightBottom.setX(ui->tableView->columnViewportPosition(colEnd)+ui->tableView->columnWidth(colEnd));
+    rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
+    int tmp = ui->tableView->rowHeight(r);
+    if(tmp < 20 || tmp > 30)
+    {
+        tmp = 20;
+    }
+    leftTop.ry() -= tmp;
+    leftTop = ui->tableView->mapToGlobal(leftTop);
+    rightBottom = ui->tableView->mapToGlobal(rightBottom);
+    leftTop += offset;
+    rightBottom += offset;
+    int buttonAreaWidth = w->getButtonAreaWidth();
+    rightBottom.rx() += buttonAreaWidth;
+    w->setGeometry(QRect(leftTop,rightBottom));
+
+    int dataDim2Size = data->getSize(SA::Dim2);
+    if(dataDim2Size < 1)
+    {
+        dataDim2Size = 1;
+    }
+    w->resizeCells(dataDim2Size);
+
+    switch(data->getType())
+    {
+    case SA::VectorPoint:
+    {
+        w->setCellTitleText(0,tr("x"));
+        w->setCellTitleText(1,tr("y"));
+        w->setCellEditText(0,model->data(model->index(r,colStart)).toString());
+        w->setCellEditText(1,model->data(model->index(r,colStart+1)).toString());
+        w->setCellWidth(0,ui->tableView->columnWidth(colStart));
+        w->setCellWidth(1,ui->tableView->columnWidth(colStart+1));
+        break;
+    }
+    }
 }
 ///
 /// \brief 表格控件处理按下ctrl + v
@@ -468,12 +391,12 @@ void SAValueTableWidget::getSelectLinerData(QHash<int, QVector<double> > &rawDat
 
         if(rawData.contains (col))
         {
-            appendDataFromVariant(indexs[i].data (),rawData[col]);
+            doubleVectorAppendFromVariant(indexs[i].data (),rawData[col]);
         }
         else
         {
             QVector<double> temp;
-            appendDataFromVariant(indexs[i].data (),temp);
+            doubleVectorAppendFromVariant(indexs[i].data (),temp);
             rawData[col] = temp;
         }
     }
@@ -604,7 +527,7 @@ bool SAValueTableWidget::getSelectVectorPointData(SAVectorPointF* data)
     return (data->getSize ())>0;
 }
 
-void SAValueTableWidget::appendDataFromVariant(const QVariant &var, QVector<double> &data) const
+void SAValueTableWidget::doubleVectorAppendFromVariant(const QVariant &var, QVector<double> &data)
 {
     bool isOk = false;
     double d = var.toDouble (&isOk);

@@ -1,4 +1,4 @@
-#ifndef SAVALUETABLEOPTCOMMANDS_H
+﻿#ifndef SAVALUETABLEOPTCOMMANDS_H
 #define SAVALUETABLEOPTCOMMANDS_H
 #include "SACommonUIGlobal.h"
 #include <QUndoCommand>
@@ -15,11 +15,11 @@ public:
         ,m_model(model)
     {
     }
-    SAAbstractDatas* data() const
+    SAAbstractDatas* getDataPtr() const
     {
         return m_data;
     }
-    SADataTableModel* model() const
+    SADataTableModel* getModel() const
     {
         return m_model;
     }
@@ -27,16 +27,37 @@ private:
     SAAbstractDatas* m_data;
     SADataTableModel* m_model;
 };
-
 ///
-/// \brief 数值表格编辑命令
+/// \brief 数值编辑命令
 ///
 class SA_COMMON_UI_EXPORT SAValueTableOptEditValueCommand : public SAValueTableOptBaseCommand
 {
 public:
     SAValueTableOptEditValueCommand(SAAbstractDatas* data
+                                      , SADataTableModel* model
+                                       , const QVariant& newData
+                                       , int row
+                                       , int col
+                                       , QUndoCommand* par = Q_NULLPTR);
+    void redo();
+    void undo();
+private:
+    QVariant m_oldDatas;
+    QVariant m_newDatas;
+    int m_modelRow;
+    int m_modelCol;
+    int m_realRow;
+    int m_realCol;
+};
+
+///
+/// \brief 数值追加命令
+///
+class SA_COMMON_UI_EXPORT SAValueTableOptAppendValueCommand : public SAValueTableOptBaseCommand
+{
+public:
+    SAValueTableOptAppendValueCommand(SAAbstractDatas* data
                                        ,SADataTableModel* model
-                                       ,const QVariantList& oldDatas
                                        ,const QVariantList& newDatas
                                        ,int row
                                        ,int col
@@ -44,10 +65,15 @@ public:
     void redo();
     void undo();
 private:
-    QVariantList m_oldDatas;
+    void appendInVectorPoint();
+    void popBackVectorPoint();
+private:
     QVariantList m_newDatas;
-    int m_row;
-    int m_col;
+    int m_modelRow;
+    int m_modelCol;
+    int m_realRow;
+    int m_startCol;
+    int m_endCol;
 };
 
 #endif // SAVALUETABLEOPTCOMMANDS_H

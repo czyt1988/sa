@@ -1,4 +1,4 @@
-#ifndef SAVECTORPOINTF_H
+﻿#ifndef SAVECTORPOINTF_H
 #define SAVECTORPOINTF_H
 
 #include "SAVectorDatas.h"
@@ -39,6 +39,7 @@ public:
     //返回点序列值,若调调用dim1，将返回QVariant(QPointF),若调用(dim1,dim2)将返回QVariant(double)
     virtual QVariant getAt(const std::initializer_list<size_t>& index) const;
     virtual QString displayAt(const std::initializer_list<size_t>& index) const;
+    virtual bool setAt(const QVariant &val, const std::initializer_list<size_t> &index);
     void getYs(QVector<double>& data) const;
     void getXs(QVector<double>& data) const;
 

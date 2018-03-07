@@ -1,4 +1,4 @@
-#include "SAVectorPointF.h"
+﻿#include "SAVectorPointF.h"
 #include "SADataHeader.h"
 
 
@@ -50,13 +50,34 @@ QVariant SAVectorPointF::getAt(const std::initializer_list<size_t> &index) const
 {
     if(1 == index.size())
     {
-        return QVariant::fromValue<QPointF>(get (*index.begin()));
+        const QPointF& f = get (*index.begin());
+        return QVariant::fromValue<double>(f.x());
     }
-    else if(2 == index.size())
+    else if(index.size()>=2)
     {
         const QPointF& f = get (*index.begin());
-        size_t dim2 = *(index.begin()+1);
-        return ((0 == dim2) ? f.x() : f.y());
+        int c = *(index.begin()+1);
+        bool isZeroIndex = true;
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                isZeroIndex = false;
+                break;
+            }
+        }
+        if(!isZeroIndex)
+            return QVariant();
+
+        if(0 == c)
+        {
+            return f.x();
+        }
+        else if(1 == c)
+        {
+            return f.y();
+        }
+        return QVariant();
     }
     return QVariant();
 }
@@ -75,6 +96,47 @@ QString SAVectorPointF::displayAt(const std::initializer_list<size_t> &index) co
         return ((0 == dim2) ? QString::number(f.x()) : QString::number(f.y()));
     }
     return QString();
+}
+///
+/// \brief setAt(double,{row,col})此时可以作为一个二维表格设置double
+/// \param val
+/// \param index
+/// \return
+///
+bool SAVectorPointF::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    if(1 == index.size())
+    {
+        return SAVectorDatas<QPointF>::setAt(val,index);
+    }
+    else if(index.size()>=2)
+    {
+        bool isOK = false;
+        double d = val.toDouble(&isOK);
+        if(!isOK)
+            return false;
+        QPointF& f = get (*index.begin());
+        int c = *(index.begin()+1);
+        if(c >= 2)
+            return false;
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return false;
+            }
+        }
+        if(0 == c)
+        {
+            f.setX(d);
+        }
+        else if(1 == c)
+        {
+            f.setY(d);
+        }
+        return true;
+    }
+    return false;
 }
 
 void SAVectorPointF::getYs(QVector<double>& data) const

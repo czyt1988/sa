@@ -33,12 +33,17 @@ public:
     void removeDatas(const QList<SAAbstractDatas*>& datas);
     //判断是否为空
     bool isEmpty() const;
-    //设置处理setData时的函数指针
-    void setupSetDataFun(FUN_SET_DATA p);
     //根据列号获取对应的数据
     SAAbstractDatas* columnToData(int c);
     //根据数据获取对应的列范围
     void dataColumnRange(SAAbstractDatas* p,int& start,int &end);
+    ///
+    /// \brief setData时的函数指针
+    /// bool(int,int,const QVariant&)形式
+    ///
+    FUN_SET_DATA onSetDataFun;
+    //判断当前行列是否在数据范围里，而不是在空白处
+    bool isInDataRange(int row , int col) const;
 public:
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
     int columnCount(const QModelIndex &parent=QModelIndex()) const;
@@ -65,7 +70,6 @@ private:
     int m_columnCount;
     int m_columnShowMin;
     int m_rowShowMin;
-    FUN_SET_DATA m_funSetData;
     QList<SAAbstractDatas*> m_datas;
     QHash<int,SAAbstractDatas*> m_col2Ptr;
     QMultiHash<SAAbstractDatas*,int> m_ptr2Col;///记录指针对应的列表的所有列号，此用来加快删除速度

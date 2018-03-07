@@ -11,7 +11,7 @@ SADataTableModel::SADataTableModel(QObject* parent):QAbstractTableModel(parent)
   ,m_columnCount(0)
   ,m_columnShowMin(15)
   ,m_rowShowMin(35)
-  ,m_funSetData(nullptr)
+  ,onSetDataFun(nullptr)
 {
 }
 
@@ -114,10 +114,7 @@ bool SADataTableModel::isEmpty() const
     return (0 == m_datas.size());
 }
 
-void SADataTableModel::setupSetDataFun(SADataTableModel::FUN_SET_DATA p)
-{
-    m_funSetData = p;
-}
+
 ///
 /// \brief 根据列号获取对应数据指针
 /// \param c
@@ -143,6 +140,28 @@ void SADataTableModel::dataColumnRange(SAAbstractDatas *p, int &start, int &end)
         start = *(cols.begin());
         end = *(cols.end()-1);
     }
+}
+///
+/// \brief 判断当前行列是否在数据范围里，而不是在空白处
+/// \param row
+/// \param col
+/// \return
+///
+bool SADataTableModel::isInDataRange(int row, int col) const
+{
+    if(col < m_col2Ptr.size ())
+    {
+        SAAbstractDatas* d = m_col2Ptr.value(col,nullptr);
+        if(d)
+        {
+            int r = d->getSize(SA::Dim1);
+            if(row < r)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 const QList<SAAbstractDatas *> &SADataTableModel::getSADataPtrs() const
@@ -304,18 +323,13 @@ QVariant SADataTableModel::horizontalHeaderToDim2(int section, SAAbstractDatas *
 
 bool SADataTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(!index.isValid() || nullptr == m_funSetData || role != Qt::EditRole)
+    if(!index.isValid() || nullptr == onSetDataFun || role != Qt::EditRole)
     {
         return false;
     }
     const int col = index.column();
     const int row = index.row();
-    return m_funSetData(row,col,value);
-
-    if(col >= m_col2Ptr.size ())
-    {
-        return false;
-    }
+    return onSetDataFun(row,col,value);
 
 }
 
@@ -323,7 +337,14 @@ Qt::ItemFlags SADataTableModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid())
         return Qt::NoItemFlags;
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+    int col = index.column();
+    //只有在数据范围内的可以编辑
+    Qt::ItemFlags f = (Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    if(isInDataRange(index.row(),index.column()))
+    {
+        f |= Qt::ItemIsEditable;
+    }
+    return f;
 }
 ///
 /// \brief 数据区的行号 区别于rowCount是显示区的

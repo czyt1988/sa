@@ -16,7 +16,7 @@ class SAValueTableWidget;
 class SADataTableModel;
 class QTableView;
 class QWheelEvent;
-
+class SACellInputWidget;
 
 
 ///
@@ -43,6 +43,7 @@ public:
 protected:
     //获取model
     SADataTableModel* getDataModel() const;
+    void wheelEvent(QWheelEvent * event);
 private slots:
     //右键菜单
     void onTableViewCustomContextMenuRequested(const QPoint &pos);
@@ -56,17 +57,21 @@ private slots:
     void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
 private:
     bool setData(int r,int c,const QVariant& v);
+    //插入数据的处理
+    void appendVectorPointFData(SAAbstractDatas *data, const QModelIndex &index);
+    //初始化输入窗口
+    void initCellInputWidget(SACellInputWidget* w, SAAbstractDatas *data, const QModelIndex &index);
     void onTableViewCtrlV();
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
     bool getSelectVectorPointData(SAVectorPointF* data);
-    void appendDataFromVariant(const QVariant& var,QVector<double>& data) const;
     //获取选择的列值
     static void getItemSelectionColumns(QItemSelectionModel* selModel
                                          ,QMap<int,std::shared_ptr<QVector<QVariant> > >& res);
-    void wheelEvent(QWheelEvent * event);
     //解析剪切板的数据 返回按照tab分隔解析的字符表的尺寸
     QSize getClipboardTextTable(QVector<QStringList> &res);
+    //
+    static void doubleVectorAppendFromVariant(const QVariant& var,QVector<double>& data);
 private:
     Ui::SAValueTableWidget *ui;
     //OpenFileManager* m_values;

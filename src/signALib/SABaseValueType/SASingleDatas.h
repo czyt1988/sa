@@ -63,11 +63,24 @@ int SASingleDatas<DATA_TYPE>::getDim() const
 {
     return SA::Dim0;
 }
-
+///
+/// \brief getAt()或者getAt(0)getAt(0,0)或者getAt({0,0,0,0...,0})只要是0都可以获得数据
+/// \param index
+/// \return
+///
 template<typename DATA_TYPE>
 QVariant SASingleDatas<DATA_TYPE>::getAt(const std::initializer_list<size_t> &index) const
 {
-    if(0 == index.size())
+    bool isZeroIndex = true;
+    for(auto i=index.begin();i!=index.end();++i)
+    {
+        if(0!=*i)
+        {
+            isZeroIndex = false;
+            break;
+        }
+    }
+    if(isZeroIndex)
     {
         return QVariant::fromValue<DATA_TYPE>(m_d);
     }
