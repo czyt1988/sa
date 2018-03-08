@@ -71,6 +71,7 @@ private:
     void appendTableDoubleData(SAAbstractDatas *data, const QModelIndex &index);
     //初始化输入窗口
     void initCellInputWidget(SACellInputWidget* w, SAAbstractDatas *data, const QModelIndex &index);
+    //ctrl + v
     void onTableViewCtrlV();
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
@@ -79,7 +80,7 @@ private:
     static void getItemSelectionColumns(QItemSelectionModel* selModel
                                          ,QMap<int,std::shared_ptr<QVector<QVariant> > >& res);
     //解析剪切板的数据 返回按照tab分隔解析的字符表的尺寸
-    QSize getClipboardTextTable(QVector<QStringList> &res);
+    QSize getClipboardTextTable(QList<QVariantList> &res);
     //
     static void doubleVectorAppendFromVariant(const QVariant& var,QVector<double>& data);
 private:

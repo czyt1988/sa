@@ -1,9 +1,10 @@
-#include "SAUIHelper.h"
+﻿#include "SAUIHelper.h"
 #include "SAUIReflection.h"
 #include "SAUIInterface.h"
 #include "SAPropertySetDialog.h"
 #include "SAFigureWindow.h"
 #include <QApplication>
+
 #define TR(str)\
     QApplication::translate("SAUIHelper", str, 0)
 
@@ -38,4 +39,33 @@ QtVariantProperty *SAUIHelper::appenFigureListInPropertyDialog(SAPropertySetDial
                             ,selectIndex >= 0 ? (selectIndex+1) : 0
                                                 ,tooltips);
 
+}
+
+///
+/// \brief 从QModelIndexList获取排完序的列号
+/// \param indexs
+/// \return
+///
+QList<int> SAUIHelper::getColumnsFromModelList(const QModelIndexList &indexs)
+{
+    QList<int> res;
+    std::for_each(indexs.begin(),indexs.end(),[&res](const QModelIndex& i){
+        res.append(i.column());
+    });
+    std::sort(res.begin(),res.end());
+    return res;
+}
+///
+/// \brief 从QModelIndexList获取排完序的行号
+/// \param indexs
+/// \return
+///
+QList<int> SAUIHelper::getRowsFromModelList(const QModelIndexList &indexs)
+{
+    QList<int> res;
+    std::for_each(indexs.begin(),indexs.end(),[&res](const QModelIndex& i){
+        res.append(i.row());
+    });
+    std::sort(res.begin(),res.end());
+    return res;
 }

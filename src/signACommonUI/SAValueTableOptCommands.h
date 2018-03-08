@@ -2,6 +2,7 @@
 #define SAVALUETABLEOPTCOMMANDS_H
 #include "SACommonUIGlobal.h"
 #include <QUndoCommand>
+#include <QItemSelectionModel>
 #include "SADataTableModel.h"
 #include "SAAbstractDatas.h"
 ///
@@ -78,6 +79,45 @@ private:
     int m_realRow;
     int m_startCol;
     int m_endCol;
+};
+
+
+///
+/// \brief 处理文本粘贴功能
+/// 此命令需要进行isValid判断，因为有可能不符合粘贴要求
+///
+class SA_COMMON_UI_EXPORT SAValueTableOptPasteValueCommand : public SAValueTableOptBaseCommand
+{
+public:
+    SAValueTableOptPasteValueCommand(SAAbstractDatas* data
+                                     ,SADataTableModel* model
+                                     ,const QList<QVariantList>& clipboardTextTable
+                                     , const QSize& tableSize
+                                     , int startCol
+                                     , int endCol
+                                     , int startRow
+                                     , int endRow
+                                     ,QUndoCommand* par = Q_NULLPTR);
+    void redo();
+    void undo();
+    bool isValid() const;
+private:
+    void initVectorDouble(const QList<QVariantList> &clipboardTable, const QSize &tableSize);
+    static bool checkVarList(const QList<QVariantList> &varTable,int row,int col);
+private:
+    bool m_isvalid;
+    //新数据的区域定位
+    int m_startCol;
+    int m_endCol;
+    int m_startRow;
+    int m_endRow;
+    //旧数据区域定位
+    int m_oldEndRow;
+    int m_oldStartRow;
+    int m_oldEndCol;
+    int m_oldStartCol;
+    QList<QVariantList>& m_oldData;
+    QList<QVariantList>& m_newData;
 };
 
 #endif // SAVALUETABLEOPTCOMMANDS_H

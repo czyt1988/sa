@@ -17,7 +17,7 @@
 #include "SAWaitCursor.h"
 #include "SACsvStream.h"
 #include "SAValueTableOptCommands.h"
-
+#include "SAUIHelper.h"
 
 /////////////////////////////////////////////////
 
@@ -561,23 +561,67 @@ void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractData
 void SAValueTableWidget::onTableViewCtrlV()
 {
     SAWaitCursor waitCursor;
-    QVector<QStringList> paseredStringTable;
-    QSize tableSize = getClipboardTextTable(paseredStringTable);
+    QList<QVariantList> variantClipboardTable;
+    QSize tableSize = getClipboardTextTable(variantClipboardTable);
     if(!tableSize.isValid())
         return;
-    QModelIndex curIndex = ui->tableView->currentIndex();
-    if(!curIndex.isValid())
-        return;
     SADataTableModel* model = getDataModel();
+    QItemSelectionModel* selModel = ui->tableView->selectionModel();
+    if(nullptr == selModel || nullptr == model)
+        return;
+    //获取当前选择的列
+    QModelIndexList selColIndexs = selModel->selectedColumns();
 
-    //情况1 复制的内长度小于数据的第二维度，且小于第一维度
-    //考虑到使用ctrl+z 用命令模式
-//    SAAbstractDatas* data = model->columnToData(curIndex.column());
-//    if(nullptr == data)
-//        return;
-//    int colStart=-1,colEnd=-1;
-//    model->dataColumnRange(data,colStart,colEnd);
+    if(1 == selColIndexs.size())
+    {
+        //说明只选择了一个单元格
+        int col = selColIndexs[0].column();
+        int row = selColIndexs[0].row();
+        //获取对应的数据
+        SAAbstractDatas* data = model->columnToData(col);
+        if(nullptr == data)
+            return;
+        //获取这个数据在表格里的起始列和终止列
+        int startCol,endCol;
+        model->dataColumnRange(data,startCol,endCol);
+        if(-1 == startCol || -1 == endCol)
+            return;
+        //获取当前的选择的单元格对应的数据第二维的列数
+        col = col - startCol;
+        //获取当前数据的第二维维度
+        int dim2 = data->getSize(SA::Dim2);
+        //判断是否能复制
+        if(tableSize.width() > (dim2-col))
+        {
+            waitCursor.release();
+            QMessageBox::warning(this,tr("warning"),tr("can not paste in current data"));
+            return;
+        }
+        //可以复制执行复制命令
+        //提取剪切板里的内容到qvariant
+        QScopedPointer<SAValueTableOptPasteValueCommand> cmd = new SAValueTableOptPasteValueCommand(
+                    data
+                    ,model
+                    ,variantClipboardTable
+                    ,tableSize
+                    ,col
+                    ,col+tableSize.width()
+                    ,row
+                    ,row+tableSize.height()
+                    );
+        if(cmd->isValid())
+        {
+            m_undoStack->push(cmd.take());
+        }
+    }
+    else
+    {
+        //TODO:对于选中的区域表格进行复制，目前有空再实现
+        QList<int> selCols = SAUIHelper::getColumnsFromModelList(selColIndexs);
+        if(selCols.isEmpty())
+            return;
 
+    }
 }
 ///
 /// \brief 获取选中的线性数据
@@ -770,7 +814,7 @@ void SAValueTableWidget::wheelEvent(QWheelEvent *event)
     event->accept();
 }
 
-QSize SAValueTableWidget::getClipboardTextTable(QVector<QStringList > &res)
+QSize SAValueTableWidget::getClipboardTextTable(QList<QVariantList> &res)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString clipboardText = clipboard->text();
@@ -786,7 +830,11 @@ QSize SAValueTableWidget::getClipboardTextTable(QVector<QStringList > &res)
         QStringList listStr = line.split('\t');
         if(listStr.size() > maxColumn)
             maxColumn = listStr.size();
-        res.append(listStr);
+        QVariantList varList;
+        std::for_each(listStr.begin(),listStr.end(),[&varList](const QString& str){
+            varList.append(str);
+        });
+        res.append(varList);
         ++maxRow;
     }
     return QSize(maxColumn,maxRow);
