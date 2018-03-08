@@ -18,13 +18,46 @@ SAVectorInterval::SAVectorInterval(const QString &name, const QVector<QwtInterva
 }
 
 
-
+///
+/// \brief 2维数据 dim1为行。dim2第一列为value第二列为minValue，第三列为maxValue
+/// \param index
+/// \return
+///
 QVariant SAVectorInterval::getAt(const std::initializer_list<size_t> &index) const
 {
     if(1 == index.size())
     {
         const QwtIntervalSample& sam = get(*index.begin());
-        return QVariant::fromValue<QwtIntervalSample>(sam);
+        return QVariant::fromValue<double>(sam.value);
+    }
+    else if(index.size()>=2)
+    {
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return QVariant();
+            }
+        }
+        int r = (*index.begin());
+        if(r >= getValueDatas().size() || r<0)
+        {
+            return QVariant();
+        }
+        const QwtIntervalSample& sam = get(r);
+        int c = *(index.begin()+1);
+        if(0 == c)
+        {
+            return sam.value;
+        }
+        else if(1 == c)
+        {
+            return sam.interval.minValue();
+        }
+        else if(2 == c)
+        {
+            return sam.interval.maxValue();
+        }
     }
     return QVariant();
 }
@@ -36,6 +69,35 @@ QString SAVectorInterval::displayAt(const std::initializer_list<size_t> &index) 
         const QwtIntervalSample& sam = get(*index.begin());
         return QString("%1(%2,%3)").arg(sam.value).arg(sam.interval.minValue ()).arg(sam.interval.maxValue ());
     }
+    else if(index.size()>=2)
+    {
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return QString();
+            }
+        }
+        int r = (*index.begin());
+        if(r >= getValueDatas().size() || r<0)
+        {
+            return QString();
+        }
+        const QwtIntervalSample& sam = get(r);
+        int c = *(index.begin()+1);
+        if(0 == c)
+        {
+            return QString::number(sam.value);
+        }
+        else if(1 == c)
+        {
+            return QString::number(sam.interval.minValue());
+        }
+        else if(2 == c)
+        {
+            return QString::number(sam.interval.maxValue());
+        }
+    }
     return QString();
 }
 
@@ -46,6 +108,54 @@ void SAVectorInterval::write(QDataStream &out) const
     out << type;
     SAAbstractDatas::write(out);
     out << getValueDatas();
+}
+
+bool SAVectorInterval::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    if(1 == index.size())
+    {
+        return SAVectorDatas<QwtIntervalSample>::setAt(val,index);
+    }
+    else if(index.size()>=2)
+    {
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return false;
+            }
+        }
+        int r = *(index.begin());
+        if(r < 0 || r >  getValueDatas().size())
+        {
+            return false;
+        }
+        QwtIntervalSample& sam = get(r);
+        int c = *(index.begin()+1);
+        bool isOK = false;
+        double d = val.toDouble(&isOK);
+        if(!isOK)
+            return false;
+        if(0 == c)
+        {
+            sam.value = d;
+        }
+        else if(1 == c)
+        {
+            sam.interval.setMinValue(d);
+        }
+        else if(2 == c)
+        {
+            sam.interval.setMaxValue(d);
+        }
+        else
+        {
+            return false;
+        }
+        setDirty(true);
+        return true;
+    }
+    return false;
 }
 
 

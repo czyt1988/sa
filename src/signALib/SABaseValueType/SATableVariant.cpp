@@ -1,4 +1,4 @@
-#include "SATableVariant.h"
+﻿#include "SATableVariant.h"
 #include "SATableDouble.h"
 #include "SAVectorDouble.h"
 SATableVariant::SATableVariant()
@@ -99,5 +99,23 @@ bool SATableVariant::getRowDatas(int row, SAVectorDouble *res)
         }
     }
     return isSuccess;
+}
+
+bool SATableVariant::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    if(index.size() < 2)
+    {
+        return false;
+    }
+    for(auto i=index.begin()+2;i!=index.end();++i)
+    {
+        if(0 != *i)
+            return false;
+    }
+    int r = *(index.begin());
+    int c = *(index.begin()+1);
+    setTableData(r,c,val);
+    setDirty(true);
+    return true;
 }
 

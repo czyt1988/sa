@@ -1,4 +1,4 @@
-#ifndef SAVECTORVARIANT_H
+﻿#ifndef SAVECTORVARIANT_H
 #define SAVECTORVARIANT_H
 
 #include "SAVectorDatas.h"
@@ -16,7 +16,7 @@ public:
     virtual QString displayAt(const std::initializer_list<size_t>& index) const;
     void setVariantList(const QVariantList& var);
     virtual void write(QDataStream & out) const;
-
+    bool setAt(const QVariant &val, const std::initializer_list<size_t> &index);
 };
 
 #endif // SAVECTORVARIANT_H

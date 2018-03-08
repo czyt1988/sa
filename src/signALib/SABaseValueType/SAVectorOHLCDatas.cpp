@@ -1,4 +1,4 @@
-#include "SAVectorOHLCDatas.h"
+﻿#include "SAVectorOHLCDatas.h"
 #include "SADataHeader.h"
 SAVectorOHLCDatas::SAVectorOHLCDatas():SAVectorDatas<QwtOHLCSample>()
 {
@@ -28,9 +28,21 @@ QVariant SAVectorOHLCDatas::getAt(const std::initializer_list<size_t> &index) co
         const QwtOHLCSample& sam = get(*index.begin());
         return QVariant::fromValue<QwtOHLCSample>(sam);
     }
-    else if(2 == index.size())
+    else if(index.size()>=2)
     {
-        const QwtOHLCSample& sam = get(*index.begin());
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return QVariant();
+            }
+        }
+        int r = (*index.begin());
+        if(r >= getValueDatas().size() || r <0)
+        {
+            return QVariant();
+        }
+        const QwtOHLCSample& sam = get(r);
         switch(*(index.begin()+1))
         {
         case 0:return sam.time;
@@ -54,9 +66,21 @@ QString SAVectorOHLCDatas::displayAt(const std::initializer_list<size_t> &index)
                 .arg(sam.open).arg(sam.high).arg(sam.low).arg(sam.close)
                 ;
     }
-    else if(2 == index.size())
+    else if(index.size()>=2)
     {
-        const QwtOHLCSample& sam = get(*index.begin());
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return QString();
+            }
+        }
+        int r = (*index.begin());
+        if(r >= getValueDatas().size() || r <0)
+        {
+            return QString();
+        }
+        const QwtOHLCSample& sam = get(r);
         switch(*(index.begin()+1))
         {
         case 0:return QString::number(sam.time);
@@ -94,6 +118,49 @@ int SAVectorOHLCDatas::getSize(int dim) const
         return 5;
     }
     return 0;
+}
+
+bool SAVectorOHLCDatas::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    if(1 == index.size())
+    {
+        return SAVectorDatas<QwtOHLCSample>::setAt(val,index);
+    }
+    else if(index.size()>=2)
+    {
+        bool isOK = false;
+        double d = val.toDouble(&isOK);
+        if(!isOK)
+            return false;
+        int r = (*index.begin());
+        if(r >= getValueDatas().size()|| r <0)
+        {
+            return false;
+        }
+        QwtOHLCSample& f = get (r);
+        int c = *(index.begin()+1);
+        if(c >= 2)
+            return false;
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return false;
+            }
+        }
+        switch(*(index.begin()+1))
+        {
+        case 0:f.time = d;break;
+        case 1:f.open = d;break;
+        case 2:f.high = d;break;
+        case 3:f.low = d;break;
+        case 4:f.close = d;break;
+        default:return false;
+        }
+        setDirty(true);
+        return true;
+    }
+    return false;
 }
 
 QDataStream &operator<<(QDataStream &out, const QwtOHLCSample &item)

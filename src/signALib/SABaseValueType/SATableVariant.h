@@ -1,4 +1,4 @@
-#ifndef SATABLEVARIANT_H
+﻿#ifndef SATABLEVARIANT_H
 #define SATABLEVARIANT_H
 
 #include "SATableData.h"
@@ -22,6 +22,8 @@ public:
     bool getColumnDatas(int col, SAVectorDouble* res);
     //获取一行数据
     bool getRowDatas(int row, SAVectorDouble* res);
+    //设置数据
+    virtual bool setAt(const QVariant& val,const std::initializer_list<size_t>& index);
     //
     SA_TABLE_WRITE(SATableVariant)
 };

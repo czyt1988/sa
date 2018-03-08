@@ -26,6 +26,7 @@ public:
     virtual QVariant getAt (const std::initializer_list<size_t>& index) const;
     virtual QString displayAt(const std::initializer_list<size_t>& index) const;
     virtual void write(QDataStream & out) const;
+    virtual bool setAt(const QVariant &val, const std::initializer_list<size_t> &index);
 
 };
 Q_DECLARE_METATYPE(QwtIntervalSample)

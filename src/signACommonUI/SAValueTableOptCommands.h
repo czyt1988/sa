@@ -67,6 +67,10 @@ public:
 private:
     void appendInVectorPoint();
     void popBackVectorPoint();
+    void appendInVectorVariant();
+    void popBackVectorVariant();
+    void appendInTable();
+    void popFromTable();
 private:
     QVariantList m_newDatas;
     int m_modelRow;

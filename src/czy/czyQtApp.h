@@ -1,4 +1,4 @@
-#ifndef CZY_QTAPP_H
+﻿#ifndef CZY_QTAPP_H
 #define CZY_QTAPP_H
 #include <Qt>
 #include <QtWidgets/QApplication>
@@ -169,6 +169,32 @@ namespace czy{
                     m_rows = (row+1);
                 m_data.insert (qMakePair(row,col),d);
             }
+
+            void removeData(Index row,Index col)
+            {
+                int i = m_data.remove(qMakePair(row,col));
+                if(i <= 0)
+                    return;
+                if(col == m_columns || row == m_rows)
+                {
+                    //说明需要更新
+                    typename Table::const_iterator i = m_data.begin();
+                    typename Table::const_iterator end = m_data.end();
+                    Index maxRow(0),maxCol(0);
+                    if(i == end)
+                        return;
+                    while(i != end)
+                    {
+                        if( maxRow  < i.key().first )
+                            maxRow = i.key().first;
+                        if(maxCol < i.key().second)
+                            maxCol = i.key().second;
+                        ++i;
+                    }
+                }
+
+            }
+
             ///
             /// \brief at 获取某行某列的内容
             /// \param r 行

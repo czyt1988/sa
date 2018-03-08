@@ -1,4 +1,4 @@
-#ifndef SAVECTOROHLCDATAS_H
+﻿#ifndef SAVECTOROHLCDATAS_H
 #define SAVECTOROHLCDATAS_H
 #define SA_QWT
 
@@ -25,6 +25,7 @@ public:
     virtual void write(QDataStream & out) const;
     virtual int getDim() const;
     virtual int getSize(int dim=SA::Dim1) const;
+    virtual bool setAt(const QVariant &val, const std::initializer_list<size_t> &index);
 };
 Q_DECLARE_METATYPE(QwtOHLCSample)
 SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const QwtOHLCSample & item);

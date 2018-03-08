@@ -32,7 +32,7 @@ int SAVectorPointF::getDim() const
     return SA::Dim2;
 }
 ///
-/// \brief 若调调用dim1，将返回QVariant(QPointF),若调用(dim1,dim2)将返回QVariant(double)
+/// \brief 若调调用dim1，,若调用(dim1,dim2)将返回QVariant(double)
 ///
 /// 如：
 /// \code
@@ -55,19 +55,20 @@ QVariant SAVectorPointF::getAt(const std::initializer_list<size_t> &index) const
     }
     else if(index.size()>=2)
     {
-        const QPointF& f = get (*index.begin());
-        int c = *(index.begin()+1);
-        bool isZeroIndex = true;
         for(auto i=(index.begin()+2);i!=index.end();++i)
         {
             if(0!=(*i))
             {
-                isZeroIndex = false;
-                break;
+                return QVariant();
             }
         }
-        if(!isZeroIndex)
+        int r = (*index.begin());
+        if(r >= getValueDatas().size()|| r <0)
+        {
             return QVariant();
+        }
+        const QPointF& f = get (r);
+        int c = *(index.begin()+1);
 
         if(0 == c)
         {
@@ -89,11 +90,30 @@ QString SAVectorPointF::displayAt(const std::initializer_list<size_t> &index) co
         const QPointF& f = get (*index.begin());
         return QString("%1,%2").arg(f.x()).arg(f.y());
     }
-    else if(2 == index.size())
+    else if(index.size()>=2)
     {
-        const QPointF& f = get (*index.begin());
-        size_t dim2 = *(index.begin()+1);
-        return ((0 == dim2) ? QString::number(f.x()) : QString::number(f.y()));
+        for(auto i=(index.begin()+2);i!=index.end();++i)
+        {
+            if(0!=(*i))
+            {
+                return QString();
+            }
+        }
+        int r = (*index.begin());
+        if(r >= getValueDatas().size() || r <0)
+        {
+            return QString();
+        }
+        const QPointF& f = get (r);
+        int c = *(index.begin()+1);
+        if(0 == c)
+        {
+            return QString::number(f.x());
+        }
+        else if(1 == c)
+        {
+            return QString::number(f.y());
+        }
     }
     return QString();
 }
@@ -115,7 +135,13 @@ bool SAVectorPointF::setAt(const QVariant &val, const std::initializer_list<size
         double d = val.toDouble(&isOK);
         if(!isOK)
             return false;
-        QPointF& f = get (*index.begin());
+        int r = (*index.begin());
+
+        if(r >= getValueDatas().size()|| r <0)
+        {
+            return false;
+        }
+        QPointF& f = get (r);
         int c = *(index.begin()+1);
         if(c >= 2)
             return false;
@@ -134,7 +160,9 @@ bool SAVectorPointF::setAt(const QVariant &val, const std::initializer_list<size
         {
             f.setY(d);
         }
+        setDirty(true);
         return true;
+
     }
     return false;
 }

@@ -6,6 +6,8 @@
 #include "SADataHeader.h"
 #include "SAVectorVariant.h"
 #include "SAVectorDatas.h"
+#include <QDebug>
+
 #ifndef SA_TABLE_WRITE
 #define SA_TABLE_WRITE(className) \
     virtual void write(QDataStream &out) const\
@@ -39,11 +41,15 @@ public:
     virtual void setDirty(bool dirty);
     //根据类型判断是否是数据,如nan就返回true，如空的一维数据都返回true
     virtual bool isEmpty() const;
+    //设置数据
+    virtual bool setAt(const QVariant& val,const std::initializer_list<size_t>& index);
 public:
     bool isHaveData(uint r,uint c) const;
     void setTableData(uint row,uint col,const T& d);
     const T getValue(uint r,uint c) const;
     T& getValue(uint r,uint c);
+    //删除一个数据
+    void removeTableData(uint r,uint c);
     int rowCount() const;
     int columnCount() const{return m_table.columnCount ();}
     //Table& getTable(){return m_table;}
@@ -179,6 +185,16 @@ T &SATableData<T>::getValue(uint r, uint c)
     return m_table.at (r,c);
 }
 ///
+/// \brief 删除一个数据
+/// \param r
+/// \param c
+///
+template<typename T>
+void SATableData<T>::removeTableData(uint r, uint c)
+{
+    m_table.removeData(r,c);
+}
+///
 /// \brief 行数
 /// \return
 ///
@@ -252,6 +268,30 @@ template<typename T>
 bool SATableData<T>::isEmpty() const
 {
     return ((0 == m_table.columnCount()) && (0 == m_table.rowCount()));
+}
+
+template<typename T>
+bool SATableData<T>::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
+{
+    if(index.size() < 2)
+    {
+        return false;
+    }
+    for(auto i=index.begin()+2;i!=index.end();++i)
+    {
+        if(0 != *i)
+            return false;
+    }
+    if(!val.canConvert<T>())
+    {
+        qDebug() << "SATableData<T> setAt: variant can not cover type";
+        return false;
+    }
+    int r = *(index.begin());
+    int c = *(index.begin()+1);
+    setTableData(r,c,val.value<T>());
+    setDirty(true);
+    return true;
 }
 #if 0
 template<typename T>

@@ -165,20 +165,18 @@ int SAVectorDatas<T>::getSize(int dim) const {
 template<typename T>
 QVariant SAVectorDatas<T>::getAt(const std::initializer_list<size_t> &index) const
 {
+    if(0 == index.size())
+        return QVariant();
     if(1 == index.size())
         return QVariant::fromValue<T>(get(*index.begin()));
-    bool isZeroIndex = true;
     for(auto i=(index.begin()+1);i!=index.end();++i)
     {
         if(0!=*i)
         {
-            isZeroIndex = false;
-            break;
+            return QVariant();
         }
     }
-    if(isZeroIndex)
-        return QVariant::fromValue<T>(get(*index.begin()));
-    return QVariant();
+    return QVariant::fromValue<T>(get(*index.begin()));
 }
 
 template<typename T>

@@ -194,6 +194,31 @@ void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
         appendVectorPointFData(data,index);
         break;
     }
+    case SA::VectorDouble:
+    {
+        appendVectorDoubleData(data,index);
+        break;
+    }
+    case SA::VectorInt:
+    {
+        appendVectorIntData(data,index);
+        break;
+    }
+    case SA::VectorVariant:
+    {
+        appendVectorVariantData(data,index);
+        break;
+    }
+    case SA::TableVariant:
+    {
+        appendTableVariantData(data,index);
+        break;
+    }
+    case SA::TableDouble:
+    {
+        appendTableDoubleData(data,index);
+        break;
+    }
     default:
         return;
  }
@@ -209,7 +234,7 @@ void SAValueTableWidget::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDel
     model->removeDatas(dataBeDeletedPtr);
 }
 ///
-/// \brief 设置数据
+/// \brief 设置数据,此函数将设置到model的setData函数里
 /// \param r
 /// \param c
 /// \param v
@@ -235,7 +260,11 @@ bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
     m_undoStack->push(cmd);
     return true;
 }
-
+///
+/// \brief 在VectorPointF插入新数据
+/// \param data
+/// \param index
+///
 void SAValueTableWidget::appendVectorPointFData(SAAbstractDatas* data,const QModelIndex &index)
 {
     int r = index.row();
@@ -266,6 +295,169 @@ void SAValueTableWidget::appendVectorPointFData(SAAbstractDatas* data,const QMod
     SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
                 ,model
                 ,{x,y}
+                ,r
+                ,c
+                );
+    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
+    m_undoStack->push(cmd);
+}
+///
+/// \brief 在VectorDouble插入新数据
+/// \param data
+/// \param index
+///
+void SAValueTableWidget::appendVectorDoubleData(SAAbstractDatas *data, const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    if(r != data->getSize(SA::Dim1))
+    {
+        return;
+    }
+    SADataTableModel* model = getDataModel();
+    SACellInputWidget cellInput;
+    initCellInputWidget(&cellInput,data,index);
+    cellInput.exec();
+    if(!cellInput.isAcceptInput())
+    {
+        return;
+    }
+    bool isOK = false;
+    double d = cellInput.getCellEditText(0).toDouble(&isOK);
+    if(!isOK)
+    {
+        return;
+    }
+    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
+                ,model
+                ,{d}
+                ,r
+                ,c
+                );
+    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
+    m_undoStack->push(cmd);
+}
+///
+/// \brief 在VectorInt插入新数据
+/// \param data
+/// \param index
+///
+void SAValueTableWidget::appendVectorIntData(SAAbstractDatas *data, const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    if(r != data->getSize(SA::Dim1))
+    {
+        return;
+    }
+    SADataTableModel* model = getDataModel();
+    SACellInputWidget cellInput;
+    initCellInputWidget(&cellInput,data,index);
+    cellInput.exec();
+    if(!cellInput.isAcceptInput())
+    {
+        return;
+    }
+    bool isOK = false;
+    int d = cellInput.getCellEditText(0).toInt(&isOK);
+    if(!isOK)
+    {
+        return;
+    }
+    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
+                ,model
+                ,{d}
+                ,r
+                ,c
+                );
+    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
+    m_undoStack->push(cmd);
+}
+///
+/// \brief 在VectorVariant插入新数据
+/// \param data
+/// \param index
+///
+void SAValueTableWidget::appendVectorVariantData(SAAbstractDatas *data, const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    if(r != data->getSize(SA::Dim1))
+    {
+        return;
+    }
+    SADataTableModel* model = getDataModel();
+    SACellInputWidget cellInput;
+    initCellInputWidget(&cellInput,data,index);
+    cellInput.exec();
+    if(!cellInput.isAcceptInput())
+    {
+        return;
+    }
+    QString str = cellInput.getCellEditText(0);
+    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
+                ,model
+                ,{str}
+                ,r
+                ,c
+                );
+    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
+    m_undoStack->push(cmd);
+}
+
+void SAValueTableWidget::appendTableVariantData(SAAbstractDatas *data, const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    if(r != data->getSize(SA::Dim1))
+    {
+        return;
+    }
+    SADataTableModel* model = getDataModel();
+    SACellInputWidget cellInput;
+    initCellInputWidget(&cellInput,data,index);
+    cellInput.exec();
+    if(!cellInput.isAcceptInput())
+    {
+        return;
+    }
+    QString str = cellInput.getCellEditText(0);
+    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
+                ,model
+                ,{str}
+                ,r
+                ,c
+                );
+    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
+    m_undoStack->push(cmd);
+}
+
+void SAValueTableWidget::appendTableDoubleData(SAAbstractDatas *data, const QModelIndex &index)
+{
+    int r = index.row();
+    int c = index.column();
+    if(r != data->getSize(SA::Dim1))
+    {
+        return;
+    }
+    SADataTableModel* model = getDataModel();
+    SACellInputWidget cellInput;
+    initCellInputWidget(&cellInput,data,index);
+    cellInput.exec();
+    if(!cellInput.isAcceptInput())
+    {
+        return;
+    }
+    bool isOK = false;
+    int d = cellInput.getCellEditText(0).toInt(&isOK);
+    if(!isOK)
+    {
+        return;
+    }
+
+    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
+                ,model
+                ,{d}
                 ,r
                 ,c
                 );
@@ -349,6 +541,17 @@ void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractData
         w->setCellWidth(0,ui->tableView->columnWidth(colStart));
         w->setCellWidth(1,ui->tableView->columnWidth(colStart+1));
         break;
+    }
+    default:
+    {
+        for(int i=0;i<dataDim2Size;++i)
+        {
+            if(i+colStart<model->columnCount())
+            {
+                int colWidth = ui->tableView->columnWidth(i+colStart);
+                w->setCellWidth(i,colWidth);
+            }
+        }
     }
     }
 }
