@@ -2,6 +2,7 @@
 #define SATABLEVIEW_H
 #include "SACommonUIGlobal.h"
 #include <QTableView>
+#include <functional>
 class QKeyEvent;
 ///
 /// \brief SA 数据表格的封装
@@ -15,6 +16,9 @@ class SA_COMMON_UI_EXPORT SATableView : public QTableView
     Q_OBJECT
 public:
     SATableView(QWidget* par = Q_NULLPTR);
+    typedef std::function<void()> FunPtr;
+    FunPtr onCtrlVFun;///< ctrl + v的函数指针
+    FunPtr onCtrlCFun;///< ctrl + c的函数指针
 protected:
     void keyPressEvent(QKeyEvent *e);
     //处理ctrl+c事件

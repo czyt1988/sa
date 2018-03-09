@@ -3,8 +3,11 @@
 #include "SACommonUIGlobal.h"
 #include <QUndoCommand>
 #include <QItemSelectionModel>
-#include "SADataTableModel.h"
-#include "SAAbstractDatas.h"
+#include <QVariant>
+#include <QList>
+class SADataTableModel;
+class SAAbstractDatas;
+class SAVectorDouble;
 ///
 /// \brief sa 数值表格操作类命令基类
 ///
@@ -16,6 +19,7 @@ public:
         ,m_model(model)
     {
     }
+
     SAAbstractDatas* getDataPtr() const
     {
         return m_data;
@@ -82,42 +86,50 @@ private:
 };
 
 
+class SA_COMMON_UI_EXPORT SAValueTableOptPasteBaseCommand : public SAValueTableOptBaseCommand
+{
+public:
+    SAValueTableOptPasteBaseCommand(SAAbstractDatas* data
+                                     ,SADataTableModel* model
+                                     ,QUndoCommand* par = Q_NULLPTR);
+    virtual bool isValid() const = 0;
+    static bool checkVarList(const QList<QVariantList> &varTable,int row,int col);
+protected:
+    virtual void init(const QList<QVariantList> &clipboardTable) = 0;
+
+};
 ///
 /// \brief 处理文本粘贴功能
 /// 此命令需要进行isValid判断，因为有可能不符合粘贴要求
 ///
-class SA_COMMON_UI_EXPORT SAValueTableOptPasteValueCommand : public SAValueTableOptBaseCommand
+class SA_COMMON_UI_EXPORT SAValueTableOptPasteDoubleVectorCommand : public SAValueTableOptPasteBaseCommand
 {
 public:
-    SAValueTableOptPasteValueCommand(SAAbstractDatas* data
-                                     ,SADataTableModel* model
-                                     ,const QList<QVariantList>& clipboardTextTable
-                                     , const QSize& tableSize
-                                     , int startCol
-                                     , int endCol
+    SAValueTableOptPasteDoubleVectorCommand(SAAbstractDatas* data
+                                     , SADataTableModel* model
+                                     , const QList<QVariantList>& clipboardTextTable
                                      , int startRow
-                                     , int endRow
-                                     ,QUndoCommand* par = Q_NULLPTR);
+                                     , QUndoCommand* par = Q_NULLPTR);
+    bool isValid() const;
     void redo();
     void undo();
-    bool isValid() const;
 private:
-    void initVectorDouble(const QList<QVariantList> &clipboardTable, const QSize &tableSize);
+    void init(const QList<QVariantList> &clipboardTable);
     static bool checkVarList(const QList<QVariantList> &varTable,int row,int col);
+    void appendValue(SAAbstractDatas *data);
+    void appendVectorDouble(SAVectorDouble* data,int startIndex);
 private:
     bool m_isvalid;
     //新数据的区域定位
-    int m_startCol;
-    int m_endCol;
     int m_startRow;
     int m_endRow;
     //旧数据区域定位
     int m_oldEndRow;
     int m_oldStartRow;
-    int m_oldEndCol;
-    int m_oldStartCol;
-    QList<QVariantList>& m_oldData;
-    QList<QVariantList>& m_newData;
+    //
+    bool m_isOldDirty;
+    QVector<double> m_oldData;
+    QVector<double> m_newData;
 };
 
 #endif // SAVALUETABLEOPTCOMMANDS_H

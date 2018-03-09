@@ -6,6 +6,8 @@
 #include <QTextStream>
 
 SATableView::SATableView(QWidget *par):QTableView(par)
+    ,onCtrlVFun(nullptr)
+    ,onCtrlCFun(nullptr)
 {
 
 }
@@ -29,6 +31,11 @@ void SATableView::keyPressEvent(QKeyEvent *e)
 ///
 void SATableView::onCtrlCPressed()
 {
+    if(onCtrlCFun)
+    {
+        onCtrlCFun();
+        return;
+    }
     QItemSelectionModel *selModel = selectionModel();
     if(!selModel || !(selModel->hasSelection()))
     {
@@ -77,6 +84,11 @@ void SATableView::onCtrlCPressed()
 ///
 void SATableView::onCtrlVPressed()
 {
+    if(onCtrlVFun)
+    {
+        onCtrlVFun();
+        return;
+    }
     QClipboard *clipboard = QApplication::clipboard();
     if(nullptr == clipboard)
     {

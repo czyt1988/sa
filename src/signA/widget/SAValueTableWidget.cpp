@@ -18,7 +18,7 @@
 #include "SACsvStream.h"
 #include "SAValueTableOptCommands.h"
 #include "SAUIHelper.h"
-
+#include "SALog.h"
 /////////////////////////////////////////////////
 
 SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
@@ -41,9 +41,10 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     {
         plotLayerVerticalHeader->setDefaultSectionSize(19);
     }
-    ui->tableView->setCtrlVFunPtr([&](){
+    ui->tableView->onCtrlVFun = [&]()
+    {
         this->onTableViewCtrlV();
-    });
+    };
 
     connect(ui->tableView,&QTableView::customContextMenuRequested
             ,this,&SAValueTableWidget::onTableViewCustomContextMenuRequested);
@@ -564,14 +565,16 @@ void SAValueTableWidget::onTableViewCtrlV()
     QList<QVariantList> variantClipboardTable;
     QSize tableSize = getClipboardTextTable(variantClipboardTable);
     if(!tableSize.isValid())
+    {
+        saPrint() << "Clipboard text size is valid";
         return;
+    }
     SADataTableModel* model = getDataModel();
     QItemSelectionModel* selModel = ui->tableView->selectionModel();
     if(nullptr == selModel || nullptr == model)
         return;
     //获取当前选择的列
-    QModelIndexList selColIndexs = selModel->selectedColumns();
-
+    QModelIndexList selColIndexs = selModel->selectedIndexes();
     if(1 == selColIndexs.size())
     {
         //说明只选择了一个单元格
@@ -598,29 +601,41 @@ void SAValueTableWidget::onTableViewCtrlV()
             return;
         }
         //可以复制执行复制命令
-        //提取剪切板里的内容到qvariant
-        QScopedPointer<SAValueTableOptPasteValueCommand> cmd = new SAValueTableOptPasteValueCommand(
-                    data
-                    ,model
-                    ,variantClipboardTable
-                    ,tableSize
-                    ,col
-                    ,col+tableSize.width()
-                    ,row
-                    ,row+tableSize.height()
-                    );
+        QScopedPointer<SAValueTableOptPasteBaseCommand> cmd;
+        switch(data->getType())
+        {
+        case SA::VectorDouble:
+        {
+            cmd.reset(new SAValueTableOptPasteDoubleVectorCommand(
+                        data
+                        ,model
+                        ,variantClipboardTable
+                        ,row
+                        ));
+        }
+        default:
+            break;
+        }
+        if(cmd.isNull())
+           return;
         if(cmd->isValid())
         {
+            saPrint() << "success paste value";
+            cmd->setText(tr("paste datas"));
             m_undoStack->push(cmd.take());
+            model->update();
+        }
+        else
+        {
+            saPrint() << "can not paste value";
         }
     }
     else
     {
-        //TODO:对于选中的区域表格进行复制，目前有空再实现
-        QList<int> selCols = SAUIHelper::getColumnsFromModelList(selColIndexs);
-        if(selCols.isEmpty())
-            return;
-
+        waitCursor.release();
+        saPrint() << "current no support selection region paste";
+        QMessageBox::warning(this,tr("warning"),tr("please select one table item to start paste"));
+        return;
     }
 }
 ///
