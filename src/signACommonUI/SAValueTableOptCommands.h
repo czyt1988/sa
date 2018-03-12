@@ -94,6 +94,17 @@ public:
                                      ,QUndoCommand* par = Q_NULLPTR);
     virtual bool isValid() const = 0;
     static bool checkVarList(const QList<QVariantList> &varTable,int row,int col);
+    template<typename T>
+    static bool safeGetValue(const QVariant &v,T& val)
+    {
+        if(!v.canConvert<T>())
+        {
+            return false;
+        }
+        val = v.value<T>();
+        return true;
+    }
+
 protected:
     virtual void init(const QList<QVariantList> &clipboardTable) = 0;
 
@@ -115,9 +126,6 @@ public:
     void undo();
 private:
     void init(const QList<QVariantList> &clipboardTable);
-    static bool checkVarList(const QList<QVariantList> &varTable,int row,int col);
-    void appendValue(SAAbstractDatas *data);
-    void appendVectorDouble(SAVectorDouble* data,int startIndex);
 private:
     bool m_isvalid;
     //新数据的区域定位
@@ -131,5 +139,41 @@ private:
     QVector<double> m_oldData;
     QVector<double> m_newData;
 };
+///
+/// \brief 处理文本粘贴功能
+/// 此命令需要进行isValid判断，因为有可能不符合粘贴要求
+///
+class SA_COMMON_UI_EXPORT SAValueTableOptPastePointFVectorCommand : public SAValueTableOptPasteBaseCommand
+{
+public:
+    SAValueTableOptPastePointFVectorCommand(SAAbstractDatas* data
+                                     , SADataTableModel* model
+                                     , const QList<QVariantList>& clipboardTextTable
+                                     , const QSize& tableSize
+                                     , int startRow
+                                     , int startCol
+                                     , QUndoCommand* par = Q_NULLPTR);
+    bool isValid() const;
+    void redo();
+    void undo();
+private:
+    void init(const QList<QVariantList> &clipboardTable);
+private:
+    bool m_isvalid;
+    //新数据的区域定位
+    int m_startRow;
+    int m_endRow;
+    int m_startCol;
+    int m_endCol;
+    //旧数据区域定位
+    int m_oldEndRow;
+    int m_oldStartRow;
+    //
+    bool m_isOldDirty;
+    QVector<QPointF> m_oldData;
+    QVector<QPointF> m_newData;
+};
+
+//TODO其他的粘贴操作以及返回选中的范围功能的添加
 
 #endif // SAVALUETABLEOPTCOMMANDS_H

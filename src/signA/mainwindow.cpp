@@ -1099,8 +1099,10 @@ void MainWindow::onActionNewChartTriggered()
 ///
 void MainWindow::onActionAddLineChartTriggered()
 {
-    m_drawDelegate->drawLineWithWizard();
-    raiseMainDock();
+    if(m_drawDelegate->drawLineWithWizard())
+    {
+        raiseMainDock();
+    }
 
 }
 ///

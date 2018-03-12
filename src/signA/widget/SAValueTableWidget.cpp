@@ -605,14 +605,23 @@ void SAValueTableWidget::onTableViewCtrlV()
         switch(data->getType())
         {
         case SA::VectorDouble:
-        {
             cmd.reset(new SAValueTableOptPasteDoubleVectorCommand(
                         data
                         ,model
                         ,variantClipboardTable
                         ,row
                         ));
-        }
+            break;
+        case SA::VectorPoint:
+            cmd.reset(new SAValueTableOptPastePointFVectorCommand(
+                        data
+                        ,model
+                        ,variantClipboardTable
+                        ,tableSize
+                        ,row
+                        ,col
+                        ));
+            break;
         default:
             break;
         }
