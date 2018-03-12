@@ -63,7 +63,8 @@ HEADERS += \
     SADataTableModel.h \
     SAPopupWidget.h \
     SAWaitCursor.h \
-    SAValueTableOptCommands.h
+    SAValueTableOptCommands.h \
+    SAPlotDataModel.h
 
 SOURCES += \
     SAPropertySetDialog.cpp \
@@ -90,7 +91,8 @@ SOURCES += \
     SATableView.cpp \
     SADataTableModel.cpp \
     SAPopupWidget.cpp \
-    SAValueTableOptCommands.cpp
+    SAValueTableOptCommands.cpp \
+    SAPlotDataModel.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

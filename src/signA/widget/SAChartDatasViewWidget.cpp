@@ -1,7 +1,7 @@
 ﻿#include "SAChartDatasViewWidget.h"
 #include "ui_SAChartDatasViewWidget.h"
 #include "SAPlotItemTreeModel.h"
-#include "QwtPlotItemDataModel.h"
+#include "SAPlotDataModel.h"
 #include "SAChart2D.h"
 #include "SAFigureWindow.h"
 SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
@@ -14,8 +14,12 @@ SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     ui->splitter->setStretchFactor(1,3);
     m_treeModel = new SAPlotItemTreeModel(this);
     ui->treeView->setModel(m_treeModel);
-    m_tableModel = new QwtPlotItemDataModel(this);
+    m_tableModel = new SAPlotDataModel(this);
     ui->tableView->setModel(m_tableModel);
+    ui->tableView->onCtrlVFun = [this](){
+        this->onCtrlVInTableView();
+    };
+
     QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
     if(plotLayerVerticalHeader)
     {
@@ -113,4 +117,9 @@ void SAChartDatasViewWidget::onChartAdded(QwtPlot *plot)
 void SAChartDatasViewWidget::onFigureDestroy(QObject *obj)
 {
     setFigure(nullptr);
+}
+
+void SAChartDatasViewWidget::onCtrlVInTableView()
+{
+
 }

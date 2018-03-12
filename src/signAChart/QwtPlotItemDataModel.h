@@ -7,6 +7,7 @@
 #include <vector>
 #include <qwt_plot_item.h>
 #include <limits>
+#define QwtPlotItemDataModel_Use_Dynamic_Cast 0
 ///
 /// \brief 显示item数据的tablemodel
 ///
@@ -20,9 +21,10 @@ public:
     void enableBackgroundColor(bool enable, int alpha = 30);
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     QVariant data(const QModelIndex &index, int role) const;
-    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    Qt::ItemFlags flags(const QModelIndex &index) const;
 
 
     static double nan();
@@ -30,8 +32,10 @@ public:
 protected:
     //获取item的最大行数
     virtual int calcItemDataRowCount(QwtPlotItem* item);
+    //获取item的最大列数
     virtual int calcItemDataColumnCount(QwtPlotItem* item);
-    virtual double getItemData(int row,int col) const;
+    //获取数据 row col 要对应item的维度
+    virtual double getItemData(int row,int col,QwtPlotItem* item) const;
     //获取绘图数据维度的描述
     virtual QString getItemDimDescribe(QwtPlotItem* item,int index) const;
 private:

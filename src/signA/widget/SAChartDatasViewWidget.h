@@ -27,6 +27,9 @@ private slots:
     //figure销毁
     void onFigureDestroy(QObject* obj);
 private:
+    //处理ctrl + v事件
+    void onCtrlVInTableView();
+private:
     Ui::SAChartDatasViewWidget *ui;
     QwtPlotItemTreeModel* m_treeModel;
     QwtPlotItemDataModel* m_tableModel;

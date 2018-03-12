@@ -1,8 +1,11 @@
 ﻿#include "QwtPlotItemDataModel.h"
-#include <qwt_plot_curve.h>
-#include <qwt_plot_histogram.h>
-#include <qwt_plot_intervalcurve.h>
-#include <qwt_plot_barchart.h>
+#include "qwt_plot_curve.h"
+#include "qwt_plot_histogram.h"
+#include "qwt_plot_intervalcurve.h"
+#include "qwt_plot_barchart.h"
+#include "qwt_plot_multi_barchart.h"
+#include "qwt_plot_spectrocurve.h"
+#include "qwt_plot_tradingcurve.h"
 #include "SAChart.h"
 
 QwtPlotItemDataModel::QwtPlotItemDataModel(QObject* p)
@@ -85,9 +88,14 @@ QVariant QwtPlotItemDataModel::data(const QModelIndex& index, int role) const
         QwtPlotItem* item = getItemFromCol(index.column());
         if(!item)
             return QVariant();
+
+
+        int col = m_itemsColumnStartIndex.value(item,0);
+        col = index.column() - col;
+
         if(index.row() >= getItemRowCount(item))
             return QVariant();
-        return getItemData(index.row(),index.column());
+        return getItemData(index.row(),col,item);
     }
     else if(role == Qt::BackgroundColorRole)
     {
@@ -99,6 +107,11 @@ QVariant QwtPlotItemDataModel::data(const QModelIndex& index, int role) const
         return getItemColor(item);
     }
     return QVariant();
+}
+
+bool QwtPlotItemDataModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+
 }
 
 Qt::ItemFlags QwtPlotItemDataModel::flags(const QModelIndex &index) const
@@ -147,13 +160,14 @@ void QwtPlotItemDataModel::updateColumnCount()
     for(auto i = m_items.begin ();i!=m_items.end ();++i)
     {
         int dim = calcItemDataColumnCount(*i);
-        qDebug("updateColumnCount : %u ,dim:%d",(uint)*i,dim);
-        int startIndex = m_columnMap.size();
-        m_itemsColumnStartIndex[*i] = startIndex;
-        for(int d=0;d<dim;++d)
+        if(dim > 0)
         {
-            qDebug("updateColumnCount : %u ,col:%d",(uint)*i,m_columnMap.size()+d);
-            m_columnMap[startIndex+d] = qMakePair<QwtPlotItem*,int>(*i,d);
+            int startIndex = m_columnMap.size();
+            m_itemsColumnStartIndex[*i] = startIndex;
+            for(int d=0;d<dim;++d)
+            {
+                m_columnMap[startIndex+d] = qMakePair<QwtPlotItem*,int>(*i,d);
+            }
         }
     }
 }
@@ -212,6 +226,7 @@ int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item)
 {
     return SAChart::getPlotChartItemDataCount(item);
 }
+
 ///
 /// \brief 获取曲线的维度
 ///
@@ -220,6 +235,7 @@ int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item)
 ///
 int QwtPlotItemDataModel::calcItemDataColumnCount(QwtPlotItem *item)
 {
+#if QwtPlotItemDataModel_Use_Dynamic_Cast
     if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
     {
         Q_UNUSED(p);
@@ -254,29 +270,54 @@ int QwtPlotItemDataModel::calcItemDataColumnCount(QwtPlotItem *item)
         Q_UNUSED(p);
         return 5;
     }
-    return -1;
+#else
+    int rtti = item->rtti();
+    switch(rtti)
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotBarChart:
+        return 2;
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+        return 3;
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+        return 5;
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+
+        const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
+        int maxDim = 0;
+        const int size = p->dataSize();
+        for(int i=0;i<size;++i)
+        {
+            int s = p->sample(i).set.size();
+            if(s > maxDim)
+            {
+                maxDim = s;
+            }
+        }
+        return maxDim + 1;
+    }
+    default:
+        return 0;
+    }
+#endif
+    return 0;
 }
 
-double QwtPlotItemDataModel::getItemData(int row, int col) const
+double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) const
 {
-    int dim = 0;
-    QwtPlotItem* item = getItemFromCol(col,&dim);
-    if(nullptr == item)
+    if(nullptr == item || col < 0)
     {
         return nan();
     }
-    int index = m_itemsColumnStartIndex.value(item,0);
-    index = col - index;
-    if(index < 0)
-    {
-        return nan();
-    }
+#if QwtPlotItemDataModel_Use_Dynamic_Cast
     //读取数据
     if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
     {
         if(row < p->dataSize())
         {
-            switch(index)
+            switch(col)
             {
                 case 0:return p->sample(row).x();
                 case 1:return p->sample(row).y();
@@ -287,7 +328,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col) const
     {
         if(row < p->dataSize())
         {
-            switch(index)
+            switch(col)
             {
                 case 0:return p->sample(row).value;
                 case 1:return p->sample(row).interval.minValue();
@@ -300,13 +341,13 @@ double QwtPlotItemDataModel::getItemData(int row, int col) const
         if(row < p->dataSize())
         {
             const QwtSetSample& s = p->sample(row);
-            if(0 == index)
+            if(0 == col)
             {
                 return s.value;
             }
             else
             {
-                int setIndex = index - 1;
+                int setIndex = col - 1;
                 if(setIndex >=0 && setIndex < s.set.size())
                 {
                     return s.set.value(setIndex);
@@ -319,7 +360,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col) const
     {
         if(row < p->dataSize())
         {
-            switch(index)
+            switch(col)
             {
                 case 0:return p->sample(row).x();
                 case 1:return p->sample(row).y();
@@ -331,7 +372,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col) const
     {
         if(row < p->dataSize())
         {
-            switch(index)
+            switch(col)
             {
                 case 0:return p->sample(row).time;
                 case 1:return p->sample(row).open;
@@ -341,12 +382,118 @@ double QwtPlotItemDataModel::getItemData(int row, int col) const
             }
         }
     }
-    return std::numeric_limits<double>::quiet_NaN();
-}
+#else
+    int rtti = item->rtti();
+    switch(rtti)
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
+        if(row < p->dataSize())
+        {
+            switch(col)
+            {
+                case 0:return p->sample(row).x();
+                case 1:return p->sample(row).y();
+            }
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        const QwtPlotBarChart* p = static_cast<const QwtPlotBarChart*>(item);
+        if(row < p->dataSize())
+        {
+            switch(col)
+            {
+                case 0:return p->sample(row).x();
+                case 1:return p->sample(row).y();
+            }
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    {
+        const QwtPlotSpectroCurve* p = static_cast<const QwtPlotSpectroCurve*>(item);
+        if(row < p->dataSize())
+        {
+            switch(col)
+            {
+                case 0:return p->sample(row).x();
+                case 1:return p->sample(row).y();
+                case 2:return p->sample(row).z();
+            }
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
+        if(row < p->dataSize())
+        {
+            switch(col)
+            {
+                case 0:return p->sample(row).value;
+                case 1:return p->sample(row).interval.minValue();
+                case 2:return p->sample(row).interval.maxValue();
+            }
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    {
+        const QwtPlotTradingCurve* p = static_cast<const QwtPlotTradingCurve*>(item);
+        if(row < p->dataSize())
+        {
+            switch(col)
+            {
+                case 0:return p->sample(row).time;
+                case 1:return p->sample(row).open;
+                case 2:return p->sample(row).high;
+                case 3:return p->sample(row).low;
+                case 4:return p->sample(row).close;
+            }
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+        const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
+        if(row < p->dataSize())
+        {
+            const QwtSetSample& s = p->sample(row);
+            if(0 == col)
+            {
+                return s.value;
+            }
+            else
+            {
+                int setIndex = col - 1;
+                if(setIndex >=0 && setIndex < s.set.size())
+                {
+                    return s.set.value(setIndex);
+                }
+            }
+        }
+        break;
+    }
+    default:
+        break;
+    }
 
+#endif
+
+    return nan();
+}
+///
+/// \brief 获取绘图数据维度的描述
+/// \param item
+/// \param index
+/// \return
+///
 QString QwtPlotItemDataModel::getItemDimDescribe(QwtPlotItem *item, int index) const
 {
-
+#if QwtPlotItemDataModel_Use_Dynamic_Cast
     if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
     {
         Q_UNUSED(p);
@@ -404,6 +551,71 @@ QString QwtPlotItemDataModel::getItemDimDescribe(QwtPlotItem *item, int index) c
         }
 
     }
+#else
+    int rtti = item->rtti();
+    switch(rtti)
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        switch(index)
+        {
+        case 0:return tr("x");
+        case 1:return tr("y");
+        default:return QString();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    {
+        switch(index)
+        {
+        case 0:return tr("x");
+        case 1:return tr("y");
+        case 2:return tr("z");
+        default:return QString();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        switch(index)
+        {
+        case 0:return tr("value");
+        case 1:return tr("min");
+        case 2:return tr("max");
+        default:return QString();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    {
+        switch(index)
+        {
+        case 0:return tr("time");
+        case 1:return tr("open");
+        case 2:return tr("high");
+        case 3:return tr("low");
+        case 4:return tr("close");
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+        if(0 == index)
+        {
+            return tr("value");
+        }
+        else
+        {
+            return tr("set %1").arg(index);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+#endif
     return QString();
 }
 
