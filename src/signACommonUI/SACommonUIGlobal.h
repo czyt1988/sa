@@ -21,12 +21,12 @@
 #include "qwt_plot_item.h"
 namespace SA {
     enum RTTI_SAChart2D{
-        RTTI_SAXYSeries = QwtPlotItem::Rtti_PlotUserItem+10
-        ,RTTI_SABarSeries = QwtPlotItem::Rtti_PlotUserItem+11
-        ,RTTI_SABoxSeries = QwtPlotItem::Rtti_PlotUserItem+12
-        ,RTTI_SAHistogramSeries = QwtPlotItem::Rtti_PlotUserItem+13
-        ,RTTI_SAScatterSeries = QwtPlotItem::Rtti_PlotUserItem+14
-        ,RTTI_SASelectRegionDataEditor = QwtPlotItem::Rtti_PlotUserItem+500
+//        RTTI_SAXYSeries = QwtPlotItem::Rtti_PlotUserItem+10
+//        ,RTTI_SABarSeries = QwtPlotItem::Rtti_PlotUserItem+11
+//        ,RTTI_SABoxSeries = QwtPlotItem::Rtti_PlotUserItem+12
+//        ,RTTI_SAHistogramSeries = QwtPlotItem::Rtti_PlotUserItem+13
+//        ,RTTI_SAScatterSeries = QwtPlotItem::Rtti_PlotUserItem+14
+        RTTI_SASelectRegionDataEditor = QwtPlotItem::Rtti_PlotUserItem+500
         ,RTTI_SASelectRegionEditor = QwtPlotItem::Rtti_PlotUserItem+501
     };
 }

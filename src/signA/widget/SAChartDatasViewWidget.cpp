@@ -56,6 +56,7 @@ void SAChartDatasViewWidget::setFigure(SAFigureWindow *fig)
                    ,this,&SAChartDatasViewWidget::onFigureDestroy);
     }
     m_figure = fig;
+    m_tableModel->setFigure(fig);
     if(fig)
     {
         QList<SAChart2D*> plotWidgets = fig->get2DPlots();

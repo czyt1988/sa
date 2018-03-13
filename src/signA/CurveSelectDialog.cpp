@@ -116,12 +116,12 @@ QList<QwtPlotCurve *> CurveSelectDialog::getSelCurve(SAChart2D *chart, QWidget *
 {
     QList<QwtPlotCurve *> res;
     CurveSelectDialog dlg(chart,par);
-    dlg.setItemFilter({QwtPlotItem::Rtti_PlotCurve,SA::RTTI_SAXYSeries});
+    dlg.setItemFilter({QwtPlotItem::Rtti_PlotCurve});
     if(QDialog::Accepted == dlg.exec())
     {
         QList<QwtPlotItem*> items = dlg.getSelItem();
         std::for_each(items.begin(),items.end(),[&res](QwtPlotItem* p){
-            if(p->rtti() == QwtPlotItem::Rtti_PlotCurve || p->rtti() == SA::RTTI_SAXYSeries)
+            if(p->rtti() == QwtPlotItem::Rtti_PlotCurve)
             {
                 res.append(static_cast<QwtPlotCurve*>(p));
             }

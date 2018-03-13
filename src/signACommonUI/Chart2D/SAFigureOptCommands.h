@@ -7,8 +7,9 @@
 #include "qwt_plot_item.h"
 #include "qwt_series_store.h"
 #include "qwt_series_store.h"
+#include "SAChart.h"
 #include <memory>
-class SAChart2D;
+
 class SAAbstractDatas;
 class QwtPlotCurve;
 
@@ -92,8 +93,16 @@ private:
     QVector<QPointF> m_newData;
     QVector<QPointF> m_oldData;
 };
+
+/////////////////////////////////////////////////////////////////////
 ///
-/// \brief 曲线QwtPlotCurve值变更
+///  Series值变更
+///
+/////////////////////////////////////////////////////////////////////
+
+
+///
+/// \brief 曲线QwtSeriesStore<QPointF>值变更
 ///
 class SA_COMMON_UI_EXPORT SAFigureChangeXYSeriesDataCommand : public SAFigureOptCommand
 {
@@ -110,34 +119,188 @@ private:
     QVector<QPointF> m_newData;
     QVector<QPointF> m_oldData;
 };
-
-
 ///
-/// \brief 移动某些序列的数据
+/// \brief 曲线QwtSeriesStore<QwtPoint3D>值变更
 ///
-class SA_COMMON_UI_EXPORT SAFigureMoveXYSeriesDataInIndexsCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureChangeXYZSeriesDataCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D* chart
-                                         ,QwtSeriesStore<QPointF> *curve
+    SAFigureChangeXYZSeriesDataCommand(SAChart2D* chart
+                                      , QwtSeriesStore<QwtPoint3D> *curve
+                                      , const QString &cmdName
+                                      , const QVector<QwtPoint3D> &newPoints
+                                      , QUndoCommand *parent = Q_NULLPTR);
+    virtual void redo();
+    virtual void undo();
+private:
+    QwtSeriesStore<QwtPoint3D>* m_curve;
+    QVector<QwtPoint3D> m_newData;
+    QVector<QwtPoint3D> m_oldData;
+};
+
+/////////////////////////////////////////////////////////////////////
+///
+///  Series值替换
+///
+/////////////////////////////////////////////////////////////////////
+template<typename T,typename TQwtSeries>
+class SA_COMMON_UI_EXPORT SAFigureReplaceSeriesDataInIndexsCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceSeriesDataInIndexsCommand(SAChart2D* chart
+                                         ,QwtSeriesStore<T> *curve
                                          ,const QString &cmdName
                                          ,const QVector<int>& inRangIndexs
-                                         ,const QVector<QPointF>& inRangNewData
+                                         ,const QVector<T>& inRangNewData
                                          , QUndoCommand *parent = Q_NULLPTR);
-    SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D* chart
-                                         ,QwtSeriesStore<QPointF> *curve
+    SAFigureReplaceSeriesDataInIndexsCommand(SAChart2D* chart
+                                         ,QwtSeriesStore<T> *curve
                                          ,const QString &cmdName
                                          ,const QVector<int>& inRangIndexs
-                                         ,const QVector<QPointF>& inRangOldData
-                                         ,const QVector<QPointF>& inRangNewData
+                                         ,const QVector<T>& inRangOldData
+                                         ,const QVector<T>& inRangNewData
                                          , QUndoCommand *parent = Q_NULLPTR);
 
     virtual void redo();
     virtual void undo();
 private:
-    QVector<QPointF> m_inRangOldData;
+    QVector<T> m_inRangOldData;
     QVector<int> m_inRangIndexs;
-    QVector<QPointF> m_inRangNewData;
-    QwtSeriesStore<QPointF> *m_curve;
+    QVector<T> m_inRangNewData;
+    QwtSeriesStore<T> *m_curve;
 };
+template<typename T,typename TQwtSeries>
+SAFigureReplaceSeriesDataInIndexsCommand<T,TQwtSeries>::SAFigureReplaceSeriesDataInIndexsCommand(
+        SAChart2D *chart
+        , QwtSeriesStore<T> *curve
+        , const QString &cmdName
+        , const QVector<int> &inRangIndexs
+        , const QVector<T> &inRangNewData
+        , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_inRangIndexs(inRangIndexs)
+    ,m_inRangNewData(inRangNewData)
+    ,m_curve(curve)
+{
+    m_inRangOldData.reserve(inRangIndexs.size());
+    copyInRangeData(inRangIndexs.begin(),inRangIndexs.end(),curve,std::back_inserter(m_inRangOldData));
+
+}
+template<typename T,typename TQwtSeries>
+SAFigureReplaceSeriesDataInIndexsCommand<T,TQwtSeries>::SAFigureReplaceSeriesDataInIndexsCommand(
+        SAChart2D *chart
+        , QwtSeriesStore<T> *curve
+        , const QString &cmdName
+        , const QVector<int> &inRangIndexs
+        , const QVector<T> &inRangOldData
+        , const QVector<T> &inRangNewData
+        , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_inRangOldData(inRangOldData)
+    ,m_inRangIndexs(inRangIndexs)
+    ,m_inRangNewData(inRangNewData)
+    ,m_curve(curve)
+{
+
+}
+template<typename T,typename TQwtSeries>
+void SAFigureReplaceSeriesDataInIndexsCommand<T,TQwtSeries>::redo()
+{
+    QVector<T> curveDatas;
+    SAChart::getSeriesData(curveDatas,m_curve);
+    const int maxSize = curveDatas.size();
+    const int indexCount = m_inRangIndexs.size();
+    const int inRangDataCount = m_inRangNewData.size();
+
+    for(int i=0;i<indexCount && i<inRangDataCount;++i)
+    {
+        int index = m_inRangIndexs[i];
+        if(index < maxSize)
+        {
+            curveDatas[index] = m_inRangNewData[i];
+        }
+    }
+    m_curve->setData(new TQwtSeries(curveDatas));
+}
+template<typename T,typename TQwtSeries>
+void SAFigureReplaceSeriesDataInIndexsCommand<T,TQwtSeries>::undo()
+{
+    QVector<T> curveDatas;
+    SAChart::getSeriesData(curveDatas,m_curve);
+    const int maxSize = curveDatas.size();
+    const int indexCount = m_inRangIndexs.size();
+    const int inRangDataCount = m_inRangOldData.size();
+
+    for(int i=0;i<indexCount && i<inRangDataCount;++i)
+    {
+        int index = m_inRangIndexs[i];
+        if(index < maxSize)
+        {
+            curveDatas[index] = m_inRangOldData[i];
+        }
+    }
+    m_curve->setData(new TQwtSeries(curveDatas));
+}
+
+///
+/// \brief 序列数据QPointF的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceXYSeriesDataInIndexsCommand
+        : public SAFigureReplaceSeriesDataInIndexsCommand<QPointF,QwtPointSeriesData>
+{
+public:
+    using SAFigureReplaceSeriesDataInIndexsCommand::SAFigureReplaceSeriesDataInIndexsCommand;
+};
+
+
+///
+/// \brief 序列数据QwtPoint3D的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceXYZSeriesDataInIndexsCommand
+        : public SAFigureReplaceSeriesDataInIndexsCommand<QwtPoint3D,QwtPoint3DSeriesData>
+{
+public:
+    using SAFigureReplaceSeriesDataInIndexsCommand::SAFigureReplaceSeriesDataInIndexsCommand;
+};
+
+///
+/// \brief 序列数据Interval的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceIntervalSeriesDataInIndexsCommand
+        : public SAFigureReplaceSeriesDataInIndexsCommand<QwtIntervalSample,QwtIntervalSeriesData>
+{
+public:
+   using SAFigureReplaceSeriesDataInIndexsCommand::SAFigureReplaceSeriesDataInIndexsCommand;
+};
+///
+/// \brief 序列数据QwtOHLCSample的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceOHLCSeriesDataInIndexsCommand
+        : public SAFigureReplaceSeriesDataInIndexsCommand<QwtOHLCSample,QwtTradingChartData>
+{
+public:
+   using SAFigureReplaceSeriesDataInIndexsCommand::SAFigureReplaceSeriesDataInIndexsCommand;
+};
+///
+/// \brief 序列数据QwtPlotMultiBarChart的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceMultiBarSeriesDataInIndexsCommand
+        : public SAFigureReplaceSeriesDataInIndexsCommand<QwtSetSample,QwtSetSeriesData>
+{
+public:
+   using SAFigureReplaceSeriesDataInIndexsCommand::SAFigureReplaceSeriesDataInIndexsCommand;
+};
+
+//把QwtSeriesStore的值按索引提取
+template<typename T,typename IteIndex,typename IteData>
+void copyInRangeData(IteIndex beginIndex,IteIndex endIndex,const QwtSeriesStore<T>* curve,IteData beginData)
+{
+    while(beginIndex != endIndex)
+    {
+        *beginData = curve->sample(*beginIndex);
+        ++beginData;
+        ++beginIndex;
+    }
+}
+
 #endif // SAFIGUREOPTCOMMAND_H

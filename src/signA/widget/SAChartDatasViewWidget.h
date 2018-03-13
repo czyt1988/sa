@@ -3,7 +3,7 @@
 
 #include <QWidget>
 class QwtPlotItemTreeModel;
-class QwtPlotItemDataModel;
+class SAPlotDataModel;
 class SAFigureWindow;
 class QwtPlot;
 namespace Ui {
@@ -32,7 +32,7 @@ private:
 private:
     Ui::SAChartDatasViewWidget *ui;
     QwtPlotItemTreeModel* m_treeModel;
-    QwtPlotItemDataModel* m_tableModel;
+    SAPlotDataModel* m_tableModel;
     SAFigureWindow* m_figure;
 };
 

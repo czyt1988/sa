@@ -183,9 +183,6 @@ void SASelectRegionDataEditor::updateRegionIndex()
         {
         case QwtPlotItem::Rtti_PlotCurve:
         case QwtPlotItem::Rtti_PlotBarChart:
-        case SA::RTTI_SAXYSeries:
-        case SA::RTTI_SAScatterSeries:
-        case SA::RTTI_SABarSeries:
         {
             QwtSeriesStore<QPointF>* ser = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
             if(nullptr == ser)
@@ -238,10 +235,7 @@ void SASelectRegionDataEditor::offsetData(const QPointF &offset)
         switch(item->rtti())
         {
         case QwtPlotItem::Rtti_PlotCurve:
-        case SA::RTTI_SAXYSeries:
-        case SA::RTTI_SAScatterSeries:
         case QwtPlotItem::Rtti_PlotBarChart:
-        case SA::RTTI_SABarSeries:
         {
             QwtSeriesStore<QPointF>* ser = dynamic_cast<QwtPlotCurve*>(item);
             if(nullptr == ser)
@@ -340,10 +334,7 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
         switch(item->rtti())
         {
         case QwtPlotItem::Rtti_PlotCurve:
-        case SA::RTTI_SAXYSeries:
-        case SA::RTTI_SAScatterSeries:
         case QwtPlotItem::Rtti_PlotBarChart:
-        case SA::RTTI_SABarSeries:
         {
             QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
             if(nullptr == series)
@@ -358,7 +349,7 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
             QVector<QPointF> newData = pointInfo->points();
             std::for_each(newData.begin(),newData.end(),[plotOffset](QPointF& point){point+=plotOffset;});
 
-            new SAFigureMoveXYSeriesDataInIndexsCommand(chart2D()
+            new SAFigureReplaceXYSeriesDataInIndexsCommand(chart2D()
                                                 ,series
                                                 ,QString("move %1 datas").arg(item->title().text())
                                                 ,pointInfo->indexs()

@@ -160,7 +160,7 @@ void SAFigureRemoveXYSeriesDataInRangCommand::undo()
     m_curve->setData(new QwtPointSeriesData(m_oldData));
 }
 
-
+//========================================
 
 ///
 /// \brief 曲线QwtPlotCurve值变更
@@ -195,74 +195,30 @@ void SAFigureChangeXYSeriesDataCommand::undo()
 
 
 
-SAFigureMoveXYSeriesDataInIndexsCommand::SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D *chart
-                                                                                 , QwtSeriesStore<QPointF> *curve
-                                                                                 , const QString &cmdName
-                                                                                 , const QVector<int> &inRangIndexs
-                                                                                 , const QVector<QPointF> &inRangNewData
-                                                                                 , QUndoCommand *parent)
+
+//================================
+SAFigureChangeXYZSeriesDataCommand::SAFigureChangeXYZSeriesDataCommand(
+        SAChart2D *chart
+        , QwtSeriesStore<QwtPoint3D> *curve
+        , const QString &cmdName
+        , const QVector<QwtPoint3D> &newPoints
+        , QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_inRangIndexs(inRangIndexs)
-    ,m_inRangNewData(inRangNewData)
     ,m_curve(curve)
+    ,m_newData(newPoints)
 {
-    QVector<QPointF> datas;
-    SAChart::getXYDatas(datas,curve);//记录原有的数据
-    m_inRangOldData.reserve(inRangIndexs.size());
-    czy::copy_inner_indexs(datas.begin(),inRangIndexs.begin(),inRangIndexs.end(),m_inRangOldData.begin());
+    SAChart::getXYZDatas(m_oldData,m_curve);//记录原有的数据
 }
 
-SAFigureMoveXYSeriesDataInIndexsCommand::SAFigureMoveXYSeriesDataInIndexsCommand(SAChart2D *chart
-                                                                                 , QwtSeriesStore<QPointF> *curve
-                                                                                 , const QString &cmdName
-                                                                                 , const QVector<int> &inRangIndexs
-                                                                                 , const QVector<QPointF> &inRangOldData
-                                                                                 , const QVector<QPointF> &inRangNewData
-                                                                                 , QUndoCommand *parent)
-    :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_inRangOldData(inRangOldData)
-    ,m_inRangIndexs(inRangIndexs)
-    ,m_inRangNewData(inRangNewData)
-    ,m_curve(curve)
+void SAFigureChangeXYZSeriesDataCommand::redo()
 {
-
+    m_curve->setData(new QwtPoint3DSeriesData(m_newData));
 }
 
-
-void SAFigureMoveXYSeriesDataInIndexsCommand::redo()
+void SAFigureChangeXYZSeriesDataCommand::undo()
 {
-    QVector<QPointF> curveDatas;
-    SAChart::getXYDatas(curveDatas,m_curve);
-    const int maxSize = curveDatas.size();
-    const int indexCount = m_inRangIndexs.size();
-    const int inRangDataCount = m_inRangNewData.size();
-
-    for(int i=0;i<indexCount && i<inRangDataCount;++i)
-    {
-        int index = m_inRangIndexs[i];
-        if(index < maxSize)
-        {
-            curveDatas[index] = m_inRangNewData[i];
-        }
-    }
-    m_curve->setData(new QwtPointSeriesData(curveDatas));
+    m_curve->setData(new QwtPoint3DSeriesData(m_oldData));
 }
 
-void SAFigureMoveXYSeriesDataInIndexsCommand::undo()
-{
-    QVector<QPointF> curveDatas;
-    SAChart::getXYDatas(curveDatas,m_curve);
-    const int maxSize = curveDatas.size();
-    const int indexCount = m_inRangIndexs.size();
-    const int inRangDataCount = m_inRangOldData.size();
+//==================================
 
-    for(int i=0;i<indexCount && i<inRangDataCount;++i)
-    {
-        int index = m_inRangIndexs[i];
-        if(index < maxSize)
-        {
-            curveDatas[index] = m_inRangOldData[i];
-        }
-    }
-    m_curve->setData(new QwtPointSeriesData(curveDatas));
-}

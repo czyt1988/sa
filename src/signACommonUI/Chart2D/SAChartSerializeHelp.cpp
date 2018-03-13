@@ -190,27 +190,9 @@ void SAChartSerializeHelp::serializeOutChartItem(QDataStream &out, const SAChart
             out << header << check0 << p << check1;
             break;
         }
-        case SA::RTTI_SAXYSeries:
-        {
-            SAXYSeries* p = static_cast<SAXYSeries*>(item);
-            out << header << check0 << p << check1;
-            break;
-        }
-        case SA::RTTI_SAScatterSeries:
-        {
-            SAScatterSeries* p = static_cast<SAScatterSeries*>(item);
-            out << header << check0 << p << check1;
-            break;
-        }
         case QwtPlotItem::Rtti_PlotBarChart:
         {
             QwtPlotBarChart* p = static_cast<QwtPlotBarChart*>(item);
-            out << header << check0 << p << check1;
-            break;
-        }
-        case SA::RTTI_SABarSeries:
-        {
-            SABarSeries* p = static_cast<SABarSeries*>(item);
             out << header << check0 << p << check1;
             break;
         }
@@ -261,48 +243,9 @@ void SAChartSerializeHelp::serializeInChartItem(QDataStream &in, SAChart2D *char
             p->attach(chart);
             break;
         }
-        case SA::RTTI_SAXYSeries:
-        {
-            SAXYSeries * p = new SAXYSeries;
-            in >> tmp0 >> p >> tmp1;
-            if(check0 != tmp0 || check1 != tmp1)
-            {
-                delete p;
-                throw sa::SABadSerializeExpection();
-                return;
-            }
-            p->attach(chart);
-            break;
-        }
-        case SA::RTTI_SAScatterSeries:
-        {
-            SAScatterSeries * p = new SAScatterSeries;
-            in >> tmp0 >> p >> tmp1;
-            if(check0 != tmp0 || check1 != tmp1)
-            {
-                delete p;
-                throw sa::SABadSerializeExpection();
-                return;
-            }
-            p->attach(chart);
-            break;
-        }
         case QwtPlotItem::Rtti_PlotBarChart:
         {
             QwtPlotBarChart* p = new SABarSeries;
-            in >> tmp0 >> p >> tmp1;
-            if(check0 != tmp0 || check1 != tmp1)
-            {
-                delete p;
-                throw sa::SABadSerializeExpection();
-                return;
-            }
-            p->attach(chart);
-            break;
-        }
-        case SA::RTTI_SABarSeries:
-        {
-            SABarSeries* p = new SABarSeries;
             in >> tmp0 >> p >> tmp1;
             if(check0 != tmp0 || check1 != tmp1)
             {

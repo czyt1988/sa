@@ -133,10 +133,7 @@ public:
             switch(items[i]->rtti())
             {
             case QwtPlotItem::Rtti_PlotCurve:
-            case SA::RTTI_SAXYSeries:
-            case SA::RTTI_SAScatterSeries:
             case QwtPlotItem::Rtti_PlotBarChart:
-            case SA::RTTI_SABarSeries:
                 if(QwtSeriesStore<QPointF>* cur = dynamic_cast<QwtSeriesStore<QPointF>*>(item))
                 {
                     new SAFigureRemoveXYSeriesDataInRangCommand(q_ptr,cur,"",item->xAxis(),item->yAxis(),cmd);
@@ -201,11 +198,6 @@ QList<int> SAChart2D::getPlotItemsRTTI()
                 <<QwtPlotItem::Rtti_PlotHistogram
                 <<QwtPlotItem::Rtti_PlotBarChart
                 <<QwtPlotItem::Rtti_PlotMultiBarChart
-               << SA::RTTI_SAXYSeries
-               << SA::RTTI_SABarSeries
-               << SA::RTTI_SABoxSeries
-               << SA::RTTI_SAHistogramSeries
-               << SA::RTTI_SAScatterSeries
                   ;
     return res;
 }
@@ -215,9 +207,6 @@ QList<int> SAChart2D::getXYSeriesItemsRTTI()
     QList<int> res;
     res<<QwtPlotItem::Rtti_PlotCurve
               <<QwtPlotItem::Rtti_PlotBarChart
-               << SA::RTTI_SAXYSeries
-               << SA::RTTI_SABarSeries
-               << SA::RTTI_SAScatterSeries
                   ;
     return res;
 }
@@ -311,8 +300,6 @@ QColor SAChart2D::getItemColor(const QwtPlotItem *item, const QColor &defaultClr
 {
     switch (item->rtti()) {
     case QwtPlotItem::Rtti_PlotCurve:
-    case SA::RTTI_SAXYSeries:
-    case SA::RTTI_SAScatterSeries:
     {
         const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
         return p->pen().color();
@@ -323,13 +310,11 @@ QColor SAChart2D::getItemColor(const QwtPlotItem *item, const QColor &defaultClr
         return p->pen().color();
     }
     case QwtPlotItem::Rtti_PlotHistogram:
-    case SA::RTTI_SAHistogramSeries:
     {
         const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
         return p->brush().color();
     }
     case QwtPlotItem::Rtti_PlotBarChart:
-    case SA::RTTI_SABarSeries:
     {
         const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item);
         const QwtColumnSymbol* symbol =  bar->symbol();
@@ -363,8 +348,6 @@ int SAChart2D::getItemDataSize(const QwtPlotItem *item)
 {
     switch (item->rtti()) {
     case QwtPlotItem::Rtti_PlotCurve:
-    case SA::RTTI_SAXYSeries:
-    case SA::RTTI_SAScatterSeries:
     {
         const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
         if(p)
@@ -383,7 +366,6 @@ int SAChart2D::getItemDataSize(const QwtPlotItem *item)
         break;
     }
     case QwtPlotItem::Rtti_PlotHistogram:
-    case SA::RTTI_SAHistogramSeries:
     {
         const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
         if(p)
@@ -392,7 +374,6 @@ int SAChart2D::getItemDataSize(const QwtPlotItem *item)
         }
     }
     case QwtPlotItem::Rtti_PlotBarChart:
-    case SA::RTTI_SABarSeries:
     {
         const QwtPlotBarChart* p = static_cast<const QwtPlotBarChart*>(item);
         if(p)

@@ -60,7 +60,6 @@ QVariant QwtPlotItemDataModel::headerData(int section, Qt::Orientation orientati
     {//说明是水平表头
         int index = 0;
         QwtPlotItem* item = getItemFromCol(section,&index);
-        qDebug("headerData index:%d",index);
         if(!item)
             return QVariant();  
         QString name = QStringLiteral("%1\n%2")
