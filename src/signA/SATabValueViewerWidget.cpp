@@ -78,6 +78,11 @@ SAValueTableWidget *SATabValueViewerWidget::getTablePage(int index)
         return nullptr;
     return tw;
 }
+
+SAValueTableWidget *SATabValueViewerWidget::currentTablePage()
+{
+    return qobject_cast<SAValueTableWidget *>(currentWidget());
+}
 ///
 /// \brief 数据删除
 ///
@@ -96,6 +101,20 @@ void SATabValueViewerWidget::removeDatas(const QList<SAAbstractDatas *> &datas)
         }
         w->removeDatas(datas);
     }
+}
+
+void SATabValueViewerWidget::redo()
+{
+    SAValueTableWidget * w = currentTablePage();
+    if (w)
+        w->redo();
+}
+
+void SATabValueViewerWidget::undo()
+{
+    SAValueTableWidget * w = currentTablePage();
+    if (w)
+        w->undo();
 }
 ///
 /// \brief SATabValueViewerWidget::clearAndReleaseAll

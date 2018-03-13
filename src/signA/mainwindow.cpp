@@ -50,6 +50,7 @@
 #include "SAMessageWidget.h"
 #include "SAFigureWindow.h"
 #include "SAChartDatasViewWidget.h"
+#include "SAValueTableWidget.h"
 // |------操作
 
 //===signACommonUI
@@ -1099,7 +1100,8 @@ void MainWindow::onActionNewChartTriggered()
 ///
 void MainWindow::onActionAddLineChartTriggered()
 {
-    if(m_drawDelegate->drawLineWithWizard())
+    QList<QwtPlotCurve *> res = m_drawDelegate->drawLineWithWizard();
+    if(res.size() > 0)
     {
         raiseMainDock();
     }
@@ -2554,15 +2556,40 @@ void MainWindow::onActionUndoTriggered()
     {
         if(f->isActiveWindow())
         {
-            f->undo();
-            return;
+            SAChart2D* w = f->current2DPlot();
+            if(w)
+            {
+                if(w->canvas())
+                {
+                    if(w->canvas()->hasFocus())
+                    {
+                        w->undo();
+                        saDebug("undo trigger:SAFigureWindow undo");
+                        return;
+                    }
+                }
+            }
         }
     }
-    if(ui->treeView_valueManager->isActiveWindow())
+    QString logInfo("but nothing valid widget accept undo triggered");
+    if(ui->treeView_valueManager->hasFocus())
     {
+        logInfo = "valueManager tree undo";
         saValueManager->undo();
-        return;
     }
+    else if(ui->tabWidget_valueViewer->isActiveWindow())
+    {
+        SAValueTableWidget* w = ui->tabWidget_valueViewer->currentTablePage();
+        if(w)
+        {
+            if(w->hasFocus())
+            {
+                w->undo();
+                logInfo = "valueTableWidget undo";
+            }
+        }
+    }
+    saDebug("undo trigger:"+logInfo);
 }
 ///
 /// \brief Redo （重做）
@@ -2574,15 +2601,40 @@ void MainWindow::onActionRedoTriggered()
     {
         if(f->isActiveWindow())
         {
-            f->redo();
-            return;
+            SAChart2D* w = f->current2DPlot();
+            if(w)
+            {
+                if(w->canvas())
+                {
+                    if(w->canvas()->hasFocus())
+                    {
+                        w->redo();
+                        saDebug("redo trigger:SAFigureWindow redo");
+                        return;
+                    }
+                }
+            }
         }
     }
-    if(ui->treeView_valueManager->isActiveWindow())
+    QString logInfo("but nothing valid widget accept undo triggered");
+    if(ui->treeView_valueManager->hasFocus())
     {
+        logInfo = "valueManager tree redo";
         saValueManager->redo();
-        return;
     }
+    else if(ui->tabWidget_valueViewer->isActiveWindow())
+    {
+        SAValueTableWidget* w = ui->tabWidget_valueViewer->currentTablePage();
+        if(w)
+        {
+            if(w->hasFocus())
+            {
+                w->redo();
+                logInfo = "valueTableWidget redo";
+            }
+        }
+    }
+    saDebug("redo trigger:"+logInfo);
 }
 
 

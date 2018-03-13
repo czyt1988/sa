@@ -424,13 +424,9 @@ void SAChart::getXYDatas(const QVector<QPointF> &xys, QVector<double> *xs, QVect
 ///
 void SAChart::getXYDatas(QVector<QPointF> &xys, const QwtSeriesStore<QPointF> *cur)
 {
-    const QwtSeriesData<QPointF>* datas = cur->data();
-    size_t size = datas->size();
-    for(size_t i=0;i<size;++i)
-    {
-        xys.push_back(datas->sample(i));
-    }
+    getSeriesData<QPointF>(xys,cur);
 }
+
 void SAChart::getXYDatas(QVector<double> *xs, QVector<double> *ys, const QwtSeriesStore<QPointF> *cur)
 {
     size_t size = cur->dataSize();
@@ -577,6 +573,24 @@ size_t SAChart::getXYDatas(QVector<double> *xs
         }
     }
     return resCount;
+}
+///
+/// \brief 对3d数据提取
+/// \param xyzs
+/// \param cur
+///
+void SAChart::getXYZDatas(QVector<QwtPoint3D> &xyzs, const QwtSeriesStore<QwtPoint3D> *cur)
+{
+    getSeriesData<QwtPoint3D>(xyzs,cur);
+}
+///
+/// \brief 获取间隔数据
+/// \param xyzs
+/// \param cur
+///
+void SAChart::getIntervalSampleDatas(QVector<QwtIntervalSample> &intv, const QwtSeriesStore<QwtIntervalSample> *cur)
+{
+    getSeriesData<QwtIntervalSample>(intv,cur);
 }
 
 ///

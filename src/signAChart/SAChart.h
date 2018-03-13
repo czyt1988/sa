@@ -100,6 +100,17 @@ public:
     static int otherAxis(int axisID);
 
 ////////////////////// 曲线数据相关操作//////////////////////////////
+    template<typename T>
+    static void getSeriesData(QVector<T>& vec, const QwtSeriesStore<T>* series)
+    {
+        const int size = series->dataSize();
+        vec.reserve(size);
+        for(int i=0;i<size;++i)
+        {
+            vec.push_back(series->sample(i));
+        }
+    }
+
     //获取一个曲线的xy值
     static void getXYDatas(const QVector<QPointF>& xys, QVector<double>* xs, QVector<double>* ys);
     static void getXYDatas(QVector<QPointF>& xys, const QwtSeriesStore<QPointF>* cur);
@@ -109,6 +120,10 @@ public:
     //对2d数据点的提取操作
     static size_t getXYDatas(QVector<QPointF>& xys, QVector<int>* indexs, const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
     static size_t getXYDatas(QVector<double>* xs, QVector<double>* ys, QVector<int>* indexs,const QwtSeriesStore<QPointF>* series,const QPainterPath& rang);
+    //对3d数据提取
+    static void getXYZDatas(QVector<QwtPoint3D>& xyzs, const QwtSeriesStore<QwtPoint3D>* cur);
+    //获取间隔数据
+    static void getIntervalSampleDatas(QVector<QwtIntervalSample>& intv,const QwtSeriesStore<QwtIntervalSample>* cur);
     //把范围内的数据移除 返回移除的个数
     static int removeDataInRang(const QRectF &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
     static int removeDataInRang(const QPainterPath &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);

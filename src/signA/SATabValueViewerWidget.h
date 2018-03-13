@@ -22,8 +22,13 @@ public:
     SAValueTableWidget *createValueViewerTab(const QString& title);
     //获取对应数据表的model
     SAValueTableWidget *getTablePage(int index);
+    //
+    SAValueTableWidget *currentTablePage();
     //数据要删除，先把显示的内容擦除
     void removeDatas(const QList<SAAbstractDatas*>& datas);
+    //redo / undo
+    void redo();
+    void undo();
 public slots:
     //添加且释放内存
     void clearAndReleaseAll();

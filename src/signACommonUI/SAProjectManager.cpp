@@ -191,10 +191,7 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
         return;
     }
     saValueManager->clear();
-//    d->m_dataPtr2DataFileName.clear();
-//    d->m_dataFileName2DataPtr.clear();
 
-    //saValueManager->load(dataPath,d->m_dataPtr2DataFileName);
     QStringList dataFileList = dir.entryList({"*.sad"},QDir::Files|QDir::NoSymLinks);
     const int size = dataFileList.size();
     if(0 == size)
@@ -224,9 +221,6 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
                 continue;
             }
             //说明读取成功
-            //记录id映射
-//            d->m_dataPtr2DataFileName[data.get()] = fullFilePath;
-//            d->m_dataFileName2DataPtr[fullFilePath] = data.get();
             datasBeLoad.append(data);
 
         }
@@ -235,6 +229,7 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
     {
         saValueManager->addDatas(datasBeLoad);
     }
+    saValueManager->clearUndoStack();
     return;
 }
 ///

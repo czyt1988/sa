@@ -19,6 +19,7 @@
 #include "SAValueTableOptCommands.h"
 #include "SAUIHelper.h"
 #include "SALog.h"
+#include <QShortcut>
 /////////////////////////////////////////////////
 
 SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
@@ -28,12 +29,18 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
   ,m_menu(nullptr)
 {
     ui->setupUi(this);
+    setFocusPolicy(Qt::ClickFocus);
+    setFocusProxy(ui->tableView);
     m_undoStack = new QUndoStack(this);
     m_undoStack->setUndoLimit(20);
+    m_undo = m_undoStack->createUndoAction(m_menu,tr("undo"));
+    m_redo = m_undoStack->createRedoAction(m_menu,tr("redo"));
+    m_undo->setIcon(QIcon(":/icons/icons/undo.png"));
+    m_redo->setIcon(QIcon(":/icons/icons/redo.png"));
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
     model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool{
-        this->setData(r,c,v);
+        return this->setData(r,c,v);
     };
 
     QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
@@ -126,16 +133,23 @@ void SAValueTableWidget::saveTableToCsv(const QString &fullFilePath)
     }
 }
 
+void SAValueTableWidget::redo()
+{
+    m_redo->activate(QAction::Trigger);
+}
+
+void SAValueTableWidget::undo()
+{
+    m_undo->activate(QAction::Trigger);
+}
+
 void SAValueTableWidget::onTableViewCustomContextMenuRequested(const QPoint &pos)
 {
     if(nullptr == m_menu)
     {
         m_menu = new QMenu(this);
-        QAction* act = nullptr;
-        act = m_undoStack->createUndoAction(m_menu,tr("undo"));
-        m_menu->addAction(act);
-        act = m_undoStack->createRedoAction(m_menu,tr("redo"));
-        m_menu->addAction(act);
+        m_menu->addAction(m_undo);
+        m_menu->addAction(m_redo);
         QMenu* m = m_menu->addMenu (tr("export select datas"));
         m->addAction(ui->actionToLinerData);
         m->addAction(ui->actionToPointFVectorData);
@@ -837,6 +851,26 @@ void SAValueTableWidget::wheelEvent(QWheelEvent *event)
     }
     event->accept();
 }
+
+//void SAValueTableWidget::keyPressEvent(QKeyEvent *e)
+//{
+//    qDebug() << "keyPressEvent:"<<e->modifiers()<<"key:"<<e->key();
+//    qDebug() << "match:" <<e->matches(QKeySequence::Undo);
+//    if((Qt::ControlModifier &e->modifiers()) && Qt::Key_Z == e->key())
+//    {
+//        qDebug() << "ctrl + z";
+//        m_undo->activate(QAction::Trigger);
+//        e->accept();
+//    }
+//    else if((Qt::ControlModifier|Qt::ShiftModifier) ==e->modifiers() && Qt::Key_Z == e->key())
+//    {
+//        qDebug() << "shift + ctrl + z";
+//        m_redo->activate(QAction::Trigger);
+//        e->accept();
+//    }
+
+//    QWidget::keyPressEvent(e);
+//}
 
 QSize SAValueTableWidget::getClipboardTextTable(QList<QVariantList> &res)
 {

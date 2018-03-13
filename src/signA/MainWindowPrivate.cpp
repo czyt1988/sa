@@ -668,7 +668,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     verticalLayout_8->setContentsMargins(0, 0, 0, 0);
     tabWidget_valueViewer = new SATabValueViewerWidget(dockWidgetContents_6);
     tabWidget_valueViewer->setObjectName(QStringLiteral("tabWidget_valueViewer"));
-
+    tabWidget_valueViewer->setFocusPolicy(Qt::ClickFocus);
     verticalLayout_8->addWidget(tabWidget_valueViewer);
 
     dockWidget_valueViewer->setWidget(dockWidgetContents_6);

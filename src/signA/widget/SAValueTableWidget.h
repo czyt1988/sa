@@ -40,10 +40,14 @@ public:
     void removeDatas(const QList<SAAbstractDatas*>& datas);
     //把表格保存到csv
     void saveTableToCsv(const QString &fullFilePath);
+    //redo / undo
+    void redo();
+    void undo();
 protected:
     //获取model
     SADataTableModel* getDataModel() const;
     void wheelEvent(QWheelEvent * event);
+    //void keyPressEvent(QKeyEvent *e);
 private slots:
     //右键菜单
     void onTableViewCustomContextMenuRequested(const QPoint &pos);
@@ -88,6 +92,8 @@ private:
     //OpenFileManager* m_values;
     uint m_countNewData;
     QMenu* m_menu;
+    QAction* m_undo;
+    QAction* m_redo;
     QUndoStack* m_undoStack;
 };
 

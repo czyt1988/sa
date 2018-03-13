@@ -111,14 +111,25 @@ QVariant QwtPlotItemDataModel::data(const QModelIndex& index, int role) const
 
 bool QwtPlotItemDataModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-
+    if (!index.isValid())
+        return false;
+    if (Qt::EditRole != role)
+        return false;
+    QwtPlotItem* item = getItemFromCol(index.column());
+    if(nullptr == item)
+        return false;
+    int col = getItemsColumnStartIndex(item);
+    if(col < 0)
+        return false;
+    col = index.column() - col;
+    return setItemData(index.row(),col,item,value);
 }
 
 Qt::ItemFlags QwtPlotItemDataModel::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
         return Qt::NoItemFlags;
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
 void QwtPlotItemDataModel::enableBackgroundColor(bool enable, int alpha)
@@ -136,6 +147,34 @@ void QwtPlotItemDataModel::enableBackgroundColor(bool enable, int alpha)
 double QwtPlotItemDataModel::nan()
 {
     return std::numeric_limits<double>::quiet_NaN();
+}
+///
+/// \brief 数据开始的那一列列号
+/// \param item
+/// \return 如果没有对应的item返回-1
+///
+int QwtPlotItemDataModel::getItemsColumnStartIndex(QwtPlotItem *item) const
+{
+    return m_itemsColumnStartIndex.value(item,-1);
+}
+///
+/// \brief 计算QwtPlotMultiBarChart的最大维度
+/// \param p
+/// \return QwtSetSample.set的最大尺寸+1，其中加1是对应QwtSetSample.value
+///
+int QwtPlotItemDataModel::calcPlotMultiBarChartDim(const QwtPlotMultiBarChart *p)
+{
+    int maxDim = 0;
+    const int size = p->dataSize();
+    for(int i=0;i<size;++i)
+    {
+        int s = p->sample(i).set.size();
+        if(s > maxDim)
+        {
+            maxDim = s;
+        }
+    }
+    return maxDim + 1;
 }
 
 void QwtPlotItemDataModel::updateMaxRow()
@@ -284,19 +323,8 @@ int QwtPlotItemDataModel::calcItemDataColumnCount(QwtPlotItem *item)
         return 5;
     case QwtPlotItem::Rtti_PlotMultiBarChart:
     {
-
         const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
-        int maxDim = 0;
-        const int size = p->dataSize();
-        for(int i=0;i<size;++i)
-        {
-            int s = p->sample(i).set.size();
-            if(s > maxDim)
-            {
-                maxDim = s;
-            }
-        }
-        return maxDim + 1;
+        return calcPlotMultiBarChartDim(p);
     }
     default:
         return 0;
@@ -617,6 +645,229 @@ QString QwtPlotItemDataModel::getItemDimDescribe(QwtPlotItem *item, int index) c
     }
 #endif
     return QString();
+}
+///
+/// \brief 依据显示规则设置数据
+/// \param row 实际数据的行号
+/// \param col 实际数据的列号，如果是表格列要减去这个数据的第一个维度的列数
+/// \param item 数据指针
+/// \param var 设置的值
+/// \return 成功设置返回true
+///
+bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVariant &var)
+{
+    if(row < 0 || col < 0 || !var.isValid() || nullptr == item)
+        return false;
+    bool isOK = false;
+    double d = var.toDouble(&isOK);
+    if(!isOK)
+        return false;
+
+    int rtti = item->rtti();
+    switch(rtti)
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        if(col > 1)
+            return false;
+        QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
+        QVector<QPointF> xys;
+        SAChart::getXYDatas(xys,p);
+        if(row < xys.size())
+        {
+            switch(col)
+            {
+            case 0:
+            {
+                xys[row].setX(d);
+                p->setSamples(xys);
+                return true;
+            }
+            case 1:
+            {
+                xys[row].setY(d);
+                p->setSamples(xys);
+                return true;
+            }
+            default:
+                break;
+            }
+        }
+        return false;
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        QwtPlotBarChart* p = static_cast<QwtPlotBarChart*>(item);
+        if(col > 1)
+            return false;
+        QVector<QPointF> xys;
+        SAChart::getXYDatas(xys,p);
+        if(row < xys.size())
+        {
+            switch(col)
+            {
+            case 0:
+            {
+                xys[row].setX(d);
+                break;
+            }
+            case 1:
+            {
+                xys[row].setY(d);
+                break;
+            }
+            default:
+                break;
+            }
+            p->setSamples(xys);
+            return true;
+        }
+        return false;
+    }
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    {
+        QwtPlotSpectroCurve* p = static_cast<QwtPlotSpectroCurve*>(item);
+        if(col > 2)
+            return false;
+        QVector<QwtPoint3D> xyzs;
+        SAChart::getXYZDatas(xyzs,p);
+        if(row < xyzs.size())
+        {
+            switch(col)
+            {
+            case 0:
+            {
+                xyzs[row].setX(d);
+                break;
+            }
+            case 1:
+            {
+                xyzs[row].setY(d);
+                break;
+            }
+            case 2:
+            {
+                xyzs[row].setZ(d);
+                break;
+            }
+            default:
+                break;
+            }
+            p->setSamples(xyzs);
+            return true;
+        }
+        return false;
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        QwtPlotIntervalCurve* p = static_cast<QwtPlotIntervalCurve*>(item);
+        if(col > 2)
+            return false;
+        QVector<QwtIntervalSample> samples;
+        SAChart::getIntervalSampleDatas(samples,p);
+        if(row < samples.size())
+        {
+            switch(col)
+            {
+            case 0:
+            {
+                samples[row].value = d;
+                break;
+            }
+            case 1:
+            {
+                samples[row].interval.setMinValue(d);
+                break;
+            }
+            case 2:
+            {
+                samples[row].interval.setMaxValue(d);
+                break;
+            }
+            default:
+                break;
+            }
+            p->setSamples(samples);
+            return true;
+        }
+        return false;
+    }
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    {
+        QwtPlotTradingCurve* p = static_cast<QwtPlotTradingCurve*>(item);
+        if(col > 4)
+            return false;
+        QVector<QwtOHLCSample> samples;
+        SAChart::getSeriesData<QwtOHLCSample>(samples,p);
+
+        if(row < samples.size())
+        {
+            switch(col)
+            {
+            case 0:
+            {
+                samples[row].time = d;
+                break;
+            }
+            case 1:
+            {
+                samples[row].open = d;
+                break;
+            }
+            case 2:
+            {
+                samples[row].high = d;
+                break;
+            }
+            case 3:
+            {
+                samples[row].low = d;
+                break;
+            }
+            case 4:
+            {
+                samples[row].close = d;
+                break;
+            }
+            default:
+                break;
+            }
+            p->setSamples(samples);
+            return true;
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+        QwtPlotMultiBarChart* p = static_cast<QwtPlotMultiBarChart*>(item);
+        QVector<QwtSetSample> samples;
+        SAChart::getSeriesData<QwtSetSample>(samples,p);
+        if(row < samples.size())
+        {
+            if(0 == col)
+            {
+                samples[row].value = d;
+            }
+            else
+            {
+                if(col-1 < samples[row].set.size())
+                {
+                    samples[row].set[col-1] = d;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            p->setSamples(samples);
+            return true;
+        }
+        return false;
+    }
+    default:
+        break;
+    }
+    return false;
 }
 
 ///

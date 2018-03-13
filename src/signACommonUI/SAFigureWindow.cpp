@@ -68,6 +68,7 @@ SAFigureWindow::SAFigureWindow(QWidget *parent) :
     ,d_ptr(new SAFigureWindowPrivate(this))
 {
     d_ptr->setupUI();
+    setFocusPolicy(Qt::ClickFocus);
     static int s_figure_count=0;
     ++s_figure_count;
     setWindowTitle(QString("figure-%1").arg(s_figure_count));
@@ -97,6 +98,7 @@ SAChart2D *SAFigureWindow::create2DSubPlot(float xPresent, float yPresent, float
         d_ptr->centralwidget->addWidget (plot,xPresent,yPresent,wPresent,hPresent);
         d_ptr->currentPlot = plot;
         emit chartAdded(plot);
+        setFocusProxy(plot);
         return plot;
     }
     catch(std::bad_alloc& b)
@@ -184,6 +186,7 @@ QRectF SAFigureWindow::getWidgetPos(QWidget *w) const
 void SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
 {
     d_ptr->currentPlot = p;
+    setFocusProxy(p);
 }
 
 //void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)

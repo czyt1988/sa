@@ -2,7 +2,6 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
-    widget/SAWidget.h \
     $$PWD/SAMessageWidget.h \
     $$PWD/SADataFeatureWidget.h \
     $$PWD/SAChartDatasViewWidget.h \
@@ -13,7 +12,6 @@ HEADERS += \
     $$PWD/SAValueTableWidget.h
 
 SOURCES += \
-    widget/SAWidget.cpp \
     $$PWD/SAMessageWidget.cpp \
     $$PWD/SADataFeatureWidget.cpp \
     $$PWD/SAChartDatasViewWidget.cpp \

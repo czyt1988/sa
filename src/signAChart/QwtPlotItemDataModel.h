@@ -7,6 +7,7 @@
 #include <vector>
 #include <qwt_plot_item.h>
 #include <limits>
+class QwtPlotMultiBarChart;
 #define QwtPlotItemDataModel_Use_Dynamic_Cast 0
 ///
 /// \brief 显示item数据的tablemodel
@@ -28,7 +29,10 @@ public:
 
 
     static double nan();
-
+    //获取item对应的第一个列号
+    int getItemsColumnStartIndex(QwtPlotItem* item) const;
+    //计算QwtPlotMultiBarChart的最大维度
+    static int calcPlotMultiBarChartDim(const QwtPlotMultiBarChart* p);
 protected:
     //获取item的最大行数
     virtual int calcItemDataRowCount(QwtPlotItem* item);
@@ -38,6 +42,8 @@ protected:
     virtual double getItemData(int row,int col,QwtPlotItem* item) const;
     //获取绘图数据维度的描述
     virtual QString getItemDimDescribe(QwtPlotItem* item,int index) const;
+    //设置数据 row col 要对应item的维度
+    virtual bool setItemData(int row,int col,QwtPlotItem* item,const QVariant& var);
 private:
     //更新最大行数
     void updateMaxRow();
