@@ -385,6 +385,24 @@ int SAChart::otherAxis(int axisID)
     return QwtPlot::xBottom;
 }
 ///
+/// \brief 判断是否是x坐标
+/// \param axisID
+/// \return
+///
+bool SAChart::isXAxis(int axisID)
+{
+    return ((QwtPlot::xBottom == axisID) || (QwtPlot::xTop == axisID));
+}
+///
+/// \brief 判断是否是y坐标
+/// \param axisID
+/// \return
+///
+bool SAChart::isYAxis(int axisID)
+{
+    return ((QwtPlot::yLeft == axisID) || (QwtPlot::yRight == axisID));
+}
+///
 /// \brief SAChart::getXYDatas
 /// \param xys
 /// \param xs

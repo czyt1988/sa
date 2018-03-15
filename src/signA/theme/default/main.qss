@@ -117,7 +117,7 @@ QWidget:item:hover
 QWidget:item:selected
 {
     background-color: #FDD36A;
-    color: #FFF;
+    color: #31312E;
 }
 
 QWidget:disabled
@@ -138,6 +138,8 @@ QCheckBox:focus
 {
 border: none;
 }
+
+
 /*================
 QFrame
 ==================*/
@@ -152,6 +154,15 @@ QFrame[frameShape="0"]
     border-radius: 2px;
     border: 1px transparent #C0C0C0;
 }
+/*================
+QwtPlotCanvas
+==================*/
+QwtPlotCanvas
+{
+    border-radius: 0px;
+    border: 1px transparent #000000;
+}
+
 /*================
 QToolTip
 ==================*/
@@ -259,20 +270,23 @@ QPushButton:disabled
     border-radius: 0px;
     color: #76797C;
 }
+QToolButton:pressed,
 QPushButton:pressed
 {
     background-color: #FDEDA3;
     border: 1px solid #F2CA58;
     color: 424242;
 }
+QToolButton:focus,
 QPushButton:focus {
     background-color: #DEDEDE;
     border: 1px solid #AFAFAA;
     color: 424242;
 }
+QToolButton:checked,
 QPushButton:checked{
-    background-color: #9ad4bd;
-    border: 1px solid #249B6D;
+    background-color: #DEDEDE;
+    border: 1px solid #AFAFAA;
 }
 
 QPushButton:hover
@@ -291,8 +305,9 @@ QToolButton {
 QToolButton:hover, QToolButton::menu-button:hover {
     background-color: #DEDEDE;
     border: 1px solid #AFAFAA;
-    padding: 2px;
+    padding: 1px;
 }
+
 /*================
 QComboBox
 ==================*/
@@ -565,19 +580,19 @@ QMenu::indicator:non-exclusive:checked:selected {
 
 
 QMenu::indicator:exclusive:unchecked {
-    image: url(./theme/normal/icon/radio.png);
+    image: url(./theme/normal/icon/unchecked.png);
 }
 
 QMenu::indicator:exclusive:unchecked:selected {
-    image: url(./theme/normal/icon/radio-disable.png);
+    image: url(./theme/normal/icon/unchecked-disable.png);
 }
 
 QMenu::indicator:exclusive:checked {
-    image: url(./theme/normal/icon/radio-on.png);
+    image: url(./theme/normal/icon/checked.png);
 }
 
 QMenu::indicator:exclusive:checked:selected {
-    image: url(./theme/normal/icon/radio-on-disable.png);
+    image: url(./theme/normal/icon/checked-hover.png);
 }
 /*
 QMenu::right-arrow {

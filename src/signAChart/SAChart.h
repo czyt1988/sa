@@ -98,7 +98,10 @@ public:
     static QwtDateScaleDraw* getAxisDateTimeScale(QwtPlot *chart, int axisID);
     //获取对应坐标轴的id,如 xTop会返回xBottom
     static int otherAxis(int axisID);
-
+    //判断是否是x轴
+    static bool isXAxis(int axisID);
+    //判断是否是y轴
+    static bool isYAxis(int axisID);
 ////////////////////// 曲线数据相关操作//////////////////////////////
     template<typename T>
     static void getSeriesData(QVector<T>& vec, const QwtSeriesStore<T>* series)

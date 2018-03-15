@@ -30,7 +30,7 @@
 #include "SAHistogramSeries.h"
 #include "qwt_plot_intervalcurve.h"
 #include "qwt_plot_multi_barchart.h"
-
+#include "qwt_plot_canvas.h"
 int SAChart2D::s_size_pen_width2 = 1000;
 
 class SAChart2DPrivate

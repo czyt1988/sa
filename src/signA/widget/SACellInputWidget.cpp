@@ -125,6 +125,27 @@ QStringList SACellInputWidget::getCellEditTexts() const
     }
     return strList;
 }
+///
+/// \brief 把每个单元格转换为double输出，若有一个不能转为double，返回false
+/// \param res
+/// \return
+///
+bool SACellInputWidget::getDoubleList(QList<double> &res) const
+{
+    QList<double> temp;
+    const int cellCount = cellsCount();
+    for(int i=0;i<cellCount;++i)
+    {
+        QString str = getCellEditText(i);
+        bool isOK = false;
+        double d = str.toDouble(&isOK);
+        if(!isOK)
+            return false;
+        temp.append(d);
+    }
+    res = temp;
+    return true;
+}
 
 bool SACellInputWidget::isAcceptInput() const
 {
@@ -157,7 +178,13 @@ void SACellInputWidget::setCellWidth(int index, int w)
 
 int SACellInputWidget::getCellWidth(int index) const
 {
-
+    QLayoutItem* i = ui->horizontalLayoutEdit->itemAt(index);
+    if(nullptr == i)
+        return 0;
+    QWidget* widget = i->widget();
+    if(nullptr == widget)
+        return 0;
+    return widget->width();
 }
 
 

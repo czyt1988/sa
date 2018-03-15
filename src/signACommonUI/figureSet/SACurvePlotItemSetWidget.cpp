@@ -9,6 +9,7 @@
 #include <QList>
 #include "SAChart.h"
 
+
 #define TR(str) QApplication::translate("SACurvePlotItemSetWidget", str, 0)
 
 

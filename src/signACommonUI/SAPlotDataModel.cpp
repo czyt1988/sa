@@ -34,7 +34,7 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
     double d = var.toDouble(&isOK);
     if(!isOK)
         return false;
-    SAChart2D * chart = getChartFromItem(item);
+    SAChart2D * chart = m_fig->findChartFromItem(item);
     if(nullptr == chart)
         return false;
     int rtti = item->rtti();
@@ -150,7 +150,35 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
             SAFigureReplaceIntervalSeriesDataInIndexsCommand* cmd =
                     new SAFigureReplaceIntervalSeriesDataInIndexsCommand(chart
                                                                    ,p
-                                                                   ,tr("set spectro curve %1 data").arg(p->title().text())
+                                                                   ,tr("set interval curve %1 data").arg(p->title().text())
+                                                                   ,{row}
+                                                                   ,{newData}
+                                                                   );
+            chart->appendCommand(cmd);
+            return true;
+        }
+        return false;
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        if(col > 2)
+            return false;
+        QwtPlotHistogram* p = static_cast<QwtPlotHistogram*>(item);
+        if(row < (int)p->dataSize())
+        {
+            QwtIntervalSample newData = p->sample(row);
+            switch(col)
+            {
+            case 0:newData.interval.setMinValue(d);break;
+            case 1:newData.interval.setMaxValue(d);break;
+            case 2:newData.value = d;break;
+            default:
+                return false;
+            }
+            SAFigureReplaceIntervalSeriesDataInIndexsCommand* cmd =
+                    new SAFigureReplaceIntervalSeriesDataInIndexsCommand(chart
+                                                                   ,p
+                                                                   ,tr("set histogram %1 data").arg(p->title().text())
                                                                    ,{row}
                                                                    ,{newData}
                                                                    );
@@ -185,7 +213,7 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
             SAFigureReplaceOHLCSeriesDataInIndexsCommand* cmd =
                     new SAFigureReplaceOHLCSeriesDataInIndexsCommand(chart
                                                                    ,p
-                                                                   ,tr("set spectro curve %1 data").arg(p->title().text())
+                                                                   ,tr("set trading curve %1 data").arg(p->title().text())
                                                                    ,{row}
                                                                    ,{newData}
                                                                    );
@@ -220,7 +248,7 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
             SAFigureReplaceMultiBarSeriesDataInIndexsCommand* cmd =
                     new SAFigureReplaceMultiBarSeriesDataInIndexsCommand(chart
                                                                    ,p
-                                                                   ,tr("set spectro curve %1 data").arg(p->title().text())
+                                                                   ,tr("set multi bar %1 data").arg(p->title().text())
                                                                    ,{row}
                                                                    ,{newData}
                                                                    );
@@ -245,23 +273,5 @@ void SAPlotDataModel::setFigure(SAFigureWindow *fig)
 {
     m_fig = fig;
 }
-///
-/// \brief 通过item找到对应的chart
-/// \param item
-/// \return
-///
-SAChart2D *SAPlotDataModel::getChartFromItem(QwtPlotItem *item)
-{
-    if(nullptr == m_fig)
-        return nullptr;
-    QList<SAChart2D*> charts = m_fig->get2DPlots();
-    const int chartSize = charts.size();
-    for(int i=0;i<chartSize;++i)
-    {
-        QwtPlotItemList items = charts[i]->itemList();
-        if(items.contains(item))
-            return charts[i];
-    }
-    return nullptr;
-}
+
 

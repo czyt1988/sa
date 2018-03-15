@@ -17,7 +17,7 @@ class SA_CHART_EXPORT QwtPlotItemDataModel : public QAbstractTableModel
     Q_OBJECT
 public:
     QwtPlotItemDataModel(QObject *p = 0);
-    void setQwtPlotItems(const QList<QwtPlotItem*>& items);
+    void setPlotItems(const QList<QwtPlotItem*>& items);
     void clear();
     void enableBackgroundColor(bool enable, int alpha = 30);
     int rowCount(const QModelIndex &parent) const;
@@ -27,21 +27,30 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-
+    //nan的数值
     static double nan();
+    //根据表格的列号获取对应的QwtPlotItem
+    QwtPlotItem* getItemFromCol(int col, int *dataColumnDim = nullptr) const;
+    //获取这个item对应的表格颜色
+    QColor getItemColor(QwtPlotItem* item) const;
+    //获取item对应的行数
+    int getItemRowCount(QwtPlotItem* item) const;
     //获取item对应的第一个列号
     int getItemsColumnStartIndex(QwtPlotItem* item) const;
+    //获取item对应的列范围
+    void getItemColumnRange(QwtPlotItem* item,int* startCol=nullptr,int* endCol=nullptr) const;
+public:
     //计算QwtPlotMultiBarChart的最大维度
     static int calcPlotMultiBarChartDim(const QwtPlotMultiBarChart* p);
-protected:
-    //获取item的最大行数
-    virtual int calcItemDataRowCount(QwtPlotItem* item);
-    //获取item的最大列数
-    virtual int calcItemDataColumnCount(QwtPlotItem* item);
-    //获取数据 row col 要对应item的维度
-    virtual double getItemData(int row,int col,QwtPlotItem* item) const;
     //获取绘图数据维度的描述
     virtual QString getItemDimDescribe(QwtPlotItem* item,int index) const;
+protected:
+    //获取item的最大行数
+    virtual int calcItemDataRowCount(QwtPlotItem* item) const;
+    //获取item的最大列数
+    virtual int calcItemDataColumnCount(QwtPlotItem* item) const;
+    //获取数据 row col 要对应item的维度
+    virtual double getItemData(int row,int col,QwtPlotItem* item) const;
     //设置数据 row col 要对应item的维度
     virtual bool setItemData(int row,int col,QwtPlotItem* item,const QVariant& var);
 private:
@@ -50,12 +59,9 @@ private:
     void updateColumnCount();
     void updateItemColor();
 
-    QwtPlotItem* getItemFromCol(int col, int *dataColumnDim = nullptr) const;
+
     QString getItemNameFromCol(int col) const;
 
-public:
-    QColor getItemColor(QwtPlotItem* item) const;
-    int getItemRowCount(QwtPlotItem* item) const;
 private:
     QList<QwtPlotItem*> m_items;
     QMap<QwtPlotItem*,int> m_itemsRowCount;

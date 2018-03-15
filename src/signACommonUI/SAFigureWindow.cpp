@@ -188,6 +188,23 @@ void SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
     d_ptr->currentPlot = p;
     setFocusProxy(p);
 }
+///
+/// \brief 通过item查找对应的SAChart2D，如果没有返回nullptr
+/// \param item
+/// \return 如果没有返回nullptr
+///
+SAChart2D *SAFigureWindow::findChartFromItem(QwtPlotItem *item)
+{
+    QList<SAChart2D*> charts = get2DPlots();
+    const int chartSize = charts.size();
+    for(int i=0;i<chartSize;++i)
+    {
+        QwtPlotItemList items = charts[i]->itemList();
+        if(items.contains(item))
+            return charts[i];
+    }
+    return nullptr;
+}
 
 //void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)
 //{

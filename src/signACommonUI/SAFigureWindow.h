@@ -45,6 +45,8 @@ public:
     QRectF getWidgetPos(QWidget *w) const;
     //设置当前的2dplot
     void setCurrent2DPlot(SAChart2D* p);
+    //通过item查找对应的SAChart2D，如果没有返回nullptr
+    SAChart2D *findChartFromItem(QwtPlotItem *item);
 protected:
 public slots:
     void redo();

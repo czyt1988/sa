@@ -37,6 +37,9 @@ public:
     void setCellEditText(int index,const QString& getCellTitleText);
     QString getCellEditText(int index) const;
     QStringList getCellEditTexts() const;
+    //特殊的获取
+    //把每个单元格转换为double输出，若有一个不能转为double，返回false
+    bool getDoubleList(QList<double>& res) const;
     //输入是否有效
     bool isAcceptInput() const;
     //返回按钮区的大小

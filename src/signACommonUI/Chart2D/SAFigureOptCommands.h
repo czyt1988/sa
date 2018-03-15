@@ -291,6 +291,120 @@ public:
    using SAFigureReplaceSeriesDataInIndexsCommand::SAFigureReplaceSeriesDataInIndexsCommand;
 };
 
+
+/////////////////////////////////////////////////////////////////////
+///
+///  Series值插入
+///
+/////////////////////////////////////////////////////////////////////
+template<typename T,typename TQwtSeries>
+class SA_COMMON_UI_EXPORT SAFigureAppendSeriesDataCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureAppendSeriesDataCommand(SAChart2D* chart
+                                         ,QwtSeriesStore<T> *curve
+                                         ,const QString &cmdName
+                                         ,const QVector<T>& newData
+                                         , QUndoCommand *parent = Q_NULLPTR);
+
+    virtual void redo();
+    virtual void undo();
+private:
+    QVector<T> m_newData;
+    QwtSeriesStore<T> *m_curve;
+};
+
+template<typename T,typename TQwtSeries>
+SAFigureAppendSeriesDataCommand<T,TQwtSeries>::SAFigureAppendSeriesDataCommand(
+        SAChart2D *chart
+        , QwtSeriesStore<T> *curve
+        , const QString &cmdName
+        , const QVector<T> &newData
+        , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_newData(newData)
+    ,m_curve(curve)
+{
+
+}
+
+template<typename T,typename TQwtSeries>
+void SAFigureAppendSeriesDataCommand<T,TQwtSeries>::redo()
+{
+    QVector<T> curveDatas;
+    SAChart::getSeriesData(curveDatas,m_curve);
+    curveDatas.append(m_newData);
+    m_curve->setData(new TQwtSeries(curveDatas));
+}
+
+template<typename T,typename TQwtSeries>
+void SAFigureAppendSeriesDataCommand<T,TQwtSeries>::undo()
+{
+    QVector<T> curveDatas;
+    SAChart::getSeriesData(curveDatas,m_curve);
+    curveDatas.resize(curveDatas.size() - m_newData.size());
+    m_curve->setData(new TQwtSeries(curveDatas));
+}
+
+
+///
+/// \brief 序列数据QPointF的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureAppendXYSeriesDataCommand
+        : public SAFigureAppendSeriesDataCommand<QPointF,QwtPointSeriesData>
+{
+public:
+    using SAFigureAppendSeriesDataCommand::SAFigureAppendSeriesDataCommand;
+};
+
+
+///
+/// \brief 序列数据QwtPoint3D的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureAppendXYZSeriesDataCommand
+        : public SAFigureAppendSeriesDataCommand<QwtPoint3D,QwtPoint3DSeriesData>
+{
+public:
+    using SAFigureAppendSeriesDataCommand::SAFigureAppendSeriesDataCommand;
+};
+
+///
+/// \brief 序列数据Interval的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureAppendIntervalSeriesDataCommand
+        : public SAFigureAppendSeriesDataCommand<QwtIntervalSample,QwtIntervalSeriesData>
+{
+public:
+   using SAFigureAppendSeriesDataCommand::SAFigureAppendSeriesDataCommand;
+};
+///
+/// \brief 序列数据QwtOHLCSample的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureAppendOHLCSeriesDataCommand
+        : public SAFigureAppendSeriesDataCommand<QwtOHLCSample,QwtTradingChartData>
+{
+public:
+   using SAFigureAppendSeriesDataCommand::SAFigureAppendSeriesDataCommand;
+};
+///
+/// \brief 序列数据QwtPlotMultiBarChart的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureAppendMultiBarSeriesDataCommand
+        : public SAFigureAppendSeriesDataCommand<QwtSetSample,QwtSetSeriesData>
+{
+public:
+   using SAFigureAppendSeriesDataCommand::SAFigureAppendSeriesDataCommand;
+};
+
+
+
+
+
+
+
+
+
+//==============================================
 //把QwtSeriesStore的值按索引提取
 template<typename T,typename IteIndex,typename IteData>
 void copyInRangeData(IteIndex beginIndex,IteIndex endIndex,const QwtSeriesStore<T>* curve,IteData beginData)

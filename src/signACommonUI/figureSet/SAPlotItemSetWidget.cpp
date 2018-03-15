@@ -21,6 +21,7 @@ public:
     QVBoxLayout* verticalLayout;
     //
     QScrollArea* tabScrollArea1;
+
     SACurvePlotItemSetWidget* curveItemSetWidget;
     UI():chartWidget(nullptr)
       ,parentClass(nullptr)
@@ -47,7 +48,6 @@ public:
         itemTabWidget->setObjectName(QStringLiteral("itemTabWidget"));
         itemTabWidget->setTabPosition(QTabWidget::West);
 
-        //Tab 1
         tabScrollArea1 = new QScrollArea();
         itemTabWidget->addTab(tabScrollArea1,QStringLiteral("1"));
         tabScrollArea1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

@@ -16,7 +16,7 @@ QwtPlotItemDataModel::QwtPlotItemDataModel(QObject* p)
 {
 }
 
-void QwtPlotItemDataModel::setQwtPlotItems(const QList<QwtPlotItem*>& items)
+void QwtPlotItemDataModel::setPlotItems(const QList<QwtPlotItem*>& items)
 {
     beginResetModel();
     m_items = items;
@@ -157,6 +157,22 @@ int QwtPlotItemDataModel::getItemsColumnStartIndex(QwtPlotItem *item) const
     return m_itemsColumnStartIndex.value(item,-1);
 }
 ///
+/// \brief 获取item对应的列范围
+/// \param startCol
+/// \param endCol
+///
+void QwtPlotItemDataModel::getItemColumnRange(QwtPlotItem* item,int *startCol, int *endCol) const
+{
+    int startIndex = getItemsColumnStartIndex(item);
+    if(startCol)
+        *startCol = startIndex;
+    if(endCol)
+    {
+        int dim2 = calcItemDataColumnCount(item);
+        *endCol = startIndex+dim2-1;
+    }
+}
+///
 /// \brief 计算QwtPlotMultiBarChart的最大维度
 /// \param p
 /// \return QwtSetSample.set的最大尺寸+1，其中加1是对应QwtSetSample.value
@@ -198,6 +214,7 @@ void QwtPlotItemDataModel::updateColumnCount()
     for(auto i = m_items.begin ();i!=m_items.end ();++i)
     {
         int dim = calcItemDataColumnCount(*i);
+        qDebug() << "rtti:" << (*i)->rtti() << " dim:" << dim;
         if(dim > 0)
         {
             int startIndex = m_columnMap.size();
@@ -260,7 +277,7 @@ QString QwtPlotItemDataModel::getItemNameFromCol(int col) const
 /// \param item
 /// \return
 ///
-int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item)
+int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item) const
 {
     return SAChart::getPlotChartItemDataCount(item);
 }
@@ -271,7 +288,7 @@ int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item)
 /// \param item
 /// \return
 ///
-int QwtPlotItemDataModel::calcItemDataColumnCount(QwtPlotItem *item)
+int QwtPlotItemDataModel::calcItemDataColumnCount(QwtPlotItem *item) const
 {
 #if QwtPlotItemDataModel_Use_Dynamic_Cast
     if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
@@ -317,6 +334,7 @@ int QwtPlotItemDataModel::calcItemDataColumnCount(QwtPlotItem *item)
         return 2;
     case QwtPlotItem::Rtti_PlotSpectroCurve:
     case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
         return 3;
     case QwtPlotItem::Rtti_PlotTradingCurve:
         return 5;
@@ -467,6 +485,20 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
         }
         break;
     }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
+        if(row < p->dataSize())
+        {
+            switch(col)
+            {
+                case 0:return p->sample(row).interval.minValue();
+                case 1:return p->sample(row).interval.maxValue();
+                case 2:return p->sample(row).value;
+            }
+        }
+        break;
+    }
     case QwtPlotItem::Rtti_PlotTradingCurve:
     {
         const QwtPlotTradingCurve* p = static_cast<const QwtPlotTradingCurve*>(item);
@@ -611,6 +643,17 @@ QString QwtPlotItemDataModel::getItemDimDescribe(QwtPlotItem *item, int index) c
         case 0:return tr("value");
         case 1:return tr("min");
         case 2:return tr("max");
+        default:return QString();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        switch(index)
+        {
+        case 0:return tr("x-min");
+        case 1:return tr("x-max");
+        case 2:return tr("value");
         default:return QString();
         }
         break;
@@ -781,6 +824,40 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
             case 2:
             {
                 samples[row].interval.setMaxValue(d);
+                break;
+            }
+            default:
+                break;
+            }
+            p->setSamples(samples);
+            return true;
+        }
+        return false;
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        QwtPlotHistogram* p = static_cast<QwtPlotHistogram*>(item);
+        if(col > 2)
+            return false;
+        QVector<QwtIntervalSample> samples;
+        SAChart::getIntervalSampleDatas(samples,p);
+        if(row < samples.size())
+        {
+            switch(col)
+            {
+            case 0:
+            {
+                samples[row].interval.setMinValue(d);
+                break;
+            }
+            case 1:
+            {
+                samples[row].interval.setMaxValue(d);
+                break;
+            }
+            case 2:
+            {
+                samples[row].value = d;
                 break;
             }
             default:

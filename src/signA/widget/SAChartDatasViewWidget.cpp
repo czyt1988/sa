@@ -4,6 +4,15 @@
 #include "SAPlotDataModel.h"
 #include "SAChart2D.h"
 #include "SAFigureWindow.h"
+#include "SACellInputWidget.h"
+#include "SAFigureOptCommands.h"
+#include "qwt_plot_curve.h"
+#include "qwt_plot_histogram.h"
+#include "qwt_plot_intervalcurve.h"
+#include "qwt_plot_barchart.h"
+#include "qwt_plot_multi_barchart.h"
+#include "qwt_plot_spectrocurve.h"
+#include "qwt_plot_tradingcurve.h"
 SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     QWidget(parent)
     ,ui(new Ui::SAChartDatasViewWidget)
@@ -27,6 +36,8 @@ SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     }
     // - TreeView CurPlotItem slots(曲线条目树形窗口)
     connect(ui->treeView,&QTreeView::clicked,this,&SAChartDatasViewWidget::onTreeViewCurPlotItemClicked);
+    // - 数据表双击 - 处理插入新数据
+    connect(ui->tableView,&QTableView::doubleClicked,this,&SAChartDatasViewWidget::onTableViewDoubleClicked);
 }
 
 SAChartDatasViewWidget::~SAChartDatasViewWidget()
@@ -107,7 +118,142 @@ void SAChartDatasViewWidget::onTreeViewCurPlotItemClicked(const QModelIndex &ind
         }
         items.append (m_treeModel->getQwtPlotItemFromIndex (indexList[i]));
     }
-    m_tableModel->setQwtPlotItems (items);
+
+    m_tableModel->setPlotItems (items);
+}
+///
+/// \brief SAChartDatasViewWidget::onTableViewDoubleClicked
+/// \param index
+///
+void SAChartDatasViewWidget::onTableViewDoubleClicked(const QModelIndex &index)
+{
+    QwtPlotItem* item = m_tableModel->getItemFromCol(index.column());
+    if(nullptr == item)
+        return;
+    int itemRowCount = m_tableModel->getItemRowCount(item);
+    if(index.row() != itemRowCount)
+        return;
+    int startCol=-1,endCol=-1;
+    m_tableModel->getItemColumnRange(item,&startCol,&endCol);
+    if(-1 == startCol || -1 == endCol)
+        return;
+    SACellInputWidget w(this);
+    initCellInputPosition(&w,item,index.row(),startCol,endCol);
+    w.exec();
+    if(!w.isAcceptInput())
+        return;
+
+    QList<double> datas;
+    if(!w.getDoubleList(datas))
+        return;
+
+    //接受完数据，根据不同类型插入新数据
+    SAChart2D* chart = m_figure->findChartFromItem(item);
+    if(nullptr == chart)
+        return;
+
+    const int dim2 = endCol - startCol + 1;
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        if(2 != datas.size())
+            return;
+        QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
+        QPointF newData(datas[0],datas[1]);
+        SAFigureAppendXYSeriesDataCommand* cmd
+                = new SAFigureAppendXYSeriesDataCommand(
+                    chart
+                    ,p
+                    ,tr("append curve %1 data").arg(p->title().text())
+                    ,{newData}
+                    );
+        chart->appendCommand(cmd);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        if(2 != datas.size())
+            return;
+        QwtPlotBarChart* p = static_cast<QwtPlotBarChart*>(item);
+        QPointF newData(datas[0],datas[1]);
+        SAFigureAppendXYSeriesDataCommand* cmd
+                = new SAFigureAppendXYSeriesDataCommand(
+                    chart
+                    ,p
+                    ,tr("append curve %1 data").arg(p->title().text())
+                    ,{newData}
+                    );
+        chart->appendCommand(cmd);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        if(3 != datas.size())
+            return;
+        QwtPlotIntervalCurve* p = static_cast<QwtPlotIntervalCurve*>(item);
+        QwtIntervalSample newData(datas[0],datas[1],datas[2]);
+        SAFigureAppendIntervalSeriesDataCommand* cmd
+                = new SAFigureAppendIntervalSeriesDataCommand(
+                    chart
+                    ,p
+                    ,tr("append interval curve %1 data").arg(p->title().text())
+                    ,{newData}
+                    );
+        chart->appendCommand(cmd);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        if(3 != datas.size())
+            return;
+        QwtPlotHistogram* p = static_cast<QwtPlotHistogram*>(item);
+        QwtIntervalSample newData(datas[2],datas[0],datas[1]);
+        SAFigureAppendIntervalSeriesDataCommand* cmd
+                = new SAFigureAppendIntervalSeriesDataCommand(
+                    chart
+                    ,p
+                    ,tr("append histogram %1 data").arg(p->title().text())
+                    ,{newData}
+                    );
+        chart->appendCommand(cmd);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    {
+        if(3 != datas.size())
+            return;
+        QwtPlotSpectroCurve* p = static_cast<QwtPlotSpectroCurve*>(item);
+        QwtPoint3D newData(datas[0],datas[1],datas[2]);
+        SAFigureAppendXYZSeriesDataCommand* cmd
+                = new SAFigureAppendXYZSeriesDataCommand(
+                    chart
+                    ,p
+                    ,tr("append spectro %1 data").arg(p->title().text())
+                    ,{newData}
+                    );
+        chart->appendCommand(cmd);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    {
+        if(5 != datas.size())
+            return;
+        QwtPlotTradingCurve* p = static_cast<QwtPlotTradingCurve*>(item);
+        QwtOHLCSample newData(datas[0],datas[1],datas[2],datas[3],datas[4]);
+        SAFigureAppendOHLCSeriesDataCommand* cmd
+                = new SAFigureAppendOHLCSeriesDataCommand(
+                    chart
+                    ,p
+                    ,tr("append trading %1 data").arg(p->title().text())
+                    ,{newData}
+                    );
+        chart->appendCommand(cmd);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void SAChartDatasViewWidget::onChartAdded(QwtPlot *plot)
@@ -123,4 +269,41 @@ void SAChartDatasViewWidget::onFigureDestroy(QObject *obj)
 void SAChartDatasViewWidget::onCtrlVInTableView()
 {
 
+}
+
+QPoint SAChartDatasViewWidget::tableHeaderPositionOffset() const
+{
+    QHeaderView* verticalHeader = ui->tableView->verticalHeader();
+    QHeaderView* horizontalHeader = ui->tableView->horizontalHeader();
+    return QPoint(verticalHeader->width(),horizontalHeader->height());
+}
+
+void SAChartDatasViewWidget::initCellInputPosition(SACellInputWidget *w,QwtPlotItem* item,int row,int colStart,int colEnd)
+{
+    QPoint offset = tableHeaderPositionOffset();
+    const int dim2 = colEnd - colStart + 1;
+    w->resizeCells(dim2);
+    QPoint leftTop,rightBottom;
+    leftTop.setX(ui->tableView->columnViewportPosition(colStart));
+    leftTop.setY(ui->tableView->rowViewportPosition(row));
+    rightBottom.setX(ui->tableView->columnViewportPosition(colEnd)+ui->tableView->columnWidth(colEnd));
+    rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(row));
+    int tmp = ui->tableView->rowHeight(row);
+    if(tmp < 20 || tmp > 30)
+    {
+        tmp = 20;
+    }
+    leftTop.ry() -= tmp;
+    leftTop = ui->tableView->mapToGlobal(leftTop);
+    rightBottom = ui->tableView->mapToGlobal(rightBottom);
+    leftTop += offset;
+    rightBottom += offset;
+    int buttonAreaWidth = w->getButtonAreaWidth();
+    rightBottom.rx() += buttonAreaWidth;
+    w->setGeometry(QRect(leftTop,rightBottom));
+    for(int i=0;i<dim2;++i)
+    {
+        w->setCellTitleText(i,m_tableModel->getItemDimDescribe(item,i));
+        w->setCellWidth(i,ui->tableView->columnWidth(colStart+i));
+    }
 }

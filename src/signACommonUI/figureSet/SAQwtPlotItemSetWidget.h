@@ -7,11 +7,11 @@ class SACheckBoxPropertyItem;
 class SALineEditPropertyItem;
 class SADoubleSpinBoxPropertyItem;
 class SAChartAxisSetSelect;
-class SAQwtPlotBarChartItemSetWidget;
 class QLabel;
 class QHBoxLayout;
 class QVBoxLayout;
 class QwtPlotBarChart;
+class SAQwtPlotItemAxisBindSetWidget;
 ///
 /// \brief 用于设置QwtPlotItem的widget
 ///
@@ -25,6 +25,9 @@ public:
     static SAQwtPlotItemSetWidget* createQwtPlotItemSetWidget(QwtPlotItem *plotItem, QWidget* parent = nullptr);
 signals:
     void plotItemTitleChanged(const QString& title);
+    void plotItemAxixBindChanged(int xOldAxis, int yOldAxis,int xNewAxis, int yNewAxis);
+private slots:
+    void onPlotItemAxisBindChanged(int xaxis,int yaxis);
 protected:
     void addWidget(QWidget* w, int stretch = 0, Qt::Alignment alignment = Qt::Alignment());
     void addLayout(QLayout *layout, int stretch = 0);
@@ -36,6 +39,7 @@ private:
 //    SAChartAxisSetSelect* m_axisSetItem;
 //    QLabel* m_labelAxisSet;
 //    QHBoxLayout* m_hAxisSetlayout;
+    SAQwtPlotItemAxisBindSetWidget* plotItemAxisBindSetWidget;
     QVBoxLayout* m_layout;
 };
 

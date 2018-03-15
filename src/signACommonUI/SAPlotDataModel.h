@@ -22,9 +22,6 @@ public:
     SAFigureWindow *getFigure() const;
     void setFigure(SAFigureWindow *fig);
 private:
-    //通过item找到对应的chart
-    SAChart2D* getChartFromItem(QwtPlotItem* item);
-private:
     SAFigureWindow* m_fig;
 };
 

@@ -231,7 +231,7 @@ void FunNum::hist()
         SAChart2D* chart = fig->create2DPlot();
         if(chart)
         {
-            chart->addBar(res.get());
+            chart->addHistogram(res.get());
         }
         saUI->raiseMainDock();
         sub->show();

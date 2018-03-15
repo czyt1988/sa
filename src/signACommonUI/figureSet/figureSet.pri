@@ -2,15 +2,14 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 FORMS += \
-    $$PWD/SAChartAxisSetSelect.ui \
     $$PWD/SAQwtSymbolSetWidget.ui \
     $$PWD/SAQwtAxisSetWidget.ui \
-    $$PWD/SAChartAxesSetWidget.ui
+    $$PWD/SAChartAxesSetWidget.ui \
+    $$PWD/SAQwtPlotItemAxisBindSetWidget.ui
 
 HEADERS += \
     $$PWD/SAQwtSymbolComboBox.h \
     $$PWD/SAAxisSelectComboBoxPropertyItem.h \
-    $$PWD/SAChartAxisSetSelect.h \
     $$PWD/SAChartNormalSetWidget.h \
     $$PWD/SAChartSetWidget.h \
     $$PWD/SACurvePlotItemSetWidget.h \
@@ -21,11 +20,11 @@ HEADERS += \
     $$PWD/SAQwtSymbolSetWidget.h \
     $$PWD/SAQwtAxisSetWidget.h \
     $$PWD/SAChartAxesSetWidget.h \
-    $$PWD/SAQwtPlotBarChartItemSetWidget.h
+    $$PWD/SAQwtPlotBarChartItemSetWidget.h \
+    $$PWD/SAQwtPlotItemAxisBindSetWidget.h
 
 SOURCES += \
     $$PWD/SAAxisSelectComboBoxPropertyItem.cpp \
-    $$PWD/SAChartAxisSetSelect.cpp \
     $$PWD/SAChartNormalSetWidget.cpp \
     $$PWD/SAChartSetWidget.cpp \
     $$PWD/SACurvePlotItemSetWidget.cpp \
@@ -37,4 +36,5 @@ SOURCES += \
     $$PWD/SAQwtSymbolSetWidget.cpp \
     $$PWD/SAQwtAxisSetWidget.cpp \
     $$PWD/SAChartAxesSetWidget.cpp \
-    $$PWD/SAQwtPlotBarChartItemSetWidget.cpp
+    $$PWD/SAQwtPlotBarChartItemSetWidget.cpp \
+    $$PWD/SAQwtPlotItemAxisBindSetWidget.cpp
