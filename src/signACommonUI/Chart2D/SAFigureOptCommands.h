@@ -137,10 +137,126 @@ private:
     QVector<QwtPoint3D> m_newData;
     QVector<QwtPoint3D> m_oldData;
 };
+/////////////////////////////////////////////////////////////////////
+///
+///  Series值在指定索引开始顺序替换
+///
+/////////////////////////////////////////////////////////////////////
+///
+/// \brief Series值在指定索引开始插入newData，原有的值会被保留，如果startIndexs为-1，则从最后追加
+///
+template<typename T,typename TQwtSeries>
+class SA_COMMON_UI_EXPORT SAFigureReplaceSeriesDataCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceSeriesDataCommand(SAChart2D* chart
+                                         ,QwtSeriesStore<T> *curve
+                                         ,const QString &cmdName
+                                         ,const int startIndexs
+                                         ,const QVector<T>& newData
+                                         , QUndoCommand *parent = Q_NULLPTR);
+    virtual void redo();
+    virtual void undo();
+private:
+    QVector<T> m_oldData;
+    int m_startIndex;
+    QVector<T> m_newData;
+    QwtSeriesStore<T> *m_curve;
+};
+
+template<typename T,typename TQwtSeries>
+SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::SAFigureReplaceSeriesDataCommand(
+        SAChart2D *chart
+        , QwtSeriesStore<T> *curve
+        , const QString &cmdName
+        , const int startIndexs
+        , const QVector<T> &newData
+        , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+      ,m_newData(newData)
+      ,m_curve(curve)
+      ,m_startIndex(startIndexs)
+{
+    if(startIndexs >= 0)
+    {
+        int index = startIndexs;
+        //说明数据从中间插入，记录旧的数据
+        int end = (index + newData.size() > curve->dataSize())
+                ? curve->dataSize()
+                : index + newData.size() + 1;
+        m_oldData.reserve(end - index);
+        while(index != end)
+        {
+            m_oldData.append(curve->sample(index));
+            ++index;
+        }
+    }
+}
+template<typename T,typename TQwtSeries>
+void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::redo()
+{
+    QVector<T> curveDatas;
+    SAChart::getSeriesData(curveDatas,m_curve);
+    if(m_startIndex < 0)
+    {
+        //插入
+        curveDatas.append(m_newData);
+    }
+    else
+    {
+        int newDataIndex = 0;
+        const int newDataSize = m_newData.size();
+        int index = m_startIndex;
+        const int curveDatasSize = curveDatas.size();
+        while(newDataIndex < newDataSize && index < curveDatasSize)
+        {
+            curveDatas[index] = m_newData[newDataIndex];
+            ++index;
+            ++newDataIndex;
+        }
+        while(newDataIndex < newDataSize)
+        {
+            curveDatas.append(m_newData[newDataIndex]);
+            ++newDataIndex;
+        }
+    }
+    m_curve->setData(new TQwtSeries(curveDatas));
+}
+template<typename T,typename TQwtSeries>
+void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::undo()
+{
+    QVector<T> curveDatas;
+    SAChart::getSeriesData(curveDatas,m_curve);
+    if(m_startIndex < 0)
+    {
+        curveDatas.resize(curveDatas.size() - m_newData.size());
+    }
+    else
+    {
+        //还原
+        int oldDataIndex = 0;
+        const int oldDataSize = m_oldData.size();
+        int index = m_startIndex;
+        const int curveDatasSize = curveDatas.size();
+        if(m_startIndex + m_oldData.size() < curveDatasSize)
+        {
+            //说明原来替换数据后还插入了新数据
+            curveDatas.resize(m_startIndex + m_oldData.size());
+        }
+        while(oldDataIndex < oldDataSize && index < curveDatasSize)
+        {
+            curveDatas[index] = m_newData[oldDataIndex];
+            ++index;
+            ++oldDataIndex;
+        }
+    }
+    m_curve->setData(new TQwtSeries(curveDatas));
+}
+
 
 /////////////////////////////////////////////////////////////////////
 ///
-///  Series值替换
+///  Series值按照索引替换
 ///
 /////////////////////////////////////////////////////////////////////
 template<typename T,typename TQwtSeries>
@@ -294,11 +410,11 @@ public:
 
 /////////////////////////////////////////////////////////////////////
 ///
-///  Series值插入
+///  Series值追加
 ///
 /////////////////////////////////////////////////////////////////////
 template<typename T,typename TQwtSeries>
-class SA_COMMON_UI_EXPORT SAFigureAppendSeriesDataCommand : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureAppendSeriesDataCommand : public SAFigureReplaceSeriesDataCommand<T,TQwtSeries>
 {
 public:
     SAFigureAppendSeriesDataCommand(SAChart2D* chart
@@ -306,12 +422,6 @@ public:
                                          ,const QString &cmdName
                                          ,const QVector<T>& newData
                                          , QUndoCommand *parent = Q_NULLPTR);
-
-    virtual void redo();
-    virtual void undo();
-private:
-    QVector<T> m_newData;
-    QwtSeriesStore<T> *m_curve;
 };
 
 template<typename T,typename TQwtSeries>
@@ -321,30 +431,11 @@ SAFigureAppendSeriesDataCommand<T,TQwtSeries>::SAFigureAppendSeriesDataCommand(
         , const QString &cmdName
         , const QVector<T> &newData
         , QUndoCommand *parent)
-    :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_newData(newData)
-    ,m_curve(curve)
+    :SAFigureReplaceSeriesDataCommand<T,TQwtSeries>(chart,curve,cmdName,-1,newData,parent)
 {
 
 }
 
-template<typename T,typename TQwtSeries>
-void SAFigureAppendSeriesDataCommand<T,TQwtSeries>::redo()
-{
-    QVector<T> curveDatas;
-    SAChart::getSeriesData(curveDatas,m_curve);
-    curveDatas.append(m_newData);
-    m_curve->setData(new TQwtSeries(curveDatas));
-}
-
-template<typename T,typename TQwtSeries>
-void SAFigureAppendSeriesDataCommand<T,TQwtSeries>::undo()
-{
-    QVector<T> curveDatas;
-    SAChart::getSeriesData(curveDatas,m_curve);
-    curveDatas.resize(curveDatas.size() - m_newData.size());
-    m_curve->setData(new TQwtSeries(curveDatas));
-}
 
 
 ///

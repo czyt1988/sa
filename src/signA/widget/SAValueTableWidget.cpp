@@ -485,9 +485,7 @@ void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractData
     int r = index.row();
     int c = index.column();
     SADataTableModel* model = getDataModel();
-    QHeaderView* verticalHeader = ui->tableView->verticalHeader();
-    QHeaderView* horizontalHeader = ui->tableView->horizontalHeader();
-    QPoint offset(verticalHeader->width(),horizontalHeader->height());
+    QPoint offset = tableHeaderPositionOffset();
     int colStart=-1,colEnd=-1;
     model->dataColumnRange(data,colStart,colEnd);
     if(-1 == colStart || -1 == colEnd)
@@ -518,7 +516,50 @@ void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractData
         w->resizeCells(1);
         return;
     }
+    QPoint leftTop,rightBottom;
+    leftTop.setX(ui->tableView->columnViewportPosition(colStart));
+    leftTop.setY(ui->tableView->rowViewportPosition(r));
+    rightBottom.setX(ui->tableView->columnViewportPosition(colEnd)+ui->tableView->columnWidth(colEnd));
+    rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
+    int tmp = ui->tableView->rowHeight(r);
+    if(tmp < 20 || tmp > 30)
+    {
+        tmp = 20;
+    }
+    leftTop.ry() -= tmp;
+    leftTop = ui->tableView->mapToGlobal(leftTop);
+    rightBottom = ui->tableView->mapToGlobal(rightBottom);
+    leftTop += offset;
+    rightBottom += offset;
+    int buttonAreaWidth = w->getButtonAreaWidth();
+    rightBottom.rx() += buttonAreaWidth;
+    w->setGeometry(QRect(leftTop,rightBottom));
+    const int dim2 = colEnd - colStart + 1;
+    for(int i=0;i<dim2;++i)
+    {
+        w->setCellWidth(i,ui->tableView->columnWidth(colStart+i));
+    }
 
+    switch(data->getType())
+    {
+    case SA::VectorPoint:
+    {
+        w->setCellTitleText(0,tr("x"));
+        w->setCellTitleText(1,tr("y"));
+        break;
+    }
+    default:
+    {
+        for(int i=0;i<dim2;++i)
+        {
+            if(i+colStart<model->columnCount())
+            {
+                w->setCellTitleText(i,QString::number(i+1));
+            }
+        }
+    }
+    }
+    /*
     QPoint leftTop,rightBottom;
     leftTop.setX(ui->tableView->columnViewportPosition(colStart));
     leftTop.setY(ui->tableView->rowViewportPosition(r));
@@ -569,6 +610,7 @@ void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractData
         }
     }
     }
+    */
 }
 ///
 /// \brief 表格控件处理按下ctrl + v
@@ -818,6 +860,14 @@ void SAValueTableWidget::doubleVectorAppendFromVariant(const QVariant &var, QVec
     double d = var.toDouble (&isOk);
     if(isOk)
         data.push_back (d);
+}
+
+QPoint SAValueTableWidget::tableHeaderPositionOffset() const
+{
+    QHeaderView* verticalHeader = ui->tableView->verticalHeader();
+    QHeaderView* horizontalHeader = ui->tableView->horizontalHeader();
+    return QPoint(verticalHeader->width(),horizontalHeader->height());
+
 }
 ///
 /// \brief 工程函数，获取QItemSelectionModel里的所有列的值

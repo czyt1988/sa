@@ -87,6 +87,8 @@ private:
     QSize getClipboardTextTable(QList<QVariantList> &res);
     //
     static void doubleVectorAppendFromVariant(const QVariant& var,QVector<double>& data);
+    //获取表格的表头的尺寸，返回一个QPoint，x:为竖直表头宽度，y为水平表头高度
+    QPoint tableHeaderPositionOffset() const;
 private:
     Ui::SAValueTableWidget *ui;
     //OpenFileManager* m_values;

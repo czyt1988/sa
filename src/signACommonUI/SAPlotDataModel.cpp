@@ -10,8 +10,41 @@
 #include "qwt_plot_multi_barchart.h"
 #include "qwt_plot_spectrocurve.h"
 #include "qwt_plot_tradingcurve.h"
+
+class SAPlotDataModelPrivate
+{
+    SA_IMPL_PUBLIC(SAPlotDataModel)
+public:
+    SAFigureWindow* m_fig;
+    SAPlotDataModelPrivate(SAPlotDataModel* d):q_ptr(d)
+    {
+
+    }
+};
+
+class AutoResetSAPlotDataModel
+{
+public:
+    AutoResetSAPlotDataModel(SAPlotDataModel* model):m_model(model)
+    {
+        m_model->beginResetModel();
+    }
+    ~AutoResetSAPlotDataModel()
+    {
+        m_model->endResetModel();
+    }
+private:
+    SAPlotDataModel* m_model;
+};
+
+
 SAPlotDataModel::SAPlotDataModel(QObject *p):QwtPlotItemDataModel(p)
-  ,m_fig(nullptr)
+  ,d_ptr(new SAPlotDataModelPrivate(this))
+{
+
+}
+
+SAPlotDataModel::~SAPlotDataModel()
 {
 
 }
@@ -34,9 +67,13 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
     double d = var.toDouble(&isOK);
     if(!isOK)
         return false;
-    SAChart2D * chart = m_fig->findChartFromItem(item);
+    SAChart2D * chart = d_ptr->m_fig->findChartFromItem(item);
     if(nullptr == chart)
         return false;
+
+    AutoResetSAPlotDataModel autoResetModel(this);
+    Q_UNUSED(autoResetModel);
+
     int rtti = item->rtti();
     switch(rtti)
     {
@@ -266,12 +303,28 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
 
 SAFigureWindow *SAPlotDataModel::getFigure() const
 {
-    return m_fig;
+    return d_ptr->m_fig;
 }
 
 void SAPlotDataModel::setFigure(SAFigureWindow *fig)
 {
-    m_fig = fig;
+    d_ptr->m_fig = fig;
+}
+
+void SAPlotDataModel::updateModel()
+{
+    beginResetModel();
+    updateRowCount();
+    updateColumnCount();
+    updateItemColor();
+    endResetModel();
+}
+
+void SAPlotDataModel::updateRow()
+{
+    beginResetModel();
+    updateRowCount();
+    endResetModel();
 }
 
 

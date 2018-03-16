@@ -7,20 +7,45 @@
 #include "qwt_plot_spectrocurve.h"
 #include "qwt_plot_tradingcurve.h"
 #include "SAChart.h"
+class QwtPlotItemDataModelPrivate
+{
+    SA_IMPL_PUBLIC(QwtPlotItemDataModel)
+public:
+    QList<QwtPlotItem*> m_items;
+    QMap<QwtPlotItem*,int> m_itemsRowCount;
+    QMap<QwtPlotItem*,QColor> m_itemsColor;///< 记录item的颜色，以免频繁读取
+    QMap<QwtPlotItem*,int> m_itemsColumnStartIndex;///< 记录数据开始的那一列的索引
+    int m_rowCount;
+    bool m_enableBkColor;///< 是否允许背景色
+    int m_bkAlpha;///< 背景透明度
+    QMap<int,QPair<QwtPlotItem*,int> > m_columnMap;
+    QwtPlotItemDataModelPrivate(QwtPlotItemDataModel* d):q_ptr(d)
+      ,m_rowCount(0)
+      ,m_enableBkColor(true)
+      ,m_bkAlpha(30)
+    {
+
+    }
+};
+
+
 
 QwtPlotItemDataModel::QwtPlotItemDataModel(QObject* p)
     :QAbstractTableModel(p)
-    ,m_rowCount(0)
-    ,m_enableBkColor(true)
-    ,m_bkAlpha(30)
+    ,d_ptr(new QwtPlotItemDataModelPrivate(this))
 {
+}
+
+QwtPlotItemDataModel::~QwtPlotItemDataModel()
+{
+
 }
 
 void QwtPlotItemDataModel::setPlotItems(const QList<QwtPlotItem*>& items)
 {
     beginResetModel();
-    m_items = items;
-    updateMaxRow();
+    d_ptr->m_items = items;
+    updateRowCount();
     updateColumnCount();
     updateItemColor();
     endResetModel();
@@ -31,25 +56,25 @@ void QwtPlotItemDataModel::setPlotItems(const QList<QwtPlotItem*>& items)
 void QwtPlotItemDataModel::clear()
 {
     beginResetModel();
-    m_rowCount = 0;
-    m_items.clear();
-    m_itemsRowCount.clear();
-    m_itemsColor.clear();
-    m_itemsColumnStartIndex.clear();
-    m_columnMap.clear();
+    d_ptr->m_rowCount = 0;
+    d_ptr->m_items.clear();
+    d_ptr->m_itemsRowCount.clear();
+    d_ptr->m_itemsColor.clear();
+    d_ptr->m_itemsColumnStartIndex.clear();
+    d_ptr->m_columnMap.clear();
     endResetModel();
 }
 
 int QwtPlotItemDataModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return m_rowCount;
+    return d_ptr->m_rowCount;
 }
 
 int QwtPlotItemDataModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return m_columnMap.size();
+    return d_ptr->m_columnMap.size();
 }
 
 QVariant QwtPlotItemDataModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -89,7 +114,7 @@ QVariant QwtPlotItemDataModel::data(const QModelIndex& index, int role) const
             return QVariant();
 
 
-        int col = m_itemsColumnStartIndex.value(item,0);
+        int col = d_ptr->m_itemsColumnStartIndex.value(item,0);
         col = index.column() - col;
 
         if(index.row() >= getItemRowCount(item))
@@ -98,7 +123,7 @@ QVariant QwtPlotItemDataModel::data(const QModelIndex& index, int role) const
     }
     else if(role == Qt::BackgroundColorRole)
     {
-        if(!m_enableBkColor)
+        if(!d_ptr->m_enableBkColor)
             return QVariant();
         QwtPlotItem* item = getItemFromCol(index.column ());
         if(!item)
@@ -134,9 +159,9 @@ Qt::ItemFlags QwtPlotItemDataModel::flags(const QModelIndex &index) const
 void QwtPlotItemDataModel::enableBackgroundColor(bool enable, int alpha)
 {
     beginResetModel();
-    m_enableBkColor = enable;
-    m_bkAlpha = alpha;
-    if(m_enableBkColor)
+    d_ptr->m_enableBkColor = enable;
+    d_ptr->m_bkAlpha = alpha;
+    if(d_ptr->m_enableBkColor)
     {
         updateItemColor();
     }
@@ -154,7 +179,7 @@ double QwtPlotItemDataModel::nan()
 ///
 int QwtPlotItemDataModel::getItemsColumnStartIndex(QwtPlotItem *item) const
 {
-    return m_itemsColumnStartIndex.value(item,-1);
+    return d_ptr->m_itemsColumnStartIndex.value(item,-1);
 }
 ///
 /// \brief 获取item对应的列范围
@@ -191,53 +216,59 @@ int QwtPlotItemDataModel::calcPlotMultiBarChartDim(const QwtPlotMultiBarChart *p
     }
     return maxDim + 1;
 }
-
-void QwtPlotItemDataModel::updateMaxRow()
+///
+/// \brief 更新行数
+///
+void QwtPlotItemDataModel::updateRowCount()
 {
-    m_rowCount = 0;
-    m_itemsRowCount.clear();
-    for(auto i = m_items.begin ();i!=m_items.end ();++i)
+    d_ptr->m_rowCount = 0;
+    d_ptr->m_itemsRowCount.clear();
+    for(auto i = d_ptr->m_items.begin ();i!=d_ptr->m_items.end ();++i)
     {
         int dataCount = calcItemDataRowCount(*i);
-        if(dataCount>m_rowCount)
+        if(dataCount>d_ptr->m_rowCount)
         {
-            m_rowCount = dataCount;
+            d_ptr->m_rowCount = dataCount;
         }
-        m_itemsRowCount[*i] = dataCount;
+        d_ptr->m_itemsRowCount[*i] = dataCount;
     }
 }
-
+///
+/// \brief 更新列数
+///
 void QwtPlotItemDataModel::updateColumnCount()
 {
-    m_columnMap.clear();
-    m_itemsColumnStartIndex.clear();
-    for(auto i = m_items.begin ();i!=m_items.end ();++i)
+    d_ptr->m_columnMap.clear();
+    d_ptr->m_itemsColumnStartIndex.clear();
+    for(auto i = d_ptr->m_items.begin ();i!=d_ptr->m_items.end ();++i)
     {
         int dim = calcItemDataColumnCount(*i);
         qDebug() << "rtti:" << (*i)->rtti() << " dim:" << dim;
         if(dim > 0)
         {
-            int startIndex = m_columnMap.size();
-            m_itemsColumnStartIndex[*i] = startIndex;
+            int startIndex = d_ptr->m_columnMap.size();
+            d_ptr->m_itemsColumnStartIndex[*i] = startIndex;
             for(int d=0;d<dim;++d)
             {
-                m_columnMap[startIndex+d] = qMakePair<QwtPlotItem*,int>(*i,d);
+                d_ptr->m_columnMap[startIndex+d] = qMakePair<QwtPlotItem*,int>(*i,d);
             }
         }
     }
 }
-
+///
+/// \brief 更新颜色
+///
 void QwtPlotItemDataModel::updateItemColor()
 {
-    m_itemsColor.clear();
-    for(auto i = m_items.begin ();i!=m_items.end ();++i)
+    d_ptr->m_itemsColor.clear();
+    for(auto i = d_ptr->m_items.begin ();i!=d_ptr->m_items.end ();++i)
     {
         QColor c = SAChart::getItemColor(*i);
-        if(m_bkAlpha < 255)
+        if(d_ptr->m_bkAlpha < 255)
         {
-            c.setAlpha(m_bkAlpha);
+            c.setAlpha(d_ptr->m_bkAlpha);
         }
-        m_itemsColor[*i] = c;
+        d_ptr->m_itemsColor[*i] = c;
     }
 }
 
@@ -250,7 +281,7 @@ void QwtPlotItemDataModel::updateItemColor()
 ///
 QwtPlotItem*QwtPlotItemDataModel::getItemFromCol(int col,int* dataColumnDim) const
 {
-    QPair<QwtPlotItem*,int> pair = m_columnMap.value(col,qMakePair<QwtPlotItem*,int>(nullptr,0));
+    QPair<QwtPlotItem*,int> pair = d_ptr->m_columnMap.value(col,qMakePair<QwtPlotItem*,int>(nullptr,0));
     if(dataColumnDim)
     {
         *dataColumnDim = pair.second;
@@ -953,12 +984,12 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
 ///
 QColor QwtPlotItemDataModel::getItemColor(QwtPlotItem* item) const
 {
-    return m_itemsColor.value(item,QColor());
+    return d_ptr->m_itemsColor.value(item,QColor());
 }
 
 int QwtPlotItemDataModel::getItemRowCount(QwtPlotItem *item) const
 {
-    return m_itemsRowCount.value(item,0);
+    return d_ptr->m_itemsRowCount.value(item,0);
 }
 
 
