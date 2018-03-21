@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include "SAWaitCursor.h"
 #include "SALog.h"
+#include "SAFigureOptCommands.h"
 #include "qwt_plot_curve.h"
 #include "qwt_plot_histogram.h"
 #include "qwt_plot_intervalcurve.h"
@@ -282,7 +283,7 @@ void SAChartDatasViewWidget::onFigureDestroy(QObject *obj)
     setFigure(nullptr);
 }
 
-QSize SAChartDatasViewWidget::getClipboardTextTable(QList<QVariantList> &res)
+QSize SAChartDatasViewWidget::getClipboardTextTable(QList<QStringList> &res)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString clipboardText = clipboard->text();
@@ -298,11 +299,7 @@ QSize SAChartDatasViewWidget::getClipboardTextTable(QList<QVariantList> &res)
         QStringList listStr = line.split('\t');
         if(listStr.size() > maxColumn)
             maxColumn = listStr.size();
-        QVariantList varList;
-        std::for_each(listStr.begin(),listStr.end(),[&varList](const QString& str){
-            varList.append(str);
-        });
-        res.append(varList);
+        res.append(listStr);
         ++maxRow;
     }
     return QSize(maxColumn,maxRow);
@@ -312,13 +309,7 @@ QSize SAChartDatasViewWidget::getClipboardTextTable(QList<QVariantList> &res)
 void SAChartDatasViewWidget::onCtrlVInTableView()
 {
     SAWaitCursor waitCursor;
-    QList<QVariantList> variantClipboardTable;
-    QSize tableSize = getClipboardTextTable(variantClipboardTable);
-    if(!tableSize.isValid())
-    {
-        saPrint() << "Clipboard text size is valid";
-        return;
-    }
+
     SAPlotDataModel* model = getPlotModel();
     QItemSelectionModel* selModel = ui->tableView->selectionModel();
     if(nullptr == selModel || nullptr == model)
@@ -342,18 +333,46 @@ void SAChartDatasViewWidget::onCtrlVInTableView()
         //判断复制的数据是否超出维度
         if(QwtPlotItem::Rtti_PlotMultiBarChart == item->rtti())
         {
-
+            //TODO:MultiBarChart 特殊处理
         }
         else
         {
-            //检查维度是否合适
-            if(tableSize.width() + col > (endCol+1))
+            //开始提取数据并进行插入 - 长度允许超越
+            switch(item->rtti())
             {
-                waitCursor.release();
-                QMessageBox::warning(this,tr("warning"),tr("please paste data dim is invalid!"));
-                return;
+            case QwtPlotItem::Rtti_PlotCurve:
+            {
+                ctrlVPlotCurve(static_cast<QwtPlotCurve*>(item),row,col-startCol);
+                break;
             }
-            //开始提取数据并进行插入
+            case QwtPlotItem::Rtti_PlotBarChart:
+            {
+
+                break;
+            }
+            case QwtPlotItem::Rtti_PlotIntervalCurve:
+            {
+
+                break;
+            }
+            case QwtPlotItem::Rtti_PlotHistogram:
+            {
+
+                break;
+            }
+            case QwtPlotItem::Rtti_PlotSpectroCurve:
+            {
+
+                break;
+            }
+            case QwtPlotItem::Rtti_PlotTradingCurve:
+            {
+
+                break;
+            }
+            default:
+                break;
+            }
         }
     }
     else
@@ -402,5 +421,160 @@ void SAChartDatasViewWidget::initCellInputPosition(SACellInputWidget *w,QwtPlotI
     {
         w->setCellTitleText(i,m_tableModel->getItemDimDescribe(item,i));
         w->setCellWidth(i,ui->tableView->columnWidth(colStart+i));
+    }
+}
+
+void SAChartDatasViewWidget::ctrlVPlotCurve(QwtPlotCurve* item, int startRow, int startCol)
+{
+    QList<QStringList> stringClipboardTable;
+    QSize tableSize = getClipboardTextTable(stringClipboardTable);
+    if(!tableSize.isValid())
+    {
+        saPrint() << "Clipboard text size is valid";
+        return;
+    }
+    if(startCol>1)
+    {
+        saPrint() << "start column invalid";
+        return;
+    }
+    if(tableSize.width() > (2 - startCol))
+    {
+        saPrint() << "clipboard data invalid";
+        return;
+    }
+    const int dataSize = item->dataSize();
+    if(1 == tableSize.width() && (startRow+tableSize.height()) > dataSize)
+    {
+        //只有一列时，且还会插入数据，不允许
+        saPrint() << "can not paste one column";
+        return;
+    }
+    //提取数据
+    QVector<QPointF> newDatas;
+    newDatas.reserve(tableSize.height());
+    bool isNeedUpdateRow = false;
+    if(startRow + tableSize.height() <= dataSize)
+    {
+        SAChart::getSeriesData(newDatas,item,startRow,startRow+tableSize.height()-1);
+        //替换数据
+        bool isOK = false;
+        for(int i=0;i<tableSize.height();++i)
+        {
+            if(1 == stringClipboardTable[i].size())
+            {
+                double d1 = stringClipboardTable[i][0].toDouble(&isOK);
+                if(!isOK)
+                    continue;
+                if(0 == startCol)
+                    newDatas[i].setX(d1);
+                else
+                    newDatas[i].setY(d1);
+            }
+            else if(2 == stringClipboardTable[i].size())
+            {
+                double d1 = stringClipboardTable[i][0].toDouble(&isOK);
+                if(!isOK)
+                    continue;
+                double d2 = stringClipboardTable[i][1].toDouble(&isOK);
+                if(!isOK)
+                    continue;
+                 newDatas[i].setX(d1);
+                 newDatas[i].setY(d2);
+            }
+        }
+    }
+    else
+    {
+        //说明复制后会超出原有大小
+        //首先要提取原有数据
+
+        //替换数据
+
+        isNeedUpdateRow = true;
+        if(1 == tableSize.width())
+        {
+            saPrint() << "can not paste one column in extern mode";
+            return;
+        }
+        else if(2 == tableSize.width())
+        {
+            bool isOK1 = false;
+            bool isOK2 = false;
+            for(int i=0;i<tableSize.height();++i)
+            {
+                if(1 == stringClipboardTable[i].size())
+                {
+                    //虽然剪切板总列数为2，但也存在不规则的可能性，例如某一行只复制了一个格，其他复制2个格
+                    if((i + startRow) >= dataSize)
+                    {
+                        //如果处于插入状态就退出
+                        QMessageBox::warning(this,tr("warning"),tr("can not insert"));
+                        return;
+                    }
+                    QPointF val = item->sample(i + startRow);
+                    double d1 = stringClipboardTable[i][0].toDouble(&isOK1);
+                    if(isOK1)
+                    {
+                        val.setX(d1);
+                    }
+                    newDatas.append(val);
+                }
+                else if(2 == stringClipboardTable[i].size())
+                {
+
+                    double d1 = stringClipboardTable[i][0].toDouble(&isOK1);
+                    double d2 = stringClipboardTable[i][1].toDouble(&isOK2);
+                    if(!isOK1 || !isOK2)
+                    {
+                        if((i + startRow) < dataSize)
+                        {
+                            QPointF val = item->sample(i + startRow);
+                            if(!isOK1)
+                                d1 = val.x();
+                            if(!isOK2)
+                                d2 = val.y();
+                        }
+                        else
+                        {
+                            QMessageBox::warning(this,tr("warning"),tr("can not insert"));
+                            return;
+                        }
+                    }
+                    newDatas.append(QPointF(d1,d2));
+                }
+                else
+                {
+                    if((i + startRow) >= dataSize)
+                    {
+                        //如果处于插入状态就退出
+                        QMessageBox::warning(this,tr("warning"),tr("can not insert"));
+                        return;
+                    }
+                    QPointF val = item->sample(i + startRow);
+                    newDatas.append(val);
+                }
+            }
+
+        }
+
+    }
+    SAChart2D* chart = qobject_cast<SAChart2D*>(item->plot());
+    if(chart)
+    {
+        SAFigureReplaceXYSeriesDataCommand* cmd = new SAFigureReplaceXYSeriesDataCommand(
+                    chart
+                    ,item
+                    ,tr("curve:%1 replace").arg(item->title().text())
+                    ,startRow
+                    ,newDatas
+                    );
+        chart->appendCommand(cmd);
+    }
+
+    SAPlotDataModel* model = getPlotModel();
+    if(model && isNeedUpdateRow)
+    {
+        model->updateRow();
     }
 }

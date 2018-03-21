@@ -103,16 +103,22 @@ public:
     //判断是否是y轴
     static bool isYAxis(int axisID);
 ////////////////////// 曲线数据相关操作//////////////////////////////
+    ///
+    /// \brief 获取QwtSeriesStore<T>对应的值
+    /// \param vec 输出的QVector<T>
+    /// \param series 输入的QwtSeriesStore<T>
+    ///
     template<typename T>
-    static void getSeriesData(QVector<T>& vec, const QwtSeriesStore<T>* series)
-    {
-        const int size = series->dataSize();
-        vec.reserve(size);
-        for(int i=0;i<size;++i)
-        {
-            vec.push_back(series->sample(i));
-        }
-    }
+    static void getSeriesData(QVector<T>& vec, const QwtSeriesStore<T>* series);
+    ///
+    /// \brief 获取QwtSeriesStore<T>对应的值
+    /// \param vec 输出的QVector<T>
+    /// \param series 输入的QwtSeriesStore<T>
+    /// \param startIndex 开始的索引
+    /// \param endIndex 结束的索引号(包括)
+    ///
+    template<typename T>
+    static void getSeriesData(QVector<T>& vec, const QwtSeriesStore<T>* series,int startIndex,int endIndex);
 
     //获取一个曲线的xy值
     static void getXYDatas(const QVector<QPointF>& xys, QVector<double>* xs, QVector<double>* ys);
@@ -147,4 +153,23 @@ public:
 
 };
 
+template<typename T>
+void SAChart::getSeriesData(QVector<T> &vec, const QwtSeriesStore<T> *series)
+{
+    const int size = series->dataSize();
+    for(int i=0;i<size;++i)
+    {
+        vec.push_back(series->sample(i));
+    }
+}
+
+template<typename T>
+void SAChart::getSeriesData(QVector<T> &vec, const QwtSeriesStore<T> *series, int startIndex, int endIndex)
+{
+    const int end = endIndex+1;
+    for(int i=startIndex;i<end;++i)
+    {
+        vec.push_back(series->sample(i));
+    }
+}
 #endif // SACHART_H

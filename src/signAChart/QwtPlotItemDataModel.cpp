@@ -243,7 +243,6 @@ void QwtPlotItemDataModel::updateColumnCount()
     for(auto i = d_ptr->m_items.begin ();i!=d_ptr->m_items.end ();++i)
     {
         int dim = calcItemDataColumnCount(*i);
-        qDebug() << "rtti:" << (*i)->rtti() << " dim:" << dim;
         if(dim > 0)
         {
             int startIndex = d_ptr->m_columnMap.size();
