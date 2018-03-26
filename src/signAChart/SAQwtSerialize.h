@@ -25,7 +25,11 @@ namespace sa {
     public:
         SABadSerializeExpection();
         ~SABadSerializeExpection();
+#if 0
         const char* what() const _GLIBCXX_USE_NOEXCEPT;
+#else
+        const char* what() const;
+#endif
     };
 
     // QFrame的序列化

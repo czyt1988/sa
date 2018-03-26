@@ -6,7 +6,7 @@ SAPenStyleComboBox::SAPenStyleComboBox(QWidget *parent):PenStyleBox(parent)
             ,this,&SAPenStyleComboBox::onComboBoxIndexChanged);
 }
 
-SAPenStyleComboBox::onComboBoxIndexChanged(int index)
+void SAPenStyleComboBox::onComboBoxIndexChanged(int index)
 {
     emit penStyleChanged(style());
 }

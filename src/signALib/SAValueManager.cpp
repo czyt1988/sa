@@ -346,6 +346,7 @@ bool SAValueManager::renameData(SAAbstractDatas *data, const QString &name)
 {
     SAValueRenameCommand* renameCMD = new SAValueRenameCommand(tr("rename value"),name,fromNormalPtr(data));
     m_undoStack.push(renameCMD);
+    return true;
 }
 
 bool SAValueManager::__renameData(SAAbstractDatas *data, const QString &name)

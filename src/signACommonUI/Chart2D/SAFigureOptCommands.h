@@ -6,7 +6,6 @@
 #include <QSharedPointer>
 #include "qwt_plot_item.h"
 #include "qwt_series_store.h"
-#include "qwt_series_store.h"
 #include "SAChart.h"
 #include <memory>
 
@@ -146,7 +145,7 @@ private:
 /// \brief Series值在指定索引开始插入newData，原有的值会被保留，如果startIndexs为-1，则从最后追加
 ///
 template<typename T,typename TQwtSeries>
-class SA_COMMON_UI_EXPORT SAFigureReplaceSeriesDataCommand : public SAFigureOptCommand
+class SAFigureReplaceSeriesDataCommand : public SAFigureOptCommand
 {
 public:
     SAFigureReplaceSeriesDataCommand(SAChart2D* chart
@@ -260,7 +259,7 @@ void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::undo()
 ///
 /////////////////////////////////////////////////////////////////////
 template<typename T,typename TQwtSeries>
-class SA_COMMON_UI_EXPORT SAFigureReplaceSeriesDataInIndexsCommand : public SAFigureOptCommand
+class SAFigureReplaceSeriesDataInIndexsCommand : public SAFigureOptCommand
 {
 public:
     SAFigureReplaceSeriesDataInIndexsCommand(SAChart2D* chart
@@ -414,7 +413,7 @@ public:
 ///
 /////////////////////////////////////////////////////////////////////
 template<typename T,typename TQwtSeries>
-class SA_COMMON_UI_EXPORT SAFigureAppendSeriesDataCommand : public SAFigureReplaceSeriesDataCommand<T,TQwtSeries>
+class SAFigureAppendSeriesDataCommand : public SAFigureReplaceSeriesDataCommand<T,TQwtSeries>
 {
 public:
     SAFigureAppendSeriesDataCommand(SAChart2D* chart

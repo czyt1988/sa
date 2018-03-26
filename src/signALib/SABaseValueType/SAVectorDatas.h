@@ -1,6 +1,6 @@
 ﻿#ifndef SAVECTORDATAS_H
 #define SAVECTORDATAS_H
-
+#include "SALibGlobal.h"
 #include "SAAbstractDatas.h"
 #include <QVector>
 ///
@@ -9,7 +9,7 @@
 /// \date
 ///
 template<typename T>
-class SALIB_EXPORT SAVectorDatas : public SAAbstractDatas
+class SAVectorDatas : public SAAbstractDatas
 {
 public:
     SAVectorDatas();

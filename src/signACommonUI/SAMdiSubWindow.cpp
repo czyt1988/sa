@@ -30,9 +30,7 @@ void SAMdiSubWindow::closeEvent( QCloseEvent *e )
 {
 	if (m_confirm_close){
 		switch( 
-			QMessageBox::question(this
-			, windowTitle()
-			,QStringLiteral("是否关闭窗口？"))
+            QMessageBox::question(this, windowTitle(),tr("Are You Sure Close Window?"))
 			)
 		{
 		case QMessageBox::Yes:

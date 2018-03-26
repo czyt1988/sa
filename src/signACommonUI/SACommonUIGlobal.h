@@ -17,7 +17,6 @@
 #ifndef SA_COMMON_UI_EXPORT
 #define SA_COMMON_UI_EXPORT
 #endif
-
 #include "qwt_plot_item.h"
 namespace SA {
     enum RTTI_SAChart2D{
