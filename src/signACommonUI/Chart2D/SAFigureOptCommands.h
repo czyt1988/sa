@@ -1,13 +1,13 @@
 ﻿#ifndef SAFIGUREOPTCOMMANDS_H
 #define SAFIGUREOPTCOMMANDS_H
 #include "SAFigureOptCommand.h"
+#include <memory>
 #include <QList>
 #include <QVector>
+#include "SAChart.h"
 #include <QSharedPointer>
 #include "qwt_plot_item.h"
-#include "qwt_series_store.h"
-#include "SAChart.h"
-#include <memory>
+
 
 class SAAbstractDatas;
 class QwtPlotCurve;
@@ -136,6 +136,10 @@ private:
     QVector<QwtPoint3D> m_newData;
     QVector<QwtPoint3D> m_oldData;
 };
+
+
+
+
 /////////////////////////////////////////////////////////////////////
 ///
 ///  Series值在指定索引开始顺序替换
@@ -180,7 +184,7 @@ SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::SAFigureReplaceSeriesDataCommand
     {
         int index = startIndexs;
         //说明数据从中间插入，记录旧的数据
-        int end = (index + newData.size() > curve->dataSize())
+        int end = ((size_t)(index + newData.size()) > curve->dataSize())
                 ? curve->dataSize()
                 : index + newData.size() + 1;
         m_oldData.reserve(end - index);
