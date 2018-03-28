@@ -4,12 +4,14 @@
 #include <QDialog>
 #include <QList>
 #include <QPair>
+#include <QVariant>
 #include <QVariantList>
 #include <memory>
 #include <QStringList>
 #include "SACommonUIGlobal.h"
 #include <functional>
 #include "SAPropertySetWidget.h"
+class SAPropertySetDialogPrivate;
 class QtTreePropertyBrowser;
 class QtVariantPropertyManager;
 class QtVariantEditorFactory;
@@ -25,6 +27,7 @@ class SAPropertySetWidget;
 class SA_COMMON_UI_EXPORT SAPropertySetDialog : public QDialog
 {
     Q_OBJECT
+    SA_IMPL(SAPropertySetDialog)
 public:
     enum BrowserType{
         TreeType = SAPropertySetWidget::TreeType
@@ -113,9 +116,6 @@ public:
     SAPropertySetWidget* getPropertyWidget() const;
 private slots:
     void onPropertyValuechanged(QtProperty* prop,const QVariant& var);
-private:
-    class UI;
-    UI* ui;
 };
 
 #endif // SAFUNCTIONPARAMINPUTDIALOG_H

@@ -148,6 +148,7 @@ private:
 ///
 /// \brief Series值在指定索引开始插入newData，原有的值会被保留，如果startIndexs为-1，则从最后追加
 ///
+#if 0
 template<typename T,typename TQwtSeries>
 class SAFigureReplaceSeriesDataCommand : public SAFigureOptCommand
 {
@@ -361,6 +362,8 @@ void SAFigureReplaceSeriesDataInIndexsCommand<T,TQwtSeries>::undo()
     m_curve->setData(new TQwtSeries(curveDatas));
 }
 
+
+
 ///
 /// \brief 序列数据QPointF的替换
 ///
@@ -491,11 +494,112 @@ public:
 };
 
 
+#else
 
 
+///
+/// \brief 序列数据QPointF的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceXYSeriesDataInIndexsCommand
+        : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceXYSeriesDataInIndexsCommand(SAChart2D* chart
+                                               ,QwtSeriesStore<QPointF> *curve
+                                               ,const QString &cmdName
+                                               ,const QVector<int>& inRangIndexs
+                                               ,const QVector<QPointF>& inRangNewData
+                                               , QUndoCommand *parent = Q_NULLPTR)
+        :SAFigureOptCommand(chart,cmdName,parent)
+    {
+
+    }
+    SAFigureReplaceXYSeriesDataInIndexsCommand(SAChart2D* chart
+                                               ,QwtSeriesStore<QPointF> *curve
+                                               ,const QString &cmdName
+                                               ,const QVector<int>& inRangIndexs
+                                               ,const QVector<QPointF>& inRangOldData
+                                               ,const QVector<QPointF>& inRangNewData
+                                               , QUndoCommand *parent = Q_NULLPTR)
+        :SAFigureOptCommand(chart,cmdName,parent)
+    {
+
+    }
+};
+
+///
+/// \brief 序列数据QPointF的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceXYZSeriesDataInIndexsCommand
+        : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceXYZSeriesDataInIndexsCommand(SAChart2D* chart
+                                               ,QwtSeriesStore<QwtPoint3D> *curve
+                                               ,const QString &cmdName
+                                               ,const QVector<int>& inRangIndexs
+                                               ,const QVector<QwtPoint3D>& inRangNewData
+                                               , QUndoCommand *parent = Q_NULLPTR)
+        :SAFigureOptCommand(chart,cmdName,parent)
+    {
+
+    }
+};
+
+///
+/// \brief 序列数据QPointF的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceIntervalSeriesDataInIndexsCommand
+        : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceIntervalSeriesDataInIndexsCommand(SAChart2D* chart
+                                               ,QwtSeriesStore<QwtIntervalSample> *curve
+                                               ,const QString &cmdName
+                                               ,const QVector<int>& inRangIndexs
+                                               ,const QVector<QwtIntervalSample>& inRangNewData
+                                               , QUndoCommand *parent = Q_NULLPTR)
+        :SAFigureOptCommand(chart,cmdName,parent)
+    {
+
+    }
+};
 
 
+class SA_COMMON_UI_EXPORT SAFigureReplaceOHLCSeriesDataInIndexsCommand
+        : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceOHLCSeriesDataInIndexsCommand(SAChart2D* chart
+                                               ,QwtSeriesStore<QwtOHLCSample> *curve
+                                               ,const QString &cmdName
+                                               ,const QVector<int>& inRangIndexs
+                                               ,const QVector<QwtOHLCSample>& inRangNewData
+                                               , QUndoCommand *parent = Q_NULLPTR)
+        :SAFigureOptCommand(chart,cmdName,parent)
+    {
 
+    }
+};
+
+class SA_COMMON_UI_EXPORT SAFigureReplaceMultiBarSeriesDataInIndexsCommand
+        : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceMultiBarSeriesDataInIndexsCommand(SAChart2D* chart
+                                               ,QwtSeriesStore<QwtSetSample> *curve
+                                               ,const QString &cmdName
+                                               ,const QVector<int>& inRangIndexs
+                                               ,const QVector<QwtSetSample>& inRangNewData
+                                               , QUndoCommand *parent = Q_NULLPTR)
+        :SAFigureOptCommand(chart,cmdName,parent)
+    {
+
+    }
+};
+
+
+#endif
 
 
 //==============================================
