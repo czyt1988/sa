@@ -611,5 +611,6 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
 
 bool SASelectRegionDataEditor::keyReleaseEvent(const QKeyEvent *e)
 {
+    Q_UNUSED(e);
     return false;
 }

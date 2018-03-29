@@ -28,11 +28,19 @@ sa::SABadSerializeExpection::~SABadSerializeExpection()
 {
 
 }
-
+#if 0
 const char *sa::SABadSerializeExpection::what() const _GLIBCXX_USE_NOEXCEPT
 {
     return "serialize error";
 }
+#else
+const char *sa::SABadSerializeExpection::what() const noexcept
+{
+    return "serialize error";
+}
+#endif
+
+
 
 void sa::serialize_out_scale_widge(QDataStream &out, const QwtPlot *chart,int axis)
 {

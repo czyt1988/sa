@@ -35,7 +35,7 @@ void SAValueTableOptEditValueCommand::redo()
 {
     SAAbstractDatas* d = getDataPtr();
     SADataTableModel* m = getModel();
-    d->setAt(m_newDatas,{m_realRow,m_realCol});
+    d->setAt(m_newDatas,{(size_t)m_realRow,(size_t)m_realCol});
     m->update();
 }
 
@@ -43,7 +43,7 @@ void SAValueTableOptEditValueCommand::undo()
 {
     SAAbstractDatas* d = getDataPtr();
     SADataTableModel* m = getModel();
-    d->setAt(m_oldDatas,{m_realRow,m_realCol});
+    d->setAt(m_oldDatas,{(size_t)m_realRow,(size_t)m_realCol});
     m->update();
 }
 

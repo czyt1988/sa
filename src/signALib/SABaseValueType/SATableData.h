@@ -21,13 +21,12 @@
 #endif
 
 template<typename T>
-class SALIB_EXPORT SATableData : public SAAbstractDatas
+class SATableData : public SAAbstractDatas
 {
 public:
     typedef czy::QtApp::QczyHashTable<T> Table;
     SATableData();
     SATableData(const QString& name);
-    SATableData(const QIcon & icon, const QString & name);
     virtual ~SATableData();
     virtual int getType() const;
     virtual QVariant getAt(const std::initializer_list<size_t>& index) const;
@@ -86,13 +85,7 @@ SATableData<T>::SATableData(const QString &name):SAAbstractDatas(name)
 {
 
 }
-template<typename T>
-SATableData<T>::SATableData(const QIcon &icon, const QString &name)
-    :SAAbstractDatas(icon,name)
-    ,m_isDirty(true)
-{
 
-}
 
 template<typename T>
 SATableData<T>::~SATableData()

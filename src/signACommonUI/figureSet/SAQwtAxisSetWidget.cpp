@@ -29,13 +29,13 @@ SAQwtAxisSetWidget::SAQwtAxisSetWidget(QWidget *parent) :
             ,this,&SAQwtAxisSetWidget::onAxisFontChanged);
     connect(ui->aligmentSetWidget,&SAAligmentSetWidget::alignmentStateChanged
             ,this,&SAQwtAxisSetWidget::onAxisLabelAligmentChanged);
-    connect(ui->doubleSpinBoxRotation,static_cast<void(QDoubleSpinBox::*)(double v)>(QDoubleSpinBox::valueChanged)
+    connect(ui->doubleSpinBoxRotation,static_cast<void(QDoubleSpinBox::*)(double v)>(&QDoubleSpinBox::valueChanged)
             ,this,&SAQwtAxisSetWidget::onAxisLabelRotationChanged);
-    connect(ui->spinBoxMargin,static_cast<void(QSpinBox::*)(int v)>(QSpinBox::valueChanged)
+    connect(ui->spinBoxMargin,static_cast<void(QSpinBox::*)(int v)>(&QSpinBox::valueChanged)
             ,this,&SAQwtAxisSetWidget::onAxisMarginValueChanged);
-    connect(ui->doubleSpinBoxMax,static_cast<void(QDoubleSpinBox::*)(double v)>(QDoubleSpinBox::valueChanged)
+    connect(ui->doubleSpinBoxMax,static_cast<void(QDoubleSpinBox::*)(double v)>(&QDoubleSpinBox::valueChanged)
             ,this,&SAQwtAxisSetWidget::onAxisMaxScaleChanged);
-    connect(ui->doubleSpinBoxMin,static_cast<void(QDoubleSpinBox::*)(double v)>(QDoubleSpinBox::valueChanged)
+    connect(ui->doubleSpinBoxMin,static_cast<void(QDoubleSpinBox::*)(double v)>(&QDoubleSpinBox::valueChanged)
             ,this,&SAQwtAxisSetWidget::onAxisMinScaleChanged);
     connect(m_buttonGroup,static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked)
             ,this,&SAQwtAxisSetWidget::onScaleStyleChanged);

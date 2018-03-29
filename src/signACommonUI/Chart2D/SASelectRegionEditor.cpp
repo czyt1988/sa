@@ -328,5 +328,6 @@ bool SASelectRegionEditor::keyPressEvent(const QKeyEvent *e)
 
 bool SASelectRegionEditor::keyReleaseEvent(const QKeyEvent *e)
 {
+    Q_UNUSED(e);
     return false;
 }

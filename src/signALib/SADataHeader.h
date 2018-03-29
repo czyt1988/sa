@@ -79,8 +79,12 @@ private:
     static QString getXMLPropertyStartElementString();
 };
 
-
+#if _MSC_VER
+QDataStream &operator<<(QDataStream & out, const SADataHeader & item);
+QDataStream &operator>>(QDataStream & in, SADataHeader & item);
+#else
 SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const SADataHeader & item);
 SALIB_EXPORT QDataStream &operator>>(QDataStream & in, SADataHeader & item);
+#endif
 
 #endif // SADATATYPEINFO_H

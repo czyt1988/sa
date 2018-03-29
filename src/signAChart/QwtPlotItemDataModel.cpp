@@ -464,7 +464,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
     case QwtPlotItem::Rtti_PlotCurve:
     {
         const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
-        if(row < p->dataSize())
+        if((size_t)row < p->dataSize())
         {
             switch(col)
             {
@@ -477,7 +477,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
     case QwtPlotItem::Rtti_PlotBarChart:
     {
         const QwtPlotBarChart* p = static_cast<const QwtPlotBarChart*>(item);
-        if(row < p->dataSize())
+        if((size_t)row < p->dataSize())
         {
             switch(col)
             {
@@ -490,7 +490,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
     case QwtPlotItem::Rtti_PlotSpectroCurve:
     {
         const QwtPlotSpectroCurve* p = static_cast<const QwtPlotSpectroCurve*>(item);
-        if(row < p->dataSize())
+        if((size_t)row < p->dataSize())
         {
             switch(col)
             {
@@ -504,7 +504,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
     case QwtPlotItem::Rtti_PlotIntervalCurve:
     {
         const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
-        if(row < p->dataSize())
+        if((size_t)row < p->dataSize())
         {
             switch(col)
             {
@@ -518,7 +518,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
     case QwtPlotItem::Rtti_PlotHistogram:
     {
         const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
-        if(row < p->dataSize())
+        if((size_t)row < p->dataSize())
         {
             switch(col)
             {
@@ -532,7 +532,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
     case QwtPlotItem::Rtti_PlotTradingCurve:
     {
         const QwtPlotTradingCurve* p = static_cast<const QwtPlotTradingCurve*>(item);
-        if(row < p->dataSize())
+        if((size_t)row < p->dataSize())
         {
             switch(col)
             {
@@ -548,7 +548,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
     case QwtPlotItem::Rtti_PlotMultiBarChart:
     {
         const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
-        if(row < p->dataSize())
+        if((size_t)row < p->dataSize())
         {
             const QwtSetSample& s = p->sample(row);
             if(0 == col)
