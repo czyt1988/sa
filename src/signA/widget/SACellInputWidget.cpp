@@ -21,7 +21,7 @@ SACellInputWidget::~SACellInputWidget()
 
 int SACellInputWidget::cellsCount() const
 {
-    m_cellInfos.size();
+    return m_cellInfos.size();
 }
 
 void SACellInputWidget::clearCells()

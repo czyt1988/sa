@@ -21,8 +21,8 @@ public:
     SADataHeader();
     SADataHeader(const SAAbstractDatas* data);
     ~SADataHeader();
-    friend QDataStream &operator<<(QDataStream & out, const SADataHeader & item);
-    friend QDataStream &operator>>(QDataStream & in, SADataHeader & item);
+    friend SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const SADataHeader & item);
+    friend SALIB_EXPORT QDataStream &operator>>(QDataStream & in, SADataHeader & item);
     ///
     /// \brief 设置版本字符
     /// \param version
@@ -79,12 +79,9 @@ private:
     static QString getXMLPropertyStartElementString();
 };
 
-#if _MSC_VER
-QDataStream &operator<<(QDataStream & out, const SADataHeader & item);
-QDataStream &operator>>(QDataStream & in, SADataHeader & item);
-#else
+
 SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const SADataHeader & item);
 SALIB_EXPORT QDataStream &operator>>(QDataStream & in, SADataHeader & item);
-#endif
+
 
 #endif // SADATATYPEINFO_H

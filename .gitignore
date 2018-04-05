@@ -21,6 +21,9 @@ push.sh
 *.db
 *.bak
 *.psd
+*.pdb
+*.exp
+*.psd
 build*
 /tmp
 /test

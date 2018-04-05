@@ -13,7 +13,7 @@ CONFIG += dll
 DESTDIR = ../bin/libs
 
 CONFIG += c++11
-QWT_CONFIG  += QwtDll
+QWT_CONFIG += QwtDll
 #czy
 include($$PWD/../czy/czy.pri)
 #propertybrowser
@@ -38,17 +38,14 @@ OTHER_FILES += readme.md
 HEADERS += \
     SACommonUIGlobal.h \
     QtPropertyIdStorage.h \
-    SAPropertySetDialog.h \
     SAUIReflection.h \
     SAFigureWindow.h \
     SAAbstractFigure.h \
     SAValueSelectDialog.h \
     SAUIInterface.h \
-    SAUIHelper.h \
     SAMdiSubWindow.h \
     SAFigureContainer.h \
     SAFiugreSetWidget.h \
-    SAPropertySetWidget.h \
     SAPenSetWidget.h \
     SAColorPickerButton.h \
     SAPenStyleComboBox.h \
@@ -60,6 +57,9 @@ HEADERS += \
     SAProjectManager.h \
     SATimeFormatSetWidget.h \
     SATableView.h \
+    SAPropertySetDialog.h \
+    SAPropertySetWidget.h \
+    SAUIHelper.h \
     SADataTableModel.h \
     SAPopupWidget.h \
     SAWaitCursor.h \
@@ -67,17 +67,14 @@ HEADERS += \
     SAPlotDataModel.h
 
 SOURCES += \
-    SAPropertySetDialog.cpp \
     SAUIReflection.cpp \
     SAFigureWindow.cpp \
     SAAbstractFigure.cpp \
     SAValueSelectDialog.cpp \
     SAUIInterface.cpp \
-    SAUIHelper.cpp \
     SAMdiSubWindow.cpp \
     SAFigureContainer.cpp \
     SAFiugreSetWidget.cpp \
-    SAPropertySetWidget.cpp \
     SAPenSetWidget.cpp \
     SAColorPickerButton.cpp \
     SAPenStyleComboBox.cpp \
@@ -89,8 +86,12 @@ SOURCES += \
     SAProjectManager.cpp \
     SATimeFormatSetWidget.cpp \
     SATableView.cpp \
+    SAPropertySetDialog.cpp \
+    SAPropertySetWidget.cpp \
+    SAUIHelper.cpp \
     SADataTableModel.cpp \
     SAPopupWidget.cpp \
+    SAWaitCursor.cpp \
     SAValueTableOptCommands.cpp \
     SAPlotDataModel.cpp
 
@@ -113,3 +114,5 @@ include($$PWD/menu/menu.pri)
 include($$PWD/figureSet/figureSet.pri)
 RESOURCES += \
     icon.qrc
+
+

@@ -1,5 +1,6 @@
 #include "SAPropertySetDialog.h"
 //#include "ui_SAPropertySetDialog.h"
+
 #include <QApplication>
 #include <QtTreePropertyBrowser>
 #include <QtButtonPropertyBrowser>
@@ -414,3 +415,4 @@ void SAPropertySetDialog::onPropertyValuechanged(QtProperty *prop, const QVarian
 
 
 
+#include "moc_SAPropertySetDialog.cpp"
