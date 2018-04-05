@@ -145,13 +145,12 @@ private:
 };
 
 
-
-
 /////////////////////////////////////////////////////////////////////
 ///
 ///  Series值在指定索引开始顺序替换
 ///
 /////////////////////////////////////////////////////////////////////
+
 ///
 /// \brief Series值在指定索引开始插入newData，原有的值会被保留，如果startIndexs为-1，则从最后追加
 ///
@@ -170,7 +169,7 @@ public:
     virtual void undo();
 private:
     QVector<T> m_oldData;
-    int m_startIndex;
+    const int mc_startIndex;
     QVector<T> m_newData;
     QwtSeriesStore<T> *m_curve;
 };
@@ -185,8 +184,8 @@ SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::SAFigureReplaceSeriesDataCommand
         , QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
       ,m_newData(newData)
+      ,mc_startIndex(startIndexs)
       ,m_curve(curve)
-      ,m_startIndex(startIndexs)
 {
     if(startIndexs >= 0)
     {
@@ -194,8 +193,10 @@ SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::SAFigureReplaceSeriesDataCommand
         //说明数据从中间插入，记录旧的数据
         int end = ((size_t)(index + newData.size()) > curve->dataSize())
                 ? curve->dataSize()
-                : index + newData.size() + 1;
-        m_oldData.reserve(end - index);
+                : index + newData.size();
+        int dis = end - index;
+        if(dis>0)
+            m_oldData.reserve(dis);
         while(index != end)
         {
             m_oldData.append(curve->sample(index));
@@ -208,7 +209,7 @@ void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::redo()
 {
     QVector<T> curveDatas;
     SAChart::getSeriesData(curveDatas,m_curve);
-    if(m_startIndex < 0)
+    if(mc_startIndex < 0)
     {
         //插入
         curveDatas.append(m_newData);
@@ -217,7 +218,7 @@ void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::redo()
     {
         int newDataIndex = 0;
         const int newDataSize = m_newData.size();
-        int index = m_startIndex;
+        int index = mc_startIndex;
         const int curveDatasSize = curveDatas.size();
         while(newDataIndex < newDataSize && index < curveDatasSize)
         {
@@ -238,21 +239,24 @@ void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::undo()
 {
     QVector<T> curveDatas;
     SAChart::getSeriesData(curveDatas,m_curve);
-    if(m_startIndex < 0)
+    if(mc_startIndex < 0)
     {
-        curveDatas.resize(curveDatas.size() - m_newData.size());
+        const int oldDataSize = curveDatas.size() - m_newData.size();
+        if(oldDataSize >= 0)
+            curveDatas.resize(oldDataSize);
     }
     else
     {
         //还原
         int oldDataIndex = 0;
         const int oldDataSize = m_oldData.size();
-        int index = m_startIndex;
-        const int curveDatasSize = curveDatas.size();
-        if(m_startIndex + m_oldData.size() < curveDatasSize)
+        int index = mc_startIndex;
+        int curveDatasSize = curveDatas.size();
+        if(mc_startIndex + m_oldData.size() < curveDatasSize)
         {
             //说明原来替换数据后还插入了新数据
-            curveDatas.resize(m_startIndex + m_oldData.size());
+            curveDatas.resize(mc_startIndex + m_oldData.size());
+            curveDatasSize = curveDatas.size();
         }
         while(oldDataIndex < oldDataSize && index < curveDatasSize)
         {
@@ -265,6 +269,54 @@ void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::undo()
 }
 
 
+///
+/// \brief 序列数据QPointF的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceXYSeriesDataCommand
+        : public SAFigureReplaceSeriesDataCommand<QPointF,QwtPointSeriesData>
+{
+public:
+    using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
+};
+
+
+///
+/// \brief 序列数据QwtPoint3D的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceXYZSeriesDataCommand
+        : public SAFigureReplaceSeriesDataCommand<QwtPoint3D,QwtPoint3DSeriesData>
+{
+public:
+    using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
+};
+
+///
+/// \brief 序列数据Interval的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceIntervalSeriesDataCommand
+        : public SAFigureReplaceSeriesDataCommand<QwtIntervalSample,QwtIntervalSeriesData>
+{
+public:
+   using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
+};
+///
+/// \brief 序列数据QwtOHLCSample的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceOHLCSeriesDataCommand
+        : public SAFigureReplaceSeriesDataCommand<QwtOHLCSample,QwtTradingChartData>
+{
+public:
+   using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
+};
+///
+/// \brief 序列数据QwtPlotMultiBarChart的替换
+///
+class SA_COMMON_UI_EXPORT SAFigureReplaceMultiBarSeriesDataCommand
+        : public SAFigureReplaceSeriesDataCommand<QwtSetSample,QwtSetSeriesData>
+{
+public:
+   using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
+};
 /////////////////////////////////////////////////////////////////////
 ///
 ///  Series值按照索引替换
@@ -371,7 +423,7 @@ void SAFigureReplaceSeriesDataInIndexsCommand<T,TQwtSeries>::undo()
 
 
 ///
-/// \brief 序列数据QPointF的替换
+/// \brief 序列数据QPointF的按照索引替换
 ///
 class SA_COMMON_UI_EXPORT SAFigureReplaceXYSeriesDataInIndexsCommand
         : public SAFigureReplaceSeriesDataInIndexsCommand<QPointF,QwtPointSeriesData>
@@ -382,7 +434,7 @@ public:
 
 
 ///
-/// \brief 序列数据QwtPoint3D的替换
+/// \brief 序列数据QwtPoint3D的按照索引替换
 ///
 class SA_COMMON_UI_EXPORT SAFigureReplaceXYZSeriesDataInIndexsCommand
         : public SAFigureReplaceSeriesDataInIndexsCommand<QwtPoint3D,QwtPoint3DSeriesData>
@@ -393,7 +445,7 @@ public:
 
 
 ///
-/// \brief 序列数据Interval的替换
+/// \brief 序列数据Interval的按照索引替换
 ///
 class SA_COMMON_UI_EXPORT SAFigureReplaceIntervalSeriesDataInIndexsCommand
         : public SAFigureReplaceSeriesDataInIndexsCommand<QwtIntervalSample,QwtIntervalSeriesData>
@@ -403,7 +455,7 @@ public:
 };
 
 ///
-/// \brief 序列数据QwtOHLCSample的替换
+/// \brief 序列数据QwtOHLCSample的按照索引替换
 ///
 class SA_COMMON_UI_EXPORT SAFigureReplaceOHLCSeriesDataInIndexsCommand
         : public SAFigureReplaceSeriesDataInIndexsCommand<QwtOHLCSample,QwtTradingChartData>
@@ -412,7 +464,7 @@ public:
    using SAFigureReplaceSeriesDataInIndexsCommand::SAFigureReplaceSeriesDataInIndexsCommand;
 };
 ///
-/// \brief 序列数据QwtPlotMultiBarChart的替换
+/// \brief 序列数据QwtPlotMultiBarChart的按照索引替换
 ///
 class SA_COMMON_UI_EXPORT SAFigureReplaceMultiBarSeriesDataInIndexsCommand
         : public SAFigureReplaceSeriesDataInIndexsCommand<QwtSetSample,QwtSetSeriesData>
@@ -452,7 +504,7 @@ SAFigureAppendSeriesDataCommand<T,TQwtSeries>::SAFigureAppendSeriesDataCommand(
 
 
 ///
-/// \brief 序列数据QPointF的替换
+/// \brief 序列数据QPointF的追加
 ///
 class SA_COMMON_UI_EXPORT SAFigureAppendXYSeriesDataCommand
         : public SAFigureAppendSeriesDataCommand<QPointF,QwtPointSeriesData>
@@ -464,7 +516,7 @@ public:
 
 
 ///
-/// \brief 序列数据QwtPoint3D的替换
+/// \brief 序列数据QwtPoint3D的追加
 ///
 class SA_COMMON_UI_EXPORT SAFigureAppendXYZSeriesDataCommand
         : public SAFigureAppendSeriesDataCommand<QwtPoint3D,QwtPoint3DSeriesData>
@@ -474,7 +526,7 @@ public:
 };
 
 ///
-/// \brief 序列数据Interval的替换
+/// \brief 序列数据Interval的追加
 ///
 class SA_COMMON_UI_EXPORT SAFigureAppendIntervalSeriesDataCommand
         : public SAFigureAppendSeriesDataCommand<QwtIntervalSample,QwtIntervalSeriesData>
@@ -483,7 +535,7 @@ public:
    using SAFigureAppendSeriesDataCommand::SAFigureAppendSeriesDataCommand;
 };
 ///
-/// \brief 序列数据QwtOHLCSample的替换
+/// \brief 序列数据QwtOHLCSample的追加
 ///
 class SA_COMMON_UI_EXPORT SAFigureAppendOHLCSeriesDataCommand
         : public SAFigureAppendSeriesDataCommand<QwtOHLCSample,QwtTradingChartData>
@@ -492,7 +544,7 @@ public:
    using SAFigureAppendSeriesDataCommand::SAFigureAppendSeriesDataCommand;
 };
 ///
-/// \brief 序列数据QwtPlotMultiBarChart的替换
+/// \brief 序列数据QwtPlotMultiBarChart的追加
 ///
 class SA_COMMON_UI_EXPORT SAFigureAppendMultiBarSeriesDataCommand
         : public SAFigureAppendSeriesDataCommand<QwtSetSample,QwtSetSeriesData>

@@ -1,13 +1,14 @@
 ﻿#ifndef SACHARTDATASVIEWWIDGET_H
 #define SACHARTDATASVIEWWIDGET_H
-
 #include <QWidget>
+#include <QStringList>
 class QwtPlotItemTreeModel;
 class SAPlotDataModel;
 class SAFigureWindow;
 class QwtPlot;
 class SACellInputWidget;
 class QwtPlotItem;
+class QwtPlotCurve;
 namespace Ui {
 class SAChartDatasViewWidget;
 }
@@ -33,13 +34,15 @@ private slots:
     void onFigureDestroy(QObject* obj);
 private:
     //解析剪切板的数据 返回按照tab分隔解析的字符表的尺寸
-    QSize getClipboardTextTable(QList<QVariantList> &res);
+    QSize getClipboardTextTable(QList<QStringList> &res);
     //处理ctrl + v事件
     void onCtrlVInTableView();
     //获取表格的表头的尺寸，返回一个QPoint，x:为竖直表头宽度，y为水平表头高度
     QPoint tableHeaderPositionOffset() const;
     //设置输入窗口的位置
     void initCellInputPosition(SACellInputWidget* w,QwtPlotItem* item,int row,int colStart,int colEnd);
+    //
+    void ctrlVPlotCurve(QwtPlotCurve* item,int startRow,int startCol);
 private:
     Ui::SAChartDatasViewWidget *ui;
     QwtPlotItemTreeModel* m_treeModel;
