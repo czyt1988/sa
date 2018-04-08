@@ -10,6 +10,16 @@ SABarSeries::SABarSeries(const QString &title):QwtPlotBarChart(title)
     setSpacing( 10 ); // spacing between bars
 }
 
+SABarSeries::SABarSeries(const QwtText &title):QwtPlotBarChart(title)
+{
+    setLayoutPolicy(AutoAdjustSamples);
+    setLegendMode( QwtPlotBarChart::LegendBarTitles );
+    setLegendIconSize( QSize( 10, 14 ) );
+    setLayoutPolicy( AutoAdjustSamples );
+    setLayoutHint( 4.0 ); // minimum width for a single bar
+    setSpacing( 10 ); // spacing between bars
+}
+
 SABarSeries::SABarSeries(SAAbstractDatas *intData, const QString &title)
     :QwtPlotBarChart(title)
 {

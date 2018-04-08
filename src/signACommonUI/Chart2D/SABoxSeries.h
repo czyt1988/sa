@@ -7,8 +7,9 @@ class SAAbstractDatas;
 class SA_COMMON_UI_EXPORT SABoxSeries : public QwtPlotTradingCurve, public SASeriesAndDataPtrMapper
 {
 public:
-    SABoxSeries(const QString &title= QString::null);
-    SABoxSeries(SAAbstractDatas* dataPoints,const QString &title= QString::null);
+    explicit SABoxSeries(const QString &title= QString::null);
+    explicit SABoxSeries( const QwtText &title );
+    explicit SABoxSeries(SAAbstractDatas* dataPoints,const QString &title= QString::null);
     //加载数据
     using QwtPlotTradingCurve::setSamples;
     //using QwtPlotTradingCurve::QwtSeriesStore<QwtOHLCSample>::dataSize;

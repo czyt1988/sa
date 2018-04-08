@@ -826,6 +826,8 @@ void MainWindow::saveWindowState(QSettings& setting)
     setting.setValue("name",SAThemeManager::currentStyleName() );
     setting.endGroup();
 
+
+
 }
 void MainWindow::loadWindowState(const QSettings& setting)
 {
@@ -860,6 +862,40 @@ void MainWindow::loadWindowState(const QSettings& setting)
         setSkin(var.toString());
     else
         setSkin("normal");
+
+}
+///
+/// \brief 保存最近打开的文件内容信息
+/// \param setting
+///
+void MainWindow::saveRecentPath(QSettings &setting)
+{
+    setting.beginGroup("path");
+    setting.setValue("openFiles",m_recentOpenFiles);
+    setting.setValue("openProjectFolders",m_recentOpenProjectFolders);
+    setting.endGroup();
+}
+///
+/// \brief 加载最近打开的文件内容信息
+/// \param setting
+///
+void MainWindow::loadRecentPath(const QSettings &setting)
+{
+    m_recentOpenFiles = setting.value("path/openFiles").toStringList();
+    m_recentOpenProjectFolders = setting.value("path/openProjectFolders").toStringList();
+}
+///
+/// \brief 刷新最近打开菜单
+///
+void MainWindow::updateRecentPathMenu()
+{
+    QList<QAction*> ofacts = ui->menuRecentOpenFile->actions();
+    std::for_each(ofacts.begin(),ofacts.end(),[&](QAction* a){
+        if(!a->isSeparator() && a != ui->actionClearRecentOpenFileHistroy){
+            ui->menuRecentOpenFile->removeAction(a);
+        }
+    });
+
 }
 
 

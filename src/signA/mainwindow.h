@@ -488,11 +488,20 @@ protected:
 //    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
     friend class SAUI;
-    //配置信息加载
+    //配置信息保存
     void saveSetting();
+    //配置信息加载
     void loadSetting();
+    //保存窗口信息
     void saveWindowState(QSettings& setting);
+    //加载窗口信息
     void loadWindowState(const QSettings& setting);
+    //保存最近打开的文件内容信息
+    void saveRecentPath(QSettings& setting);
+    //保存最近打开的文件内容信息
+    void loadRecentPath(const QSettings& setting);
+    //刷新最近打开菜单
+    void updateRecentPathMenu();
 
     //释放chart的附加editor
     void releaseChart2DEditor(SAChart2D* chart);
@@ -528,7 +537,8 @@ private:
     QActionGroup* m_chartRegionSelectionModeActionGroup;///<选区选择模式的action group
     int m_lastForceType;///< 记录最后的焦点信息
     unsigned int m_nUserChartCount;
-
+    QStringList m_recentOpenFiles;///< 记录最近打开的文件
+    QStringList m_recentOpenProjectFolders; ///< 记录最近打开的项目目录
 };
 
 ///

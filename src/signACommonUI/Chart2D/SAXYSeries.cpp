@@ -1,12 +1,13 @@
 ﻿#include "SAXYSeries.h"
 #include "SAAbstractDatas.h"
 
-SAXYSeries::SAXYSeries():QwtPlotCurve()
+
+SAXYSeries::SAXYSeries(const QString &title):QwtPlotCurve(title)
 {
 
 }
 
-SAXYSeries::SAXYSeries(const QString &title):QwtPlotCurve(title)
+SAXYSeries::SAXYSeries(const QwtText &title):QwtPlotCurve(title)
 {
 
 }

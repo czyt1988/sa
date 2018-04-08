@@ -7,9 +7,9 @@ class SAAbstractDatas;
 class SA_COMMON_UI_EXPORT SAXYSeries : public QwtPlotCurve,public SASeriesAndDataPtrMapper
 {
 public:
-    SAXYSeries();
-    SAXYSeries(const QString &title);
-    SAXYSeries(const QString &title,SAAbstractDatas* dataPoints);
+    explicit SAXYSeries( const QString &title = QString::null );
+    explicit SAXYSeries( const QwtText &title );
+    explicit SAXYSeries(const QString &title,SAAbstractDatas* dataPoints);
     //跨域重载
     using QwtPlotCurve::setSamples;
     //加载数据

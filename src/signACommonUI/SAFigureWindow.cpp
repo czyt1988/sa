@@ -317,7 +317,7 @@ QDataStream &operator <<(QDataStream &out, const SAFigureWindow *p)
     out << pos;
     for(int i=0;i<charts.size();++i)
     {
-        SAChartSerializeHelp::serializeOut(out,charts[i]);
+        out << charts[i];
     }
     return out;
 }
@@ -346,7 +346,7 @@ QDataStream &operator >>(QDataStream &in, SAFigureWindow *p)
         {
             const QRectF& r = pos[i];
             QScopedPointer<SAChart2D> chart(p->create2DSubPlot(r.x(),r.y(),r.width(),r.height()));
-            SAChartSerializeHelp::serializeIn(in,chart.data());
+            in >> chart.data();
             chart->show();
             chart.take();
         }
