@@ -23,7 +23,7 @@ unix {
 }
 
 win32 {
-    QWT_INSTALL_PREFIX    = d:/Qt/qwt-$$QWT_VERSION
+    QWT_INSTALL_PREFIX    = $${PWD}
 }
 
 QWT_INSTALL_DOCS      = $${QWT_INSTALL_PREFIX}/doc

@@ -1,6 +1,7 @@
 #ifndef SAFUNCTIONPARAMINPUTDIALOG_H
 #define SAFUNCTIONPARAMINPUTDIALOG_H
 
+#include "SACommonUIGlobal.h"
 #include <QDialog>
 #include <QList>
 #include <QPair>
@@ -8,7 +9,6 @@
 #include <QVariantList>
 #include <memory>
 #include <QStringList>
-#include "SACommonUIGlobal.h"
 #include <functional>
 #include "SAPropertySetWidget.h"
 class SAPropertySetDialogPrivate;

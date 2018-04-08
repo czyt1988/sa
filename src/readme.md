@@ -6,4 +6,7 @@
 
 - qwt 为绘图控件，具体构建方法见其说明文档，构建好后，需要把.lib放置在qwt/lib/x86{|unix}/{mingw32|msvc}
 
+- GSL 
+
+- fftw
 

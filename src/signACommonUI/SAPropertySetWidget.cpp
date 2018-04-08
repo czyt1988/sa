@@ -424,3 +424,4 @@ QtVariantEditorFactory *SAPropertySetWidget::getVariantEditorFactory() const
 }
 
 
+#include "moc_SAPropertySetWidget.cpp"

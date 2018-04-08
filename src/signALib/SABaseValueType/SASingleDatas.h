@@ -8,7 +8,7 @@ class SADataReference;
 /// \brief 基本数据容器
 ///
 template<typename DATA_TYPE>
-class SALIB_EXPORT SASingleDatas : public SAAbstractDatas
+class SASingleDatas : public SAAbstractDatas
 {
 public:
     SASingleDatas();
