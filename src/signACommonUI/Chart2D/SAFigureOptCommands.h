@@ -12,6 +12,7 @@
 #include "qwt_point_3d.h"
 #include "qwt_series_data.h"
 #include "qwt_series_store.h"
+#include "qwt_plot_curve.h"
 #include "qwt_plot_spectrocurve.h"
 #include "qwt_plot_intervalcurve.h"
 #include "qwt_plot_tradingcurve.h"
@@ -277,6 +278,7 @@ class SA_COMMON_UI_EXPORT SAFigureReplaceXYSeriesDataCommand
 {
 public:
     using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
+    ~SAFigureReplaceXYSeriesDataCommand();
 };
 
 

@@ -1004,10 +1004,12 @@ void SAChart2D::redo()
 }
 ///
 /// \brief undo
+/// 当undoStack的index为0时不执行undo
 ///
 void SAChart2D::undo()
 {
-    d_ptr->m_undoStack.undo();
+    if (0 != d_ptr->m_undoStack.index())
+        d_ptr->m_undoStack.undo();
 }
 
 void SAChart2D::appendCommand(SAFigureOptCommand *cmd)

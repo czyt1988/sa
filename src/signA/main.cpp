@@ -1,13 +1,17 @@
 ﻿#include "mainwindow.h"
 #include <QApplication>
 #include <QTextCodec>
+#include <QDir>
+#include <QLocale>
+#include <QTranslator>
 #include "SAThemeManager.h"
-#include <QDebug>
+
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 #pragma execution_character_set("utf-8")
 #endif
 
-
+//按照QLocal加载语言
+void load_local_language();
 
 int main(int argc, char *argv[])
 {
@@ -18,9 +22,10 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 #endif
 #endif
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
     QApplication a(argc, argv);
     //
-
+    qDebug() << "libs path:" << QCoreApplication::libraryPaths();
 
     //加载本地语言
     load_local_language();
@@ -30,4 +35,28 @@ int main(int argc, char *argv[])
     w.show();
 
     return a.exec();
+}
+
+
+///
+/// \brief 加载语言
+///
+void load_local_language()
+{
+    QScopedPointer<QTranslator> translator(new QTranslator);
+    QLocale loc;
+    qDebug() << loc.uiLanguages();
+    if("zh" == loc.bcp47Name() )
+    {
+        QFont f = qApp->font();
+        f.setFamily(QStringLiteral("微软雅黑"));
+        qApp->setFont(f);
+    }
+
+    QString lngPath = qApp->applicationDirPath();
+    lngPath = lngPath + QDir::separator() + "language";
+    if(translator->load(loc,QString(),QString(),lngPath))
+    {
+        qApp->installTranslator(translator.take());
+    }
 }

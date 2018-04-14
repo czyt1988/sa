@@ -53,7 +53,14 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icon/icons/xTop.png</normaloff>:/icon/icons/xTop.png</iconset>
+     </property>
      <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="autoRaise">
       <bool>true</bool>
      </property>
     </widget>
@@ -63,10 +70,17 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icon/icons/xBottom.png</normaloff>:/icon/icons/xBottom.png</iconset>
+     </property>
      <property name="checkable">
       <bool>true</bool>
      </property>
      <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="autoRaise">
       <bool>true</bool>
      </property>
     </widget>
@@ -83,10 +97,17 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icon/icons/yLeft.png</normaloff>:/icon/icons/yLeft.png</iconset>
+     </property>
      <property name="checkable">
       <bool>true</bool>
      </property>
      <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="autoRaise">
       <bool>true</bool>
      </property>
     </widget>
@@ -96,13 +117,22 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icon/icons/yRight.png</normaloff>:/icon/icons/yRight.png</iconset>
+     </property>
      <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="autoRaise">
       <bool>true</bool>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icon.qrc"/>
+ </resources>
  <connections/>
 </ui>

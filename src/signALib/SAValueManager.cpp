@@ -628,7 +628,8 @@ void SAValueManager::redo()
 
 void SAValueManager::undo()
 {
-    m_undoStack.undo();
+    if (0 != m_undoStack.index())
+        m_undoStack.undo();
 }
 
 

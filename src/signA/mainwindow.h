@@ -89,7 +89,6 @@ private:
     void initProcess();
 
 public:
-    static QColor getRandColor();
     static QIcon getIconByWndType(SA::SubWndType type);
     //-----------------------状态栏响应-------------------------
     //状态栏 - 显示进度状态
@@ -234,6 +233,7 @@ signals:
     ///
     void selectDataChanged(SAAbstractDatas* dataPtr);
 private slots:
+
     //焦点变换触发的槽
     void onFocusChanged(QWidget *old, QWidget *now);
 
@@ -453,6 +453,7 @@ private slots:
     //图层管理窗口删除了条目
     void onLayoutWidgetItemRemoved(SAChart2D* chart,QwtPlotItem* item);
 public:
+    //设置皮肤
     void setSkin(const QString& name);
     //获取ui接口
     SAUIInterface* uiInterface();
@@ -567,8 +568,7 @@ SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QStrin
     return pSubw;
 }
 
-//按照QLocal加载语言
-void load_local_language();
+
 
 ///
 /// \brief 根据子窗口类型获取后缀名

@@ -224,3 +224,8 @@ void SAFigureChangeXYZSeriesDataCommand::undo()
 
 
 
+
+SAFigureReplaceXYSeriesDataCommand::~SAFigureReplaceXYSeriesDataCommand()
+{
+
+}

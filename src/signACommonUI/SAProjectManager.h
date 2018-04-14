@@ -8,6 +8,7 @@
 #include <functional>
 #include "SAValueManager.h"
 class QDomDocument;
+class QDomNode;
 class SAValueManager;
 class SAProjectManagerPrivate;
 class SA_COMMON_UI_EXPORT SAProjectManager : public QObject
@@ -71,8 +72,10 @@ private:
     void setProjectFullPath(const QString &projectFullPath);
     //保存项目的描述信息
     void saveProjectInfo(const QString &projectFullPath);
-    //保存项目信息
-    bool loadProjectInfo(const QString &projectFullPath);
+    //加载项目信息
+    bool loadProjectInfo(const QString &projectFullPath,QStringList& valuesNameList);
+    //加载项目信息中的变量信息
+    void loadValuesProjectInfo(QDomNode* nodeValues, QStringList& valueNames);
     //加载变量
     void loadValues(const QString &projectFullPath);
     //保存变量
@@ -83,6 +86,8 @@ private:
     SAValueManager::IDATA_PTR loadSad(const QString &filePath);
     //保存一个数据
     bool saveOneValue(const SAAbstractDatas *data, const QString &path, QString *errString);
+    //写入变量的xml描述
+    void writeValuesXmlInfos(QDomDocument* doc, QDomNode* root);
 signals:
     ///
     /// \brief 信息，对于一些操作的错误等内容，通过message信号发射，信息的类型通过type进行筛选

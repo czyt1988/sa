@@ -25,8 +25,7 @@
 #include <QMdiArea>
 #include <QProcess>
 #include <QTimer>
-#include <QLocale>
-#include <QTranslator>
+
 //----------STL-------------
 #include <iostream>
 #include <algorithm>
@@ -112,25 +111,8 @@
 //#include <layerItemDelegate.h>
 
 
-//--删除表格数据发生错误
-static QColor static_line_color[9] = {
-    Qt::black
-    ,Qt::red
-    ,Qt::green
-    ,Qt::blue
-    ,Qt::cyan
-    ,Qt::magenta
-    ,Qt::yellow
-    ,Qt::gray
-    ,Qt::lightGray
-};
 
-QColor MainWindow::getRandColor()
-{
-    return static_line_color[int (float(qrand())/float(RAND_MAX)*9.0)];
-}
 
-void debug();
 
 
 
@@ -180,9 +162,6 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 
-void debug(){
-
-}
 
 ///
 /// \brief 程序初始化
@@ -778,6 +757,7 @@ void MainWindow::setSkin(const QString &name)
     }
     saElapsed(tr("end use skin"));
 }
+
 
 SAUIInterface *MainWindow::uiInterface()
 {
@@ -2856,28 +2836,6 @@ void MainWindow::onActionDeleteValueTriggered()
 }
 
 
-///
-/// \brief 加载语言
-///
-void load_local_language()
-{
-    QScopedPointer<QTranslator> translator(new QTranslator);
-    QLocale loc;
-    qDebug() << loc.uiLanguages();
-    if("zh" == loc.bcp47Name() )
-    {
-        QFont f = qApp->font();
-        f.setFamily(QStringLiteral("微软雅黑"));
-        qApp->setFont(f);
-    }
-
-    QString lngPath = qApp->applicationDirPath();
-    lngPath = lngPath + QDir::separator() + "language";
-    if(translator->load(loc,QString(),QString(),lngPath))
-    {
-        qApp->installTranslator(translator.take());
-    }
-}
 
 
 

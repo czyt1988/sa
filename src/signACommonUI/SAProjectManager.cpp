@@ -3,7 +3,8 @@
 #include <QDir>
 #include <QTextStream>
 #include <QDomDocument>
-
+#include <QFileInfo>
+#include "SALog.h"
 #define VERSION_STRING "pro.0.0.1"
 #define PROJECT_DES_XML_FILE_NAME "saProject.prodes"
 #define DATA_FOLDER_NAME "DATA"
@@ -125,6 +126,8 @@ void SAProjectManager::saveProjectInfo(const QString &projectFullPath)
     eleText = doc.createTextNode(getProjectDescribe());//创建元素文本
     ele.appendChild(eleText);//添加元素文本到元素节点
 
+    writeValuesXmlInfos(&doc,&root);
+
     QString projectDesXml = getProjectDescribeFilePath(projectFullPath);
     QFile file(projectDesXml);
     if(file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
@@ -135,14 +138,34 @@ void SAProjectManager::saveProjectInfo(const QString &projectFullPath)
         file.close();
     }
 }
+
+///
+/// \brief 插入变量信息
+/// \param doc DomDoc
+///
+void SAProjectManager::writeValuesXmlInfos(QDomDocument *doc,QDomNode* root)
+{
+    QDomElement eleValues = doc->createElement("values");//创建values节点
+    root->appendChild(eleValues);
+    QList<SAAbstractDatas*> datas = saValueManager->allDatas();
+    std::for_each(datas.begin(),datas.end(),[&](SAAbstractDatas* d){
+        QDomElement eleVar = doc->createElement("value");//创建一个value，保存一个变量的信息
+        eleValues.appendChild(eleVar);
+        QDomElement eleName = doc->createElement("name");
+        eleVar.appendChild(eleName);
+        eleName.appendChild(doc->createTextNode(d->getName()));
+    });
+}
+
 ///
 /// \brief 加载项目信息
 /// \param projectFullPath 项目文件夹
+/// \param valuesNameList xml中记录的变量名顺序
 /// \return 成功加载返回true
 ///
-bool SAProjectManager::loadProjectInfo(const QString &projectFullPath)
+bool SAProjectManager::loadProjectInfo(const QString &projectFullPath, QStringList &valuesNameList)
 {
-
+    saDebug("load project");
     QString projectDesXml = getProjectDescribeFilePath(projectFullPath);
     QFile file(projectDesXml);
     if(!file.open(QIODevice::ReadOnly))
@@ -155,26 +178,50 @@ bool SAProjectManager::loadProjectInfo(const QString &projectFullPath)
         return false;
     }
     QDomElement root = doc.documentElement();//读取根节点
-    if(root.tagName() == "SaProject")
+    if(root.tagName() != "SaProject")
     {
-        QString ver = root.attribute("version");
-
-        QDomNode node = root.firstChild();//读取第一个子节点
-        while (!node.isNull())
-        {
-            QString tagName = node.toElement().tagName();
-            if (tagName.compare("name") == 0) //节点标记查找
-            {
-                setProjectName( node.toElement().text());//读取节点文本
-            }
-            else if (tagName.compare("des") == 0)
-            {
-                setProjectDescribe(node.toElement().text());
-            }
-            node = node.nextSibling();//读取下一个兄弟节点
-        }
+        return false;
     }
+    QString ver = root.attribute("version");
+    saDebug("version:%s",ver);
+    QDomNode node = root.firstChild();//读取第一个子节点
+    while (!node.isNull())
+    {
+        QString tagName = node.toElement().tagName();
+        if (tagName.compare("name") == 0) //节点标记查找
+        {
+            setProjectName( node.toElement().text());//读取节点文本
+        }
+        else if (tagName.compare("des") == 0)
+        {
+            setProjectDescribe(node.toElement().text());
+        }
+        else if("values" == tagName)
+        {
+            loadValuesProjectInfo(&node,valuesNameList);
+        }
+        node = node.nextSibling();//读取下一个兄弟节点
+    }
+
     return true;
+}
+
+void SAProjectManager::loadValuesProjectInfo(QDomNode *nodeValues, QStringList &valueNames)
+{
+    QDomNode valNode = nodeValues->firstChild();
+    while(!valNode.isNull())
+    {
+        QDomElement el = valNode.firstChildElement("name");
+        if(!el.isNull())
+        {
+            QString name = el.text();
+            if(!name.isEmpty())
+            {
+                valueNames.append(name);
+            }
+        }
+        valNode = valNode.nextSibling();
+    }
 }
 ///
 /// \brief 加载变量
@@ -192,8 +239,9 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
     }
     saValueManager->clear();
 
-    QStringList dataFileList = dir.entryList({"*.sad"},QDir::Files|QDir::NoSymLinks);
-    const int size = dataFileList.size();
+//    QStringList dataFileList = dir.entryList({"*.sad"},QDir::Files|QDir::NoSymLinks);
+    QFileInfoList dataFileInfoList = dir.entryInfoList({"*.sad"},QDir::Files|QDir::NoSymLinks);
+    const int size = dataFileInfoList.size();
     if(0 == size)
     {
         return;
@@ -201,30 +249,26 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
     QList<std::shared_ptr<SAAbstractDatas> > datasBeLoad;
     for(int i=0;i<size;++i)
     {
-        QString fileName = dataFileList[i];
-        int index = fileName.lastIndexOf(".");
-        if(index < 0)
+//        QString fileName = dataFileList[i];
+        QFileInfo fi = dataFileInfoList[i];
+        QString suffix = fi.suffix();
+        if("sad" != suffix)
         {
-            emit messageInformation(tr("file:\"%1\" may not incorrect").arg(fileName),SA::WarningMessage);
             continue;
         }
-        QString suffix = fileName.mid(index+1);
-        QString fullFilePath = dataPath + QDir::separator() + fileName;
+        QString fullFilePath = fi.absoluteFilePath();
         //处理sad文件
-        if("sad" == suffix)
-        {
-            //说明是sad数据格式
-
-            std::shared_ptr<SAAbstractDatas> data = loadSad(fullFilePath);
-            if(nullptr == data)
-            {//说明没有读取成功
-                continue;
-            }
-            //说明读取成功
-            datasBeLoad.append(data);
-
+        //说明是sad数据格式
+        std::shared_ptr<SAAbstractDatas> data = loadSad(fullFilePath);
+        if(nullptr == data)
+        {//说明没有读取成功
+            continue;
         }
+        //说明读取成功
+        datasBeLoad.append(data);
+
     }
+    //根据记录的顺序调整list的位置
     if(!datasBeLoad.isEmpty())
     {
         saValueManager->addDatas(datasBeLoad);
@@ -676,10 +720,11 @@ bool SAProjectManager::load(const QString &projectedPath)
         return false;
     }
     //- start %加载项目描述
-    loadProjectInfo(projectedPath);
+    QStringList valNameList;
+    loadProjectInfo(projectedPath,valNameList);
 
     //加载变量
-    loadValues(projectedPath);
+    loadValues(projectedPath,valNameList);
 
 
     setProjectFullPath(projectedPath);
