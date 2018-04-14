@@ -1,4 +1,4 @@
-#ifndef SAPLUGINMANAGER_H
+﻿#ifndef SAPLUGINMANAGER_H
 #define SAPLUGINMANAGER_H
 
 #include <QObject>
@@ -24,6 +24,8 @@ public:
     QStringList getOpenFileNameFilters() const;
     //通过后缀获取打开文件对应的插件
     SAAbstractDataImportPlugin* getDataImportPluginFromSuffix(const QString& suffix) const;
+    //获取所有支持的后缀
+    QStringList getAllSupportOpenFileSuffix() const;
 private:
     //加载正常插件
     int loadNormalPlugin();

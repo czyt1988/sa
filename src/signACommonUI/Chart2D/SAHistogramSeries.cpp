@@ -6,6 +6,11 @@ SAHistogramSeries::SAHistogramSeries(const QString &title):QwtPlotHistogram(titl
 
 }
 
+SAHistogramSeries::SAHistogramSeries(const QwtText &title):QwtPlotHistogram(title)
+{
+
+}
+
 SAHistogramSeries::SAHistogramSeries(SAAbstractDatas *intData, const QString &title)
     :QwtPlotHistogram(title)
 {

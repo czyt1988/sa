@@ -98,17 +98,7 @@
 #define TR(str) \
     QApplication::translate("MainWindow", str, 0)
 
-//
-//--使用策略模式构建sa里的所有方法
-//--改Global里，用SA的枚举替换所有的宏
 
-//#include <SAFigure.h>
-
-
-
-
-//#include <qwt3d_gridplot.h>
-//#include <layerItemDelegate.h>
 
 
 
@@ -774,21 +764,28 @@ MainWindow::~MainWindow()
     delete ui;
 #endif
 }
-
-void MainWindow::loadSetting()
+///
+/// \brief 获取程序的QSettings变量
+/// \return
+///
+QSettings MainWindow::getSetting() const
 {
     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                        "CZY", "SA");
+    return settings;
+}
+
+void MainWindow::loadSetting()
+{
+    QSettings settings = getSetting();
     loadWindowState(settings);
 }
 
 void MainWindow::saveSetting()
 {
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                       "CZY", "SA");
+    QSettings settings = getSetting();
 	//mainWindow
 	saveWindowState(settings);
-	
 }
 
 void MainWindow::saveWindowState(QSettings& setting)
@@ -806,6 +803,8 @@ void MainWindow::saveWindowState(QSettings& setting)
     setting.setValue("name",SAThemeManager::currentStyleName() );
     setting.endGroup();
 
+
+
 }
 void MainWindow::loadWindowState(const QSettings& setting)
 {
@@ -814,7 +813,9 @@ void MainWindow::loadWindowState(const QSettings& setting)
     if(var.isValid())
     {
         if(var.toBool())
+        {
             onActionSetDefalutDockPosTriggered();
+        }
     }
     else
     {
@@ -840,6 +841,47 @@ void MainWindow::loadWindowState(const QSettings& setting)
         setSkin(var.toString());
     else
         setSkin("normal");
+
+}
+///
+/// \brief 保存最近打开的文件内容信息
+/// \param setting
+///
+void MainWindow::saveRecentPath(QSettings &setting)
+{
+    setting.beginGroup("path");
+    setting.setValue("openFiles",m_recentOpenFiles);
+    setting.setValue("openProjectFolders",m_recentOpenProjectFolders);
+    setting.endGroup();
+}
+///
+/// \brief 加载最近打开的文件内容信息
+/// \param setting
+///
+void MainWindow::loadRecentPath(const QSettings &setting)
+{
+    m_recentOpenFiles = setting.value("path/openFiles").toStringList();
+    m_recentOpenProjectFolders = setting.value("path/openProjectFolders").toStringList();
+}
+///
+/// \brief 刷新最近打开菜单
+///
+void MainWindow::updateRecentPathMenu()
+{
+    QList<QAction*> ofacts = ui->menuRecentOpenFile->actions();
+    std::for_each(ofacts.begin(),ofacts.end(),[&](QAction* a){
+        if(!a->isSeparator() && a != ui->actionClearRecentOpenFileHistroy){
+            ui->menuRecentOpenFile->removeAction(a);
+        }
+    });
+    std::for_each(m_recentOpenFiles.begin(),m_recentOpenFiles.end(),[&](const QString& strPath){
+        QAction* act = new QAction(strPath,this);
+        connect(act,&QAction::triggered,this,[&](bool on){
+            Q_UNUSED(on);
+            this->openFile(act->text());
+        });
+        ui->menuRecentOpenFile->addAction(act);
+    });
 }
 
 
@@ -908,6 +950,9 @@ SADrawDelegate*MainWindow::getDrawDelegate() const
     return m_drawDelegate.data();
 }
 
+
+
+
 //void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 //{
 ////    if(event->mimeData()->hasFormat(SAValueManagerMimeData::valueIDMimeType()))
@@ -958,26 +1003,68 @@ void MainWindow::onActionOpenTriggered()
 {
     QFileDialog openDlg(this);
     QStringList strNFilter = m_pluginManager->getOpenFileNameFilters();
-
+    QStringList strSuffixs = m_pluginManager->getAllSupportOpenFileSuffix();
+    QString strAllSupportSuffixs;
+    std::for_each(strSuffixs.begin(),strSuffixs.end(),[&strAllSupportSuffixs](const QString& s){
+        strAllSupportSuffixs += ("*." + s);
+    });
+    strNFilter.push_front(tr("all support files(%1)").arg(strAllSupportSuffixs));
     strNFilter.push_back(tr("all files (*.*)"));
     openDlg.setFileMode(QFileDialog::ExistingFiles);
     openDlg.setNameFilters(strNFilter);
-    if (QDialog::Accepted == openDlg.exec())
+    if (QDialog::Accepted != openDlg.exec())
     {
-        QStringList strfileNames = openDlg.selectedFiles();
-        if(strfileNames.isEmpty())
-            return;
-
-        QString strFile = strfileNames.value(0);
-        QFileInfo temDir(strFile);
-        QString suffix = temDir.suffix();
-        suffix = suffix.toLower();
-        SAAbstractDataImportPlugin* import = m_pluginManager->getDataImportPluginFromSuffix(suffix);
-        if(nullptr != import)
-        {
-            import->openFile(strfileNames);
-        }
+        return;
     }
+    QStringList strfileNames = openDlg.selectedFiles();
+    if(strfileNames.isEmpty())
+        return;
+    QString strFile = strfileNames.value(0);
+    if(!openFile(strFile))
+    {
+        showWarningMessageInfo(tr("can not open file:%1").arg(strFile));
+        return;
+    }
+    //成功打开，记录到最近打开列表中
+    m_recentOpenFiles.push_front(strFile);
+    QSettings setting = getSetting();
+    setting.beginGroup("path");
+    setting.setValue("openFiles",m_recentOpenFiles);
+    setting.endGroup();
+    QAction* act = new QAction(strFile,this);
+    connect(act,&QAction::triggered,this,[&](bool on){
+        Q_UNUSED(on);
+        this->openFile(act->text());
+    });
+
+    QList<QAction*> ofacts = ui->menuRecentOpenFile->actions();
+
+    std::for_each(m_recentOpenFiles.begin(),m_recentOpenFiles.end(),[&](const QString& strPath){
+        QAction* act = new QAction(strPath,this);
+        connect(act,&QAction::triggered,this,[&](bool on){
+            Q_UNUSED(on);
+            this->openFile(act->text());
+        });
+        ui->menuRecentOpenFile->addAction(act);
+    });
+}
+
+///
+/// \brief 打开文件
+/// \param 完整文件路径
+/// \return 成功返回true
+///
+bool MainWindow::openFile(const QString &fullPath)
+{
+    QFileInfo fi(fullPath);
+    QString suffix = fi.suffix();
+    suffix = suffix.toLower();
+    SAAbstractDataImportPlugin* import = m_pluginManager->getDataImportPluginFromSuffix(suffix);
+    if(nullptr == import)
+    {
+        return false;
+    }
+    return import->openFile(fullPath);
 }
 
 ///

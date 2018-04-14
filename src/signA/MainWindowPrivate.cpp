@@ -318,12 +318,28 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionGroupSkins->setObjectName(QStringLiteral("actionGroupSkins"));
     actionGroupSkins->setExclusive(true);
 
+    actionClearRecentOpenFileHistroy = new QAction(mainWinowPtr);
+    actionClearRecentOpenFileHistroy->setObjectName(QStringLiteral("actionClearRecentOpenFileHistroy"));
+    actionClearRecentOpenProjectorHistroy = new QAction(mainWinowPtr);
+    actionClearRecentOpenProjectorHistroy->setObjectName(QStringLiteral("actionClearRecentOpenProjectorHistroy"));
+
 
     menuBar = mainWinowPtr->ribbonBar();
     menuBar->setObjectName(QStringLiteral("menuBar"));
 
     menuFile = new SARibbonMenu(menuBar);
     menuFile->setObjectName(QStringLiteral("menuFile"));
+
+    menuRecentOpenFile = new SARibbonMenu(menuBar);
+    menuRecentOpenFile->setObjectName(QStringLiteral("menuRecentOpenFile"));
+    menuRecentOpenFile->addSeparator();
+    menuRecentOpenFile->addAction(actionClearRecentOpenFileHistroy);
+
+    menuRecentOpenProject = new SARibbonMenu(menuBar);
+    menuRecentOpenProject->setObjectName(QStringLiteral("menuRecentOpenProject"));
+    menuRecentOpenProject->addSeparator();
+    menuRecentOpenProject->addAction(actionClearRecentOpenProjectorHistroy);
+
 
     menuExport = new SARibbonMenu(menuFile);
     menuExport->setObjectName(QStringLiteral("menu_export"));
@@ -404,6 +420,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonFileOpen->setPopupMode(QToolButton::MenuButtonPopup);
     menuFile->addAction(actionOpen);
     menuFile->addAction(actionOpenProject);
+    menuFile->addMenu(menuRecentOpenFile);
+    menuFile->addMenu(menuRecentOpenProject);
+    //menuFile->addAction(menuRecentOpenFile->menuAction());
     menuFile->addAction(actionSave);
     menuFile->addAction(actionSaveAs);
     menuFile->addSeparator();
@@ -803,6 +822,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 {
     mainWinowPtr->setWindowTitle(QApplication::translate("MainWindow", "SA - Signal Analysis", 0));
     actionOpen->setText(QApplication::translate("MainWindow", "Open", 0));
+    menuRecentOpenFile->setText(QApplication::translate("MainWindow", "Recent Open Files", 0));
+    menuRecentOpenProject->setText(QApplication::translate("MainWindow", "Recent Open Projects", 0));
+    actionClearRecentOpenFileHistroy->setText(QApplication::translate("MainWindow", "Clear", 0));
+    actionClearRecentOpenProjectorHistroy->setText(QApplication::translate("MainWindow", "Clear", 0));
 #ifndef QT_NO_TOOLTIP
     actionOpen->setToolTip(QApplication::translate("MainWindow", "Open File", 0));
 #endif // QT_NO_TOOLTIP

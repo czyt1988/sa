@@ -155,7 +155,6 @@ private:
 ///
 /// \brief Series值在指定索引开始插入newData，原有的值会被保留，如果startIndexs为-1，则从最后追加
 ///
-
 template<typename T,typename TQwtSeries>
 class SAFigureReplaceSeriesDataCommand : public SAFigureOptCommand
 {

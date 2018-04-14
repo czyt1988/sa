@@ -34,7 +34,7 @@ const char *sa::SABadSerializeExpection::what() const _GLIBCXX_USE_NOEXCEPT
     return "serialize error";
 }
 #else
-const char *sa::SABadSerializeExpection::what() const
+const char *sa::SABadSerializeExpection::what() const noexcept
 {
     return "serialize error";
 }

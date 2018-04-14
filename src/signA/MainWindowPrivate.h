@@ -43,6 +43,8 @@ public:
     MainWindow* Parent;
 
     QAction *actionOpen;
+    QAction *actionClearRecentOpenFileHistroy;///< 清除最近打开文件记录
+    QAction *actionClearRecentOpenProjectorHistroy;///< 清除最近打开项目记录
     QAction *actionWindowCascade;
     QAction *actionWindowTile;
     QAction *actionWindowMode;
@@ -134,6 +136,8 @@ public:
     SARibbonToolButton* ribbonButtonBoxChart;
     SARibbonToolButton* ribbonButtonScatterChart;
     SARibbonMenu *menuFile;
+    SARibbonMenu *menuRecentOpenFile;
+    SARibbonMenu *menuRecentOpenProject;
     SARibbonMenu *menuLineChart;
     SARibbonMenu *menuBarChart;
     SARibbonMenu *menuHistogramChart;

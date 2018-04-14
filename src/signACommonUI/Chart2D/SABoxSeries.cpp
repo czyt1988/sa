@@ -7,6 +7,11 @@ SABoxSeries::SABoxSeries(const QString &title):QwtPlotTradingCurve(title)
 
 }
 
+SABoxSeries::SABoxSeries(const QwtText &title):QwtPlotTradingCurve(title)
+{
+
+}
+
 SABoxSeries::SABoxSeries(SAAbstractDatas *dataPoints,const QString &title)
     :QwtPlotTradingCurve(title)
 {

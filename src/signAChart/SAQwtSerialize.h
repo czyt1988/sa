@@ -28,7 +28,7 @@ namespace sa {
 #if 0
         const char* what() const _GLIBCXX_USE_NOEXCEPT;
 #else
-        const char* what() const;
+        const char* what() const noexcept;
 #endif
     };
 

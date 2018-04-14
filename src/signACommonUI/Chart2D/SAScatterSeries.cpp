@@ -1,13 +1,15 @@
 ﻿#include "SAScatterSeries.h"
 
-SAScatterSeries::SAScatterSeries():SAXYSeries()
-{
-    setStyle( QwtPlotCurve::Dots );
-}
+
 
 SAScatterSeries::SAScatterSeries(const QString &title):SAXYSeries(title)
 {
-    setStyle( QwtPlotCurve::Dots );
+
+}
+
+SAScatterSeries::SAScatterSeries(const QwtText &title):SAXYSeries(title)
+{
+
 }
 
 SAScatterSeries::SAScatterSeries(const QString &title, SAAbstractDatas *dataPoints)

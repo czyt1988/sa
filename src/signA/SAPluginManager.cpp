@@ -1,4 +1,4 @@
-#include "SAPluginManager.h"
+﻿#include "SAPluginManager.h"
 #include "SAUIInterface.h"
 #include <QDir>
 #include <QApplication>
@@ -53,6 +53,19 @@ QStringList SAPluginManager::getOpenFileNameFilters() const
 SAAbstractDataImportPlugin *SAPluginManager::getDataImportPluginFromSuffix(const QString &suffix) const
 {
     return m_importSuffix2PluginObj.value(suffix,nullptr);
+}
+///
+/// \brief 获取所有支持的后缀
+/// \return
+///
+QStringList SAPluginManager::getAllSupportOpenFileSuffix() const
+{
+    QStringList suffixs;
+    for(auto i=m_importSuffix2PluginObj.cbegin();i!=m_importSuffix2PluginObj.cend();++i)
+    {
+        suffixs.append(i.key());
+    }
+    return suffixs;
 }
 ///
 /// \brief 卸载插件
