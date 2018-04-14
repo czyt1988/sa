@@ -72,11 +72,10 @@ class MainWindow : public QMainWindow
 #endif
 {
     Q_OBJECT
-    
+    friend class SAUI;
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    friend class SAUI;
 private:
     void init();
     void initUI();
@@ -487,7 +486,10 @@ protected:
 //    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
 //    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
-    friend class SAUI;
+    //获取程序的保存信息
+    QSettings getSetting() const;
+    //打开文件
+    bool openFile(const QString& fullPath);
     //配置信息保存
     void saveSetting();
     //配置信息加载

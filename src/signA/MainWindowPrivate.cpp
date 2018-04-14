@@ -822,6 +822,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 {
     mainWinowPtr->setWindowTitle(QApplication::translate("MainWindow", "SA - Signal Analysis", 0));
     actionOpen->setText(QApplication::translate("MainWindow", "Open", 0));
+    menuRecentOpenFile->setText(QApplication::translate("MainWindow", "Recent Open Files", 0));
+    menuRecentOpenProject->setText(QApplication::translate("MainWindow", "Recent Open Projects", 0));
     actionClearRecentOpenFileHistroy->setText(QApplication::translate("MainWindow", "Clear", 0));
     actionClearRecentOpenProjectorHistroy->setText(QApplication::translate("MainWindow", "Clear", 0));
 #ifndef QT_NO_TOOLTIP
