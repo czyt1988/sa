@@ -107,7 +107,7 @@ void SATimeFrequencyAnalysis::onPushButtonImport()
     }
     if(!setWaveData(data))
     {
-        saUI->showWarningMessageInfo(tr("请选择有效的波形数据,数据可以为线性数组或线性点序列！"));
+        saUI->showWarningMessageInfo(tr("please choose valid wave data!"));
     }
 #endif
 }
@@ -332,11 +332,11 @@ void SATimeFrequencyAnalysis::initUI()
         m_signalWindow = static_cast<czy::Math::DSP::WindowType>(ui->comboBox_window->itemData (index).toInt ());
         updateSpectrumChart ();
     });
-    ui->comboBox_window->addItem (QStringLiteral("矩形窗"),int(czy::Math::DSP::WindowRect));
-    ui->comboBox_window->addItem (QStringLiteral("汉宁窗(Hanning)"),int(czy::Math::DSP::WindowHanning));
-    ui->comboBox_window->addItem (QStringLiteral("汉明窗(Hamming)"),int(czy::Math::DSP::WindowHamming));
-    ui->comboBox_window->addItem (QStringLiteral("巴克曼窗(Blackman)"),int(czy::Math::DSP::WindowBlackman));
-    ui->comboBox_window->addItem (QStringLiteral("巴特利窗(Bartlett)"),int(czy::Math::DSP::WindowBartlett));
+    ui->comboBox_window->addItem (tr("Rect"),int(czy::Math::DSP::WindowRect));
+    ui->comboBox_window->addItem (tr("Hanning"),int(czy::Math::DSP::WindowHanning));
+    ui->comboBox_window->addItem (tr("Hamming"),int(czy::Math::DSP::WindowHamming));
+    ui->comboBox_window->addItem (tr("Blackman"),int(czy::Math::DSP::WindowBlackman));//巴克曼窗
+    ui->comboBox_window->addItem (tr("Bartlett"),int(czy::Math::DSP::WindowBartlett));//巴特利窗
     ui->comboBox_window->setCurrentIndex (0);
     m_signalWindow = czy::Math::DSP::WindowRect;
     //按钮

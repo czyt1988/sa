@@ -797,8 +797,11 @@ void MainWindow::loadSetting()
         setSkin(var.toString());
     else
         setSkin("normal");
+    loadRecentPath();
 }
-
+///
+/// \brief 保存设置
+///
 void MainWindow::saveSetting()
 {
     saConfig.setValue("StartTimes/firstStart",false);
@@ -824,10 +827,11 @@ void MainWindow::saveRecentPath()
 /// \brief 加载最近打开的文件内容信息
 /// \param setting
 ///
-void MainWindow::loadRecentPath(const QSettings &setting)
+void MainWindow::loadRecentPath()
 {
-    m_recentOpenFiles = setting.value("path/openFiles").toStringList();
-    m_recentOpenProjectFolders = setting.value("path/openProjectFolders").toStringList();
+    m_recentOpenFiles = saConfig.getValue("path/openFiles").toStringList();
+    m_recentOpenProjectFolders = saConfig.getValue("path/openProjectFolders").toStringList();
+    updateRecentPathMenu();
 }
 ///
 /// \brief 刷新最近打开菜单
@@ -842,7 +846,7 @@ void MainWindow::updateRecentPathMenu()
     });
     std::for_each(m_recentOpenFiles.begin(),m_recentOpenFiles.end(),[&](const QString& strPath){
         QAction* act = new QAction(strPath,this);
-        connect(act,&QAction::triggered,this,[&](bool on){
+        connect(act,&QAction::triggered,this,[this,act](bool on){
             Q_UNUSED(on);
             this->openFile(act->text());
         });
@@ -972,7 +976,7 @@ void MainWindow::onActionOpenTriggered()
     QStringList strSuffixs = m_pluginManager->getAllSupportOpenFileSuffix();
     QString strAllSupportSuffixs;
     std::for_each(strSuffixs.begin(),strSuffixs.end(),[&strAllSupportSuffixs](const QString& s){
-        strAllSupportSuffixs += ("*." + s);
+        strAllSupportSuffixs += (" *." + s);
     });
     strNFilter.push_front(tr("all support files(%1)").arg(strAllSupportSuffixs));
     strNFilter.push_back(tr("all files (*.*)"));
@@ -993,6 +997,10 @@ void MainWindow::onActionOpenTriggered()
     }
     //成功打开，记录到最近打开列表中
     int openFilesCount = saConfig.getValue("path/openFilesCount",10).toInt();
+    if(m_recentOpenFiles.contains(strFile))
+    {
+        return;
+    }
     m_recentOpenFiles.push_front(strFile);
     if(openFilesCount > 0 && m_recentOpenFiles.size()>openFilesCount)
     {
@@ -1009,8 +1017,9 @@ void MainWindow::onActionOpenTriggered()
     }
     //QSettings setting = getSetting();
     saConfig.setValue("path/openFiles",m_recentOpenFiles);
+    saConfig.save();
     QAction* act = new QAction(strFile,this);
-    connect(act,&QAction::triggered,this,[&](bool on){
+    connect(act,&QAction::triggered,this,[this,act](bool on){
         Q_UNUSED(on);
         this->openFile(act->text());
     });

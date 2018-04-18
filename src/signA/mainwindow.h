@@ -496,7 +496,7 @@ private:
     //保存最近打开的文件内容信息
     void saveRecentPath();
     //保存最近打开的文件内容信息
-    void loadRecentPath(const QSettings& setting);
+    void loadRecentPath();
     //刷新最近打开菜单
     void updateRecentPathMenu();
 
