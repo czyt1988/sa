@@ -14,7 +14,7 @@ SAFigureGlobalConfig::SAFigureGlobalConfig()
 ///
 int SAFigureGlobalConfig::getPlotCurWidth(int points)
 {
-    if(points > saConfig->getIntValue(CFG_CONTENT_FIG,CFG_FIG_PlotCurWidthAdded,1000))
+    if(points > saConfig.getIntValue(CFG_CONTENT_FIG,CFG_FIG_PlotCurWidthAdded,1000))
         return 1;
     return 2;
 }
@@ -25,5 +25,5 @@ int SAFigureGlobalConfig::getPlotCurWidth(int points)
 ///
 void SAFigureGlobalConfig::setPlotCurWidth1(int points)
 {
-    saConfig->setIntValue(CFG_CONTENT_FIG,CFG_FIG_PlotCurWidthAdded,points);
+    saConfig.setIntValue(CFG_CONTENT_FIG,CFG_FIG_PlotCurWidthAdded,points);
 }

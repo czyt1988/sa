@@ -487,20 +487,14 @@ protected:
 //    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
 //    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
 private:
-    //获取程序的保存信息
-    QSettings getSetting() const;
     //打开文件
     bool openFile(const QString& fullPath);
     //配置信息保存
     void saveSetting();
     //配置信息加载
     void loadSetting();
-    //保存窗口信息
-    void saveWindowState(QSettings& setting);
-    //加载窗口信息
-    void loadWindowState(const QSettings& setting);
     //保存最近打开的文件内容信息
-    void saveRecentPath(QSettings& setting);
+    void saveRecentPath();
     //保存最近打开的文件内容信息
     void loadRecentPath(const QSettings& setting);
     //刷新最近打开菜单

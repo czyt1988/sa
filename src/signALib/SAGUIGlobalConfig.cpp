@@ -23,7 +23,7 @@ SAGUIGlobalConfig::~SAGUIGlobalConfig()
 SAGUIGlobalConfig::PropertyBrowserType SAGUIGlobalConfig::getDefaultPropertySetDialogType()
 {
     int def = (int)GroupBoxType;
-    return (SAGUIGlobalConfig::PropertyBrowserType)(saConfig->getIntValue(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,def));
+    return (SAGUIGlobalConfig::PropertyBrowserType)(saConfig.getIntValue(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,def));
 }
 ///
 /// \brief 设置默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式
@@ -32,7 +32,7 @@ SAGUIGlobalConfig::PropertyBrowserType SAGUIGlobalConfig::getDefaultPropertySetD
 ///
 void SAGUIGlobalConfig::setDefaultPropertySetDialogType(SAGUIGlobalConfig::PropertyBrowserType type)
 {
-    saConfig->setIntValue(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,(int)type);
+    saConfig.setIntValue(CFG_CONTENT_GUI,CFG_GUI_DefaultPropertySetDialogType,(int)type);
 }
 ///
 /// \brief 所有参数设置为默认

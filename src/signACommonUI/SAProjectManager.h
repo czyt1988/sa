@@ -77,7 +77,7 @@ private:
     //加载项目信息中的变量信息
     void loadValuesProjectInfo(QDomNode* nodeValues, QStringList& valueNames);
     //加载变量
-    void loadValues(const QString &projectFullPath);
+    void loadValues(const QString &projectFullPath, const QStringList &suffixs);
     //保存变量
     void saveValues(const QString &projectFullPath);
     //移除记录的要删除的数据

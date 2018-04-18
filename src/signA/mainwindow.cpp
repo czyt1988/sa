@@ -68,6 +68,7 @@
 #include "SALog.h"
 #include "SAProjectManager.h"
 #include "SAValueManagerMimeData.h"
+#include "SAGlobalConfig.h"
 //===SAChart
 #include "SAChart.h"
 #include "SAQwtSerialize.h"
@@ -764,70 +765,25 @@ MainWindow::~MainWindow()
     delete ui;
 #endif
 }
-///
-/// \brief 获取程序的QSettings变量
-/// \return
-///
-QSettings MainWindow::getSetting() const
-{
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                       "CZY", "SA");
-    return settings;
-}
+
 
 void MainWindow::loadSetting()
 {
-    QSettings settings = getSetting();
-    loadWindowState(settings);
-}
-
-void MainWindow::saveSetting()
-{
-    QSettings settings = getSetting();
-	//mainWindow
-	saveWindowState(settings);
-}
-
-void MainWindow::saveWindowState(QSettings& setting)
-{
-    setting.beginGroup("StartTimes");
-    setting.setValue("firstStart", false);
-    setting.endGroup();
-
-	setting.beginGroup("mainWindow");
-	setting.setValue("geometry", saveGeometry());
-	setting.setValue("windowState", saveState());
-	setting.endGroup();
-
-    setting.beginGroup("skin");
-    setting.setValue("name",SAThemeManager::currentStyleName() );
-    setting.endGroup();
-
-
-
-}
-void MainWindow::loadWindowState(const QSettings& setting)
-{
-	QVariant var = QVariant();
-    var = setting.value("StartTimes/firstStart");
-    if(var.isValid())
-    {
-        if(var.toBool())
-        {
-            onActionSetDefalutDockPosTriggered();
-        }
-    }
-    else
+    bool isFirstStart = saConfig.getValue("StartTimes/firstStart",true).toBool();
+    qDebug() << "first start:" << isFirstStart;
+    if(isFirstStart)
     {
         onActionSetDefalutDockPosTriggered();
     }
-    var = setting.value("mainWindow/geometry");
+
+    QVariant var = saConfig.getValue("mainWindow/geometry");
     bool isLoadGeometry = false;
     if(var.isValid())
     {
+        QByteArray arr = var.toByteArray();
         isLoadGeometry |= restoreGeometry(var.toByteArray());
     }
-    var = setting.value("mainWindow/windowState");
+    var = saConfig.getValue("mainWindow/windowState");
     if(var.isValid())
     {
         isLoadGeometry |= restoreState(var.toByteArray());
@@ -836,23 +792,33 @@ void MainWindow::loadWindowState(const QSettings& setting)
     {
         showMaximized();
     }
-    var = setting.value("skin/name");
+    var = saConfig.getValue("skin/name");
     if(var.isValid())
         setSkin(var.toString());
     else
         setSkin("normal");
-
 }
+
+void MainWindow::saveSetting()
+{
+    saConfig.setValue("StartTimes/firstStart",false);
+    saConfig.setValue("mainWindow/geometry",saveGeometry());
+    saConfig.setValue("mainWindow/windowState",saveState());
+    saConfig.setValue("skin/name",SAThemeManager::currentStyleName());
+    saConfig.setValue("path/openFiles",m_recentOpenFiles);
+    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.save();
+}
+
 ///
 /// \brief 保存最近打开的文件内容信息
 /// \param setting
 ///
-void MainWindow::saveRecentPath(QSettings &setting)
+void MainWindow::saveRecentPath()
 {
-    setting.beginGroup("path");
-    setting.setValue("openFiles",m_recentOpenFiles);
-    setting.setValue("openProjectFolders",m_recentOpenProjectFolders);
-    setting.endGroup();
+    saConfig.setValue("path/openFiles",m_recentOpenFiles);
+    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.save();
 }
 ///
 /// \brief 加载最近打开的文件内容信息
@@ -1026,27 +992,29 @@ void MainWindow::onActionOpenTriggered()
         return;
     }
     //成功打开，记录到最近打开列表中
+    int openFilesCount = saConfig.getValue("path/openFilesCount",10).toInt();
     m_recentOpenFiles.push_front(strFile);
-    QSettings setting = getSetting();
-    setting.beginGroup("path");
-    setting.setValue("openFiles",m_recentOpenFiles);
-    setting.endGroup();
+    if(openFilesCount > 0 && m_recentOpenFiles.size()>openFilesCount)
+    {
+        QString takePath = m_recentOpenFiles.takeLast();
+        QList<QAction*> acts = ui->menuRecentOpenFile->actions();
+        for(int i=0;i<acts.size();++i)
+        {
+            if(acts[i]->text() == takePath)
+            {
+                acts[i]->deleteLater();
+                break;
+            }
+        }
+    }
+    //QSettings setting = getSetting();
+    saConfig.setValue("path/openFiles",m_recentOpenFiles);
     QAction* act = new QAction(strFile,this);
     connect(act,&QAction::triggered,this,[&](bool on){
         Q_UNUSED(on);
         this->openFile(act->text());
     });
-
-    QList<QAction*> ofacts = ui->menuRecentOpenFile->actions();
-
-    std::for_each(m_recentOpenFiles.begin(),m_recentOpenFiles.end(),[&](const QString& strPath){
-        QAction* act = new QAction(strPath,this);
-        connect(act,&QAction::triggered,this,[&](bool on){
-            Q_UNUSED(on);
-            this->openFile(act->text());
-        });
-        ui->menuRecentOpenFile->addAction(act);
-    });
+    ui->menuRecentOpenFile->addAction(act);
 }
 
 ///
@@ -1064,7 +1032,7 @@ bool MainWindow::openFile(const QString &fullPath)
     {
         return false;
     }
-    return import->openFile(fullPath);
+    return import->openFile({fullPath});
 }
 
 ///

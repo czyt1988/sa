@@ -227,7 +227,7 @@ void SAProjectManager::loadValuesProjectInfo(QDomNode *nodeValues, QStringList &
 /// \brief 加载变量
 /// \param projectFullPath
 ///
-void SAProjectManager::loadValues(const QString &projectFullPath)
+void SAProjectManager::loadValues(const QString &projectFullPath,const QStringList & suffixs)
 {
     SA_D(SAProjectManager);
     QString dataPath = getProjectDataFolderPath(projectFullPath);
@@ -269,6 +269,18 @@ void SAProjectManager::loadValues(const QString &projectFullPath)
 
     }
     //根据记录的顺序调整list的位置
+    for(int i=0;i<suffixs.size();++i)
+    {
+        int index = 0;
+        while(index < datasBeLoad.size())
+        {
+            if(datasBeLoad[index]->getName() == suffixs[i])
+            {
+                datasBeLoad.swap(i,index);
+                break;
+            }
+        }
+    }
     if(!datasBeLoad.isEmpty())
     {
         saValueManager->addDatas(datasBeLoad);

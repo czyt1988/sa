@@ -15,28 +15,31 @@ class SAGlobalConfigPrivate;
 ///
 class SALIB_EXPORT SAGlobalConfig
 {
+    SA_IMPL(SAGlobalConfig)
 private:
     explicit SAGlobalConfig();
     ~SAGlobalConfig();
     Q_DISABLE_COPY(SAGlobalConfig)
-    //初始化函数
-    void init();
 public:
     //检测是否存在目录
-    bool isHasContent(const QString& content) const;
+    bool isHasGroup(const QString& group) const;
     //检测是否存在对应索引
-    bool isHasKey(const QString& content,const QString& key) const;
+    bool isHasKey(const QString& group, const QString& key) const;
     //获取键值对应的内容
-    QVariant getValue(const QString& content,const QString& key) const;
+    QVariant getValue(const QString& namePath,const QVariant& defaultVal = QVariant()) const;
+    QVariant getValue(const QString& group, const QString& key,const QVariant& defaultVal = QVariant()) const;
     //设置键值
-    void setValue(const QString& content,const QString& key,const QVariant& var);
+    void setValue(const QString& namePath, const QVariant& var);
+    void setValue(const QString& group, const QString& key, const QVariant& var);
     //获取数据，确保数据有默认构造函数
     template<typename T>
     T valueFromKey(const QString& content,const QString& key,const T& defaultVal = T());
     //获取所有目录关键字
-    QList<QString> getContentList() const;
+    QStringList getGroupList() const;
     //获取目录下对应的所有关键字
-    QList<QString> getKeyList(const QString& content) const;
+    QStringList getKeyList(const QString& group) const;
+    //保存
+    bool save();
 public:
     //获取uint型的配置
     unsigned int getUIntValue(const QString& content,const QString& key,const unsigned int& defaultVal = -1) const;
@@ -57,19 +60,20 @@ public:
     QString getStringValue(const QString& content,const QString& key,const QString& defaultVal = QString()) const;
     void setStringValue(const QString& content,const QString& key,const QString& val);
 public:
-    //获取sa的home page
-    QString getHomePath() const;
     //获取sa的配置文件目录
-    QString getConfigPath() const;
-    //获取默认home path
-    static QString makeDefaultHomePath();
+    static QString getConfigPath();
     //获取默认config path
     static QString makeDefaultConfigPath();
+    //获取sa的配置文件名
+    static QString getConfigFileName();
+    //获取sa的配置文件名
+    static QString getConfigFullPath();
 public:
-    static SAGlobalConfig* getInstance();
+    static SAGlobalConfig& getInstance();
 private:
-    std::unique_ptr<SAGlobalConfigPrivate> m_d;///<
     static SAGlobalConfig* s_instance;
+    static QString s_configFilePath;///< 配置文件路径
+    static QString s_configFileName;///< 配置文件名
 };
 
 template<typename T>

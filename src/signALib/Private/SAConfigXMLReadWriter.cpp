@@ -1,167 +1,440 @@
 #include "SAConfigXMLReadWriter.h"
-#include "SAGlobalConfig.h"
 #include <QDir>
 #include <QFile>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include "SAVariantCaster.h"
+#include <QDomDocument>
+#include <QDomElement>
+#include <QDomText>
+#include <QDomNode>
+#include <QDebug>
 #include "SAVariantCaster.h"
 #define CONFIG_FILE_NAME "saconfig.cfg"
-#define CONFIG_SECTION_NAME "config"
 
-#define CONFIG_CONTENT_NAME "content"
+#define CONFIG_ROOT_NAME "config"
+#define CONFIG_GROUP_NAME "group"
 #define CONFIG_CONTENT_PROP_NAME "name"
-
 #define CONFIG_KEY_NAME "key"
 #define CONFIG_KEY_PROP_NAME_NAME "name"
 #define CONFIG_KEY_PROP_TYPE_NAME "type"
 
-SAConfigXMLReadWriter::SAConfigXMLReadWriter(SAGlobalConfig *config, QObject *par):QObject(par)
-  ,m_config(config)
+
+
+class SAConfigXMLReadWriterPrivate
 {
-
-}
-
-QString SAConfigXMLReadWriter::getConfigXMLFileFullPath()
-{
-    QString str = m_config->getConfigPath();
-    return (str + QDir::separator() + CONFIG_FILE_NAME);
-}
-
-
-bool SAConfigXMLReadWriter::startWrite()
-{
-    QFile file(getConfigXMLFileFullPath());
-    if(!file.open(QIODevice::WriteOnly))
+	SA_IMPL_PUBLIC(SAConfigXMLReadWriter)    
+public:
+    QString m_cfgPath;
+    QDomDocument m_doc;
+    bool m_isDirty;
+    SAConfigXMLReadWriterPrivate(SAConfigXMLReadWriter* par)
+        :q_ptr(par)
+        ,m_doc("confog")
+        ,m_isDirty(false)
     {
-        emit readWriteComplete(FileOpenError);
-        return false;
+        m_doc.createElement("config");
     }
-    QList<QString> contents = m_config->getContentList();
-    const int contentsSize = contents.size();
-    QXmlStreamWriter xml(&file);
-    xml.setCodec("UTF-8");//设置编码
-    xml.setAutoFormatting(true);//自动换行，否则会写成一坨不好看
-    xml.setAutoFormattingIndent(2);//设置一个tab的空格数，也就是缩进量，一般是2或4
-    xml.writeStartDocument();//写入xml文档头<?xml version="1.0" encoding="UTF-8"?>
-    xml.writeStartElement(CONFIG_SECTION_NAME);//每个start ele都要有write en
-    for(int i=0;i<contentsSize;++i)
+    
+    SAConfigXMLReadWriterPrivate(SAConfigXMLReadWriter* par,const QString& cfgPath)
+        :q_ptr(par)
+        ,m_doc("confog")
+        ,m_isDirty(false)
     {
-        writeContent(&xml,contents[i]);
+        setCfgFile(cfgPath);
     }
-    xml.writeEndElement();
-    if(xml.hasError())
+    
+    void createDefaultDoc()
     {
-        emit readWriteComplete(WriteError);
-        return false;
+        m_doc = QDomDocument("config");
+        QDomProcessingInstruction instruction = m_doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+        m_doc.appendChild(instruction);
+        QDomElement base = m_doc.createElement(CONFIG_ROOT_NAME);
+        m_doc.appendChild(base);
     }
-    else
-    {
-        emit readWriteComplete(WriteComplete);
-    }
-    return true;
-}
 
-
-void SAConfigXMLReadWriter::writeContent(QXmlStreamWriter *xml, const QString &content)
-{
-    QList<QString> keys = m_config->getKeyList(content);
-    const int keySize = keys.size();
-    if(keySize <= 0)
+    bool setCfgFile(const QString& cfgPath)
     {
-        return;
-    }
-    xml->writeStartElement(CONFIG_CONTENT_NAME);//每个start ele都要有write end
-    xml->writeAttribute(CONFIG_CONTENT_PROP_NAME,content);
-    for(int i=0;i<keySize;++i)
-    {
-        writeKey(xml,keys[i],m_config->getValue(content,keys[i]));
-    }
-    xml->writeEndElement();
-}
-
-void SAConfigXMLReadWriter::writeKey(QXmlStreamWriter *xml, const QString &key, const QVariant &var)
-{
-    xml->writeStartElement(CONFIG_KEY_NAME);//每个start ele都要有write end
-    xml->writeAttribute(CONFIG_KEY_PROP_NAME_NAME,key);
-    xml->writeAttribute(CONFIG_KEY_PROP_TYPE_NAME,var.typeName());
-    xml->writeCharacters(SAVariantCaster::variantToString(var));
-    xml->writeEndElement();
-}
-
-bool SAConfigXMLReadWriter::startRead()
-{
-    QFile file(getConfigXMLFileFullPath());
-    if(!file.open(QIODevice::ReadOnly))
-    {
-        emit readWriteComplete(FileOpenError);
-        return false;
-    }
-    QXmlStreamReader xml(&file);
-    while(!xml.atEnd() && !xml.hasError())
-    {
-        xml.readNext();
-        if(xml.isStartElement())
+        QFile file(cfgPath);
+        if(!file.open(QIODevice::ReadWrite))
         {
-            if(xml.name() == CONFIG_SECTION_NAME)
+            return false;
+        }
+        if(!m_doc.setContent(&file))
+        {
+            createDefaultDoc();
+            return true;
+        }
+        if(m_doc.isNull())
+    	{
+            createDefaultDoc();
+            return true;
+    	}
+        m_cfgPath = cfgPath;
+        return true;
+    }
+
+    QDomNodeList getAllGroupNodes() const
+    {
+        QDomElement rootElement = m_doc.documentElement();//<config>
+        return rootElement.childNodes();//<group>
+    }
+
+    bool getGroupNode(const QString& groupName,QDomElement* groupNode) const
+    {
+        QDomNodeList groupsNode = getAllGroupNodes();
+        const int size = groupsNode.size();
+        for(int i=0;i<size;++i)
+        {
+            QDomElement node = groupsNode.at(i).toElement();
+
+            QDomNamedNodeMap attr = node.attributes();
+            QDomNode attrName = attr.namedItem(CONFIG_CONTENT_PROP_NAME);
+            if(attrName.isNull())
+                continue;
+            if(attrName.nodeValue() == groupName)
             {
-                readContent(&xml);
+                if(groupNode)
+                {
+                    *groupNode = groupsNode.at(i).toElement();
+                }
+                return true;
             }
         }
-    }
-    if(xml.hasError())
-    {
-        emit readWriteComplete(ReadError);
         return false;
     }
-    else
-    {
-        emit readWriteComplete(ReadComplete);
-    }
-    return true;
-}
 
-void SAConfigXMLReadWriter::readContent(QXmlStreamReader* xml)
-{
-    while(!xml->atEnd() && !xml->hasError())
+    bool getKeyNode(const QDomElement& groupNode,const QString& keyName,QDomElement* keyNode,QString* typeName,QString* valStr) const
     {
-        xml->readNext();
-        if(xml->isStartElement())
+        QDomNodeList keyNodeLists = groupNode.elementsByTagName(CONFIG_KEY_NAME);
+        const int count = keyNodeLists.size();
+        for(int i=0;i<count;++i)
         {
-            if(xml->name() == CONFIG_CONTENT_NAME)//<content>
+            QDomElement node = keyNodeLists.at(i).toElement();
+            if(node.isNull() || CONFIG_KEY_NAME!=node.tagName())
             {
-                QStringRef att = xml->attributes().value(CONFIG_CONTENT_PROP_NAME);
-                if(!att.isEmpty())
+                continue;
+            }
+
+            QString str = node.attribute(CONFIG_KEY_PROP_NAME_NAME,QString());
+            if(str.isNull())
+                continue;
+            if(keyName == str)
+            {
+                if(keyNode)
                 {
-                    readKey(xml,att.toString());
+                    *keyNode = node;
+                }
+                if(typeName)
+                {
+                    *typeName = node.attribute(CONFIG_KEY_PROP_TYPE_NAME,QString());
+                    if(typeName->isNull())
+                    {
+                        *typeName = "Invalid";
+                    }
+                }
+                if(valStr)
+                {
+                    *valStr = node.text();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    QVariant getValue(const QString& groupName, const QString& keyName,const QVariant& defaultVal) const
+    {
+        QDomElement groupNode;
+        if(!getGroupNode(groupName,&groupNode))
+        {
+            qDebug() << "!!!<" << groupName << ">" << " [" << keyName << "]" << "can not find group :" <<defaultVal;
+            return defaultVal;
+        }
+        QString typeName;
+        QString variantString;
+        if(!getKeyNode(groupNode,keyName,nullptr,&typeName,&variantString))
+        {
+            return defaultVal;
+        }
+        return SAVariantCaster::stringToVariant(variantString,typeName);
+    }
+
+    void setValue(const QString &groupName, const QString &keyName, const QVariant &var)
+    {
+        QDomElement groupNode;
+        if(!getGroupNode(groupName,&groupNode))
+        {
+            groupNode = m_doc.createElement(CONFIG_GROUP_NAME);
+            groupNode.setAttribute(CONFIG_CONTENT_PROP_NAME,groupName);
+            m_doc.documentElement().appendChild(groupNode);
+        }
+        QDomElement keyNode;
+        if(!getKeyNode(groupNode,keyName,&keyNode,nullptr,nullptr))
+        {
+            //没有key
+            keyNode = m_doc.createElement(CONFIG_KEY_NAME);
+            keyNode.setAttribute(CONFIG_KEY_PROP_NAME_NAME,keyName);
+            keyNode.setAttribute(CONFIG_KEY_PROP_TYPE_NAME,QString(var.typeName()));
+            keyNode.appendChild(m_doc.createTextNode(SAVariantCaster::variantToString(var)));
+            groupNode.appendChild(keyNode);
+        }
+        else
+        {
+            //有key需要替换
+            keyNode.setAttribute(CONFIG_KEY_PROP_NAME_NAME,keyName);
+            keyNode.setAttribute(CONFIG_KEY_PROP_TYPE_NAME,QString(var.typeName()));
+            QDomText text = m_doc.createTextNode(SAVariantCaster::variantToString(var));
+            QDomNodeList nl = keyNode.childNodes();
+            if(nl.size()<=0)
+            {
+                keyNode.appendChild(text);
+            }
+            else
+            {
+                for(int i=0;i<nl.size();++i)
+                {
+                    if(nl.at(i).isText())
+                    {
+                        keyNode.replaceChild(text,nl.at(i));
+                    }
                 }
             }
         }
+        m_isDirty = true;
     }
-}
 
-void SAConfigXMLReadWriter::readKey(QXmlStreamReader *xml, const QString &contentName)
-{
-    while(!xml->atEnd() && !xml->hasError())
+    QStringList getGroupList() const
     {
-        xml->readNext();
-        if(xml->isStartElement())
+        QStringList res;
+        QDomNodeList groupsNodeLists = getAllGroupNodes();
+        for(int i=0;i<groupsNodeLists.size();++i)
         {
-            if(xml->name() == CONFIG_KEY_NAME)//<key>
-            {
-                QXmlStreamAttributes att = xml->attributes();
-                QStringRef ref = att.value(CONFIG_KEY_PROP_NAME_NAME);
-                if(ref.isEmpty())
-                    continue;
-                QString name = ref.toString();
-
-                ref = att.value(CONFIG_KEY_PROP_TYPE_NAME);
-                if(ref.isEmpty())
-                    continue;
-                QString type = ref.toString();
-                QString data = xml->readElementText();
-                m_config->setValue(contentName,name,SAVariantCaster::stringToVariant(data,type));
-            }
+            res.append(groupsNodeLists.at(i).nodeName());
         }
+        return res;
+    }
+
+    QStringList getKeyList(const QString& groupName) const
+    {
+        QStringList res;
+        QDomElement groupEle;
+        if(!getGroupNode(groupName,&groupEle))
+        {
+            return res;
+        }
+        QDomNodeList keysNodeList = groupEle.childNodes();
+        for(int i=0;i<keysNodeList.size();++i)
+        {
+            QDomElement ele = keysNodeList.at(i).toElement();
+            if(ele.isNull() || CONFIG_KEY_NAME!=ele.tagName())
+                continue;
+            res.append(ele.attribute(CONFIG_KEY_PROP_NAME_NAME));
+        }
+        return res;
+    }
+
+    bool save(const QString& saveFilePath)
+    {
+        QFile file(saveFilePath);
+        if(!file.open(QIODevice::ReadWrite|QIODevice::Text))
+        {
+            return false;
+        }
+        QTextStream txt(&file);
+        txt.setCodec("UTF-8");
+        m_doc.save(txt, 4, QDomNode::EncodingFromTextStream);
+        txt.flush();
+        file.close();
+        m_isDirty = false;
+        return true;
+    }
+};
+
+
+
+
+
+SAConfigXMLReadWriter::SAConfigXMLReadWriter(QObject *par):QObject(par)
+	,d_ptr(new SAConfigXMLReadWriterPrivate(this))
+{
+    
+}
+
+SAConfigXMLReadWriter::SAConfigXMLReadWriter(const QString &cfgPath, QObject *par):QObject(par)
+	,d_ptr(new SAConfigXMLReadWriterPrivate(this,cfgPath))
+{
+    
+}
+
+SAConfigXMLReadWriter::~SAConfigXMLReadWriter()
+{
+
+}
+///
+/// \brief 设置配置文件
+/// \param filePath
+/// \return
+///
+bool SAConfigXMLReadWriter::setFile(const QString &filePath)
+{
+    return d_ptr->setCfgFile(filePath);
+}
+///
+/// \brief 是否存在组判断
+/// \param groupName 组名
+/// \return 存在返回true
+///
+bool SAConfigXMLReadWriter::isHasGroup(const QString &groupName) const
+{
+    return d_ptr->getGroupNode(groupName,nullptr);
+}
+///
+/// \brief 是否存在key
+/// \param groupName 组名
+/// \param keyName key名
+/// \return 存在返回true
+///
+bool SAConfigXMLReadWriter::isHasKey(const QString &groupName, const QString &keyName) const
+{
+    QDomElement groupNode;
+    if(!d_ptr->getGroupNode(groupName,&groupNode))
+    {
+        return false;
+    }
+    return d_ptr->getKeyNode(groupNode,keyName,nullptr,nullptr,nullptr);
+}
+///
+/// \brief 获取值
+/// \param groupName 组名
+/// \param keyName key名
+/// \param defaultVal 默认值
+/// \return 返回对应的值，若没有，返回默认值
+///
+QVariant SAConfigXMLReadWriter::getValue(const QString &groupName, const QString &keyName, const QVariant &defaultVal) const
+{
+    return d_ptr->getValue(groupName,keyName,defaultVal);
+}
+///
+/// \brief 获取值
+/// \param namePath 通过/作为分割的路径，如“xxgroup/xxkey”.
+/// 也就是
+/// \code
+/// getValue("xxgroup/xxkey",defaultVar);
+/// \endcode
+/// 等效于
+/// \code
+/// getValue（"xxgroup","xxkey",defaultVar));
+/// \endcode
+/// \param defaultVal 默认值，如果没有获取到，会返回此默认值
+/// \return
+///
+QVariant SAConfigXMLReadWriter::getValue(const QString &namePath, const QVariant &defaultVal) const
+{
+    QString group = "";
+    QString key;
+    splitNamePath(namePath,group,key);
+    return getValue(group,key,defaultVal);
+}
+///
+/// \brief 设置值
+/// \param groupName 组名
+/// \param keyName key名
+/// \param var 值
+///
+void SAConfigXMLReadWriter::setValue(const QString &groupName, const QString &keyName, const QVariant &var)
+{
+    d_ptr->setValue(groupName,keyName,var);
+}
+///
+/// \brief 设置值
+/// \param namePath 通过/作为分割的路径，如“xxgroup/xxkey”.
+/// 也就是
+/// \code
+/// setValue（"xxgroup/xxkey",var);
+/// \endcode
+/// 等效于
+/// \code
+/// setValue（"xxgroup","xxkey",var));
+/// \endcode
+/// \param var
+///
+void SAConfigXMLReadWriter::setValue(const QString &namePath, const QVariant &var)
+{
+    QString group = "";
+    QString key;
+    splitNamePath(namePath,group,key);
+    setValue(group,key,var);
+}
+///
+/// \brief 获取所有组名
+/// \return
+///
+QStringList SAConfigXMLReadWriter::getGroupList() const
+{
+    return d_ptr->getGroupList();
+}
+///
+/// \brief 获得keylist
+/// \param groupName
+/// \return
+///
+QStringList SAConfigXMLReadWriter::getKeyList(const QString &groupName) const
+{
+    return d_ptr->getKeyList(groupName);
+}
+///
+/// \brief 判断是否有改变
+/// \return
+///
+bool SAConfigXMLReadWriter::isDirty() const
+{
+    return d_ptr->m_isDirty;
+}
+
+///
+/// \brief 保存修改
+///
+/// 如果有打开文件，会保存到已有文件路径，如果没有打开文件，此函数不做任何动作
+/// \return
+///
+bool SAConfigXMLReadWriter::save()
+{
+    if(d_ptr->m_cfgPath.isEmpty())
+    {
+        return false;
+    }
+    return saveAs(d_ptr->m_cfgPath);
+}
+///
+/// \brief 另存为
+/// \param filePath 文件路径
+/// \return 成功返回true
+///
+bool SAConfigXMLReadWriter::saveAs(const QString &filePath)
+{
+    return d_ptr->save(filePath);
+}
+
+void SAConfigXMLReadWriter::splitNamePath(const QString &namePath, QString &groupName, QString &keyName)
+{
+    QStringList pl = namePath.split("/");
+    if(1 == pl.size())
+    {
+        groupName = "";
+        keyName = pl[0];
+    }
+    else if(2 == pl.size())
+    {
+        groupName = pl[0];
+        keyName = pl[1];
+    }
+    else
+    {
+        groupName = "";
+        keyName = namePath;
     }
 }
+
+

@@ -28,8 +28,7 @@ public:
     template<typename T>
     static QVariant converBase64StringToVariant(const QString& base64)
     {
-        QByteArray byte;
-        byte.fromBase64(base64.toLocal8Bit());
+        QByteArray byte = QByteArray::fromBase64(base64.toLocal8Bit());
         QDataStream st(&byte,QIODevice::ReadWrite);
         T ba;
         st >> ba;
