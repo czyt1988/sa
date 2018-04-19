@@ -8,13 +8,19 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
-
-#include <QtTreePropertyBrowser>
-#include <QtButtonPropertyBrowser>
-#include <QtGroupBoxPropertyBrowser>
-#include <QtVariantPropertyManager>
-#include <QtVariantEditorFactory>
-#include <QtVariantProperty>
+#include <qtpropertybrowser.h>
+#include <qttreepropertybrowser.h>
+#include <qtbuttonpropertybrowser.h>
+#include <qtgroupboxpropertybrowser.h>
+#include <qtpropertymanager.h>
+#include <qteditorfactory.h>
+#include <qtvariantproperty.h>
+//#include <QtTreePropertyBrowser>
+//#include <QtButtonPropertyBrowser>
+//#include <QtGroupBoxPropertyBrowser>
+//#include <QtVariantPropertyManager>
+//#include <QtVariantEditorFactory>
+//#include <QtVariantProperty>
 class SAPropertySetWidget::UI
 {
 public:

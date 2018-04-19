@@ -36,7 +36,6 @@
 //----------SA--------------
 
 // |------Dialog------------
-#include <Dialog_AddChart.h>
 #include "CurveSelectDialog.h"
 #include "SAProjectInfomationSetDialog.h"
 #include "SAAddCurveTypeDialog.h"
@@ -1096,10 +1095,11 @@ void MainWindow::onActionSaveAsTriggered()
 
 
 ///
-/// \brief 添加新图例
+/// \brief 添加新图
 ///
 void MainWindow::onActionNewChartTriggered()
 {
+#if 0
     Dialog_AddChart addChart(this);
 
     if(QDialog::Accepted == addChart.exec())
@@ -1138,6 +1138,7 @@ void MainWindow::onActionNewChartTriggered()
         pC->setAutoReplot(true);
         pSubWnd->show();
     }
+#endif
 }
 ///
 /// \brief 绘制线图

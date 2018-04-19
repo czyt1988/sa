@@ -199,27 +199,27 @@ QVariant SAValueManagerModel::data(const QModelIndex &index, int role) const
                     if(1 == dim)
                     {
                         int r = data->getSize();
-                        return QString("[%1]").arg(r);
+                        return QStringLiteral("[%1]").arg(r);
                     }
                     else if(2 == dim)
                     {
                         int r = data->getSize(SA::Dim1);
                         int c = data->getSize(SA::Dim2);
-                        return QString("[%1×%2]").arg(r).arg(c);
+                        return QStringLiteral("[%1×%2]").arg(r).arg(c);
                     }
                     else if(3 == dim)
                     {
                         int r = data->getSize(SA::Dim1);
                         int c = data->getSize(SA::Dim2);
                         int z = data->getSize(SA::Dim3);
-                        return QString("[%1×%2×%3]").arg(r).arg(c).arg(z);
+                        return QStringLiteral("[%1×%2×%3]").arg(r).arg(c).arg(z);
                     }
                     else if(dim > 3)
                     {
                         int r = data->getSize(SA::Dim1);
                         int c = data->getSize(SA::Dim2);
                         int z = data->getSize(SA::Dim3);
-                        return QString("[%1×%2×%3×...]").arg(r).arg(c).arg(z);
+                        return QStringLiteral("[%1×%2×%3×...]").arg(r).arg(c).arg(z);
                     }
                     return QVariant();
                 }

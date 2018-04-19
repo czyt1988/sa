@@ -279,6 +279,7 @@ void SAProjectManager::loadValues(const QString &projectFullPath,const QStringLi
                 datasBeLoad.swap(i,index);
                 break;
             }
+            ++index;
         }
     }
     if(!datasBeLoad.isEmpty())

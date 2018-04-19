@@ -9,15 +9,16 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signACommonUI
 TEMPLATE = lib
 CONFIG += dll
-
 DESTDIR = ../bin/libs
-
 CONFIG += c++11
 QWT_CONFIG += QwtDll
+DEFINES += SA_COMMON_UI_MAKE #make dll
+DEFINES += SA_COMMON_UI_USE_DYNAMIC #定义使用dynamic_cast 而不是rtti
 #czy
 include($$PWD/../czy/czy.pri)
 #propertybrowser
-include($$PWD/../3rdParty/qtpropertybrowser/src/qtpropertybrowser.pri)#propertybrowser support
+#include($$PWD/../3rdParty/qtpropertybrowser/src/qtpropertybrowser.pri)#propertybrowser support
+include($$[QT_INSTALL_PREFIX]/../Src/qttools/src/shared/qtpropertybrowser/qtpropertybrowser.pri)
 #sa api support
 include($$PWD/../signALib/signALib.pri)
 #QWT
@@ -30,8 +31,6 @@ include($$PWD/../signAChart/signAChart.pri)
 include($$PWD/../3rdParty/ctk/ctk.pri)
 #QTI
 include($$PWD/../3rdParty/qti/qti.pri)
-DEFINES += SA_COMMON_UI_MAKE #make dll
-DEFINES += SA_COMMON_UI_USE_DYNAMIC #定义使用dynamic_cast 而不是rtti
 
 OTHER_FILES += readme.md
 

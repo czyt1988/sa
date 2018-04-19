@@ -13,7 +13,9 @@ class QLabel;
 class QHBoxLayout;
 class QSpacerItem;
 class QtProperty;
-#include <QtVariantProperty>
+
+//#include <QtVariantProperty>
+
 class SA_COMMON_UI_EXPORT SAPropertySetWidget : public QWidget
 {
     Q_OBJECT
