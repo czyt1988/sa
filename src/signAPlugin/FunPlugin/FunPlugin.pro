@@ -17,6 +17,7 @@ include($$PWD/../../3rdParty/qwt/qwt_set.pri)
 include($$PWD/../../signALib/signALib.pri)
 include($$PWD/../../signACoreFun/signACoreFun.pri)
 include($$PWD/../../signACommonUI/signACommonUIWith3thLib.pri)
+include($$[QT_INSTALL_PREFIX]/../Src/qttools/src/shared/qtpropertybrowser/qtpropertybrowser.pri)
 #sa chart support
 #include($$PWD/../../signAChart/signAChart.pri)
 
