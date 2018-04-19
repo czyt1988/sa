@@ -54,6 +54,10 @@ sa使用了如下第三方库，在进行编译前请先配置好，否则无法
 
 编译结果生成的lib文件按照Qt的版本放置在如下对应的目录下：
 
-> Window+Qt+MinGW版本的把lib文件(libqwt.a和libqwtd.a)放置到目录`src\3rdParty\qwt\lib\x86\mingw32\`下 
+> Window+Qt+MinGW版本的把lib文件(libqwt.a和libqwtd.a)放置到目录`src\3rdParty\qwt\lib\x86\mngw32\`下 
 
 > Window+Qt+MSVC版本的把lib文件(qwt.lib和qwtd.lib)放置到目录`src\3rdParty\qwt\lib\x86\msvc\`下 
+
+编译的dll文件放置到对应`\bin\`目录下,如果不做特殊设置，编译`sa.pro`时将会在`src`文件夹下生成`bin`目录,如果做了`shadow build`，将在指定文件夹下生成`bin`文件夹
+
+### 
