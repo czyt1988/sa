@@ -8,7 +8,7 @@ message("--------------SA---------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])
 
-DESTDIR = ../../bin
+DESTDIR = $$PWD/../bin
 QT += core gui
 QT += sql
 QT += xml
@@ -21,7 +21,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 OTHER_FILES += readme.md\
     logo.rc
 
-DESTDIR = ../bin
 DEFINES -= SA_TDMS
 
 

@@ -8,7 +8,7 @@
 QT += core
 TARGET = signACoreFun
 TEMPLATE = lib
-DESTDIR = ../bin/libs
+DESTDIR = $$PWD/../bin/libs
 CONFIG += c++11
 
 include($$PWD/../czy/czy_math.pri)

@@ -10,7 +10,7 @@ TARGET = signAChart
 TEMPLATE = lib
 CONFIG += dll
 
-DESTDIR = ../bin/libs
+DESTDIR = $$PWD/../bin/libs
 
 CONFIG += c++11
 

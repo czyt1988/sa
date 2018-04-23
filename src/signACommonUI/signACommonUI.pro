@@ -9,24 +9,25 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signACommonUI
 TEMPLATE = lib
 CONFIG += dll
-DESTDIR = ../bin/libs
+DESTDIR = $$PWD/../bin/libs
 CONFIG += c++11
 QWT_CONFIG += QwtDll
 DEFINES += SA_COMMON_UI_MAKE #make dll
 DEFINES += SA_COMMON_UI_USE_DYNAMIC #定义使用dynamic_cast 而不是rtti
+DEPENDPATH += ../bin/lib
+#sa api support
+include($$PWD/../signALib/signALib.pri)
+#sa chart support
+include($$PWD/../signAChart/signAChart.pri)
 #czy
 include($$PWD/../czy/czy.pri)
 #propertybrowser
 #include($$PWD/../3rdParty/qtpropertybrowser/src/qtpropertybrowser.pri)#propertybrowser support
 include($$[QT_INSTALL_PREFIX]/../Src/qttools/src/shared/qtpropertybrowser/qtpropertybrowser.pri)
-#sa api support
-include($$PWD/../signALib/signALib.pri)
 #QWT
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
 #color picker support
 include($$PWD/../3rdParty/qtcolorpicker/qtcolorpicker.pri)
-#sa chart support
-include($$PWD/../signAChart/signAChart.pri)
 #CTK
 include($$PWD/../3rdParty/ctk/ctk.pri)
 #QTI
