@@ -76,6 +76,7 @@ public:
     //把所有设置的值转换为variant list发送
     QVariantList getDatas() const;
     QVariant getData(int index) const;
+    QVariant getDataByID(const QString& id,const QVariant& defaultVal = QVariant()) const;
     //删除所有属性内容
     void deleteAll();
 
@@ -103,15 +104,15 @@ public:
     template<typename T>
     T getDataByID(const QString& id,const T& defaultData = T())
     {
-        QtVariantProperty* pro = getPropertyByID(id);
-        if(nullptr == pro)
+        QVariant val = getDataByID(id);
+        if(!val.isValid())
         {
             return defaultData;
         }
-        return pro->value().value<T>();
+        return val.value<T>();
     }
     //通过id获取property
-    QtVariantProperty* getPropertyByID(const QString& id);
+    QtVariantProperty* getPropertyByID(const QString& id) const;
     //获取内部的SAPropertySetWidget属性widget
     SAPropertySetWidget* getPropertyWidget() const;
 private slots:

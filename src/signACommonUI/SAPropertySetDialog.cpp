@@ -316,6 +316,21 @@ QVariant SAPropertySetDialog::getData(int index) const
     return d_ptr->propertySetWidget->getData(index);
 }
 ///
+/// \brief 通过id获取对应的variant
+/// \param id
+/// \param defaultVal 默认值在未找到id时返回
+/// \return 未找到id时返回默认值
+///
+QVariant SAPropertySetDialog::getDataByID(const QString &id, const QVariant &defaultVal) const
+{
+    QtVariantProperty* pro = getPropertyByID(id);
+    if(nullptr == pro)
+    {
+        return defaultVal;
+    }
+    return pro->value();
+}
+///
 /// \brief 删除所有属性内容
 ///
 void SAPropertySetDialog::deleteAll()
@@ -385,7 +400,7 @@ void SAPropertySetDialog::recorder(const QString &id, QtVariantProperty *pro)
 /// \return
 /// \see recorder
 ///
-QtVariantProperty *SAPropertySetDialog::getPropertyByID(const QString &id)
+QtVariantProperty *SAPropertySetDialog::getPropertyByID(const QString &id) const
 {
     if(nullptr == d_ptr->m_recordStr2Pro)
     {

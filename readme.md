@@ -29,7 +29,7 @@ sa使用了如下第三方库，在进行编译前请先配置好，否则无法
 以下为需要自行构建的：
 
 - [qwt - 绘图库](https://github.com/czyt1988/sa/tree/master/src/3rdParty/qwt)  ->`QWT`的官网地址如下： [http://qwt.sourceforge.net/](http://qwt.sourceforge.net/) 另外 [ 具体构建方法可参考这个链接](http://blog.csdn.net/czyt1988/article/details/11999985)
-- [GSL - 数学计算库](https://github.com/czyt1988/sa/tree/master/src/czy/gsl) -> `GSL`是很出名的数学库，SA的window版本使用的是`GSL For Window`:[GSL for window官网](http://david.geldreich.free.fr/dev.html) `GSL`的官网见： [GSL 官网](http://ftp.gnu.org/gnu/gsl/) 由于sa的window版本使用的是GSL for window，可以直接下载编译好的二进制使用。
+- [GSL - 数学计算库](https://github.com/czyt1988/sa/tree/master/src/czy/gsl) -> `GSL`是很出名的数学库，SA的window版本使用的是`GSL For Window`:[GSL for window官网](http://gnuwin32.sourceforge.net/packages/gsl.htm) `GSL`的官网见： [GSL 官网](http://ftp.gnu.org/gnu/gsl/) 由于sa的window版本使用的是GSL for window，可以直接下载编译好的二进制使用。
 - [fftw 快速傅里叶变换库](https://github.com/czyt1988/sa/tree/master/src/czy/fftw) fftw号称世界最快的傅里叶变换库，其官网见：[http://www.fftw.org/](http://www.fftw.org/) 可以下载官网提供的编译好的dll作为window版本的使用
 
 以下为不需要自己构建的：
@@ -62,7 +62,7 @@ sa使用了如下第三方库，在进行编译前请先配置好，否则无法
 
 ### GSL for windows的安装
 
-去 [GSL for window官网](http://david.geldreich.free.fr/dev.html)下载二进制包或者使用源码自己编译也可以，`sa`中已经包含了gsl的lib和dll文件位于`src\czy\gsl\GnuWin32.7z`中
+去 [GSL for window官网](http://gnuwin32.sourceforge.net/packages/gsl.htm)下载二进制包或者使用源码自己编译也可以，`sa`中已经包含了gsl的lib和dll文件位于`src\czy\gsl\GnuWin32.7z`中
 
 把`GSL`的lib文件放置到路径：`src\czy\gsl\lib\`下面
 编译的dll文件(libgsl.dll和libgslcblas.dll)放置到sa的运行目录下,如果不做特殊设置，编译`sa.pro`时将会在`src`文件夹下生成`bin`目录,如果做了`shadow build`，将在指定文件夹下生成`bin`文件夹
