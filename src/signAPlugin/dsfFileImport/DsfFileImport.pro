@@ -20,7 +20,7 @@ include($$PWD/../../czy/czy.pri)
 DEFINES += SA_COMMON_PLUGIN_LIB_MAKE#创建插件必须添加此宏
 
 TARGET = DsfFileImport
-DESTDIR = ../../bin/plugin
+DESTDIR = $$PWD/../../bin/plugin
 
 HEADERS += \
     DsfFileImport.h\ 

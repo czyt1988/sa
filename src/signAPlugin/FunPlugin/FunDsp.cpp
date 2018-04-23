@@ -4,6 +4,7 @@
 #include <QMdiSubWindow>
 #include "sa_fun_dsp.h"
 #include "SAPropertySetDialog.h"
+#include <qtvariantproperty.h>
 #include "SAUIReflection.h"
 #include "SAUIInterface.h"
 #include "SAAbstractDatas.h"

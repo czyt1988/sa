@@ -1,6 +1,7 @@
 ﻿#include "FunDataPreprocessing.h"
 #include <QApplication>
 #include <QVariant>
+#include <qtvariantproperty.h>
 #include "sa_fun_core.h"
 #include "sa_fun_preproc.h"
 #include "SAPropertySetDialog.h"

@@ -25,7 +25,7 @@ DEFINES += SA_COMMON_PLUGIN_LIB_MAKE#创建插件必须添加此宏
 include($$PWD/../../czy/czy_qt.pri)
 
 TARGET        = textImport
-DESTDIR = ../../bin/plugin
+DESTDIR = $$PWD/../../bin/plugin
 
 HEADERS += \
     SATextDataImport.h \

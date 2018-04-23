@@ -17,7 +17,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 OTHER_FILES += readme.md
 
-DESTDIR = ../bin
+DESTDIR = $$PWD/../bin
 
 
 TARGET = signADataProc

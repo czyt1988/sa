@@ -4,7 +4,7 @@ SUBDIRS = \
           signAChart\
           signACommonUI\
           signACoreFun\
-          signAPlugin/saFunPlugin \
+          signAPlugin/FunPlugin \
           signAPlugin/textImport \
           signAPlugin/DsfFileImport \
           SARibbonBar/SARibbon/src/SARibbonBar \
