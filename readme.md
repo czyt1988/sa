@@ -46,52 +46,6 @@ sa使用了如下第三方库，在进行编译前请先配置好，否则无法
 
 # 编译
 
-## 1.第三方库编译及配置
+编译说明请看此文档:
 
-### qwt库的编译
-
-- 使用Qt Creator打开`\src\3rdParty\qwt\qwt.pro`文件，编译
-
-编译结果生成的lib文件按照Qt的版本放置在如下对应的目录下：
-
-> Window+Qt+MinGW版本的把lib文件(libqwt.a和libqwtd.a)放置到目录`src\3rdParty\qwt\lib\x86\mngw32\`下 
-
-> Window+Qt+MSVC版本的把lib文件(qwt.lib和qwtd.lib)放置到目录`src\3rdParty\qwt\lib\x86\msvc\`下 
-
-编译的dll文件(release模式下qwt.dll，debug模式下qwtd.dll)放置到sa的运行目录下,如果不做特殊设置，编译`sa.pro`时将会在`src`文件夹下生成`bin`目录,如果做了`shadow build`，将在指定文件夹下生成`bin`文件夹
-
-### GSL for windows的安装
-
-去 [GSL for window官网](http://gnuwin32.sourceforge.net/packages/gsl.htm)下载二进制包或者使用源码自己编译也可以，`sa`中已经包含了gsl的lib和dll文件位于`src\czy\gsl\GnuWin32.7z`中
-
-把`GSL`的lib文件放置到路径：`src\czy\gsl\lib\`下面
-编译的dll文件(libgsl.dll和libgslcblas.dll)放置到sa的运行目录下,如果不做特殊设置，编译`sa.pro`时将会在`src`文件夹下生成`bin`目录,如果做了`shadow build`，将在指定文件夹下生成`bin`文件夹
-
-### FFTW的安装
-
-去官网下载`FFTW`的最新版：[http://www.fftw.org/](http://www.fftw.org/)，windows版本可以直接下载编译好的dll:[http://www.fftw.org/install/windows.html](http://www.fftw.org/install/windows.html)
-
-把`FFTW`的lib文件放置到路径:`src\czy\fftw\`下面
-编译的dll文件(libfftw3-3.dll)放置到sa的运行目录下,如果不做特殊设置，编译`sa.pro`时将会在`src`文件夹下生成`bin`目录,如果做了`shadow build`，将在指定文件夹下生成`bin`文件夹
-
-自此三个主要的第三方库编译完成，其中只有`qwt`需要自行编译，`GSL`和`FFTW`都有官方提供编译好的二进制
-
-## 2.SARibbon的编译 
-
-SARibbon是sa项目写的ribbon界面，又单独独立成一个项目，因此，需要去github重新拉取SARibbon编译
-
-SARibbon项目的地址为：[https://github.com/czyt1988/SARibbon](https://github.com/czyt1988/SARibbon)
-
-拉取方法最好直接运行`src\SARibbonBar\updateSARibbon.sh`的脚本，脚本运行完就会自动拉取SARibbon项目，且别改文件夹名字
-
-拉取的文件夹`SARibbon`放置在`src\SARibbonBar\`目录下
-
-- SARibbon编译只需用Qt Creator 运行`SARibbon.pro`即可，编译完会生成lib和对应dll，lib文件位于`src\SARibbonBar\SARibbon\bin\`下面
-
-- `SARibbonBar.pri`文件，位于`src\SARibbonBar\SARibbon\SARibbonBar.pri`下
-
-- SARibbon的所有头文件位于`src\SARibbonBar\SARibbon\src\SARibbonBar\`下面
-
-## 3.SA的编译
-
-Qt Creator打开`sa.pro`并运行build
+[sa 编译说明:build.md](https://github.com/czyt1988/sa/tree/master/build.md)
