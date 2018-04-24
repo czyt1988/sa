@@ -1,0 +1,155 @@
+# 构建说明 
+
+## Window下构建步骤
+
+下面将记录为windows下构建SA的流水记录：
+
+### 1.拉取`SA`项目
+
+打开`gitbash`，`cd`到一个英文路径下，注意路径别有中文，敲入下面的脚本拉取`SA`
+
+```shell
+git clone https://github.com/czyt1988/sa.git
+```
+等待`SA`的拉取
+
+![git clone https://github.com/czyt1988/sa.git](https://github.com/czyt1988/sa/raw/master/doc/build/01.png)
+
+### 2.下载并构建第三方库
+
+- 1.下载`FFTW`库
+
+打开网址`FFTW For Windows` : [http://www.fftw.org/install/windows.html](http://www.fftw.org/install/windows.html)
+下载对应的版本
+
+![fftw for windows download page](https://github.com/czyt1988/sa/raw/master/doc/build/02.png)
+
+虽然是用MinGW编译的，但是经测试vs2003到vs2015都可以正常使用，所以为了免去不必要麻烦，建议直接使用它们已经编译好的dll,这里我们后续需要用到`libfftw3-3.dll`,`lib`文件和头文件已经在`src/czy/fftw`中配置好，理论不需要重新配置，若想重新配置`fftw`的`lib`请参考文档：[doc/buildFFTW.md](https://github.com/czyt1988/sa/tree/master/doc/buildFFTW.md)
+
+- 2.下载GSL库
+
+`GSL For Window`人家也像我一样很贴心的把所有东西都打包好了，包括dll和lib文件，你都不用费劲自己编译，下载地址见:[GSL for windows](http://gnuwin32.sourceforge.net/packages/gsl.htm)
+
+`SA`把这些打了一个压缩包位于`src\czy\gsl\GnuWin32.7z`，包括头文件，lib文件，dll文件，lib文件位于[src\czy\gsl\lib\libgsl.lib](https://github.com/czyt1988/sa/tree/master/src/czy/gsl/lib)和[src\czy\gsl\lib\libgslcblas.lib](https://github.com/czyt1988/sa/tree/master/src/czy/gsl/lib)
+
+其实只要用到压缩包里的dll文件，若想自己配置，可以下载上面链接，把头文件和lib文件替换掉进行，这里不进行详细介绍
+
+- 3.QWT库的构建
+
+为了省事，`SA`把`QWT`的源码都放置在[src\3rdParty\qwt\](https://github.com/czyt1988/sa/tree/master/src/3rdParty/qwt)中，这样不太好，以后考虑移除。
+
+要编译`qwt`只需要用`Qt Creator`运行`src\3rdParty\qwt\qwt.pro`，点build，等待10分钟即可，若不做特殊处理，将会在目录`src\3rdParty`上生成一个build-qwt-xx文件夹：
+
+![build qwt folder](https://github.com/czyt1988/sa/raw/master/doc/build/03.png)
+
+下面需要对编译好的build-qwt-xx文件夹下的lib文件夹中的lib文件进行如下配置：
+
+> Window+Qt+MinGW版本的把lib文件(libqwt.a和libqwtd.a)放置到目录`src\3rdParty\qwt\lib\x86\mngw32\`下 
+
+> Window+Qt+MSVC版本的把lib文件(qwt.lib和qwtd.lib)放置到目录`src\3rdParty\qwt\lib\x86\msvc\`下 
+
+如这里使用的是Qt5.9 MinGW版本，则需要在建立一个目录`src\3rdParty\qwt\lib\x86\mngw32\`,然后把*.a文件复制到这个目录下
+
+![copy qwt lib to folder](https://github.com/czyt1988/sa/raw/master/doc/build/04.png)
+
+编译的dll文件(release模式下qwt.dll，debug模式下qwtd.dll)放置到sa的运行目录下,如果不做特殊设置，编译`sa.pro`时将会在`src`文件夹下生成`bin`目录,如果做了`shadow build`，将在指定文件夹下生成`bin`文件夹
+
+至此目前`SA`所需的第三方库准备完成，需要有如下内容：
+
+- fftw:
+
+> src/czy/fftw/libfftw3-3.lib
+
+- gsl:
+
+> src/czy/gsl/lib/libgsl.lib
+
+> src/czy/gsl/lib/libgslcblas.lib
+
+- qwt 会根据编译环境而不同
+ 
+ window+msvc：
+
+> src/3rdParty/qwt/lib/x86/msvc/qwt.lib 
+
+> src/3rdParty/qwt/lib/x86/msvc/qwtd.lib
+
+window+MinGW：
+
+> src/3rdParty/qwt/lib/x86/mingw32/libqwt.a 
+
+> src/3rdParty/qwt/lib/x86/mingw32/libqwtd.a
+
+### 3.拉取SARibbon
+
+在完成上述步骤后，通过gitbash或其他，进入`SA`目录：`src/SARibbonBar/`,运行`updateSARibbon.sh`
+
+```shell
+./updateSARibbon.sh
+```
+
+此脚本会自动把`SARibbon`拉取下来,这是`SA`界面的Ribbon控件库。
+
+windows下，直接进入目录双击脚本也可以，如果没有安装gitbash，可以在[https://github.com/czyt1988/SARibbon](https://github.com/czyt1988/SARibbon)下载并把`SARibbon`文件夹放在`src/SARibbonBar`文件夹下，保证`SARibbon.pro`的位置在`src/SARibbonBar/SARibbon.pro`
+
+不需要编译`SARibbon`库，因为`sa.pro`会自动编译此库。
+
+若想单独编译构建`SARibbon`只需用Qt Creator打开`SARibbon.pro`并构建，若不更改配置，将会生成`src\SARibbonBar\SARibbon\bin\`路径，其中包含一个示例程序和`SARibbonBar.lib`和`SARibbonBar.dll`
+
+![build SARibbon](https://github.com/czyt1988/sa/raw/master/doc/build/05.png)
+
+生成的`SARibbonBar.lib`文件位置请不要更改，`SA`项目将引用此路径。自此`SARibbonBar`构建完成。
+
+### 4.构建`SA`
+
+使用`Qt Creator` 打开`src/sa.pro`，点构建，保证以下库存在则可顺利完成`SA`的构建:
+
+- 1. `qwt`库 ，根据编译环境不同应该有：（msvc）`src/3rdParty/qwt/lib/x86/msvc/qwt.lib`和`src/3rdParty/qwt/lib/x86/msvc/qwtd.lib` 或（MinGW） `src/3rdParty/qwt/lib/x86/mingw32/libqwt.a`和`src/3rdParty/qwt/lib/x86/mingw32/libqwtd.a`
+
+- 2. `fftw`库，位于`src/czy/fftw/libfftw3-3.lib`,头文件位于`src/czy/fftw/fftw.h`
+
+- 3. `gsl`库，位于`src/czy/gsl/lib/libgsl.lib`和`src/czy/gsl/lib/libgslcblas.lib`,头文件位于`src/czy/gsl/include/gsl/*.h`
+
+- 4. `SARibbonBar`库的源码，`SARibbonBar`可以不需要提前编译，但必须保证源码SARibbon目录位于`src/SARibbonBar`文件夹下,若已经编译，需要保证库文件位于`src\SARibbonBar\SARibbon\bin\SARibbonBar.lib`,头文件位于 `src\SARibbonBar\SARibbon\src\SARibbonBar\`下
+
+此时`sa`的结构目录为：
+
+![sa tree](https://github.com/czyt1988/sa/raw/master/doc/build/06.png)
+
+确认上述文件配置完成，自己通过`Qt Creator`构建`sa.pro`
+
+构建完成后会有程序运行异常提示，同时生成`src/bin`文件夹
+
+
+![finish build](https://github.com/czyt1988/sa/raw/master/doc/build/07.png)
+
+程序运行异常是因为缺少必要的dll，此时`src/bin`文件夹如下图所示：
+
+![copy dll](https://github.com/czyt1988/sa/raw/master/doc/build/08.png)
+
+需要把必要的dll拷贝到此目录下：
+
+需要拷贝的dll如下：
+
+- 1. [可选]`src/bin/lib`文件夹下的dll拷贝到`src/bin`目录下,*Qt Creator+MinGW 并不需要此步骤，但Qt Creator+MSVC在一些版本里需要此步骤*
+
+- 2. 之前构建`qwt`对应的dll拷贝到`src/bin`目录下，debug模式为`qwtd.dll`,release模式下为`qwt.dll`
+
+- 3. `FFTW`库的dll，此版本`SA`使用的是`libfftw3-3.dll`需要拷贝到`src/bin`下(注意`FFTW`有double版本，float版本，long double版本，每个版本对应不同的dll，目前`SA`只用了double版本也就是`libfftw3-3.dll`)
+
+- 4. `GSL`库的dll，`libgsl.dll`和`libgslcblas.dll`需要拷贝到`src/bin`下
+
+再运行`Qt Creator`的`build`即可看到程序运行
+
+此时目录下文件应该如下图所示（Debug模式）
+
+![sa dll files](https://github.com/czyt1988/sa/raw/master/doc/build/09.png)
+
+软件运行起来的截图
+
+![sa ](https://github.com/czyt1988/sa/raw/master/doc/build/ui.png)
+
+
+## Ubuntu下布置
+
+TODO
