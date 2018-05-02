@@ -77,10 +77,11 @@ push.sh
 *.zip
 *.7z
 *.rar
-/build-*
+build-*
 /tmp
 /test
-/bin
+/src/bin
+
 *.psd
 *.png
 *.jpg
