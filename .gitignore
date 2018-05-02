@@ -1,36 +1,87 @@
-*.*~
+# This file is used to ignore files which are generated
+# ----------------------------------------------------------------------------
+
 *~
-*.jpg
+*.autosave
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*.so.*
+*_pch.h.cpp
+*_resource.rc
+*.qm
+.#*
+*.*#
+core
+!core/
+tags
+.DS_Store
+.directory
+*.debug
+Makefile*
+*.prl
+*.app
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Thumbs.db
+*.res
+*.rc
+/.qmake.cache
+/.qmake.stash
+
+# qtcreator generated files
+*.pro.user*
+
+# xemacs temporary files
+*.flc
+
+# Vim temporary files
+.*.swp
+
+# Visual Studio generated files
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*vcxproj.*
+
+# MinGW generated files
+*.Debug
+*.Release
+
+# Python byte code
+*.pyc
+
+# Binaries
+# --------
+*.dll
+*.exe
+
+#SA Files
 rm.sh
 push.sh
-.*.swp
 *.zip
 *.7z
 *.rar
-*.a
-*.lib
-*.stash
-*.Debug
-*.Release
-*.user
-*.user.*
-*.autosave
-*.o
-*.so
-*.dll
-*.db
-*.bak
-*.psd
-*.pdb
-*.exp
-*.psd
-build*
+/build-*
 /tmp
 /test
 /bin
-/src/bin
-/src/build-*
-/src/signAPlugin/build-*
-/src/3rdParty/qwtplot3d/lib
-/src/3rdParty/qtpropertybrowser/lib
-Thumb.db
+*.psd
+*.png
+*.jpg
+*.svg
