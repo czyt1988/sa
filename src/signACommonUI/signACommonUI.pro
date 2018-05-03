@@ -37,7 +37,7 @@ OTHER_FILES += readme.md
 
 HEADERS += \
     SACommonUIGlobal.h \
-    QtPropertyIdStorage.h \
+    SAQwtSymbolComboBox.h \
     SAUIReflection.h \
     SAFigureWindow.h \
     SAAbstractFigure.h \
@@ -68,6 +68,7 @@ HEADERS += \
 
 SOURCES += \
     SAUIReflection.cpp \
+    SAQwtSymbolComboBox.cpp \
     SAFigureWindow.cpp \
     SAAbstractFigure.cpp \
     SAValueSelectDialog.cpp \

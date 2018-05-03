@@ -8,7 +8,6 @@ FORMS += \
     $$PWD/SAQwtPlotItemAxisBindSetWidget.ui
 
 HEADERS += \
-    $$PWD/SAQwtSymbolComboBox.h \
     $$PWD/SAAxisSelectComboBoxPropertyItem.h \
     $$PWD/SAChartNormalSetWidget.h \
     $$PWD/SAChartSetWidget.h \
@@ -30,7 +29,6 @@ SOURCES += \
     $$PWD/SACurvePlotItemSetWidget.cpp \
     $$PWD/SAPlotItemSetWidget.cpp \
     $$PWD/SAQwtPlotItemVGroupBox.cpp \
-    $$PWD/SAQwtSymbolComboBox.cpp \
     $$PWD/SAQwtPlotItemSetWidget.cpp \
     $$PWD/SAQwtPlotCurveItemSetWidget.cpp \
     $$PWD/SAQwtSymbolSetWidget.cpp \

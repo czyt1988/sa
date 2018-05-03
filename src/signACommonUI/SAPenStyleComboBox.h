@@ -1,8 +1,8 @@
-#ifndef SAPENSTYLECOMBOBOX_H
+﻿#ifndef SAPENSTYLECOMBOBOX_H
 #define SAPENSTYLECOMBOBOX_H
+#include "SACommonUIGlobal.h"
 #include "PenStyleBox.h"
-
-class SAPenStyleComboBox : public PenStyleBox
+class SA_COMMON_UI_EXPORT SAPenStyleComboBox : public PenStyleBox
 {
     Q_OBJECT
 public:

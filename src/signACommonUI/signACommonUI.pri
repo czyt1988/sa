@@ -5,6 +5,8 @@
 #
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
+INCLUDEPATH += $$PWD/../3rdParty/qti
+DEPENDPATH += $$PWD/../3rdParty/qti
 INCLUDEPATH += $$PWD/Chart2D
 DEPENDPATH += $$PWD/Chart2D
 
