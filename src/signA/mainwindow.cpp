@@ -128,6 +128,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ,m_nUserChartCount(0)
 {
     saAddLog("start app");
+
     saStartElapsed("start main app init");
 #ifdef SA_USE_RIBBON_UI
     ui->init();
@@ -140,15 +141,21 @@ MainWindow::MainWindow(QWidget *parent) :
     initUIReflection();
     initProcess();
     saElapsed("init ui and menu");
-    saStartElapsed("start load plugin and theme");
+
+    saStartElapsed("start load plugin");
 #ifndef SA_USE_RIBBON_UI
     ui->toolBar_chartSet->setEnabled(false);
 #endif
     initPlugin();
+    saElapsed("loaded plugins");
+
     initTheme();
-    saElapsed("loaded plugins and themes");
-    showNormalMessageInfo(QStringLiteral("程序初始化完成"));
+
+    saStartElapsed("start load setting");
     loadSetting();
+    saElapsed("loaded settings");
+
+    showNormalMessageInfo(QStringLiteral("程序初始化完成"));
 }
 
 
@@ -841,6 +848,7 @@ void MainWindow::updateRecentPathMenu()
     std::for_each(ofacts.begin(),ofacts.end(),[&](QAction* a){
         if(!a->isSeparator() && a != ui->actionClearRecentOpenFileHistroy){
             ui->menuRecentOpenFile->removeAction(a);
+            a->deleteLater();
         }
     });
     std::for_each(m_recentOpenFiles.begin(),m_recentOpenFiles.end(),[&](const QString& strPath){
@@ -850,6 +858,22 @@ void MainWindow::updateRecentPathMenu()
             this->openFile(act->text());
         });
         ui->menuRecentOpenFile->addAction(act);
+    });
+
+    ofacts = ui->menuRecentOpenProject->actions();
+    std::for_each(ofacts.begin(),ofacts.end(),[&](QAction* a){
+        if(!a->isSeparator() && a != ui->actionClearRecentOpenProjectorHistroy){
+            ui->menuRecentOpenProject->removeAction(a);
+            a->deleteLater();
+        }
+    });
+    std::for_each(m_recentOpenProjectFolders.begin(),m_recentOpenProjectFolders.end(),[&](const QString& strPath){
+        QAction* act = new QAction(strPath,this);
+        connect(act,&QAction::triggered,this,[this,act](bool on){
+            Q_UNUSED(on);
+            this->openProject(act->text());
+        });
+        ui->menuRecentOpenProject->addAction(act);
     });
 }
 
@@ -995,11 +1019,11 @@ void MainWindow::onActionOpenTriggered()
         return;
     }
     //成功打开，记录到最近打开列表中
-    int openFilesCount = saConfig.getValue("path/openFilesCount",10).toInt();
     if(m_recentOpenFiles.contains(strFile))
     {
         return;
     }
+    int openFilesCount = saConfig.getValue("path/openFilesCount",10).toInt();
     m_recentOpenFiles.push_front(strFile);
     if(openFilesCount > 0 && m_recentOpenFiles.size()>openFilesCount)
     {
@@ -1042,6 +1066,19 @@ bool MainWindow::openFile(const QString &fullPath)
     }
     return import->openFile({fullPath});
 }
+///
+/// \brief 打开项目文件夹
+/// \param projectPath 项目路径
+/// \return
+///
+bool MainWindow::openProject(const QString &projectPath)
+{
+    if(projectPath.isEmpty())
+        return false;
+    if(saProjectManager->load(projectPath))
+        return true;
+    return false;
+}
 
 ///
 /// \brief 打开项目文件夹
@@ -1051,10 +1088,46 @@ void MainWindow::onActionOpenProjectTriggered()
     QString path = QFileDialog::getExistingDirectory(this,QStringLiteral("选择项目目录"));
     if(path.isEmpty())
         return;
-    if(saProjectManager->load(path))
+    if(!openProject(path))
     {
-        raiseValueManageDock();
+        showWarningMessageInfo(tr("can not open project:%1").arg(path));
+        return;
     }
+    raiseValueManageDock();
+    //成功打开，记录到最近打开列表中
+    if(m_recentOpenProjectFolders.contains(path))
+    {
+        return;
+    }
+    int openFilesCount = saConfig.getValue("path/openProjectsCount",10).toInt();
+    m_recentOpenProjectFolders.push_front(path);
+    if(m_recentOpenProjectFolders.size() > 10)
+    {
+        m_recentOpenProjectFolders.pop_back();
+    }
+
+
+    if(openFilesCount > 0 && m_recentOpenProjectFolders.size()>openFilesCount)
+    {
+        QString takePath = m_recentOpenProjectFolders.takeLast();
+        QList<QAction*> acts = ui->menuRecentOpenProject->actions();
+        for(int i=0;i<acts.size();++i)
+        {
+            if(acts[i]->text() == takePath)
+            {
+                acts[i]->deleteLater();
+                break;
+            }
+        }
+    }
+    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.save();
+    QAction* act = new QAction(path,this);
+    connect(act,&QAction::triggered,this,[this,act](bool on){
+        Q_UNUSED(on);
+        this->openProject(act->text());
+    });
+    ui->menuRecentOpenProject->addAction(act);
 }
 
 

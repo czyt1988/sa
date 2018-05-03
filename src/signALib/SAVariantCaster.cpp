@@ -1,4 +1,4 @@
-#include "SAVariantCaster.h"
+﻿#include "SAVariantCaster.h"
 #include <QByteArray>
 #include <QDataStream>
 #include <QBitArray>
@@ -104,7 +104,8 @@ QString SAVariantCaster::variantToString(const QVariant &var)
     }
     case QVariant::KeySequence:
     {
-        return converVariantToBase64String<QKeySequence>(var);
+        QKeySequence d = var.value<QKeySequence>();
+        return d.toString(QKeySequence::NativeText);
     }
     case QVariant::Line:
     {
@@ -149,7 +150,13 @@ QString SAVariantCaster::variantToString(const QVariant &var)
     }
     case QVariant::Matrix4x4:
     {
-        return converVariantToBase64String<QMatrix4x4>(var);
+        QMatrix4x4 d = var.value<QMatrix4x4>();
+        return QString("%1;%2;%3;%4;%5;%6;%7;%8;%9;%10;%11;%12;%13;%14;%15;%16")
+                .arg(d(0,0)).arg(d(0,1)).arg(d(0,2)).arg(d(0,3))
+                .arg(d(1,0)).arg(d(1,1)).arg(d(1,2)).arg(d(1,3))
+                .arg(d(2,0)).arg(d(2,1)).arg(d(2,2)).arg(d(2,3))
+                .arg(d(3,0)).arg(d(3,1)).arg(d(3,2)).arg(d(3,3))
+                ;
     }
     case QVariant::Palette:
     {
@@ -175,11 +182,31 @@ QString SAVariantCaster::variantToString(const QVariant &var)
     }
     case QVariant::Polygon:
     {
-        return converVariantToBase64String<QPolygon>(var);
+        QPolygon d = var.value<QPolygon>();
+        QString str;
+        if(!d.isEmpty())
+        {
+            str += QString("%1;%2").arg(d[0].x()).arg(d[0].y());
+        }
+        for(int i=1;i<d.size();++i)
+        {
+            str += QString("|%1;%2").arg(d[i].x()).arg(d[i].y());
+        }
+        return str;
     }
     case QVariant::PolygonF:
     {
-        return converVariantToBase64String<QPolygonF>(var);
+        QPolygonF d = var.value<QPolygonF>();
+        QString str;
+        if(!d.isEmpty())
+        {
+            str += QString("%1;%2").arg(d[0].x()).arg(d[0].y());
+        }
+        for(int i=1;i<d.size();++i)
+        {
+            str += QString("|%1;%2").arg(d[i].x()).arg(d[i].y());
+        }
+        return str;
     }
     case QVariant::Quaternion:
     {
@@ -255,7 +282,7 @@ QString SAVariantCaster::variantToString(const QVariant &var)
     }
     case QVariant::Url:
     {
-        return converVariantToBase64String<QUrl>(var);
+        return var.toUrl().toString();
     }
     case QVariant::Vector2D:
     {
@@ -360,7 +387,8 @@ QVariant SAVariantCaster::stringToVariant(const QString &var, const QString &typ
     }
     case QVariant::KeySequence:
     {
-        return converBase64StringToVariant<QKeySequence>(var);
+        QKeySequence d(var,QKeySequence::NativeText);
+        return d;
     }
     case QVariant::Line:
     {
@@ -423,7 +451,16 @@ QVariant SAVariantCaster::stringToVariant(const QString &var, const QString &typ
     }
     case QVariant::Matrix4x4:
     {
-        return converBase64StringToVariant<QMatrix4x4>(var);
+        QStringList list = var.split(';');
+        if(list.size() != 16)
+        {
+            return QVariant();
+        }
+        QMatrix4x4 d(list[0].toDouble(),list[1].toDouble(),list[2].toDouble(),list[3].toDouble()
+                ,list[4].toDouble(),list[5].toDouble(),list[6].toDouble(),list[7].toDouble()
+                ,list[8].toDouble(),list[9].toDouble(),list[10].toDouble(),list[11].toDouble()
+                ,list[12].toDouble(),list[13].toDouble(),list[14].toDouble(),list[15].toDouble()
+                );
     }
     case QVariant::Palette:
     {
@@ -452,18 +489,56 @@ QVariant SAVariantCaster::stringToVariant(const QString &var, const QString &typ
         QStringList list = var.split(';');
         if(list.size() != 2)
         {
-            return QVariant();
+            return QPointF();
         }
         QPointF d(list[0].toDouble(),list[1].toDouble());
         return d;
     }
     case QVariant::Polygon:
     {
-        return converBase64StringToVariant<QPolygon>(var);
+        QPolygon d;
+        QStringList list = var.split('|');
+        if(0 == list.size())
+        {
+            list = var.split(';');
+            if(list.size() == 2)
+            {
+                d<<QPoint(list[0].toDouble(),list[1].toDouble());
+            }
+            return d;
+        }
+        for(int i=0;i<list.size();++i)
+        {
+            QStringList plist = list[i].split(';');
+            if(2 == plist.size())
+            {
+                d.append(QPoint(plist[0].toDouble(),plist[1].toDouble()));
+            }
+        }
+        return d;
     }
     case QVariant::PolygonF:
     {
-        return converBase64StringToVariant<QPolygonF>(var);
+        QStringList list = var.split('|');
+        QPolygonF d;
+        if(0 == list.size())
+        {
+            list = var.split(';');
+            if(list.size() == 2)
+            {
+                d<<QPointF(list[0].toDouble(),list[1].toDouble());
+            }
+            return d;
+        }
+        for(int i=0;i<list.size();++i)
+        {
+            QStringList plist = list[i].split(';');
+            if(2 == plist.size())
+            {
+                d.append(QPointF(plist[0].toDouble(),plist[1].toDouble()));
+            }
+        }
+        return d;
     }
     case QVariant::Quaternion:
     {
@@ -557,7 +632,7 @@ QVariant SAVariantCaster::stringToVariant(const QString &var, const QString &typ
     }
     case QVariant::Url:
     {
-        return converBase64StringToVariant<QUrl>(var);
+        return QUrl(var);
     }
     case QVariant::Vector2D:
     {

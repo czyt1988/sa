@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
     File                 : SymbolBox.h
     Project              : QtiPlot
     --------------------------------------------------------------------
@@ -31,13 +31,13 @@
 
 #include <QComboBox>
 #include <qwt_symbol.h>
-
+#include "SACommonUIGlobal.h"
 //! A modified QComboBox allowing to choose a QwtSmbol style.
 /**
  * This is a simple hack on top of the QComboBox class.
  \image html images/symbol_box.png
  */
-class SymbolBox : public QComboBox
+class SA_COMMON_UI_EXPORT SymbolBox : public QComboBox
 {
   Q_OBJECT
 public:

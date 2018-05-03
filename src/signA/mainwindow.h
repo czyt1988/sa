@@ -473,11 +473,11 @@ public:
     //把一个XYSeries转换为value
     void makeValueFromXYSeries(const QString& name, SA::PickDataMode pickMode, const QVector<QPointF>& xy);
 
-    //-------dock-图层表格相关---------------------
+//-------dock-图层表格相关---------------------
     //图层表格model
 	SAPlotLayerModel* getPlotLayerModel() const;
 
-    //------openfilemanager
+//------openfilemanager
     //OpenFileManager* getValueManager() const;
     SAValueManagerModel *getValueManagerModel() const;
     //
@@ -489,6 +489,8 @@ protected:
 private:
     //打开文件
     bool openFile(const QString& fullPath);
+    //打开项目文件夹
+    bool openProject(const QString& projectPath);
     //配置信息保存
     void saveSetting();
     //配置信息加载

@@ -9,6 +9,7 @@ class SAValueSelectComboBox;
 }
 ///
 /// \brief 封装变量选择combobox
+/// TODO 过滤功能还未开发
 ///
 class SAValueSelectComboBox : public QWidget
 {

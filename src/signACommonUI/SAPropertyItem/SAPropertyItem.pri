@@ -11,7 +11,6 @@ HEADERS += \
     $$PWD/SADoubleSpinBoxPropertyItem.h \
     $$PWD/SAComboBoxPropertyItem.h \
     $$PWD/SACheckBoxPropertyItem.h \
-    $$PWD/SACollapsibleGroupBox.h \
     $$PWD/SAVCollapsibleGroupBox.h \
     $$PWD/SAFontComboBoxPropertyItem.h \
     $$PWD/SAAligmentPropertyItem.h

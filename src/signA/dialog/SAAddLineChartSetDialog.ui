@@ -122,15 +122,15 @@
       <string>other set</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1" colspan="3">
+       <widget class="QLineEdit" name="lineEditTitle"/>
+      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>title</string>
         </property>
        </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEditTitle"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
@@ -139,12 +139,57 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="1" column="1" colspan="3">
        <widget class="QCheckBox" name="checkBoxAddInCur">
         <property name="text">
          <string/>
         </property>
        </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>More</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Line Style</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="SAPenStyleComboBox" name="penStyleComboBox"/>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Line Width:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+      </item>
+      <item row="1" column="0" rowspan="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Marker Style</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="SAQwtSymbolComboBox" name="symboComboBox"/>
       </item>
      </layout>
     </widget>
@@ -200,6 +245,16 @@
    <extends>QWidget</extends>
    <header>SAUserDefineAxisDataWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SAPenStyleComboBox</class>
+   <extends>QComboBox</extends>
+   <header>SAPenStyleComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SAQwtSymbolComboBox</class>
+   <extends>QComboBox</extends>
+   <header>SAQwtSymbolComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -38,6 +38,7 @@ OTHER_FILES += readme.md
 HEADERS += \
     SACommonUIGlobal.h \
     SAQwtSymbolComboBox.h \
+    SACollapsibleGroupBox.h \
     SAUIReflection.h \
     SAFigureWindow.h \
     SAAbstractFigure.h \
@@ -69,6 +70,7 @@ HEADERS += \
 SOURCES += \
     SAUIReflection.cpp \
     SAQwtSymbolComboBox.cpp \
+    SACollapsibleGroupBox.cpp \
     SAFigureWindow.cpp \
     SAAbstractFigure.cpp \
     SAValueSelectDialog.cpp \

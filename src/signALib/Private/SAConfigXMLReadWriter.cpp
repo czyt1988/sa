@@ -1,4 +1,4 @@
-#include "SAConfigXMLReadWriter.h"
+﻿#include "SAConfigXMLReadWriter.h"
 #include <QDir>
 #include <QFile>
 #include <QXmlStreamReader>
@@ -17,7 +17,7 @@
 #define CONFIG_KEY_NAME "key"
 #define CONFIG_KEY_PROP_NAME_NAME "name"
 #define CONFIG_KEY_PROP_TYPE_NAME "type"
-
+#define CONFIG_KEY_LIST_NAME "list"
 
 
 class SAConfigXMLReadWriterPrivate
@@ -154,9 +154,21 @@ public:
         }
         QString typeName;
         QString variantString;
-        if(!getKeyNode(groupNode,keyName,nullptr,&typeName,&variantString))
+        QDomElement keyNode;
+        if(!getKeyNode(groupNode,keyName,&keyNode,&typeName,&variantString))
         {
             return defaultVal;
+        }
+        if(typeName == QVariant::typeToName(QVariant::StringList))
+        {
+            //字符串列表特殊处理
+            QStringList strList;
+            QDomNodeList listNodes = keyNode.elementsByTagName(CONFIG_KEY_LIST_NAME);
+            for(int i=0;i<listNodes.size();++i)
+            {
+                strList << listNodes.at(i).toElement().text();
+            }
+            return strList;
         }
         return SAVariantCaster::stringToVariant(variantString,typeName);
     }
@@ -176,32 +188,34 @@ public:
             //没有key
             keyNode = m_doc.createElement(CONFIG_KEY_NAME);
             keyNode.setAttribute(CONFIG_KEY_PROP_NAME_NAME,keyName);
-            keyNode.setAttribute(CONFIG_KEY_PROP_TYPE_NAME,QString(var.typeName()));
-            keyNode.appendChild(m_doc.createTextNode(SAVariantCaster::variantToString(var)));
-            groupNode.appendChild(keyNode);
+
         }
         else
         {
-            //有key需要替换
-            keyNode.setAttribute(CONFIG_KEY_PROP_NAME_NAME,keyName);
-            keyNode.setAttribute(CONFIG_KEY_PROP_TYPE_NAME,QString(var.typeName()));
-            QDomText text = m_doc.createTextNode(SAVariantCaster::variantToString(var));
-            QDomNodeList nl = keyNode.childNodes();
-            if(nl.size()<=0)
+            //先删除所有的子节点
+            while(keyNode.hasChildNodes())
             {
-                keyNode.appendChild(text);
-            }
-            else
-            {
-                for(int i=0;i<nl.size();++i)
-                {
-                    if(nl.at(i).isText())
-                    {
-                        keyNode.replaceChild(text,nl.at(i));
-                    }
-                }
+                keyNode.removeChild(keyNode.firstChild());
             }
         }
+        keyNode.setAttribute(CONFIG_KEY_PROP_TYPE_NAME,QString(var.typeName()));
+        if(QVariant::StringList == var.type())
+        {
+            //对于string list类型进行特殊处理，而不是保存为base64
+            QStringList d = var.value<QStringList>();
+            for(int i=0;i<d.size();++i)
+            {
+                QDomElement listNode = m_doc.createElement(CONFIG_KEY_LIST_NAME);
+                listNode.setAttribute(CONFIG_KEY_PROP_TYPE_NAME,QVariant::typeToName(QVariant::String));
+                listNode.appendChild(m_doc.createTextNode(d[i]));
+                keyNode.appendChild(listNode);
+            }
+        }
+        else
+        {
+            keyNode.appendChild(m_doc.createTextNode(SAVariantCaster::variantToString(var)));
+        }
+        groupNode.appendChild(keyNode);
         m_isDirty = true;
     }
 
