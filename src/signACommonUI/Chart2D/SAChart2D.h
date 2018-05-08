@@ -72,7 +72,12 @@ public:
     //添加Bar-支持redo/undo
     SABarSeries *addBar(SAAbstractDatas* datas);
     //绘制散点图-支持redo/undo
+    QwtPlotCurve* addScatter(const double *xData, const double *yData, int size);
+    QwtPlotCurve* addScatter(const QVector<QPointF>& xyDatas);
+    QwtPlotCurve* addScatter(const QVector< double > &xData, const QVector< double > &yData);
     SAScatterSeries* addScatter(SAAbstractDatas* datas);
+    SAScatterSeries* addScatter(SAAbstractDatas* datas, double xStart, double xDetal, const QString &name = QString());
+    SAScatterSeries* addScatter(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
     //绘制箱盒图-支持redo/undo
     SABoxSeries* addBox(SAAbstractDatas* datas);
     //添加样条线-支持redo/undo

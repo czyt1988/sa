@@ -1254,13 +1254,10 @@ void MainWindow::onActionAddHistogramChartTriggered()
 ///
 void MainWindow::onActionAddScatterChartTriggered()
 {
-    raiseMainDock();
-    raiseValueManageDock();
-
-    QList<SAAbstractDatas*> datas = getSeletedDatas();
-    if(datas.size() != 0)
+    QList<QwtPlotCurve *> res = m_drawDelegate->drawScatterWithWizard();
+    if(res.size() > 0)
     {
-        QList<QwtPlotCurve *> res = m_drawDelegate->drawScatter(datas);
+        raiseMainDock();
     }
 }
 ///
@@ -1268,13 +1265,10 @@ void MainWindow::onActionAddScatterChartTriggered()
 ///
 void MainWindow::onActionAddBoxChartTriggered()
 {
-    raiseMainDock();
-    raiseValueManageDock();
-
-    QList<SAAbstractDatas*> datas = getSeletedDatas();
-    if(datas.size() != 0)
+    QList<QwtPlotCurve *> res = m_drawDelegate->drawBoxWithWizard();
+    if(res.size() > 0)
     {
-        QList<QwtPlotCurve *> res = m_drawDelegate->drawScatter(datas);
+        raiseMainDock();
     }
 }
 

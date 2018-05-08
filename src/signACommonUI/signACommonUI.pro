@@ -39,6 +39,7 @@ HEADERS += \
     SACommonUIGlobal.h \
     SAQwtSymbolComboBox.h \
     SACollapsibleGroupBox.h \
+    SAVCollapsibleGroupBox.h \
     SAUIReflection.h \
     SAFigureWindow.h \
     SAAbstractFigure.h \
@@ -71,6 +72,7 @@ SOURCES += \
     SAUIReflection.cpp \
     SAQwtSymbolComboBox.cpp \
     SACollapsibleGroupBox.cpp \
+    SAVCollapsibleGroupBox.cpp \
     SAFigureWindow.cpp \
     SAAbstractFigure.cpp \
     SAValueSelectDialog.cpp \

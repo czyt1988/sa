@@ -11,7 +11,6 @@ HEADERS += \
     $$PWD/SADoubleSpinBoxPropertyItem.h \
     $$PWD/SAComboBoxPropertyItem.h \
     $$PWD/SACheckBoxPropertyItem.h \
-    $$PWD/SAVCollapsibleGroupBox.h \
     $$PWD/SAFontComboBoxPropertyItem.h \
     $$PWD/SAAligmentPropertyItem.h
 
@@ -23,7 +22,5 @@ SOURCES += \
     $$PWD/SADoubleSpinBoxPropertyItem.cpp \
     $$PWD/SAComboBoxPropertyItem.cpp \
     $$PWD/SACheckBoxPropertyItem.cpp \
-    $$PWD/SACollapsibleGroupBox.cpp \
-    $$PWD/SAVCollapsibleGroupBox.cpp \
     $$PWD/SAFontComboBoxPropertyItem.cpp\
     $$PWD/SAAligmentPropertyItem.cpp

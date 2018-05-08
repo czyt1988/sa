@@ -1,4 +1,4 @@
-/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
+﻿/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * Qwt Widget Library
  * Copyright (C) 1997   Josef Wilgen
  * Copyright (C) 2002   Uwe Rathmann
@@ -261,7 +261,7 @@ void QwtScaleWidget::setBorderDist( int dist1, int dist2 )
 */
 void QwtScaleWidget::setMargin( int margin )
 {
-    margin = qMax( 0, margin );
+    margin = qMax( -1, margin );//allow -1 maybe the axis can
     if ( margin != d_data->margin )
     {
         d_data->margin = margin;

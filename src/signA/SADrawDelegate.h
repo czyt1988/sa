@@ -29,25 +29,40 @@ public:
     QMdiSubWindow *createFigureMdiSubWidget(const QString& title = QString());
     QMdiSubWindow* createFigureMdiSubWidget(SAFigureWindow* fig, const QString& title = QString());
     //绘图
+//线图 Line
+    //绘制线图函数
     QList<QwtPlotCurve *> drawLine(const QList<SAAbstractDatas*>& datas,SAChart2D* chart = nullptr);
-    //添加趋势图，x轴通过xStart和xDetal自动计算
     QwtPlotCurve* drawLine(SAAbstractDatas* data, double xStart, double xDetal, SAChart2D *chart, const QString &name);
-    //添加x,y曲线 chart 为nullptr时会新创建一个figure并绘图
     QwtPlotCurve* drawLine(SAAbstractDatas* x, SAAbstractDatas* y, SAChart2D *chart, const QString &name);
-    //添加x,y曲线
     QwtPlotCurve* drawLine(const QVector< double > &xData, const QVector< double > &yData, SAChart2D *chart, const QString &name);
     QList<QwtPlotCurve *> drawLineWithWizard();
     QwtPlotCurve* drawLineWithWizard(SAAbstractDatas* pointVector);
-    //统计图
+
+//散点图 Scatter
+    QList<QwtPlotCurve *> drawScatter(const QList<SAAbstractDatas*>& datas, SAChart2D *chart);
+    QwtPlotCurve* drawScatter(SAAbstractDatas* x, SAAbstractDatas* y, SAChart2D *chart, const QString &name);
+    QwtPlotCurve* drawScatter(const QVector< double > &xData, const QVector< double > &yData, SAChart2D *chart, const QString &name);
+    QwtPlotCurve* drawScatter(SAAbstractDatas* data, double xStart, double xDetal, SAChart2D *chart, const QString &name);
+    QList<QwtPlotCurve *> drawScatterWithWizard();
+    QwtPlotCurve* drawScatterWithWizard(SAAbstractDatas* pointVector);
+
+//统计图 Histogram
+
     QwtPlotHistogram* drawHistogram(SAAbstractDatas* data);
     QList<QwtPlotHistogram*> drawHistogram(const QList<SAAbstractDatas*>& datas);
-    //棒图
+    QList<QwtPlotHistogram *> drawHistogramWithWizard();
+    QwtPlotHistogram* drawHistogramWithWizard(SAAbstractDatas* boxSeries);
+
+//棒图 Bar
     QList<QwtPlotBarChart*> drawBar(const QList<SAAbstractDatas*>& datas);
-    //散点图
-    QList<QwtPlotCurve *> drawScatter(const QList<SAAbstractDatas*>& datas);
-    //箱盒图
+
+
+//箱盒图 Box
     QList<QwtPlotTradingCurve *> drawBoxChart(const QList<SAAbstractDatas*>& datas);
-    //把QMdiSubWindow的内部SAFigureWidget获取
+    QList<QwtPlotCurve *> drawBoxWithWizard();
+    QwtPlotTradingCurve* drawBoxWithWizard(SAAbstractDatas* boxSeries);
+
+//把QMdiSubWindow的内部SAFigureWidget获取
     static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* w);
     //获取当前可用的绘图
     SAChart2D* getCurSubWindowChart() const;

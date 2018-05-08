@@ -413,55 +413,67 @@ void SAChart2D::addItem(QwtPlotItem *item, const QString &des)
 {
     d_ptr->appendItemAddCommand(item,des);
 }
-
+///
+/// \brief 添加曲线-支持redo/undo
+/// \param xData
+/// \param yData
+/// \param size
+/// \return
+///
 QwtPlotCurve *SAChart2D::addCurve(const double *xData, const double *yData, int size)
 {
     if(size<=0)
     {
         return nullptr;
     }
-    QwtPlotCurve* pCurve = nullptr;
-    pCurve = new QwtPlotCurve;
+    QScopedPointer<QwtPlotCurve> pCurve(new QwtPlotCurve);
     pCurve->setYAxis(yLeft);
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData,size);
     pCurve->setPen(SARandColorMaker::getCurveColor()
                 ,getPlotCurWidth(pCurve->dataSize()));
-    addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
-    return pCurve;
+    addItem(pCurve.data(),tr("add curve:%1").arg(pCurve->title().text()));
+    return pCurve.take();
 }
-
+///
+/// \brief 添加曲线-支持redo/undo
+/// \param xyDatas
+/// \return
+///
 QwtPlotCurve *SAChart2D::addCurve(const QVector<QPointF> &xyDatas)
 {
-    QwtPlotCurve* pCurve = nullptr;
-    pCurve = new QwtPlotCurve;
+    QScopedPointer<QwtPlotCurve> pCurve(new QwtPlotCurve);
     pCurve->setYAxis(yLeft);
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xyDatas);
     pCurve->setPen(SARandColorMaker::getCurveColor()
                 ,getPlotCurWidth(pCurve->dataSize()));
-    addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
-    return pCurve;
+    addItem(pCurve.data(),tr("add curve:%1").arg(pCurve->title().text()));
+    return pCurve.take();
 }
-
+///
+/// \brief 添加曲线-支持redo/undo
+/// \param xData
+/// \param yData
+/// \return
+///
 QwtPlotCurve *SAChart2D::addCurve(const QVector<double> &xData, const QVector<double> &yData)
 {
-    QwtPlotCurve* pCurve = nullptr;
-    pCurve = new QwtPlotCurve;
+    QScopedPointer<QwtPlotCurve> pCurve(new QwtPlotCurve);
     pCurve->setYAxis(yLeft);
     pCurve->setXAxis(xBottom);
     pCurve->setStyle(QwtPlotCurve::Lines);
     pCurve->setSamples(xData,yData);
     pCurve->setPen(SARandColorMaker::getCurveColor()
                 ,getPlotCurWidth(pCurve->dataSize()));
-    addItem(pCurve,tr("add curve:%1").arg(pCurve->title().text()));
-    return pCurve;
+    addItem(pCurve.data(),tr("add curve:%1").arg(pCurve->title().text()));
+    return pCurve.take();
 }
 
 ///
-/// \brief 添加曲线
+/// \brief 添加曲线-支持redo/undo
 /// \param datas
 /// \return
 ///
@@ -560,6 +572,42 @@ SABarSeries *SAChart2D::addBar(SAAbstractDatas *datas)
     addItem(series.data(),tr("add bar:%1").arg(series->title().text()));
     return series.take();
 }
+///
+/// \brief SAChart2D::addScatter
+/// \param xData
+/// \param yData
+/// \param size
+/// \return
+///
+QwtPlotCurve *SAChart2D::addScatter(const double *xData, const double *yData, int size)
+{
+    QwtPlotCurve* p = addCurve(xData,yData,size);
+    p->setStyle(QwtPlotCurve::Dots);
+    return p;
+}
+///
+/// \brief 绘制散点图-支持redo/undo
+/// \param xyDatas
+/// \return
+///
+QwtPlotCurve *SAChart2D::addScatter(const QVector<QPointF> &xyDatas)
+{
+    QwtPlotCurve* p = addCurve(xyDatas);
+    p->setStyle(QwtPlotCurve::Dots);
+    return p;
+}
+///
+/// \brief 绘制散点图-支持redo/undo
+/// \param xData x QVector<double>
+/// \param yData y QVector<double>
+/// \return
+///
+QwtPlotCurve *SAChart2D::addScatter(const QVector<double> &xData, const QVector<double> &yData)
+{
+    QwtPlotCurve* p = addCurve(xData,yData);
+    p->setStyle(QwtPlotCurve::Dots);
+    return p;
+}
 
 
 ///
@@ -578,6 +626,34 @@ SAScatterSeries *SAChart2D::addScatter(SAAbstractDatas *datas)
     QPen pen = series->pen();
     pen.setColor(clr);
     series->setPen(pen);
+    addItem(series.data(),tr("add scatter:%1").arg(series->title().text()));
+    return series.take();
+}
+
+SAScatterSeries *SAChart2D::addScatter(SAAbstractDatas *datas, double xStart, double xDetal, const QString &name)
+{
+    QScopedPointer<SAScatterSeries> series(new SAScatterSeries(name));
+    series->setSamples(datas,xStart,xDetal);
+    if(series->dataSize() <= 0)
+    {
+        return nullptr;
+    }
+    series->setPen(SARandColorMaker::getCurveColor()
+                ,getPlotCurWidth(series->dataSize()));
+    addItem(series.data(),tr("add scatter:%1").arg(series->title().text()));
+    return series.take();
+}
+
+SAScatterSeries *SAChart2D::addScatter(SAAbstractDatas *x, SAAbstractDatas *y, const QString &name)
+{
+    QScopedPointer<SAScatterSeries> series(new SAScatterSeries(name));
+    series->setSamples(x,y);
+    if(series->dataSize() <= 0)
+    {
+        return nullptr;
+    }
+    series->setPen(SARandColorMaker::getCurveColor()
+                ,getPlotCurWidth(series->dataSize()));
     addItem(series.data(),tr("add scatter:%1").arg(series->title().text()));
     return series.take();
 }
