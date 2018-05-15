@@ -1,110 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SAAddLineChartSetDialog</class>
- <widget class="QDialog" name="SAAddLineChartSetDialog">
+ <class>SAAddIntervalCurveDialog</class>
+ <widget class="QDialog" name="SAAddIntervalCurveDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
-    <height>350</height>
+    <width>576</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Add Line Chart Set</string>
+   <string>Dialog</string>
   </property>
-  <property name="whatsThis">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This dialog box is used to set the line graph&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <widget class="QGroupBox" name="groupBoxX">
+    <widget class="QGroupBox" name="groupBoxValue">
      <property name="title">
-      <string>X</string>
+      <string>Value</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QRadioButton" name="radioButtonXNormal">
-          <property name="text">
-           <string>normal</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButtonXUseDef">
-          <property name="text">
-           <string>user define</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="SAValueSelectComboBox" name="valueComboBoxX" native="true"/>
-      </item>
-      <item>
-       <widget class="SAUserDefineAxisDataWidget" name="userDefineXWidget" native="true"/>
+       <widget class="SAValueSelectComboBox" name="valueComboBoxValue" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBoxY">
+    <widget class="QGroupBox" name="groupBoxMin">
      <property name="title">
-      <string>Y</string>
+      <string>Max</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QRadioButton" name="radioButtonYNormal">
-          <property name="text">
-           <string>normal</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButtonYUseDef">
-          <property name="text">
-           <string>user define</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <widget class="SAValueSelectComboBox" name="valueComboBoxMin" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBoxMax">
+     <property name="title">
+      <string>Max</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="SAValueSelectComboBox" name="valueComboBoxY" native="true"/>
-      </item>
-      <item>
-       <widget class="SAUserDefineAxisDataWidget" name="userDefineYWidget" native="true">
+       <widget class="SAValueSelectComboBox" name="valueComboBoxMax" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
           <horstretch>0</horstretch>
@@ -157,7 +112,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>109</height>
+       <height>130</height>
       </size>
      </property>
     </spacer>
@@ -195,44 +150,38 @@
    <header>SAValueSelectComboBox.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>SAUserDefineAxisDataWidget</class>
-   <extends>QWidget</extends>
-   <header>SAUserDefineAxisDataWidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>SAAddLineChartSetDialog</receiver>
+   <receiver>SAAddIntervalCurveDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>189</x>
-     <y>264</y>
+     <x>536</x>
+     <y>379</y>
     </hint>
     <hint type="destinationlabel">
-     <x>115</x>
-     <y>249</y>
+     <x>559</x>
+     <y>316</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>SAAddLineChartSetDialog</receiver>
+   <receiver>SAAddIntervalCurveDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>265</y>
+     <x>399</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
-     <x>228</x>
-     <y>232</y>
+     <x>244</x>
+     <y>276</y>
     </hint>
    </hints>
   </connection>

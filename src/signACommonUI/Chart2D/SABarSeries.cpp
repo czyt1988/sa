@@ -1,5 +1,6 @@
 ﻿#include "SABarSeries.h"
 #include "SAVectorInterval.h"
+#include "SADataConver.h"
 SABarSeries::SABarSeries(const QString &title):QwtPlotBarChart(title)
 {
     setLayoutPolicy(AutoAdjustSamples);
@@ -37,7 +38,7 @@ bool SABarSeries::setSamples(SAAbstractDatas *intData)
     if(SA::Dim1 == intData->getDim())
     {
         QVector<double> serPoints;
-        if(!SAAbstractDatas::converToDoubleVector(intData,serPoints))
+        if(!SADataConver::converToDoubleVector(intData,serPoints))
         {
             return false;
         }
@@ -53,7 +54,7 @@ bool SABarSeries::setSamples(SAAbstractDatas *intData)
     else if(SA::Dim2 == intData->getDim())
     {
         QVector<QPointF> serPoints;
-        if(!SAAbstractDatas::converToPointFVector(intData,serPoints))
+        if(!SADataConver::converToPointFVector(intData,serPoints))
         {
             return false;
         }

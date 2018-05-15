@@ -1,6 +1,6 @@
 ﻿#include "SAXYSeries.h"
 #include "SAAbstractDatas.h"
-
+#include "SADataConver.h"
 
 SAXYSeries::SAXYSeries(const QString &title):QwtPlotCurve(title)
 {
@@ -47,9 +47,9 @@ bool SAXYSeries::setSamples(SAAbstractDatas *dataPoints)
 bool SAXYSeries::setSamples(SAAbstractDatas *x, SAAbstractDatas *y)
 {
     QVector<double> xd,yd;
-    if(!SAAbstractDatas::converToDoubleVector(x,xd))
+    if(!SADataConver::converToDoubleVector(x,xd))
         return false;
-    if(!SAAbstractDatas::converToDoubleVector(y,yd))
+    if(!SADataConver::converToDoubleVector(y,yd))
         return false;
     if(0 == xd.size() || 0 == yd.size())
         return false;
@@ -69,7 +69,7 @@ bool SAXYSeries::setSamples(SAAbstractDatas *x, SAAbstractDatas *y)
 bool SAXYSeries::setSamples(SAAbstractDatas *y, double xStart, double xDetal)
 {
     QVector<double> yd;
-    if(!SAAbstractDatas::converToDoubleVector(y,yd))
+    if(!SADataConver::converToDoubleVector(y,yd))
         return false;
     if(0 == yd.size())
         return false;

@@ -296,6 +296,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionDrawBoxChart->setObjectName(QStringLiteral("actionDrawBoxChart"));
     //actionDrawBoxChart->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
 
+    actionDrawIntervalChart = new QAction(mainWinowPtr);
+    actionDrawIntervalChart->setObjectName(QStringLiteral("actionDrawIntervalChart"));
+
+
+
     actionSelectionRegionMove = new QAction(mainWinowPtr);
     actionSelectionRegionMove->setObjectName(QStringLiteral("actionSelectionRegionMove"));
     actionSelectionRegionMove->setCheckable(true);
@@ -787,6 +792,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBarChart->addAction(actionDrawBarChart);
 
     menuHistogramChart->addAction(actionDrawHistogramChart);
+    menuHistogramChart->addAction(actionDrawIntervalChart);
 
     menuBoxChart->addAction(actionDrawBoxChart);
 //    toolBar_chart->addAction(actionPickCurveToData);
@@ -925,6 +931,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionClearAllSelectiedRegion->setText(QApplication::translate("MainWindow", "Clear\nSelect", 0));
     actionSingleSelection->setText(QApplication::translate("MainWindow", "New Select", 0));
     actionAdditionalSelection->setText(QApplication::translate("MainWindow", "Add Select", 0));
+    actionDrawIntervalChart->setText(QApplication::translate("MainWindow", "Add Interval", 0));
     actionIntersectionSelection->setText(QApplication::translate("MainWindow", "Int Select", 0));
     actionSubtractionSelection->setText(QApplication::translate("MainWindow", "Sub Select", 0));
     actionDrawScatterChart->setText(QApplication::translate("MainWindow", "Scatter", 0));

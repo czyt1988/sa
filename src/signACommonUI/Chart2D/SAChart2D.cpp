@@ -26,11 +26,14 @@
 #include "SASelectRegionShapeItem.h"
 #include <numeric>
 #include "SAScatterSeries.h"
+#include "SAIntervalSeries.h"
 #include "SABoxSeries.h"
 #include "SAHistogramSeries.h"
 #include "qwt_plot_intervalcurve.h"
 #include "qwt_plot_multi_barchart.h"
 #include "qwt_plot_canvas.h"
+#include "qwt_plot_intervalcurve.h"
+#include "SADataConver.h"
 int SAChart2D::s_size_pen_width2 = 1000;
 
 class SAChart2DPrivate
@@ -655,6 +658,67 @@ SAScatterSeries *SAChart2D::addScatter(SAAbstractDatas *x, SAAbstractDatas *y, c
     series->setPen(SARandColorMaker::getCurveColor()
                 ,getPlotCurWidth(series->dataSize()));
     addItem(series.data(),tr("add scatter:%1").arg(series->title().text()));
+    return series.take();
+}
+
+///
+/// \brief 绘制误差带图
+/// \param invDatas
+/// \return
+///
+QwtPlotIntervalCurve *SAChart2D::addIntervalCurve(const QVector<QwtIntervalSample> &invDatas)
+{
+    QScopedPointer<QwtPlotIntervalCurve> series(new QwtPlotIntervalCurve);
+    series->setSamples(invDatas);
+    QColor clr = SARandColorMaker::getCurveColor();
+    QPen pen = series->pen();
+    pen.setColor(clr);
+    series->setPen(pen);
+    addItem(series.data(),tr("add interval curve"));
+    return series.take();
+}
+///
+/// \brief 绘制误差带图
+/// \param datas
+/// \return
+///
+SAIntervalSeries *SAChart2D::addIntervalCurve(const SAAbstractDatas *datas)
+{
+    QScopedPointer<SAIntervalSeries> series(new SAIntervalSeries(datas->getName()));
+    if(!series->setSamples(datas))
+    {
+        return nullptr;
+    }
+    QColor clr = SARandColorMaker::getCurveColor();
+    QPen pen = series->pen();
+    pen.setColor(clr);
+    series->setPen(pen);
+    clr.setAlpha(80);
+    series->setBrush(clr);
+    addItem(series.data(),tr("add interval curve:%1").arg(datas->getName()));
+    return series.take();
+}
+///
+/// \brief 绘制误差带图
+/// \param v
+/// \param min
+/// \param max
+/// \return
+///
+SAIntervalSeries *SAChart2D::addIntervalCurve(const SAAbstractDatas *v, const SAAbstractDatas *min, const SAAbstractDatas *max)
+{
+    QScopedPointer<SAIntervalSeries> series(new SAIntervalSeries("Interval"));
+    if(!series->setSamples(v,min,max))
+    {
+        return nullptr;
+    }
+    QColor clr = SARandColorMaker::getCurveColor();
+    QPen pen = series->pen();
+    pen.setColor(clr);
+    series->setPen(pen);
+    clr.setAlpha(80);
+    series->setBrush(clr);
+    addItem(series.data(),tr("add interval curve"));
     return series.take();
 }
 
@@ -1310,7 +1374,7 @@ QList<SAXYSeries *> SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
                 QwtPlotCurve* cur = dlg.getSelFollowCurs();
                 std::unique_ptr<SAXYSeries> series(new SAXYSeries(datas[0]->getName()));
                 QVector<double> x,y;
-                if(!SAAbstractDatas::converToDoubleVector(datas[0],y))
+                if(!SADataConver::converToDoubleVector(datas[0],y))
                 {
                     return QList<SAXYSeries *>();
                 }

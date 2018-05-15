@@ -115,15 +115,6 @@ public slots:
     void redo();
     void undo();
 public:
-    ///
-    /// \name 对于1维数据的操作
-    /// \{
-    ///
-    QList<SAAbstractDatas*> getVectorDataPtrs() const;
-    bool getVectorData(int id,QVector<double>& datas);
-    bool getVectorData(SAAbstractDatas* dataPtr, QVector<double>& datas);
-    /// \}
-    ///
 
     /// \name 变量添加操作
     /// \{

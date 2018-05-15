@@ -47,8 +47,6 @@ public:
     bool changDataName(SAAbstractDatas* data,const QString& name);
     //判断是否已存在名字
     bool isHaveDataName(const QString& name) const;
-    //获取所有的一维向量数据
-    QList<SAAbstractDatas*> getVectorDataPtrs() const;
     //判断数据是否处于管理状态
     bool isDataInManager(const SAAbstractDatas* data) const;
     //
@@ -378,36 +376,8 @@ bool SAValueManager::isDataInManager(const SAAbstractDatas *data) const
 {
     return m_ptrContainer->isDataInManager(data);
 }
-///
-/// \brief 获取所有的一维数据
-/// \return
-///
-QList<SAAbstractDatas *> SAValueManager::getVectorDataPtrs() const
-{
-    QList<SAAbstractDatas *> res = m_ptrContainer->getVectorDataPtrs();
-    return res;
-}
-///
-/// \brief 获取线性向量型数据
-/// \param id 数据id
-/// \param datas 数据的容器
-/// \return 成功获取返回true
-///
-bool SAValueManager::getVectorData(int id, QVector<double> &datas)
-{
-    SAAbstractDatas* dataPtr = findData(id);
-    return getVectorData(dataPtr,datas);
-}
-///
-/// \brief 获取线性向量型数据
-/// \param dataPtr 数据指针
-/// \param datas 数据的容器
-/// \return 成功获取返回true
-///
-bool SAValueManager::getVectorData(SAAbstractDatas *dataPtr, QVector<double> &datas)
-{
-    return SAAbstractDatas::converToDoubleVector(dataPtr,datas);
-}
+
+
 ///
 /// \brief 添加变量
 /// \param data 变量指针
@@ -742,18 +712,7 @@ bool PointerContainerPrivate::isHaveDataName(const QString &name) const
     return (m_dataName2DataPtr.find(name) != m_dataName2DataPtr.end());
 }
 
-QList<SAAbstractDatas *> PointerContainerPrivate::getVectorDataPtrs() const
-{
-    QList<SAAbstractDatas*> res;
-    auto fun = [&res](const std::shared_ptr<SAAbstractDatas>& p){
-        if(SA::Dim1 == p->getDim())
-        {
-            res.append(p.get());
-        }
-    };
-    std::for_each(m_smrPtrList.begin(),m_smrPtrList.end(),fun);
-    return res;
-}
+
 
 bool PointerContainerPrivate::isDataInManager(const SAAbstractDatas *data) const
 {

@@ -15,7 +15,9 @@ SAMessageWidget::~SAMessageWidget()
 
 void SAMessageWidget::addString(const QString &str,QColor clr)
 {  
-    ui->textBrowser->append (QStringLiteral("<div style=\"color:%1;\">%2</div>")
+    ui->textBrowser->append (QStringLiteral("<div style=\"color:%1;\">"
+                                            "%2"
+                                            "</div>")
                              .arg(clr.name())
                              .arg(str));
 }

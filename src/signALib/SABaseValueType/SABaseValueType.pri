@@ -15,7 +15,8 @@ HEADERS += \
     $$PWD/SATableDouble.h \
     $$PWD/SASingleDatas.h \
     $$PWD/SAVariantDatas.h \
-    $$PWD/SAVectorOHLCDatas.h
+    $$PWD/SAVectorOHLCDatas.h \
+    $$PWD/SADataConver.h
 
 SOURCES += \
     $$PWD/SADataReference.cpp \
@@ -28,4 +29,5 @@ SOURCES += \
     $$PWD/SATableVariant.cpp \
     $$PWD/SATableDouble.cpp \
     $$PWD/SAVariantDatas.cpp \
-    $$PWD/SAVectorOHLCDatas.cpp
+    $$PWD/SAVectorOHLCDatas.cpp \
+    $$PWD/SADataConver.cpp

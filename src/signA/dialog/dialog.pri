@@ -6,29 +6,21 @@ SOURCES += \
     $$PWD/PickCurveDataModeSetDialog.cpp \
     $$PWD/SAProjectInfomationSetDialog.cpp \
     $$PWD/SAAddLineChartSetDialog.cpp \
-    $$PWD/SAAddCurveTypeDialog.cpp
+    $$PWD/SAAddCurveTypeDialog.cpp \
+    $$PWD/SAAddIntervalCurveDialog.cpp
 HEADERS  +=\
     $$PWD/Dialog_SelDefSeries.h \
     $$PWD/PickCurveDataModeSetDialog.h \
     $$PWD/SAProjectInfomationSetDialog.h \
     $$PWD/SAAddLineChartSetDialog.h \
-    $$PWD/SAAddCurveTypeDialog.h
+    $$PWD/SAAddCurveTypeDialog.h \
+    $$PWD/SAAddIntervalCurveDialog.h
 FORMS    +=\
     $$PWD/Dialog_SelDefSeries.ui \
     $$PWD/PickCurveDataModeSetDialog.ui \
     $$PWD/SAProjectInfomationSetDialog.ui \
     $$PWD/SAAddLineChartSetDialog.ui \
-    $$PWD/SAAddCurveTypeDialog.ui
+    $$PWD/SAAddCurveTypeDialog.ui \
+    $$PWD/SAAddIntervalCurveDialog.ui
 
-win32{
-SOURCES +=
-HEADERS  +=
-FORMS    +=
-contains(DEFINES,SA_TDMS){
-    SOURCES +=
-    HEADERS  +=
-    FORMS    +=
-    }
-}
 
-RESOURCES +=

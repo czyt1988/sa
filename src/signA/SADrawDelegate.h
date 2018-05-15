@@ -14,6 +14,7 @@ class QMdiSubWindow;
 class SAChart2D;
 class QwtPlotTradingCurve;
 class QwtPlotBarChart;
+class QwtPlotIntervalCurve;
 ///
 /// \brief 处理绘图函数
 ///
@@ -45,9 +46,12 @@ public:
     QwtPlotCurve* drawScatter(SAAbstractDatas* data, double xStart, double xDetal, SAChart2D *chart, const QString &name);
     QList<QwtPlotCurve *> drawScatterWithWizard();
     QwtPlotCurve* drawScatterWithWizard(SAAbstractDatas* pointVector);
-
+//区域图IntervalCurve
+    QwtPlotIntervalCurve * drawIntervalCurve(SAAbstractDatas* v, SAAbstractDatas* min,SAAbstractDatas* max, SAChart2D *chart);
+    QList<QwtPlotIntervalCurve *> drawIntervalCurve(const QList<SAAbstractDatas*>& datas, SAChart2D *chart);
+    QList<QwtPlotIntervalCurve *> drawIntervalCurveWithWizard();
+    QwtPlotIntervalCurve* drawIntervalCurveWithWizard(SAAbstractDatas* datas);
 //统计图 Histogram
-
     QwtPlotHistogram* drawHistogram(SAAbstractDatas* data);
     QList<QwtPlotHistogram*> drawHistogram(const QList<SAAbstractDatas*>& datas);
     QList<QwtPlotHistogram *> drawHistogramWithWizard();

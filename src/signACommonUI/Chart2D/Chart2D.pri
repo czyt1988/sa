@@ -14,7 +14,8 @@ HEADERS += \
     $$PWD/SABoxSeries.h \
     $$PWD/SAHistogramSeries.h \
     $$PWD/SAChartSerializeHelp.h \
-    $$PWD/SAPlotItemTreeModel.h
+    $$PWD/SAPlotItemTreeModel.h \
+    $$PWD/SAIntervalSeries.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
@@ -29,4 +30,5 @@ SOURCES += \
     $$PWD/SABoxSeries.cpp \
     $$PWD/SAHistogramSeries.cpp \
     $$PWD/SAChartSerializeHelp.cpp \
-    $$PWD/SAPlotItemTreeModel.cpp
+    $$PWD/SAPlotItemTreeModel.cpp \
+    $$PWD/SAIntervalSeries.cpp

@@ -308,6 +308,8 @@ private slots:
     void onActionAddScatterChartTriggered();
     //Box图
     void onActionAddBoxChartTriggered();
+    //IntervalChartTriggered
+    void onActionAddIntervalChartTriggered();
     //开始矩形选框工具
     void onActionStartRectSelectTriggered(bool b);
     //开始圆形选框工具

@@ -223,7 +223,7 @@ void MainWindow::initUI()
     connect(ui->actionDrawHistogramChart,&QAction::triggered,this,&MainWindow::onActionAddHistogramChartTriggered);
     connect(ui->actionDrawScatterChart,&QAction::triggered,this,&MainWindow::onActionAddScatterChartTriggered);
     connect(ui->actionDrawBoxChart,&QAction::triggered,this,&MainWindow::onActionAddBoxChartTriggered);
-
+    connect(ui->actionDrawIntervalChart,&QAction::triggered,this,&MainWindow::onActionAddIntervalChartTriggered);
     //-------------------------------------
     // - menu_chartDataManager menu signal/slots connect
     connect(ui->actionInRangDataRemove,&QAction::triggered,this,&MainWindow::onActionInRangDataRemoveTriggered);
@@ -1266,6 +1266,17 @@ void MainWindow::onActionAddScatterChartTriggered()
 void MainWindow::onActionAddBoxChartTriggered()
 {
     QList<QwtPlotCurve *> res = m_drawDelegate->drawBoxWithWizard();
+    if(res.size() > 0)
+    {
+        raiseMainDock();
+    }
+}
+///
+/// \brief 绘制Interval图
+///
+void MainWindow::onActionAddIntervalChartTriggered()
+{
+    QList<QwtPlotIntervalCurve *> res = m_drawDelegate->drawIntervalCurveWithWizard();
     if(res.size() > 0)
     {
         raiseMainDock();

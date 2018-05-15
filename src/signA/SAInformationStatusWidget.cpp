@@ -233,7 +233,9 @@ void SAInformationStatusWidget::onQueueTimeout()
 
 QString SAInformationStatusWidget::colorText(const QString& text,const QColor& clr)
 {
-    return QStringLiteral("<html><head/><body><p><span style=\" color:%1;\">%2</span></p></body></html>")
+    return QStringLiteral("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;\">"
+                          "<span style=\" color:%1;\">%2</span>"
+                          "</p>")
             .arg(clr.name ())
             .arg(text);
 }

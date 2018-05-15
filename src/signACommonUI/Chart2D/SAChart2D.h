@@ -15,7 +15,9 @@ class SAFigureOptCommand;
 class SAAbstractPlotEditor;
 class SABoxSeries;
 class SAHistogramSeries;
+class SAIntervalSeries;
 class QwtPlotBarChart;
+class QwtPlotIntervalCurve;
 ///
 /// \brief sa 2d 曲线绘图的基本窗口封装，包括支持SAAbstractDatas的处理
 ///
@@ -67,10 +69,6 @@ public:
     SAXYSeries *addCurve(SAAbstractDatas* datas);
     SAXYSeries* addCurve(SAAbstractDatas* datas, double xStart, double xDetal, const QString &name = QString());
     SAXYSeries* addCurve(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
-    //添加Histogram-支持redo/undo
-    SAHistogramSeries *addHistogram(SAAbstractDatas* datas);
-    //添加Bar-支持redo/undo
-    SABarSeries *addBar(SAAbstractDatas* datas);
     //绘制散点图-支持redo/undo
     QwtPlotCurve* addScatter(const double *xData, const double *yData, int size);
     QwtPlotCurve* addScatter(const QVector<QPointF>& xyDatas);
@@ -78,6 +76,14 @@ public:
     SAScatterSeries* addScatter(SAAbstractDatas* datas);
     SAScatterSeries* addScatter(SAAbstractDatas* datas, double xStart, double xDetal, const QString &name = QString());
     SAScatterSeries* addScatter(SAAbstractDatas* x,SAAbstractDatas* y,const QString& name = QString());
+    //绘制误差带图
+    QwtPlotIntervalCurve* addIntervalCurve(const QVector<QwtIntervalSample>& invDatas);
+    SAIntervalSeries *addIntervalCurve(const SAAbstractDatas* datas);
+    SAIntervalSeries *addIntervalCurve(const SAAbstractDatas* v,const SAAbstractDatas* min,const SAAbstractDatas* max);
+    //添加Histogram-支持redo/undo
+    SAHistogramSeries *addHistogram(SAAbstractDatas* datas);
+    //添加Bar-支持redo/undo
+    SABarSeries *addBar(SAAbstractDatas* datas);
     //绘制箱盒图-支持redo/undo
     SABoxSeries* addBox(SAAbstractDatas* datas);
     //添加样条线-支持redo/undo

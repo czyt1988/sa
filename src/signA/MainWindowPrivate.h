@@ -106,6 +106,7 @@ public:
     QAction *actionDrawHistogramChart;
     QAction *actionDrawBarChart;
     QAction *actionDrawBoxChart;
+    QAction *actionDrawIntervalChart;
     QAction *actionSelectionRegionMove;///<
     QAction *actionSelectionRegionDataMove;///<
 
