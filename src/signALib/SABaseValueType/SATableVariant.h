@@ -8,8 +8,6 @@ class SAVectorDouble;
 class SALIB_EXPORT SATableVariant : public SATableData<QVariant>
 {
 public:
-    typedef czy::QtApp::QczyHashTable<QVariant> Table;
-public:
     SATableVariant();
     SATableVariant(const QString & name);
     virtual ~SATableVariant(){}

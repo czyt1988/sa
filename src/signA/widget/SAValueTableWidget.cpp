@@ -19,6 +19,7 @@
 #include "SAValueTableOptCommands.h"
 #include "SAUIHelper.h"
 #include "SALog.h"
+#include "SADataConver.h"
 #include <QShortcut>
 /////////////////////////////////////////////////
 
@@ -39,6 +40,7 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     m_redo->setIcon(QIcon(":/icons/icons/redo.png"));
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
+    //设置setdata的操作
     model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool{
         return this->setData(r,c,v);
     };
@@ -48,10 +50,18 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     {
         plotLayerVerticalHeader->setDefaultSectionSize(19);
     }
+    //设置Ctrl + v的操作
     ui->tableView->onCtrlVFun = [&]()
     {
         this->onTableViewCtrlV();
     };
+    //设置delete和backspace的操作
+    auto deleteFunPtr = [&]()
+    {
+        this->onTableViewDeletePressed();
+    };
+    ui->tableView->onDeleteFun = deleteFunPtr;
+    ui->tableView->onBackspaceFun = deleteFunPtr;
 
     connect(ui->tableView,&QTableView::customContextMenuRequested
             ,this,&SAValueTableWidget::onTableViewCustomContextMenuRequested);
@@ -260,20 +270,24 @@ bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
     SADataTableModel* model = getDataModel();
     SAAbstractDatas* d = model->columnToData(c);
 
-    if(nullptr == d)
+    if(nullptr == d || nullptr == model)
     {
         return false;
     }
+    QUndoCommand* cmd = nullptr;
+    if(r < d->getSize(SA::Dim1) && c < d->getSize(SA::Dim2))
+    {
+        qDebug() << "EditValueCommand";
+        cmd = new SAValueTableOptEditValueCommand(d,model,v,r,c);
+        cmd->setText(tr("[\"%1\"]set data").arg(d->getName()));
+    }
 
-    SAValueTableOptEditValueCommand* cmd = new SAValueTableOptEditValueCommand(d
-                                                                               ,model
-                                                                               ,{v}
-                                                                               ,r
-                                                                               ,c
-                                                                               );
-    cmd->setText(tr("[\"%1\"]set data").arg(d->getName()));
-    m_undoStack->push(cmd);
-    return true;
+    if(cmd)
+    {
+        m_undoStack->push(cmd);
+        return true;
+    }
+    return false;
 }
 ///
 /// \brief 在VectorPointF插入新数据
@@ -535,6 +549,7 @@ void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractData
     rightBottom.rx() += buttonAreaWidth;
     w->setGeometry(QRect(leftTop,rightBottom));
     const int dim2 = colEnd - colStart + 1;
+    w->resizeCells(dim2);
     for(int i=0;i<dim2;++i)
     {
         w->setCellWidth(i,ui->tableView->columnWidth(colStart+i));
@@ -645,44 +660,8 @@ void SAValueTableWidget::onTableViewCtrlV()
         model->dataColumnRange(data,startCol,endCol);
         if(-1 == startCol || -1 == endCol)
             return;
-        //获取当前的选择的单元格对应的数据第二维的列数
-        col = col - startCol;
-        //获取当前数据的第二维维度
-        int dim2 = data->getSize(SA::Dim2);
-        //判断是否能复制
-        if(tableSize.width() > (dim2-col))
-        {
-            waitCursor.release();
-            QMessageBox::warning(this,tr("warning"),tr("can not paste in current data"));
-            return;
-        }
         //可以复制执行复制命令
-        QScopedPointer<SAValueTableOptPasteBaseCommand> cmd;
-        switch(data->getType())
-        {
-        case SA::VectorDouble:
-            cmd.reset(new SAValueTableOptPasteDoubleVectorCommand(
-                        data
-                        ,model
-                        ,variantClipboardTable
-                        ,row
-                        ));
-            break;
-        case SA::VectorPoint:
-            cmd.reset(new SAValueTableOptPastePointFVectorCommand(
-                        data
-                        ,model
-                        ,variantClipboardTable
-                        ,tableSize
-                        ,row
-                        ,col
-                        ));
-            break;
-        default:
-            break;
-        }
-        if(cmd.isNull())
-           return;
+        QScopedPointer<SAValueTableOptPasteCommand> cmd(new SAValueTableOptPasteCommand(data,model,variantClipboardTable,row,col));
         if(cmd->isValid())
         {
             saPrint() << "success paste value";
@@ -702,6 +681,13 @@ void SAValueTableWidget::onTableViewCtrlV()
         QMessageBox::warning(this,tr("warning"),tr("please select one table item to start paste"));
         return;
     }
+}
+///
+/// \brief 点击delete按钮的事件回调
+///
+void SAValueTableWidget::onTableViewDeletePressed()
+{
+
 }
 ///
 /// \brief 获取选中的线性数据
@@ -825,8 +811,8 @@ bool SAValueTableWidget::getSelectVectorPointData(SAVectorPointF* data)
     SAAbstractDatas* xPtr = datasPtr[xcolumn];
     SAAbstractDatas* yPtr = datasPtr[ycolumn];
     QVector<double> x,y;
-    SAAbstractDatas::converToDoubleVector(xPtr,x);
-    SAAbstractDatas::converToDoubleVector(yPtr,y);
+    SADataConver::converToDoubleVector(xPtr,x);
+    SADataConver::converToDoubleVector(yPtr,y);
 
     QVector<double> tmp;
     tmp.reserve(xrows.size());

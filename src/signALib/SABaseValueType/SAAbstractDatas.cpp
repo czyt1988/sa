@@ -89,41 +89,7 @@ void SAAbstractDatas::write(QDataStream &out) const
 {
     QStandardItem::write(out);
 }
-///
-/// \brief 从数组获取double vector
-/// \param input 输入的数据
-/// \param data 获取的double vector
-/// \return 成功获取返回true
-/// \see SAVectorDouble::toDoubleVector
-///
-bool SAAbstractDatas::converToDoubleVector(const SAAbstractDatas *input, QVector<double> &data)
-{
-    return SAVectorDouble::toDoubleVector(input,data);
-}
 
-///
-/// \brief 转换为QPointF数组
-/// \param ptr SAAbstractDatas指针
-/// \param res 结果
-/// \return 可以转换返回true
-/// \see SAVectorPointF::toPointFVector
-///
-bool SAAbstractDatas::converToPointFVector(const SAAbstractDatas *input, QVector<QPointF> &data)
-{
-    return SAVectorPointF::toPointFVector(input,data);
-}
-
-///
-/// \brief 转换为double如果不行返回false
-/// \param input
-/// \param val
-/// \return 可以转换返回true
-/// \see SAVariantDatas::toData
-///
-bool SAAbstractDatas::converToDouble(const SAAbstractDatas *input, double &val)
-{
-    return SAVariantDatas::toData<double>(input,val);
-}
 
 
 

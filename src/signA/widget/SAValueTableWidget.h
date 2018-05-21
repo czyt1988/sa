@@ -77,6 +77,9 @@ private:
     void initCellInputWidget(SACellInputWidget* w, SAAbstractDatas *data, const QModelIndex &index);
     //ctrl + v
     void onTableViewCtrlV();
+    //delete 点击
+    void onTableViewDeletePressed();
+
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
     bool getSelectVectorPointData(SAVectorPointF* data);

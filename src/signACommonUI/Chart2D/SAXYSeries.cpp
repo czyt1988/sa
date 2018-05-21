@@ -25,7 +25,7 @@ SAXYSeries::SAXYSeries(const QString &title, SAAbstractDatas *dataPoints):QwtPlo
 bool SAXYSeries::setSamples(SAAbstractDatas *dataPoints)
 {
     QVector<QPointF> serPoints;
-    if(!SAAbstractDatas::converToPointFVector(dataPoints,serPoints))
+    if(!SADataConver::converToPointFVector(dataPoints,serPoints))
     {
         return false;
     }

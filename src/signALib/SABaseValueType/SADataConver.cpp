@@ -59,9 +59,9 @@ SAVectorInterval *SADataConver::bindToVectorInterval(const SAAbstractDatas *x, c
             )
     {
         QVector<QwtIntervalSample> datas;
-        SAVectorDouble* sax = static_cast<SAVectorDouble*>(x);
-        SAVectorDouble* sayMin = static_cast<SAVectorDouble*>(yMin);
-        SAVectorDouble* sayMax = static_cast<SAVectorDouble*>(yMax);
+        const SAVectorDouble* sax = static_cast<const SAVectorDouble*>(x);
+        const SAVectorDouble* sayMin = static_cast<const SAVectorDouble*>(yMin);
+        const SAVectorDouble* sayMax = static_cast<const SAVectorDouble*>(yMax);
         int minSize = qMin(sax->getValueDatas().size(),sayMin->getValueDatas().size());
         minSize = qMin(minSize,sayMax->getValueDatas().size());
         datas.resize(minSize);
@@ -74,7 +74,7 @@ SAVectorInterval *SADataConver::bindToVectorInterval(const SAAbstractDatas *x, c
         }
         if(datas.size() > 0)
         {
-            ptr.reset(new SAVectorInterval(datas));
+            ptr.reset(new SAVectorInterval("VectorInterval",datas));
         }
     }
     else
@@ -114,7 +114,7 @@ SAVectorInterval *SADataConver::bindToVectorInterval(const SAAbstractDatas *x, c
             }
             if(datas.size() > 0)
             {
-                ptr.reset(new SAVectorInterval(datas));
+                ptr.reset(new SAVectorInterval("VectorInterval",datas));
             }
         }
     }

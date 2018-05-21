@@ -72,10 +72,6 @@ public:
     virtual bool isDirty() const = 0;
     //设置内存有变更
     virtual void setDirty(bool dirty) = 0;
-public:
-    static bool converToDoubleVector(const SAAbstractDatas* input,QVector<double>& data);
-    static bool converToPointFVector(const SAAbstractDatas* input,QVector<QPointF>& data);
-    static bool converToDouble(const SAAbstractDatas* input,double& val);
 };
 
 #endif // SAABSTRACTDATAS

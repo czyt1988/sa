@@ -19,12 +19,18 @@ public:
     typedef std::function<void()> FunPtr;
     FunPtr onCtrlVFun;///< ctrl + v的函数指针
     FunPtr onCtrlCFun;///< ctrl + c的函数指针
+    FunPtr onDeleteFun;///< delete的函数指针
+    FunPtr onBackspaceFun;///< Backspace的函数指针
 protected:
     void keyPressEvent(QKeyEvent *e);
     //处理ctrl+c事件
     virtual void onCtrlCPressed();
     //处理ctrl+v事件
     virtual void onCtrlVPressed();
+    //处理delete事件
+    virtual void onDeletePressed();
+    //处理Backspace事件
+    virtual void onBackspacePressed();
 private:
     //获取选中的表格范围和四个端点的行列号
     static QSize getSelectSize(const QModelIndexList& indexs, int* minRow, int* maxRow, int *minCol, int *maxCol);

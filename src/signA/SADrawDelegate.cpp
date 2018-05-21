@@ -20,6 +20,7 @@
 #include "SAIntervalSeries.h"
 #include <QInputDialog>
 #include "SAAddIntervalCurveDialog.h"
+#include "SADataConver.h"
 SADrawDelegate::SADrawDelegate(MainWindow* wnd):SAMainWindowDelegate(wnd)
 {
 }
@@ -88,7 +89,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &d
             if(SA::Dim1 == data->getDim())
             {
                 QVector<double> v;
-                SAAbstractDatas::converToDoubleVector(data,v);
+                SADataConver::converToDoubleVector(data,v);
                 if(v.size() > 0)
                 {
                     QVector<double> x(v.size());
@@ -107,7 +108,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLine(const QList<SAAbstractDatas *> &d
             else if(SA::Dim2 == data->getDim())
             {
                 QVector<QPointF> v;
-                SAAbstractDatas::converToPointFVector(data,v);
+                SADataConver::converToPointFVector(data,v);
                 if(v.size() > 0)
                 {
                     SAXYSeries* serise = new SAXYSeries(data->getName());
@@ -297,7 +298,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
         dlg.getYUserDefineValues(start,detal);
         SAAbstractDatas* x = dlg.getXDatas();
         QVector<double> xarr,yarr;
-        if(SAAbstractDatas::converToDoubleVector(x,xarr))
+        if(SADataConver::converToDoubleVector(x,xarr))
         {
             yarr.resize(xarr.size());
             for(int i=0;i<yarr.size();++i)
@@ -430,7 +431,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawScatter(const QList<SAAbstractDatas *>
             if(SA::Dim1 == data->getDim())
             {
                 QVector<double> v;
-                SAAbstractDatas::converToDoubleVector(data,v);
+                SADataConver::converToDoubleVector(data,v);
                 if(v.size() > 0)
                 {
                     QVector<double> x(v.size());
@@ -449,7 +450,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawScatter(const QList<SAAbstractDatas *>
             else if(SA::Dim2 == data->getDim())
             {
                 QVector<QPointF> v;
-                SAAbstractDatas::converToPointFVector(data,v);
+                SADataConver::converToPointFVector(data,v);
                 if(v.size() > 0)
                 {
                     SAScatterSeries* serise = new SAScatterSeries(data->getName());
@@ -628,7 +629,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawScatterWithWizard()
         dlg.getYUserDefineValues(start,detal);
         SAAbstractDatas* x = dlg.getXDatas();
         QVector<double> xarr,yarr;
-        if(SAAbstractDatas::converToDoubleVector(x,xarr))
+        if(SADataConver::converToDoubleVector(x,xarr))
         {
             yarr.resize(xarr.size());
             for(int i=0;i<yarr.size();++i)
@@ -1036,7 +1037,7 @@ QList<QwtPlotBarChart *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *> 
             if(SA::Dim1 == data->getDim())
             {
                 QVector<double> v;
-                SAAbstractDatas::converToDoubleVector(data,v);
+                SADataConver::converToDoubleVector(data,v);
                 if(v.size() > 0)
                 {
                     SABarSeries* barSerise = new SABarSeries(data->getName());
@@ -1049,7 +1050,7 @@ QList<QwtPlotBarChart *> SADrawDelegate::drawBar(const QList<SAAbstractDatas *> 
             else if(SA::Dim2 == data->getDim())
             {
                 QVector<QPointF> v;
-                SAAbstractDatas::converToPointFVector(data,v);
+                SADataConver::converToPointFVector(data,v);
                 if(v.size() > 0)
                 {
                     SABarSeries* barSerise = new SABarSeries(data->getName());

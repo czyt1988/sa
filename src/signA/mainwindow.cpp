@@ -2942,7 +2942,7 @@ void MainWindow::__loadSubWindowFromFolder(const QString &folderPath)
     {
         if(QMdiSubWindow* s = load_sub_window(uiInterface(),dir.absoluteFilePath(dataFileList[i]),&errString))
         {
-
+            Q_UNUSED(s);
         }
         else
         {

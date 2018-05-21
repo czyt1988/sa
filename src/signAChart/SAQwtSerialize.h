@@ -16,6 +16,8 @@ class QwtColorMap;
 class QwtScaleDraw;
 class QwtPlotBarChart;
 class QwtColumnSymbol;
+class QwtPlotIntervalCurve;
+class QwtIntervalSymbol;
 ///
 /// \brief 序列化类都是带异常的，使用中需要处理异常
 ///
@@ -42,6 +44,9 @@ namespace sa {
     // QwtSymbol的序列化
     SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QwtSymbol* t);
     SA_CHART_EXPORT QDataStream& operator >>(QDataStream & in,QwtSymbol* t);
+    // QwtIntervalSymbol的序列化
+    SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QwtIntervalSymbol* t);
+    SA_CHART_EXPORT QDataStream& operator >>(QDataStream & in,QwtIntervalSymbol* t);
     // QwtColumnSymbol的序列化
     SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QwtColumnSymbol* t);
     SA_CHART_EXPORT QDataStream& operator >>(QDataStream & in,QwtColumnSymbol* t);
@@ -62,7 +67,9 @@ namespace sa {
     // QwtPlotBarChart指针的序列化
     SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QwtPlotBarChart* item);
     SA_CHART_EXPORT QDataStream& operator >>(QDataStream & in,QwtPlotBarChart* item);
-
+    // QwtPlotIntervalCurve指针的序列化
+    SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QwtPlotIntervalCurve* item);
+    SA_CHART_EXPORT QDataStream& operator >>(QDataStream & in,QwtPlotIntervalCurve* item);
 
     // QwtPlotCanvas的序列化
     SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QwtPlotCanvas* c);
@@ -73,12 +80,14 @@ namespace sa {
     // QwtPlot的序列化
     SA_CHART_EXPORT QDataStream& operator <<(QDataStream & out,const QwtPlot* chart);
     SA_CHART_EXPORT QDataStream& operator >>(QDataStream & in,QwtPlot* chart);
-    // QwtIntervalSample的序列化
-    SA_CHART_EXPORT QDataStream &operator<<(QDataStream & out, const QwtIntervalSample & item);
-    SA_CHART_EXPORT QDataStream &operator>>(QDataStream & in, QwtIntervalSample & item);
-    // QwtInterval的序列化
-    SA_CHART_EXPORT QDataStream &operator<<(QDataStream & out, const QwtInterval & item);
-    SA_CHART_EXPORT QDataStream &operator>>(QDataStream & in, QwtInterval & item);
+
 }
+
+// QwtIntervalSample的序列化
+SA_CHART_EXPORT QDataStream &operator<<(QDataStream & out, const QwtIntervalSample & item);
+SA_CHART_EXPORT QDataStream &operator>>(QDataStream & in, QwtIntervalSample & item);
+// QwtInterval的序列化
+SA_CHART_EXPORT QDataStream &operator<<(QDataStream & out, const QwtInterval & item);
+SA_CHART_EXPORT QDataStream &operator>>(QDataStream & in, QwtInterval & item);
 
 #endif // SAQWTSERIALIZE_H

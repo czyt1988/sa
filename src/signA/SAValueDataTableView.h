@@ -2,6 +2,7 @@
 #define SAVALUEDATATABLEVIEW_H
 #include "SATableView.h"
 #include <functional>
+class QKeyEvent;
 class SAValueDataTableViewPrivate;
 ///
 /// \brief 用于数据显示的table view

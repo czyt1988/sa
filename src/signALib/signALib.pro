@@ -38,7 +38,8 @@ HEADERS += \
     SAXMLReadHelper.h \
     SADataProcessVectorPointF.h \
     SAValueManagerMimeData.h \
-    SAValueManagerListModel.h
+    SAValueManagerListModel.h \
+    SAHashTable.h
 
 
 SOURCES += \

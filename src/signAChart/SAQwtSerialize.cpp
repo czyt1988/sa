@@ -9,12 +9,14 @@
 #include "qwt_color_map.h"
 #include "qwt_plot_barchart.h"
 #include "qwt_column_symbol.h"
-
+#include "qwt_plot_intervalcurve.h"
+#include "qwt_interval_symbol.h"
+///< 版本标示，每个序列化都应该带有版本信息，用于对下兼容
+const int gc_version = 1;
+const int gc_magic_mark = 0x5A6B4CF1;
 namespace sa {
 void serialize_out_scale_widge(QDataStream &out, const QwtPlot *chart,int axis);
 void serialize_in_scale_widge(QDataStream &in, QwtPlot *chart,int axis);
-
-
 
 
 }
@@ -48,6 +50,7 @@ void sa::serialize_out_scale_widge(QDataStream &out, const QwtPlot *chart,int ax
     bool isaxis = (nullptr != axisWid);
     unsigned int checkH=0x1234;
     unsigned int checkB=0x345A;
+    out << gc_version << gc_magic_mark;
     out << isaxis;
     out << checkH;
     if(isaxis)
@@ -64,6 +67,14 @@ void sa::serialize_in_scale_widge(QDataStream &in, QwtPlot *chart, int axis)
     const unsigned int checkB=0x345A;
     unsigned int H;
     unsigned int B;
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return;
+    }
     in >> isaxis;
     in >> H;
     if(checkH != H)
@@ -100,6 +111,7 @@ void sa::serialize_in_scale_widge(QDataStream &in, QwtPlot *chart, int axis)
 
 QDataStream &sa::operator <<(QDataStream &out, const QwtText &t)
 {
+    out << gc_version << gc_magic_mark;
     unsigned int c0=0x12fa34;
     out << c0
         << t.text()
@@ -119,6 +131,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtText &t)
 
 QDataStream &sa::operator >>(QDataStream &in, QwtText &t)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     unsigned int c0=0x12fa34;
     unsigned int tmp;
     in >> tmp;
@@ -169,6 +189,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtText &t)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtSymbol *t)
 {
+    out << gc_version << gc_magic_mark;
     unsigned int c0=0x32fa34;
     out << c0;
     out << static_cast<int>(t->cachePolicy())
@@ -191,6 +212,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtSymbol *t)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtSymbol *t)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     unsigned int c0=0x32fa34;
     unsigned int tmp;
     in >> tmp;
@@ -235,6 +264,54 @@ QDataStream &sa::operator >>(QDataStream &in, QwtSymbol *t)
     }
     return in;
 }
+
+QDataStream &sa::operator <<(QDataStream &out, const QwtIntervalSymbol *t)
+{
+    out << gc_version << gc_magic_mark;
+    unsigned int c0=0xf2fab4;
+    out << c0;
+    out << static_cast<int>(t->width())
+        << t->brush()
+        << t->pen()
+        << static_cast<int>(t->style())
+           ;
+    return out;
+}
+
+QDataStream &sa::operator >>(QDataStream &in, QwtIntervalSymbol *t)
+{
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    unsigned int c0=0xf2fab4;
+    unsigned int tmp;
+    in >> tmp;
+    if(c0 != tmp)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    int width;
+    QBrush brush;
+    QPen pen;
+    int style;
+    in >> width
+        >> brush
+        >> pen
+        >> style;
+    t->setWidth(width);
+    t->setBrush(brush);
+    t->setPen(pen);
+    t->setStyle(static_cast<QwtIntervalSymbol::Style>(style));
+    return in;
+}
+
+
 ///
 /// \brief QwtColumnSymbol的序列化
 /// \param out
@@ -243,6 +320,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtSymbol *t)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtColumnSymbol *t)
 {
+    out << gc_version << gc_magic_mark;
     unsigned int c0=0x42fa34;
     out << c0;
     out << static_cast<int>(t->frameStyle())
@@ -260,6 +338,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtColumnSymbol *t)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtColumnSymbol *t)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     unsigned int c0=0x42fa34;
     unsigned int tmp;
     in >> tmp;
@@ -291,6 +377,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtColumnSymbol *t)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtPlotItem *item)
 {
+    out << gc_version << gc_magic_mark;
     unsigned int c0=0x52fa34;
     out << c0;
     out << item->title()
@@ -317,6 +404,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotItem *item)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtPlotItem *item)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     unsigned int c0=0x52fa34;
     unsigned int tmp;
     in >> tmp;
@@ -369,6 +464,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotItem *item)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtPlotCurve *item)
 {
+    out << gc_version << gc_magic_mark;
     out << (const QwtPlotItem*)item;
     out << item->baseline()
         << item->brush()
@@ -384,6 +480,7 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotCurve *item)
         << item->testLegendAttribute(QwtPlotCurve::LegendShowBrush)
         << item->testCurveAttribute(QwtPlotCurve::Inverted)
         << item->testCurveAttribute(QwtPlotCurve::Fitted)
+        << (int)(item->orientation())
            ;
     //save sample
     const unsigned int ck0 = 0xab231f;
@@ -409,6 +506,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotCurve *item)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     double baseline;
     QBrush brush;
     QPen pen;
@@ -423,6 +528,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
     bool isLegendShowBrush;
     bool isInverted;
     bool isFitted;
+    int orientation;
     in >> (QwtPlotItem*)item;
     in >> baseline
             >> brush
@@ -438,6 +544,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
             >> isLegendShowBrush
             >> isInverted
             >> isFitted
+            >> orientation
             ;
     item->setBaseline(baseline);
     item->setBrush(brush);
@@ -453,6 +560,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
     item->setLegendAttribute(QwtPlotCurve::LegendShowBrush,isLegendShowBrush);
     item->setCurveAttribute(QwtPlotCurve::Inverted,isInverted);
     item->setCurveAttribute(QwtPlotCurve::Fitted,isFitted);
+    item->setOrientation((Qt::Orientation)orientation);
     //load sample
     const unsigned int ck0 = 0xab231f;
     const unsigned int ck1 = 0x956fda;
@@ -491,6 +599,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCurve *item)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
 {
+    out << gc_version << gc_magic_mark;
     out << (const QwtPlotItem*)item;
     out << static_cast<int>(item->layoutPolicy())
         << item->layoutHint()
@@ -498,6 +607,7 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
         << item->margin()
         << item->baseline()
         << static_cast<int>(item->legendMode())
+        << (int)(item->orientation())
            ;
     //save sample
     const unsigned int ck0 = 0xab231f;
@@ -523,6 +633,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotBarChart *item)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     in >> (QwtPlotItem*)item;
     int layoutPolicy;
     double layoutHint;
@@ -530,12 +648,14 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
     int margin;
     double baseline;
     int legendMode;
+    int orientation;
     in >> layoutPolicy
             >> layoutHint
             >> spacing
             >> margin
             >> baseline
             >> legendMode
+            >> orientation
             ;
     item->setLayoutPolicy(static_cast<QwtPlotBarChart::LayoutPolicy>(layoutPolicy));
     item->setLayoutHint(layoutHint);
@@ -543,6 +663,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
     item->setMargin(margin);
     item->setBaseline(baseline);
     item->setLegendMode(static_cast<QwtPlotBarChart::LegendMode>(legendMode));
+    item->setOrientation((Qt::Orientation)orientation);
     //load sample
     const unsigned int ck0 = 0xab231f;
     const unsigned int ck1 = 0x956fda;
@@ -572,6 +693,99 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
     }
     return in;
 }
+
+
+QDataStream &sa::operator <<(QDataStream &out, const QwtPlotIntervalCurve *item)
+{
+    using namespace sa;
+    out << gc_version << gc_magic_mark;
+    out << (const QwtPlotItem*)item;
+    out << (int)item->orientation()
+        << item->pen()
+        << item->brush()
+        << (int)item->style()
+        << item->testPaintAttribute(QwtPlotIntervalCurve::ClipPolygons)
+        << item->testPaintAttribute(QwtPlotIntervalCurve::ClipSymbol)
+           ;
+    //save sample
+    const unsigned int ck0 = 0xabf31f;
+    const unsigned int ck1 = 0x9f6fda;
+    QVector<QwtIntervalSample> sample;
+    SAChart::getSeriesData(sample,item);
+    out << ck0 << sample << ck1;
+    //QwtSymbol的序列化
+    const QwtIntervalSymbol* symbol = item->symbol();
+    bool isHaveSymbol = (symbol != nullptr);
+    out << isHaveSymbol;
+    if(isHaveSymbol)
+    {
+        out << symbol;
+    }
+    return out;
+}
+
+QDataStream &sa::operator >>(QDataStream &in, QwtPlotIntervalCurve *item)
+{
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    in >> (QwtPlotItem*)item;
+    int orientation;
+    QBrush brush;
+    QPen pen;
+    int style;
+    bool isClipPolygons;
+    bool isClipSymbol;
+    in >> orientation
+        >> pen
+        >> brush
+        >> style
+        >> isClipPolygons
+        >> isClipSymbol
+        ;
+    item->setPen(pen);
+    item->setBrush(brush);
+    item->setStyle(static_cast<QwtPlotIntervalCurve::CurveStyle>(style));
+    item->setPaintAttribute(QwtPlotIntervalCurve::ClipPolygons,isClipPolygons);
+    item->setPaintAttribute(QwtPlotIntervalCurve::ClipSymbol,isClipSymbol);
+    //load sample
+    const unsigned int ck0 = 0xabf31f;
+    const unsigned int ck1 = 0x9f6fda;
+    unsigned int tmp0,tmp1;
+    QVector<QwtIntervalSample> sample;
+    in >> tmp0 ;
+    if(ck0 != tmp0)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    in >> sample >> tmp1;
+    if(ck1 != tmp1)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
+    item->setSamples(sample);
+    // QwtSymbol的序列化
+    bool isHaveSymbol;
+    in >> isHaveSymbol;
+    if(isHaveSymbol)
+    {
+        QwtIntervalSymbol* symbol = new QwtIntervalSymbol();
+        in >> symbol;
+        item->setSymbol(symbol);
+    }
+    return in;
+}
+
+
+
+
 ///
 /// \brief QwtScaleWidget指针的序列化
 /// \param out
@@ -580,6 +794,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotBarChart *item)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtScaleWidget *w)
 {
+    out << gc_version << gc_magic_mark;
     unsigned int c0=0x82fa34;
     out << c0;
     int minBorderDistStart,minBorderDistEnd;
@@ -616,6 +831,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtScaleWidget *w)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtScaleWidget *w)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     unsigned int c0=0x82fa34;
     unsigned int tmp;
     in >> tmp;
@@ -678,6 +901,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtScaleWidget *w)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtScaleDraw *w)
 {
+    out << gc_version << gc_magic_mark;
     unsigned int c0=0x92fa34;
     out << c0;
     out << static_cast<int>(w->alignment())
@@ -695,6 +919,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtScaleDraw *w)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtScaleDraw *w)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     unsigned int c0=0x92fa34;
     unsigned int tmp;
     in >> tmp;
@@ -727,6 +959,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtScaleDraw *w)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QFrame *f)
 {
+    out << gc_version << gc_magic_mark;
     unsigned int c0=0x13fa34;
     out << c0;
     out << static_cast<int>(f->frameShadow())
@@ -747,6 +980,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QFrame *f)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QFrame *f)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     unsigned int c0=0x13fa34;
     unsigned int tmp;
     in >> tmp;
@@ -791,6 +1032,7 @@ QDataStream &sa::operator >>(QDataStream &in, QFrame *f)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtPlotCanvas *c)
 {
+    out << gc_version << gc_magic_mark;
     out << (const QFrame*)c;
     out << static_cast<int>(c->focusIndicator())
         << c->borderRadius()
@@ -809,6 +1051,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlotCanvas *c)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtPlotCanvas *c)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     in >> (QFrame*)c;
     int focusIndicator;
     double borderRadius;
@@ -839,6 +1089,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlotCanvas *c)
 ///
 QDataStream &sa::operator <<(QDataStream &out, const QwtPlot *chart)
 {
+    out << gc_version << gc_magic_mark;
     //QFrame save
     out << (const QFrame*)chart;
     //QwtPlot save
@@ -869,6 +1120,14 @@ QDataStream &sa::operator <<(QDataStream &out, const QwtPlot *chart)
 ///
 QDataStream &sa::operator >>(QDataStream &in, QwtPlot *chart)
 {
+    int version;
+    int magic;
+    in >> version >> magic;
+    if(gc_magic_mark != magic)
+    {
+        throw SABadSerializeExpection();
+        return in;
+    }
     //QFrame load
     in >> (QFrame*)chart;
     //QwtPlot load
@@ -909,7 +1168,7 @@ QDataStream &sa::operator >>(QDataStream &in, QwtPlot *chart)
 /// \param item
 /// \return
 ///
-QDataStream &sa::operator<<(QDataStream & out, const QwtIntervalSample & item)
+QDataStream &operator<<(QDataStream & out, const QwtIntervalSample & item)
 {
     out << item.value << item.interval;
     return out;
@@ -920,7 +1179,7 @@ QDataStream &sa::operator<<(QDataStream & out, const QwtIntervalSample & item)
 /// \param item
 /// \return
 ///
-QDataStream &sa::operator>>(QDataStream & in, QwtIntervalSample & item)
+QDataStream &operator>>(QDataStream & in, QwtIntervalSample & item)
 {
     in >> item.value >> item.interval;
     return in;
@@ -931,7 +1190,7 @@ QDataStream &sa::operator>>(QDataStream & in, QwtIntervalSample & item)
 /// \param item
 /// \return
 ///
-QDataStream &sa::operator<<(QDataStream & out, const QwtInterval & item)
+QDataStream &operator<<(QDataStream & out, const QwtInterval & item)
 {
     out << item.minValue() << item.maxValue() << item.borderFlags();
     return out;
@@ -942,7 +1201,7 @@ QDataStream &sa::operator<<(QDataStream & out, const QwtInterval & item)
 /// \param item
 /// \return
 ///
-QDataStream &sa::operator>>(QDataStream & in, QwtInterval & item)
+QDataStream &operator>>(QDataStream & in, QwtInterval & item)
 {
     int flag;
     double min,max;

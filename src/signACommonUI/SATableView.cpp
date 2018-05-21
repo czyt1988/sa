@@ -6,8 +6,10 @@
 #include <QTextStream>
 
 SATableView::SATableView(QWidget *par):QTableView(par)
-    ,onCtrlVFun(nullptr)
-    ,onCtrlCFun(nullptr)
+  ,onCtrlVFun(nullptr)
+  ,onCtrlCFun(nullptr)
+  ,onDeleteFun(nullptr)
+  ,onBackspaceFun(nullptr)
 {
 
 }
@@ -22,6 +24,16 @@ void SATableView::keyPressEvent(QKeyEvent *e)
     else if(Qt::ControlModifier == e->modifiers() && Qt::Key_V == e->key())
     {
         onCtrlVPressed();
+        return;
+    }
+    else if(Qt::Key_Delete == e->key())
+    {
+        onDeletePressed();
+        return;
+    }
+    else if(Qt::Key_Backspace == e->key())
+    {
+        onBackspacePressed();
         return;
     }
     QTableView::keyPressEvent(e);
@@ -123,6 +135,24 @@ void SATableView::onCtrlVPressed()
             itemModel->setData(itemModel->index(r+rowStart,c+colStart),sp[c]);
         }
         ++r;
+    }
+}
+
+void SATableView::onDeletePressed()
+{
+    if(onDeleteFun)
+    {
+        onDeleteFun();
+        return;
+    }
+}
+
+void SATableView::onBackspacePressed()
+{
+    if(onBackspaceFun)
+    {
+        onBackspaceFun();
+        return;
     }
 }
 ///

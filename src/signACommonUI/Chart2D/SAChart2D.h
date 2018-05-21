@@ -184,4 +184,7 @@ private:
     static int s_size_pen_width2;///< 小于此尺寸将设置画笔为2，大于这个尺寸设置为1
 };
 
+SA_COMMON_UI_EXPORT QDataStream& operator <<(QDataStream & out,const SAChart2D* chart);
+SA_COMMON_UI_EXPORT QDataStream& operator >>(QDataStream & in,SAChart2D* chart);
+
 #endif // SACHART2D_H

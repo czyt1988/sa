@@ -1,12 +1,10 @@
-#ifndef SATABLEDOUBLE_H
+﻿#ifndef SATABLEDOUBLE_H
 #define SATABLEDOUBLE_H
 
 #include "SATableData.h"
 
 class SALIB_EXPORT SATableDouble : public SATableData<double>
 {
-public:
-    typedef czy::QtApp::QczyHashTable<double> Table;
 public:
     SATableDouble();
     SATableDouble(const QString & name);

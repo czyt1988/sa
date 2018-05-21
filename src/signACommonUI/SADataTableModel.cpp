@@ -330,14 +330,13 @@ bool SADataTableModel::setData(const QModelIndex& index, const QVariant& value, 
     const int col = index.column();
     const int row = index.row();
     return onSetDataFun(row,col,value);
-
 }
 
 Qt::ItemFlags SADataTableModel::flags(const QModelIndex& index) const
 {
     if(!index.isValid())
         return Qt::NoItemFlags;
-    int col = index.column();
+#if 0
     //只有在数据范围内的可以编辑
     Qt::ItemFlags f = (Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     if(isInDataRange(index.row(),index.column()))
@@ -345,6 +344,9 @@ Qt::ItemFlags SADataTableModel::flags(const QModelIndex& index) const
         f |= Qt::ItemIsEditable;
     }
     return f;
+#else
+    return (Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+#endif
 }
 ///
 /// \brief 数据区的行号 区别于rowCount是显示区的

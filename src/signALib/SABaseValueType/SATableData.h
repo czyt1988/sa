@@ -2,7 +2,7 @@
 #define SATABLEDATA_H
 
 #include "SAAbstractDatas.h"
-#include "czyQtApp.h"
+#include "SAHashTable.h"
 #include "SADataHeader.h"
 #include "SAVectorVariant.h"
 #include "SAVectorDatas.h"
@@ -24,7 +24,7 @@ template<typename T>
 class SATableData : public SAAbstractDatas
 {
 public:
-    typedef czy::QtApp::QczyHashTable<T> Table;
+    typedef SAHashTable<T> Table;
     SATableData();
     SATableData(const QString& name);
     virtual ~SATableData();

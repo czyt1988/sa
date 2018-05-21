@@ -16,7 +16,6 @@
 #include "SAValueManagerMimeData.h"
 //sa common ui
 #include "SAFigureContainer.h"
-#include "SAChartSerializeHelp.h"
 #define GET_CHART_PTR \
 SAChart2D* chart = current2DPlot();\
 if(nullptr == chart)\

@@ -14,24 +14,6 @@
 namespace czy{
     namespace QtApp{
 	
-		/// 
-		/// \brief 字符串扩展
-		class StringEx
-		{
-		public:
-			StringEx(){}
-			~StringEx(){}
-			static bool is_match_string(const QString& str,const QStringList& key)
-			{
-				for (auto ite = key.begin();ite != key.end();++ite)
-				{
-					if (str.contains(*ite))
-						return true;
-				}
-				return false;
-			}
-		};
-
         class QPointEx : public QPoint
 		    {
 			    public:
@@ -169,7 +151,11 @@ namespace czy{
                     m_rows = (row+1);
                 m_data.insert (qMakePair(row,col),d);
             }
-
+            ///
+            /// \brief 移除数据
+            /// \param row 移除的行
+            /// \param col 移除的列
+            ///
             void removeData(Index row,Index col)
             {
                 int i = m_data.remove(qMakePair(row,col));
@@ -434,4 +420,8 @@ QDataStream &operator>>(QDataStream & in, czy::QtApp::QczyHashTable<T> & item)
     item.setDatas(table);
     return in;
 }
+
+
+
+
 #endif // QWAITCURSOR_H
