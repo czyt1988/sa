@@ -203,13 +203,29 @@ void SAValueTableWidget::onActionToPointFVectorDataTriggered()
 void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
 {
     SADataTableModel* model = getDataModel();
-    if(model->isInDataRange(index.row(),index.column()))
-    {
-        return;
-    }
+//    if(model->isInDataRange(index.row(),index.column()))
+//    {
+//        return;
+//    }
     SAAbstractDatas* data = model->columnToData(index.column());
     if(nullptr == data)
-        return;
+    {
+        //此时有一种情况，就是打开的是表格
+        QList<SAAbstractDatas *> datas = model->getSADataPtrs();
+        if(datas.isEmpty())
+        {
+            saPrint() << "no data in table";
+            return;
+        }
+        const int type = datas.back()->getType();
+        if(type != SA::TableVariant && type != SA::TableDouble)
+        {
+            saPrint() << "current is have data,but paste col is out of data range ,"
+                         "and is not table data,data type is :" << type;
+            return;
+        }
+        data = datas.back();
+    }
 
 
     switch(data->getType())
@@ -557,75 +573,24 @@ void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractData
 
     switch(data->getType())
     {
-    case SA::VectorPoint:
-    {
-        w->setCellTitleText(0,tr("x"));
-        w->setCellTitleText(1,tr("y"));
-        break;
-    }
-    default:
-    {
-        for(int i=0;i<dim2;++i)
+        case SA::VectorPoint:
         {
-            if(i+colStart<model->columnCount())
+            w->setCellTitleText(0,tr("x"));
+            w->setCellTitleText(1,tr("y"));
+            break;
+        }
+        default:
+        {
+            for(int i=0;i<dim2;++i)
             {
-                w->setCellTitleText(i,QString::number(i+1));
+                if(i+colStart<model->columnCount())
+                {
+                    w->setCellTitleText(i,QString::number(i+1));
+                }
             }
         }
     }
-    }
-    /*
-    QPoint leftTop,rightBottom;
-    leftTop.setX(ui->tableView->columnViewportPosition(colStart));
-    leftTop.setY(ui->tableView->rowViewportPosition(r));
-    rightBottom.setX(ui->tableView->columnViewportPosition(colEnd)+ui->tableView->columnWidth(colEnd));
-    rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
-    int tmp = ui->tableView->rowHeight(r);
-    if(tmp < 20 || tmp > 30)
-    {
-        tmp = 20;
-    }
-    leftTop.ry() -= tmp;
-    leftTop = ui->tableView->mapToGlobal(leftTop);
-    rightBottom = ui->tableView->mapToGlobal(rightBottom);
-    leftTop += offset;
-    rightBottom += offset;
-    int buttonAreaWidth = w->getButtonAreaWidth();
-    rightBottom.rx() += buttonAreaWidth;
-    w->setGeometry(QRect(leftTop,rightBottom));
 
-    int dataDim2Size = data->getSize(SA::Dim2);
-    if(dataDim2Size < 1)
-    {
-        dataDim2Size = 1;
-    }
-    w->resizeCells(dataDim2Size);
-
-    switch(data->getType())
-    {
-    case SA::VectorPoint:
-    {
-        w->setCellTitleText(0,tr("x"));
-        w->setCellTitleText(1,tr("y"));
-        w->setCellEditText(0,model->data(model->index(r,colStart)).toString());
-        w->setCellEditText(1,model->data(model->index(r,colStart+1)).toString());
-        w->setCellWidth(0,ui->tableView->columnWidth(colStart));
-        w->setCellWidth(1,ui->tableView->columnWidth(colStart+1));
-        break;
-    }
-    default:
-    {
-        for(int i=0;i<dataDim2Size;++i)
-        {
-            if(i+colStart<model->columnCount())
-            {
-                int colWidth = ui->tableView->columnWidth(i+colStart);
-                w->setCellWidth(i,colWidth);
-            }
-        }
-    }
-    }
-    */
 }
 ///
 /// \brief 表格控件处理按下ctrl + v
@@ -646,6 +611,7 @@ void SAValueTableWidget::onTableViewCtrlV()
         return;
     //获取当前选择的列
     QModelIndexList selColIndexs = selModel->selectedIndexes();
+    saPrint() << "selColIndexs size:" <<selColIndexs.size();
     if(1 == selColIndexs.size())
     {
         //说明只选择了一个单元格
@@ -654,17 +620,36 @@ void SAValueTableWidget::onTableViewCtrlV()
         //获取对应的数据
         SAAbstractDatas* data = model->columnToData(col);
         if(nullptr == data)
-            return;
+        {
+            //此时有一种情况，就是打开的是表格
+            QList<SAAbstractDatas *> datas = model->getSADataPtrs();
+            if(datas.isEmpty())
+            {
+                saPrint() << "no data in table";
+                return;
+            }
+            const int type = datas.back()->getType();
+            if(type != SA::TableVariant && type != SA::TableDouble)
+            {
+                saPrint() << "current is have data,but paste col is out of data range ,"
+                             "and is not table data,data type is :" << type;
+                return;
+            }
+            data = datas.back();
+        }
         //获取这个数据在表格里的起始列和终止列
         int startCol,endCol;
         model->dataColumnRange(data,startCol,endCol);
         if(-1 == startCol || -1 == endCol)
+        {
+            saPrint() << "startCol and endCol invalid: startCol"<<startCol
+                     <<" endCol:" << endCol;
             return;
+        }
         //可以复制执行复制命令
         QScopedPointer<SAValueTableOptPasteCommand> cmd(new SAValueTableOptPasteCommand(data,model,variantClipboardTable,row,col));
         if(cmd->isValid())
         {
-            saPrint() << "success paste value";
             cmd->setText(tr("paste datas"));
             m_undoStack->push(cmd.take());
             model->update();
@@ -678,7 +663,6 @@ void SAValueTableWidget::onTableViewCtrlV()
     {
         waitCursor.release();
         saPrint() << "current no support selection region paste";
-        QMessageBox::warning(this,tr("warning"),tr("please select one table item to start paste"));
         return;
     }
 }

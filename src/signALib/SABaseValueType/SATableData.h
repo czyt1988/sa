@@ -51,8 +51,9 @@ public:
     void removeTableData(uint r,uint c);
     int rowCount() const;
     int columnCount() const{return m_table.columnCount ();}
-    //Table& getTable(){return m_table;}
+    //get
     const Table& getTable() const{return m_table;}
+    Table& getTable(){return m_table;}
     void setTable(const Table& t){m_table = t;}
     //获取表格的尺寸
     QSize getTableSize() const;

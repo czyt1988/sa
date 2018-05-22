@@ -127,21 +127,18 @@ private:
     bool m_isvalid;
     //新数据的区域定位
     int m_startRow;
-    int m_endRow;
     int m_startCol;
-    int m_endCol;
-    //旧数据区域定位
-    int m_oldEndRow;
-    int m_oldStartRow;
     //
     bool m_isOldDirty;
-    typename SATableData<T>::Table m_oldData;
-    typename SATableData<T>::Table m_newData;
     //
     SADataTableModel *m_model;
-    SATableVariant *m_data;
+    SATableData<T> *m_data;
+    //
+    QList<QPair<QPoint,T> > m_tableNewData;
+    QList<QPair<QPoint,T> > m_tableOldData;
+    QList<QPoint> m_willRemovePos;///< 需要删除的索引
 };
-/////////////////////////////////////////////////////////////////
+//////SAValueTableOptPasteCommandPrivateBase///////////////////////////////////////////////////////////
 bool SAValueTableOptPasteCommandPrivateBase::checkVarList(const QList<QVariantList> &varTable, int row, int col)
 {
     if(row < varTable.size())
@@ -170,7 +167,7 @@ QSize SAValueTableOptPasteCommandPrivateBase::getClipboardTableSize(const QList<
 }
 
 
-//////////////////////////////////////////////////////////////////////
+///////SAValueTableOptDoubleVectorPasteCommandPrivate///////////////////////////////////////////////////////////////
 
 SAValueTableOptDoubleVectorPasteCommandPrivate::SAValueTableOptDoubleVectorPasteCommandPrivate(
         SAAbstractDatas *data
@@ -187,6 +184,7 @@ SAValueTableOptDoubleVectorPasteCommandPrivate::SAValueTableOptDoubleVectorPaste
     ,m_oldEndRow(-1)
     ,m_oldStartRow(-1)
 {
+    Q_UNUSED(startCol);
     if(data->getType() == SA::VectorDouble)
     {
         m_data = static_cast<SAVectorDouble*>(data);
@@ -287,7 +285,7 @@ bool SAValueTableOptDoubleVectorPasteCommandPrivate::isValid() const
     return m_isvalid;
 }
 
-/////////////////////////////////////////////////////////////////
+///////SAValueTableOptPointFVectorPasteCommandPrivate//////////////////////////////////////////////////////////
 
 SAValueTableOptPointFVectorPasteCommandPrivate::SAValueTableOptPointFVectorPasteCommandPrivate(
         SAAbstractDatas *data
@@ -469,8 +467,126 @@ bool SAValueTableOptPointFVectorPasteCommandPrivate::isValid() const
     return m_isvalid;
 }
 
+////////SAValueTableOptTablePasteCommandPrivate///////////////////////////////////////////////
 
-///////////////////////////////////////////////
+template<typename T>
+SAValueTableOptTablePasteCommandPrivate<T>::SAValueTableOptTablePasteCommandPrivate(
+        SAAbstractDatas *data
+        , SADataTableModel *model
+        , const QList<QVariantList> &clipboardTextTable
+        , int startRow
+        , int startCol)
+    :SAValueTableOptPasteCommandPrivateBase()
+    ,m_model(model)
+    ,m_isvalid(false)
+    ,m_startRow(startRow)
+    ,m_startCol(startCol)
+{
+    int type = data->getType();
+    if(SA::TableDouble == type || SA::TableVariant == type)
+    {
+        m_data = static_cast<SATableData<T>*>(data);
+        init(&clipboardTextTable);
+    }
+}
+
+template<typename T>
+void SAValueTableOptTablePasteCommandPrivate<T>::init(const QList<QVariantList> *clipboardTable)
+{
+    const int rowCount = clipboardTable->size();
+    const typename SATableData<T>::Table& table = m_data->getTable();
+    for(int r=0;r<rowCount;++r)
+    {
+        const QVariantList& rowValue = clipboardTable->at(r);
+        const int colCount = rowValue.size();
+        for(int c=0;c<colCount;++c)
+        {
+            int rr = r+m_startRow;
+            int rc = c+m_startCol;
+            bool isHaveData = table.isHaveData(rr,rc);
+
+            if(isHaveData)
+            {
+                //先把旧数据提取
+                m_tableOldData.append(qMakePair(QPoint(rr,rc)
+                                                ,table.at(rr,rc)));
+            }
+
+            if(rowValue.at(c).isValid())
+            {
+                //新加入的数据
+                m_tableNewData.append(qMakePair(QPoint(rr,rc)
+                                                ,rowValue.at(c).value<T>()));
+            }
+            else
+            {
+                //剪切板空，但原来有，说明要删除的数据
+                if(isHaveData)
+                {
+                    m_willRemovePos.append(QPoint(rr,rc));
+                }
+            }
+        }
+    }
+    //完成处理
+    if(m_tableNewData.size() > 0 || m_tableOldData.size()>0 || m_willRemovePos.size()>0)
+    {
+        m_isvalid = true;
+    }
+}
+
+template<typename T>
+void SAValueTableOptTablePasteCommandPrivate<T>::redo()
+{
+    if(!m_isvalid)
+        return;
+    typename SATableData<T>::Table& table = m_data->getTable();
+    //! 1先删除
+    for(int i=0;i<m_willRemovePos.size();++i)
+    {
+        const QPoint& pos = m_willRemovePos.at(i);
+        table.removeData(pos.x(),pos.y());
+    }
+    //! 2插入新数据
+    for(int i=0;i<m_tableNewData.size();++i)
+    {
+        const QPair<QPoint,T>& pair = m_tableNewData.at(i);
+        table.setData(pair.first.x(),pair.first.y(),pair.second);
+    }
+    m_isOldDirty = m_data->isDirty();
+    m_data->setDirty(true);
+}
+
+template<typename T>
+void SAValueTableOptTablePasteCommandPrivate<T>::undo()
+{
+    if(!m_isvalid)
+        return;
+    typename SATableData<T>::Table& table = m_data->getTable();
+    //! 1删除数据
+    for(int i=0;i<m_tableNewData.size();++i)
+    {
+        const QPair<QPoint,T>& pair = m_tableNewData.at(i);
+        table.removeData(pair.first.x(),pair.first.y());
+    }
+    //! 2插入旧数据
+    for(int i=0;i<m_tableOldData.size();++i)
+    {
+        const QPair<QPoint,T>& pair = m_tableOldData.at(i);
+        table.setData(pair.first.x(),pair.first.y(),pair.second);
+    }
+    m_data->setDirty(m_isOldDirty);
+}
+
+template<typename T>
+bool SAValueTableOptTablePasteCommandPrivate<T>::isValid() const
+{
+    return m_isvalid;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////SAValueTableOptEditValueCommand/////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 SAValueTableOptEditValueCommand::SAValueTableOptEditValueCommand(SAAbstractDatas *data
                                                                  , SADataTableModel *model
@@ -759,13 +875,19 @@ SAValueTableOptPasteCommand::SAValueTableOptPasteCommand(
         d_ptr = new SAValueTableOptDoubleVectorPasteCommandPrivate(data,model,clipboardTextTable,startRow,startCol);
         break;
     }
-    case SA::VectorPoint:
+    case SA::VectorPoint://VectorPoint在显示上比较特殊
     {
         d_ptr = new SAValueTableOptPointFVectorPasteCommandPrivate(data,model,clipboardTextTable,startRow,startCol);
         break;
     }
     case SA::TableDouble:
     {
+        d_ptr = new SAValueTableOptTablePasteCommandPrivate<double>(data,model,clipboardTextTable,startRow,startCol);
+        break;
+    }
+    case SA::TableVariant:
+    {
+        d_ptr = new SAValueTableOptTablePasteCommandPrivate<QVariant>(data,model,clipboardTextTable,startRow,startCol);
         break;
     }
     default:
