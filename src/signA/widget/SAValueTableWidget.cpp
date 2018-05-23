@@ -203,10 +203,6 @@ void SAValueTableWidget::onActionToPointFVectorDataTriggered()
 void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
 {
     SADataTableModel* model = getDataModel();
-//    if(model->isInDataRange(index.row(),index.column()))
-//    {
-//        return;
-//    }
     SAAbstractDatas* data = model->columnToData(index.column());
     if(nullptr == data)
     {
@@ -611,7 +607,6 @@ void SAValueTableWidget::onTableViewCtrlV()
         return;
     //获取当前选择的列
     QModelIndexList selColIndexs = selModel->selectedIndexes();
-    saPrint() << "selColIndexs size:" <<selColIndexs.size();
     if(1 == selColIndexs.size())
     {
         //说明只选择了一个单元格
@@ -647,7 +642,12 @@ void SAValueTableWidget::onTableViewCtrlV()
             return;
         }
         //可以复制执行复制命令
-        QScopedPointer<SAValueTableOptPasteCommand> cmd(new SAValueTableOptPasteCommand(data,model,variantClipboardTable,row,col));
+        QScopedPointer<SAValueTableOptPasteCommand> cmd(new SAValueTableOptPasteCommand(
+                                                            data
+                                                            ,model
+                                                            ,variantClipboardTable
+                                                            ,row
+                                                            ,col-startCol));
         if(cmd->isValid())
         {
             cmd->setText(tr("paste datas"));

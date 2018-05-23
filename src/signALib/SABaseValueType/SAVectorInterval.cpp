@@ -17,6 +17,24 @@ SAVectorInterval::SAVectorInterval(const QString &name, const QVector<QwtInterva
     setData (getType(),SA_ROLE_DATA_TYPE);
 }
 
+int SAVectorInterval::getDim() const
+{
+    return SA::Dim2;
+}
+
+int SAVectorInterval::getSize(int dim) const
+{
+    if(dim==SA::Dim1)
+    {
+        return this->SAVectorDatas<QwtIntervalSample>::getSize(dim);
+    }
+    else if(SA::Dim2 == dim)
+    {
+        return 3;
+    }
+    return 0;
+}
+
 
 ///
 /// \brief 2维数据 dim1为行。dim2第一列为value第二列为minValue，第三列为maxValue

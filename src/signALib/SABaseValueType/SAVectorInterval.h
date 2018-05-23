@@ -22,7 +22,8 @@ public:
     virtual ~SAVectorInterval(){}
     virtual int getType() const   {return SA::VectorInterval;}
     virtual QString getTypeName() const{return QString("interval Vector");}
-
+    virtual int getDim() const;
+    virtual int getSize(int dim=SA::Dim1) const;
     virtual QVariant getAt (const std::initializer_list<size_t>& index) const;
     virtual QString displayAt(const std::initializer_list<size_t>& index) const;
     virtual void write(QDataStream & out) const;

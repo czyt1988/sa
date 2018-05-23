@@ -318,7 +318,44 @@ QVariant SADataTableModel::horizontalHeaderToDim2(int section, SAAbstractDatas *
     {
         return QVariant();
     }
-    return QString("%1(%2)").arg(d->getName()).arg(*iteSize+1);
+    //特化
+    switch(d->getType())
+    {
+    case SA::VectorPoint:
+        switch(*iteSize)
+        {
+        case 0:return (0 == section) ? tr("x") : tr("%1-x").arg(d->getName());
+        default:return tr("y");
+        }
+        break;
+    case SA::VectorInterval:
+        switch(*iteSize)
+        {
+        case 0:return (0 == section) ? tr("value") : tr("%1-value").arg(d->getName());
+        case 1:return tr("min");
+        default:return tr("max");
+        }
+        break;
+    case SA::VectorOHLC:
+        switch(*iteSize)
+        {
+        case 0:return (0 == section) ? tr("value") : tr("%1-time").arg(d->getName());
+        case 1:return tr("open");
+        case 2:return tr("high");
+        case 3:return tr("low");
+        default:return tr("close");
+        }
+        break;
+    default:
+        break;
+    }
+//对于其他，就显示序号
+    if(0 == *iteSize)
+    {
+        //第一列把变量名也显示，后面只显示序号
+        return QString("%1(%2)").arg(d->getName()).arg(*iteSize+1);
+    }
+    return QString("%1").arg(*iteSize+1);
 }
 
 bool SADataTableModel::setData(const QModelIndex& index, const QVariant& value, int role)

@@ -33,8 +33,11 @@ private:
     SAAbstractDatas* m_data;
     SADataTableModel* m_model;
 };
+
 ///
 /// \brief 数值编辑命令
+///
+///
 ///
 class SA_COMMON_UI_EXPORT SAValueTableOptEditValueCommand : public SAValueTableOptBaseCommand
 {
@@ -90,7 +93,9 @@ private:
 
 
 ///
-/// \brief 处理数据表格的复制&粘贴
+/// \brief 处理数据表格的复制&粘贴命令
+///
+/// 并非所有数据都能支持复制粘贴，因此需要使用\sa isValid 进行判断
 ///
 class SA_COMMON_UI_EXPORT SAValueTableOptPasteCommand : public SAValueTableOptBaseCommand
 {

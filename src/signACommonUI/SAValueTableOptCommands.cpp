@@ -43,7 +43,6 @@ class SAValueTableOptDoubleVectorPasteCommandPrivate : public SAValueTableOptPas
 {
 public:
     SAValueTableOptDoubleVectorPasteCommandPrivate(SAAbstractDatas* data
-                                                   ,SADataTableModel* model
                                                    , const QList<QVariantList>& clipboardTextTable
                                                    , int startRow
                                                    , int startCol);
@@ -64,7 +63,6 @@ private:
     QVector<double> m_oldData;
     QVector<double> m_newData;
     //
-    SADataTableModel *m_model;
     SAVectorDouble *m_data;
     //
 };
@@ -78,7 +76,6 @@ class SAValueTableOptPointFVectorPasteCommandPrivate : public SAValueTableOptPas
 {
 public:
     SAValueTableOptPointFVectorPasteCommandPrivate(SAAbstractDatas* data
-                                                   , SADataTableModel* model
                                                    , const QList<QVariantList>& clipboardTextTable
                                                    , int startRow
                                                    , int startCol);
@@ -101,7 +98,6 @@ private:
     QVector<QPointF> m_oldData;
     QVector<QPointF> m_newData;
     //
-    SADataTableModel *m_model;
     SAVectorPointF *m_data;
 };
 
@@ -115,7 +111,6 @@ class SAValueTableOptTablePasteCommandPrivate : public SAValueTableOptPasteComma
 {
 public:
     SAValueTableOptTablePasteCommandPrivate(SAAbstractDatas* data
-                                                   , SADataTableModel* model
                                                    , const QList<QVariantList>& clipboardTextTable
                                                    , int startRow
                                                    , int startCol);
@@ -131,7 +126,6 @@ private:
     //
     bool m_isOldDirty;
     //
-    SADataTableModel *m_model;
     SATableData<T> *m_data;
     //
     QList<QPair<QPoint,T> > m_tableNewData;
@@ -171,13 +165,11 @@ QSize SAValueTableOptPasteCommandPrivateBase::getClipboardTableSize(const QList<
 
 SAValueTableOptDoubleVectorPasteCommandPrivate::SAValueTableOptDoubleVectorPasteCommandPrivate(
         SAAbstractDatas *data
-        , SADataTableModel *model
         , const QList<QVariantList> &clipboardTextTable
         , int startRow
         , int startCol
         )
     :SAValueTableOptPasteCommandPrivateBase()
-    ,m_model(model)
     ,m_isvalid(false)
     ,m_startRow(startRow)
     ,m_endRow(-1)
@@ -185,6 +177,7 @@ SAValueTableOptDoubleVectorPasteCommandPrivate::SAValueTableOptDoubleVectorPaste
     ,m_oldStartRow(-1)
 {
     Q_UNUSED(startCol);
+
     if(data->getType() == SA::VectorDouble)
     {
         m_data = static_cast<SAVectorDouble*>(data);
@@ -289,12 +282,10 @@ bool SAValueTableOptDoubleVectorPasteCommandPrivate::isValid() const
 
 SAValueTableOptPointFVectorPasteCommandPrivate::SAValueTableOptPointFVectorPasteCommandPrivate(
         SAAbstractDatas *data
-        , SADataTableModel *model
         , const QList<QVariantList> &clipboardTextTable
         , int startRow
         , int startCol)
     :SAValueTableOptPasteCommandPrivateBase()
-    ,m_model(model)
     ,m_isvalid(false)
     ,m_startRow(startRow)
     ,m_endRow(-1)
@@ -303,6 +294,7 @@ SAValueTableOptPointFVectorPasteCommandPrivate::SAValueTableOptPointFVectorPaste
     ,m_oldEndRow(-1)
     ,m_oldStartRow(-1)
 {
+
     QSize tableSize = getClipboardTableSize(clipboardTextTable);
     if(1 == tableSize.width())
     {
@@ -472,12 +464,10 @@ bool SAValueTableOptPointFVectorPasteCommandPrivate::isValid() const
 template<typename T>
 SAValueTableOptTablePasteCommandPrivate<T>::SAValueTableOptTablePasteCommandPrivate(
         SAAbstractDatas *data
-        , SADataTableModel *model
         , const QList<QVariantList> &clipboardTextTable
         , int startRow
         , int startCol)
     :SAValueTableOptPasteCommandPrivateBase()
-    ,m_model(model)
     ,m_isvalid(false)
     ,m_startRow(startRow)
     ,m_startCol(startCol)
@@ -872,22 +862,22 @@ SAValueTableOptPasteCommand::SAValueTableOptPasteCommand(
     {
     case SA::VectorDouble:
     {
-        d_ptr = new SAValueTableOptDoubleVectorPasteCommandPrivate(data,model,clipboardTextTable,startRow,startCol);
+        d_ptr = new SAValueTableOptDoubleVectorPasteCommandPrivate(data,clipboardTextTable,startRow,startCol);
         break;
     }
     case SA::VectorPoint://VectorPoint在显示上比较特殊
     {
-        d_ptr = new SAValueTableOptPointFVectorPasteCommandPrivate(data,model,clipboardTextTable,startRow,startCol);
+        d_ptr = new SAValueTableOptPointFVectorPasteCommandPrivate(data,clipboardTextTable,startRow,startCol);
         break;
     }
     case SA::TableDouble:
     {
-        d_ptr = new SAValueTableOptTablePasteCommandPrivate<double>(data,model,clipboardTextTable,startRow,startCol);
+        d_ptr = new SAValueTableOptTablePasteCommandPrivate<double>(data,clipboardTextTable,startRow,startCol);
         break;
     }
     case SA::TableVariant:
     {
-        d_ptr = new SAValueTableOptTablePasteCommandPrivate<QVariant>(data,model,clipboardTextTable,startRow,startCol);
+        d_ptr = new SAValueTableOptTablePasteCommandPrivate<QVariant>(data,clipboardTextTable,startRow,startCol);
         break;
     }
     default:
