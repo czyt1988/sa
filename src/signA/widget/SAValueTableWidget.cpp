@@ -552,25 +552,6 @@ void SAValueTableWidget::wheelEvent(QWheelEvent *event)
     event->accept();
 }
 
-//void SAValueTableWidget::keyPressEvent(QKeyEvent *e)
-//{
-//    qDebug() << "keyPressEvent:"<<e->modifiers()<<"key:"<<e->key();
-//    qDebug() << "match:" <<e->matches(QKeySequence::Undo);
-//    if((Qt::ControlModifier &e->modifiers()) && Qt::Key_Z == e->key())
-//    {
-//        qDebug() << "ctrl + z";
-//        m_undo->activate(QAction::Trigger);
-//        e->accept();
-//    }
-//    else if((Qt::ControlModifier|Qt::ShiftModifier) ==e->modifiers() && Qt::Key_Z == e->key())
-//    {
-//        qDebug() << "shift + ctrl + z";
-//        m_redo->activate(QAction::Trigger);
-//        e->accept();
-//    }
-
-//    QWidget::keyPressEvent(e);
-//}
 
 QSize SAValueTableWidget::getClipboardTextTable(QList<QVariantList> &res)
 {

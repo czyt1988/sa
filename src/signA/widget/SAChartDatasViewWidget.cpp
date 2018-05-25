@@ -30,9 +30,11 @@ SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     ui->treeView->setModel(m_treeModel);
     m_tableModel = new SAPlotDataModel(this);
     ui->tableView->setModel(m_tableModel);
+
     ui->tableView->onCtrlVFun = [this](){
         this->onCtrlVInTableView();
     };
+
 
     QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
     if(plotLayerVerticalHeader)
@@ -130,6 +132,11 @@ void SAChartDatasViewWidget::onTreeViewCurPlotItemClicked(const QModelIndex &ind
     }
 
     m_tableModel->setPlotItems (items);
+}
+
+void SAChartDatasViewWidget::onTableViewSetData()
+{
+
 }
 ///
 /// \brief SAChartDatasViewWidget::onTableViewDoubleClicked
