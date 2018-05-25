@@ -1,5 +1,11 @@
-﻿#include "SAVectorOHLCDatas.h"
-#include "SADataHeader.h"
+﻿#include "SADataHeader.h"
+#include "SAVectorDatas.h"
+#include "SAVectorInt.h"
+#include "SAVectorDouble.h"
+#include "SAVectorInterval.h"
+#include "SAVectorPointF.h"
+#include "SAVectorVariant.h"
+#include "SAVectorOHLCDatas.h"
 SAVectorOHLCDatas::SAVectorOHLCDatas():SAVectorDatas<QwtOHLCSample>()
 {
     setData (getType(),SA_ROLE_DATA_TYPE);

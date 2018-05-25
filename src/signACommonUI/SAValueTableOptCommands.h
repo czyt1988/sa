@@ -8,6 +8,7 @@
 class SADataTableModel;
 class SAAbstractDatas;
 class SAVectorDouble;
+class SAValueTableOptEditValueCommandPrivateBase;
 class SAValueTableOptPasteCommandPrivateBase;
 ///
 /// \brief sa 数值表格操作类命令基类
@@ -15,9 +16,8 @@ class SAValueTableOptPasteCommandPrivateBase;
 class SA_COMMON_UI_EXPORT SAValueTableOptBaseCommand : public QUndoCommand
 {
 public:
-    SAValueTableOptBaseCommand(SAAbstractDatas* data,SADataTableModel* model,QUndoCommand* par = Q_NULLPTR)
+    SAValueTableOptBaseCommand(SAAbstractDatas* data,QUndoCommand* par = Q_NULLPTR)
         :m_data(data)
-        ,m_model(model)
     {
     }
 
@@ -25,40 +25,38 @@ public:
     {
         return m_data;
     }
-    SADataTableModel* getModel() const
-    {
-        return m_model;
-    }
 private:
     SAAbstractDatas* m_data;
-    SADataTableModel* m_model;
 };
+
+
 
 ///
 /// \brief 数值编辑命令
 ///
-///
+/// 数据编辑可以实现数据的修改，以及数据的添加
 ///
 class SA_COMMON_UI_EXPORT SAValueTableOptEditValueCommand : public SAValueTableOptBaseCommand
 {
 public:
     SAValueTableOptEditValueCommand(SAAbstractDatas* data
-                                      , SADataTableModel* model
-                                       , const QVariant& newData
+                                      , const QVariant& newData
                                        , int row
                                        , int col
                                        , QUndoCommand* par = Q_NULLPTR);
+    SAValueTableOptEditValueCommand(SAAbstractDatas* data
+                                      , const QVariantList& newDatas
+                                       , int row
+                                       , int col
+                                       , QUndoCommand* par = Q_NULLPTR);
+    ~SAValueTableOptEditValueCommand();
     void redo();
     void undo();
+    bool isValid() const;
 private:
-    QVariant m_oldDatas;
-    QVariant m_newDatas;
-    int m_modelRow;
-    int m_modelCol;
-    int m_realRow;
-    int m_realCol;
+    SAValueTableOptEditValueCommandPrivateBase* d_ptr;
 };
-
+#if 0
 ///
 /// \brief 数值追加命令
 ///
@@ -88,7 +86,7 @@ private:
     int m_startCol;
     int m_endCol;
 };
-
+#endif
 ////////////////////////////////////////////////////////////////////
 
 
@@ -101,7 +99,6 @@ class SA_COMMON_UI_EXPORT SAValueTableOptPasteCommand : public SAValueTableOptBa
 {
 public:
     SAValueTableOptPasteCommand(SAAbstractDatas* data
-                                     ,SADataTableModel* model
                                      , const QList<QVariantList>& clipboardTextTable
                                      , int startRow
                                      , int startCol

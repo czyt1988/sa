@@ -2,18 +2,21 @@
 #include "SAData.h"
 #include "SADataTableModel.h"
 #include "SAUIHelper.h"
-
-///
-/// \brief SAValueTableOptPasteCommand的内部处理类，会根据参数类型不一样实例化不一样的内容
-///
-class SAValueTableOptPasteCommandPrivateBase
+#include "SAVectorDatas.h"
+#include "SAVectorInt.h"
+#include "SAVectorDouble.h"
+#include "SAVectorInterval.h"
+#include "SAVectorPointF.h"
+#include "SAVectorVariant.h"
+#include "SAVectorOHLCDatas.h"
+class SAValueTableOptCommandPrivateBase
 {
 public:
-    SAValueTableOptPasteCommandPrivateBase()
+    SAValueTableOptCommandPrivateBase()
     {
 
     }
-    virtual ~SAValueTableOptPasteCommandPrivateBase()
+    virtual ~SAValueTableOptCommandPrivateBase()
     {
 
     }
@@ -28,12 +31,83 @@ public:
         val = v.value<T>();
         return true;
     }
-    virtual void init(const QList<QVariantList>* clipboardTable) = 0;
     virtual void redo() = 0;
     virtual void undo() = 0;
+};
+
+
+///
+/// \brief Edit的内部处理类，会根据参数类型不一样实例化不一样的内容
+///
+class SAValueTableOptEditValueCommandPrivateBase : public SAValueTableOptCommandPrivateBase
+{
+public:
+    SAValueTableOptEditValueCommandPrivateBase(){}
+    virtual ~SAValueTableOptEditValueCommandPrivateBase(){}
+    virtual bool isValid() const = 0;
+};
+
+///
+/// \brief SAValueTableOptPasteCommand的内部处理类，会根据参数类型不一样实例化不一样的内容
+///
+class SAValueTableOptPasteCommandPrivateBase : public SAValueTableOptCommandPrivateBase
+{
+public:
+    SAValueTableOptPasteCommandPrivateBase(){}
+    virtual ~SAValueTableOptPasteCommandPrivateBase(){}
     virtual bool isValid() const = 0;
     static QSize getClipboardTableSize(const QList<QVariantList>& clipboardTable);
 };
+
+
+template<typename T>
+class SAValueTableOptEditVectorValueCommandPrivate : public SAValueTableOptEditValueCommandPrivateBase
+{
+public:
+    SAValueTableOptEditVectorValueCommandPrivate(SAAbstractDatas* data
+                                                 ,const QVariant& val
+                                                 , int startRow
+                                                 , int startCol);
+    ~SAValueTableOptEditVectorValueCommandPrivate();
+    bool isValid() const;
+    void init(const QVariant& val);
+    virtual void redo();
+    virtual void undo();
+private:
+    SAVectorDatas<T>* m_data;
+    bool m_isValid;
+    int m_startRow;
+    int m_startCol;
+    int m_oldSize;
+    int m_newSize;
+    QVariant m_oldVal;
+    QVariant m_newVal;
+};
+
+template<typename T>
+class SAValueTableOptEditVectorMultValuesCommandPrivate : public SAValueTableOptEditValueCommandPrivateBase
+{
+public:
+    SAValueTableOptEditVectorMultValuesCommandPrivate(SAAbstractDatas* data
+                                                 ,const QVariantList& vals
+                                                 , int startRow
+                                                 , int startCol);
+    ~SAValueTableOptEditVectorMultValuesCommandPrivate();
+    bool isValid() const;
+    void init(const QVariantList& val);
+    virtual void redo();
+    virtual void undo();
+private:
+    SAVectorDatas<T>* m_data;
+    bool m_isValid;
+    int m_startRow;
+    int m_startCol;
+    int m_oldSize;
+    int m_newSize;
+    QVariantList m_oldVal;
+    QVariantList m_newVal;
+};
+
 ///
 /// \brief The SAValueTableOptDoubleVectorPasteCommandPrivate class
 ///
@@ -46,7 +120,7 @@ public:
                                                    , const QList<QVariantList>& clipboardTextTable
                                                    , int startRow
                                                    , int startCol);
-    virtual void init(const QList<QVariantList>* clipboardTable);
+    void init(const QList<QVariantList>* clipboardTable);
     virtual void redo();
     virtual void undo();
     virtual bool isValid() const;
@@ -79,7 +153,7 @@ public:
                                                    , const QList<QVariantList>& clipboardTextTable
                                                    , int startRow
                                                    , int startCol);
-    virtual void init(const QList<QVariantList>* clipboardTable);
+    void init(const QList<QVariantList>* clipboardTable);
     virtual void redo();
     virtual void undo();
     virtual bool isValid() const;
@@ -132,8 +206,10 @@ private:
     QList<QPair<QPoint,T> > m_tableOldData;
     QList<QPoint> m_willRemovePos;///< 需要删除的索引
 };
-//////SAValueTableOptPasteCommandPrivateBase///////////////////////////////////////////////////////////
-bool SAValueTableOptPasteCommandPrivateBase::checkVarList(const QList<QVariantList> &varTable, int row, int col)
+
+
+//////SAValueTableOptCommandPrivateBase/////////////////////////////////////////////////////
+bool SAValueTableOptCommandPrivateBase::checkVarList(const QList<QVariantList> &varTable, int row, int col)
 {
     if(row < varTable.size())
     {
@@ -144,6 +220,8 @@ bool SAValueTableOptPasteCommandPrivateBase::checkVarList(const QList<QVariantLi
     }
     return false;
 }
+
+//////SAValueTableOptPasteCommandPrivateBase///////////////////////////////////////////////////////////
 
 QSize SAValueTableOptPasteCommandPrivateBase::getClipboardTableSize(const QList<QVariantList> &clipboardTable)
 {
@@ -162,6 +240,222 @@ QSize SAValueTableOptPasteCommandPrivateBase::getClipboardTableSize(const QList<
 
 
 ///////SAValueTableOptDoubleVectorPasteCommandPrivate///////////////////////////////////////////////////////////////
+
+template<typename T>
+SAValueTableOptEditVectorValueCommandPrivate<T>::SAValueTableOptEditVectorValueCommandPrivate(
+        SAAbstractDatas *data
+        , const QVariant &val
+        , int startRow
+        , int startCol)
+    :SAValueTableOptEditValueCommandPrivateBase()
+    ,m_isValid(false)
+    ,m_data(nullptr)
+    ,m_startRow(startRow)
+    ,m_startCol(startCol)
+{
+    switch(data->getType())
+    {
+    case SA::VectorInt:
+    case SA::VectorDouble:
+    case SA::VectorInterval:
+    case SA::VectorOHLC:
+    case SA::VectorPoint:
+    case SA::VectorVariant:
+    {
+        m_data = static_cast<SAVectorDatas<T>*>(data);
+        init(val);
+        break;
+    }
+    default:
+        break;
+    }
+}
+template<typename T>
+SAValueTableOptEditVectorValueCommandPrivate<T>::~SAValueTableOptEditVectorValueCommandPrivate()
+{
+
+}
+template<typename T>
+bool SAValueTableOptEditVectorValueCommandPrivate<T>::isValid() const
+{
+    return m_isValid;
+}
+
+template<typename T>
+void SAValueTableOptEditVectorValueCommandPrivate<T>::init(const QVariant &val)
+{
+    //获取第二维长度
+    int dim2 = m_data->getSize(SA::Dim2);
+
+    if(m_startCol >= dim2)
+    {
+        if(0 != dim2)
+        {
+            return;
+        }
+        else
+        {
+            //0维度时列数为0也是正确的
+            if(0 != m_startCol)
+            {
+                return;
+            }
+        }
+    }
+    m_newSize = m_oldSize = m_data->getValueDatas().size();
+    if(m_startRow >= m_oldSize)
+    {
+        //说明是插入数据，需要记录新尺寸
+        m_newSize = m_startRow+1;
+    }
+    else
+    {
+        //修改数据就记录原有的值
+        m_oldVal = m_data->getAt({m_startRow,m_startCol});
+    }
+    m_newVal = val;
+    m_isValid = true;
+}
+template<typename T>
+void SAValueTableOptEditVectorValueCommandPrivate<T>::redo()
+{
+    QVector<T> & innerData = m_data->getValueDatas();
+    while(innerData.size() < m_newSize)
+    {
+        //插入默认数据达到一样的长度
+        innerData.append(T());
+    }
+    m_data->setAt(m_newVal,{(size_t)m_startRow,(size_t)m_startCol});
+}
+template<typename T>
+void SAValueTableOptEditVectorValueCommandPrivate<T>::undo()
+{
+    QVector<T> & innerData = m_data->getValueDatas();
+    if(innerData.size() != m_oldSize)
+    {
+        innerData.resize(m_oldSize);
+    }
+    else
+    {
+        m_data->setAt(m_oldVal,{(size_t)m_startRow,(size_t)m_startCol});
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+SAValueTableOptEditVectorMultValuesCommandPrivate<T>::SAValueTableOptEditVectorMultValuesCommandPrivate(
+        SAAbstractDatas *data
+        , const QVariantList &vals
+        , int startRow
+        , int startCol)
+    :SAValueTableOptEditValueCommandPrivateBase()
+    ,m_isValid(false)
+    ,m_data(nullptr)
+    ,m_startRow(startRow)
+    ,m_startCol(startCol)
+{
+    switch(data->getType())
+    {
+    case SA::VectorInt:
+    case SA::VectorDouble:
+    case SA::VectorInterval:
+    case SA::VectorOHLC:
+    case SA::VectorPoint:
+    case SA::VectorVariant:
+    {
+        m_data = static_cast<SAVectorDatas<T>*>(data);
+        init(vals);
+        break;
+    }
+    default:
+        break;
+    }
+}
+template<typename T>
+SAValueTableOptEditVectorMultValuesCommandPrivate<T>::~SAValueTableOptEditVectorMultValuesCommandPrivate()
+{
+
+}
+template<typename T>
+bool SAValueTableOptEditVectorMultValuesCommandPrivate<T>::isValid() const
+{
+    return m_isValid;
+}
+template<typename T>
+void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::init(const QVariantList &val)
+{
+    //获取第二维长度
+    int editColSize = val.size();
+    int dim2 = m_data->getSize(SA::Dim2);
+
+    if(m_startCol >= dim2 || m_startCol+editColSize >= dim2)
+    {
+        if(0 != dim2)
+        {
+            return;
+        }
+        else
+        {
+            //0维度时列数为0也是正确的
+            if(0 != m_startCol || 1 != editColSize)
+            {
+                return;
+            }
+        }
+    }
+    m_newSize = m_oldSize = m_data->getValueDatas().size();
+    if(m_startRow >= m_oldSize)
+    {
+        //说明是插入数据，需要记录新尺寸
+        m_newSize = m_startRow+1;
+    }
+    else
+    {
+        //修改数据就记录原有的值
+        for(int i=0;i<editColSize;++i)
+        {
+            m_oldVal.append(m_data->getAt({m_startRow,m_startCol+i}));
+        }
+    }
+    m_newVal = val;
+    m_isValid = true;
+}
+template<typename T>
+void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::redo()
+{
+    QVector<T> & innerData = m_data->getValueDatas();
+    while(innerData.size() < m_newSize)
+    {
+        //插入默认数据达到一样的长度
+        innerData.append(T());
+    }
+    int editColSize = m_newVal.size();
+    for(int i=0;i<editColSize;++i)
+        m_data->setAt(m_newVal[i],{(size_t)m_startRow,(size_t)m_startCol+i});
+}
+template<typename T>
+void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::undo()
+{
+    QVector<T> & innerData = m_data->getValueDatas();
+    if(innerData.size() != m_oldSize)
+    {
+        innerData.resize(m_oldSize);
+    }
+    else
+    {
+        int editColSize = m_oldVal.size();
+        for(int i=0;i<editColSize;++i)
+            m_data->setAt(m_oldVal[i],{(size_t)m_startRow,(size_t)m_startCol+i});
+    }
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 SAValueTableOptDoubleVectorPasteCommandPrivate::SAValueTableOptDoubleVectorPasteCommandPrivate(
         SAAbstractDatas *data
@@ -578,55 +872,103 @@ bool SAValueTableOptTablePasteCommandPrivate<T>::isValid() const
 //////SAValueTableOptEditValueCommand/////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-SAValueTableOptEditValueCommand::SAValueTableOptEditValueCommand(SAAbstractDatas *data
-                                                                 , SADataTableModel *model
-                                                                 , const QVariant &newData
-                                                                 , int row
-                                                                 , int col
-                                                                 , QUndoCommand *par)
-    :SAValueTableOptBaseCommand(data,model,par)
-    ,m_newDatas(newData)
-    ,m_modelRow(row)
-    ,m_modelCol(col)
-    ,m_realRow(row)
+SAValueTableOptEditValueCommand::SAValueTableOptEditValueCommand(
+        SAAbstractDatas *data
+         , const QVariant &newData
+         , int row
+         , int col
+         , QUndoCommand *par)
+    :SAValueTableOptBaseCommand(data,par)
+    ,d_ptr(nullptr)
 {
-    SAAbstractDatas* d = getDataPtr();
-    if(d->getDim() < SA::Dim2)
+    switch(data->getType())
     {
-        //对于小于2维的直接设置
-        m_oldDatas = d->getAt(row);
-        m_realCol = 0;
+    case SA::VectorInt:
+        d_ptr = new SAValueTableOptEditVectorValueCommandPrivate<int>(data,newData,row,col);
+        break;
+    case SA::VectorDouble:
+        d_ptr = new SAValueTableOptEditVectorValueCommandPrivate<double>(data,newData,row,col);
+        break;
+    case SA::VectorInterval:
+        d_ptr = new SAValueTableOptEditVectorValueCommandPrivate<QwtInterval>(data,newData,row,col);
+        break;
+    case SA::VectorOHLC:
+        d_ptr = new SAValueTableOptEditVectorValueCommandPrivate<QwtOHLCSample>(data,newData,row,col);
+        break;
+    case SA::VectorPoint:
+        d_ptr = new SAValueTableOptEditVectorValueCommandPrivate<QPointF>(data,newData,row,col);
+        break;
+    case SA::VectorVariant:
+        d_ptr = new SAValueTableOptEditVectorValueCommandPrivate<QVariant>(data,newData,row,col);
+        break;
+    default:
+        break;
     }
-    else
+}
+
+SAValueTableOptEditValueCommand::SAValueTableOptEditValueCommand(
+        SAAbstractDatas *data
+        , const QVariantList &newDatas
+        , int row
+        , int col
+        , QUndoCommand *par)
+    :SAValueTableOptBaseCommand(data,par)
+    ,d_ptr(nullptr)
+{
+    switch(data->getType())
     {
-        int colStart,colEnd;
-        model->dataColumnRange(d,colStart,colEnd);
-        m_realCol = col - colStart;
-        m_oldDatas = d->getAt(m_realRow,m_realCol);
+    case SA::VectorInt:
+        d_ptr = new SAValueTableOptEditVectorMultValuesCommandPrivate<int>(data,newDatas,row,col);
+        break;
+    case SA::VectorDouble:
+        d_ptr = new SAValueTableOptEditVectorMultValuesCommandPrivate<double>(data,newDatas,row,col);
+        break;
+    case SA::VectorInterval:
+        d_ptr = new SAValueTableOptEditVectorMultValuesCommandPrivate<QwtInterval>(data,newDatas,row,col);
+        break;
+    case SA::VectorOHLC:
+        d_ptr = new SAValueTableOptEditVectorMultValuesCommandPrivate<QwtOHLCSample>(data,newDatas,row,col);
+        break;
+    case SA::VectorPoint:
+        d_ptr = new SAValueTableOptEditVectorMultValuesCommandPrivate<QPointF>(data,newDatas,row,col);
+        break;
+    case SA::VectorVariant:
+        d_ptr = new SAValueTableOptEditVectorMultValuesCommandPrivate<QVariant>(data,newDatas,row,col);
+        break;
+    default:
+        break;
     }
+}
+
+SAValueTableOptEditValueCommand::~SAValueTableOptEditValueCommand()
+{
+    if(d_ptr)
+        delete d_ptr;
 }
 
 void SAValueTableOptEditValueCommand::redo()
 {
-    SAAbstractDatas* d = getDataPtr();
-    SADataTableModel* m = getModel();
-    if(m_realRow < d->getSize(SA::Dim1) && m_realCol < d->getSize(SA::Dim2))
+    if(d_ptr)
     {
-        d->setAt(m_newDatas,{(size_t)m_realRow,(size_t)m_realCol});
+        return d_ptr->redo();
     }
-    else
-    {
-        qDebug() << "set row or col out of range";
-    }
-    m->update();
 }
 
 void SAValueTableOptEditValueCommand::undo()
 {
-    SAAbstractDatas* d = getDataPtr();
-    SADataTableModel* m = getModel();
-    d->setAt(m_oldDatas,{(size_t)m_realRow,(size_t)m_realCol});
-    m->update();
+    if(d_ptr)
+    {
+        return d_ptr->undo();
+    }
+}
+
+bool SAValueTableOptEditValueCommand::isValid() const
+{
+    if(d_ptr)
+    {
+        return d_ptr->isValid();
+    }
+    return false;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -637,7 +979,7 @@ void SAValueTableOptEditValueCommand::undo()
 
 
 /////////////////////////////////////////////////////////////////////////
-
+#if 0
 SAValueTableOptAppendValueCommand::SAValueTableOptAppendValueCommand(
         SAAbstractDatas *data
        ,SADataTableModel* model
@@ -844,18 +1186,17 @@ void SAValueTableOptAppendValueCommand::popFromTable()
     }
 }
 
-
+#endif
 //===============================================
 
 
 SAValueTableOptPasteCommand::SAValueTableOptPasteCommand(
         SAAbstractDatas *data
-        , SADataTableModel *model
         , const QList<QVariantList> &clipboardTextTable
         , int startRow
         , int startCol
         , QUndoCommand *par)
-    :SAValueTableOptBaseCommand(data,model,par)
+    :SAValueTableOptBaseCommand(data,par)
     ,d_ptr(nullptr)
 {
     switch(data->getType())
@@ -918,5 +1259,7 @@ void SAValueTableOptPasteCommand::undo()
         return d_ptr->undo();
     }
 }
+
+
 
 

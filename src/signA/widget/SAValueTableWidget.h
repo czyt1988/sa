@@ -55,26 +55,10 @@ private slots:
     void onActionToLinerDataTriggered();
     //选择的列转换为点序列
     void onActionToPointFVectorDataTriggered();
-    //表格双击 进入编辑模式
-    void onTableViewDoubleClicked(const QModelIndex& index);
     //数据删除触发的槽
     void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
 private:
     bool setData(int r,int c,const QVariant& v);
-    //插入数据的处理
-    void appendVectorPointFData(SAAbstractDatas *data, const QModelIndex &index);
-    //插入数据的处理
-    void appendVectorDoubleData(SAAbstractDatas *data, const QModelIndex &index);
-    //插入数据的处理
-    void appendVectorIntData(SAAbstractDatas *data, const QModelIndex &index);
-    //插入数据的处理
-    void appendVectorVariantData(SAAbstractDatas *data, const QModelIndex &index);
-    //插入数据的处理
-    void appendTableVariantData(SAAbstractDatas *data, const QModelIndex &index);
-    //插入数据的处理
-    void appendTableDoubleData(SAAbstractDatas *data, const QModelIndex &index);
-    //初始化输入窗口
-    void initCellInputWidget(SACellInputWidget* w, SAAbstractDatas *data, const QModelIndex &index);
     //ctrl + v
     void onTableViewCtrlV();
     //delete 点击

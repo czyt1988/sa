@@ -69,7 +69,6 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
             ,this,&SAValueTableWidget::onActionToLinerDataTriggered);
     connect(ui->actionToPointFVectorData,&QAction::triggered
             ,this,&SAValueTableWidget::onActionToPointFVectorDataTriggered);
-    connect(ui->tableView,&QTableView::doubleClicked,this,&SAValueTableWidget::onTableViewDoubleClicked);
     connect(saValueManager,&SAValueManager::dataRemoved
             ,this,&SAValueTableWidget::onDataRemoved);
 }
@@ -200,67 +199,6 @@ void SAValueTableWidget::onActionToPointFVectorDataTriggered()
     }
 }
 
-void SAValueTableWidget::onTableViewDoubleClicked(const QModelIndex &index)
-{
-    SADataTableModel* model = getDataModel();
-    SAAbstractDatas* data = model->columnToData(index.column());
-    if(nullptr == data)
-    {
-        //此时有一种情况，就是打开的是表格
-        QList<SAAbstractDatas *> datas = model->getSADataPtrs();
-        if(datas.isEmpty())
-        {
-            saPrint() << "no data in table";
-            return;
-        }
-        const int type = datas.back()->getType();
-        if(type != SA::TableVariant && type != SA::TableDouble)
-        {
-            saPrint() << "current is have data,but paste col is out of data range ,"
-                         "and is not table data,data type is :" << type;
-            return;
-        }
-        data = datas.back();
-    }
-
-
-    switch(data->getType())
-    {
-    case SA::VectorPoint:
-    {
-        appendVectorPointFData(data,index);
-        break;
-    }
-    case SA::VectorDouble:
-    {
-        appendVectorDoubleData(data,index);
-        break;
-    }
-    case SA::VectorInt:
-    {
-        appendVectorIntData(data,index);
-        break;
-    }
-    case SA::VectorVariant:
-    {
-        appendVectorVariantData(data,index);
-        break;
-    }
-    case SA::TableVariant:
-    {
-        appendTableVariantData(data,index);
-        break;
-    }
-    case SA::TableDouble:
-    {
-        appendTableDoubleData(data,index);
-        break;
-    }
-    default:
-        return;
- }
-
-}
 ///
 /// \brief 变量删除发出的信号
 /// \param dataBeDeletedPtr
@@ -282,312 +220,55 @@ bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
     SADataTableModel* model = getDataModel();
     SAAbstractDatas* d = model->columnToData(c);
 
-    if(nullptr == d || nullptr == model)
+    if(nullptr == model)
     {
         return false;
     }
-    QUndoCommand* cmd = nullptr;
-    if(r < d->getSize(SA::Dim1) && c < d->getSize(SA::Dim2))
+    if(nullptr == d)
     {
-        qDebug() << "EditValueCommand";
-        cmd = new SAValueTableOptEditValueCommand(d,model,v,r,c);
+        //判断是否是表格
+        QList<SAAbstractDatas*> datas = model->getSADataPtrs();
+        if(datas.isEmpty())
+        {
+            return false;
+        }
+        d = datas.back();
+        switch(d->getType())
+        {
+        case SA::TableDouble:
+        case SA::TableVariant:
+            break;
+        default:
+            return false;
+        }
+    }
+    int startCol,endCol;
+    model->dataColumnRange(d,startCol,endCol);
+    if(startCol < 0 || endCol < 0)
+    {
+        return false;
+    }
+    QScopedPointer<SAValueTableOptEditValueCommand> cmd;
+    cmd.reset(new SAValueTableOptEditValueCommand(d,v,r,c-startCol));
+    if(cmd->isValid())
+    {
         cmd->setText(tr("[\"%1\"]set data").arg(d->getName()));
     }
+    else
+    {
+        cmd.reset(nullptr);
+    }
+
 
     if(cmd)
     {
-        m_undoStack->push(cmd);
+        m_undoStack->push(cmd.take());
+        model->update();
         return true;
     }
     return false;
 }
-///
-/// \brief 在VectorPointF插入新数据
-/// \param data
-/// \param index
-///
-void SAValueTableWidget::appendVectorPointFData(SAAbstractDatas* data,const QModelIndex &index)
-{
-    int r = index.row();
-    int c = index.column();
-    if(r != data->getSize(SA::Dim1))
-    {
-        return;
-    }
-    SADataTableModel* model = getDataModel();
-    SACellInputWidget cellInput;
-    initCellInputWidget(&cellInput,data,index);
-    cellInput.exec();
-    if(!cellInput.isAcceptInput())
-    {
-        return;
-    }
-    bool isOK = false;
-    double x = cellInput.getCellEditText(0).toDouble(&isOK);
-    if(!isOK)
-    {
-        return;
-    }
-    double y = cellInput.getCellEditText(1).toDouble(&isOK);
-    if(!isOK)
-    {
-        return;
-    }
-    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
-                ,model
-                ,{x,y}
-                ,r
-                ,c
-                );
-    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
-    m_undoStack->push(cmd);
-}
-///
-/// \brief 在VectorDouble插入新数据
-/// \param data
-/// \param index
-///
-void SAValueTableWidget::appendVectorDoubleData(SAAbstractDatas *data, const QModelIndex &index)
-{
-    int r = index.row();
-    int c = index.column();
-    if(r != data->getSize(SA::Dim1))
-    {
-        return;
-    }
-    SADataTableModel* model = getDataModel();
-    SACellInputWidget cellInput;
-    initCellInputWidget(&cellInput,data,index);
-    cellInput.exec();
-    if(!cellInput.isAcceptInput())
-    {
-        return;
-    }
-    bool isOK = false;
-    double d = cellInput.getCellEditText(0).toDouble(&isOK);
-    if(!isOK)
-    {
-        return;
-    }
-    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
-                ,model
-                ,{d}
-                ,r
-                ,c
-                );
-    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
-    m_undoStack->push(cmd);
-}
-///
-/// \brief 在VectorInt插入新数据
-/// \param data
-/// \param index
-///
-void SAValueTableWidget::appendVectorIntData(SAAbstractDatas *data, const QModelIndex &index)
-{
-    int r = index.row();
-    int c = index.column();
-    if(r != data->getSize(SA::Dim1))
-    {
-        return;
-    }
-    SADataTableModel* model = getDataModel();
-    SACellInputWidget cellInput;
-    initCellInputWidget(&cellInput,data,index);
-    cellInput.exec();
-    if(!cellInput.isAcceptInput())
-    {
-        return;
-    }
-    bool isOK = false;
-    int d = cellInput.getCellEditText(0).toInt(&isOK);
-    if(!isOK)
-    {
-        return;
-    }
-    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
-                ,model
-                ,{d}
-                ,r
-                ,c
-                );
-    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
-    m_undoStack->push(cmd);
-}
-///
-/// \brief 在VectorVariant插入新数据
-/// \param data
-/// \param index
-///
-void SAValueTableWidget::appendVectorVariantData(SAAbstractDatas *data, const QModelIndex &index)
-{
-    int r = index.row();
-    int c = index.column();
-    if(r != data->getSize(SA::Dim1))
-    {
-        return;
-    }
-    SADataTableModel* model = getDataModel();
-    SACellInputWidget cellInput;
-    initCellInputWidget(&cellInput,data,index);
-    cellInput.exec();
-    if(!cellInput.isAcceptInput())
-    {
-        return;
-    }
-    QString str = cellInput.getCellEditText(0);
-    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
-                ,model
-                ,{str}
-                ,r
-                ,c
-                );
-    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
-    m_undoStack->push(cmd);
-}
 
-void SAValueTableWidget::appendTableVariantData(SAAbstractDatas *data, const QModelIndex &index)
-{
-    int r = index.row();
-    int c = index.column();
-    if(r != data->getSize(SA::Dim1))
-    {
-        return;
-    }
-    SADataTableModel* model = getDataModel();
-    SACellInputWidget cellInput;
-    initCellInputWidget(&cellInput,data,index);
-    cellInput.exec();
-    if(!cellInput.isAcceptInput())
-    {
-        return;
-    }
-    QString str = cellInput.getCellEditText(0);
-    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
-                ,model
-                ,{str}
-                ,r
-                ,c
-                );
-    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
-    m_undoStack->push(cmd);
-}
-
-void SAValueTableWidget::appendTableDoubleData(SAAbstractDatas *data, const QModelIndex &index)
-{
-    int r = index.row();
-    int c = index.column();
-    if(r != data->getSize(SA::Dim1))
-    {
-        return;
-    }
-    SADataTableModel* model = getDataModel();
-    SACellInputWidget cellInput;
-    initCellInputWidget(&cellInput,data,index);
-    cellInput.exec();
-    if(!cellInput.isAcceptInput())
-    {
-        return;
-    }
-    bool isOK = false;
-    int d = cellInput.getCellEditText(0).toInt(&isOK);
-    if(!isOK)
-    {
-        return;
-    }
-
-    SAValueTableOptAppendValueCommand* cmd = new SAValueTableOptAppendValueCommand(data
-                ,model
-                ,{d}
-                ,r
-                ,c
-                );
-    cmd->setText(tr("[\"%1\"] append").arg(data->getName()));
-    m_undoStack->push(cmd);
-}
-
-void SAValueTableWidget::initCellInputWidget(SACellInputWidget *w,SAAbstractDatas* data,const QModelIndex &index)
-{
-    int r = index.row();
-    int c = index.column();
-    SADataTableModel* model = getDataModel();
-    QPoint offset = tableHeaderPositionOffset();
-    int colStart=-1,colEnd=-1;
-    model->dataColumnRange(data,colStart,colEnd);
-    if(-1 == colStart || -1 == colEnd)
-    {
-        return;
-    }
-    //特殊的处理
-    if(SA::TableVariant == data->getType() || SA::TableDouble == data->getType())
-    {
-        QPoint leftTop,rightBottom;
-        leftTop.setX(ui->tableView->columnViewportPosition(c));
-        leftTop.setY(ui->tableView->rowViewportPosition(r));
-        rightBottom.setX(leftTop.x()+ui->tableView->columnWidth(c));
-        rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
-        int tmp = ui->tableView->rowHeight(r);
-        if(tmp < 20 || tmp > 30)
-        {
-            tmp = 20;
-        }
-        leftTop.ry() -= tmp;
-        leftTop = ui->tableView->mapToGlobal(leftTop);
-        rightBottom = ui->tableView->mapToGlobal(rightBottom);
-        leftTop += offset;
-        rightBottom += offset;
-        int buttonAreaWidth = w->getButtonAreaWidth();
-        rightBottom.rx() += buttonAreaWidth;
-        w->setGeometry(QRect(leftTop,rightBottom));
-        w->resizeCells(1);
-        return;
-    }
-    QPoint leftTop,rightBottom;
-    leftTop.setX(ui->tableView->columnViewportPosition(colStart));
-    leftTop.setY(ui->tableView->rowViewportPosition(r));
-    rightBottom.setX(ui->tableView->columnViewportPosition(colEnd)+ui->tableView->columnWidth(colEnd));
-    rightBottom.setY(leftTop.y()+ui->tableView->rowHeight(r));
-    int tmp = ui->tableView->rowHeight(r);
-    if(tmp < 20 || tmp > 30)
-    {
-        tmp = 20;
-    }
-    leftTop.ry() -= tmp;
-    leftTop = ui->tableView->mapToGlobal(leftTop);
-    rightBottom = ui->tableView->mapToGlobal(rightBottom);
-    leftTop += offset;
-    rightBottom += offset;
-    int buttonAreaWidth = w->getButtonAreaWidth();
-    rightBottom.rx() += buttonAreaWidth;
-    w->setGeometry(QRect(leftTop,rightBottom));
-    const int dim2 = colEnd - colStart + 1;
-    w->resizeCells(dim2);
-    for(int i=0;i<dim2;++i)
-    {
-        w->setCellWidth(i,ui->tableView->columnWidth(colStart+i));
-    }
-
-    switch(data->getType())
-    {
-        case SA::VectorPoint:
-        {
-            w->setCellTitleText(0,tr("x"));
-            w->setCellTitleText(1,tr("y"));
-            break;
-        }
-        default:
-        {
-            for(int i=0;i<dim2;++i)
-            {
-                if(i+colStart<model->columnCount())
-                {
-                    w->setCellTitleText(i,QString::number(i+1));
-                }
-            }
-        }
-    }
-
-}
 ///
 /// \brief 表格控件处理按下ctrl + v
 ///
@@ -644,7 +325,6 @@ void SAValueTableWidget::onTableViewCtrlV()
         //可以复制执行复制命令
         QScopedPointer<SAValueTableOptPasteCommand> cmd(new SAValueTableOptPasteCommand(
                                                             data
-                                                            ,model
                                                             ,variantClipboardTable
                                                             ,row
                                                             ,col-startCol));
