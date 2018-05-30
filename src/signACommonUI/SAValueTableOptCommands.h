@@ -13,10 +13,10 @@ class SAValueTableOptPasteCommandPrivateBase;
 ///
 /// \brief sa 数值表格操作类命令基类
 ///
-class SA_COMMON_UI_EXPORT SAValueTableOptBaseCommand : public QUndoCommand
+class SA_COMMON_UI_EXPORT SAAbstractValueTableOptCommand : public QUndoCommand
 {
 public:
-    SAValueTableOptBaseCommand(SAAbstractDatas* data,QUndoCommand* par = Q_NULLPTR)
+    SAAbstractValueTableOptCommand(SAAbstractDatas* data,QUndoCommand* par = Q_NULLPTR)
         :m_data(data)
     {
     }
@@ -36,7 +36,7 @@ private:
 ///
 /// 数据编辑可以实现数据的修改，以及数据的添加，使用\sa isValid 进行判断
 ///
-class SA_COMMON_UI_EXPORT SAValueTableOptEditValueCommand : public SAValueTableOptBaseCommand
+class SA_COMMON_UI_EXPORT SAValueTableOptEditValueCommand : public SAAbstractValueTableOptCommand
 {
 public:
     SAValueTableOptEditValueCommand(SAAbstractDatas* data
@@ -64,7 +64,7 @@ private:
 ///
 /// 并非所有数据都能支持复制粘贴，因此需要使用\sa isValid 进行判断
 ///
-class SA_COMMON_UI_EXPORT SAValueTableOptPasteCommand : public SAValueTableOptBaseCommand
+class SA_COMMON_UI_EXPORT SAValueTableOptPasteCommand : public SAAbstractValueTableOptCommand
 {
 public:
     SAValueTableOptPasteCommand(SAAbstractDatas* data
