@@ -225,13 +225,13 @@ private:
 };
 
 template <typename T>
-bool SAHashTable<T>::isHaveData(SAHashTable<T>::Index r, SAHashTable<T>::Index c) const
+bool SAHashTable<T>::isHaveData(typename SAHashTable<T>::Index r,typename SAHashTable<T>::Index c) const
 {
     return (m_data.find(qMakePair(r,c)) != m_data.end ());
 }
 
 template <typename T>
-void SAHashTable<T>::setData(SAHashTable<T>::Index row, SAHashTable<T>::Index col, const T &d)
+void SAHashTable<T>::setData(typename SAHashTable<T>::Index row,typename SAHashTable<T>::Index col, const T &d)
 {
     if(col >= m_columns )
         m_columns = (col+1);
@@ -241,7 +241,7 @@ void SAHashTable<T>::setData(SAHashTable<T>::Index row, SAHashTable<T>::Index co
 }
 
 template <typename T>
-void SAHashTable<T>::removeData(SAHashTable<T>::Index row, SAHashTable<T>::Index col)
+void SAHashTable<T>::removeData(typename SAHashTable<T>::Index row,typename SAHashTable<T>::Index col)
 {
     int i = m_data.remove(qMakePair(row,col));
     if(i <= 0)
@@ -266,13 +266,13 @@ void SAHashTable<T>::removeData(SAHashTable<T>::Index row, SAHashTable<T>::Index
 }
 
 template <typename T>
-const T SAHashTable<T>::at(SAHashTable<T>::Index r, SAHashTable<T>::Index c) const
+const T SAHashTable<T>::at(typename SAHashTable<T>::Index r,typename SAHashTable<T>::Index c) const
 {
     return m_data[qMakePair(r,c)];
 }
 
 template <typename T>
-T &SAHashTable<T>::at(SAHashTable<T>::Index r, SAHashTable<T>::Index c)
+T &SAHashTable<T>::at(typename SAHashTable<T>::Index r,typename SAHashTable<T>::Index c)
 {
     return m_data[qMakePair(r,c)];
 }
@@ -293,7 +293,7 @@ typename SAHashTable<T>::Index SAHashTable<T>::appendRow(const QList<T> &rows)
 }
 
 template <typename T>
-typename SAHashTable<T>::Index SAHashTable<T>::setRowDatas(SAHashTable<T>::Index row, SAHashTable<T>::Index col, const QList<T> &rows)
+typename SAHashTable<T>::Index SAHashTable<T>::setRowDatas(typename SAHashTable<T>::Index row,typename SAHashTable<T>::Index col, const QList<T> &rows)
 {
     int size = rows.size ();
     Index endCol = col + size-1;
@@ -309,7 +309,7 @@ typename SAHashTable<T>::Index SAHashTable<T>::setRowDatas(SAHashTable<T>::Index
 }
 
 template <typename T>
-typename SAHashTable<T>::Index SAHashTable<T>::setColumnDatas(SAHashTable<T>::Index row, SAHashTable<T>::Index col, const QList<T> &cols)
+typename SAHashTable<T>::Index SAHashTable<T>::setColumnDatas(typename SAHashTable<T>::Index row,typename SAHashTable<T>::Index col, const QList<T> &cols)
 {
     int size = cols.size ();
     Index endrow = row + size-1;
@@ -350,7 +350,7 @@ void SAHashTable<T>::clear()
 }
 
 template <typename T>
-QList<T> SAHashTable<T>::getColumn(SAHashTable<T>::Index index, bool ifGetNullData) const
+QList<T> SAHashTable<T>::getColumn(typename SAHashTable<T>::Index index, bool ifGetNullData) const
 {
     QList<T> res;
     if(index >= m_columns)
@@ -375,7 +375,7 @@ QList<T> SAHashTable<T>::getColumn(SAHashTable<T>::Index index, bool ifGetNullDa
 }
 
 template <typename T>
-QList<T> SAHashTable<T>::getRow(SAHashTable<T>::Index index, bool ifGetNullData) const
+QList<T> SAHashTable<T>::getRow(typename SAHashTable<T>::Index index, bool ifGetNullData) const
 {
     QList<T> res;
     if(index >= m_rows)
@@ -400,7 +400,7 @@ QList<T> SAHashTable<T>::getRow(SAHashTable<T>::Index index, bool ifGetNullData)
 }
 
 template <typename T>
-void SAHashTable<T>::setDatas(const SAHashTable<T>::Table &datas)
+void SAHashTable<T>::setDatas(const typename SAHashTable<T>::Table &datas)
 {
     typename Table::const_iterator i = datas.begin();
     typename Table::const_iterator end = datas.end();

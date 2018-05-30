@@ -399,7 +399,7 @@ void SAValueTableOptEditVectorValueCommandPrivate<T>::init(const QVariant &val)
     else
     {
         //修改数据就记录原有的值
-        m_oldVal = m_data->getAt({m_startRow,m_startCol});
+        m_oldVal = m_data->getAt({(unsigned int)m_startRow,(unsigned int)m_startCol});
     }
     m_newVal = val;
     m_isValid = true;
@@ -505,7 +505,7 @@ void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::init(const QVariantLi
         //修改数据就记录原有的值
         for(int i=0;i<editColSize;++i)
         {
-            m_oldVal.append(m_data->getAt({m_startRow,m_startCol+i}));
+            m_oldVal.append(m_data->getAt({(unsigned int)m_startRow,(unsigned int)(m_startCol+i)}));
         }
     }
     m_newVal = val;

@@ -6,9 +6,9 @@
 #include "czyMath_Fit.h"
 #include "SATableVariant.h"
 #include "SAValueManager.h"
-
+#include <QCoreApplication>
 #define TR(str)\
-    QApplication::translate("sa_fun_fit", str, 0)
+    QCoreApplication::translate("sa_fun_fit", str, 0)
 
 std::tuple<std::shared_ptr<SAVectorDouble>, std::shared_ptr<SATableVariant> >
 saFun::polyfit(const SAAbstractDatas *wave, int n)

@@ -8,10 +8,12 @@
 #include "SAVectorDouble.h"
 #include "SAVariantDatas.h"
 #include "SATableVariant.h"
-
+#include <QCoreApplication>
 #include "SAVectorInterval.h"
+#include "SADataConver.h"
+
 #define TR(str)\
-    QApplication::translate("sa_fun_num", str, 0)
+    QCoreApplication::translate("sa_fun_num", str, 0)
 
 
 ///
@@ -22,7 +24,7 @@
 std::shared_ptr<SAVariantDatas> saFun::mean(SAAbstractDatas* data)
 {
     QVector<double> vd;
-    if(!SAAbstractDatas::converToDoubleVector(data,vd))
+    if(!SADataConver::converToDoubleVector(data,vd))
     {
         setErrorString(TR("data can not conver to double vector"));
         return false;
@@ -39,7 +41,7 @@ std::shared_ptr<SAVariantDatas> saFun::mean(SAAbstractDatas* data)
 std::shared_ptr<SAVariantDatas> saFun::sum(SAAbstractDatas* data)
 {
     QVector<double> vd;
-    if(!SAAbstractDatas::converToDoubleVector(data,vd))
+    if(!SADataConver::converToDoubleVector(data,vd))
     {
         setErrorString( TR("data can not conver to double vector"));
         return nullptr;
@@ -110,7 +112,7 @@ std::shared_ptr<SAAbstractDatas> saFun::division(SAAbstractDatas* a,SAAbstractDa
 std::shared_ptr<SAVectorDouble> saFun::diff(SAAbstractDatas *data, unsigned diffCount)
 {
     QVector<double> waveData;
-    if(!SAAbstractDatas::converToDoubleVector(data,waveData))
+    if(!SADataConver::converToDoubleVector(data,waveData))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return nullptr;

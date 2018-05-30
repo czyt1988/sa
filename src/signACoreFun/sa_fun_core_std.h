@@ -8,7 +8,7 @@
 #include "SAValueManager.h"
 #include "SAVectorDouble.h"
 #include "SAVariantDatas.h"
-
+#include "SADataConver.h"
 
 ///
 /// \brief transform 类似std::transform
@@ -30,11 +30,11 @@ SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> double_transform(SAAbstract
             return nullptr;
         }
         QVector<double> va,vb;
-        if(!SAAbstractDatas::converToDoubleVector(a,va))
+        if(!SADataConver::converToDoubleVector(a,va))
         {
             return nullptr;
         }
-        if(!SAAbstractDatas::converToDoubleVector(b,vb))
+        if(!SADataConver::converToDoubleVector(b,vb))
         {
             return nullptr;
         }
@@ -50,7 +50,7 @@ SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> double_transform(SAAbstract
     else if(SA::Dim1 == a->getDim() && SA::Dim0 == b->getDim())
     {
         QVector<double> va;
-        if(!SAAbstractDatas::converToDoubleVector(a,va))
+        if(!SADataConver::converToDoubleVector(a,va))
         {
             return nullptr;
         }
@@ -75,7 +75,7 @@ SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> double_transform(SAAbstract
     else if(SA::Dim0 == a->getDim() && SA::Dim1 == b->getDim())
     {
         QVector<double> vb;
-        if(!SAAbstractDatas::converToDoubleVector(b,vb))
+        if(!SADataConver::converToDoubleVector(b,vb))
         {
             return nullptr;
         }

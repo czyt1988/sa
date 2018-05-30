@@ -4,10 +4,10 @@
 #include "czyMath_Smooth.h"
 #include "SAValueManager.h"
 #include "czyAlgorithm.h"
-
+#include <QCoreApplication>
 
 #define TR(str)\
-    QApplication::translate("sa_fun_preproc", str, 0)
+    QCoreApplication::translate("sa_fun_preproc", str, 0)
 
 
 

@@ -18,9 +18,6 @@ QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
-OTHER_FILES += readme.md\
-    logo.rc
-
 DEFINES -= SA_TDMS
 
 
@@ -73,7 +70,10 @@ FORMS    += \
     SAInformationStatusWidget.ui
 
 #INCLUDEPATH += tmp/moc/release_shared
-
+OTHER_FILES += \
+    readme.md\
+    $$PWD/../readme.md\
+    logo.rc
 
 RESOURCES += \
     icons.qrc \

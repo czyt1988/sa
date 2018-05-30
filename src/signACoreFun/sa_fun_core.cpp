@@ -6,15 +6,15 @@
 #include "SAAbstractDatas.h"
 #include "SAVectorDouble.h"
 #include "SAVariantDatas.h"
-
-
+#include "SADataConver.h"
+#include <QCoreApplication>
 ///
 /// \brief 激记录错误信息
 ///
 static QString s_error_info = QString("");
 
 #define TR(str)\
-    QApplication::translate("sa_fun_core", str, 0)
+    QCoreApplication::translate("sa_fun_core", str, 0)
 
 #if 0
 #ifndef FUNCTION_DEFINE
@@ -393,7 +393,7 @@ FUNCTION_DEFINE(powerSpectrum)//bool powerSpectrum(QList<SAAbstractDatas *> &inp
 ///
 bool saFun::getDoubleVector(const SAAbstractDatas* input,QVector<double>& vd)
 {
-    if(!SAAbstractDatas::converToDoubleVector(input,vd))
+    if(!SADataConver::converToDoubleVector(input,vd))
     {
         setErrorString(TR("can not conver %1 to vector").arg(input->getName()));
         return false;
@@ -408,7 +408,7 @@ bool saFun::getDoubleVector(const SAAbstractDatas* input,QVector<double>& vd)
 ///
 bool saFun::getPointFVector(const SAAbstractDatas *input, QVector<QPointF> &vd)
 {
-    if(!SAAbstractDatas::converToPointFVector(input,vd))
+    if(!SADataConver::converToPointFVector(input,vd))
     {
         setErrorString(TR("can not conver %1 to points vector").arg(input->getName()));
         return false;

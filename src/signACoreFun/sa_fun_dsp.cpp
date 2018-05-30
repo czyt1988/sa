@@ -4,12 +4,13 @@
 #include <iterator>
 #include "SAValueManager.h"
 #include "SAAbstractDatas.h"
+#include "SADataConver.h"
 #include "SAVectorDouble.h"
 #include "SAVariantDatas.h"
 #include <algorithm>
-
+#include <QCoreApplication>
 #define TR(str)\
-    QApplication::translate("sa_fun_dsp", str, 0)
+    QCoreApplication::translate("sa_fun_dsp", str, 0)
 
 std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::WindowType window);
 std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF *wave, czy::Math::DSP::WindowType window);
@@ -43,7 +44,7 @@ std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(const SAAbstractDatas *wav
         std::shared_ptr<SAVectorPointF> res = _detrendDirect(static_cast<const SAVectorPointF*>(wave));
         return SAValueManager::castPointToBase(res);
     }
-    else if(SAAbstractDatas::converToDoubleVector(wave,waveData))
+    else if(SADataConver::converToDoubleVector(wave,waveData))
     {
         std::shared_ptr<SAVectorDouble> res = _detrendDirect(waveData);
         if(res)
@@ -88,7 +89,7 @@ saFun::spectrum(const SAAbstractDatas *wave
         const SAVectorPointF* pf = static_cast<const SAVectorPointF*>(wave);
         pf->getYs(waveArr);
     }
-    else if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
+    else if(!SADataConver::converToDoubleVector(wave,waveArr))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return std::make_tuple(nullptr,nullptr);
@@ -155,7 +156,7 @@ saFun::powerSpectrum(const SAAbstractDatas *wave
         const SAVectorPointF* pf = static_cast<const SAVectorPointF*>(wave);
         pf->getYs(waveArr);
     }
-    else if(!SAAbstractDatas::converToDoubleVector(wave,waveArr))
+    else if(!SADataConver::converToDoubleVector(wave,waveArr))
     {
         setErrorString(TR("can not conver data to double vector!"));
         return std::make_tuple(nullptr,nullptr);
@@ -233,7 +234,7 @@ std::shared_ptr<SAAbstractDatas> saFun::setWindow(const SAAbstractDatas *wave, c
         std::shared_ptr<SAVectorPointF> res = _setWindow(static_cast<const SAVectorPointF*>(wave),window);
         return SAValueManager::castPointToBase(res);
     }
-    else if(SAAbstractDatas::converToDoubleVector(wave,waveArr))
+    else if(SADataConver::converToDoubleVector(wave,waveArr))
     {
         if(waveArr.size() <= 0)
         {
