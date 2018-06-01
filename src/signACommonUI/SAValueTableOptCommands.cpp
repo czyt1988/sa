@@ -133,19 +133,26 @@ private:
     QVariantList m_newVal;
 };
 
-template<typename T>
+///
+/// \brief The SAValueTableOptVectorPasteCommandPrivate class
+///
+/// 处理Vector的复制粘贴
+///
+template<typename T,typename FunMakeT>
 class SAValueTableOptVectorPasteCommandPrivate : public SAValueTableOptPasteCommandPrivateBase
 {
 public:
     SAValueTableOptVectorPasteCommandPrivate(SAAbstractDatas* data
-                                                   , const QList<QVariantList>& clipboardTextTable
-                                                   , int startRow
-                                                   , int startCol);
-    virtual void init(const QList<QVariantList>* clipboardTable);
+                                            , const QList<QVariantList>& clipboardTextTable
+                                            , int startRow
+                                            , int startCol
+                                            ,FunMakeT fp);
+    void init(const QList<QVariantList>* clipboardTable);
     virtual void redo();
     virtual void undo();
     virtual bool isValid() const;
 private:
+    FunMakeT m_funPtr;///< void fun(T& data,int col,QVariant val)
     bool m_isvalid;
     //新数据的区域定位
     int m_startRow;
@@ -154,78 +161,14 @@ private:
     bool m_isOldDirty;
     //
     SAVectorDatas<T> *m_data;
-    //
-    QVector<T> m_newData;
-    QVector<T> m_oldData;
-    QVector<QPoint> m_willRemovePos;///< 需要删除的索引
+    //索引，旧值，新值
+    QVector<std::tuple<int,T,T> > m_replaceInfos;
+    QVector<std::pair<int,T> > m_appendInfos;
+    int m_oldDataSize;///< 记录原来的长度
+    int m_newDataSize;///< 记录原来的长度
 };
 
-///
-/// \brief The SAValueTableOptDoubleVectorPasteCommandPrivate class
-///
-/// 处理DoubleVector的复制粘贴
-///
-class SAValueTableOptDoubleVectorPasteCommandPrivate : public SAValueTableOptPasteCommandPrivateBase
-{
-public:
-    SAValueTableOptDoubleVectorPasteCommandPrivate(SAAbstractDatas* data
-                                                   , const QList<QVariantList>& clipboardTextTable
-                                                   , int startRow
-                                                   , int startCol);
-    void init(const QList<QVariantList>* clipboardTable);
-    virtual void redo();
-    virtual void undo();
-    virtual bool isValid() const;
-private:
-    bool m_isvalid;
-    //新数据的区域定位
-    int m_startRow;
-    int m_endRow;
-    //旧数据区域定位
-    int m_oldEndRow;
-    int m_oldStartRow;
-    //
-    bool m_isOldDirty;
-    QVector<double> m_oldData;
-    QVector<double> m_newData;
-    //
-    SAVectorDouble *m_data;
-    //
-};
 
-///
-/// \brief The SAValueTableOptDoubleVectorPasteCommandPrivate class
-///
-/// 处理DoubleVector的复制粘贴
-///
-class SAValueTableOptPointFVectorPasteCommandPrivate : public SAValueTableOptPasteCommandPrivateBase
-{
-public:
-    SAValueTableOptPointFVectorPasteCommandPrivate(SAAbstractDatas* data
-                                                   , const QList<QVariantList>& clipboardTextTable
-                                                   , int startRow
-                                                   , int startCol);
-    void init(const QList<QVariantList>* clipboardTable);
-    virtual void redo();
-    virtual void undo();
-    virtual bool isValid() const;
-private:
-    bool m_isvalid;
-    //新数据的区域定位
-    int m_startRow;
-    int m_endRow;
-    int m_startCol;
-    int m_endCol;
-    //旧数据区域定位
-    int m_oldEndRow;
-    int m_oldStartRow;
-    //
-    bool m_isOldDirty;
-    QVector<QPointF> m_oldData;
-    QVector<QPointF> m_newData;
-    //
-    SAVectorPointF *m_data;
-};
 
 ///
 /// \brief The SAValueTableOptTablePasteCommandPrivate class
@@ -569,302 +512,126 @@ void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::undo()
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-SAValueTableOptDoubleVectorPasteCommandPrivate::SAValueTableOptDoubleVectorPasteCommandPrivate(
+////////SAValueTableOptVectorPasteCommandPrivate/////////////////////////////////////////////////
+template<typename T,typename FunMakeT>
+SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::SAValueTableOptVectorPasteCommandPrivate(
         SAAbstractDatas *data
         , const QList<QVariantList> &clipboardTextTable
         , int startRow
         , int startCol
-        )
+        , FunMakeT fp)
     :SAValueTableOptPasteCommandPrivateBase()
-    ,m_isvalid(false)
     ,m_startRow(startRow)
-    ,m_endRow(-1)
-    ,m_oldEndRow(-1)
-    ,m_oldStartRow(-1)
-{
-    Q_UNUSED(startCol);
-
-    if(data->getType() == SA::VectorDouble)
-    {
-        m_data = static_cast<SAVectorDouble*>(data);
-        init(&clipboardTextTable);
-    }
-}
-
-void SAValueTableOptDoubleVectorPasteCommandPrivate::init(const QList<QVariantList>* clipboardTable)
-{
-    const int clipSize = clipboardTable->size();
-    m_newData.reserve(clipSize);
-    for(int i=0;i<clipSize;++i)
-    {
-        if(!checkVarList((*clipboardTable),i,0))
-            return;
-        QVariant v = (*clipboardTable)[i][0];
-        double d = v.toDouble();//没转换成功就设置为0
-        m_newData.append(d);
-    }
-    //记录行变换
-    m_endRow = m_startRow + m_newData.size();
-    //提取需要复制的数据
-    const int rawRowCount = m_data->getValueDatas().size();
-    m_oldStartRow = (m_startRow < rawRowCount) ? m_startRow : -1;
-    m_oldEndRow = (m_endRow < rawRowCount)? m_endRow : rawRowCount-1;
-
-    //提取原有数据
-    if(m_oldStartRow >= 0)
-    {
-        m_oldData.reserve(m_oldEndRow-m_oldStartRow+1);
-        for(int i=m_oldStartRow;i<m_oldEndRow;++i)
-        {
-            m_oldData.append(m_data->get(i));
-        }
-    }
-    //完成处理
-    m_isvalid = true;
-}
-
-void SAValueTableOptDoubleVectorPasteCommandPrivate::redo()
-{
-    if(!m_isvalid)
-        return;
-    QVector<double>& rawBuffer = m_data->getValueDatas();
-    const int oldDataSize = rawBuffer.size();
-    //1 替换数据
-    if(m_endRow < oldDataSize)
-    {
-        //不会扩展
-        for(int r=m_startRow;r<m_endRow;++r)
-        {
-            rawBuffer[r] = m_newData[r - m_startRow];
-        }
-    }
-    else
-    {
-        //会扩展
-        const int newDataSize = m_newData.size();
-        int i= 0;
-        for(i = 0;i<newDataSize && (m_startRow+i) < oldDataSize;++i)
-        {
-            rawBuffer[m_startRow+i] = m_newData[i];
-        }
-        //剩下插入
-        for(;i < newDataSize;++i)
-        {
-            rawBuffer.append(m_newData[i]);
-        }
-    }
-    m_isOldDirty = m_data->isDirty();
-    m_data->setDirty(true);
-}
-
-void SAValueTableOptDoubleVectorPasteCommandPrivate::undo()
-{
-    if(!m_isvalid)
-        return;
-    QVector<double>& rawBuffer = m_data->getValueDatas();
-    //判断是否要删除
-    if(m_oldEndRow < m_endRow)
-    {
-        rawBuffer.resize(m_oldEndRow+1);
-    }
-    //1 替换数据只会少不会多
-    if(m_oldStartRow >= 0)
-    {
-        //有需要替换的数据
-        for(int r=m_oldStartRow;r<m_oldEndRow;++r)
-        {
-            rawBuffer[r] = m_oldData[r - m_oldStartRow];
-        }
-    }
-    m_data->setDirty(m_isOldDirty);
-}
-
-bool SAValueTableOptDoubleVectorPasteCommandPrivate::isValid() const
-{
-    return m_isvalid;
-}
-
-///////SAValueTableOptPointFVectorPasteCommandPrivate//////////////////////////////////////////////////////////
-
-SAValueTableOptPointFVectorPasteCommandPrivate::SAValueTableOptPointFVectorPasteCommandPrivate(
-        SAAbstractDatas *data
-        , const QList<QVariantList> &clipboardTextTable
-        , int startRow
-        , int startCol)
-    :SAValueTableOptPasteCommandPrivateBase()
-    ,m_isvalid(false)
-    ,m_startRow(startRow)
-    ,m_endRow(-1)
     ,m_startCol(startCol)
-    ,m_endCol(-1)
-    ,m_oldEndRow(-1)
-    ,m_oldStartRow(-1)
+    ,m_funPtr(fp)
+    ,m_isOldDirty(true)
+    ,m_data(nullptr)
+    ,m_oldDataSize(0)
+    ,m_newDataSize(0)
 {
-
-    QSize tableSize = getClipboardTableSize(clipboardTextTable);
-    if(1 == tableSize.width())
+    switch(data->getType())
     {
-        m_endCol = startCol;
+    case SA::VectorInt:
+    case SA::VectorDouble:
+    case SA::VectorInterval:
+    case SA::VectorOHLC:
+    case SA::VectorPoint:
+    case SA::VectorVariant:
+    {
+        m_data = static_cast<SAVectorDatas<T>*>(data);
+        init(&clipboardTextTable);
+        break;
     }
-    if(2 == tableSize.width())
-    {
-        m_endCol = startCol+1;
-    }
-    if(m_startCol == m_endCol || (0 == m_startCol && 1 == m_endCol))
-    {
-        //只有两种情况:
-        //1.开始列和结束列相等
-        //2.开始列为0，结束列为1
-        if(SA::VectorPoint == data->getType())
-        {
-            m_data = static_cast<SAVectorPointF*>(data);
-            init(&clipboardTextTable);
-        }
+    default:
+        break;
     }
 }
-
-void SAValueTableOptPointFVectorPasteCommandPrivate::init(const QList<QVariantList> *clipboardTable)
+template<typename T,typename FunMakeT>
+void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::init(const QList<QVariantList> *clipboardTable)
 {
-    const int clipSize = clipboardTable->size();
-    const int oldDataSize = m_data->getValueDatas().size();
-    m_newData.reserve(clipSize);
-
-    //只有两种情况:
-    //1.开始列和结束列相等
-    //2.开始列为0，结束列为1
-    if(m_startCol==m_endCol)
+    const int clipBoardRowCount = clipboardTable->size();
+    int dim2 = m_data->getSize(SA::Dim2);
+    const QVector<T>& datas = m_data->getValueDatas();
+    m_newDataSize = m_oldDataSize = datas.size();
+    //线提取旧的数据，生成新的数据
+    for(int r=0;r<clipBoardRowCount;++r)
     {
-        //只复制了一列是不允许超过原有的长度的
-        if((clipSize + m_startRow) > oldDataSize)
+        const QVariantList& rowValue = clipboardTable->at(r);
+        const int realDataRowIndex = m_startRow + r;
+        if(realDataRowIndex < datas.size())
         {
-            return;
-        }
-        int successReadCount = 0;
-        m_oldData.reserve(clipSize);
-        for(int i=0;i<clipSize;++i)
-        {
-            double d;
-            if(!checkVarList(*clipboardTable,i,0))
-                return;
-            if(!safeGetValue((*clipboardTable)[i][0],d))
+            //说明这是替换原来的数据
+            if(rowValue.size() <= 0)
                 continue;
-
-            QPointF value = m_data->get(m_startRow+successReadCount);
-            m_oldData.append(value);
-            if(0 == m_startCol)
+            T val = datas.at(realDataRowIndex);
+            for(int c=0;c<rowValue.size();++c)
             {
-                value.setX(d);
+                int realDataCol = c + m_startCol;
+                if(realDataCol < dim2)
+                    m_funPtr(val,realDataCol,rowValue[c]);//此函数指针用来根据QVariant和对应的列设置T的值
             }
-            else
-            {
-                value.setY(d);
-            }
-            m_newData.append(value);
-            ++successReadCount;
+            m_replaceInfos.append(std::make_tuple(realDataRowIndex,datas[realDataRowIndex],val));
         }
-        //记录行变换
-        m_endRow = m_startRow + m_newData.size();
-        //提取需要复制的数据
-        m_oldStartRow = m_startRow;//由于单行不能增长，因此不需要特殊处理
-        m_oldEndRow = m_endRow;
-    }
-    else
-    {
-        for(int i=0;i<clipSize;++i)
+        else
         {
-            double x;
-            if(!checkVarList(*clipboardTable,i,0))
-                return;
-            if(!safeGetValue((*clipboardTable)[i][0],x))
-                continue;
-
-            double y;
-            if(!checkVarList(*clipboardTable,i,1))
-                return;
-            if(!safeGetValue((*clipboardTable)[i][1],y))
-                continue;
-
-            m_newData.append(QPointF(x,y));
-        }
-        //记录行变换
-        m_endRow = m_startRow + m_newData.size();
-        m_oldStartRow = (m_startRow < oldDataSize) ? m_startRow : -1;
-        m_oldEndRow = (m_endRow < oldDataSize)? m_endRow : oldDataSize-1;
-        //提取原有数据
-        if(m_oldStartRow >= 0)
-        {
-            m_oldData.reserve(m_oldEndRow-m_oldStartRow+1);
-            for(int i=m_oldStartRow;i<m_oldEndRow;++i)
+            //说明插入新数据
+            if(rowValue.size() > 0)
             {
-                m_oldData.append(m_data->get(i));
+                T val;
+                for(int c=0;c<rowValue.size();++c)
+                {
+                    int realDataCol = c + m_startCol;
+                    if(realDataCol < dim2)
+                        m_funPtr(val,realDataCol,rowValue[c]);//此函数指针用来根据QVariant和对应的列设置T的值
+                }
+                m_appendInfos.append(std::make_pair(realDataRowIndex,val));
             }
+            m_newDataSize = realDataRowIndex+1;
         }
     }
-    //完成处理
     m_isvalid = true;
-}
-
-void SAValueTableOptPointFVectorPasteCommandPrivate::redo()
-{
-    if(!m_isvalid)
-        return;
-    QVector<QPointF>& rawBuffer = m_data->getValueDatas();
-    const int oldDataSize = rawBuffer.size();
-    //1 替换数据
-    if(m_endRow < oldDataSize)
-    {
-        //不会扩展
-        for(int r=m_startRow;r<m_endRow;++r)
-        {
-            rawBuffer[r] = m_newData[r - m_startRow];
-        }
-    }
-    else
-    {
-        //会扩展
-        const int newDataSize = m_newData.size();
-        int i= 0;
-        for(i = 0;i<newDataSize && (m_startRow+i) < oldDataSize;++i)
-        {
-            rawBuffer[m_startRow+i] = m_newData[i];
-        }
-        //剩下插入
-        for(;i < newDataSize;++i)
-        {
-            rawBuffer.append(m_newData[i]);
-        }
-    }
     m_isOldDirty = m_data->isDirty();
+}
+template<typename T,typename FunMakeT>
+void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::redo()
+{
+    QVector<T>& datas = m_data->getValueDatas();
+    if(m_newDataSize > m_oldDataSize)
+    {
+        datas.resize(m_newDataSize);
+        for(auto i = m_appendInfos.begin();i!=m_appendInfos.end();++i)
+        {
+            int index = std::get<0>((*i));
+            if(index < datas.size())
+                datas[index] = std::get<1>((*i));
+        }
+    }
+    for(auto i = m_replaceInfos.begin();i!=m_replaceInfos.end();++i)
+    {
+        int index = std::get<0>((*i));
+        if(index < datas.size())
+            datas[index] = std::get<2>((*i));
+    }
     m_data->setDirty(true);
 }
-
-void SAValueTableOptPointFVectorPasteCommandPrivate::undo()
+template<typename T,typename FunMakeT>
+void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::undo()
 {
-    if(!m_isvalid)
-        return;
-    QVector<QPointF>& rawBuffer = m_data->getValueDatas();
-    //判断是否要删除
-    if(m_oldEndRow < m_endRow)
+    QVector<T>& datas = m_data->getValueDatas();
+    if(m_newDataSize > m_oldDataSize)
     {
-        rawBuffer.resize(m_oldEndRow+1);
+        datas.resize(m_oldDataSize);
     }
-    //1 替换数据只会少不会多
-    if(m_oldStartRow >= 0)
+    for(auto i = m_replaceInfos.begin();i!=m_replaceInfos.end();++i)
     {
-        //有需要替换的数据
-        for(int r=m_oldStartRow;r<m_oldEndRow;++r)
-        {
-            rawBuffer[r] = m_oldData[r - m_oldStartRow];
-        }
+        int index = std::get<0>((*i));
+        if(index < datas.size())
+            datas[index] = std::get<1>((*i));
     }
     m_data->setDirty(m_isOldDirty);
 }
-
-bool SAValueTableOptPointFVectorPasteCommandPrivate::isValid() const
+template<typename T,typename FunMakeT>
+bool SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::isValid() const
 {
     return m_isvalid;
 }
@@ -1109,12 +876,37 @@ SAValueTableOptPasteCommand::SAValueTableOptPasteCommand(
     {
     case SA::VectorDouble:
     {
-        d_ptr = new SAValueTableOptDoubleVectorPasteCommandPrivate(data,clipboardTextTable,startRow,startCol);
+        auto fp = [](double& d,int col,const QVariant& val)
+        {
+            if(0 == col && val.isValid())
+            {
+                d = val.toDouble();
+            }
+        };
+        d_ptr = new SAValueTableOptVectorPasteCommandPrivate<double,decltype(fp)>(data
+                                                                     ,clipboardTextTable
+                                                                     ,startRow
+                                                                     ,startCol
+                                                                     ,fp);
         break;
     }
     case SA::VectorPoint://VectorPoint在显示上比较特殊
     {
-        d_ptr = new SAValueTableOptPointFVectorPasteCommandPrivate(data,clipboardTextTable,startRow,startCol);
+        auto fp = [](QPointF& d,int col,const QVariant& val){
+            if(0 == col && val.isValid())
+            {
+                d.rx() = val.toDouble();
+            }
+            else if (1 == col && val.isValid())
+            {
+                d.ry() = val.toDouble();
+            }
+        };
+        d_ptr = new SAValueTableOptVectorPasteCommandPrivate<QPointF,decltype(fp)>(data
+                                                                     ,clipboardTextTable
+                                                                     ,startRow
+                                                                     ,startCol
+                                                                     ,fp);
         break;
     }
     case SA::TableDouble:
@@ -1165,6 +957,8 @@ void SAValueTableOptPasteCommand::undo()
         return d_ptr->undo();
     }
 }
+
+
 
 
 
