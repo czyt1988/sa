@@ -71,6 +71,8 @@ public:
     SAAbstractDatas* getSeletedData() const;
     //获取选中的数据条目，如果没有选中，将弹出数据选择窗口让用户进行选择
     SAAbstractDatas* getSelectSingleData(bool isAutoSelect = false);
+    //更新变量管理的树形控件
+    void updateValueManagerTreeView();
     /// \}
 
     /// 子窗口相关操作

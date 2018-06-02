@@ -314,28 +314,28 @@ SAItem *SAValueManagerModel::toItemPtr(const QModelIndex &index)
 void SAValueManagerModel::onDataAdded(const QList<SAAbstractDatas *> &datas)
 {
     Q_UNUSED(datas);
-    resetModel();
+    updateModel();
 }
 
 void SAValueManagerModel::onDataDeleted(const QList<SAAbstractDatas *> &dataBeDeletedPtr)
 {
     Q_UNUSED(dataBeDeletedPtr);
-    resetModel();
+    updateModel();
 }
 
 void SAValueManagerModel::onDataClear()
 {
-    resetModel();
+    updateModel();
 }
 
 void SAValueManagerModel::onDataNameChanged(SAAbstractDatas *data, const QString &oldName)
 {
     Q_UNUSED(data);
     Q_UNUSED(oldName);
-    resetModel();
+    updateModel();
 }
 
-void SAValueManagerModel::resetModel()
+void SAValueManagerModel::updateModel()
 {
     beginResetModel();
     endResetModel();

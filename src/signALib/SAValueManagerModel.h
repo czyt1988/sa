@@ -25,7 +25,7 @@ public:
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-
+    void updateModel();
 public:
     //把QModelIndex转为SAAbstractDatas
     SAAbstractDatas* castToDataPtr(const QModelIndex &index) const;
@@ -46,8 +46,8 @@ private slots:
     void onDataDeleted(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
     void onDataClear();
     void onDataNameChanged(SAAbstractDatas* data,const QString& oldName);
-private:
-    void resetModel();
+
+
 private:
     FunBackgroundShowPtr m_funBackgroundData;
 };

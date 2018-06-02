@@ -592,6 +592,7 @@ void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::init(const QList<QVar
     m_isvalid = true;
     m_isOldDirty = m_data->isDirty();
 }
+
 template<typename T,typename FunMakeT>
 void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::redo()
 {
@@ -614,6 +615,7 @@ void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::redo()
     }
     m_data->setDirty(true);
 }
+
 template<typename T,typename FunMakeT>
 void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::undo()
 {
@@ -880,7 +882,12 @@ SAValueTableOptPasteCommand::SAValueTableOptPasteCommand(
         {
             if(0 == col && val.isValid())
             {
-                d = val.toDouble();
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d = v;
+                }
             }
         };
         d_ptr = new SAValueTableOptVectorPasteCommandPrivate<double,decltype(fp)>(data
@@ -895,11 +902,21 @@ SAValueTableOptPasteCommand::SAValueTableOptPasteCommand(
         auto fp = [](QPointF& d,int col,const QVariant& val){
             if(0 == col && val.isValid())
             {
-                d.rx() = val.toDouble();
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.rx() = v;
+                }
             }
             else if (1 == col && val.isValid())
             {
-                d.ry() = val.toDouble();
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.ry() = v;
+                }
             }
         };
         d_ptr = new SAValueTableOptVectorPasteCommandPrivate<QPointF,decltype(fp)>(data

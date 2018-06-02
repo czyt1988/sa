@@ -323,7 +323,7 @@ void MainWindow::initUI()
     connect(ui->actionZoomOut,&QAction::triggered
             ,this,&MainWindow::onActionChartZoomOutTriggered);
     connect(ui->actionZoomInBestView,&QAction::triggered
-            ,this,&MainWindow::actionZoomInBestView);
+            ,this,&MainWindow::onActionZoomInBestView);
 
     //选区菜单
     m_chartRegionSelectionShapeActionGroup = new QActionGroup(this);
@@ -837,6 +837,7 @@ void MainWindow::loadRecentPath()
 {
     m_recentOpenFiles = saConfig.getValue("path/openFiles").toStringList();
     m_recentOpenProjectFolders = saConfig.getValue("path/openProjectFolders").toStringList();
+    saPrint() << m_recentOpenProjectFolders;
     updateRecentPathMenu();
 }
 ///
@@ -875,6 +876,15 @@ void MainWindow::updateRecentPathMenu()
         });
         ui->menuRecentOpenProject->addAction(act);
     });
+}
+
+void MainWindow::updateValueManagerTreeView()
+{
+    SAValueManagerModel* model = getValueManagerModel();
+    if(model)
+    {
+        model->updateModel();
+    }
 }
 
 
@@ -1679,7 +1689,7 @@ void MainWindow::onActionChartZoomOutTriggered(bool check)
 /// \brief 缩放到最佳视图
 /// \param check
 ///
-void MainWindow::actionZoomInBestView(bool check)
+void MainWindow::onActionZoomInBestView(bool check)
 {
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();

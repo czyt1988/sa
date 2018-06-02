@@ -92,6 +92,8 @@ public:
     virtual SAAbstractDatas* getSeletedData() const = 0;
     //获取选中的数据条目，如果没有选中，将弹出数据选择窗口让用户进行选择
     virtual SAAbstractDatas* getSelectSingleData(bool isAutoSelect = false) = 0;
+    //更新变量管理的树形控件
+    virtual void updateValueManagerTreeView() = 0;
     /// \}
 
     ///

@@ -345,7 +345,7 @@ private slots:
     //当前绘图缩小
     void onActionChartZoomOutTriggered(bool check);
     //缩放到最佳视图
-    void actionZoomInBestView(bool check);
+    void onActionZoomInBestView(bool check);
     //当前绘图重置
     void onActionChartZoomResetTriggered(bool check);
     //拾取y值
@@ -503,7 +503,8 @@ private:
     void loadRecentPath();
     //刷新最近打开菜单
     void updateRecentPathMenu();
-
+    //更新变量管理的树形控件
+    void updateValueManagerTreeView();
     //释放chart的附加editor
     void releaseChart2DEditor(SAChart2D* chart);
 

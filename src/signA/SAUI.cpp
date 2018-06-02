@@ -33,6 +33,12 @@ SAAbstractDatas *SAUI::getSelectSingleData(bool isAutoSelect)
     return m_mainWnd->getSelectSingleData(isAutoSelect);
 }
 
+void SAUI::updateValueManagerTreeView()
+{
+    if(m_mainWnd)
+        m_mainWnd->updateValueManagerTreeView();
+}
+
 QWidget *SAUI::getMainWindowPtr()
 {
     return m_mainWnd;
@@ -43,7 +49,8 @@ QWidget *SAUI::getMainWindowPtr()
 ///
 void SAUI::addDataImportPluginAction(QAction *action)
 {
-    m_mainWnd->addDataImportPluginAction(action);
+    if(m_mainWnd)
+        m_mainWnd->addDataImportPluginAction(action);
 }
 ///
 /// \brief 添加导入数据插件菜单
