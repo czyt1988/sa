@@ -9,6 +9,8 @@
 #include "SAVectorPointF.h"
 #include "SAVectorVariant.h"
 #include "SAVectorOHLCDatas.h"
+#include <iterator>
+#include <algorithm>
 class SAValueTableOptCommandPrivateBase
 {
 public:
@@ -42,7 +44,7 @@ public:
 class SAValueTableOptEditValueCommandPrivateBase : public SAValueTableOptCommandPrivateBase
 {
 public:
-    SAValueTableOptEditValueCommandPrivateBase(){}
+    SAValueTableOptEditValueCommandPrivateBase():SAValueTableOptCommandPrivateBase(){}
     virtual ~SAValueTableOptEditValueCommandPrivateBase(){}
     virtual bool isValid() const = 0;
 };
@@ -53,12 +55,60 @@ public:
 class SAValueTableOptPasteCommandPrivateBase : public SAValueTableOptCommandPrivateBase
 {
 public:
-    SAValueTableOptPasteCommandPrivateBase(){}
+    SAValueTableOptPasteCommandPrivateBase():SAValueTableOptCommandPrivateBase(){}
     virtual ~SAValueTableOptPasteCommandPrivateBase(){}
     virtual bool isValid() const = 0;
     static QSize getClipboardTableSize(const QList<QVariantList>& clipboardTable);
 };
+///
+/// \brief SAValueTableOptDeleteCommand的内部处理类，会根据参数类型不一样实例化不一样的内容
+///
+class SAValueTableOptDeleteCommandPrivateBase : public SAValueTableOptCommandPrivateBase
+{
+public:
+    SAValueTableOptDeleteCommandPrivateBase():SAValueTableOptCommandPrivateBase(){}
+    virtual ~SAValueTableOptDeleteCommandPrivateBase(){}
+    virtual bool isValid() const = 0;
+    ///
+    /// \brief 获取索引表里有序不重复的行号
+    /// \param input 以QVector<QPoint>组织的索引表
+    /// \param index_begin 输出的有序行号迭代器起始地址，
+    /// 注意，此迭代器为普通迭代器，在函数中会使用std::back_inserter自动插入，因此别传入std::back_inserter的迭代器
+    ///
+    template<typename Ite>
+    static void getUniqueRows(const QVector<QPoint>& input,Ite index_begin)
+    {
+        QVector<int> rows;
+        rows.resize(input.size());
+        std::transform(input.begin(),input.end(),rows.begin(),[](const QPoint& p)->int{return p.y()});
+        std::sort(rows.begin(),rows.end());
+        std::unique_copy(rows.begin(),rows.end(),std::back_inserter(index_begin));
+    }
+    ///
+    /// \brief 在数组中把已经排列的有序索引删除
+    /// \param arr_begin 数组的开始迭代器
+    /// \param arr_end 数组的结束迭代器
+    /// \param index_begin 索引的开始迭代器
+    /// \param index_end 索引的结束迭代器
+    /// \note 索引必须是有序且唯一的，\sa std::sort std::unique
+    /// \code
+    /// \endcode
+    ///
+    template<typename Container_Ite,typename Index_Ite>
+    static Container_Ite removeByIndex(Container_Ite arr_begin,Container_Ite arr_end,Index_Ite index_begin,Index_Ite index_end)
+    {
+        size_t size = std::distance(arr_begin,arr_end);
+        Index_Ite i = index_begin;
+        while(i != index_end)
+        {
 
+        }
+    }
+};
+
+
+
+/////Edit 相关/////////////////////////////////////////////////
 
 template<typename T>
 class SAValueTableOptEditVectorValueCommandPrivate : public SAValueTableOptEditValueCommandPrivateBase
@@ -200,6 +250,25 @@ private:
     QList<QPair<QPoint,T> > m_tableNewData;
     QList<QPair<QPoint,T> > m_tableOldData;
     QList<QPoint> m_willRemovePos;///< 需要删除的索引
+};
+
+/////delete 相关///////////////////////////////////////////////
+
+template<typename T>
+class SAValueTableOptVectorDeleteCommandPrivate : public SAValueTableOptDeleteCommandPrivateBase
+{
+public:
+    SAValueTableOptVectorDeleteCommandPrivate(SAAbstractDatas* data
+                                               ,const QVector<QPoint>& indexs);
+    bool isValid() const;
+    void init(const QVector<QPoint>& indexs);
+    virtual void redo();
+    virtual void undo();
+private:
+    SAVectorDatas<T>* m_data;
+    bool m_isValid;
+    bool m_isOldDirty;
+    QVector<QPair<int,T>> m_deleteDatasInfo;
 };
 
 
@@ -753,6 +822,77 @@ bool SAValueTableOptTablePasteCommandPrivate<T>::isValid() const
     return m_isvalid;
 }
 
+
+////////SAValueTableOptVectorDeleteCommandPrivate//////////////////////////////////////////////////////////////////////
+
+template<typename T>
+SAValueTableOptVectorDeleteCommandPrivate<T>::SAValueTableOptVectorDeleteCommandPrivate(
+        SAAbstractDatas* data
+        ,const QVector<QPoint>& indexs)
+    :SAValueTableOptDeleteCommandPrivateBase()
+    ,m_isvalid(false)
+    ,m_isOldDirty(true)
+{
+    switch(data->getType())
+    {
+    case SA::VectorInt:
+    case SA::VectorDouble:
+    case SA::VectorInterval:
+    case SA::VectorOHLC:
+    case SA::VectorPoint:
+    case SA::VectorVariant:
+    {
+        m_data = static_cast<SAVectorDatas<T>*>(data);
+        init(indexs);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+
+template<typename T>
+bool SAValueTableOptVectorDeleteCommandPrivate<T>::isValid() const
+{
+    return m_isValid;
+}
+
+template<typename T>
+void SAValueTableOptVectorDeleteCommandPrivate<T>::init(const QVector<QPoint> &indexs)
+{
+    const QVector<T>& datas = m_data->getValueDatas();
+    QVector<int> indexUniqueSortRows;
+    indexRows.reserve(indexs.size());
+    getUniqueRows(indexs,indexUniqueSortRows.begin());
+    m_deleteDatasInfo.reserve(indexUniqueSortRows.size());
+    const int size = indexUniqueSortRows.size();
+    for(int i=0;i<size;++i)
+    {
+        if(indexUniqueSortRows[i] <= datas.size())
+        {
+            m_deleteDatasInfo.append( qMakePair(indexUniqueSortRows[i],datas[indexUniqueSortRows[i]]));
+        }
+    }
+    if(m_deleteDatasInfo.size()>0)
+    {
+        m_isValid = true;
+        m_isOldDirty = m_data->isDirty();
+    }
+}
+
+template<typename T>
+void SAValueTableOptVectorDeleteCommandPrivate<T>::redo()
+{
+    QVector<T>& datas = m_data->getValueDatas();
+}
+
+template<typename T>
+void SAValueTableOptVectorDeleteCommandPrivate<T>::undo()
+{
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //////SAValueTableOptEditValueCommand/////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -834,7 +974,9 @@ SAValueTableOptEditValueCommand::SAValueTableOptEditValueCommand(
 SAValueTableOptEditValueCommand::~SAValueTableOptEditValueCommand()
 {
     if(d_ptr)
+    {
         delete d_ptr;
+    }
 }
 
 void SAValueTableOptEditValueCommand::redo()
@@ -978,6 +1120,52 @@ void SAValueTableOptPasteCommand::undo()
 
 
 
+
+///////////SAValueTableOptDeleteCommand////////////////////////////
+
+
+SAValueTableOptDeleteCommand::SAValueTableOptDeleteCommand(
+        SAAbstractDatas *data
+        , const QVector<QPoint> &deleteIndexs
+        , QUndoCommand *par)
+    :SAAbstractValueTableOptCommand(data,par)
+    ,d_ptr(nullptr)
+{
+
+}
+
+SAValueTableOptDeleteCommand::~SAValueTableOptDeleteCommand()
+{
+    if(d_ptr)
+    {
+        delete d_ptr;
+    }
+}
+
+bool SAValueTableOptDeleteCommand::isValid() const
+{
+    if(d_ptr)
+    {
+        return d_ptr->isValid();
+    }
+    return false;
+}
+
+void SAValueTableOptDeleteCommand::redo()
+{
+    if(d_ptr)
+    {
+        return d_ptr->redo();
+    }
+}
+
+void SAValueTableOptDeleteCommand::undo()
+{
+    if(d_ptr)
+    {
+        return d_ptr->undo();
+    }
+}
 
 
 

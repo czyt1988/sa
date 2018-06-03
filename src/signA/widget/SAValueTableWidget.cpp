@@ -21,6 +21,8 @@
 #include "SALog.h"
 #include "SADataConver.h"
 #include <QShortcut>
+#include "SAUIInterface.h"
+#include "SAUIReflection.h"
 /////////////////////////////////////////////////
 
 SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
@@ -264,6 +266,7 @@ bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
     {
         m_undoStack->push(cmd.take());
         model->update();
+        saUI->updateValueManagerTreeView();
         return true;
     }
     return false;
@@ -333,6 +336,7 @@ void SAValueTableWidget::onTableViewCtrlV()
             cmd->setText(tr("paste datas"));
             m_undoStack->push(cmd.take());
             model->update();
+            saUI->updateValueManagerTreeView();
         }
         else
         {
