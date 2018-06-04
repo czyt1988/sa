@@ -58,11 +58,11 @@ private slots:
     //数据删除触发的槽
     void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
 private:
-    bool setData(int r,int c,const QVariant& v);
+    bool onTableViewSetData(int r,int c,const QVariant& v);
     //ctrl + v
-    void onTableViewCtrlV();
+    void onTableViewPressedCtrlV();
     //delete 点击
-    void onTableViewDeletePressed();
+    void onTableViewPressedDeleteKey();
 
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);

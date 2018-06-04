@@ -10,7 +10,7 @@
 #include "SAVectorVariant.h"
 #include "SAVectorOHLCDatas.h"
 #include <iterator>
-#include <algorithm>
+#include "czyAlgorithm.h"
 class SAValueTableOptCommandPrivateBase
 {
 public:
@@ -80,30 +80,15 @@ public:
     {
         QVector<int> rows;
         rows.resize(input.size());
-        std::transform(input.begin(),input.end(),rows.begin(),[](const QPoint& p)->int{return p.y()});
-        std::sort(rows.begin(),rows.end());
-        std::unique_copy(rows.begin(),rows.end(),std::back_inserter(index_begin));
-    }
-    ///
-    /// \brief 在数组中把已经排列的有序索引删除
-    /// \param arr_begin 数组的开始迭代器
-    /// \param arr_end 数组的结束迭代器
-    /// \param index_begin 索引的开始迭代器
-    /// \param index_end 索引的结束迭代器
-    /// \note 索引必须是有序且唯一的，\sa std::sort std::unique
-    /// \code
-    /// \endcode
-    ///
-    template<typename Container_Ite,typename Index_Ite>
-    static Container_Ite removeByIndex(Container_Ite arr_begin,Container_Ite arr_end,Index_Ite index_begin,Index_Ite index_end)
-    {
-        size_t size = std::distance(arr_begin,arr_end);
-        Index_Ite i = index_begin;
-        while(i != index_end)
+        std::transform(input.begin(),input.end(),rows.begin()
+                       ,[](const QPoint& p)->int
         {
-
-        }
+            return p.y();
+        });
+        std::sort(rows.begin(),rows.end());
+        std::unique_copy(rows.begin(),rows.end(),index_begin);
     }
+
 };
 
 
@@ -264,11 +249,14 @@ public:
     void init(const QVector<QPoint>& indexs);
     virtual void redo();
     virtual void undo();
+
 private:
     SAVectorDatas<T>* m_data;
     bool m_isValid;
     bool m_isOldDirty;
-    QVector<QPair<int,T>> m_deleteDatasInfo;
+    QVector<T> m_deleteDatas;
+    QVector<int> m_deleteIndexs;
+    int m_oldDataSize;
 };
 
 
@@ -830,8 +818,9 @@ SAValueTableOptVectorDeleteCommandPrivate<T>::SAValueTableOptVectorDeleteCommand
         SAAbstractDatas* data
         ,const QVector<QPoint>& indexs)
     :SAValueTableOptDeleteCommandPrivateBase()
-    ,m_isvalid(false)
+    ,m_isValid(false)
     ,m_isOldDirty(true)
+    ,m_oldDataSize(0)
 {
     switch(data->getType())
     {
@@ -843,7 +832,7 @@ SAValueTableOptVectorDeleteCommandPrivate<T>::SAValueTableOptVectorDeleteCommand
     case SA::VectorVariant:
     {
         m_data = static_cast<SAVectorDatas<T>*>(data);
-        init(indexs);
+        init (indexs);
         break;
     }
     default:
@@ -862,19 +851,19 @@ template<typename T>
 void SAValueTableOptVectorDeleteCommandPrivate<T>::init(const QVector<QPoint> &indexs)
 {
     const QVector<T>& datas = m_data->getValueDatas();
-    QVector<int> indexUniqueSortRows;
-    indexRows.reserve(indexs.size());
-    getUniqueRows(indexs,indexUniqueSortRows.begin());
-    m_deleteDatasInfo.reserve(indexUniqueSortRows.size());
-    const int size = indexUniqueSortRows.size();
+    m_oldDataSize = datas.size();
+    m_deleteIndexs.reserve(indexs.size());
+    getUniqueRows(indexs,std::back_inserter(m_deleteIndexs));
+    m_deleteDatas.reserve(m_deleteIndexs.size());
+    const int size = m_deleteIndexs.size();
     for(int i=0;i<size;++i)
     {
-        if(indexUniqueSortRows[i] <= datas.size())
+        if(m_deleteIndexs[i] <= datas.size())
         {
-            m_deleteDatasInfo.append( qMakePair(indexUniqueSortRows[i],datas[indexUniqueSortRows[i]]));
+            m_deleteDatas.push_back(datas[m_deleteIndexs[i]]);
         }
     }
-    if(m_deleteDatasInfo.size()>0)
+    if(m_deleteIndexs.size()>0)
     {
         m_isValid = true;
         m_isOldDirty = m_data->isDirty();
@@ -885,12 +874,25 @@ template<typename T>
 void SAValueTableOptVectorDeleteCommandPrivate<T>::redo()
 {
     QVector<T>& datas = m_data->getValueDatas();
+    QVector<T> newDatas;
+    newDatas.reserve(datas.size());
+    czy::copy_out_of_indexs(datas.begin(),datas.end(),m_deleteIndexs.begin(),m_deleteIndexs.end(),std::back_inserter(newDatas));
+    datas.swap(newDatas);
+    m_data->setDirty(true);
 }
 
 template<typename T>
 void SAValueTableOptVectorDeleteCommandPrivate<T>::undo()
 {
-
+    QVector<T>& datas = m_data->getValueDatas();
+    QVector<T> newDatas;
+    newDatas.reserve(m_oldDataSize);
+    czy::insert_inner_indexs(m_deleteIndexs.begin(),m_deleteIndexs.end()
+                             ,m_deleteDatas.begin()
+                             ,datas.begin(),datas.end()
+                             ,std::back_inserter(newDatas));
+    datas.swap(newDatas);
+    m_data->setDirty(m_isOldDirty);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1068,6 +1070,129 @@ SAValueTableOptPasteCommand::SAValueTableOptPasteCommand(
                                                                      ,fp);
         break;
     }
+    case SA::VectorInterval:
+    {
+        auto fp = [](QwtIntervalSample& d,int col,const QVariant& val){
+            switch(col)
+            {
+            case 0:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.value = v;
+                }
+                break;
+            }
+            case 1:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.interval.setMinValue(v);
+                }
+                break;
+            }
+            case 2:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.interval.setMaxValue(v);
+                }
+                break;
+            }
+            }
+        };
+        d_ptr = new SAValueTableOptVectorPasteCommandPrivate<QwtIntervalSample,decltype(fp)>(data
+                                                                     ,clipboardTextTable
+                                                                     ,startRow
+                                                                     ,startCol
+                                                                     ,fp);
+        break;
+    }
+    case SA::VectorOHLC:
+    {
+        auto fp = [](QwtOHLCSample& d,int col,const QVariant& val){
+            switch(col)
+            {
+            case 0:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.time = v;
+                }
+                break;
+            }
+            case 1:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.open=v;
+                }
+                break;
+            }
+            case 2:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.high=v;
+                }
+                break;
+            }
+            case 3:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.low=v;
+                }
+                break;
+            }
+            case 4:
+            {
+                bool isOK = false;
+                double v = val.toDouble(&isOK);
+                if(isOK)
+                {
+                    d.close=v;
+                }
+                break;
+            }
+            }
+        };
+        d_ptr = new SAValueTableOptVectorPasteCommandPrivate<QwtOHLCSample,decltype(fp)>(data
+                                                                     ,clipboardTextTable
+                                                                     ,startRow
+                                                                     ,startCol
+                                                                     ,fp);
+        break;
+    }
+    case SA::VectorVariant:
+    {
+        auto fp = [](QVariant& d,int col,const QVariant& val)
+        {
+            Q_UNUSED(col);
+            d = val;
+        };
+        d_ptr = new SAValueTableOptVectorPasteCommandPrivate<QVariant,decltype(fp)>(data
+                                                                     ,clipboardTextTable
+                                                                     ,startRow
+                                                                     ,startCol
+                                                                     ,fp);
+        break;
+        break;
+    }
     case SA::TableDouble:
     {
         d_ptr = new SAValueTableOptTablePasteCommandPrivate<double>(data,clipboardTextTable,startRow,startCol);
@@ -1131,7 +1256,44 @@ SAValueTableOptDeleteCommand::SAValueTableOptDeleteCommand(
     :SAAbstractValueTableOptCommand(data,par)
     ,d_ptr(nullptr)
 {
-
+    switch(data->getType())
+    {
+    case SA::VectorDouble:
+    {
+        d_ptr = new SAValueTableOptVectorDeleteCommandPrivate<double>(data,deleteIndexs);
+        break;
+    }
+    case SA::VectorPoint://VectorPoint在显示上比较特殊
+    {
+        d_ptr = new SAValueTableOptVectorDeleteCommandPrivate<QPoint>(data,deleteIndexs);
+        break;
+    }
+    case SA::VectorInterval:
+    {
+        d_ptr = new SAValueTableOptVectorDeleteCommandPrivate<QwtIntervalSample>(data,deleteIndexs);
+        break;
+    }
+    case SA::VectorOHLC:
+    {
+        d_ptr = new SAValueTableOptVectorDeleteCommandPrivate<QwtOHLCSample>(data,deleteIndexs);
+        break;
+    }
+    case SA::VectorVariant:
+    {
+        d_ptr = new SAValueTableOptVectorDeleteCommandPrivate<QVariant>(data,deleteIndexs);
+        break;
+    }
+    case SA::TableDouble:
+    {
+        break;
+    }
+    case SA::TableVariant:
+    {
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 SAValueTableOptDeleteCommand::~SAValueTableOptDeleteCommand()

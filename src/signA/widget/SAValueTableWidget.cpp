@@ -42,10 +42,14 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     m_redo->setIcon(QIcon(":/icons/icons/redo.png"));
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
+
+
     //设置setdata的操作
-    model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool{
-        return this->setData(r,c,v);
+    model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool
+    {
+        return this->onTableViewSetData(r,c,v);
     };
+
 
     QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
     if(plotLayerVerticalHeader)
@@ -55,13 +59,14 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     //设置Ctrl + v的操作
     ui->tableView->onCtrlVFun = [&]()
     {
-        this->onTableViewCtrlV();
+        this->onTableViewPressedCtrlV();
     };
     //设置delete和backspace的操作
     auto deleteFunPtr = [&]()
     {
-        this->onTableViewDeletePressed();
+        this->onTableViewPressedDeleteKey();
     };
+
     ui->tableView->onDeleteFun = deleteFunPtr;
     ui->tableView->onBackspaceFun = deleteFunPtr;
 
@@ -217,7 +222,7 @@ void SAValueTableWidget::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDel
 /// \param v
 /// \return
 ///
-bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
+bool SAValueTableWidget::onTableViewSetData(int r, int c, const QVariant &v)
 {
     SADataTableModel* model = getDataModel();
     SAAbstractDatas* d = model->columnToData(c);
@@ -275,7 +280,7 @@ bool SAValueTableWidget::setData(int r, int c, const QVariant &v)
 ///
 /// \brief 表格控件处理按下ctrl + v
 ///
-void SAValueTableWidget::onTableViewCtrlV()
+void SAValueTableWidget::onTableViewPressedCtrlV()
 {
     SAWaitCursor waitCursor;
     QList<QVariantList> variantClipboardTable;
@@ -353,9 +358,92 @@ void SAValueTableWidget::onTableViewCtrlV()
 ///
 /// \brief 点击delete按钮的事件回调
 ///
-void SAValueTableWidget::onTableViewDeletePressed()
+void SAValueTableWidget::onTableViewPressedDeleteKey()
 {
+    SAWaitCursor waitCursor;
+    QItemSelectionModel* selModel = ui->tableView->selectionModel();
+    QModelIndexList indexs = selModel->selectedIndexes ();
+    const int size = indexs.size ();
+    SADataTableModel* model = getDataModel();
+    struct _tmp_struct
+    {
+        QVector<QPoint> selIndexPos;
+        int colStart;
+        int colEnd;
+        SAAbstractDatas* dataPtr;
+    };
+    QVector<_tmp_struct> res;
+    auto fp_create_tmp_struct = [](int col,SADataTableModel* model)->_tmp_struct
+    {
+        _tmp_struct st;
+        SAAbstractDatas* data = model->columnToData(col);
+        model->dataColumnRange(data,st.colStart,st.colEnd);
+        st.dataPtr = data;
+        return st;
+    };
 
+    if(size>0)
+    {
+        int col = indexs[0].column ();
+        _tmp_struct st = fp_create_tmp_struct(col,model);
+        //获取对应的数据
+        if(-1 == st.colStart || -1 == st.colEnd)
+        {
+            saPrint() << "startCol and endCol invalid: startCol"<<st.colStart
+                     <<" endCol:" << st.colEnd;
+            return;
+        }
+        res.append(st);
+    }
+
+
+    int curResIndex = 0;
+    for(int i=0;i<size;++i)
+    {
+        int col = indexs[i].column ();
+        int row = indexs[i].row ();
+        if(curResIndex < res.size() && col >= res[curResIndex].colStart && col <= res[curResIndex].colEnd)
+        {
+            res[curResIndex].selIndexPos.push_back(QPoint(col-res[curResIndex].colStart,row));
+        }
+        else
+        {
+            int newResIndex = -1;
+            for(int k=0;k<res.size() && k != curResIndex;++k)
+            {
+                if(col >= res[k].colStart && col <= res[k].colEnd)
+                {
+                   newResIndex = k;
+                }
+            }
+            if(-1 == newResIndex)
+            {
+                _tmp_struct st = fp_create_tmp_struct(col,model);
+                if(-1 == st.colStart || -1 == st.colEnd)
+                {
+                    continue;
+                }
+                res.append(st);
+                newResIndex = res.size()-1;
+            }
+            curResIndex = newResIndex;
+            res[curResIndex].selIndexPos.push_back(QPoint(col-res[curResIndex].colStart,row));
+        }
+    }
+
+    QScopedPointer<QUndoCommand> topCmd(new QUndoCommand);
+    for(int i=0;i<res.size();++i)
+    {
+        const _tmp_struct& st = res[i];
+        SAValueTableOptDeleteCommand* cmd = new SAValueTableOptDeleteCommand(st.dataPtr,st.selIndexPos,topCmd.data());
+    }
+    if(topCmd->childCount() > 0)
+    {
+        topCmd->setText(tr("delete datas"));
+        m_undoStack->push(topCmd.take());
+        model->update();
+        saUI->updateValueManagerTreeView();
+    }
 }
 ///
 /// \brief 获取选中的线性数据

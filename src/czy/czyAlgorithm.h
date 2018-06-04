@@ -111,6 +111,55 @@ void copy_inner_indexs(_IT input_begin,_IT_Index index_begin,_IT_Index index_end
     }
 }
 
+
+///
+/// \brief 此函数作用是根据提供的待插入数组insert_data和待插入索引index_be_insert(这两者长度需要一致)
+/// ，以及需要插入的数组old_data，程序根据insert_data和index_be_insert插入到old_data相应的位置，形成new_data
+/// ，index_be_insert是以new_data为基准，也就是说new_data[index_be_insert[i]] == insert_data[i]
+/// \param insert_data_begin 待插入的数据内容起始迭代器
+/// \param insert_data_end 待插入的数据内容终止迭代器
+/// \param index_be_insert_begin 待插入的索引起始迭代器，待插入的索引长度需要大于等于std::distance(insert_data_begin,insert_data_end)
+/// \param old_data_begin 旧数据的开始地址
+/// \param old_data_end 旧数据的结束地址
+/// \param new_data_begin 新数据的开始地址，新数据长度应该为std::distance(insert_data_begin,insert_data_end)+std::distance(old_data_begin,old_data_end)
+/// \note index_be_insert是以new_data为基准，也就是说new_data[index_be_insert[i]] == insert_data[i]
+///
+template<typename _IT_Index,typename _IT_Data,typename _IT_OldDataArr,typename _IT_NewDataArr>
+void insert_inner_indexs(_IT_Index index_be_insert_begin,_IT_Index index_be_insert_end
+                         ,_IT_Data data_be_insert_begin
+                        ,_IT_OldDataArr old_data_begin,_IT_OldDataArr old_data_end
+                         ,_IT_NewDataArr new_data_begin)
+{
+    size_t i = 0;
+    while (old_data_begin!=old_data_end)
+    {
+        if(i == *index_be_insert_begin)
+        {
+            //说明遇到要插入的索引
+            *new_data_begin = *data_be_insert_begin;
+            ++i;
+            ++index_be_insert_begin;
+            ++data_be_insert_begin;
+            ++new_data_begin;
+        }
+        else
+        {
+            *new_data_begin = *old_data_begin;
+            ++i;
+            ++old_data_begin;
+            ++new_data_begin;
+        }
+    }
+    while(index_be_insert_begin != index_be_insert_end)
+    {
+        *new_data_begin = *data_be_insert_begin;
+        ++index_be_insert_begin;
+        ++data_be_insert_begin;
+        ++new_data_begin;
+    }
+}
+
+
 ///
 /// \brief 根据提供的索引把一个序列分解为两个结集
 ///  ，其中 outputInnerIndex_begin存放在提供范围内的结果
@@ -241,7 +290,7 @@ OutputIterator transform (InputIterator1 first1, InputIterator1 last1
 }
 
 ///
-/// \brief transform 4参数的transform，对std::transform的扩展，适用于5参数
+/// \brief transform 6参数的transform，对std::transform的扩展，适用于6参数
 /// \param first1 参数1的开始迭代器
 /// \param last1 参数1的结束迭代器
 /// \param first2 参数2的开始迭代器
