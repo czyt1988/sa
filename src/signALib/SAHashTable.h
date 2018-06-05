@@ -98,8 +98,6 @@ int SAArrayTable<T>::columnCount() const
 }
 
 
-
-
 ///
 /// \brief 根据QHash来作为存储的数据结构
 ///
@@ -246,7 +244,7 @@ void SAHashTable<T>::removeData(typename SAHashTable<T>::Index row,typename SAHa
     int i = m_data.remove(qMakePair(row,col));
     if(i <= 0)
         return;
-    if(col == m_columns || row == m_rows)
+    if(col == (m_columns-1) || row == (m_rows-1))
     {
         //说明需要更新
         typename Table::const_iterator i = m_data.begin();
@@ -262,6 +260,8 @@ void SAHashTable<T>::removeData(typename SAHashTable<T>::Index row,typename SAHa
                 maxCol = i.key().second;
             ++i;
         }
+        m_columns = maxCol+1;
+        m_rows = maxRow+1;
     }
 }
 
@@ -450,5 +450,6 @@ QDataStream &operator>>(QDataStream & in, SAHashTable<T> & item)
 
 
 #endif // SAHASHTABLE_H
+
 
 

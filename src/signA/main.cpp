@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 #endif
 #endif
-    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
     QApplication a(argc, argv);
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
     //
     qDebug() << "libs path:" << QCoreApplication::libraryPaths();
 

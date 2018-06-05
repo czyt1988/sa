@@ -154,11 +154,13 @@ void SAValueTableWidget::saveTableToCsv(const QString &fullFilePath)
 void SAValueTableWidget::redo()
 {
     m_redo->activate(QAction::Trigger);
+    saUI->updateValueManagerTreeView();
 }
 
 void SAValueTableWidget::undo()
 {
     m_undo->activate(QAction::Trigger);
+    saUI->updateValueManagerTreeView();
 }
 
 void SAValueTableWidget::onTableViewCustomContextMenuRequested(const QPoint &pos)
@@ -369,6 +371,12 @@ void SAValueTableWidget::onTableViewPressedDeleteKey()
     SADataTableModel* model = getDataModel();
     struct _tmp_struct
     {
+        _tmp_struct()
+        {
+            colStart = -1;
+            colEnd = -1;
+            dataPtr = nullptr;
+        }
         QVector<QPoint> selIndexPos;
         int colStart;
         int colEnd;
@@ -379,24 +387,13 @@ void SAValueTableWidget::onTableViewPressedDeleteKey()
     {
         _tmp_struct st;
         SAAbstractDatas* data = model->columnToData(col);
-        model->dataColumnRange(data,st.colStart,st.colEnd);
-        st.dataPtr = data;
+        if(data)
+        {
+            model->dataColumnRange(data,st.colStart,st.colEnd);
+            st.dataPtr = data;
+        }
         return st;
     };
-
-    if(size>0)
-    {
-        int col = indexs[0].column ();
-        _tmp_struct st = fp_create_tmp_struct(col,model);
-        //获取对应的数据
-        if(-1 == st.colStart || -1 == st.colEnd)
-        {
-            saPrint() << "startCol and endCol invalid: startCol"<<st.colStart
-                     <<" endCol:" << st.colEnd;
-            return;
-        }
-        res.append(st);
-    }
 
 
     int curResIndex = 0;
@@ -404,31 +401,22 @@ void SAValueTableWidget::onTableViewPressedDeleteKey()
     {
         int col = indexs[i].column ();
         int row = indexs[i].row ();
-        if(curResIndex < res.size() && col >= res[curResIndex].colStart && col <= res[curResIndex].colEnd)
+
+        if(curResIndex < 0 || curResIndex >= res.size())
         {
-            res[curResIndex].selIndexPos.push_back(QPoint(col-res[curResIndex].colStart,row));
+            _tmp_struct st = fp_create_tmp_struct(col,model);
+            //获取对应的数据
+            if(nullptr == st.dataPtr || -1 == st.colStart || -1 == st.colEnd)
+            {
+                continue;
+            }
+            res.push_back(st);
+            curResIndex = res.size()-1;
         }
-        else
+
+
+        if(col >= res[curResIndex].colStart && col <= res[curResIndex].colEnd)
         {
-            int newResIndex = -1;
-            for(int k=0;k<res.size() && k != curResIndex;++k)
-            {
-                if(col >= res[k].colStart && col <= res[k].colEnd)
-                {
-                   newResIndex = k;
-                }
-            }
-            if(-1 == newResIndex)
-            {
-                _tmp_struct st = fp_create_tmp_struct(col,model);
-                if(-1 == st.colStart || -1 == st.colEnd)
-                {
-                    continue;
-                }
-                res.append(st);
-                newResIndex = res.size()-1;
-            }
-            curResIndex = newResIndex;
             res[curResIndex].selIndexPos.push_back(QPoint(col-res[curResIndex].colStart,row));
         }
     }

@@ -258,7 +258,23 @@ private:
     QVector<int> m_deleteIndexs;
     int m_oldDataSize;
 };
+template<typename T>
+class SAValueTableOptTableDeleteCommandPrivate : public SAValueTableOptDeleteCommandPrivateBase
+{
+public:
+    SAValueTableOptTableDeleteCommandPrivate(SAAbstractDatas* data
+                                               ,const QVector<QPoint>& indexs);
+    bool isValid() const;
+    void init(const QVector<QPoint>& indexs);
+    virtual void redo();
+    virtual void undo();
 
+private:
+    SATableData<T>* m_data;
+    bool m_isValid;
+    bool m_isOldDirty;
+    QList<QPair<QPoint,T> > m_tableDeletedData;
+};
 
 //////SAValueTableOptCommandPrivateBase/////////////////////////////////////////////////////
 bool SAValueTableOptCommandPrivateBase::checkVarList(const QList<QVariantList> &varTable, int row, int col)
@@ -346,11 +362,15 @@ void SAValueTableOptEditTableValueCommandPrivate<T>::init(const QVariant &val)
 template<typename T>
 void SAValueTableOptEditTableValueCommandPrivate<T>::redo()
 {
+    if(!isValid())
+        return;
     m_data->setTableData(m_startRow,m_startCol,m_newVal);
 }
 template<typename T>
 void SAValueTableOptEditTableValueCommandPrivate<T>::undo()
 {
+    if(!isValid())
+        return;
     m_data->removeTableData(m_startRow,m_startCol);
 }
 
@@ -434,6 +454,8 @@ void SAValueTableOptEditVectorValueCommandPrivate<T>::init(const QVariant &val)
 template<typename T>
 void SAValueTableOptEditVectorValueCommandPrivate<T>::redo()
 {
+    if(!isValid())
+        return;
     QVector<T> & innerData = m_data->getValueDatas();
     while(innerData.size() < m_newSize)
     {
@@ -445,6 +467,8 @@ void SAValueTableOptEditVectorValueCommandPrivate<T>::redo()
 template<typename T>
 void SAValueTableOptEditVectorValueCommandPrivate<T>::undo()
 {
+    if(!isValid())
+        return;
     QVector<T> & innerData = m_data->getValueDatas();
     if(innerData.size() != m_oldSize)
     {
@@ -541,6 +565,8 @@ void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::init(const QVariantLi
 template<typename T>
 void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::redo()
 {
+    if(!isValid())
+        return;
     QVector<T> & innerData = m_data->getValueDatas();
     while(innerData.size() < m_newSize)
     {
@@ -554,6 +580,8 @@ void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::redo()
 template<typename T>
 void SAValueTableOptEditVectorMultValuesCommandPrivate<T>::undo()
 {
+    if(!isValid())
+        return;
     QVector<T> & innerData = m_data->getValueDatas();
     if(innerData.size() != m_oldSize)
     {
@@ -653,6 +681,8 @@ void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::init(const QList<QVar
 template<typename T,typename FunMakeT>
 void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::redo()
 {
+    if(!isValid())
+        return;
     QVector<T>& datas = m_data->getValueDatas();
     if(m_newDataSize > m_oldDataSize)
     {
@@ -676,6 +706,8 @@ void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::redo()
 template<typename T,typename FunMakeT>
 void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::undo()
 {
+    if(!isValid())
+        return;
     QVector<T>& datas = m_data->getValueDatas();
     if(m_newDataSize > m_oldDataSize)
     {
@@ -764,7 +796,7 @@ void SAValueTableOptTablePasteCommandPrivate<T>::init(const QList<QVariantList> 
 template<typename T>
 void SAValueTableOptTablePasteCommandPrivate<T>::redo()
 {
-    if(!m_isvalid)
+    if(!isValid())
         return;
     typename SATableData<T>::Table& table = m_data->getTable();
     //! 1先删除
@@ -786,7 +818,7 @@ void SAValueTableOptTablePasteCommandPrivate<T>::redo()
 template<typename T>
 void SAValueTableOptTablePasteCommandPrivate<T>::undo()
 {
-    if(!m_isvalid)
+    if(!isValid())
         return;
     typename SATableData<T>::Table& table = m_data->getTable();
     //! 1删除数据
@@ -852,11 +884,24 @@ void SAValueTableOptVectorDeleteCommandPrivate<T>::init(const QVector<QPoint> &i
 {
     const QVector<T>& datas = m_data->getValueDatas();
     m_oldDataSize = datas.size();
-    m_deleteIndexs.reserve(indexs.size());
-    getUniqueRows(indexs,std::back_inserter(m_deleteIndexs));
+    QVector<int> rowIndexs;
+    rowIndexs.reserve(indexs.size());
+    m_deleteIndexs.reserve(rowIndexs.size());
+    getUniqueRows(indexs,std::back_inserter(rowIndexs));
+    for(int i=0;i<rowIndexs.size();++i)
+    {
+        if(rowIndexs[i] < m_oldDataSize)
+        {
+            m_deleteIndexs.push_back(rowIndexs[i]);
+        }
+        else
+        {
+            break;
+        }
+    }
+
     m_deleteDatas.reserve(m_deleteIndexs.size());
-    const int size = m_deleteIndexs.size();
-    for(int i=0;i<size;++i)
+    for(int i=0;i<m_deleteIndexs.size();++i)
     {
         if(m_deleteIndexs[i] <= datas.size())
         {
@@ -873,6 +918,8 @@ void SAValueTableOptVectorDeleteCommandPrivate<T>::init(const QVector<QPoint> &i
 template<typename T>
 void SAValueTableOptVectorDeleteCommandPrivate<T>::redo()
 {
+    if(!isValid())
+        return;
     QVector<T>& datas = m_data->getValueDatas();
     QVector<T> newDatas;
     newDatas.reserve(datas.size());
@@ -884,6 +931,8 @@ void SAValueTableOptVectorDeleteCommandPrivate<T>::redo()
 template<typename T>
 void SAValueTableOptVectorDeleteCommandPrivate<T>::undo()
 {
+    if(!isValid())
+        return;
     QVector<T>& datas = m_data->getValueDatas();
     QVector<T> newDatas;
     newDatas.reserve(m_oldDataSize);
@@ -893,6 +942,84 @@ void SAValueTableOptVectorDeleteCommandPrivate<T>::undo()
                              ,std::back_inserter(newDatas));
     datas.swap(newDatas);
     m_data->setDirty(m_isOldDirty);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////SAValueTableOptTableDeleteCommandPrivate/////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+SAValueTableOptTableDeleteCommandPrivate<T>::SAValueTableOptTableDeleteCommandPrivate(
+        SAAbstractDatas *data
+        , const QVector<QPoint> &indexs)
+    :SAValueTableOptDeleteCommandPrivateBase()
+    ,m_isValid(false)
+    ,m_isOldDirty(true)
+{
+    switch(data->getType())
+    {
+    case SA::TableDouble:
+    case SA::TableVariant:
+    {
+        m_data = static_cast<SATableData<T>*>(data);
+        init(indexs);
+        break;
+    }
+    default:
+        break;
+    }
+}
+template<typename T>
+bool SAValueTableOptTableDeleteCommandPrivate<T>::isValid() const
+{
+    return m_isValid;
+
+}
+template<typename T>
+void SAValueTableOptTableDeleteCommandPrivate<T>::init(const QVector<QPoint> &indexs)
+{
+    int size = indexs.size();
+    for(int i=0;i<size;++i)
+    {
+        int r = indexs[i].y();
+        int c = indexs[i].x();
+        if(m_data->isHaveData(r,c))
+        {
+            m_tableDeletedData.append(qMakePair(indexs[i],m_data->getValue(r,c)));
+        }
+    }
+    if(m_tableDeletedData.size()>0)
+    {
+        m_isValid = true;
+        m_isOldDirty = m_data->isDirty();
+    }
+}
+template<typename T>
+void SAValueTableOptTableDeleteCommandPrivate<T>::redo()
+{
+    if(!isValid())
+        return;
+    int size = m_tableDeletedData.size();
+    for(int i=0;i<size;++i)
+    {
+        int r = m_tableDeletedData[i].first.y();
+        int c = m_tableDeletedData[i].first.x();
+        m_data->removeTableData(r,c);
+    }
+}
+template<typename T>
+void SAValueTableOptTableDeleteCommandPrivate<T>::undo()
+{
+    if(!isValid())
+        return;
+    int size = m_tableDeletedData.size();
+    for(int i=0;i<size;++i)
+    {
+        int r = m_tableDeletedData[i].first.y();
+        int c = m_tableDeletedData[i].first.x();
+        m_data->setTableData(r,c,m_tableDeletedData[i].second);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1265,7 +1392,7 @@ SAValueTableOptDeleteCommand::SAValueTableOptDeleteCommand(
     }
     case SA::VectorPoint://VectorPoint在显示上比较特殊
     {
-        d_ptr = new SAValueTableOptVectorDeleteCommandPrivate<QPoint>(data,deleteIndexs);
+        d_ptr = new SAValueTableOptVectorDeleteCommandPrivate<QPointF>(data,deleteIndexs);
         break;
     }
     case SA::VectorInterval:
@@ -1285,10 +1412,12 @@ SAValueTableOptDeleteCommand::SAValueTableOptDeleteCommand(
     }
     case SA::TableDouble:
     {
+        d_ptr = new SAValueTableOptTableDeleteCommandPrivate<double>(data,deleteIndexs);
         break;
     }
     case SA::TableVariant:
     {
+        d_ptr = new SAValueTableOptTableDeleteCommandPrivate<QVariant>(data,deleteIndexs);
         break;
     }
     default:

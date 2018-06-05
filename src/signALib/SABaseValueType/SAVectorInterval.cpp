@@ -226,3 +226,10 @@ QDataStream &operator>>(QDataStream & in, QwtInterval & item)
     item.setBorderFlags(static_cast<QwtInterval::BorderFlags>(flag));
     return in;
 }
+
+QDebug operator<<(QDebug debug, const QwtIntervalSample &c)
+{
+    QDebugStateSaver saver(debug);
+    debug.nospace() << '(' << c.value << ",[" << c.interval.minValue() << '~' << c.interval.maxValue() << "])";
+    return debug.space();
+}

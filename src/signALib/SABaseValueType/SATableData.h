@@ -31,7 +31,7 @@ public:
     virtual int getType() const;
     virtual QVariant getAt(const std::initializer_list<size_t>& index) const;
     virtual QString displayAt(const std::initializer_list<size_t>& index) const;
-    int getSize(int dim=SA::Row) const;
+    int getSize(int dim=SA::Dim1) const;
     int getDim() const;
     virtual void read(QDataStream & in);
     //判断该数据在上次write之后是否内存有变更
@@ -121,9 +121,9 @@ QString SATableData<T>::displayAt(const std::initializer_list<size_t> &index) co
 template<typename T>
 int SATableData<T>::getSize(int dim) const
 {
-    if(SA::Row == dim)
+    if(SA::Dim1 == dim)
         return m_table.rowCount ();
-    else if(SA::Column == dim)
+    else if(SA::Dim2 == dim)
         return m_table.columnCount ();
     return 0;
 }

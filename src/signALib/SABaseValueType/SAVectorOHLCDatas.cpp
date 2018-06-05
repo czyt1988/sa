@@ -6,6 +6,7 @@
 #include "SAVectorPointF.h"
 #include "SAVectorVariant.h"
 #include "SAVectorOHLCDatas.h"
+
 SAVectorOHLCDatas::SAVectorOHLCDatas():SAVectorDatas<QwtOHLCSample>()
 {
     setData (getType(),SA_ROLE_DATA_TYPE);
@@ -179,4 +180,16 @@ QDataStream &operator>>(QDataStream &in, QwtOHLCSample &item)
 {
     in >> item.time >> item.open >> item.high >> item.low >> item.close;
     return in;
+}
+
+QDebug operator<<(QDebug debug, const QwtOHLCSample &c)
+{
+    QDebugStateSaver saver(debug);
+    debug.nospace() << 'QwtOHLCSample(t:' << c.time
+                    << ",open:" << c.open
+                    << ",high:"<<c.high
+                    << ",low:" << c.low
+                    << ",close:" << c.close
+                    << ")";
+    return debug;
 }

@@ -1,7 +1,7 @@
 ﻿#ifndef SAVECTOROHLCDATAS_H
 #define SAVECTOROHLCDATAS_H
 #define SA_QWT
-
+#include <QDebug>
 #include "SAVectorDatas.h"
 
 #ifdef SA_QWT
@@ -30,6 +30,7 @@ public:
 Q_DECLARE_METATYPE(QwtOHLCSample)
 SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const QwtOHLCSample & item);
 SALIB_EXPORT QDataStream &operator>>(QDataStream & in, QwtOHLCSample & item);
-
-
+#ifndef QT_NO_DEBUG_STREAM
+SALIB_EXPORT QDebug operator<<(QDebug debug, const QwtOHLCSample &c);
+#endif
 #endif // SAVECTOROHLCDATAS_H

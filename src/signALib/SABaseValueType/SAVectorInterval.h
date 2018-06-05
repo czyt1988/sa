@@ -38,4 +38,8 @@ SALIB_EXPORT QDataStream &operator>>(QDataStream & in, QwtIntervalSample & item)
 SALIB_EXPORT QDataStream &operator<<(QDataStream & out, const QwtInterval & item);
 SALIB_EXPORT QDataStream &operator>>(QDataStream & in, QwtInterval & item);
 
+#ifndef QT_NO_DEBUG_STREAM
+SALIB_EXPORT QDebug operator<<(QDebug debug, const QwtIntervalSample &c);
+#endif
+
 #endif // SAVECTORINTERVAL_H
