@@ -57,13 +57,15 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
         plotLayerVerticalHeader->setDefaultSectionSize(19);
     }
     //设置Ctrl + v的操作
-    ui->tableView->onCtrlVFun = [&]()
+    ui->tableView->onCtrlVFun = [&](SATableView* obj)
     {
+        Q_UNUSED(obj);
         this->onTableViewPressedCtrlV();
     };
     //设置delete和backspace的操作
-    auto deleteFunPtr = [&]()
+    auto deleteFunPtr = [&](SATableView* obj)
     {
+        Q_UNUSED(obj);
         this->onTableViewPressedDeleteKey();
     };
 

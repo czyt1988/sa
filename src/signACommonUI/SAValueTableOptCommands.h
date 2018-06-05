@@ -18,7 +18,8 @@ class SA_COMMON_UI_EXPORT SAAbstractValueTableOptCommand : public QUndoCommand
 {
 public:
     SAAbstractValueTableOptCommand(SAAbstractDatas* data,QUndoCommand* par = Q_NULLPTR)
-        :m_data(data)
+        :QUndoCommand(par)
+        ,m_data(data)
     {
     }
 

@@ -45,7 +45,7 @@ void SATableView::onCtrlCPressed()
 {
     if(onCtrlCFun)
     {
-        onCtrlCFun();
+        onCtrlCFun(this);
         return;
     }
     QItemSelectionModel *selModel = selectionModel();
@@ -98,7 +98,7 @@ void SATableView::onCtrlVPressed()
 {
     if(onCtrlVFun)
     {
-        onCtrlVFun();
+        onCtrlVFun(this);
         return;
     }
     QClipboard *clipboard = QApplication::clipboard();
@@ -142,8 +142,7 @@ void SATableView::onDeletePressed()
 {
     if(onDeleteFun)
     {
-        onDeleteFun();
-        return;
+        onDeleteFun(this);
     }
 }
 
@@ -151,8 +150,7 @@ void SATableView::onBackspacePressed()
 {
     if(onBackspaceFun)
     {
-        onBackspaceFun();
-        return;
+        onBackspaceFun(this);
     }
 }
 ///

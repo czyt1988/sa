@@ -31,7 +31,9 @@ SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     m_tableModel = new SAPlotDataModel(this);
     ui->tableView->setModel(m_tableModel);
 
-    ui->tableView->onCtrlVFun = [this](){
+    ui->tableView->onCtrlVFun = [this](SATableView* obj)
+    {
+        Q_UNUSED(obj);
         this->onCtrlVInTableView();
     };
 
