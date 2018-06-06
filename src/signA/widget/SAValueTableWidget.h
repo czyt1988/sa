@@ -57,14 +57,19 @@ private slots:
     void onActionToPointFVectorDataTriggered();
     //数据删除触发的槽
     void onDataRemoved(const QList<SAAbstractDatas*>& dataBeDeletedPtr);
-private:
-    bool onTableViewSetData(int r,int c,const QVariant& v);
-    //ctrl + v
-    void onTableViewPressedCtrlV();
+    //插入命令
+    void onActionInsertTriggered();
     //delete 点击
-    void onTableViewPressedDeleteKey();
+    void onActionDeleteTriggered();
+    //ctrl + v
+    void onActionPasteTriggered();
+private:
+    //输入数据
+    bool onTableViewSetData(int r,int c,const QVariant& v);
 
+    //获取选中的线形数据
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
+    //获取选择的点集
     void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
     bool getSelectVectorPointData(SAVectorPointF* data);
     //获取选择的列值
@@ -76,6 +81,8 @@ private:
     static void doubleVectorAppendFromVariant(const QVariant& var,QVector<double>& data);
     //获取表格的表头的尺寸，返回一个QPoint，x:为竖直表头宽度，y为水平表头高度
     QPoint tableHeaderPositionOffset() const;
+    //
+    void createMenu();
 private:
     Ui::SAValueTableWidget *ui;
     //OpenFileManager* m_values;
@@ -83,6 +90,9 @@ private:
     QMenu* m_menu;
     QAction* m_undo;
     QAction* m_redo;
+    QAction* m_insertAction;
+    QAction* m_deleteAction;
+    QAction* m_pasteAction;
     QUndoStack* m_undoStack;
 };
 

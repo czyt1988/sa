@@ -30,6 +30,8 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     ui(new Ui::SAValueTableWidget)
   ,m_countNewData(0)
   ,m_menu(nullptr)
+  ,m_insertAction(nullptr)
+  ,m_deleteAction(nullptr)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::ClickFocus);
@@ -60,13 +62,13 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     ui->tableView->onCtrlVFun = [&](SATableView* obj)
     {
         Q_UNUSED(obj);
-        this->onTableViewPressedCtrlV();
+        this->onActionPasteTriggered();
     };
     //设置delete和backspace的操作
     auto deleteFunPtr = [&](SATableView* obj)
     {
         Q_UNUSED(obj);
-        this->onTableViewPressedDeleteKey();
+        this->onActionDeleteTriggered();
     };
 
     ui->tableView->onDeleteFun = deleteFunPtr;
@@ -85,6 +87,33 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
 SAValueTableWidget::~SAValueTableWidget()
 {
     delete ui;
+}
+
+void SAValueTableWidget::createMenu()
+{
+    if(m_menu)
+    {
+        return;
+    }
+    m_menu = new QMenu(this);
+    m_menu->addAction(m_undo);
+    m_menu->addAction(m_redo);
+    m_insertAction = new QAction(tr("insert"),this);
+    m_menu->addAction(m_insertAction);
+    connect(m_insertAction,&QAction::triggered,this,&SAValueTableWidget::onActionInsertTriggered);
+
+    m_deleteAction = new QAction(tr("delete"),this);
+    m_menu->addAction(m_deleteAction);
+    connect(m_deleteAction,&QAction::triggered,this,&SAValueTableWidget::onActionDeleteTriggered);
+
+    m_pasteAction = new QAction(tr("paste"),this);
+    m_menu->addAction(m_pasteAction);
+    connect(m_pasteAction,&QAction::triggered,this,&SAValueTableWidget::onActionPasteTriggered);
+
+    QMenu* m = m_menu->addMenu (tr("export select datas"));
+    m->addAction(ui->actionToLinerData);
+    m->addAction(ui->actionToPointFVectorData);
+
 }
 
 QTableView *SAValueTableWidget::getTableView()
@@ -167,12 +196,7 @@ void SAValueTableWidget::onTableViewCustomContextMenuRequested(const QPoint &pos
 {
     if(nullptr == m_menu)
     {
-        m_menu = new QMenu(this);
-        m_menu->addAction(m_undo);
-        m_menu->addAction(m_redo);
-        QMenu* m = m_menu->addMenu (tr("export select datas"));
-        m->addAction(ui->actionToLinerData);
-        m->addAction(ui->actionToPointFVectorData);
+        createMenu();
     }
     m_menu->exec (QCursor::pos());
 }
@@ -218,6 +242,13 @@ void SAValueTableWidget::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDel
 {
     SADataTableModel* model = getDataModel();
     model->removeDatas(dataBeDeletedPtr);
+}
+///
+/// \brief 插入
+///
+void SAValueTableWidget::onActionInsertTriggered()
+{
+
 }
 ///
 /// \brief 设置数据,此函数将设置到model的setData函数里
@@ -284,7 +315,7 @@ bool SAValueTableWidget::onTableViewSetData(int r, int c, const QVariant &v)
 ///
 /// \brief 表格控件处理按下ctrl + v
 ///
-void SAValueTableWidget::onTableViewPressedCtrlV()
+void SAValueTableWidget::onActionPasteTriggered()
 {
     SAWaitCursor waitCursor;
     QList<QVariantList> variantClipboardTable;
@@ -362,7 +393,7 @@ void SAValueTableWidget::onTableViewPressedCtrlV()
 ///
 /// \brief 点击delete按钮的事件回调
 ///
-void SAValueTableWidget::onTableViewPressedDeleteKey()
+void SAValueTableWidget::onActionDeleteTriggered()
 {
     SAWaitCursor waitCursor;
     QItemSelectionModel* selModel = ui->tableView->selectionModel();
@@ -601,6 +632,8 @@ QPoint SAValueTableWidget::tableHeaderPositionOffset() const
     return QPoint(verticalHeader->width(),horizontalHeader->height());
 
 }
+
+
 ///
 /// \brief 工程函数，获取QItemSelectionModel里的所有列的值
 ///
