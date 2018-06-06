@@ -22,6 +22,8 @@ public:
     FunPtr onCtrlCFun;///< ctrl + c的函数指针
     FunPtr onDeleteFun;///< delete的函数指针
     FunPtr onBackspaceFun;///< Backspace的函数指针
+    //把当前选中的cell复制进剪切板
+    void copySelectedCellInClipboard();
 protected:
     void keyPressEvent(QKeyEvent *e);
     //处理ctrl+c事件

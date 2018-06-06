@@ -32,6 +32,7 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
   ,m_menu(nullptr)
   ,m_insertAction(nullptr)
   ,m_deleteAction(nullptr)
+  ,m_copyAction(nullptr)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::ClickFocus);
@@ -106,9 +107,14 @@ void SAValueTableWidget::createMenu()
     m_menu->addAction(m_deleteAction);
     connect(m_deleteAction,&QAction::triggered,this,&SAValueTableWidget::onActionDeleteTriggered);
 
+    m_copyAction = new QAction(tr("copy"),this);
+    m_menu->addAction(m_copyAction);
+    connect(m_copyAction,&QAction::triggered,this,&SAValueTableWidget::onActionCopyTriggered);
+
     m_pasteAction = new QAction(tr("paste"),this);
     m_menu->addAction(m_pasteAction);
     connect(m_pasteAction,&QAction::triggered,this,&SAValueTableWidget::onActionPasteTriggered);
+
 
     QMenu* m = m_menu->addMenu (tr("export select datas"));
     m->addAction(ui->actionToLinerData);
@@ -389,6 +395,11 @@ void SAValueTableWidget::onActionPasteTriggered()
         saPrint() << "current no support selection region paste";
         return;
     }
+}
+
+void SAValueTableWidget::onActionCopyTriggered()
+{
+    ui->tableView->
 }
 ///
 /// \brief 点击delete按钮的事件回调

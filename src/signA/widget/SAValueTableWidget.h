@@ -63,6 +63,8 @@ private slots:
     void onActionDeleteTriggered();
     //ctrl + v
     void onActionPasteTriggered();
+    //ctrl + c
+    void onActionCopyTriggered();
 private:
     //输入数据
     bool onTableViewSetData(int r,int c,const QVariant& v);
@@ -93,6 +95,7 @@ private:
     QAction* m_insertAction;
     QAction* m_deleteAction;
     QAction* m_pasteAction;
+    QAction* m_copyAction;
     QUndoStack* m_undoStack;
 };
 

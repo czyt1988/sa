@@ -11,43 +11,10 @@ SATableView::SATableView(QWidget *par):QTableView(par)
   ,onDeleteFun(nullptr)
   ,onBackspaceFun(nullptr)
 {
-
 }
 
-void SATableView::keyPressEvent(QKeyEvent *e)
+void SATableView::copySelectedCellInClipboard()
 {
-    if(Qt::ControlModifier == e->modifiers() && Qt::Key_C == e->key())
-    {
-        onCtrlCPressed();
-        return;
-    }
-    else if(Qt::ControlModifier == e->modifiers() && Qt::Key_V == e->key())
-    {
-        onCtrlVPressed();
-        return;
-    }
-    else if(Qt::Key_Delete == e->key())
-    {
-        onDeletePressed();
-        return;
-    }
-    else if(Qt::Key_Backspace == e->key())
-    {
-        onBackspacePressed();
-        return;
-    }
-    QTableView::keyPressEvent(e);
-}
-///
-/// \brief 处理ctrl+c事件
-///
-void SATableView::onCtrlCPressed()
-{
-    if(onCtrlCFun)
-    {
-        onCtrlCFun(this);
-        return;
-    }
     QItemSelectionModel *selModel = selectionModel();
     if(!selModel || !(selModel->hasSelection()))
     {
@@ -88,6 +55,43 @@ void SATableView::onCtrlCPressed()
         delete [] tableString[i];
     }
     delete tableString;
+}
+
+void SATableView::keyPressEvent(QKeyEvent *e)
+{
+    if(Qt::ControlModifier == e->modifiers() && Qt::Key_C == e->key())
+    {
+        onCtrlCPressed();
+        return;
+    }
+    else if(Qt::ControlModifier == e->modifiers() && Qt::Key_V == e->key())
+    {
+        onCtrlVPressed();
+        return;
+    }
+    else if(Qt::Key_Delete == e->key())
+    {
+        onDeletePressed();
+        return;
+    }
+    else if(Qt::Key_Backspace == e->key())
+    {
+        onBackspacePressed();
+        return;
+    }
+    QTableView::keyPressEvent(e);
+}
+///
+/// \brief 处理ctrl+c事件
+///
+void SATableView::onCtrlCPressed()
+{
+    if(onCtrlCFun)
+    {
+        onCtrlCFun(this);
+        return;
+    }
+    copySelectedCellInClipboard();
 }
 ///
 /// \brief 处理ctrl+v事件
