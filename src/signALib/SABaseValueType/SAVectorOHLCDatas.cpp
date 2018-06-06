@@ -185,7 +185,7 @@ QDataStream &operator>>(QDataStream &in, QwtOHLCSample &item)
 QDebug operator<<(QDebug debug, const QwtOHLCSample &c)
 {
     QDebugStateSaver saver(debug);
-    debug.nospace() << 'QwtOHLCSample(t:' << c.time
+    debug.nospace() << "QwtOHLCSample(t:" << c.time
                     << ",open:" << c.open
                     << ",high:"<<c.high
                     << ",low:" << c.low

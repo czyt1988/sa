@@ -99,6 +99,9 @@ void SAValueTableWidget::createMenu()
     m_menu = new QMenu(this);
     m_menu->addAction(m_undo);
     m_menu->addAction(m_redo);
+    //////////////////////////////////////////////////////
+    m_menu->addSeparator();
+
     m_insertAction = new QAction(tr("insert"),this);
     m_menu->addAction(m_insertAction);
     connect(m_insertAction,&QAction::triggered,this,&SAValueTableWidget::onActionInsertTriggered);
@@ -115,6 +118,8 @@ void SAValueTableWidget::createMenu()
     m_menu->addAction(m_pasteAction);
     connect(m_pasteAction,&QAction::triggered,this,&SAValueTableWidget::onActionPasteTriggered);
 
+    /////////////////////////////////////////////////////
+    m_menu->addSeparator();
 
     QMenu* m = m_menu->addMenu (tr("export select datas"));
     m->addAction(ui->actionToLinerData);
@@ -204,6 +209,7 @@ void SAValueTableWidget::onTableViewCustomContextMenuRequested(const QPoint &pos
     {
         createMenu();
     }
+    m_pasteAction->setEnabled(QApplication::clipboard()->ownsClipboard());
     m_menu->exec (QCursor::pos());
 }
 
@@ -399,7 +405,7 @@ void SAValueTableWidget::onActionPasteTriggered()
 
 void SAValueTableWidget::onActionCopyTriggered()
 {
-    ui->tableView->
+    ui->tableView->copySelectedCellInClipboard();
 }
 ///
 /// \brief 点击delete按钮的事件回调

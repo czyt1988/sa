@@ -11,6 +11,7 @@ class SAVectorDouble;
 class SAValueTableOptEditValueCommandPrivateBase;
 class SAValueTableOptPasteCommandPrivateBase;
 class SAValueTableOptDeleteCommandPrivateBase;
+class SAValueTableOptInsertCommandPrivateBase;
 ///
 /// \brief sa 数值表格操作类命令基类
 ///
@@ -99,5 +100,23 @@ public:
 
 private:
     SAValueTableOptDeleteCommandPrivateBase* d_ptr;
+};
+
+///
+/// \brief 数据表格的插入命令
+///
+class SA_COMMON_UI_EXPORT SAValueTableOptInsertCommand : public SAAbstractValueTableOptCommand
+{
+public:
+    SAValueTableOptInsertCommand(SAAbstractDatas* data
+                                     , const QVector<QPoint>& selectIndex
+                                     ,QUndoCommand* par = Q_NULLPTR);
+    ~SAValueTableOptInsertCommand();
+    bool isValid() const;
+    void redo();
+    void undo();
+
+private:
+    SAValueTableOptInsertCommandPrivateBase* d_ptr;
 };
 #endif // SAVALUETABLEOPTCOMMANDS_H

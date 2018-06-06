@@ -11,6 +11,11 @@
 #include "SAVectorOHLCDatas.h"
 #include <iterator>
 #include "czyAlgorithm.h"
+
+
+///
+/// \brief 数据表格的操作内部类的基类
+///
 class SAValueTableOptCommandPrivateBase
 {
 public:
@@ -39,7 +44,7 @@ public:
 
 
 ///
-/// \brief Edit的内部处理类，会根据参数类型不一样实例化不一样的内容
+/// \brief 数据表格Edit的内部处理类，会根据参数类型不一样实例化不一样的内容
 ///
 class SAValueTableOptEditValueCommandPrivateBase : public SAValueTableOptCommandPrivateBase
 {
@@ -1458,5 +1463,49 @@ void SAValueTableOptDeleteCommand::undo()
     }
 }
 
+//////////////////////////////////////////////////////////
+//SAValueTableOptInsertCommand
+///////////////////////////////////////////////////////////
 
+SAValueTableOptInsertCommand::SAValueTableOptInsertCommand(
+        SAAbstractDatas *data
+        , const QVector<QPoint> &selectIndex
+        , QUndoCommand *par)
+    :SAAbstractValueTableOptCommand(data,par)
+    ,d_ptr(nullptr)
+{
 
+}
+
+SAValueTableOptInsertCommand::~SAValueTableOptInsertCommand()
+{
+    if(d_ptr)
+    {
+        delete d_ptr;
+    }
+}
+
+bool SAValueTableOptInsertCommand::isValid() const
+{
+    if(d_ptr)
+    {
+        return d_ptr->isValid();
+    }
+    return false;
+}
+
+void SAValueTableOptInsertCommand::redo()
+{
+    if(d_ptr)
+    {
+        return d_ptr->redo();
+    }
+}
+
+void SAValueTableOptInsertCommand::undo()
+{
+    if(d_ptr)
+    {
+        return d_ptr->undo();
+    }
+}
