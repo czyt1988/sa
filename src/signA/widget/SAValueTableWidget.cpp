@@ -46,32 +46,30 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
 
-
-    //设置setdata的操作
-    model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool
-    {
-        return this->onTableViewSetData(r,c,v);
-    };
-
-
+    //表格默认高度
     QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
     if(plotLayerVerticalHeader)
     {
         plotLayerVerticalHeader->setDefaultSectionSize(19);
     }
-    //设置Ctrl + v的操作
+
+    //设置model的setData的操作
+    model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool
+    {
+        return this->onTableViewSetData(r,c,v);
+    };
+    //设置tableView的Ctrl + v的操作
     ui->tableView->onCtrlVFun = [&](SATableView* obj)
     {
         Q_UNUSED(obj);
         this->onActionPasteTriggered();
     };
-    //设置delete和backspace的操作
+    //设置tableView的delete和backspace的操作
     auto deleteFunPtr = [&](SATableView* obj)
     {
         Q_UNUSED(obj);
         this->onActionDeleteTriggered();
     };
-
     ui->tableView->onDeleteFun = deleteFunPtr;
     ui->tableView->onBackspaceFun = deleteFunPtr;
 
@@ -89,7 +87,11 @@ SAValueTableWidget::~SAValueTableWidget()
 {
     delete ui;
 }
-
+///
+/// \brief 右键菜单的创建
+///
+/// 菜单再使用时才会创建
+///
 void SAValueTableWidget::createMenu()
 {
     if(m_menu)
@@ -126,7 +128,11 @@ void SAValueTableWidget::createMenu()
     m->addAction(ui->actionToPointFVectorData);
 
 }
-
+///
+/// \brief 根据选中的表格单元，分析数据对应的有用表格
+/// \param indexLists 表格选中的索引index
+/// \param res 分析的结果
+///
 void SAValueTableWidget::analysisSelectModelIndex(const QModelIndexList &indexLists, QMap<SAAbstractDatas *, QVector<QPoint> > &res)
 {
     SADataTableModel* model = getDataModel();
@@ -168,46 +174,82 @@ void SAValueTableWidget::analysisSelectModelIndex(const QModelIndexList &indexLi
     }
 }
 
+///
+/// \brief 获取tableView
+/// \return
+///
 QTableView *SAValueTableWidget::getTableView()
 {
     return ui->tableView;
 }
 
+///
+/// \brief 获取model
+/// \return
+///
 SADataTableModel *SAValueTableWidget::getDataModel() const
 {
     return static_cast<SADataTableModel*>(ui->tableView->model ());
 }
 
+///
+/// \brief 设置数据到表格中显示
+///
+/// 此操作会覆盖掉原来已经设置的数据指针
+///
+/// \param data 数据指针
+///
+///
 void SAValueTableWidget::setSADataPtr(SAAbstractDatas *data)
 {
     m_undoStack->clear();
     getDataModel()->setSADataPtr(data);
 }
 
+///
+/// \brief 设置多个数据指针到表格中显示
+/// \param datas
+///
 void SAValueTableWidget::setSADataPtrs(const QList<SAAbstractDatas *> &datas)
 {
     m_undoStack->clear();
     getDataModel()->setSADataPtrs(datas);
 }
 
+///
+/// \brief 在已有数据指针后继续插入数据显示
+/// \param data
+///
 void SAValueTableWidget::appendSADataPtr(SAAbstractDatas *data)
 {
     m_undoStack->clear();
     getDataModel()->appendSADataPtr(data);
 }
 
+///
+/// \brief 插入多个数据指针
+/// \param datas
+///
 void SAValueTableWidget::appendSADataPtrs(QList<SAAbstractDatas *> datas)
 {
     m_undoStack->clear();
     getDataModel()->appendSADataPtrs(datas);
 }
 
+///
+/// \brief 移除模型中的数据指针
+/// \param datas
+///
 void SAValueTableWidget::removeDatas(const QList<SAAbstractDatas *> &datas)
 {
     m_undoStack->clear();
     getDataModel()->removeDatas(datas);
 }
 
+///
+/// \brief 把整个表格内容保存为csv格式
+/// \param fullFilePath csv文件的路径
+///
 void SAValueTableWidget::saveTableToCsv(const QString &fullFilePath)
 {
     SADataTableModel* model = getDataModel();
@@ -218,6 +260,8 @@ void SAValueTableWidget::saveTableToCsv(const QString &fullFilePath)
                               , tr("can not create file"));
         return;
     }
+    SAWaitCursor wait;
+
     SACsvStream csv(&file);
     const int rows = model->dataRowCount();
     const int columns = model->dataColumnCount();
@@ -230,6 +274,10 @@ void SAValueTableWidget::saveTableToCsv(const QString &fullFilePath)
         }
         csv<<endl;
     }
+    file.close();
+    wait.release();
+    QMessageBox::critical(nullptr, tr("information")
+                          , tr("can not create file"));
 }
 
 void SAValueTableWidget::redo()
