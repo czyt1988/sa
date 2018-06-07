@@ -85,6 +85,8 @@ private:
     QPoint tableHeaderPositionOffset() const;
     //
     void createMenu();
+    //分析选择的索引，把选中的数据指针和索引分类输出
+    void analysisSelectModelIndex(const QModelIndexList& indexLists, QMap<SAAbstractDatas *, QVector<QPoint> > &res);
 private:
     Ui::SAValueTableWidget *ui;
     //OpenFileManager* m_values;

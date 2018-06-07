@@ -127,6 +127,47 @@ void SAValueTableWidget::createMenu()
 
 }
 
+void SAValueTableWidget::analysisSelectModelIndex(const QModelIndexList &indexLists, QMap<SAAbstractDatas *, QVector<QPoint> > &res)
+{
+    SADataTableModel* model = getDataModel();
+    const QList<SAAbstractDatas*>& datas = model->getSADataPtrs();
+    struct _tmp_struct
+    {
+        _tmp_struct()
+        {
+            colStart = -1;
+            colEnd = -1;
+            dataPtr = nullptr;
+        }
+        int colStart;
+        int colEnd;
+        SAAbstractDatas* dataPtr;
+    };
+    QList<_tmp_struct> dataRanges;
+    for(int i=0;i<datas.size();++i)
+    {
+        _tmp_struct st;
+        st.dataPtr = datas[i];
+        model->dataColumnRange(st.dataPtr,st.colStart,st.colEnd);
+        if(st.colStart >= 0 || st.colEnd >= 0)
+        {
+            dataRanges.append(st);
+        }
+    }
+    for(int i=0;i<indexLists.size();++i)
+    {
+        int col = indexLists[i].column ();
+        int row = indexLists[i].row ();
+        for(int j=0;j<dataRanges.size();++j)
+        {
+            if(col >= dataRanges[j].colStart && col <= dataRanges[j].colEnd && row < dataRanges[j].dataPtr->getSize(SA::Dim1))
+            {
+                res[dataRanges[j].dataPtr].push_back(QPoint(col,row));
+            }
+        }
+    }
+}
+
 QTableView *SAValueTableWidget::getTableView()
 {
     return ui->tableView;
@@ -194,12 +235,14 @@ void SAValueTableWidget::saveTableToCsv(const QString &fullFilePath)
 void SAValueTableWidget::redo()
 {
     m_redo->activate(QAction::Trigger);
+    getDataModel()->update();
     saUI->updateValueManagerTreeView();
 }
 
 void SAValueTableWidget::undo()
 {
     m_undo->activate(QAction::Trigger);
+    getDataModel()->update();
     saUI->updateValueManagerTreeView();
 }
 
@@ -260,7 +303,23 @@ void SAValueTableWidget::onDataRemoved(const QList<SAAbstractDatas *> &dataBeDel
 ///
 void SAValueTableWidget::onActionInsertTriggered()
 {
-
+    SAWaitCursor waitCursor;
+    QItemSelectionModel* selModel = ui->tableView->selectionModel();
+    QMap<SAAbstractDatas *, QVector<QPoint> > res;
+    QModelIndexList indexs = selModel->selectedIndexes ();
+    analysisSelectModelIndex(indexs,res);
+    QScopedPointer<QUndoCommand> topCmd(new QUndoCommand);
+    for(auto i=res.begin();i!=res.end();++i)
+    {
+        SAValueTableOptInsertCommand* cmd = new SAValueTableOptInsertCommand(i.key(),i.value(),topCmd.data());
+    }
+    if(topCmd->childCount() > 0)
+    {
+        topCmd->setText(tr("delete datas"));
+        m_undoStack->push(topCmd.take());
+        getDataModel()->update();
+        saUI->updateValueManagerTreeView();
+    }
 }
 ///
 /// \brief 设置数据,此函数将设置到model的setData函数里
@@ -414,7 +473,22 @@ void SAValueTableWidget::onActionDeleteTriggered()
 {
     SAWaitCursor waitCursor;
     QItemSelectionModel* selModel = ui->tableView->selectionModel();
+    QMap<SAAbstractDatas *, QVector<QPoint> > res;
     QModelIndexList indexs = selModel->selectedIndexes ();
+    analysisSelectModelIndex(indexs,res);
+    QScopedPointer<QUndoCommand> topCmd(new QUndoCommand);
+    for(auto i=res.begin();i!=res.end();++i)
+    {
+        SAValueTableOptDeleteCommand* cmd = new SAValueTableOptDeleteCommand(i.key(),i.value(),topCmd.data());
+    }
+    if(topCmd->childCount() > 0)
+    {
+        topCmd->setText(tr("delete datas"));
+        m_undoStack->push(topCmd.take());
+        getDataModel()->update();
+        saUI->updateValueManagerTreeView();
+    }
+    /*
     const int size = indexs.size ();
     SADataTableModel* model = getDataModel();
     struct _tmp_struct
@@ -482,6 +556,8 @@ void SAValueTableWidget::onActionDeleteTriggered()
         model->update();
         saUI->updateValueManagerTreeView();
     }
+    */
+
 }
 ///
 /// \brief 获取选中的线性数据
