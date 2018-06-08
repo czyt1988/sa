@@ -33,11 +33,11 @@ void SAFigureChartItemAddCommand::undo()
     m_item->detach();
 }
 
-SAFigureChartItemDeleteCommand::SAFigureChartItemDeleteCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName,QUndoCommand *parent)
+SAFigureChartItemDeleteCommand::SAFigureChartItemDeleteCommand(SAChart2D *chart, QwtPlotItem *item, const QString &cmdName,QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_item(ser)
+    ,m_item(item)
 {
-
+    switch()
 }
 
 SAFigureChartItemDeleteCommand::~SAFigureChartItemDeleteCommand()

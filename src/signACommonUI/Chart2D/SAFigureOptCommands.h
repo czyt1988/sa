@@ -57,7 +57,7 @@ private:
 class SA_COMMON_UI_EXPORT SAFigureChartItemDeleteCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureChartItemDeleteCommand(SAChart2D* chart, QwtPlotItem *ser, const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
+    SAFigureChartItemDeleteCommand(SAChart2D* chart, QwtPlotItem *item, const QString &cmdName, QUndoCommand *parent = Q_NULLPTR);
     ~SAFigureChartItemDeleteCommand();
     virtual void redo();
     virtual void undo();
@@ -103,11 +103,28 @@ private:
 
 /////////////////////////////////////////////////////////////////////
 ///
-///  Series值变更
+///  Series值的编辑，这个编辑是对应表格的编辑，需要提供indexRow和indexCol信息
 ///
 /////////////////////////////////////////////////////////////////////
+class SAFigureEditSeriesDataCommandPrivate;
+class SA_COMMON_UI_EXPORT SAFigureEditSeriesDataCommand : public SAFigureOptCommand
+{
+public:
+    SA_IMPL(SAFigureEditSeriesDataCommand)
+    SAFigureEditSeriesDataCommand(SAChart2D* chart
+                                      , QwtPlotItem* item
+                                      , double val
+                                      , int indexRow
+                                      , int indexCol
+                                      , const QString &cmdName = QString()
+                                      , QUndoCommand *parent = Q_NULLPTR);
+    virtual void redo();
+    virtual void undo();
+    bool isValid() const;
+};
 
 
+-------------------
 ///
 /// \brief 曲线QwtSeriesStore<QPointF>值变更
 ///

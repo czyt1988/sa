@@ -29,4 +29,5 @@ SOURCES += \
     $$PWD/SABoxSeries.cpp \
     $$PWD/SAHistogramSeries.cpp \
     $$PWD/SAPlotItemTreeModel.cpp \
-    $$PWD/SAIntervalSeries.cpp
+    $$PWD/SAIntervalSeries.cpp \
+    $$PWD/SAFigureOptCommands_EditSeriesImpl.cpp
