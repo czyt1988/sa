@@ -35,6 +35,10 @@ include($$PWD/../3rdParty/qti/qti.pri)
 
 OTHER_FILES += readme.md
 
+
+#Chart2D
+include($$PWD/Chart2D/Chart2D.pri)
+
 HEADERS += \
     SACommonUIGlobal.h \
     SAQwtSymbolComboBox.h \
@@ -107,8 +111,7 @@ FORMS += \
     SATendencyChartDataSelectDialog.ui \
     SATimeFormatSetWidget.ui
 
-#Chart2D
-include($$PWD/Chart2D/Chart2D.pri)
+
 #sa property item
 include($$PWD/SAPropertyItem/SAPropertyItem.pri)
 #sa chart support

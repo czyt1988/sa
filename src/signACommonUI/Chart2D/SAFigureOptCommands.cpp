@@ -37,7 +37,6 @@ SAFigureChartItemDeleteCommand::SAFigureChartItemDeleteCommand(SAChart2D *chart,
     :SAFigureOptCommand(chart,cmdName,parent)
     ,m_item(item)
 {
-    switch()
 }
 
 SAFigureChartItemDeleteCommand::~SAFigureChartItemDeleteCommand()

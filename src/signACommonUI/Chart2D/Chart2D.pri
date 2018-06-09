@@ -30,4 +30,4 @@ SOURCES += \
     $$PWD/SAHistogramSeries.cpp \
     $$PWD/SAPlotItemTreeModel.cpp \
     $$PWD/SAIntervalSeries.cpp \
-    $$PWD/SAFigureOptCommands_EditSeriesImpl.cpp
+    $$PWD/SAFiguresEditSeriesCommand_impl.cpp

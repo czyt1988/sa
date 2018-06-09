@@ -81,6 +81,7 @@ void SAValueSelectDialog::initUI()
         {
             return this->getHightLightColor();
         }
+        return QVariant();
     });
     ui->treeView->setModel(m_valueModel);
 
@@ -92,6 +93,7 @@ void SAValueSelectDialog::initUI()
 
 void SAValueSelectDialog::onTreeClicked(const QModelIndex &index)
 {
+    Q_UNUSED(index);
     QList<SAAbstractDatas *> datas = getSelectDatas();
     m_dataModel->setSADataPtrs(datas);
 }

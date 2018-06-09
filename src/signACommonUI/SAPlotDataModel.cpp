@@ -11,6 +11,7 @@
 #include "qwt_plot_spectrocurve.h"
 #include "qwt_plot_tradingcurve.h"
 
+
 class SAPlotDataModelPrivate
 {
     SA_IMPL_PUBLIC(SAPlotDataModel)
@@ -74,6 +75,24 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
     AutoResetSAPlotDataModel autoResetModel(this);
     Q_UNUSED(autoResetModel);
 
+    //new SAFiguresDataCommandEditSeries(chart,item,d,row,col,tr("set curve data"));
+
+    QScopedPointer<SAFiguresEditSeriesCommand> cmd;
+    cmd.reset(new SAFiguresEditSeriesCommand(chart,item,d,row,col,tr("set curve data")));
+    if(cmd->isValid())
+    {
+        bool isChangedSize = cmd->isSizeChanged();
+        chart->appendCommand(cmd.take());
+        if(isChangedSize)
+        {
+            updateColumnCount();
+        }
+        return true;
+    }
+
+
+
+    /*
     int rtti = item->rtti();
     switch(rtti)
     {
@@ -297,6 +316,8 @@ bool SAPlotDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVa
     default:
         break;
     }
+    */
+
     return false;
 }
 

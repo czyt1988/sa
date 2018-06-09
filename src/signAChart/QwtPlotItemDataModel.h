@@ -56,7 +56,7 @@ protected:
     virtual int calcItemDataRowCount(QwtPlotItem* item) const;
     //获取item的最大列数
     virtual int calcItemDataColumnCount(QwtPlotItem* item) const;
-    //获取数据 row col 要对应item的维度
+    //获取数据 row col 要对应item的维度 ,col是以数据为基准而不是以表格为基准
     virtual double getItemData(int row,int col,QwtPlotItem* item) const;
     //设置数据 row col 要对应item的维度
     virtual bool setItemData(int row,int col,QwtPlotItem* item,const QVariant& var);

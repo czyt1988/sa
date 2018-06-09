@@ -26,8 +26,6 @@ public:
     SAPlotDataModel* getPlotModel() const;
 private slots:
     void onTreeViewCurPlotItemClicked(const QModelIndex& index);
-    //设置数据的回调
-    void onTableViewSetData();
     //数据表双击 - 处理插入新数据
     void onTableViewDoubleClicked(const QModelIndex& index);
     //figure有图添加发送的信号

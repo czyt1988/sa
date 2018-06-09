@@ -13,6 +13,15 @@
 #include <QPainterPath>
 #include <QList>
 #include "qwt_series_store.h"
+
+#include "qwt_plot_barchart.h"
+#include "qwt_plot_histogram.h"
+#include "qwt_plot_intervalcurve.h"
+#include "qwt_plot_multi_barchart.h"
+#include "qwt_plot_scaleitem.h"
+#include "qwt_plot_spectrocurve.h"
+#include "qwt_plot_tradingcurve.h"
+#include "qwt_plot_spectrogram.h"
 class QwtPlotItem;
 class QwtScaleDraw;
 class QwtDateScaleDraw;
@@ -140,8 +149,8 @@ public:
     static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
 
 ////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
-
-
+    template<typename T,typename PlotItemType>
+    static void setVectorSampleData(QwtPlotItem* item,const QVector<T>& datas);
     //设置符号
     static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size = QSize(8,8));
     static void setCurveLinePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
@@ -172,4 +181,13 @@ void SAChart::getSeriesData(QVector<T> &vec, const QwtSeriesStore<T> *series, in
         vec.push_back(series->sample(i));
     }
 }
+
+
+
+template<typename T,typename PlotItemType>
+void SAChart::setVectorSampleData(QwtPlotItem* item,const QVector<T>& datas)
+{
+    static_cast<PlotItemType*>(item)->setSamples(datas);
+}
+
 #endif // SACHART_H

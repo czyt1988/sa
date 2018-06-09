@@ -136,10 +136,7 @@ void SAChartDatasViewWidget::onTreeViewCurPlotItemClicked(const QModelIndex &ind
     m_tableModel->setPlotItems (items);
 }
 
-void SAChartDatasViewWidget::onTableViewSetData()
-{
 
-}
 ///
 /// \brief SAChartDatasViewWidget::onTableViewDoubleClicked
 /// \param index

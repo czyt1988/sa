@@ -106,25 +106,37 @@ private:
 ///  Series值的编辑，这个编辑是对应表格的编辑，需要提供indexRow和indexCol信息
 ///
 /////////////////////////////////////////////////////////////////////
-class SAFigureEditSeriesDataCommandPrivate;
-class SA_COMMON_UI_EXPORT SAFigureEditSeriesDataCommand : public SAFigureOptCommand
+class SAFiguresEditSeriesCommandPrivate;
+///
+/// \brief 编辑序列数值的命令在编辑的位置超过原有位置时，会把长度扩展到指定的长度，并初始化为默认的数据
+///
+class SA_COMMON_UI_EXPORT SAFiguresEditSeriesCommand : public SAFigureOptCommand
 {
 public:
-    SA_IMPL(SAFigureEditSeriesDataCommand)
-    SAFigureEditSeriesDataCommand(SAChart2D* chart
-                                      , QwtPlotItem* item
-                                      , double val
-                                      , int indexRow
-                                      , int indexCol
-                                      , const QString &cmdName = QString()
-                                      , QUndoCommand *parent = Q_NULLPTR);
+    SAFiguresEditSeriesCommand(SAChart2D* chart
+                                  , QwtPlotItem* item
+                                  , double val
+                                  , int indexRow
+                                  , int indexCol
+                                  , const QString &cmdName = QString()
+                                  , QUndoCommand *parent = Q_NULLPTR);
+    ~SAFiguresEditSeriesCommand();
     virtual void redo();
     virtual void undo();
+    //判断是否有效
     bool isValid() const;
+    //判断是否尺寸有变化
+    bool isSizeChanged() const;
+private:
+    SAFiguresEditSeriesCommandPrivate* d_ptr;
 };
 
 
--------------------
+
+
+
+
+
 ///
 /// \brief 曲线QwtSeriesStore<QPointF>值变更
 ///
