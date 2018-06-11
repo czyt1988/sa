@@ -501,6 +501,7 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
         }
         break;
     }
+
     case QwtPlotItem::Rtti_PlotIntervalCurve:
     {
         const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
@@ -522,9 +523,9 @@ double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) co
         {
             switch(col)
             {
-                case 0:return p->sample(row).interval.minValue();
-                case 1:return p->sample(row).interval.maxValue();
-                case 2:return p->sample(row).value;
+                case 0:return p->sample(row).value;
+                case 1:return p->sample(row).interval.minValue();
+                case 2:return p->sample(row).interval.maxValue();
             }
         }
         break;
@@ -667,23 +668,13 @@ QString QwtPlotItemDataModel::getItemDimDescribe(QwtPlotItem *item, int index) c
         break;
     }
     case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
     {
         switch(index)
         {
         case 0:return tr("value");
         case 1:return tr("min");
         case 2:return tr("max");
-        default:return QString();
-        }
-        break;
-    }
-    case QwtPlotItem::Rtti_PlotHistogram:
-    {
-        switch(index)
-        {
-        case 0:return tr("x-min");
-        case 1:return tr("x-max");
-        case 2:return tr("value");
         default:return QString();
         }
         break;
@@ -718,6 +709,83 @@ QString QwtPlotItemDataModel::getItemDimDescribe(QwtPlotItem *item, int index) c
 #endif
     return QString();
 }
+
+
+
+void QwtPlotItemDataModel::setSeriesPointFValue(QPointF& p,int col,double val)
+{
+    switch (col) {
+    case 0:
+        p.rx() = val;break;
+    case 1:
+        p.ry() = val;break;
+    default:
+        break;
+    }
+}
+
+void QwtPlotItemDataModel::setSeriesPoint3dValue(QwtPoint3D& p,int col,double val)
+{
+    switch(col)
+    {
+    case 0:
+        p.setX(val);break;
+    case 1:
+        p.setY(val);break;
+    case 2:
+        p.setZ(val);break;
+    default:
+        break;
+    }
+}
+
+void QwtPlotItemDataModel::setSeriesIntervalValue(QwtIntervalSample& p,int col,double val)
+{
+    switch(col)
+    {
+    case 0:p.value = val;break;
+    case 1:p.interval.setMinValue(val);break;
+    case 2:p.interval.setMaxValue(val);break;
+    default:
+        break;
+    }
+}
+
+void QwtPlotItemDataModel::setSeriesSetsampleValue(QwtSetSample& p,int col,double val)
+{
+    if(0 == col)
+    {
+        p.value = val;
+    }
+    else
+    {
+        if(col-1 < p.set.size())
+        {
+            p.set[col-1] = val;
+        }
+    }
+}
+
+void QwtPlotItemDataModel::setSeriesOHLCsampleValue(QwtOHLCSample& p,int col,double val)
+{
+    switch(col)
+    {
+    case 0:
+        p.time = val;break;
+    case 1:
+        p.open = val;break;
+    case 2:
+        p.high = val;break;
+    case 3:
+        p.low = val;break;
+    case 4:
+        p.close = val;break;
+    default:
+        break;
+    }
+}
+
+
 ///
 /// \brief 依据显示规则设置数据
 /// \param row 实际数据的行号
@@ -747,23 +815,8 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
         SAChart::getXYDatas(xys,p);
         if(row < xys.size())
         {
-            switch(col)
-            {
-            case 0:
-            {
-                xys[row].setX(d);
-                p->setSamples(xys);
-                return true;
-            }
-            case 1:
-            {
-                xys[row].setY(d);
-                p->setSamples(xys);
-                return true;
-            }
-            default:
-                break;
-            }
+            setSeriesPointFValue(xys[row],col,d);
+            p->setSamples(xys);
         }
         return false;
     }
@@ -776,21 +829,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
         SAChart::getXYDatas(xys,p);
         if(row < xys.size())
         {
-            switch(col)
-            {
-            case 0:
-            {
-                xys[row].setX(d);
-                break;
-            }
-            case 1:
-            {
-                xys[row].setY(d);
-                break;
-            }
-            default:
-                break;
-            }
+            setSeriesPointFValue(xys[row],col,d);
             p->setSamples(xys);
             return true;
         }
@@ -805,26 +844,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
         SAChart::getXYZDatas(xyzs,p);
         if(row < xyzs.size())
         {
-            switch(col)
-            {
-            case 0:
-            {
-                xyzs[row].setX(d);
-                break;
-            }
-            case 1:
-            {
-                xyzs[row].setY(d);
-                break;
-            }
-            case 2:
-            {
-                xyzs[row].setZ(d);
-                break;
-            }
-            default:
-                break;
-            }
+            setSeriesPoint3dValue(xyzs[row],col,d);
             p->setSamples(xyzs);
             return true;
         }
@@ -839,26 +859,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
         SAChart::getIntervalSampleDatas(samples,p);
         if(row < samples.size())
         {
-            switch(col)
-            {
-            case 0:
-            {
-                samples[row].value = d;
-                break;
-            }
-            case 1:
-            {
-                samples[row].interval.setMinValue(d);
-                break;
-            }
-            case 2:
-            {
-                samples[row].interval.setMaxValue(d);
-                break;
-            }
-            default:
-                break;
-            }
+            setSeriesIntervalValue(samples[row],col,d);
             p->setSamples(samples);
             return true;
         }
@@ -873,26 +874,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
         SAChart::getIntervalSampleDatas(samples,p);
         if(row < samples.size())
         {
-            switch(col)
-            {
-            case 0:
-            {
-                samples[row].interval.setMinValue(d);
-                break;
-            }
-            case 1:
-            {
-                samples[row].interval.setMaxValue(d);
-                break;
-            }
-            case 2:
-            {
-                samples[row].value = d;
-                break;
-            }
-            default:
-                break;
-            }
+            setSeriesIntervalValue(samples[row],col,d);
             p->setSamples(samples);
             return true;
         }
@@ -905,39 +887,9 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
             return false;
         QVector<QwtOHLCSample> samples;
         SAChart::getSeriesData<QwtOHLCSample>(samples,p);
-
         if(row < samples.size())
         {
-            switch(col)
-            {
-            case 0:
-            {
-                samples[row].time = d;
-                break;
-            }
-            case 1:
-            {
-                samples[row].open = d;
-                break;
-            }
-            case 2:
-            {
-                samples[row].high = d;
-                break;
-            }
-            case 3:
-            {
-                samples[row].low = d;
-                break;
-            }
-            case 4:
-            {
-                samples[row].close = d;
-                break;
-            }
-            default:
-                break;
-            }
+            setSeriesOHLCsampleValue(samples[row],col,d);
             p->setSamples(samples);
             return true;
         }
@@ -950,21 +902,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
         SAChart::getSeriesData<QwtSetSample>(samples,p);
         if(row < samples.size())
         {
-            if(0 == col)
-            {
-                samples[row].value = d;
-            }
-            else
-            {
-                if(col-1 < samples[row].set.size())
-                {
-                    samples[row].set[col-1] = d;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            setSeriesSetsampleValue(samples[row],col,d);
             p->setSamples(samples);
             return true;
         }

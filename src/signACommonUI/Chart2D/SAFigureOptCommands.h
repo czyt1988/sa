@@ -81,6 +81,32 @@ private:
     QPainterPath m_oldPainterPath;
 };
 
+
+////////////////////////////////////////////////////
+///   Series值的范围移除
+////////////////////////////////////////////////////
+class SAFigureRemoveSeriesDatasInRangCommandPrivate;
+///
+/// \brief 移除选区范围内的数据
+///
+class SA_COMMON_UI_EXPORT SAFigureRemoveSeriesDatasInRangCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureRemoveSeriesDatasInRangCommand(SAChart2D* chart
+                                            , QwtPlotItem* item
+                                            , const QPainterPath& selectRange
+                                            , const QString &cmdName
+                                            , QUndoCommand *parent = Q_NULLPTR);
+    virtual void redo();
+    virtual void undo();
+    bool isValid() const;
+private:
+    SAFigureRemoveSeriesDatasInRangCommandPrivate* d_ptr;
+};
+
+
+
+
 ///
 /// \brief 移除曲线QwtPlotCurve范围内的数据
 ///

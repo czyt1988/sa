@@ -5,7 +5,9 @@
 #include <QList>
 #include <algorithm>
 #include <vector>
-#include <qwt_plot_item.h>
+#include "qwt_plot_item.h"
+#include "qwt_point_3d.h"
+#include "qwt_samples.h"
 #include <limits>
 class QwtPlotMultiBarChart;
 class QwtPlotItemDataModelPrivate;
@@ -44,6 +46,15 @@ public:
     virtual QString getItemDimDescribe(QwtPlotItem* item,int index) const;
     //通过列号获取item的名字
     QString getItemNameFromCol(int col) const;
+    //
+    // == 下面为设置值的静态函数
+    //
+    static void setSeriesPointFValue(QPointF& p,int col,double val);
+    static void setSeriesPoint3dValue(QwtPoint3D& p,int col,double val);
+    static void setSeriesIntervalValue(QwtIntervalSample& p,int col,double val);
+    static void setSeriesSetsampleValue(QwtSetSample& p,int col,double val);
+    static void setSeriesOHLCsampleValue(QwtOHLCSample& p,int col,double val);
+    //
 public:
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;

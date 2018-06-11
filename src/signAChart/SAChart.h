@@ -148,6 +148,14 @@ public:
     static int removeDataInRang(const QRectF& removeRang,QwtSeriesStore<QPointF>* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
 
+
+    static void setPlotCurveSample(QwtPlotItem* p,const QVector<QPointF>& datas);
+    static void setPlotBarChartSample(QwtPlotItem* p,const QVector<QPointF>& datas);
+    static void setPlotHistogramSample(QwtPlotItem* p,const QVector<QwtIntervalSample>& datas);
+    static void setPlotIntervalCurveSample(QwtPlotItem* p,const QVector<QwtIntervalSample>& datas);
+    static void setPlotMultiBarChartSample(QwtPlotItem* p,const QVector<QwtSetSample>& datas);
+    static void setPlotTradingCurveSample(QwtPlotItem* p,const QVector<QwtOHLCSample>& datas);
+    static void setPlotSpectroCurveSample(QwtPlotItem* p,const QVector<QwtPoint3D>& datas);
 ////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
     template<typename T,typename PlotItemType>
     static void setVectorSampleData(QwtPlotItem* item,const QVector<T>& datas);

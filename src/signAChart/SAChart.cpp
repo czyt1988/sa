@@ -730,6 +730,41 @@ int SAChart::removeDataInRang(const QPainterPath &removeRang, QwtSeriesStore<QPo
     return newLine.size();
 }
 
+void SAChart::setPlotCurveSample(QwtPlotItem *p, const QVector<QPointF> &datas)
+{
+    static_cast<QwtPlotCurve*>(p)->setSamples(datas);
+}
+
+void SAChart::setPlotBarChartSample(QwtPlotItem *p, const QVector<QPointF> &datas)
+{
+    static_cast<QwtPlotBarChart*>(p)->setSamples(datas);
+}
+
+void SAChart::setPlotHistogramSample(QwtPlotItem *p, const QVector<QwtIntervalSample> &datas)
+{
+    static_cast<QwtPlotHistogram*>(p)->setSamples(datas);
+}
+
+void SAChart::setPlotIntervalCurveSample(QwtPlotItem *p, const QVector<QwtIntervalSample> &datas)
+{
+    static_cast<QwtPlotIntervalCurve*>(p)->setSamples(datas);
+}
+
+void SAChart::setPlotMultiBarChartSample(QwtPlotItem *p, const QVector<QwtSetSample> &datas)
+{
+    static_cast<QwtPlotMultiBarChart*>(p)->setSamples(datas);
+}
+
+void SAChart::setPlotTradingCurveSample(QwtPlotItem *p, const QVector<QwtOHLCSample> &datas)
+{
+    static_cast<QwtPlotTradingCurve*>(p)->setSamples(datas);
+}
+
+void SAChart::setPlotSpectroCurveSample(QwtPlotItem *p, const QVector<QwtPoint3D> &datas)
+{
+    static_cast<QwtPlotSpectroCurve*>(p)->setSamples(datas);
+}
+
 
 
 
