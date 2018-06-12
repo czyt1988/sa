@@ -142,13 +142,15 @@ public:
     static void getXYZDatas(QVector<QwtPoint3D>& xyzs, const QwtSeriesStore<QwtPoint3D>* cur);
     //获取间隔数据
     static void getIntervalSampleDatas(QVector<QwtIntervalSample>& intv,const QwtSeriesStore<QwtIntervalSample>* cur);
+    //判断点是否在选择的范围内
+    static bool isDataInRange(const QPainterPath &range,const QPointF& point);
     //把范围内的数据移除 返回移除的个数
     static int removeDataInRang(const QRectF &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
     static int removeDataInRang(const QPainterPath &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
     static int removeDataInRang(const QRectF& removeRang,QwtSeriesStore<QPointF>* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
 
-
+    //setSample;
     static void setPlotCurveSample(QwtPlotItem* p,const QVector<QPointF>& datas);
     static void setPlotBarChartSample(QwtPlotItem* p,const QVector<QPointF>& datas);
     static void setPlotHistogramSample(QwtPlotItem* p,const QVector<QwtIntervalSample>& datas);
@@ -156,6 +158,7 @@ public:
     static void setPlotMultiBarChartSample(QwtPlotItem* p,const QVector<QwtSetSample>& datas);
     static void setPlotTradingCurveSample(QwtPlotItem* p,const QVector<QwtOHLCSample>& datas);
     static void setPlotSpectroCurveSample(QwtPlotItem* p,const QVector<QwtPoint3D>& datas);
+    //
 ////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
     template<typename T,typename PlotItemType>
     static void setVectorSampleData(QwtPlotItem* item,const QVector<T>& datas);

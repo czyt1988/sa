@@ -97,6 +97,7 @@ public:
                                             , const QPainterPath& selectRange
                                             , const QString &cmdName
                                             , QUndoCommand *parent = Q_NULLPTR);
+    virtual ~SAFigureRemoveSeriesDatasInRangCommand();
     virtual void redo();
     virtual void undo();
     bool isValid() const;

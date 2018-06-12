@@ -610,6 +610,16 @@ void SAChart::getIntervalSampleDatas(QVector<QwtIntervalSample> &intv, const Qwt
 {
     getSeriesData<QwtIntervalSample>(intv,cur);
 }
+///
+/// \brief 判断点是否在选择的范围内
+/// \param range
+/// \param point
+/// \return
+///
+bool SAChart::isDataInRange(const QPainterPath &range, const QPointF &point)
+{
+    return range.contains(point);
+}
 
 ///
 /// \brief 设置曲线标识符

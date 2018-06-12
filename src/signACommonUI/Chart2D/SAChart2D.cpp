@@ -214,13 +214,34 @@ public:
     }
     void appendRemoveChart2DItemDataInRangCommand(const QList<QwtPlotItem *>& items,const QString& des)
     {
-        QUndoCommand* cmd = new QUndoCommand(des);
-        cmd->setText(des);
+        if(nullptr == m_seclectRegionItem)
+        {
+            return;
+        }
+        QScopedPointer<QUndoCommand> cmd(new QUndoCommand(des));
         bool isAutoReplot = q_ptr->autoReplot();
         q_ptr->setAutoReplot(false);
+        QPainterPath region = m_seclectRegionItem->shape();
+        int regionXAxis = m_seclectRegionItem->xAxis();
+        int regionYAxis = m_seclectRegionItem->yAxis();
+
+
         for(int i=0;i<items.size();++i)
         {
             QwtPlotItem *item = items[i];
+            if(regionXAxis == item->xAxis() && regionYAxis == item->yAxis())
+            {
+                new SAFigureRemoveSeriesDatasInRangCommand(q_ptr,item,region,item->title().text(),cmd.data());
+            }
+            else
+            {
+                QPainterPath trPath = SAChart::transformPath(q_ptr,region,regionXAxis,regionYAxis,item->xAxis(),item->yAxis());
+                new SAFigureRemoveSeriesDatasInRangCommand(q_ptr,item,trPath,item->title().text(),cmd.data());
+            }
+
+
+           /*
+
             switch(items[i]->rtti())
             {
             case QwtPlotItem::Rtti_PlotCurve:
@@ -239,10 +260,11 @@ public:
             default:
                 break;
             }
+            */
         }
 
 
-        m_undoStack.push(cmd);
+        m_undoStack.push(cmd.take());
         q_ptr->setAutoReplot(isAutoReplot);
         q_ptr->replot();
     }

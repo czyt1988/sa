@@ -117,7 +117,7 @@ void SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T,PlotItemType,FpSetFu
     //两种情况，第一种indexRow比size小，直接提取旧数据进行替换，第二种情况，indexRow比size大，插入到新数据处，期间补充默认构造
     if(indexRow < m_oldDataSize)
     {
-        T data = m_plotItem->sample(indexRow);
+        const T& data = m_plotItem->sample(indexRow);
         m_oldData = data;
         m_newData = data;
         m_fpSetValue(m_newData,indexCol,val);
@@ -144,7 +144,7 @@ void SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T,PlotItemType,FpSetFu
 {
     if(!m_isValid)
         return;
-    if(m_oldDataSize != m_plotItem->dataSize())
+    if(m_oldDataSize != (int)(m_plotItem->dataSize()))
         return;
     QVector<T> vecDatas;
     vecDatas.reserve(m_plotItem->dataSize());
