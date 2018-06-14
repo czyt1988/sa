@@ -6,7 +6,6 @@ class QwtPlotItemTreeModel;
 class SAPlotDataModel;
 class SAFigureWindow;
 class QwtPlot;
-class SACellInputWidget;
 class QwtPlotItem;
 class QwtPlotCurve;
 namespace Ui {

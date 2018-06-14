@@ -8,7 +8,6 @@ HEADERS += \
     $$PWD/SAUserDefineAxisDataWidget.h \
     $$PWD/SAValueSelectComboBox.h \
     $$PWD/SAFigureLayoutWidget.h \
-    $$PWD/SACellInputWidget.h \
     $$PWD/SAValueTableWidget.h
 
 SOURCES += \
@@ -18,7 +17,6 @@ SOURCES += \
     $$PWD/SAUserDefineAxisDataWidget.cpp \
     $$PWD/SAValueSelectComboBox.cpp \
     $$PWD/SAFigureLayoutWidget.cpp \
-    $$PWD/SACellInputWidget.cpp \
     $$PWD/SAValueTableWidget.cpp
 
 FORMS += \
@@ -28,7 +26,6 @@ FORMS += \
     $$PWD/SAUserDefineAxisDataWidget.ui \
     $$PWD/SAValueSelectComboBox.ui \
     $$PWD/SAFigureLayoutWidget.ui \
-    $$PWD/SACellInputWidget.ui \
     $$PWD/SAValueTableWidget.ui
 
 

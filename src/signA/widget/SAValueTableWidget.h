@@ -16,7 +16,7 @@ class SAValueTableWidget;
 class SADataTableModel;
 class QTableView;
 class QWheelEvent;
-class SACellInputWidget;
+
 
 
 ///
