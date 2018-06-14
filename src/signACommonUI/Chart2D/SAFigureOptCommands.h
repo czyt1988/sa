@@ -109,62 +109,6 @@ private:
 
 
 ///
-/// \brief 移除曲线QwtPlotCurve范围内的数据
-///
-class SA_COMMON_UI_EXPORT SAFigureRemoveXYSeriesDataInRangCommand : public SAFigureOptCommand
-{
-public:
-    SAFigureRemoveXYSeriesDataInRangCommand(SAChart2D* chart
-                                            , QwtSeriesStore<QPointF> *curve
-                                            , const QString &cmdName
-                                            , int xaxis
-                                            , int yaxis
-                                            , QUndoCommand *parent = Q_NULLPTR);
-    virtual void redo();
-    virtual void undo();
-private:
-    QwtSeriesStore<QPointF>* m_curve;
-    QVector<QPointF> m_newData;
-    QVector<QPointF> m_oldData;
-};
-
-/////////////////////////////////////////////////////////////////////
-///
-///  Series值的编辑，这个编辑是对应表格的编辑，需要提供indexRow和indexCol信息
-///
-/////////////////////////////////////////////////////////////////////
-class SAFiguresEditSeriesCommandPrivate;
-///
-/// \brief 编辑序列数值的命令在编辑的位置超过原有位置时，会把长度扩展到指定的长度，并初始化为默认的数据
-///
-class SA_COMMON_UI_EXPORT SAFiguresEditSeriesCommand : public SAFigureOptCommand
-{
-public:
-    SAFiguresEditSeriesCommand(SAChart2D* chart
-                                  , QwtPlotItem* item
-                                  , double val
-                                  , int indexRow
-                                  , int indexCol
-                                  , const QString &cmdName = QString()
-                                  , QUndoCommand *parent = Q_NULLPTR);
-    ~SAFiguresEditSeriesCommand();
-    virtual void redo();
-    virtual void undo();
-    //判断是否有效
-    bool isValid() const;
-    //判断是否尺寸有变化
-    bool isSizeChanged() const;
-private:
-    SAFiguresEditSeriesCommandPrivate* d_ptr;
-};
-
-
-
-
-
-
-
-///
 /// \brief 曲线QwtSeriesStore<QPointF>值变更
 ///
 class SA_COMMON_UI_EXPORT SAFigureChangeXYSeriesDataCommand : public SAFigureOptCommand
@@ -325,55 +269,7 @@ void SAFigureReplaceSeriesDataCommand<T,TQwtSeries>::undo()
 }
 
 
-///
-/// \brief 序列数据QPointF的替换
-///
-class SA_COMMON_UI_EXPORT SAFigureReplaceXYSeriesDataCommand
-        : public SAFigureReplaceSeriesDataCommand<QPointF,QwtPointSeriesData>
-{
-public:
-    using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
-    ~SAFigureReplaceXYSeriesDataCommand();
-};
 
-
-///
-/// \brief 序列数据QwtPoint3D的替换
-///
-class SA_COMMON_UI_EXPORT SAFigureReplaceXYZSeriesDataCommand
-        : public SAFigureReplaceSeriesDataCommand<QwtPoint3D,QwtPoint3DSeriesData>
-{
-public:
-    using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
-};
-
-///
-/// \brief 序列数据Interval的替换
-///
-class SA_COMMON_UI_EXPORT SAFigureReplaceIntervalSeriesDataCommand
-        : public SAFigureReplaceSeriesDataCommand<QwtIntervalSample,QwtIntervalSeriesData>
-{
-public:
-   using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
-};
-///
-/// \brief 序列数据QwtOHLCSample的替换
-///
-class SA_COMMON_UI_EXPORT SAFigureReplaceOHLCSeriesDataCommand
-        : public SAFigureReplaceSeriesDataCommand<QwtOHLCSample,QwtTradingChartData>
-{
-public:
-   using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
-};
-///
-/// \brief 序列数据QwtPlotMultiBarChart的替换
-///
-class SA_COMMON_UI_EXPORT SAFigureReplaceMultiBarSeriesDataCommand
-        : public SAFigureReplaceSeriesDataCommand<QwtSetSample,QwtSetSeriesData>
-{
-public:
-   using SAFigureReplaceSeriesDataCommand::SAFigureReplaceSeriesDataCommand;
-};
 /////////////////////////////////////////////////////////////////////
 ///
 ///  Series值按照索引替换

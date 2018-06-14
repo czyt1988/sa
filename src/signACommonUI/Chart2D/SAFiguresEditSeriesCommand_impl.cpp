@@ -1,4 +1,4 @@
-﻿#include "SAFigureOptCommands.h"
+﻿#include "SAFiguresTableCommands.h"
 #include <QDebug>
 #include "qwt_series_store.h"
 #include "SAChart.h"
@@ -7,14 +7,14 @@
 /// \brief The SAFigureEditSeriesDataCommandPrivate class
 /// 通用impl接口
 ///
-class SAFiguresEditSeriesCommandPrivate
+class SAFiguresTableEditSeriesCommandPrivate
 {
 public:
-    SAFiguresEditSeriesCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
+    SAFiguresTableEditSeriesCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
         :m_chart(chart)
         ,m_item(item)
     {}
-    virtual ~SAFiguresEditSeriesCommandPrivate(){}
+    virtual ~SAFiguresTableEditSeriesCommandPrivate(){}
     //获取chart
     SAChart2D *chart() const{return m_chart;}
     //获取item
@@ -36,7 +36,7 @@ private:
 /// \brief 适用于QwtSeriesStore<T>的接口
 ///
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-class SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem : public SAFiguresEditSeriesCommandPrivate
+class SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem : public SAFiguresTableEditSeriesCommandPrivate
 {
 public:
     SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem(
@@ -58,17 +58,20 @@ public:
     //
     virtual bool isSizeChanged() const;
 private:
+    int m_index;
+    bool m_isValid;
+    bool m_isSizeChanged;///< 记录是否尺寸发生了变化
+    int m_oldDataSize;///< 旧数据的尺寸，只有在数据需要插入时有效
+    FpSetFun m_fpSetValue;///< fun(T& inputoutput,int indexCol,double val);
+    FpSetSeriesSampleFun m_fpSetSample;///< fun(QwtPlotItem* item,cosnt QVector<T>& series);
     PlotItemType* m_plotItem;
     T m_oldData;
     T m_newData;
-    int m_index;
-    int m_oldDataSize;///< 旧数据的尺寸，只有在数据需要插入时有效
-    bool m_isValid;
-    bool m_isSizeChanged;///< 记录是否尺寸发生了变化
-    FpSetFun m_fpSetValue;///< fun(T& inputoutput,int indexCol,double val);
-    FpSetSeriesSampleFun m_fpSetSample;///< fun(QwtPlotItem* item,cosnt QVector<T>& series);
 };
-
+////////////////////////////////////////////////////////////////
+// SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem
+// 适用于单个数据的编辑
+////////////////////////////////////////////////////////////////
 
 ///
 /// \brief SAFigureEditSeriesDataCommandSeriesStoreItemPrivate<T, FpSetFun>::SAFigureEditSeriesDataCommandSeriesStoreItemPrivate
@@ -90,7 +93,7 @@ SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T,PlotItemType,FpSetFun,FpS
         , FpSetFun fpSetVal
         , FpSetSeriesSampleFun fpSetSeries
         )
-    :SAFiguresEditSeriesCommandPrivate(chart,item)
+    :SAFiguresTableEditSeriesCommandPrivate(chart,item)
     ,m_index(indexRow)
     ,m_isValid(false)
     ,m_isSizeChanged(false)
@@ -129,6 +132,7 @@ void SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T,PlotItemType,FpSetFu
         m_oldData = m_newData = data;
         m_fpSetValue(m_newData,indexCol,val);
         m_isValid = true;
+        m_isSizeChanged = true;
     }
     else
     {
@@ -142,7 +146,7 @@ template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeries
 void SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T,PlotItemType,FpSetFun,FpSetSeriesSampleFun>
 ::redo()
 {
-    if(!m_isValid)
+    if(!isValid())
         return;
     if(m_oldDataSize != (int)(m_plotItem->dataSize()))
         return;
@@ -166,7 +170,7 @@ template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeries
 void SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
 ::undo()
 {
-    if(!m_isValid)
+    if(!isValid())
         return;
     QVector<T> vecDatas;
     vecDatas.reserve(m_plotItem->dataSize());
@@ -190,6 +194,14 @@ bool SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T, PlotItemType, FpSet
     return m_isSizeChanged;
 }
 
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////////
 // SAFigureEditSeriesDataCommand
 ////////////////////////////////////////////////////////////////
@@ -205,7 +217,7 @@ bool SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T, PlotItemType, FpSet
 /// \param cmdName 命令名
 /// \param parent 命令父级
 ///
-SAFiguresEditSeriesCommand::SAFiguresEditSeriesCommand(
+SAFiguresTableEditSeriesCommand::SAFiguresTableEditSeriesCommand(
         SAChart2D *chart
         , QwtPlotItem *item
         , double val
@@ -315,13 +327,14 @@ SAFiguresEditSeriesCommand::SAFiguresEditSeriesCommand(
     }
 }
 
-SAFiguresEditSeriesCommand::~SAFiguresEditSeriesCommand()
+
+SAFiguresTableEditSeriesCommand::~SAFiguresTableEditSeriesCommand()
 {
     if(d_ptr)
         delete d_ptr;
 }
 
-void SAFiguresEditSeriesCommand::redo()
+void SAFiguresTableEditSeriesCommand::redo()
 {
     if(d_ptr)
     {
@@ -329,7 +342,7 @@ void SAFiguresEditSeriesCommand::redo()
     }
 }
 
-void SAFiguresEditSeriesCommand::undo()
+void SAFiguresTableEditSeriesCommand::undo()
 {
     if(d_ptr)
     {
@@ -337,7 +350,7 @@ void SAFiguresEditSeriesCommand::undo()
     }
 }
 
-bool SAFiguresEditSeriesCommand::isValid() const
+bool SAFiguresTableEditSeriesCommand::isValid() const
 {
     if(d_ptr)
     {
@@ -346,7 +359,7 @@ bool SAFiguresEditSeriesCommand::isValid() const
     return false;
 }
 
-bool SAFiguresEditSeriesCommand::isSizeChanged() const
+bool SAFiguresTableEditSeriesCommand::isSizeChanged() const
 {
     if(d_ptr)
     {
@@ -354,4 +367,6 @@ bool SAFiguresEditSeriesCommand::isSizeChanged() const
     }
     return false;
 }
+
+
 

@@ -212,6 +212,7 @@ public:
     {
         m_undoStack.push(new SAFigureChartSelectionRegionAddCommand(q_ptr,newRegion,des));
     }
+
     void appendRemoveChart2DItemDataInRangCommand(const QList<QwtPlotItem *>& items,const QString& des)
     {
         if(nullptr == m_seclectRegionItem)
@@ -238,32 +239,7 @@ public:
                 QPainterPath trPath = SAChart::transformPath(q_ptr,region,regionXAxis,regionYAxis,item->xAxis(),item->yAxis());
                 new SAFigureRemoveSeriesDatasInRangCommand(q_ptr,item,trPath,item->title().text(),cmd.data());
             }
-
-
-           /*
-
-            switch(items[i]->rtti())
-            {
-            case QwtPlotItem::Rtti_PlotCurve:
-            case QwtPlotItem::Rtti_PlotBarChart:
-                if(QwtSeriesStore<QPointF>* cur = dynamic_cast<QwtSeriesStore<QPointF>*>(item))
-                {
-                    new SAFigureRemoveXYSeriesDataInRangCommand(q_ptr,cur,"",item->xAxis(),item->yAxis(),cmd);
-                }
-                break;
-            case QwtPlotItem::Rtti_PlotSpectroCurve:
-            case QwtPlotItem::Rtti_PlotIntervalCurve:
-            case QwtPlotItem::Rtti_PlotHistogram:
-            case QwtPlotItem::Rtti_PlotSpectrogram:
-            case QwtPlotItem::Rtti_PlotTradingCurve:
-            case QwtPlotItem::Rtti_PlotMultiBarChart:
-            default:
-                break;
-            }
-            */
         }
-
-
         m_undoStack.push(cmd.take());
         q_ptr->setAutoReplot(isAutoReplot);
         q_ptr->replot();
@@ -904,31 +880,6 @@ void SAChart2D::removeDataInRang(const QList<QwtPlotItem *>& chartItems)
         return;
     }
     d_ptr->appendRemoveChart2DItemDataInRangCommand(chartItems,tr("remove rang data"));
-#if 0
-    QHash<QPair<int,int>,QPainterPath> otherScaleMap;
-    for(int i=0;i<curves.size();++i)
-    {
-        int xa = curves[i]->xAxis();
-        int ya = curves[i]->yAxis();
-        if(xa == editor->getXAxis() && ya == editor->getYAxis())
-        {
-            SAChart::removeDataInRang(region,curves[i]);
-        }
-        else
-        {
-            QPair<int,int> axiss=qMakePair(xa,ya);
-            if(!otherScaleMap.contains(axiss))
-            {
-                otherScaleMap[axiss] = editor->transformToOtherAxis(xa,ya);
-
-            }
-            SAChart::removeDataInRang(otherScaleMap.value(axiss)
-                                      ,curves[i]);
-        }
-    }
-    setAutoReplot(true);
-    replot();
-#endif
 }
 
 void SAChart2D::removeDataInRang()

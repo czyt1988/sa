@@ -146,7 +146,7 @@ bool QwtPlotItemDataModel::setData(const QModelIndex &index, const QVariant &val
     if(col < 0)
         return false;
     col = index.column() - col;
-    return setItemData(index.row(),col,item,value);
+    return setPlotItemData(index.row(),col,item,value);
 }
 
 Qt::ItemFlags QwtPlotItemDataModel::flags(const QModelIndex &index) const
@@ -320,64 +320,7 @@ int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item) const
 ///
 int QwtPlotItemDataModel::calcItemDataColumnCount(QwtPlotItem *item) const
 {
-#if QwtPlotItemDataModel_Use_Dynamic_Cast
-    if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
-    {
-        Q_UNUSED(p);
-        return 2;
-    }
-    else if(const QwtSeriesStore<QwtIntervalSample>* p = dynamic_cast<const QwtSeriesStore<QwtIntervalSample>*>(item))
-    {
-        Q_UNUSED(p);
-        return 3;
-    }
-    else if(const QwtSeriesStore<QwtSetSample>* p = dynamic_cast<const QwtSeriesStore<QwtSetSample>*>(item))
-    {
-        int maxDim = 0;
-        const int size = p->dataSize();
-        for(int i=0;i<size;++i)
-        {
-            int s = p->sample(i).set.size();
-            if(s > maxDim)
-            {
-                maxDim = s;
-            }
-        }
-        return maxDim + 1;
-    }
-    else if(const QwtSeriesStore<QwtPoint3D>* p = dynamic_cast<const QwtSeriesStore<QwtPoint3D>*>(item))
-    {
-        Q_UNUSED(p);
-        return 3;
-    }
-    else if(const QwtSeriesStore<QwtOHLCSample>* p = dynamic_cast<const QwtSeriesStore<QwtOHLCSample>*>(item))
-    {
-        Q_UNUSED(p);
-        return 5;
-    }
-#else
-    int rtti = item->rtti();
-    switch(rtti)
-    {
-    case QwtPlotItem::Rtti_PlotCurve:
-    case QwtPlotItem::Rtti_PlotBarChart:
-        return 2;
-    case QwtPlotItem::Rtti_PlotSpectroCurve:
-    case QwtPlotItem::Rtti_PlotIntervalCurve:
-    case QwtPlotItem::Rtti_PlotHistogram:
-        return 3;
-    case QwtPlotItem::Rtti_PlotTradingCurve:
-        return 5;
-    case QwtPlotItem::Rtti_PlotMultiBarChart:
-    {
-        const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
-        return calcPlotMultiBarChartDim(p);
-    }
-    default:
-        return 0;
-    }
-#endif
-    return 0;
+    return getItemColumnCount(item);
 }
 
 double QwtPlotItemDataModel::getItemData(int row, int col, QwtPlotItem *item) const
@@ -794,7 +737,7 @@ void QwtPlotItemDataModel::setSeriesOHLCsampleValue(QwtOHLCSample& p,int col,dou
 /// \param var 设置的值
 /// \return 成功设置返回true
 ///
-bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, const QVariant &var)
+bool QwtPlotItemDataModel::setPlotItemData(int row, int col, QwtPlotItem *item, const QVariant &var)
 {
     if(row < 0 || col < 0 || !var.isValid() || nullptr == item)
         return false;
@@ -817,8 +760,9 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
         {
             setSeriesPointFValue(xys[row],col,d);
             p->setSamples(xys);
+            return true;
         }
-        return false;
+        break;
     }
     case QwtPlotItem::Rtti_PlotBarChart:
     {
@@ -833,7 +777,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
             p->setSamples(xys);
             return true;
         }
-        return false;
+        break;
     }
     case QwtPlotItem::Rtti_PlotSpectroCurve:
     {
@@ -848,7 +792,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
             p->setSamples(xyzs);
             return true;
         }
-        return false;
+        break;
     }
     case QwtPlotItem::Rtti_PlotIntervalCurve:
     {
@@ -863,7 +807,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
             p->setSamples(samples);
             return true;
         }
-        return false;
+        break;
     }
     case QwtPlotItem::Rtti_PlotHistogram:
     {
@@ -878,7 +822,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
             p->setSamples(samples);
             return true;
         }
-        return false;
+        break;
     }
     case QwtPlotItem::Rtti_PlotTradingCurve:
     {
@@ -906,7 +850,7 @@ bool QwtPlotItemDataModel::setItemData(int row, int col, QwtPlotItem *item, cons
             p->setSamples(samples);
             return true;
         }
-        return false;
+        break;
     }
     default:
         break;
@@ -932,3 +876,68 @@ int QwtPlotItemDataModel::getItemRowCount(QwtPlotItem *item) const
 
 
 
+///
+/// \brief QwtPlotItemDataModel::getItemColumnCount
+/// \param item
+/// \return
+///
+int QwtPlotItemDataModel::getItemColumnCount(QwtPlotItem *item)
+{
+#if QwtPlotItemDataModel_Use_Dynamic_Cast
+    if (const QwtSeriesStore<QPointF>* p = dynamic_cast<const QwtSeriesStore<QPointF>*>(item))
+    {
+        Q_UNUSED(p);
+        return 2;
+    }
+    else if(const QwtSeriesStore<QwtIntervalSample>* p = dynamic_cast<const QwtSeriesStore<QwtIntervalSample>*>(item))
+    {
+        Q_UNUSED(p);
+        return 3;
+    }
+    else if(const QwtSeriesStore<QwtSetSample>* p = dynamic_cast<const QwtSeriesStore<QwtSetSample>*>(item))
+    {
+        int maxDim = 0;
+        const int size = p->dataSize();
+        for(int i=0;i<size;++i)
+        {
+            int s = p->sample(i).set.size();
+            if(s > maxDim)
+            {
+                maxDim = s;
+            }
+        }
+        return maxDim + 1;
+    }
+    else if(const QwtSeriesStore<QwtPoint3D>* p = dynamic_cast<const QwtSeriesStore<QwtPoint3D>*>(item))
+    {
+        Q_UNUSED(p);
+        return 3;
+    }
+    else if(const QwtSeriesStore<QwtOHLCSample>* p = dynamic_cast<const QwtSeriesStore<QwtOHLCSample>*>(item))
+    {
+        Q_UNUSED(p);
+        return 5;
+    }
+#else
+    int rtti = item->rtti();
+    switch(rtti)
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotBarChart:
+        return 2;
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotHistogram:
+        return 3;
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+        return 5;
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+        const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
+        return calcPlotMultiBarChartDim(p);
+    }
+    default:
+        return 0;
+    }
+#endif
+}

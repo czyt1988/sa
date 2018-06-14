@@ -9,7 +9,7 @@ class SADataTableModel;
 class SAAbstractDatas;
 class SAVectorDouble;
 class SAValueTableOptEditValueCommandPrivateBase;
-class SAValueTableOptPasteCommandPrivateBase;
+class SAAbstractValueTableOptPasteCommandPrivate;
 class SAValueTableOptDeleteCommandPrivateBase;
 class SAValueTableOptInsertCommandPrivateBase;
 ///
@@ -38,6 +38,8 @@ private:
 /// \brief 数值编辑命令
 ///
 /// 数据编辑可以实现数据的修改，以及数据的添加，使用\sa isValid 进行判断
+///
+/// \file SAValueTableOptEditValueCommand_impl.cpp
 ///
 class SA_COMMON_UI_EXPORT SAValueTableOptEditValueCommand : public SAAbstractValueTableOptCommand
 {
@@ -81,7 +83,7 @@ public:
     void undo();
 
 private:
-    SAValueTableOptPasteCommandPrivateBase* d_ptr;
+    SAAbstractValueTableOptPasteCommandPrivate* d_ptr;
 };
 
 ///
@@ -119,4 +121,40 @@ public:
 private:
     SAValueTableOptInsertCommandPrivateBase* d_ptr;
 };
+
+
+
+
+
+///
+/// \brief 数据表格的操作内部类的基类
+///
+class SAAbstractValueTableOptCommandPrivate
+{
+public:
+    SAAbstractValueTableOptCommandPrivate()
+    {
+
+    }
+    virtual ~SAAbstractValueTableOptCommandPrivate()
+    {
+
+    }
+    static bool checkVarList(const QList<QVariantList> &varTable,int row,int col);
+    template<typename T>
+    static bool safeGetValue(const QVariant &v,T& val)
+    {
+        if(!v.canConvert<T>())
+        {
+            return false;
+        }
+        val = v.value<T>();
+        return true;
+    }
+    virtual void redo() = 0;
+    virtual void undo() = 0;
+};
+
+
+
 #endif // SAVALUETABLEOPTCOMMANDS_H

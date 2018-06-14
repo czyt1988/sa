@@ -14,7 +14,8 @@ HEADERS += \
     $$PWD/SABoxSeries.h \
     $$PWD/SAHistogramSeries.h \
     $$PWD/SAPlotItemTreeModel.h \
-    $$PWD/SAIntervalSeries.h
+    $$PWD/SAIntervalSeries.h \
+    $$PWD/SAFiguresTableCommands.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
@@ -31,4 +32,5 @@ SOURCES += \
     $$PWD/SAPlotItemTreeModel.cpp \
     $$PWD/SAIntervalSeries.cpp \
     $$PWD/SAFiguresEditSeriesCommand_impl.cpp \
-    $$PWD/SAFigureRemoveSeriesDatasInRangCommand_impl.cpp
+    $$PWD/SAFigureRemoveSeriesDatasInRangCommand_impl.cpp \
+    $$PWD/SAFiguresTablePasteInSeriesCommand_impl.cpp

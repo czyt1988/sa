@@ -19,10 +19,10 @@ public:
     SAFigureWindow *getFigure() const;
     void setFigure(SAFigureWindow *fig);
 
-    int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
     //设置数据 row col 要对应item的维度
-    virtual bool setItemData(int row,int col,QwtPlotItem* item,const QVariant& var);
+    virtual bool setPlotItemData(int row,int col,QwtPlotItem* item,const QVariant& var);
 
     //更新整个model
     void updateModel();

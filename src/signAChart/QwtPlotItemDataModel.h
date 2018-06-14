@@ -46,6 +46,8 @@ public:
     virtual QString getItemDimDescribe(QwtPlotItem* item,int index) const;
     //通过列号获取item的名字
     QString getItemNameFromCol(int col) const;
+    //获取item对应的列数
+    static int getItemColumnCount(QwtPlotItem* item);
     //
     // == 下面为设置值的静态函数
     //
@@ -56,8 +58,8 @@ public:
     static void setSeriesOHLCsampleValue(QwtOHLCSample& p,int col,double val);
     //
 public:
-    int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
@@ -70,7 +72,7 @@ protected:
     //获取数据 row col 要对应item的维度 ,col是以数据为基准而不是以表格为基准
     virtual double getItemData(int row,int col,QwtPlotItem* item) const;
     //设置数据 row col 要对应item的维度
-    virtual bool setItemData(int row,int col,QwtPlotItem* item,const QVariant& var);
+    virtual bool setPlotItemData(int row,int col,QwtPlotItem* item,const QVariant& var);
     //更新最大行数
     void updateRowCount();
     //更新列数

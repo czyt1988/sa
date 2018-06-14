@@ -105,8 +105,8 @@ SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(S
 
 SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(SAChart2D *chart, const QPainterPath &oldRegion, const QPainterPath &newRegion, const QString &cmdName, QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
-    ,m_oldPainterPath(oldRegion)
     ,m_newPainterPath(newRegion)
+    ,m_oldPainterPath(oldRegion)
 {
 
 }
@@ -120,7 +120,7 @@ void SAFigureChartSelectionRegionAddCommand::undo()
 {
     plot()->setSelectionRange(m_oldPainterPath);
 }
-
+#if 0
 ///
 /// \brief 移除曲线范围内的数据
 /// \param chart
@@ -158,7 +158,7 @@ void SAFigureRemoveXYSeriesDataInRangCommand::undo()
 {
     m_curve->setData(new QwtPointSeriesData(m_oldData));
 }
-
+#endif
 //========================================
 
 ///
@@ -224,7 +224,3 @@ void SAFigureChangeXYZSeriesDataCommand::undo()
 
 
 
-SAFigureReplaceXYSeriesDataCommand::~SAFigureReplaceXYSeriesDataCommand()
-{
-
-}

@@ -102,7 +102,11 @@ SOURCES += \
     SAPopupWidget.cpp \
     SAWaitCursor.cpp \
     SAValueTableOptCommands.cpp \
-    SAPlotDataModel.cpp
+    SAPlotDataModel.cpp \
+    SAValueTableOptEditValueCommand_impl.cpp \
+    SAValueTableOptPasteCommand_impl.cpp \
+    SAValueTableOptDeleteCommand_impl.cpp \
+    SAValueTableOptInsertCommand_impl.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \
