@@ -723,7 +723,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     verticalLayout->setContentsMargins(11, 11, 11, 11);
     verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
     verticalLayout->setContentsMargins(0, 0, 0, 0);
-    figureSetWidget = new SAFiugreSetWidget(dockWidgetContents);
+    figureSetWidget = new SAFigureSetWidget(dockWidgetContents);
     figureSetWidget->setObjectName(QStringLiteral("figureSetWidget"));
 
     verticalLayout->addWidget(figureSetWidget);

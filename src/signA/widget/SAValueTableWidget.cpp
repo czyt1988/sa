@@ -45,13 +45,6 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     SADataTableModel* model = new SADataTableModel(ui->tableView);
     ui->tableView->setModel (model);
 
-    //表格默认高度
-    QHeaderView* plotLayerVerticalHeader = ui->tableView->verticalHeader();
-    if(plotLayerVerticalHeader)
-    {
-        plotLayerVerticalHeader->setDefaultSectionSize(19);
-    }
-
     //设置model的setData的操作
     model->onSetDataFun = [&](int r,int c,const QVariant& v)->bool
     {

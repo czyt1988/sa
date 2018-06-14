@@ -45,13 +45,9 @@ HEADERS += \
     SACollapsibleGroupBox.h \
     SAVCollapsibleGroupBox.h \
     SAUIReflection.h \
-    SAFigureWindow.h \
-    SAAbstractFigure.h \
     SAValueSelectDialog.h \
     SAUIInterface.h \
     SAMdiSubWindow.h \
-    SAFigureContainer.h \
-    SAFiugreSetWidget.h \
     SAPenSetWidget.h \
     SAColorPickerButton.h \
     SAPenStyleComboBox.h \
@@ -70,20 +66,17 @@ HEADERS += \
     SAPopupWidget.h \
     SAWaitCursor.h \
     SAValueTableOptCommands.h \
-    SAPlotDataModel.h
+    SAPlotDataModel.h \
+    SAFigureSetWidget.h
 
 SOURCES += \
     SAUIReflection.cpp \
     SAQwtSymbolComboBox.cpp \
     SACollapsibleGroupBox.cpp \
     SAVCollapsibleGroupBox.cpp \
-    SAFigureWindow.cpp \
-    SAAbstractFigure.cpp \
     SAValueSelectDialog.cpp \
     SAUIInterface.cpp \
     SAMdiSubWindow.cpp \
-    SAFigureContainer.cpp \
-    SAFiugreSetWidget.cpp \
     SAPenSetWidget.cpp \
     SAColorPickerButton.cpp \
     SAPenStyleComboBox.cpp \
@@ -106,7 +99,8 @@ SOURCES += \
     SAValueTableOptEditValueCommand_impl.cpp \
     SAValueTableOptPasteCommand_impl.cpp \
     SAValueTableOptDeleteCommand_impl.cpp \
-    SAValueTableOptInsertCommand_impl.cpp
+    SAValueTableOptInsertCommand_impl.cpp \
+    SAFigureSetWidget.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

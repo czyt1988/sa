@@ -3,6 +3,9 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
     $$PWD/SAChart2D.h \
+    $$PWD/SAAbstractFigure.h \
+    $$PWD/SAFigureWindow.h \
+    $$PWD/SAFigureContainer.h \
     $$PWD/SAXYSeries.h \
     $$PWD/SABarSeries.h \
     $$PWD/SASeriesAndDataPtrMapper.h \
@@ -15,10 +18,13 @@ HEADERS += \
     $$PWD/SAHistogramSeries.h \
     $$PWD/SAPlotItemTreeModel.h \
     $$PWD/SAIntervalSeries.h \
-    $$PWD/SAFiguresTableCommands.h
+    $$PWD/SAFigureTableCommands.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
+    $$PWD/SAAbstractFigure.cpp \
+    $$PWD/SAFigureWindow.cpp \
+    $$PWD/SAFigureContainer.cpp \
     $$PWD/SAXYSeries.cpp \
     $$PWD/SABarSeries.cpp \
     $$PWD/SASeriesAndDataPtrMapper.cpp \
@@ -31,7 +37,7 @@ SOURCES += \
     $$PWD/SAHistogramSeries.cpp \
     $$PWD/SAPlotItemTreeModel.cpp \
     $$PWD/SAIntervalSeries.cpp \
-    $$PWD/SAFiguresEditSeriesCommand_impl.cpp \
     $$PWD/SAFigureRemoveSeriesDatasInRangCommand_impl.cpp \
-    $$PWD/SAFiguresTablePasteInSeriesCommand_impl.cpp \
-    $$PWD/SAFiguresTableDeleteCommand_impl.cpp
+    $$PWD/SAFigureEditSeriesCommand_impl.cpp \
+    $$PWD/SAFigureTableDeleteCommand_impl.cpp \
+    $$PWD/SAFigureTablePasteInSeriesCommand_impl.cpp

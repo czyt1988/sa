@@ -22,7 +22,7 @@
 #include <SADataFeatureWidget.h>
 #include <SAMessageWidget.h>
 #include <SATabValueViewerWidget.h>
-#include "SAFiugreSetWidget.h"
+#include "SAFigureSetWidget.h"
 #include "SAValueManagerTreeView.h"
 #include "SARibbonBar.h"
 #include "SARibbonCategory.h"
@@ -268,7 +268,7 @@ public:
     QDockWidget *dockWidget_plotSet;
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout;
-    SAFiugreSetWidget *figureSetWidget;
+    SAFigureSetWidget *figureSetWidget;
         //QToolBar *toolBarChartTools;
 
     MainWindowPrivate(MainWindow* p);

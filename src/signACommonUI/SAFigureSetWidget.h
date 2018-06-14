@@ -9,12 +9,12 @@ class SAFigureWindow;
 ///
 /// \brief 绘图设置窗口
 ///
-class SA_COMMON_UI_EXPORT SAFiugreSetWidget : public QWidget
+class SA_COMMON_UI_EXPORT SAFigureSetWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SAFiugreSetWidget(QWidget *parent = nullptr);
-    ~SAFiugreSetWidget();
+    explicit SAFigureSetWidget(QWidget *parent = nullptr);
+    ~SAFigureSetWidget();
     void setFigureWidget(SAFigureWindow* fig);
 #ifdef SAFiugreSetWidget_USE_COMBOX
     void clear();
@@ -36,7 +36,7 @@ private:
 #endif
 private:
     class UI;
-    SAFiugreSetWidget::UI * ui;
+    SAFigureSetWidget::UI * ui;
     SAFigureWindow* m_fig;
 };
 

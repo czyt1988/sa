@@ -2,7 +2,7 @@
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include "SAChart.h"
-#include "SAFiguresTableCommands.h"
+#include "SAFigureTableCommands.h"
 #include "qwt_plot_curve.h"
 #include "qwt_plot_histogram.h"
 #include "qwt_plot_intervalcurve.h"
@@ -77,8 +77,8 @@ bool SAPlotDataModel::setPlotItemData(int row, int col, QwtPlotItem *item, const
 
     //new SAFiguresDataCommandEditSeries(chart,item,d,row,col,tr("set curve data"));
 
-    QScopedPointer<SAFiguresTableEditSeriesCommand> cmd;
-    cmd.reset(new SAFiguresTableEditSeriesCommand(chart,item,d,row,col,tr("set curve data")));
+    QScopedPointer<SAFigureTableEditSeriesCommand> cmd;
+    cmd.reset(new SAFigureTableEditSeriesCommand(chart,item,d,row,col,tr("set curve data")));
     if(cmd->isValid())
     {
         bool isChangedSize = cmd->isSizeChanged();

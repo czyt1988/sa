@@ -1,18 +1,18 @@
-﻿#include "SAFiguresTableCommands.h"
+﻿#include "SAFigureTableCommands.h"
 #include "QwtPlotItemDataModel.h"
 #include "SAChart.h"
 ///
 /// \brief The SAAbstractFiguresTablePasteInSeriesCommandPrivate class
 /// 通用impl接口
 ///
-class SAFiguresTablePasteInSeriesCommandPrivate
+class SAFigureTablePasteInSeriesCommandPrivate
 {
 public:
-    SAFiguresTablePasteInSeriesCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
+    SAFigureTablePasteInSeriesCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
         :m_chart(chart)
         ,m_item(item)
     {}
-    virtual ~SAFiguresTablePasteInSeriesCommandPrivate(){}
+    virtual ~SAFigureTablePasteInSeriesCommandPrivate(){}
     //获取chart
     SAChart2D *chart() const{return m_chart;}
     //获取item
@@ -32,7 +32,7 @@ private:
 };
 
 
-QSize SAFiguresTablePasteInSeriesCommandPrivate::getClipboardTableSize(const QList<QVariantList> &clipboardTable)
+QSize SAFigureTablePasteInSeriesCommandPrivate::getClipboardTableSize(const QList<QVariantList> &clipboardTable)
 {
     int maxColumn = 0;
     const int row = clipboardTable.size();
@@ -53,10 +53,10 @@ QSize SAFiguresTablePasteInSeriesCommandPrivate::getClipboardTableSize(const QLi
 ////////////////////////////////////////////////////////////////
 
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-class SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem : public SAFiguresTablePasteInSeriesCommandPrivate
+class SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem : public SAFigureTablePasteInSeriesCommandPrivate
 {
 public:
-    SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem(
+    SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem(
             SAChart2D *chart
             , QwtPlotItem *item
             , const QList<QStringList>& stringClipboardTable
@@ -88,8 +88,8 @@ private:
 };
 
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
-::SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem(
+SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
+::SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem(
         SAChart2D *chart
         , QwtPlotItem *item
         , const QList<QStringList> &stringClipboardTable
@@ -97,7 +97,7 @@ SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSet
         , int indexCol
         , FpSetFun fpSetVal
         , FpSetSeriesSampleFun fpSetSeries)
-    :SAFiguresTablePasteInSeriesCommandPrivate(chart,item)
+    :SAFigureTablePasteInSeriesCommandPrivate(chart,item)
     ,m_isValid(false)
     ,m_isSizeChanged(false)
     ,m_fpSetValue(fpSetVal)
@@ -109,7 +109,7 @@ SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSet
     init(stringClipboardTable,indexRow,indexCol);
 }
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-void SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
+void SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
 ::init(const QList<QStringList> &stringClipboardTable, int indexRow, int indexCol)
 {
     int dataColumnSize = QwtPlotItemDataModel::getItemColumnCount(item());
@@ -159,13 +159,13 @@ void SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, 
     m_isSizeChanged = (m_appendInfos.size() > 0);
 }
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-bool SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
+bool SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
 ::isValid() const
 {
     return m_isValid;
 }
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-void SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
+void SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
 ::redo()
 {
     if(!isValid())
@@ -192,7 +192,7 @@ void SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, 
     m_fpSetSample(item(),vecDatas);
 }
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-void SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
+void SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
 ::undo()
 {
     if(!isValid())
@@ -213,7 +213,7 @@ void SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, 
     m_fpSetSample(item(),vecDatas);
 }
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-bool SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
+bool SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, FpSetFun,FpSetSeriesSampleFun>
 ::isSizeChanged() const
 {
     return m_isSizeChanged;
@@ -223,7 +223,7 @@ bool SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem<T, PlotItemType, 
 
 
 
-SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
+SAFigureTablePasteInSeriesCommand::SAFigureTablePasteInSeriesCommand(
         SAChart2D *chart
         , QwtPlotItem *item
         , const QList<QStringList> &stringClipboardTable
@@ -238,7 +238,7 @@ SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
     {
     case QwtPlotItem::Rtti_PlotCurve:
     {
-        d_ptr = new SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem
+        d_ptr = new SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem
                 <QPointF
                 ,QwtPlotCurve
                 ,decltype(&QwtPlotItemDataModel::setSeriesPointFValue)
@@ -251,7 +251,7 @@ SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
     }
     case QwtPlotItem::Rtti_PlotHistogram:
     {
-        d_ptr = new SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem
+        d_ptr = new SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem
                 <QwtIntervalSample
                 ,QwtPlotHistogram
                 ,decltype(&QwtPlotItemDataModel::setSeriesIntervalValue)
@@ -264,7 +264,7 @@ SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
     }
     case QwtPlotItem::Rtti_PlotIntervalCurve:
     {
-        d_ptr = new SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem
+        d_ptr = new SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem
                 <QwtIntervalSample
                 ,QwtPlotIntervalCurve
                 ,decltype(&QwtPlotItemDataModel::setSeriesIntervalValue)
@@ -277,7 +277,7 @@ SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
     }
     case QwtPlotItem::Rtti_PlotMultiBarChart:
     {
-        d_ptr = new SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem
+        d_ptr = new SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem
                 <QwtSetSample
                 ,QwtPlotMultiBarChart
                 ,decltype(&QwtPlotItemDataModel::setSeriesSetsampleValue)
@@ -290,7 +290,7 @@ SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
     }
     case QwtPlotItem::Rtti_PlotTradingCurve:
     {
-        d_ptr = new SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem
+        d_ptr = new SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem
                 <QwtOHLCSample
                 ,QwtPlotTradingCurve
                 ,decltype(&QwtPlotItemDataModel::setSeriesOHLCsampleValue)
@@ -303,7 +303,7 @@ SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
     }
     case QwtPlotItem::Rtti_PlotSpectroCurve:
     {
-        d_ptr = new SAFiguresTablePasteInSeriesCommandPrivate_SeriesStoreItem
+        d_ptr = new SAFigureTablePasteInSeriesCommandPrivate_SeriesStoreItem
                 <QwtPoint3D
                 ,QwtPlotSpectroCurve
                 ,decltype(&QwtPlotItemDataModel::setSeriesPoint3dValue)
@@ -319,32 +319,32 @@ SAFiguresTablePasteInSeriesCommand::SAFiguresTablePasteInSeriesCommand(
     }
 }
 
-SAFiguresTablePasteInSeriesCommand::~SAFiguresTablePasteInSeriesCommand()
+SAFigureTablePasteInSeriesCommand::~SAFigureTablePasteInSeriesCommand()
 {
     if(d_ptr)
         delete d_ptr;
 }
 
-void SAFiguresTablePasteInSeriesCommand::redo()
+void SAFigureTablePasteInSeriesCommand::redo()
 {
     if(d_ptr)
         d_ptr->redo();
 }
 
-void SAFiguresTablePasteInSeriesCommand::undo()
+void SAFigureTablePasteInSeriesCommand::undo()
 {
     if(d_ptr)
         d_ptr->undo();
 }
 
-bool SAFiguresTablePasteInSeriesCommand::isValid() const
+bool SAFigureTablePasteInSeriesCommand::isValid() const
 {
     if(d_ptr)
         return d_ptr->isValid();
     return false;
 }
 
-bool SAFiguresTablePasteInSeriesCommand::isSizeChanged() const
+bool SAFigureTablePasteInSeriesCommand::isSizeChanged() const
 {
     if(d_ptr)
         return d_ptr->isSizeChanged();

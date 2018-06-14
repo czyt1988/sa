@@ -12,6 +12,8 @@ class SAValueDataTableView : public SATableView
     Q_OBJECT
 public:
     SAValueDataTableView(QWidget* par = Q_NULLPTR);
+    //设置单元格高度
+    void setCellHeight(int height);
 };
 
 #endif // SADATATABLEVIEW_H

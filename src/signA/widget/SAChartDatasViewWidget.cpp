@@ -10,7 +10,7 @@
 #include "SAWaitCursor.h"
 #include "SALog.h"
 #include "SAFigureOptCommands.h"
-#include "SAFiguresTableCommands.h"
+#include "SAFigureTableCommands.h"
 
 SAChartDatasViewWidget::SAChartDatasViewWidget(QWidget *parent) :
     QWidget(parent)
@@ -194,7 +194,7 @@ void SAChartDatasViewWidget::onCtrlVInTableView()
     SAChart2D* chart = qobject_cast<SAChart2D*>(item->plot());
     if(chart)
     {
-        QScopedPointer<SAFiguresTablePasteInSeriesCommand> cmd(new SAFiguresTablePasteInSeriesCommand(
+        QScopedPointer<SAFigureTablePasteInSeriesCommand> cmd(new SAFigureTablePasteInSeriesCommand(
                     chart
                     ,item
                     ,stringClipboardTable

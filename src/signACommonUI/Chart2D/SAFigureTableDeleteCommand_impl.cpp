@@ -1,19 +1,19 @@
-﻿#include "SAFiguresTableCommands.h"
+﻿#include "SAFigureTableCommands.h"
 #include "SAData.h"
 #include "czyAlgorithm.h"
 #include "SAChart.h"
 
 //////////////////////////////////////////////
-class SAFiguresTableDeleteCommandPrivate
+class SAFigureTableDeleteCommandPrivate
 {
 public:
-    SAFiguresTableDeleteCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
+    SAFigureTableDeleteCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
         :m_chart(chart)
         ,m_item(item)
     {
 
     }
-    virtual ~SAFiguresTableDeleteCommandPrivate()
+    virtual ~SAFigureTableDeleteCommandPrivate()
     {
 
     }
@@ -54,10 +54,10 @@ private:
 /// \brief 适用于QwtSeriesStore<T>的接口
 ///
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-class SAFiguresTableDeleteCommandPrivate_SeriesStoreItem : public SAFiguresTableDeleteCommandPrivate
+class SAFigureTableDeleteCommandPrivate_SeriesStoreItem : public SAFigureTableDeleteCommandPrivate
 {
 public:
-    SAFiguresTableDeleteCommandPrivate_SeriesStoreItem(
+    SAFigureTableDeleteCommandPrivate_SeriesStoreItem(
             SAChart2D *chart
             , QwtPlotItem *item
             , const QVector<QPoint> &deleteIndexs
@@ -77,14 +77,14 @@ private:
 };
 
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
-::SAFiguresTableDeleteCommandPrivate_SeriesStoreItem(
+SAFigureTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
+::SAFigureTableDeleteCommandPrivate_SeriesStoreItem(
         SAChart2D *chart
         , QwtPlotItem *item
         , const QVector<QPoint> &deleteIndexs
         , FpSetSeriesSampleFun fpSetSeries
         )
-    :SAFiguresTableDeleteCommandPrivate(chart,item)
+    :SAFigureTableDeleteCommandPrivate(chart,item)
     ,m_isValid(false)
     ,m_fpSetSample(fpSetSeries)
     ,m_oldDataSize(0)
@@ -93,7 +93,7 @@ SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSam
     init(deleteIndexs);
 }
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-void SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
+void SAFigureTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
 ::init(const QVector<QPoint> &indexs)
 {
     m_oldDataSize = (int)(m_plotItem->dataSize());
@@ -120,7 +120,7 @@ void SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeri
     m_isValid = true;
 }
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-void SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
+void SAFigureTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
 ::redo()
 {
     if(!isValid())
@@ -142,7 +142,7 @@ void SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeri
     }
 }
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-void SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
+void SAFigureTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
 ::undo()
 {
     if(!isValid())
@@ -158,7 +158,7 @@ void SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeri
     m_fpSetSample(item(),newDatas);
 }
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-bool SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
+bool SAFigureTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
 ::isValid() const
 {
     return m_isValid;
@@ -174,7 +174,7 @@ bool SAFiguresTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeri
 /// \param cmdName
 /// \param parent
 ///
-SAFiguresTableDeleteCommand::SAFiguresTableDeleteCommand(
+SAFigureTableDeleteCommand::SAFigureTableDeleteCommand(
         SAChart2D *chart
         , QwtPlotItem *item
         , const QVector<QPoint> &deleteIndexs
@@ -186,25 +186,25 @@ SAFiguresTableDeleteCommand::SAFiguresTableDeleteCommand(
 
 }
 
-SAFiguresTableDeleteCommand::~SAFiguresTableDeleteCommand()
+SAFigureTableDeleteCommand::~SAFigureTableDeleteCommand()
 {
     if(d_ptr)
         delete d_ptr;
 }
 
-void SAFiguresTableDeleteCommand::redo()
+void SAFigureTableDeleteCommand::redo()
 {
     if(d_ptr)
         d_ptr->redo();
 }
 
-void SAFiguresTableDeleteCommand::undo()
+void SAFigureTableDeleteCommand::undo()
 {
     if(d_ptr)
         d_ptr->undo();
 }
 
-bool SAFiguresTableDeleteCommand::isValid() const
+bool SAFigureTableDeleteCommand::isValid() const
 {
     if(d_ptr)
         return d_ptr->isValid();

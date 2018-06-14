@@ -1,4 +1,4 @@
-﻿#include "SAFiguresTableCommands.h"
+﻿#include "SAFigureTableCommands.h"
 #include <QDebug>
 #include "qwt_series_store.h"
 #include "SAChart.h"
@@ -7,14 +7,14 @@
 /// \brief The SAFigureEditSeriesDataCommandPrivate class
 /// 通用impl接口
 ///
-class SAFiguresTableEditSeriesCommandPrivate
+class SAFigureTableEditSeriesCommandPrivate
 {
 public:
-    SAFiguresTableEditSeriesCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
+    SAFigureTableEditSeriesCommandPrivate(SAChart2D *chart, QwtPlotItem *item)
         :m_chart(chart)
         ,m_item(item)
     {}
-    virtual ~SAFiguresTableEditSeriesCommandPrivate(){}
+    virtual ~SAFigureTableEditSeriesCommandPrivate(){}
     //获取chart
     SAChart2D *chart() const{return m_chart;}
     //获取item
@@ -36,7 +36,7 @@ private:
 /// \brief 适用于QwtSeriesStore<T>的接口
 ///
 template<typename T,typename PlotItemType,typename FpSetFun,typename FpSetSeriesSampleFun>
-class SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem : public SAFiguresTableEditSeriesCommandPrivate
+class SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem : public SAFigureTableEditSeriesCommandPrivate
 {
 public:
     SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem(
@@ -93,7 +93,7 @@ SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T,PlotItemType,FpSetFun,FpS
         , FpSetFun fpSetVal
         , FpSetSeriesSampleFun fpSetSeries
         )
-    :SAFiguresTableEditSeriesCommandPrivate(chart,item)
+    :SAFigureTableEditSeriesCommandPrivate(chart,item)
     ,m_index(indexRow)
     ,m_isValid(false)
     ,m_isSizeChanged(false)
@@ -217,7 +217,7 @@ bool SAFigureDataCommandEditSeriesPrivate_SeriesStoreItem<T, PlotItemType, FpSet
 /// \param cmdName 命令名
 /// \param parent 命令父级
 ///
-SAFiguresTableEditSeriesCommand::SAFiguresTableEditSeriesCommand(
+SAFigureTableEditSeriesCommand::SAFigureTableEditSeriesCommand(
         SAChart2D *chart
         , QwtPlotItem *item
         , double val
@@ -328,13 +328,13 @@ SAFiguresTableEditSeriesCommand::SAFiguresTableEditSeriesCommand(
 }
 
 
-SAFiguresTableEditSeriesCommand::~SAFiguresTableEditSeriesCommand()
+SAFigureTableEditSeriesCommand::~SAFigureTableEditSeriesCommand()
 {
     if(d_ptr)
         delete d_ptr;
 }
 
-void SAFiguresTableEditSeriesCommand::redo()
+void SAFigureTableEditSeriesCommand::redo()
 {
     if(d_ptr)
     {
@@ -342,7 +342,7 @@ void SAFiguresTableEditSeriesCommand::redo()
     }
 }
 
-void SAFiguresTableEditSeriesCommand::undo()
+void SAFigureTableEditSeriesCommand::undo()
 {
     if(d_ptr)
     {
@@ -350,7 +350,7 @@ void SAFiguresTableEditSeriesCommand::undo()
     }
 }
 
-bool SAFiguresTableEditSeriesCommand::isValid() const
+bool SAFigureTableEditSeriesCommand::isValid() const
 {
     if(d_ptr)
     {
@@ -359,7 +359,7 @@ bool SAFiguresTableEditSeriesCommand::isValid() const
     return false;
 }
 
-bool SAFiguresTableEditSeriesCommand::isSizeChanged() const
+bool SAFigureTableEditSeriesCommand::isSizeChanged() const
 {
     if(d_ptr)
     {

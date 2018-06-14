@@ -13,7 +13,7 @@ class QAbstractItemModel;
 class SAFigureWindow;
 class DataFeatureTreeModel;
 class SAChart2D;
-class SAFiugreSetWidget;
+class SAFigureSetWidget;
 /// \def 使用多线程来进行数据特征的计算，否则使用多进程，
 /// 如果程序不希望使用多线程进行计算，把这个宏注释掉，会使用多进程进行计算
 //#define USE_THREAD_CALC_FEATURE

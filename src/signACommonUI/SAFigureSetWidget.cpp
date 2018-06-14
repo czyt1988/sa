@@ -1,4 +1,4 @@
-﻿#include "SAFiugreSetWidget.h"
+﻿#include "SAFigureSetWidget.h"
 #include "SAFigureWindow.h"
 #include "SAChartSetWidget.h"
 
@@ -14,7 +14,7 @@
 #include <QtWidgets/QStackedWidget>
 #include "SAChart2D.h"
 
-class SAFiugreSetWidget::UI
+class SAFigureSetWidget::UI
 {
 public:
     QVBoxLayout *verticalLayout;
@@ -26,7 +26,7 @@ public:
 #endif
     QMap<QwtPlot*,SAChartSetWidget*> plotMapToWidget;
 
-    void setupUi(SAFiugreSetWidget *p)
+    void setupUi(SAFigureSetWidget *p)
     {
         if (p->objectName().isEmpty())
             p->setObjectName(QStringLiteral("SAFiugreSetWidget"));
@@ -46,9 +46,9 @@ public:
         verticalLayout->addWidget(chartSetWidget);
         p->setLayout(verticalLayout);
         p->connect(chartSetWidget,&SAChartSetWidget::chartTitleChanged
-                ,p,&SAFiugreSetWidget::onChartTitleChanged);
+                ,p,&SAFigureSetWidget::onChartTitleChanged);
         p->connect(chartSelectComboBox,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
-                   ,p,&SAFiugreSetWidget::onComboxChanged);
+                   ,p,&SAFigureSetWidget::onComboxChanged);
         retranslateUi(p);
 #else
         tabWidget = new QTabWidget(SAFiugreSetWidget);
@@ -75,25 +75,25 @@ public:
     } // retranslateUi
 };
 
-SAFiugreSetWidget::SAFiugreSetWidget(QWidget *parent) :
+SAFigureSetWidget::SAFigureSetWidget(QWidget *parent) :
     QWidget(parent)
-    ,ui(new SAFiugreSetWidget::UI)
+    ,ui(new SAFigureSetWidget::UI)
     ,m_fig(nullptr)
 {
     ui->setupUi(this);
 }
 
-SAFiugreSetWidget::~SAFiugreSetWidget()
+SAFigureSetWidget::~SAFigureSetWidget()
 {
     delete ui;
 }
 
-void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
+void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
 #if SAFiugreSetWidget_USE_COMBOX
     if(m_fig)
     {
-        disconnect(fig,&QObject::destroyed,this,&SAFiugreSetWidget::onFigutrDestroy);
+        disconnect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
     }
     if(nullptr == fig)
     {
@@ -102,7 +102,7 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
     }
     if(nullptr != fig && m_fig != fig)
     {
-        connect(fig,&QObject::destroyed,this,&SAFiugreSetWidget::onFigutrDestroy);
+        connect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
     }
     m_fig = nullptr;
     ui->chartSelectComboBox->clear();
@@ -117,7 +117,7 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
         //combox 插入条目
         ui->chartSelectComboBox->addItem(title,QVariant::fromValue((quintptr)plots[i]));
         //关联槽
-        connect(plots[i],&QObject::destroyed,this,&SAFiugreSetWidget::onPlotDestroy);
+        connect(plots[i],&QObject::destroyed,this,&SAFigureSetWidget::onPlotDestroy);
     }
     if(!plots.isEmpty())
     {
@@ -206,7 +206,7 @@ void SAFiugreSetWidget::setFigureWidget(SAFigureWindow *fig)
 }
 
 #ifdef SAFiugreSetWidget_USE_COMBOX
-void SAFiugreSetWidget::clear()
+void SAFigureSetWidget::clear()
 {
     while(ui->chartSelectComboBox->count())
     {
@@ -215,28 +215,28 @@ void SAFiugreSetWidget::clear()
     ui->chartSetWidget->setChart(nullptr);
 }
 
-void SAFiugreSetWidget::updateData()
+void SAFigureSetWidget::updateData()
 {
     ui->chartSetWidget->updateAll();
 }
 
-void SAFiugreSetWidget::updatePlotItemsSet()
+void SAFigureSetWidget::updatePlotItemsSet()
 {
     ui->chartSetWidget->updatePlotItemsSet();
 }
 
-void SAFiugreSetWidget::updateAxesSet()
+void SAFigureSetWidget::updateAxesSet()
 {
     ui->chartSetWidget->updateAxesSet();
 }
 
-void SAFiugreSetWidget::updateNormalSet()
+void SAFigureSetWidget::updateNormalSet()
 {
     ui->chartSetWidget->updateNormalSet();
 }
 #endif
 
-void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
+void SAFigureSetWidget::onChartTitleChanged(const QString &text)
 {
 #if SAFiugreSetWidget_USE_COMBOX
     //ui->chartSelectComboBox->setCurrentText(text);
@@ -263,7 +263,7 @@ void SAFiugreSetWidget::onChartTitleChanged(const QString &text)
 #endif
 }
 
-void SAFiugreSetWidget::onPlotDestroy(QObject *obj)
+void SAFigureSetWidget::onPlotDestroy(QObject *obj)
 {
 #if SAFiugreSetWidget_USE_COMBOX
     int count = ui->chartSelectComboBox->count();
@@ -305,7 +305,7 @@ void SAFiugreSetWidget::onPlotDestroy(QObject *obj)
 #endif
 }
 
-void SAFiugreSetWidget::onFigutrDestroy(QObject *obj)
+void SAFigureSetWidget::onFigutrDestroy(QObject *obj)
 {
     Q_UNUSED(obj);
     m_fig = nullptr;
@@ -314,7 +314,7 @@ void SAFiugreSetWidget::onFigutrDestroy(QObject *obj)
 
 
 #if SAFiugreSetWidget_USE_COMBOX
-void SAFiugreSetWidget::onComboxChanged(int index)
+void SAFigureSetWidget::onComboxChanged(int index)
 {
     if(nullptr == m_fig)
     {
