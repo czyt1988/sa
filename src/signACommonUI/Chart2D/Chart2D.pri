@@ -33,4 +33,5 @@ SOURCES += \
     $$PWD/SAIntervalSeries.cpp \
     $$PWD/SAFiguresEditSeriesCommand_impl.cpp \
     $$PWD/SAFigureRemoveSeriesDatasInRangCommand_impl.cpp \
-    $$PWD/SAFiguresTablePasteInSeriesCommand_impl.cpp
+    $$PWD/SAFiguresTablePasteInSeriesCommand_impl.cpp \
+    $$PWD/SAFiguresTableDeleteCommand_impl.cpp

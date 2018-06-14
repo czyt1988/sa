@@ -124,10 +124,6 @@ void SAValueTableOptVectorDeleteCommandPrivate<T>::init(const QVector<QPoint> &i
         {
             m_deleteIndexs.push_back(rowIndexs[i]);
         }
-        else
-        {
-            break;
-        }
     }
 
     m_deleteDatas.reserve(m_deleteIndexs.size());

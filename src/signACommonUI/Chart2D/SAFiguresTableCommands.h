@@ -67,12 +67,36 @@ private:
 };
 
 
-
-
+/////////////////////////////////////////////////////////////////////
+///
+///  Series值的删除命令，这个编辑是对应表格的编辑，需要提供indexRow和indexCol信息
+///
+/////////////////////////////////////////////////////////////////////
+class SAFiguresTableDeleteCommandPrivate;
+///
+/// \brief figure表格的delete 处理delete
+///
+class SA_COMMON_UI_EXPORT SAFiguresTableDeleteCommand : public SAFigureOptCommand
+{
+public:
+    SAFiguresTableDeleteCommand(SAChart2D* chart
+                                  , QwtPlotItem* item
+                                  , const QVector<QPoint> &deleteIndexs
+                                  , const QString &cmdName = QString()
+                                  , QUndoCommand *parent = Q_NULLPTR);
+    ~SAFiguresTableDeleteCommand();
+    virtual void redo();
+    virtual void undo();
+    //判断是否有效
+    bool isValid() const;
+private:
+    SAFiguresTableDeleteCommandPrivate* d_ptr;
+};
 
 
 
 #endif // SAFIGURESTABLECOMMANDS_H
+
 
 
 

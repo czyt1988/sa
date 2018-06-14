@@ -4,7 +4,6 @@
 #include "SAPlotDataModel.h"
 #include "SAChart2D.h"
 #include "SAFigureWindow.h"
-#include "SACellInputWidget.h"
 #include "SAFigureOptCommands.h"
 #include <QClipboard>
 #include <QMessageBox>

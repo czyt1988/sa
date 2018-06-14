@@ -12,7 +12,6 @@
 #include "SAValueManager.h"
 #include "SAData.h"
 #include <QDebug>
-#include "SACellInputWidget.h"
 #include <QClipboard>
 #include "SAWaitCursor.h"
 #include "SACsvStream.h"
