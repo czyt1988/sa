@@ -24,6 +24,7 @@ public:
     ~QwtPlotItemDataModel();
     //给model设置item
     void setPlotItems(const QList<QwtPlotItem*>& items);
+    const QList<QwtPlotItem*>& getPlotItems() const;
     //清空所有内容
     void clear();
     //允许显示背景色

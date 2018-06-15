@@ -183,7 +183,71 @@ SAFigureTableDeleteCommand::SAFigureTableDeleteCommand(
     :SAFigureOptCommand(chart,cmdName,parent)
     ,d_ptr(nullptr)
 {
-
+    switch(item->rtti ())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        d_ptr = new SAFigureTableDeleteCommandPrivate_SeriesStoreItem
+                <QPointF
+                ,QwtPlotCurve
+                ,decltype(&SAChart::setPlotCurveSample)
+                >
+                (chart,item,deleteIndexs,SAChart::setPlotCurveSample);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        d_ptr = new SAFigureTableDeleteCommandPrivate_SeriesStoreItem
+                <QwtIntervalSample
+                ,QwtPlotHistogram
+                ,decltype(&SAChart::setPlotHistogramSample)
+                >
+                (chart,item,deleteIndexs,SAChart::setPlotHistogramSample);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        d_ptr = new SAFigureTableDeleteCommandPrivate_SeriesStoreItem
+                <QwtIntervalSample
+                ,QwtPlotIntervalCurve
+                ,decltype(&SAChart::setPlotIntervalCurveSample)
+                >
+                (chart,item,deleteIndexs,SAChart::setPlotIntervalCurveSample);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+        d_ptr = new SAFigureTableDeleteCommandPrivate_SeriesStoreItem
+                <QwtSetSample
+                ,QwtPlotMultiBarChart
+                ,decltype(&SAChart::setPlotMultiBarChartSample)
+                >
+                (chart,item,deleteIndexs,SAChart::setPlotMultiBarChartSample);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    {
+        d_ptr = new SAFigureTableDeleteCommandPrivate_SeriesStoreItem
+                <QwtOHLCSample
+                ,QwtPlotTradingCurve
+                ,decltype(&SAChart::setPlotTradingCurveSample)
+                >
+                (chart,item,deleteIndexs,SAChart::setPlotTradingCurveSample);
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    {
+        d_ptr = new SAFigureTableDeleteCommandPrivate_SeriesStoreItem
+                <QwtPoint3D
+                ,QwtPlotSpectroCurve
+                ,decltype(&SAChart::setPlotSpectroCurveSample)
+                >
+                (chart,item,deleteIndexs,SAChart::setPlotSpectroCurveSample);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 SAFigureTableDeleteCommand::~SAFigureTableDeleteCommand()

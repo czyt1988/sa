@@ -55,7 +55,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="SAChartDataTableView" name="tableView"/>
+     <widget class="SAChartDataTableView" name="tableView">
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

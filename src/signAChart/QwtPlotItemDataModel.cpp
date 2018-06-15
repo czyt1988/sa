@@ -51,6 +51,11 @@ void QwtPlotItemDataModel::setPlotItems(const QList<QwtPlotItem*>& items)
     endResetModel();
 }
 
+const QList<QwtPlotItem *> &QwtPlotItemDataModel::getPlotItems() const
+{
+    return d_ptr->m_items;
+}
+
 
 
 void QwtPlotItemDataModel::clear()

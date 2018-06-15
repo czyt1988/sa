@@ -94,8 +94,34 @@ private:
 };
 
 
-
+/////////////////////////////////////////////////////////////////////
+///
+///  Series值的插入命令，这个编辑是对应表格的插入编辑，需要提供indexRow信息
+///
+/////////////////////////////////////////////////////////////////////
+class SAFigureTableInsertCommandPrivate;
+///
+/// \brief figure表格的insert 处理insert
+///
+class SA_COMMON_UI_EXPORT SAFigureTableInsertCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureTableInsertCommand(SAChart2D* chart
+                                  , QwtPlotItem* item
+                                  , int row
+                                  , const QString &cmdName = QString()
+                                  , QUndoCommand *parent = Q_NULLPTR);
+    ~SAFigureTableInsertCommand();
+    virtual void redo();
+    virtual void undo();
+    //判断是否有效
+    bool isValid() const;
+private:
+    SAFigureTableInsertCommandPrivate* d_ptr;
+};
 #endif // SAFIGURESTABLECOMMANDS_H
+
+
 
 
 
