@@ -11,6 +11,7 @@
 #include <QtWidgets/QUndoStack>
 class QFile;
 class PointerContainerPrivate;
+class SAValueOptCommand;
 ///
 /// \brief sa的变量管理类
 /// 此类设计为单例模式，不允许拷贝，通过getInstance();获取实例
@@ -110,7 +111,8 @@ public:
     static QList<SAAbstractDatas*> fromSmartPtr(const QList<std::shared_ptr<SAAbstractDatas> >& smrPtrs);
     //清空undo stack
     void clearUndoStack();
-    //
+    //添加操作
+    void addCommand(SAValueOptCommand* cmd);
 public slots:
     void redo();
     void undo();

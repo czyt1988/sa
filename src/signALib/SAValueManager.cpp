@@ -590,6 +590,14 @@ void SAValueManager::clearUndoStack()
 {
     m_undoStack.clear();
 }
+///
+/// \brief 添加操作命令
+/// \param cmd
+///
+void SAValueManager::addCommand(SAValueOptCommand *cmd)
+{
+    m_undoStack.push(cmd);
+}
 
 void SAValueManager::redo()
 {

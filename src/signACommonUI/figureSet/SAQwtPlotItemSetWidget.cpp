@@ -114,7 +114,7 @@ void SAQwtPlotItemSetWidget::onPlotItemAxisBindChanged(int xaxis, int yaxis)
     }
     if(yaxis != oldYAxis && SAChart::isYAxis(yaxis))
     {
-        m_itemPtr->setYAxis(xaxis);
+        m_itemPtr->setYAxis(yaxis);
         isSet = true;
     }
     if(isSet)
