@@ -78,8 +78,8 @@ QPointF SAChart::transformValue(QwtPlot *chart, const QPointF &p, int orgXAxis, 
     }
     if(sdy1 && sdy2)
     {
-        y = sdx1->scaleMap().transform(y);
-        y = sdx2->scaleMap().invTransform(y);
+        y = sdy1->scaleMap().transform(y);
+        y = sdy2->scaleMap().invTransform(y);
     }
     return QPointF(x,y);
 }

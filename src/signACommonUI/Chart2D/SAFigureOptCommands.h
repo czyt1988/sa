@@ -108,6 +108,9 @@ private:
 
 
 
+
+
+
 ///
 /// \brief 曲线QwtSeriesStore<QPointF>值变更
 ///

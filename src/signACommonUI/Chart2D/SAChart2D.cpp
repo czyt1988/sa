@@ -869,11 +869,6 @@ void SAChart2D::removeItem(QwtPlotItem *item)
 ///
 void SAChart2D::removeDataInRang(const QList<QwtPlotItem *>& chartItems)
 {
-    QPainterPath region = getSelectionRange();
-    if(region.isEmpty())
-    {
-        return;
-    }
     SAAbstractRegionSelectEditor* editor = getRegionSelectEditor();
     if(nullptr == editor)
     {
@@ -884,7 +879,10 @@ void SAChart2D::removeDataInRang(const QList<QwtPlotItem *>& chartItems)
 
 void SAChart2D::removeDataInRang()
 {
-    removeDataInRang(getCurrentSelectItems());
+    QList<QwtPlotItem *> items = getCurrentSelectItems();
+    if(items.isEmpty())
+        return;
+    removeDataInRang(items);
 }
 ///
 /// \brief 获取选择范围内的数据,如果当前没有选区，返回false
