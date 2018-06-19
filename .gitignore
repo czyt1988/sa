@@ -1,4 +1,4 @@
-# This file is used to ignore files which are generated
+﻿# This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
 *~
@@ -87,3 +87,4 @@ build-*
 *.png
 *.jpg
 *.svg
+*src\3rdParty\qwt\lib\*
