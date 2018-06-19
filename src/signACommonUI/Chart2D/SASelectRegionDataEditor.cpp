@@ -108,7 +108,46 @@ public:
         }
         m_curListInfo.clear();
     }
+    //更新选中的索引
+    virtual void updateRegionIndex() = 0;
+    //对区域进行偏移
+    virtual void offsetData(const QPointF& offset) = 0;
+    //对数据进行偏移
+    virtual void offsetRegion(const QPointF& offset) = 0;
+    //完成编辑
+    virtual bool completeEdit(const QPoint &screenPoint) = 0;
+    //开始编辑
+    virtual void startEdit(const QPoint &screenPoint) = 0;
+    //移动编辑
+    virtual void moveEdit(const QPoint &toScreenPoint) = 0;
+    //完成键盘的编辑
+    virtual void completeKeyActionEdit() = 0;
 };
+
+
+template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
+class SASelectRegionDataEditorPrivate_SeriesStoreItem : public SASelectRegionDataEditorPrivate
+{
+public:
+    SASelectRegionDataEditorPrivate_SeriesStoreItem(SASelectRegionDataEditor* p);
+private:
+    bool m_isValid;
+    QVector<T> m_operateDatas;
+    QVector<int> m_operateIndexs;
+    FpSetSeriesSampleFun m_fpSetSample;///< fun(QwtPlotItem* item,cosnt QVector<T>& series);
+    PlotItemType* m_plotItem;
+    int m_oldDataSize;
+
+};
+
+template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
+SASelectRegionDataEditorPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
+::SASelectRegionDataEditorPrivate_SeriesStoreItem(SASelectRegionDataEditor *p)
+    :SASelectRegionDataEditorPrivate(p)
+{
+
+}
+
 
 SASelectRegionDataEditor::SASelectRegionDataEditor(SAChart2D *parent)
     :SAAbstractPlotEditor(parent)
@@ -614,3 +653,6 @@ bool SASelectRegionDataEditor::keyReleaseEvent(const QKeyEvent *e)
     Q_UNUSED(e);
     return false;
 }
+
+
+
