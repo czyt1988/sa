@@ -17,21 +17,21 @@ DEPENDPATH  += $${QWT_ROOT}/src
 contains(QWT_CONFIG, QwtFramework) {
 #添加平台判断
     win32{
-        msvc:LIBS += -L$${QWT_ROOT}/lib/x86/msvc
-        mingw:LIBS += -L$${QWT_ROOT}/lib/x86/mingw32
+        msvc:LIBS += -L$${QWT_ROOT}/lib/msvc/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
+        mingw:LIBS += -L$${QWT_ROOT}/lib/mingw32/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
     }
     unix{
-        LIBS += -L$${QWT_ROOT}/lib/unix
+        LIBS += -L$${QWT_ROOT}/lib/unix/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
     }
 }
 else {
     #LIBS      += -L$${QWT_ROOT}/lib
     win32{
-        msvc:LIBS += -L$${QWT_ROOT}/lib/x86/msvc
-        mingw:LIBS += -L$${QWT_ROOT}/lib/x86/mingw32
+        msvc:LIBS += -L$${QWT_ROOT}/lib/msvc/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
+        mingw:LIBS += -L$${QWT_ROOT}/lib/mingw32/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
     }
     unix{
-        LIBS += -L$${QWT_ROOT}/lib/unix
+        LIBS += -L$${QWT_ROOT}/lib/unix/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
     }
 }
 qwtAddLibrary(qwt)

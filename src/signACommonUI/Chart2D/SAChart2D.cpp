@@ -1290,17 +1290,17 @@ void SAChart2D::setCurrentSelectPlotCurveItems(const QList<QwtPlotCurve *> &item
 ///
 /// \brief 把当前存在的编辑器禁止
 ///
-void SAChart2D::unenableEditor()
+void SAChart2D::setEnableAllEditor(bool enable)
 {
     if(d_ptr->m_chartSelectRigionEditor)
     {
-        d_ptr->m_chartSelectRigionEditor->setEnabled(false);
+        d_ptr->m_chartSelectRigionEditor->setEnabled(enable);
     }
     if(SAAbstractPlotEditor* editor = getEditor())
     {
-        editor->setEnabled(false);
+        editor->setEnabled(enable);
     }
-    SA2DGraph::unenableEditor();
+    SA2DGraph::setEnableAllEditor(enable);
 }
 ///
 /// \brief 添加标记 通过此函数添加的标记将会记录到一个列表中

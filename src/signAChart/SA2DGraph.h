@@ -264,7 +264,7 @@ public:
     double axisYmin(int axisId = QwtPlot::yLeft) const;
     double axisYmax(int axisId = QwtPlot::yLeft) const;
     //清除所有editor，如zoom，panner，cross等
-    virtual void unenableEditor();
+    virtual void setEnableAllEditor(bool enable);
 public slots:
 	//功能性语句
     void enableZoomer(bool enable = true );

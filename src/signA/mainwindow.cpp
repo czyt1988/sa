@@ -204,7 +204,7 @@ void MainWindow::initUI()
     connect(ui->treeView_valueManager,&QTreeView::clicked,this,&MainWindow::onTreeViewValueManagerClicked);
     connect(ui->treeView_valueManager,&QTreeView::doubleClicked,this,&MainWindow::onTreeViewValueManagerDoubleClicked);
     connect(ui->treeView_valueManager,&QTreeView::customContextMenuRequested,this,&MainWindow::onTreeViewValueManagerCustomContextMenuRequested);
-    connect(ui->actionRenameValue,&QAction::triggered,this,&MainWindow::onActionRenameValueTriggered);
+    connect(ui->actionRenameValue,&QAction::triggered,this,&MainWindow::onActionValueRenameTriggered);
     //-------------------------------------
     // - start subwindow signal/slots connect
     connect(ui->mdiArea,&QMdiArea::subWindowActivated,this,&MainWindow::onMdiAreaSubWindowActivated);
@@ -226,14 +226,14 @@ void MainWindow::initUI()
     connect(ui->actionDrawIntervalChart,&QAction::triggered,this,&MainWindow::onActionAddIntervalChartTriggered);
     //-------------------------------------
     // - menu_chartDataManager menu signal/slots connect
-    connect(ui->actionInRangDataRemove,&QAction::triggered,this,&MainWindow::onActionInRangDataRemoveTriggered);
+    connect(ui->actionInRangDataRemove,&QAction::triggered,this,&MainWindow::onActionChartRemoveInRangDataTriggered);
     connect(ui->actionPickCurveToData,&QAction::triggered,this,&MainWindow::onActionPickCurveToDataTriggered);
     //-------------------------------------
     // - menu_dataManager menu signal/slots connect
     connect(ui->actionViewValueInCurrentTab,&QAction::triggered,this,&MainWindow::onActionViewValueInCurrentTabTriggered);
     connect(ui->actionViewValueAppendInCurrentTab,&QAction::triggered,this,&MainWindow::onActionViewValueAppendInCurrentTabTriggered);
     connect(ui->actionViewValueInNewTab,&QAction::triggered,this,&MainWindow::onActionViewValueInNewTabTriggered);
-    connect(ui->actionDeleteValue,&QAction::triggered,this,&MainWindow::onActionDeleteValueTriggered);
+    connect(ui->actionDeleteValue,&QAction::triggered,this,&MainWindow::onActionValueDeleteTriggered);
     //-------------------------------------
     // - about menu signal/slots connect
     connect(ui->actionAbout,&QAction::triggered,this,&MainWindow::onActionAboutTriggered);
@@ -290,16 +290,16 @@ void MainWindow::initUI()
     //十字光标
     ui->actionEnableChartCrossCursor->setCheckable(true);
     connect(ui->actionEnableChartCrossCursor,&QAction::triggered
-            ,this,&MainWindow::onActionEnableChartPickerTriggered);
+            ,this,&MainWindow::onActionChartEnablePickerTriggered);
 
     //拖动
     ui->actionEnableChartPanner->setCheckable(true);
     connect(ui->actionEnableChartPanner,&QAction::triggered
-            ,this,&MainWindow::onActionEnableChartPannerTriggered);
+            ,this,&MainWindow::onActionChartEnablePannerTriggered);
     //区间缩放
     ui->actionEnableChartZoom->setCheckable(true);
     connect(ui->actionEnableChartZoom,&QAction::triggered
-            ,this,&MainWindow::onActionEnableChartZoomTriggered);
+            ,this,&MainWindow::onActionChartEnableZoomTriggered);
 
 #ifndef SA_USE_RIBBON_UI
     QToolButton* toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionEnableChartZoom));
@@ -323,7 +323,7 @@ void MainWindow::initUI()
     connect(ui->actionZoomOut,&QAction::triggered
             ,this,&MainWindow::onActionChartZoomOutTriggered);
     connect(ui->actionZoomInBestView,&QAction::triggered
-            ,this,&MainWindow::onActionZoomInBestView);
+            ,this,&MainWindow::onActionChartZoomInBestView);
 
     //选区菜单
     m_chartRegionSelectionShapeActionGroup = new QActionGroup(this);
@@ -343,12 +343,12 @@ void MainWindow::initUI()
             ,this,&MainWindow::onActionStartPolygonSelectTriggered);
     //清除所有选区
     connect(ui->actionClearAllSelectiedRegion,&QAction::triggered
-            ,this,&MainWindow::onActionClearAllSelectiedRegionTriggered);
+            ,this,&MainWindow::onActionChartClearAllSelectiedRegionTriggered);
     ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
     ui->ribbonButtonStartSelection->setChecked(false);
     //选区数据变换
     connect(ui->actionSelectionRegionMove,&QAction::triggered
-            ,this,&MainWindow::onActionSelectionRegionMove);
+            ,this,&MainWindow::onActionChartSelectionRegionMove);
     //
     m_chartRegionSelectionModeActionGroup = new QActionGroup(this);
     ui->actionSingleSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
@@ -357,16 +357,16 @@ void MainWindow::initUI()
     ui->actionIntersectionSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
     //选区单选模式
     connect(ui->actionSingleSelection,&QAction::triggered
-            ,this,&MainWindow::onActionSingleSelectionTriggered);
+            ,this,&MainWindow::onActionChartActiveSingleSelectionTriggered);
     //选区多选模式
     connect(ui->actionAdditionalSelection,&QAction::triggered
-            ,this,&MainWindow::onActionAdditionalSelectionTriggered);
+            ,this,&MainWindow::onActionChartActiveAdditionalSelectionTriggered);
     //选区减选模式
     connect(ui->actionSubtractionSelection,&QAction::triggered
-            ,this,&MainWindow::onActionSubtractionSelectionTriggered);
+            ,this,&MainWindow::onActionChartActiveSubtractionSelectionTriggered);
     //选区交集模式
     connect(ui->actionIntersectionSelection,&QAction::triggered
-            ,this,&MainWindow::onActionIntersectionSelectionTriggered);
+            ,this,&MainWindow::onActionChartActiveIntersectionSelectionTriggered);
     //数据显示
     ui->actionYDataPicker->setCheckable(true);
     //拾取y值
@@ -375,7 +375,7 @@ void MainWindow::initUI()
     //拾取xy值
     connect(ui->actionXYDataPicker,&QAction::triggered,this,&MainWindow::onActionXYDataPickerTriggered);
     //选区范围内的数据移动
-    connect(ui->actionSelectionRegionDataMove,&QAction::triggered,this,&MainWindow::onActionSelectionRegionDataMove);
+    connect(ui->actionSelectionRegionDataMove,&QAction::triggered,this,&MainWindow::onActionChartMoveDataInSelectionRegion);
 #ifndef SA_USE_RIBBON_UI
     toolbtn = qobject_cast<QToolButton*>(ui->toolBar_chartSet->widgetForAction(ui->actionXYDataPicker));
     if(toolbtn)
@@ -1305,7 +1305,7 @@ void MainWindow::onActionStartRectSelectTriggered(bool b)
         releaseChart2DEditor(chart);
         if(b)
         {
-            chart->unenableEditor();
+            chart->setEnableAllEditor(false);
             chart->enableSelection(SAChart2D::RectSelection,b);
             SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
             if(selectEditor)
@@ -1335,7 +1335,7 @@ void MainWindow::onActionStartEllipseSelectTriggered(bool b)
         releaseChart2DEditor(chart);
         if(b)
         {
-            chart->unenableEditor();
+            chart->setEnableAllEditor(false);
             chart->enableSelection(SAChart2D::EllipseSelection,b);
             SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
             if(selectEditor)
@@ -1362,7 +1362,7 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
         releaseChart2DEditor(chart);
         if(b)
         {
-            chart->unenableEditor();
+            chart->setEnableAllEditor(false);
             chart->enableSelection(SAChart2D::PolygonSelection,b);
             SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor();
             if(selectEditor)
@@ -1382,7 +1382,7 @@ void MainWindow::onActionStartPolygonSelectTriggered(bool b)
 /// \brief 清除所有选区
 /// \param b
 ///
-void MainWindow::onActionClearAllSelectiedRegionTriggered(bool b)
+void MainWindow::onActionChartClearAllSelectiedRegionTriggered(bool b)
 {
     Q_UNUSED(b);
     SAChart2D* chart = this->getCurSubWindowChart();
@@ -1397,7 +1397,7 @@ void MainWindow::onActionClearAllSelectiedRegionTriggered(bool b)
 /// \brief 选区单选模式
 /// \param b
 ///
-void MainWindow::onActionSingleSelectionTriggered(bool b)
+void MainWindow::onActionChartActiveSingleSelectionTriggered(bool b)
 {
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
@@ -1416,7 +1416,7 @@ void MainWindow::onActionSingleSelectionTriggered(bool b)
 /// \brief 选区多选模式
 /// \param b
 ///
-void MainWindow::onActionAdditionalSelectionTriggered(bool b)
+void MainWindow::onActionChartActiveAdditionalSelectionTriggered(bool b)
 {
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
@@ -1435,7 +1435,7 @@ void MainWindow::onActionAdditionalSelectionTriggered(bool b)
 /// \brief 选区减选模式
 /// \param b
 ///
-void MainWindow::onActionSubtractionSelectionTriggered(bool b)
+void MainWindow::onActionChartActiveSubtractionSelectionTriggered(bool b)
 {
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
@@ -1454,7 +1454,7 @@ void MainWindow::onActionSubtractionSelectionTriggered(bool b)
 /// \brief 选区交集模式
 /// \param b
 ///
-void MainWindow::onActionIntersectionSelectionTriggered(bool b)
+void MainWindow::onActionChartActiveIntersectionSelectionTriggered(bool b)
 {
     SAChart2D* chart = this->getCurSubWindowChart();
     if(chart)
@@ -1473,7 +1473,7 @@ void MainWindow::onActionIntersectionSelectionTriggered(bool b)
 /// \brief 选区移动
 /// \param b
 ///
-void MainWindow::onActionSelectionRegionMove(bool b)
+void MainWindow::onActionChartSelectionRegionMove(bool b)
 {
     SAChart2D* chart = getCurSubWindowChart();
     if(nullptr == chart)
@@ -1488,7 +1488,7 @@ void MainWindow::onActionSelectionRegionMove(bool b)
         {
             saAddLog("Selection Region Move");
             raiseMainDock();
-            chart->unenableEditor();
+            chart->setEnableAllEditor(false);
             selectEditor->setEnabled(false);
             SASelectRegionEditor* editor = new SASelectRegionEditor(chart);
             editor->setObjectName(QStringLiteral("SASelectRegionEditor"));
@@ -1512,7 +1512,7 @@ void MainWindow::onActionSelectionRegionMove(bool b)
 /// \brief 选区范围内的数据移动
 /// \param on
 ///
-void MainWindow::onActionSelectionRegionDataMove(bool on)
+void MainWindow::onActionChartMoveDataInSelectionRegion(bool on)
 {
     SAChart2D* chart = getCurSubWindowChart();
     if(nullptr == chart)
@@ -1535,11 +1535,12 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
             {
                 chart->canvas()->setFocus();
             }
-            selectEditor->setEnabled(false);
-            chart->unenableEditor();
+            chart->setEnableAllEditor(false);
             SASelectRegionDataEditor* editor = new SASelectRegionDataEditor(chart);
             editor->setObjectName(QStringLiteral("SASelectRegionDataEditor"));
             chart->setEditor(editor);
+            updateSelectActionState(chart);
+            updateChartEditorActionState(chart);
         }
         else
         {
@@ -1547,8 +1548,6 @@ void MainWindow::onActionSelectionRegionDataMove(bool on)
             return;
         }
     }
-    updateSelectActionState(chart);
-    updateChartEditorActionState(chart);
 }
 
 ///
@@ -1594,14 +1593,14 @@ SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, QWidget *w, 
 ///
 /// \brief 开启当前绘图的十字光标
 ///
-void MainWindow::onActionEnableChartPickerTriggered(bool check)
+void MainWindow::onActionChartEnablePickerTriggered(bool check)
 {
     SAFigureWindow* fig = getCurrentFigureWindow();
     if(fig)
     {
         QList<SAChart2D*> charts = fig->get2DPlots();
         std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
-            c->unenableEditor();
+            c->setEnableAllEditor(false);
             c->enablePicker(check);
         });
         releaseChart2DEditor(fig->current2DPlot());
@@ -1612,14 +1611,14 @@ void MainWindow::onActionEnableChartPickerTriggered(bool check)
 /// \brief 开启当前绘图的拖动
 /// \param check
 ///
-void MainWindow::onActionEnableChartPannerTriggered(bool check)
+void MainWindow::onActionChartEnablePannerTriggered(bool check)
 {
     SAFigureWindow* fig = getCurrentFigureWindow();
     if(fig)
     {
         QList<SAChart2D*> charts = fig->get2DPlots();
         std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
-            c->unenableEditor();
+            c->setEnableAllEditor(false);
             c->enablePanner(check);
         });
         releaseChart2DEditor(fig->current2DPlot());
@@ -1630,14 +1629,14 @@ void MainWindow::onActionEnableChartPannerTriggered(bool check)
 /// \brief 开启当前绘图的区间缩放
 /// \param check
 ///
-void MainWindow::onActionEnableChartZoomTriggered(bool check)
+void MainWindow::onActionChartEnableZoomTriggered(bool check)
 {
     SAFigureWindow* fig = getCurrentFigureWindow();
     if(fig)
     {
         QList<SAChart2D*> charts = fig->get2DPlots();
         std::for_each(charts.begin(),charts.end(),[check](SAChart2D* c){
-            c->unenableEditor();
+            c->setEnableAllEditor(false);
             c->enableZoomer(check);
         });
         releaseChart2DEditor(fig->current2DPlot());
@@ -1689,7 +1688,7 @@ void MainWindow::onActionChartZoomOutTriggered(bool check)
 /// \brief 缩放到最佳视图
 /// \param check
 ///
-void MainWindow::onActionZoomInBestView(bool check)
+void MainWindow::onActionChartZoomInBestView(bool check)
 {
     Q_UNUSED(check);
     SAChart2D* chart = this->getCurSubWindowChart();
@@ -1719,7 +1718,7 @@ void MainWindow::onActionYDataPickerTriggered(bool on)
     SAChart2D* chart = getCurSubWindowChart();
     if(chart)
     {
-        chart->unenableEditor();
+        chart->setEnableAllEditor(false);
         chart->enableYDataPicker(on);
     }
     releaseChart2DEditor(chart);
@@ -1734,7 +1733,7 @@ void MainWindow::onActionXYDataPickerTriggered(bool on)
     SAChart2D* chart = getCurSubWindowChart();
     if(chart)
     {
-        chart->unenableEditor();
+        chart->setEnableAllEditor(false);
         chart->enableXYDataPicker(on);
     }
     releaseChart2DEditor(chart);
@@ -1920,7 +1919,7 @@ void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
 ///
 /// \brief 数据剔除，会把选定区域的数据剔除
 ///
-void MainWindow::onActionInRangDataRemoveTriggered()
+void MainWindow::onActionChartRemoveInRangDataTriggered()
 {
     SAFigureWindow* wnd = getCurrentFigureWindow();
     if(nullptr == wnd)
@@ -1938,14 +1937,22 @@ void MainWindow::onActionInRangDataRemoveTriggered()
     if(!chart->isCurrentSelectItemsHaveChartItem())
     {
         QList<QwtPlotItem*> selItems = CurveSelectDialog::getSelectChartPlotItems(chart,this);
-        qDebug() << selItems.size();
+        if(selItems.isEmpty())
+        {
+            return;
+        }
         chart->setCurrentSelectItems(selItems);
-        chart->removeDataInRang();
     }
-    else
+    //选区数据删除和区域数据移动互斥
+    if(chart->getEditor())
     {
-        chart->removeDataInRang();
+        if(SA::RTTI_SASelectRegionDataEditor == chart->getEditor()->rtti())
+        {
+            chart->setEditor(nullptr);
+            ui->actionSelectionRegionDataMove->setChecked(false);
+        }
     }
+    chart->removeDataInRang();
 }
 
 
@@ -2513,7 +2520,7 @@ void MainWindow::onActionViewValueInNewTabTriggered()
 ///
 /// \brief action 变量重命名
 ///
-void MainWindow::onActionRenameValueTriggered()
+void MainWindow::onActionValueRenameTriggered()
 { 
     SAAbstractDatas* data = getSeletedData();
     if(data)
@@ -2971,7 +2978,7 @@ void MainWindow::__loadSubWindowFromFolder(const QString &folderPath)
 ///
 /// \brief 删除变量
 ///
-void MainWindow::onActionDeleteValueTriggered()
+void MainWindow::onActionValueDeleteTriggered()
 {
     QList<SAAbstractDatas*> datas = getSeletedDatas();
     QString info=tr("Are you sure remove:\n");

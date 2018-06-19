@@ -1176,27 +1176,27 @@ double SA2DGraph::axisYmax(int axisId) const
 ///
 /// \brief 此功能用于禁止所有活动的editor，如Zoomer，Picker，Panner，DataPicker等
 ///
-void SA2DGraph::unenableEditor()
+void SA2DGraph::setEnableAllEditor(bool enable)
 {
     if(isEnableZoomer())
     {
-        enableZoomer(false);
+        enableZoomer(enable);
     }
     if(isEnablePicker())
     {
-        enablePicker(false);
+        enablePicker(enable);
     }
     if(isEnablePanner())
     {
-        enablePanner(false);
+        enablePanner(enable);
     }
     if(isEnableYDataPicker())
     {
-        enableYDataPicker(false);
+        enableYDataPicker(enable);
     }
     if(isEnableXYDataPicker())
     {
-        enableXYDataPicker(false);
+        enableXYDataPicker(enable);
     }
 }
 
@@ -1478,7 +1478,7 @@ void SA2DGraph::zoomInCompatible()
 {
     SA_D(SA2DGraph);
     QwtInterval intv[axisCnt];
-    SAChart::dataRange(this,intv+yLeft,intv+yRight,intv+xBottom,intv+xTop);
+    SAChart::dataRange(this,&intv[yLeft],&intv[yRight],&intv[xBottom],&intv[xTop]);
     if(!d->m_zoomer.isNull())
     {
         int axx = d->m_zoomer->xAxis();

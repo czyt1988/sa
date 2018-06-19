@@ -136,7 +136,8 @@ public:
     void setCurrentSelectPlotCurveItems(const QList<QwtPlotCurve*>& items);
 
     //
-    void unenableEditor();
+    virtual void setEnableAllEditor(bool enable);
+
     //添加标记 通过此函数添加的标记将会记录到一个列表中
     void addPlotMarker(SAAbstractPlotMarker* marker);
     const QList<SAAbstractPlotMarker*>& getPlotMarkers() const;

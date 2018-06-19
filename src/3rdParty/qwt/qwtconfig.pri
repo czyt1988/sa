@@ -21,15 +21,20 @@ QWT_INSTALL_PREFIX = $$[QT_INSTALL_PREFIX]
 unix {
     QWT_INSTALL_PREFIX    = /usr/local/qwt-$$QWT_VERSION
 }
-
 win32 {
     QWT_INSTALL_PREFIX    = $${PWD}
 }
 
 QWT_INSTALL_DOCS      = $${QWT_INSTALL_PREFIX}/doc
 QWT_INSTALL_HEADERS   = $${QWT_INSTALL_PREFIX}/include
-QWT_INSTALL_LIBS      = $${QWT_INSTALL_PREFIX}/lib
 
+win32{
+    msvc:QWT_INSTALL_LIBS=$${QWT_INSTALL_PREFIX}/lib/msvc/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
+    mingw:QWT_INSTALL_LIBS=$${QWT_INSTALL_PREFIX}/lib/mingw32/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
+}
+unix{
+    QWT_INSTALL_LIBS=$${QWT_INSTALL_PREFIX}/lib/unix/$${QT_MAJOR_VERSION}_$${QT_MINOR_VERSION}_$${QT_PATCH_VERSION}
+}
 ######################################################################
 # Designer plugin
 # creator/designer load designer plugins from certain default

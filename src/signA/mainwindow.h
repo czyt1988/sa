@@ -247,7 +247,7 @@ private slots:
     // ValueManager tree right clicked menu
     void onTreeViewValueManagerCustomContextMenuRequested(const QPoint &pos);
     //变量管理treeView-菜单-重名变量
-    void onActionRenameValueTriggered();
+    void onActionValueRenameTriggered();
     /// \}
 
     ///
@@ -289,7 +289,7 @@ private slots:
     //变量管理treeView-菜单-当前选择的数据在新标签页里浏览
     void onActionViewValueInNewTabTriggered();
     //变量删除
-    void onActionDeleteValueTriggered();
+    void onActionValueDeleteTriggered();
     /// \}
 
     ///
@@ -317,27 +317,27 @@ private slots:
     //开始多边形选框工具
     void onActionStartPolygonSelectTriggered(bool b);
     //清除所有选区
-    void onActionClearAllSelectiedRegionTriggered(bool b);
+    void onActionChartClearAllSelectiedRegionTriggered(bool b);
     //选区单选模式
-    void onActionSingleSelectionTriggered(bool b);
+    void onActionChartActiveSingleSelectionTriggered(bool b);
     //选区多选模式
-    void onActionAdditionalSelectionTriggered(bool b);
+    void onActionChartActiveAdditionalSelectionTriggered(bool b);
     //选区减选模式
-    void onActionSubtractionSelectionTriggered(bool b);
+    void onActionChartActiveSubtractionSelectionTriggered(bool b);
     //选区交集模式
-    void onActionIntersectionSelectionTriggered(bool b);
+    void onActionChartActiveIntersectionSelectionTriggered(bool b);
     //选区移动
-    void onActionSelectionRegionMove(bool b);
+    void onActionChartSelectionRegionMove(bool b);
     //选区范围内的数据移动
-    void onActionSelectionRegionDataMove(bool on);
+    void onActionChartMoveDataInSelectionRegion(bool on);
 
 
     //开启当前绘图的十字光标
-    void onActionEnableChartPickerTriggered(bool check);
+    void onActionChartEnablePickerTriggered(bool check);
     //开启当前绘图的拖动
-    void onActionEnableChartPannerTriggered(bool check);
+    void onActionChartEnablePannerTriggered(bool check);
     //开启当前绘图的区间缩放
-    void onActionEnableChartZoomTriggered(bool check);
+    void onActionChartEnableZoomTriggered(bool check);
     //当前绘图的缩放还原
     void onActionSetChartZoomToBaseTriggered(bool check);
     //当前绘图放大
@@ -345,7 +345,7 @@ private slots:
     //当前绘图缩小
     void onActionChartZoomOutTriggered(bool check);
     //缩放到最佳视图
-    void onActionZoomInBestView(bool check);
+    void onActionChartZoomInBestView(bool check);
     //当前绘图重置
     void onActionChartZoomResetTriggered(bool check);
     //拾取y值
@@ -374,7 +374,7 @@ private slots:
     /// \{
     ///
     // 剔除选定范围内数据
-    void onActionInRangDataRemoveTriggered();
+    void onActionChartRemoveInRangDataTriggered();
     // 把曲线转换为数据
     void onActionPickCurveToDataTriggered();
     /// \}
