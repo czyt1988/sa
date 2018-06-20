@@ -1,4 +1,4 @@
-#include "SAValueSelectDialog.h"
+﻿#include "SAValueSelectDialog.h"
 #include "ui_SAValueSelectDialog.h"
 //SALib
 #include "SAValueManagerModel.h"
@@ -77,6 +77,7 @@ void SAValueSelectDialog::initUI()
 {
     m_valueModel = new SAValueManagerModel(this);
     m_valueModel->setFunBackgroundData([this](const QModelIndex &index,SAAbstractDatas* d)->QVariant{
+        Q_UNUSED(index);
         if(this->m_hightLightData.contains(d))
         {
             return this->getHightLightColor();

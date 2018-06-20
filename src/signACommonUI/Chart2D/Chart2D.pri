@@ -41,4 +41,5 @@ SOURCES += \
     $$PWD/SAFigureEditSeriesCommand_impl.cpp \
     $$PWD/SAFigureTableDeleteCommand_impl.cpp \
     $$PWD/SAFigureTablePasteInSeriesCommand_impl.cpp \
-    $$PWD/SAFigureTableInsertCommand_impl.cpp
+    $$PWD/SAFigureTableInsertCommand_impl.cpp \
+    $$PWD/SAFigureReplaceDatasCommand_impl.cpp

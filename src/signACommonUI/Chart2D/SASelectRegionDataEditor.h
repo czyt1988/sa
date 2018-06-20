@@ -25,8 +25,6 @@ private slots:
 private:
     //更新选中的索引
     void updateRegionIndex();
-    //对区域进行偏移
-    void offsetData(const QPointF& offset);
     //对数据进行偏移
     void offsetRegion(const QPointF& offset);
     //完成编辑
@@ -42,7 +40,6 @@ protected:
     virtual bool mouseMovedEvent( const QMouseEvent *e);
     virtual bool mouseReleasedEvent( const QMouseEvent *e);
     virtual bool keyPressEvent(const QKeyEvent *e);
-    virtual bool keyReleaseEvent(const QKeyEvent *e);
 };
 
 #endif // SASELECTREGIONDATAEDITOR_H

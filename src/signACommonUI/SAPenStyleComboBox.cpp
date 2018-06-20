@@ -1,4 +1,4 @@
-#include "SAPenStyleComboBox.h"
+﻿#include "SAPenStyleComboBox.h"
 
 SAPenStyleComboBox::SAPenStyleComboBox(QWidget *parent):PenStyleBox(parent)
 {
@@ -8,5 +8,6 @@ SAPenStyleComboBox::SAPenStyleComboBox(QWidget *parent):PenStyleBox(parent)
 
 void SAPenStyleComboBox::onComboBoxIndexChanged(int index)
 {
+    Q_UNUSED(index);
     emit penStyleChanged(style());
 }

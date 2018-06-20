@@ -75,6 +75,9 @@ public:
     static QPainterPath transformPath(QwtPlot*chart,const QPainterPath& p,int orgXAxis,int orgYAxis,int otherXAxis,int otherYAxis);
     //图中1像素在实际数据的偏移(正向)
     static QPointF calcOnePixelOffset(QwtPlot* chart,int xaxis,int yaxis);
+    //屏幕坐标转到对应的绘图坐标
+    static QPointF screenPointToPlotPoint(QwtPlot*chart,const QPointF& screen,int xAxis,int yAxis);
+
 ////////////////////// 坐标轴相关操作//////////////////////////////
 
     //是否允许显示坐标轴
@@ -143,13 +146,25 @@ public:
     //获取间隔数据
     static void getIntervalSampleDatas(QVector<QwtIntervalSample>& intv,const QwtSeriesStore<QwtIntervalSample>* cur);
     //判断点是否在选择的范围内
-    static bool isDataInRange(const QPainterPath &range,const QPointF& point);
+    static bool isPointInRange(const QPainterPath &range,const QPointF& point);
+    static bool isHistogramSampleInRange(const QPainterPath &selectRange,const QwtIntervalSample& val);
+    static bool isIntervalCurveSampleInRange(const QPainterPath &selectRange,const QwtIntervalSample& val);
+    static bool isMultiBarChartSampleInRange(const QPainterPath &selectRange,const QwtSetSample& val);
+    static bool isTradingCurveSampleInRange(const QPainterPath &selectRange,const QwtOHLCSample& val);
+    static bool isSpectroCurveSampleInRange(const QPainterPath &selectRange,const QwtPoint3D& val);
+    //偏移
+    static void offsetPointSample(QPointF& sample,const double& xoffset,const double& yoffset);
+    static void offsetHistogramSample(QwtIntervalSample& sample,const double& xoffset,const double& yoffset);
+    static void offsetIntervalCurveSample(QwtIntervalSample& sample,const double& xoffset,const double& yoffset);
+    static void offsetMultiBarChartSample(QwtSetSample& sample,const double& xoffset,const double& yoffset);
+    static void offsetTradingCurveSample(QwtOHLCSample& sample,const double& xoffset,const double& yoffset);
+    static void offsetSpectroCurveSample(QwtPoint3D& sample,const double& xoffset,const double& yoffset);
     //把范围内的数据移除 返回移除的个数
     static int removeDataInRang(const QRectF &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
     static int removeDataInRang(const QPainterPath &removeRang, const QVector<QPointF>& rawData, QVector<QPointF>& newData);
     static int removeDataInRang(const QRectF& removeRang,QwtSeriesStore<QPointF>* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
-
+////////////////////// 针对QwtSeriesStore<T>的设置操作//////////////////////////////
     //setSample;
     static void setPlotCurveSample(QwtPlotItem* p,const QVector<QPointF>& datas);
     static void setPlotBarChartSample(QwtPlotItem* p,const QVector<QPointF>& datas);
@@ -170,6 +185,8 @@ public:
 ////////////////////// QwtPlotBarChart曲线相关操作//////////////////////////////
     //获取屏幕位置离bar最近的点，类似于QwtPlotCurve::closestPoint
     static int closestPoint(const QwtPlotBarChart* bar,const QPoint &pos, double *dist );
+
+
 
 };
 

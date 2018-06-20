@@ -29,7 +29,7 @@ void copy_out_of_indexs(_IT input_begin,_IT input_end,_IT_Index index_begin,_IT_
     }
     while (input_begin!=input_end)
     {
-      if (inputIndexStart == *index_begin)
+      if (inputIndexStart == (size_t)(*index_begin))
       {
           ++input_begin;
           ++index_begin;
@@ -133,7 +133,7 @@ void insert_inner_indexs(_IT_Index index_be_insert_begin,_IT_Index index_be_inse
     size_t i = 0;
     while (old_data_begin!=old_data_end)
     {
-        if(i == *index_be_insert_begin)
+        if(i == (size_t)(*index_be_insert_begin))
         {
             //说明遇到要插入的索引
             *new_data_begin = *data_be_insert_begin;

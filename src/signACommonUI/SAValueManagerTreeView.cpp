@@ -71,6 +71,7 @@ void SAValueManagerTreeView::dropEvent(QDropEvent *event)
 
 void SAValueManagerTreeView::startDrag(Qt::DropActions supportedActions)
 {
+    Q_UNUSED(supportedActions);
     QList<SAAbstractDatas *> datas = getSeletedDatas();
     SAValueManagerMimeData *mimeData = new SAValueManagerMimeData;
     QList<int> ids;

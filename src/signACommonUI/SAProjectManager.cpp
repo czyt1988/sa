@@ -229,7 +229,6 @@ void SAProjectManager::loadValuesProjectInfo(QDomNode *nodeValues, QStringList &
 ///
 void SAProjectManager::loadValues(const QString &projectFullPath,const QStringList & suffixs)
 {
-    SA_D(SAProjectManager);
     QString dataPath = getProjectDataFolderPath(projectFullPath);
     QDir dir(dataPath);
     if(!dir.exists())
@@ -722,7 +721,6 @@ bool SAProjectManager::saveAs(const QString &savePath)
 ///
 bool SAProjectManager::load(const QString &projectedPath)
 {
-    SA_D(SAProjectManager);
     //验证目录正确性
     QDir dir(projectedPath);
     if(!dir.exists ())

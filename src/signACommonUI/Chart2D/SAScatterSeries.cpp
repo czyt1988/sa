@@ -16,6 +16,7 @@ SAScatterSeries::SAScatterSeries(const QString &title, SAAbstractDatas *dataPoin
     :SAXYSeries(title)
 {
     setStyle( QwtPlotCurve::Dots );
+    setSamples(dataPoints);
 }
 
 

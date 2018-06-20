@@ -48,6 +48,7 @@ QRectF SAFigureContainer::getWidgetPos(QWidget *w) const
 
 void SAFigureContainer::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event);
     QRect subWidgetSize;
     for(auto i=m_widgetPos.begin();i!=m_widgetPos.end();++i)
     {

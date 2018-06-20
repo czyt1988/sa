@@ -7,11 +7,11 @@
 #include "SAAbstractDatas.h"
 #include "SAPropertySetDialog.h"
 SADataTableModel::SADataTableModel(QObject* parent):QAbstractTableModel(parent)
+  ,onSetDataFun(nullptr)
   ,m_rowCount(0)
   ,m_columnCount(0)
   ,m_columnShowMin(15)
   ,m_rowShowMin(35)
-  ,onSetDataFun(nullptr)
 {
 }
 

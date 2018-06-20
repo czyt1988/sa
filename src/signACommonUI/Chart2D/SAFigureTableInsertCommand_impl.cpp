@@ -132,6 +132,7 @@ SAFigureTableInsertCommand::SAFigureTableInsertCommand(
         , QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
 {
+    d_ptr = nullptr;
     switch(item->rtti ())
     {
     case QwtPlotItem::Rtti_PlotCurve:

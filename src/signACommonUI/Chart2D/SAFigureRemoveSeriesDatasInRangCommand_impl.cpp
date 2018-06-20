@@ -132,53 +132,7 @@ bool SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem<T,PlotItemTyp
     return m_isValid;
 }
 
-bool check_is_histogram_sample_in_range(const QPainterPath &selectRange,const QwtIntervalSample& val)
-{
-    QPointF v1(val.interval.minValue(),val.value),v2(val.interval.maxValue(),val.value);
-    if(SAChart::isDataInRange(selectRange,v1) || SAChart::isDataInRange(selectRange,v2))
-    {
-        return true;
-    }
-    return false;
-}
 
-bool check_is_interval_curve_sample_in_range(const QPainterPath &selectRange,const QwtIntervalSample& val)
-{
-    QPointF v1(val.value,val.interval.minValue()),v2(val.value,val.interval.maxValue());
-    if(SAChart::isDataInRange(selectRange,v1) || SAChart::isDataInRange(selectRange,v2))
-    {
-        return true;
-    }
-    return false;
-}
-bool check_is_multi_bar_chart_sample_in_range(const QPainterPath &selectRange,const QwtSetSample& val)
-{
-    for(int i=0;i<val.set.size();++i)
-    {
-        if(!SAChart::isDataInRange(selectRange,QPointF(val.value,val.set[i])))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-bool check_is_trading_curve_sample_in_range(const QPainterPath &selectRange,const QwtOHLCSample& val)
-{
-    if(
-        SAChart::isDataInRange(selectRange,QPointF(val.time,val.high))
-        && SAChart::isDataInRange(selectRange,QPointF(val.time,val.low))
-        && SAChart::isDataInRange(selectRange,QPointF(val.time,val.open))
-        && SAChart::isDataInRange(selectRange,QPointF(val.time,val.close))
-            )
-    {
-        return true;
-    }
-    return false;
-}
-bool check_is_spectro_curve_sample_in_range(const QPainterPath &selectRange,const QwtPoint3D& val)
-{
-    return SAChart::isDataInRange(selectRange,QPointF(val.x(),val.y()));
-}
 ///
 /// \brief SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand
 /// \param chart
@@ -203,9 +157,9 @@ SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand(
         d_ptr = new SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem
                 <QPointF,QwtPlotCurve
                 ,decltype(&SAChart::setPlotCurveSample)
-                ,decltype(&SAChart::isDataInRange)
+                ,decltype(&SAChart::isPointInRange)
                 >(chart,item,selectRange
-                  ,SAChart::setPlotCurveSample,SAChart::isDataInRange);
+                  ,SAChart::setPlotCurveSample,SAChart::isPointInRange);
         break;
     }
     case QwtPlotItem::Rtti_PlotBarChart:
@@ -213,9 +167,9 @@ SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand(
         d_ptr = new SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem
                 <QPointF,QwtPlotBarChart
                 ,decltype(&SAChart::setPlotBarChartSample)
-                ,decltype(&SAChart::isDataInRange)
+                ,decltype(&SAChart::isPointInRange)
                 >(chart,item,selectRange
-                  ,SAChart::setPlotBarChartSample,SAChart::isDataInRange);
+                  ,SAChart::setPlotBarChartSample,SAChart::isPointInRange);
         break;
     }
     case QwtPlotItem::Rtti_PlotHistogram:
@@ -223,9 +177,9 @@ SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand(
         d_ptr = new SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem
                 <QwtIntervalSample,QwtPlotHistogram
                 ,decltype(&SAChart::setPlotHistogramSample)
-                ,decltype(&check_is_histogram_sample_in_range)
+                ,decltype(&SAChart::isHistogramSampleInRange)
                 >(chart,item,selectRange
-                  ,SAChart::setPlotHistogramSample,check_is_histogram_sample_in_range);
+                  ,SAChart::setPlotHistogramSample,SAChart::isHistogramSampleInRange);
         break;
     }
     case QwtPlotItem::Rtti_PlotIntervalCurve:
@@ -233,9 +187,9 @@ SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand(
         d_ptr = new SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem
                 <QwtIntervalSample,QwtPlotIntervalCurve
                 ,decltype(&SAChart::setPlotIntervalCurveSample)
-                ,decltype(&check_is_interval_curve_sample_in_range)
+                ,decltype(&SAChart::isIntervalCurveSampleInRange)
                 >(chart,item,selectRange
-                  ,SAChart::setPlotIntervalCurveSample,check_is_interval_curve_sample_in_range);
+                  ,SAChart::setPlotIntervalCurveSample,SAChart::isIntervalCurveSampleInRange);
         break;
     }
     case QwtPlotItem::Rtti_PlotMultiBarChart:
@@ -243,9 +197,9 @@ SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand(
         d_ptr = new SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem
                 <QwtSetSample,QwtPlotMultiBarChart
                 ,decltype(&SAChart::setPlotMultiBarChartSample)
-                ,decltype(&check_is_multi_bar_chart_sample_in_range)
+                ,decltype(&SAChart::isMultiBarChartSampleInRange)
                 >(chart,item,selectRange
-                  ,SAChart::setPlotMultiBarChartSample,check_is_multi_bar_chart_sample_in_range);
+                  ,SAChart::setPlotMultiBarChartSample,SAChart::isMultiBarChartSampleInRange);
         break;
     }
     case QwtPlotItem::Rtti_PlotTradingCurve:
@@ -253,9 +207,9 @@ SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand(
         d_ptr = new SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem
                 <QwtOHLCSample,QwtPlotTradingCurve
                 ,decltype(&SAChart::setPlotTradingCurveSample)
-                ,decltype(&check_is_trading_curve_sample_in_range)
+                ,decltype(&SAChart::isTradingCurveSampleInRange)
                 >(chart,item,selectRange
-                  ,SAChart::setPlotTradingCurveSample,check_is_trading_curve_sample_in_range);
+                  ,SAChart::setPlotTradingCurveSample,SAChart::isTradingCurveSampleInRange);
         break;
     }
     case QwtPlotItem::Rtti_PlotSpectroCurve:
@@ -263,9 +217,9 @@ SAFigureRemoveSeriesDatasInRangCommand::SAFigureRemoveSeriesDatasInRangCommand(
         d_ptr = new SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem
                 <QwtPoint3D,QwtPlotSpectroCurve
                 ,decltype(&SAChart::setPlotSpectroCurveSample)
-                ,decltype(&check_is_spectro_curve_sample_in_range)
+                ,decltype(&SAChart::isSpectroCurveSampleInRange)
                 >(chart,item,selectRange
-                  ,SAChart::setPlotSpectroCurveSample,check_is_spectro_curve_sample_in_range);
+                  ,SAChart::setPlotSpectroCurveSample,SAChart::isSpectroCurveSampleInRange);
         break;
     }
     default:

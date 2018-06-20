@@ -7,13 +7,14 @@
 #include "SAFigureOptCommands.h"
 #include <QHash>
 #include "SALog.h"
-
+#include <memory>
+#include "SALog.h"
 class chart2d_base_info
 {
 public:
     enum RTTI
     {
-        RTTI_PointInfo
+        RTTI_SeriesStoreInfo
     };
 
     chart2d_base_info():plotItem(nullptr)
@@ -22,38 +23,149 @@ public:
     }
     virtual ~chart2d_base_info(){}
     virtual int rtti() const = 0;
-
-    const QVector<int>& indexs() const{return inRangIndexs;}
-    QVector<int>& indexs() {return inRangIndexs;}
-    void setIndexs(const QVector<int>& v){inRangIndexs = v;}
-
+    //偏移数据，输入偏移的屏幕坐标点，会根据上次的偏移进行偏移，返回实际绘图坐标系的偏移量，偏移量的坐标系为当前QwtPlotItem的坐标系
+    virtual QPointF offsetData(const QPointF &screenPoint) = 0;
+    //重置偏移基准
+    virtual void resetOffsetBase(const QPointF &screenPoint) = 0;
+    //接受更改，接受更改应该向sachart2d写入命令
+    virtual SAFigureOptCommand* accept(QUndoCommand* parent) = 0;
     QwtPlotItem* item(){return plotItem;}
     void setItem(QwtPlotItem* v){plotItem  =v;}
 protected:
-    QVector<int> inRangIndexs;
+
     QwtPlotItem* plotItem;
 };
 
-class chart2d_points_info : public chart2d_base_info
+template<typename T,typename PlotItemType,typename OffsetFun,typename FpSetSeriesSampleFun>
+class chart2d_series_store_info : public chart2d_base_info
 {
 public:
-    chart2d_points_info():chart2d_base_info(){
-
+    chart2d_series_store_info(QwtPlotItem* item,OffsetFun offsetFun,FpSetSeriesSampleFun fpSetSeries):chart2d_base_info()
+      ,m_fpOffsetFun(offsetFun)
+      ,m_fpSetSample(fpSetSeries)
+    {
+        m_plotItem = static_cast<PlotItemType*>(item);
+        setItem(item);
     }
 
-    int rtti() const{return RTTI_PointInfo;}
-    void setPoints(const QVector<QPointF>& p){
-        inRangOriginData = p;
+    int rtti() const{return RTTI_SeriesStoreInfo;}
+    void setDatas(const QVector<T>& p){m_datas = p;}
+    const QVector<T>& datas() const{return m_datas;}
+    QVector<T>& datas(){return m_datas;}
+    const QVector<int>& indexs() const{return m_indexs;}
+    QVector<int>& indexs() {return m_indexs;}
+    void setIndexs(const QVector<int>& v){m_indexs = v;}
+    int size() const{return qMin(m_datas.size(),m_indexs.size());}
+    template<typename CheckFun>
+    void init(const QPainterPath& otPath,int xaxis,int yaxis,CheckFun fun)
+    {
+        m_indexs.clear();
+        m_datas.clear();
+        if(xaxis != item()->xAxis() || yaxis != item()->yAxis())
+        {
+            QPainterPath trPath = SAChart::transformPath(item()->plot(),otPath,xaxis,yaxis
+                                                       ,item()->xAxis(),item()->yAxis());
+
+            for(size_t i=0;i<m_plotItem->dataSize();++i)
+            {
+                if(fun(trPath,m_plotItem->sample(i)))
+                {
+                    m_indexs.append((int)i);
+                    m_datas.append(m_plotItem->sample(i));
+                }
+            }
+            m_newDatas = m_datas;
+        }
+        else
+        {
+            for(size_t i=0;i<m_plotItem->dataSize();++i)
+            {
+                if(fun(otPath,m_plotItem->sample(i)))
+                {
+                    m_indexs.append((int)i);
+                    m_datas.append(m_plotItem->sample(i));
+                }
+            }
+            m_newDatas = m_datas;
+        }
     }
-    const QVector<QPointF>& points() const{
-        return inRangOriginData;
+    virtual QPointF offsetData(const QPointF &screenPoint)
+    {
+        int xaxis = item()->xAxis();
+        int yaxis = item()->yAxis();
+        QwtPlot* plot = item()->plot();
+        if(nullptr == plot)
+        {
+            saError("item dose not bind plot");
+            return QPointF();
+        }
+        m_currentOffset = SAChart::screenPointToPlotPoint(plot,screenPoint,xaxis,yaxis);
+        if(m_firstOffset.isNull())
+        {
+            m_firstOffset.reset(new QPointF(m_currentOffset));
+        }
+        if(m_lastOffset == m_currentOffset)
+        {
+            return QPointF();
+        }
+        QPointF plotOffset = m_currentOffset - m_lastOffset;
+        m_lastOffset = m_currentOffset;
+        for(int i=0;i<m_newDatas.size()&&i<m_indexs.size();++i)
+        {
+            m_fpOffsetFun(m_newDatas[i],plotOffset.x(),plotOffset.y());
+        }
+        replacePlotData();
+        return plotOffset;
     }
-    QVector<QPointF>& points(){
-        return inRangOriginData;
+    virtual void resetOffsetBase(const QPointF &screenPoint)
+    {
+        m_firstOffset.reset();
+        m_lastOffset = SAChart::screenPointToPlotPoint(item()->plot(),screenPoint,item()->xAxis(),item()->yAxis());
+        m_currentOffset = m_lastOffset;
     }
+    void replacePlotData()
+    {
+        QVector<T> newDatas;
+        newDatas.reserve(m_plotItem->dataSize());
+        SAChart::getSeriesData(newDatas,m_plotItem);
+        for(int i=0;i<m_indexs.size()&&i<m_newDatas.size();++i)
+        {
+            if(m_indexs[i] < newDatas.size())
+            {
+                newDatas[m_indexs[i]] = m_newDatas[i];
+            }
+        }
+        m_fpSetSample(item(),newDatas);
+    }
+    virtual SAFigureOptCommand* accept(QUndoCommand* parent)
+    {
+        SAChart2D* chart = qobject_cast<SAChart2D*>(item()->plot());
+        if(nullptr == chart)
+            return nullptr;
+        SAFigureReplaceDatasCommand<T>* cmd
+                = new SAFigureReplaceDatasCommand<T>(
+                    chart
+                    ,item()
+                    ,m_indexs
+                    ,m_datas
+                    ,m_newDatas
+                    ,QObject::tr("move range datas")
+                    ,parent
+                    );
+        return cmd;
+    }
+
 
 protected:
-    QVector<QPointF> inRangOriginData;
+    PlotItemType* m_plotItem;
+    QVector<T> m_datas;
+    QVector<int> m_indexs;
+    QVector<T> m_newDatas;
+    QScopedPointer<QPointF> m_firstOffset;
+    QPointF m_lastOffset;
+    QPointF m_currentOffset;
+    OffsetFun m_fpOffsetFun;
+    FpSetSeriesSampleFun m_fpSetSample;///< fun(QwtPlotItem* item,cosnt QVector<T>& series);
 };
 
 class SASelectRegionDataEditorPrivate
@@ -108,45 +220,10 @@ public:
         }
         m_curListInfo.clear();
     }
-    //更新选中的索引
-    virtual void updateRegionIndex() = 0;
-    //对区域进行偏移
-    virtual void offsetData(const QPointF& offset) = 0;
-    //对数据进行偏移
-    virtual void offsetRegion(const QPointF& offset) = 0;
-    //完成编辑
-    virtual bool completeEdit(const QPoint &screenPoint) = 0;
-    //开始编辑
-    virtual void startEdit(const QPoint &screenPoint) = 0;
-    //移动编辑
-    virtual void moveEdit(const QPoint &toScreenPoint) = 0;
-    //完成键盘的编辑
-    virtual void completeKeyActionEdit() = 0;
 };
 
 
-template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-class SASelectRegionDataEditorPrivate_SeriesStoreItem : public SASelectRegionDataEditorPrivate
-{
-public:
-    SASelectRegionDataEditorPrivate_SeriesStoreItem(SASelectRegionDataEditor* p);
-private:
-    bool m_isValid;
-    QVector<T> m_operateDatas;
-    QVector<int> m_operateIndexs;
-    FpSetSeriesSampleFun m_fpSetSample;///< fun(QwtPlotItem* item,cosnt QVector<T>& series);
-    PlotItemType* m_plotItem;
-    int m_oldDataSize;
 
-};
-
-template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-SASelectRegionDataEditorPrivate_SeriesStoreItem<T,PlotItemType,FpSetSeriesSampleFun>
-::SASelectRegionDataEditorPrivate_SeriesStoreItem(SASelectRegionDataEditor *p)
-    :SASelectRegionDataEditorPrivate(p)
-{
-
-}
 
 
 SASelectRegionDataEditor::SASelectRegionDataEditor(SAChart2D *parent)
@@ -221,35 +298,117 @@ void SASelectRegionDataEditor::updateRegionIndex()
         switch(item->rtti())
         {
         case QwtPlotItem::Rtti_PlotCurve:
+        {
+            typedef chart2d_series_store_info
+                    <QPointF
+                    ,QwtPlotCurve
+                    ,decltype(&SAChart::offsetPointSample)
+                    ,decltype(&SAChart::setPlotCurveSample)
+                    > SerInfo;
+            QScopedPointer<SerInfo> ser(new SerInfo(item,&SAChart::offsetPointSample,&SAChart::setPlotCurveSample));
+            ser->init(d_ptr->m_selectRegionOrigin,editor->getXAxis(),editor->getYAxis(),&SAChart::isPointInRange);
+            if(ser->size() > 0)
+            {
+                d_ptr->appendInfo(ser.take());
+            }
+            break;
+        }
         case QwtPlotItem::Rtti_PlotBarChart:
         {
-            QwtSeriesStore<QPointF>* ser = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
-            if(nullptr == ser)
+            typedef chart2d_series_store_info
+                    <QPointF
+                    ,QwtPlotBarChart
+                    ,decltype(&SAChart::offsetPointSample)
+                    ,decltype(&SAChart::setPlotBarChartSample)
+                    > SerInfo;
+            QScopedPointer<SerInfo> ser(new SerInfo(item,&SAChart::offsetPointSample,&SAChart::setPlotBarChartSample));
+            ser->init(d_ptr->m_selectRegionOrigin,editor->getXAxis(),editor->getYAxis(),&SAChart::isPointInRange);
+            if(ser->size() > 0)
             {
-                continue;
-            }
-            chart2d_points_info* ci = new chart2d_points_info();
-            d_ptr->appendInfo(ci);
-            ci->setItem(item);
-            if(editor->getXAxis() != item->xAxis() || editor->getYAxis() != item->yAxis())
-            {
-                QPainterPath otPath = SAChart::transformPath(chart,d_ptr->m_selectRegionOrigin
-                                                           ,editor->getXAxis(),editor->getYAxis()
-                                                           ,item->xAxis(),item->yAxis());
-                SAChart::getXYDatas(ci->points(),&(ci->indexs()),ser,otPath);
-            }
-            else
-            {
-                SAChart::getXYDatas(ci->points(),&(ci->indexs()),ser,d_ptr->m_selectRegionOrigin);
+                d_ptr->appendInfo(ser.take());
             }
             break;
         }
         case QwtPlotItem::Rtti_PlotSpectroCurve:
+        {
+            typedef chart2d_series_store_info
+                    <QwtPoint3D
+                    ,QwtPlotSpectroCurve
+                    ,decltype(&SAChart::offsetSpectroCurveSample)
+                    ,decltype(&SAChart::setPlotSpectroCurveSample)
+                    > SerInfo;
+            QScopedPointer<SerInfo> ser(new SerInfo(item,&SAChart::offsetSpectroCurveSample,&SAChart::setPlotSpectroCurveSample));
+            ser->init(d_ptr->m_selectRegionOrigin,editor->getXAxis(),editor->getYAxis(),&SAChart::isSpectroCurveSampleInRange);
+            if(ser->size() > 0)
+            {
+                d_ptr->appendInfo(ser.take());
+            }
+            break;
+        }
         case QwtPlotItem::Rtti_PlotIntervalCurve:
+        {
+            typedef chart2d_series_store_info
+                    <QwtIntervalSample
+                    ,QwtPlotIntervalCurve
+                    ,decltype(&SAChart::offsetIntervalCurveSample)
+                    ,decltype(&SAChart::setPlotIntervalCurveSample)
+                    > SerInfo;
+            QScopedPointer<SerInfo> ser(new SerInfo(item,&SAChart::offsetIntervalCurveSample,&SAChart::setPlotIntervalCurveSample));
+            ser->init(d_ptr->m_selectRegionOrigin,editor->getXAxis(),editor->getYAxis(),&SAChart::isIntervalCurveSampleInRange);
+            if(ser->size() > 0)
+            {
+                d_ptr->appendInfo(ser.take());
+            }
+            break;
+        }
         case QwtPlotItem::Rtti_PlotHistogram:
-        case QwtPlotItem::Rtti_PlotSpectrogram:
+        {
+            typedef chart2d_series_store_info
+                    <QwtIntervalSample
+                    ,QwtPlotHistogram
+                    ,decltype(&SAChart::offsetHistogramSample)
+                    ,decltype(&SAChart::setPlotHistogramSample)
+                    > SerInfo;
+            QScopedPointer<SerInfo> ser(new SerInfo(item,&SAChart::offsetHistogramSample,&SAChart::setPlotHistogramSample));
+            ser->init(d_ptr->m_selectRegionOrigin,editor->getXAxis(),editor->getYAxis(),&SAChart::isHistogramSampleInRange);
+            if(ser->size() > 0)
+            {
+                d_ptr->appendInfo(ser.take());
+            }
+            break;
+        }
         case QwtPlotItem::Rtti_PlotTradingCurve:
+        {
+            typedef chart2d_series_store_info
+                    <QwtOHLCSample
+                    ,QwtPlotTradingCurve
+                    ,decltype(&SAChart::offsetTradingCurveSample)
+                    ,decltype(&SAChart::setPlotTradingCurveSample)
+                    > SerInfo;
+            QScopedPointer<SerInfo> ser(new SerInfo(item,&SAChart::offsetTradingCurveSample,&SAChart::setPlotTradingCurveSample));
+            ser->init(d_ptr->m_selectRegionOrigin,editor->getXAxis(),editor->getYAxis(),&SAChart::isTradingCurveSampleInRange);
+            if(ser->size() > 0)
+            {
+                d_ptr->appendInfo(ser.take());
+            }
+            break;
+        }
         case QwtPlotItem::Rtti_PlotMultiBarChart:
+        {
+            typedef chart2d_series_store_info
+                    <QwtSetSample
+                    ,QwtPlotMultiBarChart
+                    ,decltype(&SAChart::offsetMultiBarChartSample)
+                    ,decltype(&SAChart::setPlotMultiBarChartSample)
+                    > SerInfo;
+            QScopedPointer<SerInfo> ser(new SerInfo(item,&SAChart::offsetMultiBarChartSample,&SAChart::setPlotMultiBarChartSample));
+            ser->init(d_ptr->m_selectRegionOrigin,editor->getXAxis(),editor->getYAxis(),&SAChart::isMultiBarChartSampleInRange);
+            if(ser->size() > 0)
+            {
+                d_ptr->appendInfo(ser.take());
+            }
+            break;
+        }
         default:
             break;
         }
@@ -258,54 +417,7 @@ void SASelectRegionDataEditor::updateRegionIndex()
 
     }
 }
-///
-/// \brief SASelectRegionDataEditor::offsetRegionAndData
-/// \param offset
-///
-void SASelectRegionDataEditor::offsetData(const QPointF &offset)
-{
-    bool isAutoReplot = chart2D()->autoReplot();
-    chart2D()->setAutoReplot(false);
-    int count = d_ptr->infoCount();
-    for(int i=0;i<count;++i)
-    {
-        chart2d_base_info* info = d_ptr->info(i);
-        QwtPlotItem* item = info->item();
-        switch(item->rtti())
-        {
-        case QwtPlotItem::Rtti_PlotCurve:
-        case QwtPlotItem::Rtti_PlotBarChart:
-        {
-            QwtSeriesStore<QPointF>* ser = dynamic_cast<QwtPlotCurve*>(item);
-            if(nullptr == ser)
-            {
-                continue;
-            }
-            QVector<QPointF> xyData;
-            SAChart::getXYDatas(xyData,ser);
-            std::for_each(info->indexs().begin(),info->indexs().end()
-                          ,[&xyData,offset](int i){
-                if(i >= 0 && i<xyData.size())
-                {
-                    xyData[i]+=offset;
-                }
-            });
-            ser->setData(new QwtPointSeriesData( xyData ));
-            break;
-        }
 
-        case QwtPlotItem::Rtti_PlotSpectroCurve:
-        case QwtPlotItem::Rtti_PlotIntervalCurve:
-        case QwtPlotItem::Rtti_PlotHistogram:
-        case QwtPlotItem::Rtti_PlotSpectrogram:
-        case QwtPlotItem::Rtti_PlotTradingCurve:
-        case QwtPlotItem::Rtti_PlotMultiBarChart:
-        default:
-            break;
-        }
-    }
-    chart2D()->setAutoReplot(isAutoReplot);
-}
 
 void SASelectRegionDataEditor::offsetRegion(const QPointF &offset)
 {
@@ -355,53 +467,8 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
     for(int i=0;i<count;++i)
     {
         chart2d_base_info* info = d_ptr->info(i);
-        QwtPlotItem* item = info->item();
-        int xaxis = item->xAxis();
-        int yaxis = item->yAxis();
-#if 0
-        double cx = plot()->canvasMap(xaxis).invTransform(screenPoint.x());
-        double cy = plot()->canvasMap(yaxis).invTransform(screenPoint.y());
-        double ox = plot()->canvasMap(xaxis).invTransform(d_ptr->m_firstPressedScreenPoint.x());
-        double oy = plot()->canvasMap(yaxis).invTransform(d_ptr->m_firstPressedScreenPoint.y());
-#else
-        double cx = plot()->invTransform(xaxis,screenPoint.x());
-        double cy = plot()->invTransform(yaxis,screenPoint.y());
-        double ox = plot()->invTransform(xaxis,d_ptr->m_firstPressedScreenPoint.x());
-        double oy = plot()->invTransform(yaxis,d_ptr->m_firstPressedScreenPoint.y());
-#endif
-        QPointF plotOffset(cx-ox,cy-oy);
-        switch(item->rtti())
-        {
-        case QwtPlotItem::Rtti_PlotCurve:
-        case QwtPlotItem::Rtti_PlotBarChart:
-        {
-            QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
-            if(nullptr == series)
-            {
-                continue;
-            }
-            chart2d_points_info* pointInfo = static_cast<chart2d_points_info*>(info);
-            if(nullptr == pointInfo)
-            {
-                continue;
-            }
-            QVector<QPointF> newData = pointInfo->points();
-            std::for_each(newData.begin(),newData.end(),[plotOffset](QPointF& point){point+=plotOffset;});
-
-            new SAFigureReplaceXYSeriesDataInIndexsCommand(chart2D()
-                                                ,series
-                                                ,QString("move %1 datas").arg(item->title().text())
-                                                ,pointInfo->indexs()
-                                                ,pointInfo->points()
-                                                ,newData
-                                                ,topCmd);
-            //把数据更新
-            pointInfo->setPoints(newData);
-            break;
-        }
-        default:
-            break;
-        }
+        info->offsetData(screenPoint);
+        info->accept(topCmd);
     }
     chart2D()->appendCommand(topCmd);
     chart2D()->setAutoReplot(isAutoReplot);
@@ -417,6 +484,12 @@ void SASelectRegionDataEditor::startEdit(const QPoint &screenPoint)
     d_ptr->m_firstPressedScreenPoint = screenPoint;
     d_ptr->m_tmpPoint = screenPoint;
     d_ptr->m_selectRegionOrigin = chart2D()->getSelectionRange();
+    int count = d_ptr->infoCount();
+    for(int i=0;i<count;++i)
+    {
+        chart2d_base_info* info = d_ptr->info(i);
+        info->resetOffsetBase(screenPoint);
+    }
 }
 
 void SASelectRegionDataEditor::moveEdit(const QPoint &toScreenPoint)
@@ -430,7 +503,7 @@ void SASelectRegionDataEditor::moveEdit(const QPoint &toScreenPoint)
     chart2D()->setAutoReplot(false);
     QPointF currentPoint = editor->invTransform(toScreenPoint);
     QPointF originPoint = editor->invTransform(d_ptr->m_tmpPoint);
-    QPointF offset = czy::calcOffset(currentPoint,originPoint);
+    QPointF offset = currentPoint - originPoint;
     //选区进行移动
     offsetRegion(offset);
     //数据进行移动
@@ -438,23 +511,7 @@ void SASelectRegionDataEditor::moveEdit(const QPoint &toScreenPoint)
     for(int i=0;i<count;++i)
     {
         chart2d_base_info* info = d_ptr->info(i);
-        QwtPlotItem* item = info->item();
-        int xaxis = item->xAxis();
-        int yaxis = item->yAxis();
-#if 0
-        double cx = plot()->canvasMap(xaxis).invTransform(screenPoint.x());
-        double cy = plot()->canvasMap(yaxis).invTransform(screenPoint.y());
-        double ox = plot()->canvasMap(xaxis).invTransform(d_ptr->m_tmpPoint.x());
-        double oy = plot()->canvasMap(yaxis).invTransform(d_ptr->m_tmpPoint.y());
-#else
-        double cx = plot()->invTransform(xaxis,toScreenPoint.x());
-        double cy = plot()->invTransform(yaxis,toScreenPoint.y());
-        double ox = plot()->invTransform(xaxis,d_ptr->m_tmpPoint.x());
-        double oy = plot()->invTransform(yaxis,d_ptr->m_tmpPoint.y());
-#endif
-        offset.rx() = cx-ox;
-        offset.ry() = cy-oy;
-        offsetData(offset);
+        info->offsetData(toScreenPoint);
     }
     d_ptr->m_tmpPoint = toScreenPoint;
     chart2D()->setAutoReplot(isAutoReplot);
@@ -648,11 +705,8 @@ bool SASelectRegionDataEditor::keyPressEvent(const QKeyEvent *e)
     return false;
 }
 
-bool SASelectRegionDataEditor::keyReleaseEvent(const QKeyEvent *e)
-{
-    Q_UNUSED(e);
-    return false;
-}
+
+
 
 
 

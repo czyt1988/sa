@@ -121,6 +121,26 @@ QPointF SAChart::calcOnePixelOffset(QwtPlot *chart, int xaxis, int yaxis)
     double y2 = chart->invTransform(yaxis,cen.y()+1);
     return QPointF(x2-x1,y2-y1);
 }
+///
+/// \brief 屏幕坐标转到对应的绘图坐标
+/// \param chart
+/// \param screen 屏幕坐标
+/// \param xAxis x轴
+/// \param yAxis y轴
+/// \return
+///
+QPointF SAChart::screenPointToPlotPoint(QwtPlot *chart, const QPointF &screen, int xAxis, int yAxis)
+{
+    QwtScaleDraw * sdx = chart->axisScaleDraw(xAxis);
+    QwtScaleDraw * sdy = chart->axisScaleDraw(yAxis);
+    if(sdx && sdy)
+    {
+        //转换
+        //先转到屏幕坐标
+        return QPointF(sdx->scaleMap().invTransform(screen.x()),sdy->scaleMap().invTransform(screen.y()));
+    }
+    return QPointF();
+}
 
 ///
 /// \brief 是否允许显示坐标轴
@@ -616,9 +636,170 @@ void SAChart::getIntervalSampleDatas(QVector<QwtIntervalSample> &intv, const Qwt
 /// \param point
 /// \return
 ///
-bool SAChart::isDataInRange(const QPainterPath &range, const QPointF &point)
+bool SAChart::isPointInRange(const QPainterPath &range, const QPointF &point)
 {
     return range.contains(point);
+}
+
+///
+/// \brief 判断HistogramSample是否在区域中
+///
+/// \param selectRange
+/// \param val
+/// \return 只要(minValue,value)或者(maxValue,value)在区域中就认为是
+///
+bool SAChart::isHistogramSampleInRange(const QPainterPath &selectRange, const QwtIntervalSample &val)
+{
+    QPointF v1(val.interval.minValue(),val.value),v2(val.interval.maxValue(),val.value);
+    if(SAChart::isPointInRange(selectRange,v1) || SAChart::isPointInRange(selectRange,v2))
+    {
+        return true;
+    }
+    return false;
+}
+///
+/// \brief 判断IntervalCurveSample是否在区域中
+/// \param selectRange
+/// \param val
+/// \return 只要(value,minValue)或者(value,maxValue)在区域中就认为是
+///
+bool SAChart::isIntervalCurveSampleInRange(const QPainterPath &selectRange, const QwtIntervalSample &val)
+{
+    QPointF v1(val.value,val.interval.minValue()),v2(val.value,val.interval.maxValue());
+    if(SAChart::isPointInRange(selectRange,v1) || SAChart::isPointInRange(selectRange,v2))
+    {
+        return true;
+    }
+    return false;
+}
+///
+/// \brief 判断MultiBarChartSample是否在区域中
+/// \param selectRange
+/// \param val
+/// \return 所有的(value,set[n])在区域中才判定为真
+///
+bool SAChart::isMultiBarChartSampleInRange(const QPainterPath &selectRange, const QwtSetSample &val)
+{
+    for(int i=0;i<val.set.size();++i)
+    {
+        if(!SAChart::isPointInRange(selectRange,QPointF(val.value,val.set[i])))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+///
+/// \brief 判断TradingCurveSample是否在区域中
+/// \param selectRange
+/// \param val
+/// \return 只有(time,high),(time,low)，(time,open)，(time,close)都在区域中才判定为真
+///
+bool SAChart::isTradingCurveSampleInRange(const QPainterPath &selectRange, const QwtOHLCSample &val)
+{
+    if(
+        SAChart::isPointInRange(selectRange,QPointF(val.time,val.high))
+        && SAChart::isPointInRange(selectRange,QPointF(val.time,val.low))
+        && SAChart::isPointInRange(selectRange,QPointF(val.time,val.open))
+        && SAChart::isPointInRange(selectRange,QPointF(val.time,val.close))
+            )
+    {
+        return true;
+    }
+    return false;
+}
+///
+/// \brief 判断SpectroCurveSample是否在区域中
+/// \param selectRange
+/// \param val
+/// \return 只要(val.x,val.y)在区域中就判定为真
+///
+bool SAChart::isSpectroCurveSampleInRange(const QPainterPath &selectRange, const QwtPoint3D &val)
+{
+    return SAChart::isPointInRange(selectRange,QPointF(val.x(),val.y()));
+}
+///
+/// \brief 对点坐标进行二维偏移
+/// \param sample 数据
+/// \param xoffset x方向偏移
+/// \param yoffset y方向偏移
+///
+void SAChart::offsetPointSample(QPointF &sample, const double &xoffset, const double &yoffset)
+{
+    sample.rx() += xoffset;
+    sample.ry() += yoffset;
+}
+///
+/// \brief 对HistogramSample进行二维偏移
+///
+/// minValue,maxValue接受xoffset，value接受yoffset
+/// \param sample 数据
+/// \param xoffset x方向偏移
+/// \param yoffset y方向偏移
+///
+void SAChart::offsetHistogramSample(QwtIntervalSample &sample, const double &xoffset, const double &yoffset)
+{
+    sample.interval.setMinValue(sample.interval.minValue() + xoffset);
+    sample.interval.setMaxValue(sample.interval.maxValue() + xoffset);
+    sample.value += yoffset;
+}
+///
+/// \brief 对IntervalCurveSample进行二维偏移
+///
+/// minValue,maxValue接受yoffset，value接受xoffset
+/// \param sample 数据
+/// \param xoffset x方向偏移
+/// \param yoffset y方向偏移
+///
+void SAChart::offsetIntervalCurveSample(QwtIntervalSample &sample, const double &xoffset, const double &yoffset)
+{
+    sample.interval.setMinValue(sample.interval.minValue() + yoffset);
+    sample.interval.setMaxValue(sample.interval.maxValue() + yoffset);
+    sample.value += xoffset;
+}
+///
+/// \brief 对MultiBarChartSample进行二维偏移
+///
+/// value接受xoffset，set接受yoffset
+/// \param sample 数据
+/// \param xoffset x方向偏移
+/// \param yoffset y方向偏移
+///
+void SAChart::offsetMultiBarChartSample(QwtSetSample &sample, const double &xoffset, const double &yoffset)
+{
+    sample.value += xoffset;
+    for(int i=0;i<sample.set.size();++i)
+    {
+        sample.set[i] += yoffset;
+    }
+}
+///
+/// \brief 对TradingCurveSample进行二维偏移
+///
+/// time接受xoffset，high,low,close,open接受yoffset
+/// \param sample 数据
+/// \param xoffset x方向偏移
+/// \param yoffset y方向偏移
+///
+void SAChart::offsetTradingCurveSample(QwtOHLCSample &sample, const double &xoffset, const double &yoffset)
+{
+    sample.time += xoffset;
+    sample.high += yoffset;
+    sample.low += yoffset;
+    sample.close += yoffset;
+    sample.open += yoffset;
+}
+///
+/// \brief 对SpectroCurveSample进行二维偏移
+///
+/// \param sample 数据
+/// \param xoffset x方向偏移
+/// \param yoffset y方向偏移
+///
+void SAChart::offsetSpectroCurveSample(QwtPoint3D &sample, const double &xoffset, const double &yoffset)
+{
+    sample.rx() += xoffset;
+    sample.ry() += yoffset;
 }
 
 ///
@@ -1235,6 +1416,7 @@ int SAChart::closestPoint(const QwtPlotBarChart *bar, const QPoint &pos, double 
 
     return index;
 }
+
 
 
 

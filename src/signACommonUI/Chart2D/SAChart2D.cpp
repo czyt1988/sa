@@ -63,9 +63,9 @@ struct chart2d_serialize_header
 struct chart_item_rtti_info
 {
     int magicStart;
+    int magicEnd;
     int rtti;///< item的rtti
     bool isEnd;///< 是否是结束，如果是，将会结束
-    int magicEnd;
     chart_item_rtti_info()
         :magicStart(0xabcdf12)
         ,magicEnd(0x24645f)
