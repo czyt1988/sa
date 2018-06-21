@@ -18,7 +18,8 @@ HEADERS += \
     $$PWD/SAHistogramSeries.h \
     $$PWD/SAPlotItemTreeModel.h \
     $$PWD/SAIntervalSeries.h \
-    $$PWD/SAFigureTableCommands.h
+    $$PWD/SAFigureTableCommands.h \
+    $$PWD/SAFigureReplaceDatasCommand.h
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
@@ -41,5 +42,4 @@ SOURCES += \
     $$PWD/SAFigureEditSeriesCommand_impl.cpp \
     $$PWD/SAFigureTableDeleteCommand_impl.cpp \
     $$PWD/SAFigureTablePasteInSeriesCommand_impl.cpp \
-    $$PWD/SAFigureTableInsertCommand_impl.cpp \
-    $$PWD/SAFigureReplaceDatasCommand_impl.cpp
+    $$PWD/SAFigureTableInsertCommand_impl.cpp

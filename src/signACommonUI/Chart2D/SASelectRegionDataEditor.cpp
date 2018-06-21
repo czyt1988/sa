@@ -5,6 +5,7 @@
 #include "SAAbstractRegionSelectEditor.h"
 #include "czyQtPointAlgorithm.h"
 #include "SAFigureOptCommands.h"
+#include "SAFigureReplaceDatasCommand.h"
 #include <QHash>
 #include "SALog.h"
 #include <memory>
@@ -142,14 +143,15 @@ public:
         SAChart2D* chart = qobject_cast<SAChart2D*>(item()->plot());
         if(nullptr == chart)
             return nullptr;
-        SAFigureReplaceDatasCommand<T>* cmd
-                = new SAFigureReplaceDatasCommand<T>(
+        SAFigureReplaceDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>* cmd
+                = new SAFigureReplaceDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>(
                     chart
                     ,item()
                     ,m_indexs
                     ,m_datas
                     ,m_newDatas
                     ,QObject::tr("move range datas")
+                    ,m_fpSetSample
                     ,parent
                     );
         return cmd;

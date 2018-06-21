@@ -20,7 +20,7 @@
 class SAAbstractDatas;
 class QwtPlotCurve;
 
-
+///////////////////////////////////////////////////////////////////////
 ///
 /// \brief 绘图元素的添加
 ///
@@ -35,7 +35,7 @@ private:
     SAChart2D* m_chart;
     QwtPlotItem* m_item;
 };
-
+///////////////////////////////////////////////////////////////////////
 ///
 /// \brief 绘图元素群的添加
 ///
@@ -50,7 +50,7 @@ private:
     SAChart2D* m_chart;
     QList<QwtPlotItem*> m_itemList;
 };
-
+///////////////////////////////////////////////////////////////////////
 ///
 /// \brief 绘图元素的删除
 ///
@@ -65,7 +65,7 @@ private:
     SAChart2D* m_chart;
     QwtPlotItem* m_item;
 };
-
+///////////////////////////////////////////////////////////////////////
 ///
 /// \brief 图像添加选区
 ///
@@ -109,37 +109,6 @@ private:
 
 
 
-
-
-/////////////////////////////////////////////////////////////////////
-///
-///  Series值按照索引替换
-///
-/////////////////////////////////////////////////////////////////////
-class SAFigureReplaceDatasCommandPrivate;
-template<typename T>
-class SA_COMMON_UI_EXPORT SAFigureReplaceDatasCommand : public SAFigureOptCommand
-{
-public:
-    SAFigureReplaceDatasCommand(SAChart2D* chart
-                                , QwtPlotItem* item
-                                , const QVector<int>& indexs
-                                , const QVector<T>& oldDatas
-                                , const QVector<T>& newDatas
-                                , const QString& cmdName
-                                , QUndoCommand *parent = Q_NULLPTR
-                                );
-    ~SAFigureReplaceDatasCommand();
-    virtual void redo();
-    virtual void undo();
-private:
-    SAFigureReplaceDatasCommandPrivate* d_ptr;
-};
-
-
-
-
-
 //==============================================
 //把QwtSeriesStore的值按索引提取
 template<typename T,typename IteIndex,typename IteData>
@@ -152,5 +121,6 @@ void copyInRangeData(IteIndex beginIndex,IteIndex endIndex,const QwtSeriesStore<
         ++beginIndex;
     }
 }
+
 
 #endif // SAFIGUREOPTCOMMAND_H
