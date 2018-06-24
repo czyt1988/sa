@@ -211,7 +211,8 @@ public:
     SAAbstractDatas* getSelectSingleData(bool isAutoSelect = false);
     /// \}
 
-
+    //设置数据显示列表显示的数据
+    void setValueView(const QList<SAAbstractDatas*>& datas,bool showInNewTab = false);
 signals:
 	/// 
 	/// \brief 准备清理项目
@@ -264,6 +265,22 @@ private slots:
     void onActionSaveAsTriggered();
     //清除项目
     void onActionClearProjectTriggered();
+    /// \}
+
+
+
+    ///
+    /// \group 数据操作相关
+    /// \{
+    ///
+    //变量创建向导
+    void onActionValueCreateWizardTriggered();
+    //创建线性double数组
+    void onActionValueCreateDoubleVectorTriggered();
+    //创建线性point数组
+    void onActionValueCreatePointVectorTriggered();
+    //创建表
+    void onActionValueCreateVariantTableTriggered();
     /// \}
 
     ///

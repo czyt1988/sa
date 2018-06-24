@@ -225,6 +225,12 @@ void MainWindow::initUI()
     connect(ui->actionDrawBoxChart,&QAction::triggered,this,&MainWindow::onActionAddBoxChartTriggered);
     connect(ui->actionDrawIntervalChart,&QAction::triggered,this,&MainWindow::onActionAddIntervalChartTriggered);
     //-------------------------------------
+    //- value operate
+    connect(ui->actionValueCreateWizard,&QAction::triggered,this,&MainWindow::onActionValueCreateWizardTriggered);
+    connect(ui->actionValueCreateDoubleVector,&QAction::triggered,this,&MainWindow::onActionValueCreateDoubleVectorTriggered);
+    connect(ui->actionValueCreatePointVector,&QAction::triggered,this,&MainWindow::onActionValueCreatePointVectorTriggered);
+    connect(ui->actionValueCreateVariantTable,&QAction::triggered,this,&MainWindow::onActionValueCreateVariantTableTriggered);
+    //-------------------------------------
     // - menu_chartDataManager menu signal/slots connect
     connect(ui->actionInRangDataRemove,&QAction::triggered,this,&MainWindow::onActionChartRemoveInRangDataTriggered);
     connect(ui->actionPickCurveToData,&QAction::triggered,this,&MainWindow::onActionPickCurveToDataTriggered);
@@ -927,10 +933,8 @@ void MainWindow::onTreeViewValueManagerDoubleClicked(const QModelIndex &index)
     QList<SAAbstractDatas*> datas=getSeletedDatas();
     if(datas.size ()<=0)
         return;
-    ui->tabWidget_valueViewer->setDataInCurrentTab(datas);
-    if (ui->dockWidget_valueViewer->isHidden())
-        ui->dockWidget_valueViewer->show();
-    ui->dockWidget_valueViewer->raise();
+    setValueView(datas);
+    raiseValueViewerDock();
 }
 ///
 /// \brief 变量管理树形视图的右键触发
@@ -1863,6 +1867,38 @@ void MainWindow::onActionClearProjectTriggered()
     emit cleanedProject();
 }
 
+///
+/// \brief 变量创建向导
+///
+void MainWindow::onActionValueCreateWizardTriggered()
+{
+
+}
+///
+/// \brief 创建线性double数组
+///
+void MainWindow::onActionValueCreateDoubleVectorTriggered()
+{
+    std::shared_ptr<SAVectorDouble> ptr = SAValueManager::makeData<SAVectorDouble>("VectorDouble");
+    saValueManager->addData(ptr);
+    setValueView({ptr.get()},true);
+    raiseValueViewerDock();
+}
+///
+/// \brief 创建线性point数组
+///
+void MainWindow::onActionValueCreatePointVectorTriggered()
+{
+
+}
+///
+/// \brief 创建表
+///
+void MainWindow::onActionValueCreateVariantTableTriggered()
+{
+
+}
+
 
 
 
@@ -2590,6 +2626,14 @@ SAAbstractDatas *MainWindow::getSelectSingleData(bool isAutoSelect)
         return nullptr;
     }
     return tmp[0];
+}
+
+void MainWindow::setValueView(const QList<SAAbstractDatas *> &datas, bool showInNewTab)
+{
+    if(showInNewTab)
+        ui->tabWidget_valueViewer->setDataInNewTab(datas);
+    else
+        ui->tabWidget_valueViewer->setDataInCurrentTab(datas);
 }
 ///
 /// \brief 焦点变换触发的槽

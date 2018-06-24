@@ -111,8 +111,8 @@ public:
     QAction *actionSelectionRegionDataMove;///<
 
     QAction *actionValueCreateWizard;///< 创建数据向导
-    QAction *actionValueCreateDouble1Dim;///< 创建一个维double数据
-    QAction *actionValueCreatePoint1Dim;///< 创建一个维point数据
+    QAction *actionValueCreateDoubleVector;///< 创建一个维double数据
+    QAction *actionValueCreatePointVector;///< 创建一个维point数据
     QAction *actionValueCreateVariantTable;///< 创建一个通用表格
 
     QAction *actionSelectSkin;///<
@@ -150,6 +150,12 @@ public:
     SARibbonMenu *menuBoxChart;
     SARibbonMenu *menuScatterChart;
     SARibbonMenu *menuSkinList;
+
+    SARibbonPannel* mainCategoryValuePannel;
+    SARibbonToolButton* ribbonButtonValueCreateWizard;
+    SARibbonToolButton* ribbonButtonValueCreateDouble1Dim;
+    SARibbonToolButton* ribbonButtonValueCreatePoint1Dim;
+    SARibbonToolButton* ribbonButtonValueCreateVariantTable;
     //! operate Category Page
     SARibbonCategory* operateRibbonCategory;
     SARibbonMenu *menuSelection;

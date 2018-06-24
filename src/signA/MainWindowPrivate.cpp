@@ -328,6 +328,21 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionClearRecentOpenProjectorHistroy = new QAction(mainWinowPtr);
     actionClearRecentOpenProjectorHistroy->setObjectName(QStringLiteral("actionClearRecentOpenProjectorHistroy"));
 
+    actionValueCreateWizard = new QAction(mainWinowPtr);
+    actionValueCreateWizard->setObjectName(QStringLiteral("actionValueCreateWizard"));
+    actionValueCreateWizard->setIcon(QIcon(":/icons/icons/createValueWizard.png"));
+
+    actionValueCreateDoubleVector = new QAction(mainWinowPtr);
+    actionValueCreateDoubleVector->setObjectName(QStringLiteral("actionValueCreateDouble1Dim"));
+    actionValueCreateDoubleVector->setIcon(QIcon(":/icons/icons/createDouble1DimValue.png"));
+
+    actionValueCreatePointVector = new QAction(mainWinowPtr);
+    actionValueCreatePointVector->setObjectName(QStringLiteral("actionValueCreatePoint1Dim"));
+    actionValueCreatePointVector->setIcon(QIcon(":/icons/icons/createPoint1DimValue.png"));
+
+    actionValueCreateVariantTable = new QAction(mainWinowPtr);
+    actionValueCreateVariantTable->setObjectName(QStringLiteral("actionValueCreateVariantTable"));
+    actionValueCreateVariantTable->setIcon(QIcon(":/icons/icons/createVariantTableValue.png"));
 
     menuBar = mainWinowPtr->ribbonBar();
     menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -452,7 +467,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonHistogramChart = mainCategoryChartPannel->addLargeMenu(menuHistogramChart);
     ribbonButtonBoxChart = mainCategoryChartPannel->addLargeMenu(menuBoxChart);
 
-
+    //Value Operate Pannel
+    mainCategoryValuePannel = mainRibbonCategory->addPannel(QStringLiteral("Value"));
+    ribbonButtonValueCreateWizard = mainCategoryValuePannel->addLargeAction(actionValueCreateWizard);
+    ribbonButtonValueCreateDouble1Dim = mainCategoryValuePannel->addSmallAction(actionValueCreateDoubleVector);
+    ribbonButtonValueCreatePoint1Dim = mainCategoryValuePannel->addSmallAction(actionValueCreatePointVector);
+    ribbonButtonValueCreateVariantTable = mainCategoryValuePannel->addSmallAction(actionValueCreateVariantTable);
     //! operate Category Page
     operateRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Operate"));
     operateRibbonCategory->setObjectName(QStringLiteral("operateRibbonCategory"));
@@ -941,6 +961,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionSelectionRegionMove->setText(QApplication::translate("MainWindow", "Transform", 0));
     actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Move\nDatas", 0));
     actionFigureSetDock->setText(QApplication::translate("MainWindow", "Figure Setting", 0));
+    actionValueCreateWizard->setText(QApplication::translate("MainWindow", "Value Create\n Wizard", 0));
+    actionValueCreateDoubleVector->setText(QApplication::translate("MainWindow", "double vector", 0));
+    actionValueCreatePointVector->setText(QApplication::translate("MainWindow", "point vector", 0));
+    actionValueCreateVariantTable->setText(QApplication::translate("MainWindow", "variant table", 0));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
@@ -983,7 +1007,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     analysisRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Analysis", 0));
 
     mainCategoryFilePannel->setWindowTitle(QApplication::translate("MainWindow", "File", 0));
-    mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart", 0));
+    mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Operate", 0));
+    mainCategoryValuePannel->setWindowTitle(QApplication::translate("MainWindow", "Value Operate", 0));
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
     operateCategoryChartEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Editor", 0));
@@ -994,6 +1019,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonScatterChart->setText(menuScatterChart->title());
     ribbonButtonAllDock->setText(menuWindowsViewSet->title());
     ribbonButtonAllFuntion->setText(menuAnalysis->title());
+
 
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
