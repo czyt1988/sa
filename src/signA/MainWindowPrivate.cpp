@@ -311,6 +311,11 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSelectionRegionDataMove->setCheckable(true);
     actionSelectionRegionDataMove->setIcon(QIcon(":/icons/icons/selectionRegionDataMove.png"));
 
+    actionFigureEditSubPlotGeometry = new QAction(mainWinowPtr);
+    actionFigureEditSubPlotGeometry->setObjectName(QStringLiteral("actionFigureEditSubPlotGeometry"));
+    actionFigureEditSubPlotGeometry->setCheckable(true);
+
+
     actionChartEditor = new QActionGroup(mainWinowPtr);
     actionChartEditor->setExclusive(true);
     actionChartEditor->addAction(actionSelectionRegionMove);
@@ -521,6 +526,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuShowCrowdedGrid->addAction(actionShowCrowdedVGrid);
     ribbonButtonShowCrowdedGrid = chartGridCategoryWindowPannel->addSmallMenu(menuShowCrowdedGrid);
     ribbonButtonShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
+    //figure Opt pannel
+    figureOptRibbonPannel = operateRibbonCategory->addPannel("Figure Option");
+    ribbonButtonFigureEditSubplot = figureOptRibbonPannel->addLargeAction(actionFigureEditSubPlotGeometry);
+
     //! Analysis
     analysisRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Analysis"));
     analysisRibbonCategory->setObjectName(QStringLiteral("analysisRibbonCategory"));
@@ -941,6 +950,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionSelectionRegionMove->setText(QApplication::translate("MainWindow", "Transform", 0));
     actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Move\nDatas", 0));
     actionFigureSetDock->setText(QApplication::translate("MainWindow", "Figure Setting", 0));
+    actionFigureEditSubPlotGeometry->setText(QApplication::translate("MainWindow", "Subplot\nEdit", 0));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
@@ -998,6 +1008,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
     chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));
+    figureOptRibbonPannel->setWindowTitle(QApplication::translate("MainWindow", "Figure Operate", 0));
     ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));
 
     ribbonApplicationButton->setText(QApplication::translate("MainWindow", "SA", 0));

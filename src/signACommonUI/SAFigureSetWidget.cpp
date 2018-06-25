@@ -316,7 +316,7 @@ void SAFigureSetWidget::onFigutrDestroy(QObject *obj)
 #if SAFiugreSetWidget_USE_COMBOX
 void SAFigureSetWidget::onComboxChanged(int index)
 {
-    if(nullptr == m_fig)
+    if(nullptr == m_fig||index<0)
     {
         return;
     }

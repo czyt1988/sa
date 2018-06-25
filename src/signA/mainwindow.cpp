@@ -420,7 +420,9 @@ void MainWindow::initUI()
     //显示图例选择器
     ui->actionShowLegendPanel->setCheckable(true);
     connect(ui->actionShowLegendPanel,&QAction::triggered,this,&MainWindow::onActionShowLegendPanelTriggered);
-
+    //figure subplot 编辑
+    ui->actionFigureEditSubPlotGeometry->setChecked(false);
+    connect(ui->actionFigureEditSubPlotGeometry,&QAction::triggered,this,&MainWindow::onActionFigureEditSubPlotGeometryTriggered);
 
     //窗口激活对应数据特性的mdiSubWindowActived
     connect(ui->mdiArea,&QMdiArea::subWindowActivated
@@ -1829,6 +1831,18 @@ void MainWindow::onActionShowLegendPanelTriggered(bool on)
         chart->enableLegendPanel(on);
     }
     updateChartSetToolBar();
+}
+///
+/// \brief 子窗口编辑开关
+/// \param on
+///
+void MainWindow::onActionFigureEditSubPlotGeometryTriggered(bool on)
+{
+    SAFigureWindow* fig = getCurrentFigureWindow();
+    if(fig)
+    {
+        fig->enableSubWindowEditMode(on);
+    }
 }
 
 
