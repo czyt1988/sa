@@ -383,7 +383,8 @@ private slots:
     void onActionShowLegendTriggered(bool on);
     //显示图例选择器
     void onActionShowLegendPanelTriggered(bool on);
-
+    //figure subplot set 子窗口编辑开关
+    void onActionFigureEditSubPlotGeometryTriggered(bool on);
     /// \}
 
     ///
@@ -458,9 +459,7 @@ private slots:
     void onActionProjectSettingTriggered();
     /// \}
 
-    ///
-    /// 皮肤切换
-    ///
+    // 皮肤切换
     void onActionSkinChanged(QAction* act);
 
     ///

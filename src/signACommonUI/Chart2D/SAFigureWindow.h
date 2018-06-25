@@ -5,7 +5,7 @@
 #include <QScopedPointer>
 #include "SAAbstractFigure.h"
 #include "SACommonUIGlobal.h"
-
+#include <QPainter>
 #include "qwt_plot_histogram.h"
 class QwtPlotCurve;
 class QwtPlotItem;
@@ -17,7 +17,7 @@ class SAChart2D;
 class SAFigureContainer;
 class CurveDataFeatureItem;
 class SAFigureWindowPrivate;
-
+class SAFigureChartRubberbandEditOverlay;
 ///
 /// \brief SA的绘图窗口
 ///
@@ -47,7 +47,9 @@ public:
     void setCurrent2DPlot(SAChart2D* p);
     //通过item查找对应的SAChart2D，如果没有返回nullptr
     SAChart2D *findChartFromItem(QwtPlotItem *item);
-protected:
+    //开启子窗口编辑模式
+    void enableSubWindowEditMode(bool enable = true,SAFigureChartRubberbandEditOverlay* ptr = nullptr);
+    SAFigureChartRubberbandEditOverlay* subWindowEditModeOverlayWidget() const;
 public slots:
     void redo();
     void undo();

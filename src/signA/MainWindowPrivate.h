@@ -115,6 +115,10 @@ public:
     QAction *actionValueCreatePointVector;///< 创建一个维point数据
     QAction *actionValueCreateVariantTable;///< 创建一个通用表格
 
+
+    QAction *actionFigureEditSubPlotGeometry;///< 编辑子窗口位置
+
+
     QAction *actionSelectSkin;///<
     QActionGroup* actionGroupSkins;
     QActionGroup* actionGroupSelection;
@@ -183,7 +187,10 @@ public:
     SARibbonToolButton* ribbonButtonPickCurveToData;
     SARibbonToolButton* ribbonButtonSelectionRegionDataMove;
 
+
     SARibbonMenu *menuDataRemove;
+
+
     //legend pannel
     SARibbonPannel* chartLegendCategoryWindowPannel;
     SARibbonToolButton* ribbonButtonShowLegend;
@@ -195,6 +202,10 @@ public:
     SARibbonToolButton* ribbonButtonShowVGrid;
     SARibbonToolButton* ribbonButtonShowCrowdedGrid;
     SARibbonMenu *menuShowCrowdedGrid;
+
+    //Figure Operate Category Page
+    SARibbonPannel* figureOptRibbonPannel;
+    SARibbonToolButton* ribbonButtonFigureEditSubplot;
     //! Analysis
     SARibbonCategory* analysisRibbonCategory;
     SARibbonPannel* analysisCategoryFunctionPannel;
@@ -216,7 +227,6 @@ public:
     SARibbonToolButton* ribbonButtonTabMode;
     SARibbonToolButton* ribbonButtonWindowCascade;
     SARibbonToolButton* ribbonButtonWindowTile;
-
 
 
 

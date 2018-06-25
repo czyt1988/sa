@@ -5,6 +5,9 @@
 #include <QKeyEvent>
 #include <QAction>
 #include <QMimeData>
+#include <QPaintEvent>
+#include <QCoreApplication>
+#include <QScopedPointer>
 //sa chart
 #include "SAChart2D.h"
 #include "SAQwtSerialize.h"
@@ -16,6 +19,7 @@
 #include "SAValueManagerMimeData.h"
 //sa common ui
 #include "SAFigureContainer.h"
+#include "SAFigureChartRubberbandEditOverlay.h"
 #define GET_CHART_PTR \
 SAChart2D* chart = current2DPlot();\
 if(nullptr == chart)\
@@ -30,15 +34,19 @@ if(nullptr == chart)\
     return;\
 }
 
+
+
 class SAFigureWindowPrivate
 {
     SA_IMPL_PUBLIC(SAFigureWindow)
 public:
     SAFigureContainer *centralwidget;
     SAChart2D *currentPlot;
+    SAFigureChartRubberbandEditOverlay* chartRubberbandEditor;///< 编辑模式
     SAFigureWindowPrivate(SAFigureWindow* p):q_ptr(p)
       ,centralwidget(nullptr)
       ,currentPlot(nullptr)
+      ,chartRubberbandEditor(nullptr)
     {
 
     }
@@ -157,6 +165,8 @@ void SAFigureWindow::clearAll()
 ///
 void SAFigureWindow::setBackgroundColor(const QBrush &brush)
 {
+    if(!autoFillBackground())
+        setAutoFillBackground(true);
     QPalette p = palette();
     p.setBrush(QPalette::Window,brush);
     setPalette(p);
@@ -164,6 +174,8 @@ void SAFigureWindow::setBackgroundColor(const QBrush &brush)
 
 void SAFigureWindow::setBackgroundColor(const QColor &clr)
 {
+    if(!autoFillBackground())
+        setAutoFillBackground(true);
     QPalette p = palette();
     p.setColor(QPalette::Window,clr);
     setPalette(p);
@@ -204,6 +216,57 @@ SAChart2D *SAFigureWindow::findChartFromItem(QwtPlotItem *item)
     }
     return nullptr;
 }
+///
+/// \brief 是否开始子窗口编辑模式
+/// \param enable
+/// \param ptr 通过此参数可以指定自定义的编辑器，若为nullptr，将使用默认的编辑器，此指针的管理权将移交SAFigureWindow
+///
+void SAFigureWindow::enableSubWindowEditMode(bool enable,SAFigureChartRubberbandEditOverlay* ptr)
+{
+    if(enable)
+    {
+        if(nullptr == d_ptr->chartRubberbandEditor)
+        {
+            if(ptr)
+            {
+                d_ptr->chartRubberbandEditor = ptr;
+                d_ptr->chartRubberbandEditor->show();
+            }
+            else
+            {
+                d_ptr->chartRubberbandEditor = new SAFigureChartRubberbandEditOverlay(this);
+                d_ptr->chartRubberbandEditor->show();
+            }
+        }
+        else
+        {
+            if(d_ptr->chartRubberbandEditor->isHidden())
+            {
+                d_ptr->chartRubberbandEditor->show();
+            }
+        }
+    }
+    else
+    {
+        if(d_ptr->chartRubberbandEditor)
+        {
+            delete d_ptr->chartRubberbandEditor;
+            d_ptr->chartRubberbandEditor = nullptr;
+        }
+    }
+}
+///
+/// \brief 获取子窗口编辑器指针，若没有此编辑器，返回nullptr
+///
+/// 此指针的管理权在SAFigureWindow上，不要在外部对此指针进行释放
+/// \return
+///
+SAFigureChartRubberbandEditOverlay *SAFigureWindow::subWindowEditModeOverlayWidget() const
+{
+    return d_ptr->chartRubberbandEditor;
+}
+
+
 
 //void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)
 //{
