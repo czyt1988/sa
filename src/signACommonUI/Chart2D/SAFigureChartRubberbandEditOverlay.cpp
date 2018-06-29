@@ -1,5 +1,6 @@
 ﻿#include "SAFigureChartRubberbandEditOverlay.h"
 #include "SAChart2D.h"
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QHash>
 #include <QCoreApplication>
@@ -19,6 +20,7 @@ public:
     QPen chart2dEditModeEdgetPen;///< 绘制chart2d在编辑模式下的画笔
     bool isStartResize;///< 标定开始进行缩放
     QWidget* activeWidget;///标定当前激活的窗口，如果没有就为nullptr
+    int searchIndex;///< 记录搜索的索引
     SAFigureChartRubberbandEditOverlay::RectRange activeWidgetRectRange;///< 记录当前缩放窗口的位置情况
     SAFigureChartRubberbandEditOverlayPrivate(SAFigureChartRubberbandEditOverlay* p):q_ptr(p)
       ,lastMouseMovePos(0,0)
@@ -37,6 +39,15 @@ SAFigureChartRubberbandEditOverlay::SAFigureChartRubberbandEditOverlay(SAFigureW
     ,d_ptr(new SAFigureChartRubberbandEditOverlayPrivate(this))
 {
    fig->installEventFilter(this);
+   QList<SAChart2D*> chart = figure()->get2DPlots();
+   if(!chart.isEmpty())
+   {
+       d_ptr->activeWidget = chart.first();
+   }
+   else
+   {
+       selectNextWidget();
+   }
 }
 
 SAFigureChartRubberbandEditOverlay::~SAFigureChartRubberbandEditOverlay()
@@ -185,21 +196,51 @@ bool SAFigureChartRubberbandEditOverlay::isPointInRectEdget(const QPoint &pos, c
     return false;
 }
 
-void SAFigureChartRubberbandEditOverlay::drawOverlay(QPainter *p) const
+void SAFigureChartRubberbandEditOverlay::selectNextWidget(bool forward)
 {
-    p->save();
-    p->setPen(d_ptr->chart2dEditModeEdgetPen);
     QList<QWidget*> ws = figure()->getWidgets();
+    if(ws.isEmpty())
+    {
+        d_ptr->activeWidget = nullptr;
+        return;
+    }
+    if(nullptr == d_ptr->activeWidget)
+    {
+        d_ptr->activeWidget = ws.first();
+        return;
+    }
+    int index = 0;
     for(int i=0;i<ws.size();++i)
     {
-        drawChartEditMode(p,ws[i]->geometry());
+        if(ws[i] == d_ptr->activeWidget)
+        {
+            index = (forward ? i+1 : i-1);
+            break;
+        }
     }
-    p->restore();
+    if(index == ws.size())
+    {
+        index = 0;
+    }
+    if(index<0)
+    {
+        index = ws.size()-1;
+    }
+    d_ptr->activeWidget = ws[index];
+}
 
-    //对于激活的窗口，绘制到四周的距离提示线
-    p->save();
+void SAFigureChartRubberbandEditOverlay::drawOverlay(QPainter *p) const
+{
     if(d_ptr->activeWidget)
     {
+        p->save();
+        p->setPen(d_ptr->chart2dEditModeEdgetPen);
+        drawChartEditMode(p,d_ptr->activeWidget->frameGeometry());
+        p->restore();
+
+        //对于激活的窗口，绘制到四周的距离提示线
+        p->save();
+
         QPen linePen(d_ptr->chart2dEditModeEdgetPen.color().darker());
         linePen.setStyle(Qt::DotLine);
         linePen.setWidth(d_ptr->chart2dEditModeEdgetPen.width());
@@ -210,8 +251,9 @@ void SAFigureChartRubberbandEditOverlay::drawOverlay(QPainter *p) const
         p->drawLine(center.x(),wr.bottom(),center.x(),height());//bottom
         p->drawLine(0,center.y(),wr.left(),center.y());//left
         p->drawLine(wr.right(),center.y(),width(),center.y());//right
+
+        p->restore();
     }
-    p->restore();
 }
 
 QRegion SAFigureChartRubberbandEditOverlay::maskHint() const
@@ -228,125 +270,138 @@ bool SAFigureChartRubberbandEditOverlay::eventFilter(QObject *obj, QEvent *event
         QMouseEvent* me = static_cast<QMouseEvent*>(event);
         if(Qt::LeftButton == me->button())
         {
-            d_ptr->isStartResize = true;
+            QList<QWidget*> ws = figure()->getWidgets();
+            for(int i=0;i<ws.size();++i)
+            {
+                if(ws[i]->frameGeometry().contains(me->pos(),true))
+                {
+                    //记录激活的窗口
+                    d_ptr->activeWidget = ws[i];
+                    d_ptr->searchIndex = 0;
+                    d_ptr->lastMouseMovePos = me->pos();
+                    updateOverlay();
+                    //找到第一个窗口就跳出
+                    return true;
+                }
+            }
         }
         return true;
     }
-    case QEvent::MouseButtonRelease:
+    case QEvent::KeyPress:
     {
-        QMouseEvent* me = static_cast<QMouseEvent*>(event);
-        if(Qt::LeftButton == me->button())
+        QKeyEvent* ke = static_cast<QKeyEvent*>(event);
+        switch(ke->key())
         {
-            d_ptr->isStartResize = false;
+        case Qt::Key_Up:
+        case Qt::Key_Left:
+            selectNextWidget(true);
+            break;
+        case Qt::Key_Right:
+        case Qt::Key_Down:
+            selectNextWidget(false);
+            break;
+        default:
+            return true;
         }
+        updateOverlay();
         return true;
     }
     case QEvent::MouseMove:
     {
-        if(d_ptr->isStartResize)
+        if(d_ptr->activeWidget)
         {
             QMouseEvent* me = static_cast<QMouseEvent*>(event);
-
-            if(d_ptr->activeWidget)
+            QRect geoRect = d_ptr->activeWidget->geometry();
+            switch (d_ptr->activeWidgetRectRange)
             {
-                QRect geoRect = d_ptr->activeWidget->geometry();
-                switch (d_ptr->activeWidgetRectRange)
-                {
-                case Top:
-                {
-                    int resultY = me->pos().y();
-                    geoRect.adjust(0,resultY-geoRect.top(),0,0);
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case Bottom:
-                {
-                    int resultY = me->pos().y();
-                    geoRect.adjust(0,0,0,resultY - geoRect.bottom());
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case Left:
-                {
-                    int resultX = me->pos().x();
-                    geoRect.adjust(resultX - geoRect.left(),0,0,0);
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case Right:
-                {
-                    int resultX = me->pos().x();
-                    geoRect.adjust(0,0,resultX - geoRect.right(),0);
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case TopLeft:
-                {
-                    geoRect.adjust(me->pos().x() - geoRect.left(),me->pos().y()-geoRect.top(),0,0);
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case TopRight:
-                {
-                    geoRect.adjust(0,me->pos().y()-geoRect.top(),me->pos().x() - geoRect.right(),0);
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case BottomLeft:
-                {
-                    geoRect.adjust(me->pos().x() - geoRect.left(),0,0,me->pos().y() - geoRect.bottom());
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case BottomRight:
-                {
-                    geoRect.adjust(0,0,me->pos().x() - geoRect.right(),me->pos().y() - geoRect.bottom());
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                case Inner:
-                {
-                    QPoint offset = me->pos() - d_ptr->lastMouseMovePos;
-                    geoRect.moveTo(geoRect.topLeft()+offset);
-                    d_ptr->activeWidget->setGeometry(geoRect);
-                    break;
-                }
-                default:
-                    return false;
-                }
+            case Top:
+            {
+                int resultY = me->pos().y();
+                geoRect.adjust(0,resultY-geoRect.top(),0,0);
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
             }
+            case Bottom:
+            {
+                int resultY = me->pos().y();
+                geoRect.adjust(0,0,0,resultY - geoRect.bottom());
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            case Left:
+            {
+                int resultX = me->pos().x();
+                geoRect.adjust(resultX - geoRect.left(),0,0,0);
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            case Right:
+            {
+                int resultX = me->pos().x();
+                geoRect.adjust(0,0,resultX - geoRect.right(),0);
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            case TopLeft:
+            {
+                geoRect.adjust(me->pos().x() - geoRect.left(),me->pos().y()-geoRect.top(),0,0);
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            case TopRight:
+            {
+                geoRect.adjust(0,me->pos().y()-geoRect.top(),me->pos().x() - geoRect.right(),0);
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            case BottomLeft:
+            {
+                geoRect.adjust(me->pos().x() - geoRect.left(),0,0,me->pos().y() - geoRect.bottom());
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            case BottomRight:
+            {
+                geoRect.adjust(0,0,me->pos().x() - geoRect.right(),me->pos().y() - geoRect.bottom());
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            case Inner:
+            {
+                QPoint offset = me->pos() - d_ptr->lastMouseMovePos;
+                geoRect.moveTo(geoRect.topLeft()+offset);
+                d_ptr->activeWidget->setGeometry(geoRect);
+                break;
+            }
+            default:
+                d_ptr->lastMouseMovePos = me->pos();
+                return false;
+            }
+
             d_ptr->lastMouseMovePos = me->pos();
             updateOverlay();
         }
         return true;
     }
-    case QEvent::Leave:
-    {
-        break;
-    }
+//    case QEvent::Leave:
+//    {
+//        break;
+//    }
     case QEvent::HoverMove:
     {
         QHoverEvent* me = static_cast<QHoverEvent*>(event);
-        if(d_ptr->isStartResize)
+        d_ptr->lastMouseMovePos = me->pos();
+        if(d_ptr->activeWidget)
         {
-            return true;
-        }
-        QList<QWidget*> ws = figure()->getWidgets();
-        for(int i=0;i<ws.size();++i)
-        {
-            RectRange rectRange = getPointInRectRange(me->pos(),ws[i]->frameGeometry(),4);
+            RectRange rectRange = getPointInRectRange(me->pos(),d_ptr->activeWidget->frameGeometry(),4);
             Qt::CursorShape shape = rectRangeToCursorShape(rectRange);
             if(Qt::ArrowCursor == shape)
             {
-                figure()->unsetCursor();
-                d_ptr->activeWidget = nullptr;
-                continue;
+                return true;
             }
 
             figure()->setCursor(shape);
-            d_ptr->activeWidget = ws[i];
             d_ptr->activeWidgetRectRange = rectRange;
-            d_ptr->lastMouseMovePos = me->pos();
             //找到第一个窗口就跳出
             return true;
 

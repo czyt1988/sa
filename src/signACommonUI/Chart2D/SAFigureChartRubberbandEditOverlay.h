@@ -32,6 +32,7 @@ public:
     static Qt::CursorShape rectRangeToCursorShape(RectRange rr);
     static RectRange getPointInRectRange(const QPoint& pos,const QRect& region,int err = 1);
     static bool isPointInRectEdget(const QPoint& pos,const QRect& region,int err = 1);
+    void selectNextWidget(bool forward = true);
 protected:
     virtual void drawOverlay( QPainter * p) const;
     virtual QRegion maskHint() const;
