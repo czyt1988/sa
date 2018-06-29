@@ -20,6 +20,10 @@ SAAddLineChartSetDialog::SAAddLineChartSetDialog(QWidget *parent) :
     m_yMoreSetButtonGroup->addButton(ui->radioButtonYUseDef,UserDefineSet);
     m_yMoreSetButtonGroup->setExclusive(true);
 
+    m_addChartModeButtonGroup = new QButtonGroup(this);
+    m_addChartModeButtonGroup->addButton(ui->radioButtonInCurrentChart,AddInCurrentChart);
+    m_addChartModeButtonGroup->addButton(ui->radioButtonInNewSubPlot,AddInNewSubplot);
+    m_addChartModeButtonGroup->addButton(ui->radioButtonNewFigure,AddInNewFigure);
 
     ui->valueComboBoxX->setFilter(&filterSAValueSelectComboBox1Dim);
     ui->valueComboBoxY->setFilter(&filterSAValueSelectComboBox1Dim);
@@ -104,14 +108,24 @@ void SAAddLineChartSetDialog::getYUserDefineValues(double &start, double &increa
     start = ui->userDefineYWidget->getStartValue();
     increase = ui->userDefineYWidget->getIncreaseValue();
 }
-///
-/// \brief 是否添加到当前的chart
-/// \return
-///
-bool SAAddLineChartSetDialog::isAddInCurrentChart() const
+
+SAAddLineChartSetDialog::AddChartMode SAAddLineChartSetDialog::addChartMode() const
 {
-    return ui->checkBoxAddInCur->isChecked();
+    if(ui->radioButtonInNewSubPlot->isChecked())
+    {
+        return AddInNewSubplot;
+    }
+    else if(ui->radioButtonInCurrentChart->isChecked())
+    {
+        return AddInCurrentChart;
+    }
+    else if(ui->radioButtonNewFigure->isChecked())
+    {
+        return AddInNewFigure;
+    }
+    return AddInNewFigure;
 }
+
 ///
 /// \brief 曲线的名
 /// \return

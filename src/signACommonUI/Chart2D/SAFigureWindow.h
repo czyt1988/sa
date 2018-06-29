@@ -29,6 +29,7 @@ class SA_COMMON_UI_EXPORT SAFigureWindow : public QMainWindow
 public:
     explicit SAFigureWindow(QWidget *parent = 0);
     ~SAFigureWindow();
+    QList<QWidget*> getWidgets() const;
     //添加一个2D chart
     SAChart2D* create2DPlot();
     SAChart2D* create2DSubPlot(float xPresent, float yPresent, float wPresent, float hPresent);

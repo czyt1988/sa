@@ -266,16 +266,28 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
     SAAddLineChartSetDialog::AsixSet asX = dlg.getXAxisSet();
     SAAddLineChartSetDialog::AsixSet asY = dlg.getYAxisSet();
     QString title = dlg.getChartTitle();
-    bool isAddInCur = dlg.isAddInCurrentChart();
-
-    if(isAddInCur)
+    SAAddLineChartSetDialog::AddChartMode addMode = dlg.addChartMode();
+    switch(addMode)
+    {
+    case SAAddLineChartSetDialog::AddInCurrentChart:
     {
         chart = getCurSubWindowChart();
+        break;
     }
-    else
+    case SAAddLineChartSetDialog::AddInNewFigure:
     {
         chart = nullptr;
+        break;
     }
+    case SAAddLineChartSetDialog::AddInNewSubplot:
+    {
+        SAFigureWindow* fig = getCurrentFigureWindow();
+        chart = fig->create2DSubPlot(0.5,0.5,0.4,0.4);
+        chart->show();
+        break;
+    }
+    }
+
 
     if(SAAddLineChartSetDialog::NormalSet == asX && SAAddLineChartSetDialog::NormalSet == asY)
     {
@@ -597,15 +609,26 @@ QList<QwtPlotCurve *> SADrawDelegate::drawScatterWithWizard()
     SAAddLineChartSetDialog::AsixSet asX = dlg.getXAxisSet();
     SAAddLineChartSetDialog::AsixSet asY = dlg.getYAxisSet();
     QString title = dlg.getChartTitle();
-    bool isAddInCur = dlg.isAddInCurrentChart();
-
-    if(isAddInCur)
+    SAAddLineChartSetDialog::AddChartMode addMode = dlg.addChartMode();
+    switch(addMode)
+    {
+    case SAAddLineChartSetDialog::AddInCurrentChart:
     {
         chart = getCurSubWindowChart();
+        break;
     }
-    else
+    case SAAddLineChartSetDialog::AddInNewFigure:
     {
         chart = nullptr;
+        break;
+    }
+    case SAAddLineChartSetDialog::AddInNewSubplot:
+    {
+        SAFigureWindow* fig = getCurrentFigureWindow();
+        chart = fig->create2DSubPlot(0.5,0.5,0.4,0.4);
+        chart->show();
+        break;
+    }
     }
 
     if(SAAddLineChartSetDialog::NormalSet == asX && SAAddLineChartSetDialog::NormalSet == asY)

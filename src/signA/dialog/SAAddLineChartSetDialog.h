@@ -25,6 +25,13 @@ public:
         NormalSet = 0
         ,UserDefineSet
     };
+    enum AddChartMode
+    {
+        AddInCurrentChart
+        ,AddInNewFigure
+        ,AddInNewSubplot
+    };
+
     //设置x，y轴当前选中的状态
     void setXAsixSet(AsixSet set);
     void setYAsixSet(AsixSet set);
@@ -41,8 +48,8 @@ public:
     //获取自定义设置的值
     void getXUserDefineValues(double& start,double& increase) const;
     void getYUserDefineValues(double& start,double& increase) const;
-    //是否添加到当前的chart
-    bool isAddInCurrentChart() const;
+    //添加绘图的模式
+    AddChartMode addChartMode() const;
     //曲线的名
     QString getChartTitle() const;
     void setChartTitle(const QString& title);
@@ -65,6 +72,7 @@ private:
     Ui::SAAddLineChartSetDialog *ui;
     QButtonGroup* m_xMoreSetButtonGroup;
     QButtonGroup* m_yMoreSetButtonGroup;
+    QButtonGroup* m_addChartModeButtonGroup;
     SAUserDefineAxisDataWidget* m_xUsrDef;
     SAUserDefineAxisDataWidget* m_yUsrDef;
 };

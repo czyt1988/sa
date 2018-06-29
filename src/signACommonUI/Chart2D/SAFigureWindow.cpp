@@ -88,6 +88,11 @@ SAFigureWindow::~SAFigureWindow()
     //qDebug() << "SAFigureWindow destroy";
 }
 
+QList<QWidget*> SAFigureWindow::getWidgets() const
+{
+    return d_ptr->centralwidget->getWidgetList();
+}
+
 ///
 /// \brief 添加一个2Dchart
 /// \return 返回2D绘图的指针
