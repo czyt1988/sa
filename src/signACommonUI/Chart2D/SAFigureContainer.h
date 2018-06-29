@@ -22,11 +22,14 @@ public:
     QList<QWidget *> getWidgetList() const;
     //获取窗口的位置信息
     QRectF getWidgetPos(QWidget *w) const;
+    //判断是否存在这个widget
+    bool isWidgetInContainer(const QWidget* w);
 private slots:
     //void onWidgetDestroy(QObject* obj);
 protected:
     void resizeEvent(QResizeEvent *event);
     bool event(QEvent *e);
+    bool eventFilter(QObject *watched, QEvent *event);
 private:
     void calcWidgetSize(const QRectF& present, QRect& newSize);
 private:
