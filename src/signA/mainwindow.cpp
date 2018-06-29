@@ -3042,7 +3042,7 @@ void MainWindow::onActionValueDeleteTriggered()
     QString info=tr("Are you sure remove:\n");
     for(int i=0;i<datas.size () && i < 5;++i)
     {
-        info += QStringLiteral("%1;").arg(datas[i]->text ());
+        info += QStringLiteral("%1;").arg(datas[i]->getName());
     }
     info += tr("\n datas?");
     QMessageBox::StandardButton btn = QMessageBox::question (this,tr("Quesstion"),info);

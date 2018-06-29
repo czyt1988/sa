@@ -74,6 +74,8 @@ QString SAAbstractDatas::displayAt(size_t dim1, size_t dim2) const
 ///
 bool SAAbstractDatas::setAt(const QVariant &val, const std::initializer_list<size_t> &index)
 {
+    Q_UNUSED(val);
+    Q_UNUSED(index);
     return false;
 }
 
@@ -81,13 +83,35 @@ bool SAAbstractDatas::setAt(const QVariant &val, const std::initializer_list<siz
 
 void SAAbstractDatas::read(QDataStream &in)
 {
-    QStandardItem::read(in);
-    setID(int(this));//read后会把id复写为旧的id，这里重新设置id
+    QIcon icon;
+    QString name;
+    int dataCounts;
+    in >> icon >> name >> dataCounts;
+    setIcon(icon);
+    setName(name);
+    for(int i=0;i<dataCounts;++i)
+    {
+        int id;
+        QVariant var;
+        in >> id >> var;
+    }
+
+    //QStandardItem::read(in);
+    //setID(int(this));//read后会把id复写为旧的id，这里重新设置id
 }
 
 void SAAbstractDatas::write(QDataStream &out) const
 {
-    QStandardItem::write(out);
+    //QStandardItem::write(out);
+    int dc = getDataCount();
+    out << getIcon() << getName() << dc;
+    for(int i=0;i<dc;++i)
+    {
+        int id;
+        QVariant var;
+        getData(i,id,var);
+        out << id << var;
+    }
 }
 
 

@@ -80,6 +80,7 @@ void SAValueManagerListModel::setFilter(SAValueManagerListModel::FunPtrFilter fi
 
 void SAValueManagerListModel::onDataChanged(const QList<SAAbstractDatas *> &datas)
 {
+    Q_UNUSED(datas);
     updateData();
 }
 

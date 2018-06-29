@@ -746,7 +746,7 @@ bool PointerContainerPrivate::changDataName(SAAbstractDatas *data, const QString
     }
     m_dataName2DataPtr.remove(data->getName());
     m_dataName2DataPtr[name] = data;
-    data->setText(name);
+    data->setName(name);
     return true;
 }
 

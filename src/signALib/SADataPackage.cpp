@@ -1,4 +1,4 @@
-#include "SADataPackage.h"
+﻿#include "SADataPackage.h"
 #include <QIcon>
 #define ICON_PackageNormal QIcon(":/treeItemIcon/res_treeItemIcon/package_normal.png")
 
@@ -18,7 +18,7 @@ SAABstractDataPackage::SAABstractDataPackage(const QString &text):SAAbstractData
 ///
 void SAABstractDataPackage::appendData(SAAbstractDatas *datas)
 {
-    appendRow(datas);
+    appendChild(datas);
 }
 
 ///
@@ -28,7 +28,7 @@ void SAABstractDataPackage::appendData(SAAbstractDatas *datas)
 ///
 bool SAABstractDataPackage::isfield(const QString &fieldName)
 {
-    const int r = rowCount();
+    const int r = childCount();
     for(int i=0;i<r;++i)
     {
         auto p = child(i);
@@ -36,7 +36,7 @@ bool SAABstractDataPackage::isfield(const QString &fieldName)
         {
             continue;
         }
-        if(p->text() == fieldName)
+        if(p->getName() == fieldName)
         {
             return true;
         }
@@ -58,17 +58,17 @@ SADataPackage::SADataPackage(const QString &text):SAABstractDataPackage(text)
 int SADataPackage::getSize(int sizeType) const
 {
     Q_UNUSED(sizeType);
-    return rowCount();
+    return childCount();
 }
 
 QVariant SADataPackage::getAt(size_t index, size_t index2) const
 {
     Q_UNUSED(index2);
-    if((int)index >= rowCount())
+    if((int)index >= childCount())
     {
         return QVariant();
     }
-    return child(index)->text();
+    return child(index)->getName();
 }
 
 bool SADataPackage::toDoubleVector(QVector<double> &data, const QVector<int> *index) const

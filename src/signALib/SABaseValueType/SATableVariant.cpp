@@ -28,8 +28,6 @@ bool SATableVariant::toDouble(SATableDouble *doubleTable)
     bool isOK(false);
     bool isSuccess = false;
     QVariant var;
-    doubleTable->setRowCount(row);
-    doubleTable->setColumnCount(col);
     for(int i= 0;i<col;++i)
     {
         for(int j = 0;j<row;++j)
