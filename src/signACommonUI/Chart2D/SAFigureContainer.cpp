@@ -23,6 +23,7 @@ void SAFigureContainer::addWidget(QWidget *widget, const QRectF &pos)
     widget->setGeometry(widgetSize);
     //connect(widget,&QObject::destroyed,this,&SAFigureContainer::onWidgetDestroy);
     m_widgetPos[widget] = pos;
+    widget->installEventFilter(this);
 }
 
 void SAFigureContainer::addWidget(QWidget *widget, float xPresent, float yPresent, float wPresent, float hPresent)
@@ -43,6 +44,11 @@ QList<QWidget *> SAFigureContainer::getWidgetList() const
 QRectF SAFigureContainer::getWidgetPos(QWidget *w) const
 {
     return m_widgetPos.value(w);
+}
+
+bool SAFigureContainer::isWidgetInContainer(const QWidget *w)
+{
+    return m_widgetPos.contains(const_cast<QWidget*>(w));
 }
 
 
@@ -76,6 +82,43 @@ bool SAFigureContainer::event(QEvent *e)
         }
     }
     return QWidget::event(e);
+}
+
+bool SAFigureContainer::eventFilter(QObject *watched, QEvent *event)
+{
+    if(nullptr == event)
+    {
+        return QWidget::eventFilter(watched,event);
+    }
+    if(QEvent::Resize == event->type())
+    {
+        if(watched && watched->isWidgetType())
+        {
+            QWidget* w = qobject_cast<QWidget*>(watched);
+            if(w && isWidgetInContainer(w))
+            {
+                QResizeEvent* e = static_cast<QResizeEvent*>(event);
+                QRectF& data = m_widgetPos[w];
+                data.setWidth(e->size().width()/(double)width());
+                data.setHeight(e->size().height()/(double)height());
+            }
+        }
+    }
+    else if(QEvent::Move == event->type())
+    {
+        if(watched && watched->isWidgetType())
+        {
+            QWidget* w = qobject_cast<QWidget*>(watched);
+            if(w && isWidgetInContainer(w))
+            {
+                QMoveEvent* e = static_cast<QMoveEvent*>(event);
+                QRectF& data = m_widgetPos[w];
+                data.setX(e->pos().x()/(double)width());
+                data.setY(e->pos().y()/(double)height());
+            }
+        }
+    }
+    return QWidget::eventFilter(watched,event);
 }
 
 

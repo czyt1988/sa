@@ -13,6 +13,8 @@ class SA_COMMON_UI_EXPORT SAFigureWindowOverlay : public QwtWidgetOverlay
 public:
     SAFigureWindowOverlay(SAFigureWindow* fig);
     SAFigureWindow* figure() const;
+private:
+    SAFigureWindow* m_fig;
 };
 
 #endif // SAFIGUREWINDOWOVERLAY_H
