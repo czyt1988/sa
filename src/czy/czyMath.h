@@ -37,6 +37,7 @@ namespace Math
     /// \endcode
     /// \param _begin 数据开始迭代器
     /// \param _end 数据结束迭代器
+    /// \return 和
     ///
     template <typename IT>
     double sum(INPUT const IT _begin,INPUT const IT _end)
@@ -48,6 +49,44 @@ namespace Math
         }
         return total;
     }
+    ///
+    /// \brief 对数组求和
+    /// \code
+    /// struct point
+    ///{
+    ///    double x;
+    ///    double y;
+    ///};
+    ///std::vector<point> ps;
+    ///const int size = 100;
+    ///ps.reserve(size);
+    ///for (int i=0;i<size;++i)
+    ///{
+    ///    point p;
+    ///    p.x = i;
+    ///    p.y = i;
+    ///    ps.push_back(p);
+    ///}
+    ///double sum = czy::Math::sum(ps.begin(),ps.end(),[](const point& p)->double{return p.y;});
+    /// \endcode
+    /// \param _begin 数据开始迭代器
+    /// \param _end 数据结束迭代器
+    /// \param fpGetter 获取数值的函数指针，形如：fp(const IT::value_type& point);
+    /// \return
+    ///
+    template <typename IT,typename FpGetter>
+    double sum(INPUT const IT _begin,INPUT const IT _end,FpGetter fpGetter)
+    {
+        IT it = _begin;
+        double total(0.0);
+        for(;it!=_end;++it){
+            total += fpGetter(*it);
+        }
+        return total;
+    }
+
+
+
     ///
     /// \brief 求平均值的模版函数
     /// \code
@@ -74,7 +113,12 @@ namespace Math
     template <typename IT>
     double mean(INPUT const IT _begin,INPUT const IT _end)
     {
-        return sum(_begin,_end)/(_end - _begin);
+        return sum(_begin,_end)/(double)(_end - _begin);
+    }
+    template <typename IT,typename FpGetter>
+    double mean(INPUT const IT _begin,INPUT const IT _end,FpGetter fpGetter)
+    {
+        return sum(_begin,_end,fpGetter)/(double)(_end - _begin);
     }
     ///
     /// \brief 求序列的方差 - 为n-1类型既是序列是随机抽样不是固定值
@@ -114,6 +158,22 @@ namespace Math
             length -= 1;//随机序列的方差要减去1
         return d/length;
     }
+    template <typename IT,typename FpGetter>
+    double var(INPUT const IT _begin,INPUT const IT _end,FpGetter fpGetter)
+    {
+        double m = Math::mean(_begin,_end,fpGetter);
+        double d(0);
+        IT it = _begin;
+        for(;it!=_end;++it)
+        {
+            d += ((m - fpGetter(*it)) * (m - fpGetter(*it)));
+        }
+        size_t length = std::distance(_begin,_end);
+        if(length>1)
+            length -= 1;//随机序列的方差要减去1
+        return d/length;
+    }
+
     ///
     /// \brief 求序列的标准差 - 为n-1类型既是序列是随机抽样不是固定值
     /// \code
@@ -143,6 +203,12 @@ namespace Math
         double v = var(_begin,_end);
         return sqrt(v);
     }
+    template <typename IT,typename FpGetter>
+    double std_var(INPUT const IT _begin,INPUT const IT _end,FpGetter fpGetter)
+    {
+        double v = var(_begin,_end,fpGetter);
+        return sqrt(v);
+    }
     ///
     /// \brief 求序列的n阶中心矩
     ///
@@ -160,6 +226,20 @@ namespace Math
         for(IT it = _begin;it!=_end;++it)
         {
             tmp = ((*it) - m);
+            res += pow(tmp,int(order));
+        }
+        res /= length;
+        return res;
+    }
+    template <typename IT,typename FpGetter>
+    double central_moment(INPUT const IT _begin,INPUT const IT _end,INPUT unsigned order,FpGetter fpGetter)
+    {
+        double m = mean(_begin,_end,fpGetter);
+        double tmp(0),res(0);
+        size_t length = _end - _begin;
+        for(IT it = _begin;it!=_end;++it)
+        {
+            tmp = (fpGetter(*it) - m);
             res += pow(tmp,int(order));
         }
         res /= length;
@@ -183,6 +263,18 @@ namespace Math
         res /= length;
         return res;
     }
+    template <typename IT,typename FpGetter>
+    double origin_moment(INPUT const IT _begin,INPUT const IT _end,INPUT unsigned order,FpGetter fpGetter)
+    {
+        double res(0);
+        size_t length = _end - _begin;
+        for(IT it = _begin;it!=_end;++it)
+        {
+            res += pow(fpGetter(*it),int(order));
+        }
+        res /= length;
+        return res;
+    }
 
     ///
     /// \brief 求序列的斜度 - 3次矩
@@ -197,7 +289,14 @@ namespace Math
         res /= (s*s*s);
         return res;
     }
-
+    template <typename IT,typename FpGetter>
+    double skewness(INPUT const IT _begin,INPUT const IT _end,FpGetter fpGetter)
+    {
+        double s = std_var(_begin,_end,fpGetter);
+        double res = central_moment(_begin,_end,3,fpGetter);//先求3阶中心距
+        res /= (s*s*s);
+        return res;
+    }
     ///
     /// \brief 求序列的峰度(峭度) - 4次矩
     /// \param _begin 数据开始迭代器
@@ -211,12 +310,22 @@ namespace Math
         res /= (v*v);
         return res;
     }
-    template <class ForwardIterator>
+    template <typename IT,typename FpGetter>
+    double kurtosis(INPUT const IT _begin,INPUT const IT _end,FpGetter fpGetter)
+    {
+        double v = var(_begin,_end,fpGetter);
+        double res = central_moment(_begin,_end,4,fpGetter);//先求4阶中心距
+        res /= (v*v);
+        return res;
+    }
+    ///
+    ///
+    ///
+    template <typename ForwardIterator>
       std::pair<ForwardIterator,ForwardIterator>
         minmax_element (ForwardIterator first, ForwardIterator last)
       {
 #if __cplusplus >= 201103L
-
         return std::minmax_element(first,last);
 #else
         std::pair<ForwardIterator,ForwardIterator> res;
@@ -225,7 +334,19 @@ namespace Math
         return res;
 #endif
       }
-
+     template <typename ForwardIterator,typename FpLess>
+        std::pair<ForwardIterator,ForwardIterator>
+          minmax_element (ForwardIterator first, ForwardIterator last,FpLess less)
+        {
+  #if __cplusplus >= 201103L
+          return std::minmax_element(first,last,less);
+  #else
+          std::pair<ForwardIterator,ForwardIterator> res;
+          res.first = std::min_element(first,last,less);
+          res.second = std::max_element(first,last,less);
+          return res;
+  #endif
+        }
     ///
     /// \brief 求序列的峰峰值
     /// \param _begin 数据开始迭代器
@@ -236,6 +357,13 @@ namespace Math
     {
 
         std::pair<IT,IT> minmax = minmax_element(_begin,_end);
+        return ((double)(*minmax.second) - (double)(*minmax.first));
+    }
+    template <typename IT,typename FpLess>
+    double peak_to_peak_value(INPUT const IT _begin,INPUT const IT _end,FpLess less)
+    {
+
+        std::pair<IT,IT> minmax = minmax_element(_begin,_end,less);
         return ((double)(*minmax.second) - (double)(*minmax.first));
     }
     ///
@@ -291,7 +419,49 @@ namespace Math
         d_skewness /= (length*d_std_var*d_std_var*d_std_var);
         d_kurtosis /= (length*d_var*d_var);
     }
+    template <typename IT,typename FpGetter>
+    void get_statistics(INPUT const IT _begin,INPUT const IT _end
+                       ,OUTPUT double& d_sum
+                       ,OUTPUT double& d_mean
+                       ,OUTPUT double& d_var
+                       ,OUTPUT double& d_std_var
+                       ,OUTPUT double& d_skewness
+                       ,OUTPUT double& d_kurtosis
+                       ,FpGetter fpGetter)
+    {
+        size_t length = std::distance(_begin,_end);
+        IT it = _begin;
+        double d(0.0),tmp(0.0);
 
+        for(;it!=_end;++it){
+            d += fpGetter(*it);
+        }
+        d_sum = d;
+        //均值
+        d_mean = d_sum / length;
+        //方差
+        for(d=0,it = _begin;it!=_end;++it)
+        {
+            d += ((d_mean - fpGetter(*it)) * (d_mean - fpGetter(*it)));
+        }
+        if(length>1)
+            d_var = d/(length-1);//随机序列的方差要减去1
+        else
+            d_var = d/length;
+        //标准差
+        d_std_var = sqrt(d_var);
+        //斜度,峭度
+        double dk(0.0),tmp2(0.0);
+        for(d=0,it = _begin;it!=_end;++it)
+        {
+            tmp = (fpGetter(*it) - d_mean);
+            tmp2 = tmp*tmp*tmp;
+            d += tmp2;
+            dk += tmp2*tmp;
+        }
+        d_skewness /= (length*d_std_var*d_std_var*d_std_var);
+        d_kurtosis /= (length*d_var*d_var);
+    }
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -311,7 +481,16 @@ namespace Math
         }
         return m;
     }
-
+    template <typename IT,typename FpGetterRef>
+    double sub_mean(IN_OUTPUT IT _begin,IN_OUTPUT IT _end,FpGetterRef fpGetterRef)
+    {
+        double m = mean<IT>(_begin,_end,fpGetterRef);
+        for(IT i=_begin;i!=_end;++i)
+        {
+            fpGetterRef(*i) = (fpGetterRef(*i) - m);
+        }
+        return m;
+    }
     ///
     /// \brief 获取在n倍sigma范围外的数据索引
     /// \param _begin 数据开始迭代器
@@ -534,7 +713,7 @@ namespace Math
             if(*in_begin>max)
                 *in_begin = max;
         }
-    }
+    } 
 }
 }
 

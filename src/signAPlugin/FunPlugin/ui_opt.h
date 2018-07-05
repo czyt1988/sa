@@ -3,9 +3,9 @@
 #include <QList>
 class QwtPlotItem;
 class SAChart2D;
+class SAUIInterface;
 
-
-SAChart2D* filter_xy_series(QList<QwtPlotItem*>& res);
+SAChart2D* filter_xy_series(SAUIInterface* ui,QList<QwtPlotItem*>& res);
 
 
 

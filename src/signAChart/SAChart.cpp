@@ -923,37 +923,72 @@ int SAChart::removeDataInRang(const QPainterPath &removeRang, QwtSeriesStore<QPo
 
 void SAChart::setPlotCurveSample(QwtPlotItem *p, const QVector<QPointF> &datas)
 {
-    static_cast<QwtPlotCurve*>(p)->setSamples(datas);
+    setVectorSampleData<QPointF,QwtPlotCurve>(p,datas);
 }
 
 void SAChart::setPlotBarChartSample(QwtPlotItem *p, const QVector<QPointF> &datas)
 {
-    static_cast<QwtPlotBarChart*>(p)->setSamples(datas);
+    setVectorSampleData<QPointF,QwtPlotBarChart>(p,datas);
 }
 
 void SAChart::setPlotHistogramSample(QwtPlotItem *p, const QVector<QwtIntervalSample> &datas)
 {
-    static_cast<QwtPlotHistogram*>(p)->setSamples(datas);
+    setVectorSampleData<QwtIntervalSample,QwtPlotHistogram>(p,datas);
 }
 
 void SAChart::setPlotIntervalCurveSample(QwtPlotItem *p, const QVector<QwtIntervalSample> &datas)
 {
-    static_cast<QwtPlotIntervalCurve*>(p)->setSamples(datas);
+    setVectorSampleData<QwtIntervalSample,QwtPlotIntervalCurve>(p,datas);
 }
 
 void SAChart::setPlotMultiBarChartSample(QwtPlotItem *p, const QVector<QwtSetSample> &datas)
 {
-    static_cast<QwtPlotMultiBarChart*>(p)->setSamples(datas);
+    setVectorSampleData<QwtSetSample,QwtPlotMultiBarChart>(p,datas);
 }
 
 void SAChart::setPlotTradingCurveSample(QwtPlotItem *p, const QVector<QwtOHLCSample> &datas)
 {
-    static_cast<QwtPlotTradingCurve*>(p)->setSamples(datas);
+    setVectorSampleData<QwtOHLCSample,QwtPlotTradingCurve>(p,datas);
 }
 
 void SAChart::setPlotSpectroCurveSample(QwtPlotItem *p, const QVector<QwtPoint3D> &datas)
 {
-    static_cast<QwtPlotSpectroCurve*>(p)->setSamples(datas);
+    setVectorSampleData<QwtPoint3D,QwtPlotSpectroCurve>(p,datas);
+}
+
+void SAChart::getPlotCurveSample(QwtPlotItem *p, QVector<QPointF> &datas)
+{
+    getVectorSampleData<QPointF,QwtPlotCurve>(p,datas);
+}
+
+void SAChart::getPlotBarChartSample(QwtPlotItem *p, QVector<QPointF> &datas)
+{
+    getVectorSampleData<QPointF,QwtPlotBarChart>(p,datas);
+}
+
+void SAChart::getPlotHistogramSample(QwtPlotItem *p, QVector<QwtIntervalSample> &datas)
+{
+    getVectorSampleData<QwtIntervalSample,QwtPlotHistogram>(p,datas);
+}
+
+void SAChart::getPlotIntervalCurveSample(QwtPlotItem *p, QVector<QwtIntervalSample> &datas)
+{
+    getVectorSampleData<QwtIntervalSample,QwtPlotIntervalCurve>(p,datas);
+}
+
+void SAChart::getPlotMultiBarChartSample(QwtPlotItem *p, QVector<QwtSetSample> &datas)
+{
+    getVectorSampleData<QwtSetSample,QwtPlotMultiBarChart>(p,datas);
+}
+
+void SAChart::getPlotTradingCurveSample(QwtPlotItem *p, QVector<QwtOHLCSample> &datas)
+{
+    getVectorSampleData<QwtOHLCSample,QwtPlotTradingCurve>(p,datas);
+}
+
+void SAChart::getPlotSpectroCurveSample(QwtPlotItem *p, QVector<QwtPoint3D> &datas)
+{
+    getVectorSampleData<QwtPoint3D,QwtPlotSpectroCurve>(p,datas);
 }
 
 
@@ -1416,8 +1451,6 @@ int SAChart::closestPoint(const QwtPlotBarChart *bar, const QPoint &pos, double 
 
     return index;
 }
-
-
 
 
 

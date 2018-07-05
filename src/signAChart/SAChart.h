@@ -165,6 +165,10 @@ public:
     static int removeDataInRang(const QRectF& removeRang,QwtSeriesStore<QPointF>* curve);
     static int removeDataInRang(const QPainterPath& removeRang,QwtSeriesStore<QPointF>* curve);
 ////////////////////// 针对QwtSeriesStore<T>的设置操作//////////////////////////////
+    template<typename T,typename PlotItemType>
+    static void setVectorSampleData(QwtPlotItem* item,const QVector<T>& datas);
+    template<typename T,typename PlotItemType>
+    static void getVectorSampleData(QwtPlotItem* item,QVector<T>& datas);
     //setSample;
     static void setPlotCurveSample(QwtPlotItem* p,const QVector<QPointF>& datas);
     static void setPlotBarChartSample(QwtPlotItem* p,const QVector<QPointF>& datas);
@@ -173,10 +177,19 @@ public:
     static void setPlotMultiBarChartSample(QwtPlotItem* p,const QVector<QwtSetSample>& datas);
     static void setPlotTradingCurveSample(QwtPlotItem* p,const QVector<QwtOHLCSample>& datas);
     static void setPlotSpectroCurveSample(QwtPlotItem* p,const QVector<QwtPoint3D>& datas);
+    //getSample
+    static void getPlotCurveSample(QwtPlotItem* p,QVector<QPointF>& datas);
+    static void getPlotBarChartSample(QwtPlotItem* p,QVector<QPointF>& datas);
+    static void getPlotHistogramSample(QwtPlotItem* p,QVector<QwtIntervalSample>& datas);
+    static void getPlotIntervalCurveSample(QwtPlotItem* p,QVector<QwtIntervalSample>& datas);
+    static void getPlotMultiBarChartSample(QwtPlotItem* p,QVector<QwtSetSample>& datas);
+    static void getPlotTradingCurveSample(QwtPlotItem* p,QVector<QwtOHLCSample>& datas);
+    static void getPlotSpectroCurveSample(QwtPlotItem* p,QVector<QwtPoint3D>& datas);
     //
+
 ////////////////////// QwtPlotCurve 曲线相关操作//////////////////////////////
-    template<typename T,typename PlotItemType>
-    static void setVectorSampleData(QwtPlotItem* item,const QVector<T>& datas);
+
+
     //设置符号
     static void setCurveSymbol(QwtPlotCurve* cur,QwtSymbol::Style style,const QSize &size = QSize(8,8));
     static void setCurveLinePenStyle(QwtPlotCurve* cur,Qt::PenStyle style);
@@ -185,9 +198,6 @@ public:
 ////////////////////// QwtPlotBarChart曲线相关操作//////////////////////////////
     //获取屏幕位置离bar最近的点，类似于QwtPlotCurve::closestPoint
     static int closestPoint(const QwtPlotBarChart* bar,const QPoint &pos, double *dist );
-
-
-
 };
 
 template<typename T>
@@ -216,6 +226,18 @@ template<typename T,typename PlotItemType>
 void SAChart::setVectorSampleData(QwtPlotItem* item,const QVector<T>& datas)
 {
     static_cast<PlotItemType*>(item)->setSamples(datas);
+}
+
+template<typename T, typename PlotItemType>
+void SAChart::getVectorSampleData(QwtPlotItem *item, QVector<T> &datas)
+{
+    PlotItemType* c = static_cast<PlotItemType*>(item);
+    const int size = c->dataSize();
+    datas.reserve(size);
+    for(int i=0;i<size;++i)
+    {
+        datas.push_back(c->sample(i));
+    }
 }
 
 #endif // SACHART_H

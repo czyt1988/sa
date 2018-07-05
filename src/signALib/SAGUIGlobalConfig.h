@@ -16,13 +16,17 @@ private:
     Q_DISABLE_COPY(SAGUIGlobalConfig)
 public:
     explicit SAGUIGlobalConfig();
+    ///
+    /// \brief 属性表的样式
+    ///
     enum PropertyBrowserType{
-        TreeType
-        ,GroupBoxType
-        ,ButtonType
+        TreeType ///< 树形样式
+        ,GroupBoxType ///< group 样式
+        ,ButtonType ///< 按钮样式 （默认）
     };
     ~SAGUIGlobalConfig();
 public:
+    //还原为默认设置
     static void setDefault();
     //默认属性对话框的样式，用于记录SAPropertySetDialog的生成默认样式
     static PropertyBrowserType getDefaultPropertySetDialogType();

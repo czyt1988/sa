@@ -17,32 +17,19 @@
 #include "ui_opt.h"
 #include <QMdiSubWindow>
 #include <QTextStream>
+#include <QApplication>
 #define TR(str)\
-    QApplication::translate("FunStatistics", str, 0)
+    QApplication::translate("FunNum", str, 0)
 
-FunNum::FunNum()
-{
+void statisticsInChart(SAUIInterface* ui);
+void statisticsInValue(SAUIInterface* ui);
 
-}
-
-void FunNum::statistics()
-{
-    SAUIInterface::LastFocusType ft = saUI->lastFocusWidgetType();
-    if(SAUIInterface::FigureWindowFocus == ft)
-    {
-        statisticsInChart();
-    }
-    else
-    {
-        statisticsInValue();
-    }
-}
 ///
 /// \brief 求统计参数
 ///
-void FunNum::statisticsInValue()
+void statisticsInValue(SAUIInterface* ui)
 {
-    SAAbstractDatas* data = saUI->getSelectSingleData();
+    SAAbstractDatas* data = ui->getSelectSingleData();
     if(nullptr == data)
     {
         return;
@@ -50,22 +37,22 @@ void FunNum::statisticsInValue()
     std::shared_ptr<SATableVariant> res = saFun::statistics(data);
     if(nullptr == res)
     {
-        saUI->showErrorMessageInfo(saFun::getLastErrorString());
-        saUI->raiseMessageInfoDock();
+        ui->showErrorMessageInfo(saFun::getLastErrorString());
+        ui->raiseMessageInfoDock();
         return;
     }
     res->setName(TR("%1_statistics").arg(data->getName()));
     saValueManager->addData(res);
-    saUI->showNormalMessageInfo(TR("%1 sum is %2").arg(data->getName()).arg(res->getName()));
+    ui->showNormalMessageInfo(TR("%1 sum is %2").arg(data->getName()).arg(res->getName()));
 
 }
-void FunNum::statisticsInChart()
+void statisticsInChart(SAUIInterface* ui)
 {
     QList<QwtPlotItem*> curs;
-    SAChart2D* chart = filter_xy_series(curs);
+    SAChart2D* chart = filter_xy_series(ui,curs);
     if(nullptr == chart || curs.size() <= 0)
     {
-        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
+        ui->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
         return;
     }
 
@@ -109,71 +96,14 @@ void FunNum::statisticsInChart()
     }
     if(infos.size() > 0)
     {
-        saUI->showNormalMessageInfo(infos.join("================\n"));
-        saUI->raiseMessageInfoDock();
+        ui->showNormalMessageInfo(infos.join("================\n"));
+        ui->raiseMessageInfoDock();
     }
 }
 
-
-
-///
-/// \brief 求差分
-///
-void FunNum::diff()
+void sum(SAUIInterface *ui)
 {
-    SAAbstractDatas* data = saUI->getSelectSingleData();
-    if(nullptr == data)
-    {
-        return;
-    }
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
-    dlg.appendGroup(TR("property set"));
-    auto tmp = dlg.appendIntProperty(TR("diff count")
-                             ,1,std::numeric_limits<int>::max()
-                             ,1,TR("diff count"));
-    dlg.recorder("diff",tmp);
-    int diffCount = dlg.getDataByID<int>("diff");
-    std::shared_ptr<SAVectorDouble> res = saFun::diff(data,diffCount);
-    if(nullptr == res)
-    {
-        saUI->showErrorMessageInfo(saFun::getLastErrorString());
-        saUI->raiseMessageInfoDock();
-        return;
-    }
-    res->setName(TR("%1_diff%2").arg(data->getName()).arg(diffCount));
-    saValueManager->addData(res);
-    saUI->showNormalMessageInfo(TR("%1 diff(%2) is %3")
-                                .arg(data->getName())
-                                .arg(diffCount)
-                                .arg(res->getName()));
-}
-///
-/// \brief 求均值
-///
-void FunNum::mean()
-{
-    SAAbstractDatas* data = saUI->getSelectSingleData();
-    if(nullptr == data)
-    {
-        return;
-    }
-    std::shared_ptr<SAVariantDatas> res = saFun::mean(data);
-    if(nullptr == res)
-    {
-        saUI->showErrorMessageInfo(saFun::getLastErrorString());
-        saUI->raiseMessageInfoDock();
-        return;
-    }
-    res->setName(TR("%1-mean").arg(data->getName()));
-    saValueManager->addData(res);
-    saUI->showNormalMessageInfo(TR("%1 sum is %2").arg(data->getName()).arg(res->toData<double>()));
-}
-///
-/// \brief 求和
-///
-void FunNum::sum()
-{
-    SAAbstractDatas* data = saUI->getSelectSingleData();
+    SAAbstractDatas* data = ui->getSelectSingleData();
     if(nullptr == data)
     {
         return;
@@ -181,29 +111,45 @@ void FunNum::sum()
     std::shared_ptr<SAVariantDatas> res = saFun::sum(data);
     if(nullptr == res)
     {
-        saUI->showErrorMessageInfo(saFun::getLastErrorString());
-        saUI->raiseMessageInfoDock();
+        ui->showErrorMessageInfo(saFun::getLastErrorString());
+        ui->raiseMessageInfoDock();
         return;
     }
     res->setName(TR("%1-sum").arg(data->getName()));
     saValueManager->addData(res);
     saUI->showNormalMessageInfo(TR("%1 sum is %2").arg(data->getName()).arg(res->toData<double>()));
+
 }
 
-
-///
-/// \brief 频率统计
-///
-void FunNum::hist()
+void mean(SAUIInterface *ui)
 {
-    SAAbstractDatas* data = saUI->getSelectSingleData();
+    SAAbstractDatas* data = ui->getSelectSingleData();
+    if(nullptr == data)
+    {
+        return;
+    }
+    std::shared_ptr<SAVariantDatas> res = saFun::mean(data);
+    if(nullptr == res)
+    {
+        ui->showErrorMessageInfo(saFun::getLastErrorString());
+        ui->raiseMessageInfoDock();
+        return;
+    }
+    res->setName(TR("%1-mean").arg(data->getName()));
+    saValueManager->addData(res);
+    ui->showNormalMessageInfo(TR("%1 sum is %2").arg(data->getName()).arg(res->toData<double>()));
+}
+
+void hist(SAUIInterface *ui)
+{
+    SAAbstractDatas* data = ui->getSelectSingleData();
     if(nullptr == data)
     {
         return;
     }
     const QString idHistCount = "histCount";
     const QString idIsPlot = "isPlot";
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     dlg.appendIntProperty(idHistCount,TR("hist count")
                           ,1,std::numeric_limits<int>::max()
@@ -219,25 +165,63 @@ void FunNum::hist()
     auto res = saFun::hist(data,dlg.getDataByID<int>(idHistCount));
     if(nullptr == res)
     {
-        saUI->showErrorMessageInfo(saFun::getLastErrorString());
-        saUI->raiseMessageInfoDock();
+        ui->showErrorMessageInfo(saFun::getLastErrorString());
+        ui->raiseMessageInfoDock();
         return;
     }
     saValueManager->addData(res);
     if(dlg.getDataByID<bool>(idIsPlot))
     {
-        QMdiSubWindow* sub = saUI->createFigureWindow();
-        SAFigureWindow* fig = saUI->getFigureWidgetFromMdiSubWindow(sub);
+        QMdiSubWindow* sub = ui->createFigureWindow();
+        SAFigureWindow* fig = ui->getFigureWidgetFromMdiSubWindow(sub);
         SAChart2D* chart = fig->create2DPlot();
         if(chart)
         {
             chart->addHistogram(res.get());
         }
-        saUI->raiseMainDock();
+        ui->raiseMainDock();
         sub->show();
     }
 }
 
+void diff(SAUIInterface *ui)
+{
+    SAAbstractDatas* data = ui->getSelectSingleData();
+    if(nullptr == data)
+    {
+        return;
+    }
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    dlg.appendGroup(TR("property set"));
+    auto tmp = dlg.appendIntProperty(TR("diff count")
+                             ,1,std::numeric_limits<int>::max()
+                             ,1,TR("diff count"));
+    dlg.recorder("diff",tmp);
+    int diffCount = dlg.getDataByID<int>("diff");
+    std::shared_ptr<SAVectorDouble> res = saFun::diff(data,diffCount);
+    if(nullptr == res)
+    {
+        ui->showErrorMessageInfo(saFun::getLastErrorString());
+        ui->raiseMessageInfoDock();
+        return;
+    }
+    res->setName(TR("%1_diff%2").arg(data->getName()).arg(diffCount));
+    saValueManager->addData(res);
+    ui->showNormalMessageInfo(TR("%1 diff(%2) is %3")
+                                .arg(data->getName())
+                                .arg(diffCount)
+                                .arg(res->getName()));
+}
 
-
-
+void statistics(SAUIInterface *ui)
+{
+    SAUIInterface::LastFocusType ft = ui->lastFocusWidgetType();
+    if(SAUIInterface::FigureWindowFocus == ft)
+    {
+        statisticsInChart(ui);
+    }
+    else
+    {
+        statisticsInValue(ui);
+    }
+}

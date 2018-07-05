@@ -32,7 +32,17 @@ std::shared_ptr<SAVariantDatas> saFun::mean(SAAbstractDatas* data)
     double meanData = czy::Math::mean(vd.begin(),vd.end());
     return SAValueManager::makeData<SAVariantDatas>(meanData);
 }
-
+///
+/// \brief 求均值
+/// \param points
+/// \return
+///
+double saFun::meamPointY(const QVector<QPointF> &points)
+{
+    if(points.size() > 0)
+        return sumPointY(points)/ double(points.size());
+    return 0;
+}
 ///
 /// \brief 求和运算
 /// \param data 数据
@@ -49,8 +59,19 @@ std::shared_ptr<SAVariantDatas> saFun::sum(SAAbstractDatas* data)
     double sumData = czy::Math::sum(vd.begin(),vd.end());
     return SAValueManager::makeData<SAVariantDatas>(sumData);
 }
-
-
+///
+/// \brief 求点集的y值和
+/// \param points
+/// \return
+///
+double saFun::sumPointY(const QVector<QPointF> &points)
+{
+    double res = 0.0;
+    std::for_each(points.begin(),points.end(),[&res](const QPointF& p){
+        res += p.y();
+    });
+    return res;
+}
 ///
 /// \brief 加法
 /// \param a
@@ -204,3 +225,7 @@ QMap<QString, double> saFun::statistics(const QVector<double> &data)
     res[IDS_PEAK2PEAK] = ppv;
     return res;
 }
+
+
+
+

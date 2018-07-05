@@ -1,6 +1,7 @@
 ﻿#ifndef SAFIGUREREPLACEDATASCOMMAND_H
 #define SAFIGUREREPLACEDATASCOMMAND_H
 #include "SAFigureOptCommands.h"
+#include <functional>
 #include "SAChart.h"
 /////////////////////////////////////////////////////////////////////
 ///
@@ -8,8 +9,11 @@
 ///
 /////////////////////////////////////////////////////////////////////
 
+///
+/// \brief 按照索引替换部分数据
+///
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
-class SA_COMMON_UI_EXPORT SAFigureReplaceDatasCommand : public SAFigureOptCommand
+class SAFigureReplaceDatasCommand : public SAFigureOptCommand
 {
 public:
     SAFigureReplaceDatasCommand(SAChart2D* chart
@@ -33,6 +37,40 @@ private:
     FpSetSeriesSampleFun m_fpSetSample;///< fun(QwtPlotItem* item,cosnt QVector<T>& series);
 };
 
+
+///
+/// \brief 替换所有的图线数据
+///
+template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun>
+class SAFigureReplaceAllDatasCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureReplaceAllDatasCommand(SAChart2D* chart
+                                , QwtPlotItem* item
+                                , const QVector<T>& oldDatas
+                                , const QVector<T>& newDatas
+                                , const QString& cmdName
+                                , FpSetSeriesSampleFun fpSetSample
+                                , QUndoCommand *parent = Q_NULLPTR
+                                );
+    SAFigureReplaceAllDatasCommand(SAChart2D* chart
+                                , QwtPlotItem* item
+                                , const QVector<T>& newDatas
+                                , const QString& cmdName
+                                , FpSetSeriesSampleFun fpSetSample
+                                , std::function<void(QwtPlotItem*,QVector<T>&)> fpGetSample
+                                , QUndoCommand *parent = Q_NULLPTR
+                                );
+    ~SAFigureReplaceAllDatasCommand();
+    virtual void redo();
+    virtual void undo();
+private:
+    SAChart2D *m_chart;
+    PlotItemType* m_plotItem;
+    QVector<T> m_oldDatas;
+    QVector<T> m_newDatas;
+    FpSetSeriesSampleFun m_fpSetSample;///< fun(QwtPlotItem* item,cosnt QVector<T>& series);
+};
 
 
 
@@ -90,10 +128,67 @@ void SAFigureReplaceDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>::undo()
 
 
 
+//////////////////////////////////////////////////
+
+template<typename T, typename PlotItemType, typename FpSetSeriesSampleFun>
+SAFigureReplaceAllDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>
+::SAFigureReplaceAllDatasCommand(SAChart2D *chart
+                                 , QwtPlotItem *item
+                                 , const QVector<T> &oldDatas
+                                 , const QVector<T> &newDatas
+                                 , const QString &cmdName
+                                 , FpSetSeriesSampleFun fpSetSample
+                                 , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_fpSetSample(fpSetSample)
+{
+    m_plotItem = static_cast<PlotItemType*>(item);
+    m_oldDatas = oldDatas;
+    m_newDatas = newDatas;
+}
+
+template<typename T, typename PlotItemType, typename FpSetSeriesSampleFun>
+SAFigureReplaceAllDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>
+::SAFigureReplaceAllDatasCommand(SAChart2D *chart
+                                 , QwtPlotItem *item
+                                 , const QVector<T> &newDatas
+                                 , const QString &cmdName
+                                 , FpSetSeriesSampleFun fpSetSample
+                                 , std::function<void(QwtPlotItem*,QVector<T>&)> fpGetSample
+                                 , QUndoCommand *parent)
+    :SAFigureOptCommand(chart,cmdName,parent)
+    ,m_fpSetSample(fpSetSample)
+{
+    m_plotItem = static_cast<PlotItemType*>(item);
+    fpGetSample(item,m_oldDatas);
+    m_newDatas = newDatas;
+}
 
 
 
+template<typename T, typename PlotItemType, typename FpSetSeriesSampleFun>
+SAFigureReplaceAllDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>
+::~SAFigureReplaceAllDatasCommand()
+{
+
+}
+
+template<typename T, typename PlotItemType, typename FpSetSeriesSampleFun>
+void SAFigureReplaceAllDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>
+::redo()
+{
+    m_fpSetSample(m_plotItem,m_newDatas);
+}
+
+template<typename T, typename PlotItemType, typename FpSetSeriesSampleFun>
+void SAFigureReplaceAllDatasCommand<T,PlotItemType,FpSetSeriesSampleFun>
+::undo()
+{
+    m_fpSetSample(m_plotItem,m_oldDatas);
+}
 
 
 
 #endif // SAFIGUREREPLACEDATASCOMMAND_H
+
+

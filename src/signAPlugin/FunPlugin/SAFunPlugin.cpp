@@ -112,10 +112,6 @@ SAFunPlugin::SAFunPlugin()
     ,m_spectrumAction(nullptr)
     ,m_isSetupUI(false)
 {
-    m_funDSP.reset(new FunDsp);//std::make_unique<FunDsp>();
-    m_funDataPreprocessing.reset(new FunDataPreprocessing);//std::make_unique<FunDataPreprocessing>();
-    m_funNum.reset(new FunNum);
-    m_funFit.reset(new FunFit);
     init();
 }
 
@@ -408,21 +404,21 @@ bool SAFunPlugin::event(QEvent *e)
 ///
 void SAFunPlugin::on_sumAction()
 {
-    m_funNum->sum();
+    sum(m_ui);
 }
 ///
 /// \brief 求均值
 ///
 void SAFunPlugin::on_meanAction()
 {
-    m_funNum->mean();
+    mean(m_ui);
 }
 ///
 /// \brief 求差分
 ///
 void SAFunPlugin::on_diffAction()
 {
-    m_funNum->diff();
+    diff(m_ui);
 
 }
 ///
@@ -430,12 +426,12 @@ void SAFunPlugin::on_diffAction()
 ///
 void SAFunPlugin::on_statisticsAction()
 {
-    m_funNum->statistics();
+    statistics(m_ui);
 }
 
 void SAFunPlugin::on_histAction()
 {
-    m_funNum->hist();
+    hist(m_ui);
 }
 
 ///
@@ -443,14 +439,14 @@ void SAFunPlugin::on_histAction()
 ///
 void SAFunPlugin::on_spectrumAction()
 {
-    m_funDSP->spectrum();
+    spectrum(m_ui);
 }
 ///
 /// \brief 功率谱分析 - powerSpectrum
 ///
 void SAFunPlugin::on_powerSpectrumAction()
 {
-    m_funDSP->powerSpectrum();
+    powerSpectrum(m_ui);
 }
 
 ///
@@ -458,42 +454,42 @@ void SAFunPlugin::on_powerSpectrumAction()
 ///
 void SAFunPlugin::on_detrendDirect()
 {
-    m_funDSP->detrendDirect();
+    detrendDirect(m_ui);
 }
 ///
 /// \brief 信号设置窗
 ///
 void SAFunPlugin::on_setWindowToWave()
 {
-    m_funDSP->setWindow();
+    setWindow(m_ui);
 }
 ///
 /// \brief 时频分析工具箱
 ///
 void SAFunPlugin::on_tmeFrequencyAction()
 {
-    m_funDSP->tmeFrequency();
+    tmeFrequency(m_ui);
 }
 ///
 /// \brief sigma异常值判断
 ///
 void SAFunPlugin::on_sigmaDetectAction()
 {
-    m_funDataPreprocessing->sigmaDetect();
+    sigmaDetect(m_ui);
 }
 ///
 /// \brief m点n次滤波
 ///
 void SAFunPlugin::on_pointSmoothAction()
 {
-    m_funDataPreprocessing->pointSmooth();
+    pointSmooth(m_ui);
 }
 ///
 /// \brief 拟合当前绘图曲线上的曲线
 ///
 void SAFunPlugin::on_fittingFigureCurveAction()
 {
-    m_funFit->polyfit();
+    polyfit(m_ui);
 }
 
 

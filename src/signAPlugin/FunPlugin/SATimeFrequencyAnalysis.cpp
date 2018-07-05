@@ -7,6 +7,7 @@
 #include "SAUIReflection.h"
 #include "SAUIInterface.h"
 #include <iterator>
+#include "SADataConver.h"
 SATimeFrequencyAnalysis::SATimeFrequencyAnalysis(QWidget *parent) :
     QWidget(parent)
   ,ui(new Ui::SATimeFrequencyAnalysis)
@@ -41,7 +42,7 @@ SATimeFrequencyAnalysis::~SATimeFrequencyAnalysis()
 bool SATimeFrequencyAnalysis::setWaveData(SAAbstractDatas* data)
 {
     QVector<double> wave;
-    if(SAAbstractDatas::converToDoubleVector(data,wave))
+    if(SADataConver::converToDoubleVector(data,wave))
     {
         if(!checkSampleInterval())
             return false;
@@ -56,7 +57,7 @@ bool SATimeFrequencyAnalysis::setWaveData(SAAbstractDatas* data)
         return true;
     }
     QVector<QPointF> points;
-    if(SAAbstractDatas::converToPointFVector(data,points))
+    if(SADataConver::converToPointFVector(data,points))
     {
         m_interval = points[1].x () - points[0].x ();//获取x轴的间隔
         if(!checkSampleInterval())

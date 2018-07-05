@@ -1,4 +1,5 @@
 ﻿#include "sa_fun_dsp.h"
+#include "sa_fun_num.h"
 
 #include <QVector>
 #include <iterator>
@@ -65,6 +66,17 @@ std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(const SAAbstractDatas *wav
 void saFun::detrendDirect(QVector<double> &y)
 {
     czy::Math::DSP::detrend(y.begin(),y.end());
+}
+
+
+///
+/// \brief 去直流
+/// \param points
+///
+void saFun::detrendDirect(QVector<QPointF> &points)
+{
+    double mean = saFun::meamPointY(points);
+    std::for_each(points.begin(),points.end(),[mean](QPointF& p){p.ry() = p.ry() - mean;});
 }
 
 ///
@@ -262,6 +274,11 @@ void saFun::setWindow(QVector<double> &input, czy::Math::DSP::WindowType window)
     czy::Math::DSP::windowed (input.begin (),input.end (),window);
 }
 
+void saFun::setWindow(QVector<QPointF> &input, czy::Math::DSP::WindowType window)
+{
+
+}
+
 ///
 /// \brief 窗函数名
 /// \param window 窗类型
@@ -279,6 +296,9 @@ QString saFun::windowName(czy::Math::DSP::WindowType window)
     }
     return TR("Rect Window");
 }
+
+
+
 
 
 

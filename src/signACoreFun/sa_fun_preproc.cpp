@@ -104,7 +104,6 @@ bool saFun::pointSmooth(const SAVectorPointF *wave, int points, int power, SAVec
     }
     if(output)
     {
-        *output = *wave;
         SAVectorPointF::replaceYs(output,smoothY.begin(),smoothY.end());
     }
     return true;

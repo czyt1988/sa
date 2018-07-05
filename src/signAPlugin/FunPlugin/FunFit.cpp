@@ -14,10 +14,13 @@
 #include "qwt_series_store.h"
 #include "SAGUIGlobalConfig.h"
 #include "ui_opt.h"
-
+#include <QApplication>
+#include "SADataConver.h"
 #define TR(str)\
     QApplication::translate("FunFit", str, 0)
-
+void polyfitInChart(SAUIInterface* ui);
+void polyfitInValue(SAUIInterface* ui);
+bool getPolyfitConfig(int &order,SAUIInterface* ui);
 void splitPointF(const QVector<QPointF>& xys,QVector<double>& xs,QVector<double>& ys);
 void splitPointF(const QVector<QPointF>& xys,QVector<double>& xs,QVector<double>& ys)
 {
@@ -29,35 +32,32 @@ void splitPointF(const QVector<QPointF>& xys,QVector<double>& xs,QVector<double>
     });
 }
 
-FunFit::FunFit()
-{
 
-}
 
-void FunFit::polyfit()
+void polyfit(SAUIInterface* ui)
 {
-    SAUIInterface::LastFocusType ft = saUI->lastFocusWidgetType();
+    SAUIInterface::LastFocusType ft = ui->lastFocusWidgetType();
     if(SAUIInterface::FigureWindowFocus == ft)
     {
-        polyfitInChart();
+        polyfitInChart(ui);
     }
     else
     {
-        polyfitInValue();
+        polyfitInValue(ui);
     }
 }
 
-void FunFit::polyfitInChart()
+void polyfitInChart(SAUIInterface* ui)
 {
     QList<QwtPlotItem*> curs;
-    SAChart2D* chart = filter_xy_series(curs);
+    SAChart2D* chart = filter_xy_series(ui,curs);
     if(nullptr == chart || curs.size() <= 0)
     {
-        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
+        ui->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
         return;
     }
     int order = 1;
-    if(!getPolyfitConfig(order))
+    if(!getPolyfitConfig(order,ui))
     {
         return;
     }
@@ -154,22 +154,22 @@ void FunFit::polyfitInChart()
 
 }
 
-void FunFit::polyfitInValue()
+void polyfitInValue(SAUIInterface* ui)
 {
-    SAAbstractDatas* data = saUI->getSelectSingleData();
+    SAAbstractDatas* data = ui->getSelectSingleData();
     if(nullptr == data)
     {
         return;
     }
     QVector<QPointF> xys;
-    if(!SAAbstractDatas::converToPointFVector(data,xys))
+    if(!SADataConver::converToPointFVector(data,xys))
     {
-        saUI->showWarningMessageInfo(TR("data:[\"%1\"] can not to conver to points array").arg(data->getName()));
-        saUI->raiseMessageInfoDock();
+        ui->showWarningMessageInfo(TR("data:[\"%1\"] can not to conver to points array").arg(data->getName()));
+        ui->raiseMessageInfoDock();
         return;
     }
     int order = 1;
-    if(!getPolyfitConfig(order))
+    if(!getPolyfitConfig(order,ui))
     {
         return;
     }
@@ -245,7 +245,7 @@ void FunFit::polyfitInValue()
     saUI->showNormalMessageInfo(strDes);
 }
 
-bool FunFit::getPolyfitConfig(int &order)
+bool getPolyfitConfig(int &order,SAUIInterface* ui)
 {
     const QString idPolyN = "polyN";
     SAPropertySetDialog dlg(saUI->getMainWindowPtr()
@@ -263,3 +263,5 @@ bool FunFit::getPolyfitConfig(int &order)
 
     return true;
 }
+
+

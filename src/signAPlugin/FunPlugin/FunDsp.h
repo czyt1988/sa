@@ -3,52 +3,36 @@
 #include <memory>
 #include <QString>
 #include "czyMath_DSP.h"
+class SAUIInterface;
 class SATimeFrequencyAnalysis;
+///
+/// \brief 去趋势
+/// \param ui ui接口
+///
+void detrendDirect(SAUIInterface* ui);
 
-class FunDsp {
-public:
-    //去趋势
-    static void detrendDirect();
-    //信号设置窗
-    static void setWindow();
-    //频谱分析
-    static void spectrum();
-    //功率谱分析
-    static void powerSpectrum();
-    //时频分析工具箱
-    void tmeFrequency();
-private:
-    //频谱分析
-    static void spectrumInChart();
-    static void spectrumInValue();
-    static bool getSpectrumProperty(double *samFre
-                                    , int *fftsize
-                                    , czy::Math::DSP::SpectrumType *magType
-                                    , czy::Math::DSP::WindowType *window
-                                    , bool *isDetrend
-                                    , size_t dataSize=0);
-    //功率谱分析
-    static void powerSpectrumInValue();
-    static void powerSpectrumInChart();
-    static bool getPowerSpectrumProperty(double *samFre
-                                    , int *fftsize
-                                    , czy::Math::DSP::WindowType *window
-                                    , czy::Math::DSP::PowerDensityWay* pdw
-                                    , double* ti
-                                    , bool *isDetrend
-                                    , size_t dataSize=0);
-    //信号设置窗
-    static void setWindowToWaveInValue();
-    static void setWindowToWaveInChart();
-    static bool getWindowProperty(czy::Math::DSP::WindowType &windowType,bool& isDetrend);
-    static QString windowTypeToString(czy::Math::DSP::WindowType windowType);
-    static QString magTypeToString(czy::Math::DSP::SpectrumType magType);
-    static QString psdTypeToString(czy::Math::DSP::PowerDensityWay psd);
-    //去趋势
-    static void detrendDirectInValue();
-    static void detrendDirectInChart();
-    std::unique_ptr<SATimeFrequencyAnalysis> timeFrequencyWidget;
+///
+/// \brief 信号设置窗
+/// \param ui ui接口
+///
+void setWindow(SAUIInterface* ui);
 
-};
 
+///
+/// \brief 频谱分析
+/// \param ui ui接口
+///
+void spectrum(SAUIInterface* ui);
+
+///
+/// \brief 功率谱分析
+/// \param ui ui接口
+///
+void powerSpectrum(SAUIInterface *ui);
+
+///
+/// \brief 时频分析工具箱
+/// \param ui ui接口
+///
+void tmeFrequency(SAUIInterface *ui);
 #endif // FUN_DSP_H

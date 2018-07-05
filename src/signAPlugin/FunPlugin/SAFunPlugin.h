@@ -114,12 +114,6 @@ private:
     //======统计学相关菜单==========================================
     QAction* m_FittingFigureCurve;///< 拟合图表曲线
     //
-    QScopedPointer<FunDsp> m_funDSP;///< Dsp相关的函数封装
-    QScopedPointer<FunDataPreprocessing> m_funDataPreprocessing;///< DataPreprocessing相关的函数封装
-    QScopedPointer<FunNum> m_funNum;///< num相关的函数封装
-    QScopedPointer<FunFit> m_funFit;///< Fit相关的函数封装
-
-    //
     QHash<QString,QList<QAction*> > m_category2actionList;
     bool m_isSetupUI;///< 是否已经完成ui的构建
 };

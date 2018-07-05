@@ -1,24 +1,33 @@
 ﻿#ifndef FUNNUM_H
 #define FUNNUM_H
+class SAUIInterface;
+///
+/// \brief 求和
+/// \param ui ui接口
+///
+void sum(SAUIInterface* ui);
+///
+/// \brief 求均值
+/// \param ui ui接口
+///
+void mean(SAUIInterface* ui);
+///
+/// \brief 频率统计
+/// \param ui ui接口
+///
+void hist(SAUIInterface* ui);
 
+///
+/// \brief 求差分
+/// \param ui ui接口
+///
+void diff(SAUIInterface* ui);
 
-class FunNum
-{
-public:
-    FunNum();
-    //求统计参数
-    static void statistics();
-    //求差分
-    static void diff();
-    //求均值
-    static void mean();
-    // 求和
-    static void sum();
-    // 频率统计
-    static void hist();
-private:
-    static void statisticsInChart();
-    static void statisticsInValue();
-};
+///
+/// \brief 频率统计
+/// \param ui ui接口
+///
+void statistics(SAUIInterface* ui);
+
 
 #endif // FUNSTATISTICS_H

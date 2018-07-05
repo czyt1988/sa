@@ -13,7 +13,7 @@
 #include "SAValueManager.h"
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
-#include "SAFigureOptCommands.h"
+#include "SAFigureReplaceDatasCommand.h"
 #include "SAChart.h"
 #include "qwt_symbol.h"
 #include <QMdiSubWindow>
@@ -21,13 +21,17 @@
 #include "ui_opt.h"
 #include "czyAlgorithm.h"
 #include "SARandColorMaker.h"
+#include <QApplication>
 #define TR(str)\
     QApplication::translate("FunDataPreprocessing", str, 0)
+void sigmaDetectInValue(SAUIInterface* ui);
+bool getSigmaDetectPorperty(double &sigma, bool *isMark, bool *isChangPlot,SAUIInterface* ui);
+bool getPointSmoothPorperty(int &m, int& n, SAUIInterface *ui);
 
-void FunDataPreprocessing::sigmaDetect()
+void sigmaDetect(SAUIInterface* ui)
 {
     QList<QwtPlotItem*> curs;
-    SAChart2D* chart = filter_xy_series(curs);
+    SAChart2D* chart = filter_xy_series(ui,curs);
     if(nullptr == chart || curs.size() <= 0)
     {
         saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
@@ -35,7 +39,7 @@ void FunDataPreprocessing::sigmaDetect()
     }
     double sigma;
     bool isMark,isChangedPlot;
-    if(!getSigmaDetectPorperty(sigma,&isMark,&isChangedPlot))
+    if(!getSigmaDetectPorperty(sigma,&isMark,&isChangedPlot,ui))
     {
         return;
     }
@@ -48,6 +52,80 @@ void FunDataPreprocessing::sigmaDetect()
     for (int i = 0;i<curs.size();++i)
     {
         QwtPlotItem* item = curs[i];
+        switch(item->rtti())
+        {
+        case QwtPlotItem::Rtti_PlotCurve:
+        {
+            QVector<double> xs,ys;
+            {
+                QVector<QPointF> wave;
+                SAChart::getPlotCurveSample(item,wave);
+                xs.reserve(wave.size());
+                ys.reserve(wave.size());
+                std::for_each(wave.begin(),wave.end(),[&xs](const QPointF& p){xs.push_back(p.x());});
+                std::for_each(wave.begin(),wave.end(),[&ys](const QPointF& p){ys.push_back(p.y());});
+            }
+            QString info;
+            QString title = item->title().text();
+            QVector<int> indexs;
+            saFun::sigmaDenoising(xs,ys,sigma,indexs);
+            info = QString("sigma(\"%1\") out range datas count:%2").arg(title).arg(indexs.size());
+            infos.append(info);
+            if(0 == indexs.size())
+            {
+                continue;
+            }
+            if(isMark)
+            {
+                QVector<double> oxs,oys;
+                czy::copy_inner_indexs(xs.begin(),indexs.begin(),indexs.end(),std::back_inserter(oxs));
+                czy::copy_inner_indexs(ys.begin(),indexs.begin(),indexs.end(),std::back_inserter(oys));
+                QwtPlotCurve* curs = new QwtPlotCurve(QString("%1_outSigmaMarker").arg(title));
+                curs->setSamples(oxs,oys);
+                SAChart::setCurvePenStyle(curs,Qt::NoPen);
+                QwtSymbol* sym = new QwtSymbol(QwtSymbol::XCross);
+                sym->setColor(SARandColorMaker::getCurveColor());
+                sym->setSize(QSize(6,6));
+                curs->setSymbol(sym);
+                new SAFigureChartItemAddCommand(chart
+                                                ,curs
+                                                ,QString("%1 - sigma out rang").arg(title)
+                                                ,topCmd.data());
+            }
+            if(isChangedPlot)
+            {
+                QVector<int> allIndex;
+                QVector<int> innerIndex;
+                const int count = xs.size();
+                innerIndex.resize(count);
+                allIndex.reserve(count);
+                for(int i=0;i<count;++i)
+                {
+                    allIndex.append(i);
+                }
+                czy::copy_out_of_indexs(allIndex.begin(),allIndex.end(),indexs.begin(),indexs.end(),std::back_inserter(innerIndex));
+                QVector<double> oxs,oys;
+                czy::copy_inner_indexs(xs.begin(),innerIndex.begin(),innerIndex.end(),std::back_inserter(oxs));
+                czy::copy_inner_indexs(ys.begin(),innerIndex.begin(),innerIndex.end(),std::back_inserter(oys));
+                QVector<QPointF> oxys;
+                saFun::makeVectorPointF(oxs,oys,oxys);;
+
+                new SAFigureReplaceAllDatasCommand<QPointF,QwtPlotCurve,decltype(&SAChart::setPlotCurveSample)>
+                        (chart
+                       ,item
+                       ,oxys
+                       ,TR("%1 sigma %2").arg(title).arg(sigma)
+                       ,&SAChart::setPlotCurveSample
+                       ,&SAChart::getPlotCurveSample
+                       ,topCmd.data()
+                       );
+
+            }
+            break;
+        }
+        }
+
+        /*
         QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
         if(nullptr == series)
         {
@@ -108,7 +186,12 @@ void FunDataPreprocessing::sigmaDetect()
                                                  ,TR("%1 sigma %2").arg(title).arg(sigma)
                                                  ,oxys
                                                  ,topCmd.data());
+
+            new SAFigureReplaceAllDatasCommand<>(chart
+                                              ,series
+                                              ,);
         }
+        */
     }
     if(topCmd->childCount() > 0)
     {
@@ -117,17 +200,17 @@ void FunDataPreprocessing::sigmaDetect()
     }
 }
 
-void FunDataPreprocessing::pointSmooth()
+void pointSmooth(SAUIInterface* ui)
 {
     QList<QwtPlotItem*> curs;
-    SAChart2D* chart = filter_xy_series(curs);
+    SAChart2D* chart = filter_xy_series(ui,curs);
     if(nullptr == chart || curs.size() <= 0)
     {
-        saUI->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
+        ui->showMessageInfo(TR("unsupport chart items"),SA::WarningMessage);
         return;
     }
     int m,n;
-    if(!getPointSmoothPorperty(m,n))
+    if(!getPointSmoothPorperty(m,n,ui))
     {
         return;
     }
@@ -137,6 +220,43 @@ void FunDataPreprocessing::pointSmooth()
     {
         QwtPlotItem* item = curs[i];
         QString title = item->title().text();
+
+        switch(item->rtti())
+        {
+        case QwtPlotItem::Rtti_PlotCurve:
+        {
+            QVector<double> xs,ys;
+            {
+                QVector<QPointF> wave;
+                SAChart::getPlotCurveSample(item,wave);
+                xs.reserve(wave.size());
+                ys.reserve(wave.size());
+                std::for_each(wave.begin(),wave.end(),[&xs](const QPointF& p){xs.push_back(p.x());});
+                std::for_each(wave.begin(),wave.end(),[&ys](const QPointF& p){ys.push_back(p.y());});
+            }
+            QVector<double> res;
+            if(!saFun::pointSmooth(ys,m,n,res))
+            {
+                continue;
+            }
+            QVector<QPointF> xys;
+            saFun::makeVectorPointF(xs,res,xys);
+
+            new SAFigureReplaceAllDatasCommand<QPointF,QwtPlotCurve,decltype(&SAChart::setPlotCurveSample)>
+                    (chart
+                   ,item
+                   ,xys
+                   ,TR("%1 m%2n%3").arg(title).arg(m).arg(n)
+                   ,&SAChart::setPlotCurveSample
+                   ,&SAChart::getPlotCurveSample
+                   ,topCmd.data()
+                   );
+            infos.append(TR("%1 m%2n%3 smooth").arg(title).arg(m).arg(n));
+            break;
+        }
+        }
+
+        /*
         QwtSeriesStore<QPointF>* series = dynamic_cast<QwtSeriesStore<QPointF>*>(item);
         if(nullptr == series)
         {
@@ -166,11 +286,12 @@ void FunDataPreprocessing::pointSmooth()
                                              ,topCmd.data());
 
         infos.append(TR("%1 m%2n%3 smooth").arg(title).arg(m).arg(n));
+        */
     }
     if(topCmd->childCount() > 0)
     {
         chart->appendCommand(topCmd.take());
-        saUI->showNormalMessageInfo(infos.join('\n'));
+        ui->showNormalMessageInfo(infos.join('\n'));
     }
 }
 
@@ -178,15 +299,16 @@ void FunDataPreprocessing::pointSmooth()
 ///
 /// \brief sigma异常值判断
 ///
-void FunDataPreprocessing::sigmaDetectInValue()
+void sigmaDetectInValue(SAUIInterface* ui)
 {
-    SAAbstractDatas* data = saUI->getSelectSingleData();
+
+    SAAbstractDatas* data = ui->getSelectSingleData();
     if(nullptr == data)
     {
         return;
     }
     QList<SAFigureWindow*> figList;//用于保存当前主界面所有的绘图窗口
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     const QString idSigma = "sigma";
     const QString idPlotInNewFigure = "isPlotInNewFigure";
     const QString idPlotOriginDataAndOutRangDataInNewFigure = "isPlotOriginDataAndOutRangDataInNewFigure";
@@ -256,8 +378,8 @@ void FunDataPreprocessing::sigmaDetectInValue()
 
     if(nullptr == waveDenoising || nullptr == waveRemove)
     {
-        saUI->showErrorMessageInfo(saFun::getLastErrorString());
-        saUI->raiseMessageInfoDock();
+        ui->showErrorMessageInfo(saFun::getLastErrorString());
+        ui->raiseMessageInfoDock();
         return;
     }
     //========================
@@ -277,8 +399,8 @@ void FunDataPreprocessing::sigmaDetectInValue()
     //========================
     if(dlg.getDataByID<bool>(idPlotInNewFigure))
     {
-        QMdiSubWindow* sub = saUI->createFigureWindow();
-        SAFigureWindow* fig = saUI->getFigureWidgetFromMdiSubWindow(sub);
+        QMdiSubWindow* sub = ui->createFigureWindow();
+        SAFigureWindow* fig = ui->getFigureWidgetFromMdiSubWindow(sub);
         SAChart2D* chart = fig->current2DPlot();
         if(nullptr == chart)
         {
@@ -320,7 +442,7 @@ void FunDataPreprocessing::sigmaDetectInValue()
                 }
             }
         }
-        saUI->raiseMainDock();
+        ui->raiseMainDock();
         sub->show();
     }
     if(dlg.getDataByID<bool>("isPlotInCurrentFigure"))
@@ -381,9 +503,9 @@ void FunDataPreprocessing::sigmaDetectInValue()
 /// \param isNewPlotOrChangPlot 是否新建绘图或者改变原来绘图
 /// \return
 ///
-bool FunDataPreprocessing::getPointSmoothPorperty(int &m, int &n)
+bool getPointSmoothPorperty(int &m, int &n,SAUIInterface* ui)
 {
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     dlg.appendEnumProperty("m",TR("points")
                            ,{"3","5","7"}
@@ -490,9 +612,9 @@ void FunDataPreprocessing::pointSmoothInValue()
     }
 }
 
-bool FunDataPreprocessing::getSigmaDetectPorperty(double &sigma,bool* isMark,bool* isChangPlot)
+bool getSigmaDetectPorperty(double &sigma,bool* isMark,bool* isChangPlot,SAUIInterface* ui)
 {
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
     dlg.appendGroup(TR("property set"));
     dlg.appendDoubleProperty("sigma",TR("sigma")
                              ,0,std::numeric_limits<double>::max()
@@ -524,4 +646,8 @@ bool FunDataPreprocessing::getSigmaDetectPorperty(double &sigma,bool* isMark,boo
         *isChangPlot = dlg.getDataByID<double>("isChangPlot");
     return true;
 }
+
+
+
+
 
