@@ -3,7 +3,7 @@
 #include "SAFigureWindowOverlay.h"
 class SAFigureChartRubberbandEditOverlayPrivate;
 ///
-/// \brief The SAFigureChartRubberbandEditOverlay class
+/// \brief 用于辅助显示figure的子chart位置编辑的覆盖辅助窗体
 ///
 class SAFigureChartRubberbandEditOverlay : public SAFigureWindowOverlay
 {
@@ -12,6 +12,9 @@ class SAFigureChartRubberbandEditOverlay : public SAFigureWindowOverlay
 public:
     SAFigureChartRubberbandEditOverlay(SAFigureWindow* fig);
     ~SAFigureChartRubberbandEditOverlay();
+    ///
+    /// \brief 用于标记矩形的区域
+    ///
     enum RectRange
     {
         Top
@@ -37,6 +40,12 @@ protected:
     virtual void drawOverlay( QPainter * p) const;
     virtual QRegion maskHint() const;
     virtual bool eventFilter(QObject *obj, QEvent *event);
+private:
+    bool onMouseMoveEvent(QMouseEvent* me);
+    bool onMouseReleaseEvent(QMouseEvent* me);
+    bool onMousePressedEvent(QMouseEvent* me);
+    bool onMouseHoverMoveEvent(QHoverEvent* me);
+    bool onKeyPressedEvent(QKeyEvent* ke);
 };
 
 #endif // SAFIGURECHARTRUBBERBANDEDITOVERLAY_H

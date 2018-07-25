@@ -24,6 +24,24 @@ class QwtPlotCurve;
 ///
 /// \brief 绘图元素的添加
 ///
+class SA_COMMON_UI_EXPORT SAFigureSubChartResize : public SAFigureOptCommand
+{
+public:
+    SAFigureSubChartResize(SAFigureWindow* fig,QWidget* w,const QRect& size,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
+    SAFigureSubChartResize(SAFigureWindow* fig,QWidget* w,const QRect& oldSize,const QRect& newSize,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
+    ~SAFigureSubChartResize();
+    virtual void redo();
+    virtual void undo();
+private:
+    QWidget* m_widget;
+    QRect m_oldSize;
+    QRect m_newSize;
+};
+
+///////////////////////////////////////////////////////////////////////
+///
+/// \brief 绘图元素的添加
+///
 class SA_COMMON_UI_EXPORT SAFigureChartItemAddCommand : public SAFigureOptCommand
 {
 public:
@@ -32,7 +50,6 @@ public:
     virtual void redo();
     virtual void undo();
 private:
-    SAChart2D* m_chart;
     QwtPlotItem* m_item;
 };
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +64,6 @@ public:
     virtual void redo();
     virtual void undo();
 private:
-    SAChart2D* m_chart;
     QList<QwtPlotItem*> m_itemList;
 };
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +78,6 @@ public:
     virtual void redo();
     virtual void undo();
 private:
-    SAChart2D* m_chart;
     QwtPlotItem* m_item;
 };
 ///////////////////////////////////////////////////////////////////////

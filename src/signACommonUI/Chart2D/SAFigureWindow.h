@@ -3,13 +3,12 @@
 
 #include <QMainWindow>
 #include <QScopedPointer>
-#include "SAAbstractFigure.h"
 #include "SACommonUIGlobal.h"
 #include <QPainter>
 #include "qwt_plot_histogram.h"
 class QwtPlotCurve;
 class QwtPlotItem;
-
+class SAFigureOptCommand;
 class SAAbstractDatas;
 class SAVectorInterval;
 class DataFeaturePlotInfoItem;
@@ -22,7 +21,6 @@ class SAFigureChartRubberbandEditOverlay;
 /// \brief SA的绘图窗口
 ///
 class SA_COMMON_UI_EXPORT SAFigureWindow : public QMainWindow
-        ,public SAAbstractFigure
 {
     Q_OBJECT
     SA_IMPL(SAFigureWindow)
@@ -51,9 +49,17 @@ public:
     //开启子窗口编辑模式
     void enableSubWindowEditMode(bool enable = true,SAFigureChartRubberbandEditOverlay* ptr = nullptr);
     SAFigureChartRubberbandEditOverlay* subWindowEditModeOverlayWidget() const;
+    //使用支持redo/undo模式的改变子窗口大小
+    void resizeWidget(QWidget* p,const QRect& newRect,const QRect& oldRect = QRect());
+    //添加命令
+    void appendCommand(SAFigureOptCommand* cmd);
 public slots:
+    //redo
     void redo();
+    //undo
     void undo();
+    //清空回退栈
+    void clearRedoUndoStack();
 #if 0
 protected:
     void keyPressEvent(QKeyEvent *e);

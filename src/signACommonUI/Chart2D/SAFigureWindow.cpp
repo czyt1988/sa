@@ -18,6 +18,7 @@
 #include "SAValueManager.h"
 #include "SAValueManagerMimeData.h"
 //sa common ui
+#include "SAFigureOptCommands.h"
 #include "SAFigureContainer.h"
 #include "SAFigureChartRubberbandEditOverlay.h"
 #define GET_CHART_PTR \
@@ -43,6 +44,7 @@ public:
     SAFigureContainer *centralwidget;
     SAChart2D *currentPlot;
     SAFigureChartRubberbandEditOverlay* chartRubberbandEditor;///< 编辑模式
+    QUndoStack redoUndoStack;
     SAFigureWindowPrivate(SAFigureWindow* p):q_ptr(p)
       ,centralwidget(nullptr)
       ,currentPlot(nullptr)
@@ -270,6 +272,29 @@ SAFigureChartRubberbandEditOverlay *SAFigureWindow::subWindowEditModeOverlayWidg
 {
     return d_ptr->chartRubberbandEditor;
 }
+///
+/// \brief 使用支持redo/undo模式的改变子窗口大小
+/// \param p 子窗口
+/// \param rect 子窗口相对figure的大小
+///
+void SAFigureWindow::resizeWidget(QWidget *p, const QRect &newRect, const QRect &oldRect)
+{
+    SAFigureSubChartResize * resizeCmd;
+    if(oldRect.isNull())
+    {
+        resizeCmd = new SAFigureSubChartResize(this,p,oldRect,newRect,tr("resize"));
+    }
+    else
+    {
+        resizeCmd = new SAFigureSubChartResize(this,p,newRect,tr("resize"));
+    }
+    appendCommand(resizeCmd);
+}
+
+void SAFigureWindow::appendCommand(SAFigureOptCommand *cmd)
+{
+    d_ptr->redoUndoStack.push(cmd);
+}
 
 
 
@@ -324,22 +349,26 @@ SAFigureChartRubberbandEditOverlay *SAFigureWindow::subWindowEditModeOverlayWidg
 //    }
 //}
 
+///
+/// \brief redo
+///
 void SAFigureWindow::redo()
 {
-    SAChart2D * c = current2DPlot();
-    if(c)
-    {
-        c->redo();
-    }
+    d_ptr->redoUndoStack.redo();
 }
-
+///
+/// \brief undo
+///
 void SAFigureWindow::undo()
 {
-    SAChart2D * c = current2DPlot();
-    if(c)
-    {
-        c->undo();
-    }
+    d_ptr->redoUndoStack.undo();
+}
+///
+/// \brief 清空回退栈
+///
+void SAFigureWindow::clearRedoUndoStack()
+{
+    d_ptr->redoUndoStack.clear();
 }
 
 #if 0

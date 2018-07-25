@@ -3,7 +3,6 @@ DEPENDPATH += $$PWD
 
 HEADERS += \
     $$PWD/SAChart2D.h \
-    $$PWD/SAAbstractFigure.h \
     $$PWD/SAFigureWindow.h \
     $$PWD/SAFigureContainer.h \
     $$PWD/SAXYSeries.h \
@@ -25,7 +24,6 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/SAChart2D.cpp \
-    $$PWD/SAAbstractFigure.cpp \
     $$PWD/SAFigureWindow.cpp \
     $$PWD/SAFigureContainer.cpp \
     $$PWD/SAXYSeries.cpp \

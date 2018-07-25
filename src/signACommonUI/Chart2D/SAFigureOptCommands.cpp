@@ -1,5 +1,6 @@
 ﻿#include "SAFigureOptCommands.h"
-#include <SAChart2D.h>
+#include "SAFigureWindow.h"
+#include "SAChart2D.h"
 #include "SAChart.h"
 #include "SAXYSeries.h"
 #include "qwt_plot_item.h"
@@ -7,6 +8,51 @@
 #include "SAAbstractRegionSelectEditor.h"
 #include "qwt_series_data.h"
 #include "czyAlgorithm.h"
+
+
+SAFigureSubChartResize::SAFigureSubChartResize(
+        SAFigureWindow *fig
+        , QWidget *w
+        , const QRect &size
+        ,const QString &cmdName
+        , QUndoCommand *parent)
+    :SAFigureOptCommand(fig,cmdName,parent)
+  ,m_widget(w)
+  ,m_newSize(size)
+{
+    m_oldSize = w->frameGeometry();
+}
+
+SAFigureSubChartResize::SAFigureSubChartResize(
+        SAFigureWindow *fig
+        , QWidget *w
+        , const QRect &oldSize
+        , const QRect &newSize
+        ,const QString &cmdName
+        , QUndoCommand *parent)
+ :SAFigureOptCommand(fig,cmdName,parent)
+ ,m_widget(w)
+ ,m_newSize(newSize)
+ ,m_oldSize(oldSize)
+{
+
+}
+
+SAFigureSubChartResize::~SAFigureSubChartResize()
+{
+
+}
+
+void SAFigureSubChartResize::redo()
+{
+    m_widget->setGeometry(m_newSize);
+}
+
+void SAFigureSubChartResize::undo()
+{
+    m_widget->setGeometry(m_oldSize);
+}
+
 
 SAFigureChartItemAddCommand::SAFigureChartItemAddCommand(SAChart2D *chart, QwtPlotItem *ser, const QString &cmdName,QUndoCommand *parent)
     :SAFigureOptCommand(chart,cmdName,parent)
@@ -25,7 +71,7 @@ SAFigureChartItemAddCommand::~SAFigureChartItemAddCommand()
 
 void SAFigureChartItemAddCommand::redo()
 {
-    m_item->attach(plot());
+    m_item->attach(chart2D());
 }
 
 void SAFigureChartItemAddCommand::undo()
@@ -54,7 +100,7 @@ void SAFigureChartItemDeleteCommand::redo()
 
 void SAFigureChartItemDeleteCommand::undo()
 {
-    m_item->attach(plot());
+    m_item->attach(chart2D());
 }
 
 SAFigureChartItemListAddCommand::SAFigureChartItemListAddCommand(SAChart2D *chart, const QList<QwtPlotItem *> &itemList, const QString &cmdName,QUndoCommand *parent)
@@ -83,7 +129,7 @@ void SAFigureChartItemListAddCommand::redo()
     const int size = m_itemList.size();
     for(int i=0;i<size;++i)
     {
-        m_itemList[i]->attach(plot());
+        m_itemList[i]->attach(chart2D());
     }
 }
 
@@ -100,7 +146,7 @@ SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(S
     :SAFigureOptCommand(chart,cmdName,parent)
     ,m_newPainterPath(newRegion)
 {
-    m_oldPainterPath = plot()->getSelectionRange();
+    m_oldPainterPath = chart2D()->getSelectionRange();
 }
 
 SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(SAChart2D *chart, const QPainterPath &oldRegion, const QPainterPath &newRegion, const QString &cmdName, QUndoCommand *parent)
@@ -113,13 +159,14 @@ SAFigureChartSelectionRegionAddCommand::SAFigureChartSelectionRegionAddCommand(S
 
 void SAFigureChartSelectionRegionAddCommand::redo()
 {
-    plot()->setSelectionRange(m_newPainterPath);
+    chart2D()->setSelectionRange(m_newPainterPath);
 }
 
 void SAFigureChartSelectionRegionAddCommand::undo()
 {
-    plot()->setSelectionRange(m_oldPainterPath);
+    chart2D()->setSelectionRange(m_oldPainterPath);
 }
+
 
 
 
