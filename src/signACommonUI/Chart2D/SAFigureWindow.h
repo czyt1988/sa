@@ -31,6 +31,8 @@ public:
     //添加一个2D chart
     SAChart2D* create2DPlot();
     SAChart2D* create2DSubPlot(float xPresent, float yPresent, float wPresent, float hPresent);
+    //不支持redo/undo的添加窗口操作
+    void _addWidget(QWidget* w,float xPresent, float yPresent, float wPresent, float hPresent);
     //获取所有的图表
     QList<SAChart2D*> get2DPlots() const;
     //获取当前的2d绘图指针

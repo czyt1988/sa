@@ -364,10 +364,6 @@ bool SAFigureChartRubberbandEditOverlay::onMouseMoveEvent(QMouseEvent *me)
         case Inner:
         {
             QPoint offset = me->pos() - d_ptr->lastMouseMovePos;
-            qDebug() << "lastMouseMovePos:"<<d_ptr->lastMouseMovePos<<" current pos:"<<me->pos()
-                     << " offset:"<<offset << " current widget pos:" << d_ptr->activeWidget->pos();
-//            geoRect.moveTo(geoRect.topLeft()+offset);
-//            d_ptr->activeWidget->setGeometry(geoRect);
             d_ptr->activeWidget->move(d_ptr->activeWidget->pos()+offset);
             break;
         }
@@ -375,7 +371,6 @@ bool SAFigureChartRubberbandEditOverlay::onMouseMoveEvent(QMouseEvent *me)
             d_ptr->lastMouseMovePos = me->pos();
             return false;
         }
-   // qDebug() << "geoRect:"<<geoRect;
         d_ptr->lastMouseMovePos = me->pos();
         updateOverlay();
     }

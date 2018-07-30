@@ -20,9 +20,26 @@
 class SAAbstractDatas;
 class QwtPlotCurve;
 
+
 ///////////////////////////////////////////////////////////////////////
 ///
-/// \brief 绘图元素的添加
+/// \brief figure窗体中添加子窗体
+///
+class SA_COMMON_UI_EXPORT SAFigureCreateSubWidget : public SAFigureOptCommand
+{
+public:
+    SAFigureCreateSubWidget(SAFigureWindow* fig,QWidget* w,float xPresent, float yPresent, float wPresent, float hPresent,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
+    ~SAFigureCreateSubWidget();
+    virtual void redo();
+    virtual void undo();
+private:
+    QWidget* m_widget;
+    bool m_isNeedToDelete;///< 记录是否是此命令对它进行隐藏
+};
+
+///////////////////////////////////////////////////////////////////////
+///
+/// \brief 子窗口位置变更
 ///
 class SA_COMMON_UI_EXPORT SAFigureSubChartResize : public SAFigureOptCommand
 {

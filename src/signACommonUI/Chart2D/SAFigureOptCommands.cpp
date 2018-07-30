@@ -10,6 +10,57 @@
 #include "czyAlgorithm.h"
 
 
+///
+/// \brief SAFigureCreateSubWidget::SAFigureCreateSubWidget
+/// \param fig
+/// \param w
+/// \param xPresent
+/// \param yPresent
+/// \param wPresent
+/// \param hPresent
+/// \param cmdName
+/// \param parent
+///
+SAFigureCreateSubWidget::SAFigureCreateSubWidget(SAFigureWindow *fig
+                                                 , QWidget *w
+                                                 , float xPresent
+                                                 , float yPresent
+                                                 , float wPresent
+                                                 , float hPresent
+                                                 , const QString &cmdName
+                                                 , QUndoCommand *parent)
+    :SAFigureOptCommand(fig,cmdName,parent)
+    ,m_widget(w)
+    ,m_isNeedToDelete(false)
+{
+    fig->_addWidget(w,xPresent,yPresent,wPresent,hPresent);
+}
+
+///
+/// \brief 析构此命令时需要对窗口进行删除处理否则会一直存在
+///
+SAFigureCreateSubWidget::~SAFigureCreateSubWidget()
+{
+    if(m_widget && m_isNeedToDelete)
+    {
+        //只有在m_isHidedByCmd是true时才delete，证明最后状态是处于undo状态
+        delete m_widget;
+    }
+}
+
+void SAFigureCreateSubWidget::redo()
+{
+    m_widget->show();
+    m_isNeedToDelete = false;
+}
+
+void SAFigureCreateSubWidget::undo()
+{
+    m_widget->hide();
+    m_isNeedToDelete = true;
+}
+
+
 SAFigureSubChartResize::SAFigureSubChartResize(
         SAFigureWindow *fig
         , QWidget *w
@@ -166,6 +217,7 @@ void SAFigureChartSelectionRegionAddCommand::undo()
 {
     chart2D()->setSelectionRange(m_oldPainterPath);
 }
+
 
 
 

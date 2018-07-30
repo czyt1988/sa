@@ -5,11 +5,7 @@
 SAFigureOptCommand::SAFigureOptCommand(SAChart2D* chart, const QString &cmdName, QUndoCommand *parent):QUndoCommand(cmdName,parent)
   ,m_chart(chart)
 {
-    SAFigureWindow* fig = qobject_cast<SAFigureWindow*>(chart->parentWidget());
-    if(fig)
-    {
-        m_fig = fig;
-    }
+    m_fig = qobject_cast<SAFigureWindow*>(chart->parentWidget());
 }
 
 SAFigureOptCommand::SAFigureOptCommand(SAFigureWindow *fig, const QString &cmdName, QUndoCommand *parent):QUndoCommand(cmdName,parent)

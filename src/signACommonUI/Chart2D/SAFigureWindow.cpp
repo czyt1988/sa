@@ -108,20 +108,49 @@ SAChart2D *SAFigureWindow::create2DSubPlot(float xPresent, float yPresent, float
 {
     try
     {
-        SAChart2D* plot = new SAChart2D(d_ptr->centralwidget);
-        d_ptr->centralwidget->addWidget (plot,xPresent,yPresent,wPresent,hPresent);
-        d_ptr->currentPlot = plot;
-        emit chartAdded(plot);
-        setFocusProxy(plot);
-        return plot;
+#if 0
+        SAChart2D* chart = new SAChart2D(d_ptr->centralwidget);
+        d_ptr->centralwidget->addWidget (chart,xPresent,yPresent,wPresent,hPresent);
+        d_ptr->currentPlot = chart;
+        emit chartAdded(chart);
+        setFocusProxy(chart);
+#else
+        SAChart2D *chart = new SAChart2D;
+        SAFigureCreateSubWidget* cmd = new SAFigureCreateSubWidget(this
+                                                                   ,chart
+                                                                   ,xPresent,yPresent,wPresent,hPresent
+                                                                   ,tr("create 2D chart")
+                                                                   );
+        appendCommand(cmd);
+        d_ptr->currentPlot = chart;
+        emit chartAdded(chart);
+        setFocusProxy(chart);
+#endif
+        return chart;
     }
-    catch(std::bad_alloc& b)
+    catch(const std::bad_alloc& b)
     {
         Q_UNUSED(b);
         QMessageBox::warning (this,tr("memory out"),tr("memory out"));
         return nullptr;
     }
     return nullptr;
+}
+///
+/// \brief 添加窗口到fig中，此操作不是命令模式，不支持redo/undo
+/// \param w 窗体指针，如果父窗口不是fig，会改变为fig
+/// \param xPresent
+/// \param yPresent
+/// \param wPresent
+/// \param hPresent
+///
+void SAFigureWindow::_addWidget(QWidget *w, float xPresent, float yPresent, float wPresent, float hPresent)
+{
+    if(w->parentWidget() != d_ptr->centralwidget)
+    {
+        w->setParent(d_ptr->centralwidget);
+    }
+    d_ptr->centralwidget->addWidget (w,xPresent,yPresent,wPresent,hPresent);
 }
 
 ///
