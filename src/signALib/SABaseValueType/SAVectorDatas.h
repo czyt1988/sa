@@ -155,7 +155,7 @@ int SAVectorDatas<T>::getSize(int dim) const {
     {
         return this->m_datas.size();
     }
-    return m_datas.isEmpty() ? 0 : 1;
+    return 0;
 }
 
 template<typename T>

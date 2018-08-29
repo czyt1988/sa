@@ -101,6 +101,8 @@ QSize SAAbstractValueTableOptPasteCommandPrivate::getClipboardTableSize(const QL
 }
 
 ////////SAValueTableOptVectorPasteCommandPrivate/////////////////////////////////////////////////
+
+
 template<typename T,typename FunMakeT>
 SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::SAValueTableOptVectorPasteCommandPrivate(
         SAAbstractDatas *data
@@ -137,6 +139,7 @@ SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::SAValueTableOptVectorPaste
 template<typename T,typename FunMakeT>
 void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::init(const QList<QVariantList> *clipboardTable)
 {
+    qDebug() << "SAValueTableOptVectorPasteCommandPrivate init";
     const int clipBoardRowCount = clipboardTable->size();
     int dim2 = m_data->getSize(SA::Dim2);
     const QVector<T>& datas = m_data->getValueDatas();
@@ -167,7 +170,7 @@ void SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::init(const QList<QVar
             //说明插入新数据
             //此句在if(rowValue.size() <= 0)之前的意义是允许插入空行，空行会以默认数据替代
             m_newDataSize = realDataRowIndex+1;
-
+qDebug() << m_newDataSize;
             if(rowValue.size() <= 0)
                 continue;
             T val;

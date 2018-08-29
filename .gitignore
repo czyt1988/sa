@@ -82,7 +82,8 @@ build-*
 /tmp
 /test
 /src/bin
-
+/src/bin-debug
+/src/bin-release
 *.psd
 *.png
 *.jpg

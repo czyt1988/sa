@@ -48,6 +48,19 @@
 //    return nullptr;
 //}
 
+int SAVectorDouble::getSize(int dim) const
+{
+    if(dim==SA::Dim1)
+    {
+        return SAVectorDatas<double>::getSize(dim);
+    }
+    else if(dim==SA::Dim2)
+    {
+        return 1;
+    }
+    return 0;
+}
+
 void SAVectorDouble::write(QDataStream &out) const
 {
     SADataHeader type(this);
