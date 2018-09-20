@@ -60,6 +60,7 @@
 #include "SAMdiSubWindowSerializeHead.h"
 #include "SAWaitCursor.h"
 //===signALib
+#include "SAData.h"
 #include "SALocalServerDefine.h"
 #include "SAValueManager.h"//变量管理
 #include "SAValueManagerModel.h"//变量管理的model
@@ -1903,14 +1904,20 @@ void MainWindow::onActionValueCreateDoubleVectorTriggered()
 ///
 void MainWindow::onActionValueCreatePointVectorTriggered()
 {
-
+    std::shared_ptr<SAVectorPointF> ptr = SAValueManager::makeData<SAVectorPointF>("VectorPoint");
+    saValueManager->addData(ptr);
+    setValueView({ptr.get()},true);
+    raiseValueViewerDock();
 }
 ///
 /// \brief 创建表
 ///
 void MainWindow::onActionValueCreateVariantTableTriggered()
 {
-
+    std::shared_ptr<SATableVariant> ptr = SAValueManager::makeData<SATableVariant>("TableVariant");
+    saValueManager->addData(ptr);
+    setValueView({ptr.get()},true);
+    raiseValueViewerDock();
 }
 
 
@@ -2754,19 +2761,9 @@ void MainWindow::onActionUndoTriggered()
     {
         if(f->isActiveWindow())
         {
-            SAChart2D* w = f->current2DPlot();
-            if(w)
-            {
-                if(w->canvas())
-                {
-                    if(w->canvas()->hasFocus())
-                    {
-                        w->undo();
-                        saDebug("undo trigger:SAFigureWindow undo");
-                        return;
-                    }
-                }
-            }
+            f->undo();
+            saDebug("undo trigger:SAFigureWindow undo");
+            return;
         }
     }
     QString logInfo("but nothing valid widget accept undo triggered");
@@ -2799,19 +2796,9 @@ void MainWindow::onActionRedoTriggered()
     {
         if(f->isActiveWindow())
         {
-            SAChart2D* w = f->current2DPlot();
-            if(w)
-            {
-                if(w->canvas())
-                {
-                    if(w->canvas()->hasFocus())
-                    {
-                        w->redo();
-                        saDebug("redo trigger:SAFigureWindow redo");
-                        return;
-                    }
-                }
-            }
+            f->redo();
+            saDebug("redo trigger:SAFigureWindow redo");
+            return;
         }
     }
     QString logInfo("but nothing valid widget accept undo triggered");

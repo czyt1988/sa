@@ -21,7 +21,7 @@
 /// \param cmdName
 /// \param parent
 ///
-SAFigureCreateSubWidget::SAFigureCreateSubWidget(SAFigureWindow *fig
+SAFigureCreateSubWidgetCommand::SAFigureCreateSubWidgetCommand(SAFigureWindow *fig
                                                  , QWidget *w
                                                  , float xPresent
                                                  , float yPresent
@@ -39,7 +39,7 @@ SAFigureCreateSubWidget::SAFigureCreateSubWidget(SAFigureWindow *fig
 ///
 /// \brief 析构此命令时需要对窗口进行删除处理否则会一直存在
 ///
-SAFigureCreateSubWidget::~SAFigureCreateSubWidget()
+SAFigureCreateSubWidgetCommand::~SAFigureCreateSubWidgetCommand()
 {
     if(m_widget && m_isNeedToDelete)
     {
@@ -48,20 +48,20 @@ SAFigureCreateSubWidget::~SAFigureCreateSubWidget()
     }
 }
 
-void SAFigureCreateSubWidget::redo()
+void SAFigureCreateSubWidgetCommand::redo()
 {
     m_widget->show();
     m_isNeedToDelete = false;
 }
 
-void SAFigureCreateSubWidget::undo()
+void SAFigureCreateSubWidgetCommand::undo()
 {
     m_widget->hide();
     m_isNeedToDelete = true;
 }
 
 
-SAFigureSubChartResize::SAFigureSubChartResize(
+SAFigureSubChartResizeCommand::SAFigureSubChartResizeCommand(
         SAFigureWindow *fig
         , QWidget *w
         , const QRect &size
@@ -74,7 +74,7 @@ SAFigureSubChartResize::SAFigureSubChartResize(
     m_oldSize = w->frameGeometry();
 }
 
-SAFigureSubChartResize::SAFigureSubChartResize(
+SAFigureSubChartResizeCommand::SAFigureSubChartResizeCommand(
         SAFigureWindow *fig
         , QWidget *w
         , const QRect &oldSize
@@ -89,17 +89,17 @@ SAFigureSubChartResize::SAFigureSubChartResize(
 
 }
 
-SAFigureSubChartResize::~SAFigureSubChartResize()
+SAFigureSubChartResizeCommand::~SAFigureSubChartResizeCommand()
 {
 
 }
 
-void SAFigureSubChartResize::redo()
+void SAFigureSubChartResizeCommand::redo()
 {
     m_widget->setGeometry(m_newSize);
 }
 
-void SAFigureSubChartResize::undo()
+void SAFigureSubChartResizeCommand::undo()
 {
     m_widget->setGeometry(m_oldSize);
 }

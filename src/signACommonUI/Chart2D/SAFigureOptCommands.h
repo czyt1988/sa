@@ -25,11 +25,11 @@ class QwtPlotCurve;
 ///
 /// \brief figure窗体中添加子窗体
 ///
-class SA_COMMON_UI_EXPORT SAFigureCreateSubWidget : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureCreateSubWidgetCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureCreateSubWidget(SAFigureWindow* fig,QWidget* w,float xPresent, float yPresent, float wPresent, float hPresent,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
-    ~SAFigureCreateSubWidget();
+    SAFigureCreateSubWidgetCommand(SAFigureWindow* fig,QWidget* w,float xPresent, float yPresent, float wPresent, float hPresent,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
+    ~SAFigureCreateSubWidgetCommand();
     virtual void redo();
     virtual void undo();
 private:
@@ -41,12 +41,12 @@ private:
 ///
 /// \brief 子窗口位置变更
 ///
-class SA_COMMON_UI_EXPORT SAFigureSubChartResize : public SAFigureOptCommand
+class SA_COMMON_UI_EXPORT SAFigureSubChartResizeCommand : public SAFigureOptCommand
 {
 public:
-    SAFigureSubChartResize(SAFigureWindow* fig,QWidget* w,const QRect& size,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
-    SAFigureSubChartResize(SAFigureWindow* fig,QWidget* w,const QRect& oldSize,const QRect& newSize,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
-    ~SAFigureSubChartResize();
+    SAFigureSubChartResizeCommand(SAFigureWindow* fig,QWidget* w,const QRect& size,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
+    SAFigureSubChartResizeCommand(SAFigureWindow* fig,QWidget* w,const QRect& oldSize,const QRect& newSize,const QString &cmdName,QUndoCommand *parent = Q_NULLPTR);
+    ~SAFigureSubChartResizeCommand();
     virtual void redo();
     virtual void undo();
 private:

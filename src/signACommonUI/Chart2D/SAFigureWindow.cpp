@@ -8,6 +8,7 @@
 #include <QPaintEvent>
 #include <QCoreApplication>
 #include <QScopedPointer>
+#include <QChildEvent>
 //sa chart
 #include "SAChart2D.h"
 #include "SAQwtSerialize.h"
@@ -116,11 +117,12 @@ SAChart2D *SAFigureWindow::create2DSubPlot(float xPresent, float yPresent, float
         setFocusProxy(chart);
 #else
         SAChart2D *chart = new SAChart2D;
-        SAFigureCreateSubWidget* cmd = new SAFigureCreateSubWidget(this
+        SAFigureCreateSubWidgetCommand* cmd = new SAFigureCreateSubWidgetCommand(this
                                                                    ,chart
                                                                    ,xPresent,yPresent,wPresent,hPresent
                                                                    ,tr("create 2D chart")
                                                                    );
+        chart->attachToFigure(this);
         appendCommand(cmd);
         d_ptr->currentPlot = chart;
         emit chartAdded(chart);
@@ -308,14 +310,14 @@ SAFigureChartRubberbandEditOverlay *SAFigureWindow::subWindowEditModeOverlayWidg
 ///
 void SAFigureWindow::resizeWidget(QWidget *p, const QRect &newRect, const QRect &oldRect)
 {
-    SAFigureSubChartResize * resizeCmd;
+    SAFigureSubChartResizeCommand * resizeCmd;
     if(oldRect.isNull())
     {
-        resizeCmd = new SAFigureSubChartResize(this,p,oldRect,newRect,tr("resize"));
+        resizeCmd = new SAFigureSubChartResizeCommand(this,p,oldRect,newRect,tr("resize"));
     }
     else
     {
-        resizeCmd = new SAFigureSubChartResize(this,p,newRect,tr("resize"));
+        resizeCmd = new SAFigureSubChartResizeCommand(this,p,newRect,tr("resize"));
     }
     appendCommand(resizeCmd);
 }
@@ -399,6 +401,8 @@ void SAFigureWindow::clearRedoUndoStack()
 {
     d_ptr->redoUndoStack.clear();
 }
+
+
 
 #if 0
 void SAFigureWindow::keyPressEvent(QKeyEvent *e)

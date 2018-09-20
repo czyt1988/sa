@@ -4,6 +4,7 @@
 #include "SACommonUIGlobal.h"
 #include "SAPlotMarker.h"
 #include <memory>
+class SAFigureWindow;
 class QUndoStack;
 class SAChart2DPrivate;
 class SAAbstractRegionSelectEditor;
@@ -26,6 +27,7 @@ class SA_COMMON_UI_EXPORT SAChart2D : public SA2DGraph
     Q_OBJECT
     Q_DISABLE_COPY(SAChart2D)
     SA_IMPL(SAChart2D)
+    friend class SAFigureWindow;
 public:
     SAChart2D(QWidget *parent = nullptr);
     ~SAChart2D();
@@ -117,11 +119,8 @@ public:
     void setSelectionRange(const QPainterPath& painterPath);
     //判断当前的条目的x，y轴关联是否和选区的一致
     bool isSelectionRangeAxisMatch(const QwtPlotItem* item);
-    //
-
-    //ctrl+z || ctrl + y
-    void redo();
-    void undo();
+    //获取figure
+    SAFigureWindow* figure() const;
     //redo/undo 的command添加操作
     void appendCommand(SAFigureOptCommand* cmd);
     //设置一个编辑器，编辑器的内存交由SAChart2D管理，SAChart2D只能存在一个额外的编辑器
@@ -174,6 +173,8 @@ protected slots:
     void onSelectionFinished(const QPainterPath& shape);
 private:
     QList<SAXYSeries *> addDatas(const QList<SAAbstractDatas*>& datas);
+    //关联到figure时，figure会调用此函数，保证此时保存的临时操作栈写入到figure的redo/undo stack中
+    void attachToFigure(SAFigureWindow* fig);
 protected:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;

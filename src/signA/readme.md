@@ -18,7 +18,7 @@
 后续可能还会有表格样式的扩展等
 
 # 当前进度
-- 子图移动操作\子图的redo/undo
+- 子图移动操作\子图的redo/undo(更改SACHart的redo/undo，转移到SAFigureWindow中，目前SAChart::appendCommand会删除无法加入的cmd，此操作有危险，建议返回false，在append后判断进行删除)
 - figure添加鼠标点击切换currentChart
 - figure的图层界面进行修改，支持子图
 - 添加数据操作标签，主要功能有，数据操作面板 ： 新加数据(新建序列，新建表，新建包)

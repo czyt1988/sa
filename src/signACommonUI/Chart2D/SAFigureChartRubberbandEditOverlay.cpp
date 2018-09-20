@@ -386,7 +386,7 @@ bool SAFigureChartRubberbandEditOverlay::onMouseReleaseEvent(QMouseEvent *me)
             d_ptr->isStartResize = false;
             if(d_ptr->activeWidget)
             {
-                SAFigureSubChartResize * resizeCmd = new SAFigureSubChartResize(figure()
+                SAFigureSubChartResizeCommand * resizeCmd = new SAFigureSubChartResizeCommand(figure()
                                                                                 ,d_ptr->activeWidget
                                                                                 ,d_ptr->oldSizeRect
                                                                                 ,d_ptr->activeWidget->geometry()

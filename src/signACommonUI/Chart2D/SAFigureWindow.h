@@ -24,6 +24,7 @@ class SA_COMMON_UI_EXPORT SAFigureWindow : public QMainWindow
 {
     Q_OBJECT
     SA_IMPL(SAFigureWindow)
+
 public:
     explicit SAFigureWindow(QWidget *parent = 0);
     ~SAFigureWindow();
@@ -66,6 +67,7 @@ public slots:
 protected:
     void keyPressEvent(QKeyEvent *e);
 #endif
+
 signals:
     //添加了一个绘图发送的信号
     void chartAdded(QwtPlot* plot);

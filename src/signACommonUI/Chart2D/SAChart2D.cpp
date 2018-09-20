@@ -21,6 +21,7 @@
 #include "SAEllipseRegionSelectEditor.h"
 #include "SAPolygonRegionSelectEditor.h"
 #include <QUndoStack>
+#include "SAFigureWindow.h"
 #include "SAFigureOptCommands.h"
 #include "qwt_text.h"
 #include "SASelectRegionShapeItem.h"
@@ -128,7 +129,8 @@ class SAChart2DPrivate
 {
     SA_IMPL_PUBLIC(SAChart2D)
 public:
-    QUndoStack m_undoStack;
+    SAFigureWindow* m_fig;///< 记录fig
+    QList<QUndoCommand*> m_tempUndoCmdList;///< 临时的操作记录，在关联到figure之后会转移到figure中
     SAChart2D::SelectionMode m_selectMode;///< 选择模式
     SAAbstractRegionSelectEditor* m_chartSelectRigionEditor;///< 矩形选择编辑器
     QMap<QString,QPainterPath> m_selectionMap;///< 此dict保存的选区，选区可以保存，并加载
@@ -141,6 +143,7 @@ public:
     QList<SAAbstractPlotMarker *> m_plotMarkers;
 public:
     SAChart2DPrivate(SAChart2D* p):q_ptr(p)
+      ,m_fig(nullptr)
       ,m_selectMode(SAChart2D::NoneSelection)
       ,m_chartSelectRigionEditor(nullptr)
       ,m_seclectRegionItem(nullptr)
@@ -190,27 +193,67 @@ public:
 
     void appendItemAddCommand(QwtPlotItem* item,const QString& des)
     {
-        m_undoStack.push(new SAFigureChartItemAddCommand(q_ptr,item,des));
+        QScopedPointer<SAFigureChartItemAddCommand> cmd(new SAFigureChartItemAddCommand(q_ptr,item,des));
+        if(m_fig)
+        {
+            m_fig->appendCommand(cmd.take());
+        }
+        else
+        {
+            cmd->redo();
+        }
     }
     void appendItemDeleteCommand(QwtPlotItem* item,const QString& des)
     {
-        m_undoStack.push(new SAFigureChartItemDeleteCommand(q_ptr,item,des));
+        QScopedPointer<SAFigureChartItemDeleteCommand> cmd(new SAFigureChartItemDeleteCommand(q_ptr,item,des));
+        if(m_fig)
+        {
+            m_fig->appendCommand(cmd.take());
+        }
+        else
+        {
+            cmd->redo();
+        }
     }
     void appendItemListAddCommand(QList<QwtPlotItem*> itemList,const QString& des)
     {
         bool isAutoReplot = q_ptr->autoReplot();
         q_ptr->setAutoReplot(false);
-        m_undoStack.push(new SAFigureChartItemListAddCommand(q_ptr,itemList,des));
+        QScopedPointer<SAFigureChartItemListAddCommand> cmd(new SAFigureChartItemListAddCommand(q_ptr,itemList,des));
+        if(m_fig)
+        {
+            m_fig->appendCommand(cmd.take());
+        }
+        else
+        {
+            cmd->redo();
+        }
         q_ptr->setAutoReplot(isAutoReplot);
         q_ptr->replot();
     }
     void appendRemoveItemCommand(QwtPlotItem* item,const QString& des)
     {
-        m_undoStack.push(new SAFigureChartItemDeleteCommand(q_ptr,item,des));
+        QScopedPointer<SAFigureChartItemDeleteCommand> cmd(new SAFigureChartItemDeleteCommand(q_ptr,item,des));
+        if(m_fig)
+        {
+            m_fig->appendCommand(cmd.take());
+        }
+        else
+        {
+            cmd->redo();
+        }
     }
     void appendAddSelectionRegionCommand(const QPainterPath& newRegion,const QString& des)
     {
-        m_undoStack.push(new SAFigureChartSelectionRegionAddCommand(q_ptr,newRegion,des));
+        QScopedPointer<SAFigureChartSelectionRegionAddCommand> cmd(new SAFigureChartSelectionRegionAddCommand(q_ptr,newRegion,des));
+        if(m_fig)
+        {
+            m_fig->appendCommand(cmd.take());
+        }
+        else
+        {
+            cmd->redo();
+        }
     }
 
     void appendRemoveChart2DItemDataInRangCommand(const QList<QwtPlotItem *>& items,const QString& des)
@@ -219,7 +262,7 @@ public:
         {
             return;
         }
-        QScopedPointer<QUndoCommand> cmd(new QUndoCommand(des));
+        QScopedPointer<SAFigureOptCommand> cmd(new SAFigureOptCommand(q_ptr,q_ptr->tr("remove chart items")));
         bool isAutoReplot = q_ptr->autoReplot();
         q_ptr->setAutoReplot(false);
         QPainterPath region = m_seclectRegionItem->shape();
@@ -240,7 +283,15 @@ public:
                 new SAFigureRemoveSeriesDatasInRangCommand(q_ptr,item,trPath,item->title().text(),cmd.data());
             }
         }
-        m_undoStack.push(cmd.take());
+
+        if(m_fig)
+        {
+            m_fig->appendCommand(cmd.take());
+        }
+        else
+        {
+            cmd->redo();
+        }
         q_ptr->setAutoReplot(isAutoReplot);
         q_ptr->replot();
     }
@@ -269,6 +320,10 @@ public:
 SAChart2D::SAChart2D(QWidget *parent):SA2DGraph(parent)
   ,d_ptr(new SAChart2DPrivate(this))
 {
+    if(SAFigureWindow* fig = qobject_cast<SAFigureWindow*>(parent))
+    {
+        d_ptr->m_fig = fig;
+    }
     setAcceptDrops(true);
     canvas()->setFocusPolicy(Qt::ClickFocus);
 }
@@ -1194,26 +1249,27 @@ bool SAChart2D::isSelectionRangeAxisMatch(const QwtPlotItem *item)
     }
     return (editor->getXAxis() == item->xAxis()) && (editor->getYAxis() == item->yAxis());
 }
-///
-/// \brief redo
-///
-void SAChart2D::redo()
+
+/**
+ * @brief 获取figure，
+ * @return 如果没有指定，返回nullptr
+ */
+SAFigureWindow *SAChart2D::figure() const
 {
-    d_ptr->m_undoStack.redo();
-}
-///
-/// \brief undo
-/// 当undoStack的index为0时不执行undo
-///
-void SAChart2D::undo()
-{
-    if (0 != d_ptr->m_undoStack.index())
-        d_ptr->m_undoStack.undo();
+    return qobject_cast<SAFigureWindow*>(parent());
 }
 
 void SAChart2D::appendCommand(SAFigureOptCommand *cmd)
 {
-    d_ptr->m_undoStack.push(cmd);
+    if(figure())
+    {
+        figure()->appendCommand(cmd);
+    }
+    else
+    {
+        //如果没有加入figure，删除此命令
+        delete cmd;
+    }
 }
 ///
 /// \brief 设置一个编辑器，编辑器的内存交由SAChart2D管理，SAChart2D只能存在一个额外的编辑器
@@ -1505,6 +1561,15 @@ QList<SAXYSeries *> SAChart2D::addDatas(const QList<SAAbstractDatas *> &datas)
         replot();
     }
     return res;
+}
+
+/**
+ * @brief 关联到figure时，figure会调用此函数，保证此时保存的临时操作栈写入到figure的redo/undo stack中
+ * @param fig
+ */
+void SAChart2D::attachToFigure(SAFigureWindow *fig)
+{
+    d_ptr->m_fig = fig;
 }
 
 void SAChart2D::dragEnterEvent(QDragEnterEvent *event)
