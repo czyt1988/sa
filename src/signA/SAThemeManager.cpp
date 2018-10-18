@@ -45,6 +45,7 @@ bool SAThemeManager::getStyleString(const QString &styleName, QString &mainStyle
     }
     ribbonStyle = file.readAll();
     file.close();
+    return true;
 }
 
 QString SAThemeManager::getDefaultStyleString()

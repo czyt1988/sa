@@ -9,7 +9,12 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signACommonUI
 TEMPLATE = lib
 CONFIG += dll
-DESTDIR = $$PWD/../bin/libs
+CONFIG(debug, debug|release){
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
+}else {
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
+}
+
 CONFIG += c++11
 QWT_CONFIG += QwtDll
 DEFINES += SA_COMMON_UI_MAKE #make dll

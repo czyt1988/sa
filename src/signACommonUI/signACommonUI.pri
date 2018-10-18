@@ -10,7 +10,11 @@ DEPENDPATH += $$PWD/../3rdParty/qti
 INCLUDEPATH += $$PWD/Chart2D
 DEPENDPATH += $$PWD/Chart2D
 
-LIBS += -L$$PWD/../bin/libs/ -lsignACommonUI
+CONFIG(debug, debug|release){
+    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_debug/libs/ -lsignACommonUI
+}else {
+    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_release/libs/ -lsignACommonUI
+}
 # user need add 
 #include($$PWD/../3rdParty/qwt/qwt_set.pri)
 # user need add 

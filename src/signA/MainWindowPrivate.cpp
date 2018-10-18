@@ -314,6 +314,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionFigureEditSubPlotGeometry = new QAction(mainWinowPtr);
     actionFigureEditSubPlotGeometry->setObjectName(QStringLiteral("actionFigureEditSubPlotGeometry"));
     actionFigureEditSubPlotGeometry->setCheckable(true);
+    actionFigureEditSubPlotGeometry->setIcon(QIcon(":/icons/icons/subplotEdit.png"));
 
 
     actionChartEditor = new QActionGroup(mainWinowPtr);

@@ -5,7 +5,7 @@ SUBDIRS = \
           signACommonUI\
           signACoreFun\
           signAPlugin/FunPlugin \
-          signAPlugin/textImport \
+          signAPlugin/TextImport \
           signAPlugin/DsfFileImport \
           SARibbonBar/SARibbon/src/SARibbonBar \
           signADataProc\

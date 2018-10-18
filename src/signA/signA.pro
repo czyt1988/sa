@@ -8,7 +8,12 @@ message("--------------SA---------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])
 
-DESTDIR = $$PWD/../bin
+CONFIG(debug, debug|release){
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug
+}else {
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release
+}
+
 QT += core gui
 QT += sql
 QT += xml

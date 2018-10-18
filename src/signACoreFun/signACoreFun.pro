@@ -8,7 +8,12 @@
 QT += core
 TARGET = signACoreFun
 TEMPLATE = lib
-DESTDIR = $$PWD/../bin/libs
+
+CONFIG(debug, debug|release){
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
+}else {
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
+}
 CONFIG += c++11
 
 include($$PWD/../czy/czy_math.pri)

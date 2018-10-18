@@ -9,7 +9,13 @@ QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signALib
 TEMPLATE = lib
-DESTDIR = $$PWD/../bin/libs
+
+CONFIG(debug, debug|release){
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
+}else {
+    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
+}
+
 CONFIG += c++11
 
 HEADERS += \
