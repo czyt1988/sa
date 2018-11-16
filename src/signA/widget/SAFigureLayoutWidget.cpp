@@ -4,10 +4,12 @@
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include <QColorDialog>
+#include <QComboBox>
 #include "SAChart.h"
 SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SAFigureLayoutWidget)
+  ,m_figure(nullptr)
 {
     ui->setupUi(this);
     m_layoutModel = new SAPlotLayerModel(ui->tableView);
@@ -25,6 +27,8 @@ SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     hh->setStretchLastSection(true);
     connect(ui->tableView,&QTableView::pressed,this,&SAFigureLayoutWidget::onTableViewLayerPressed);
     connect(ui->toolButtonDelete,&QToolButton::clicked,this,&SAFigureLayoutWidget::onToolButtonDeleteClicked);
+    connect(ui->comboBoxCurrentChart,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
+            ,this,&SAFigureLayoutWidget::onComboBoxCurrentChartCurrentIndexChanged);
 }
 
 SAFigureLayoutWidget::~SAFigureLayoutWidget()
@@ -39,8 +43,23 @@ SAPlotLayerModel *SAFigureLayoutWidget::getLayoutModel() const
 
 void SAFigureLayoutWidget::setFigure(SAFigureWindow *fig)
 {
+    if(m_figure)
+    {
+        disconnect(m_figure,&SAFigureWindow::chartAdded
+                   ,this,&SAFigureLayoutWidget::onChartAdded);
+        disconnect(m_figure,&SAFigureWindow::chartRemoved
+                   ,this,&SAFigureLayoutWidget::onChartRemoved);
+    }
     m_figure = fig;
-    updateLayout();
+    if(m_figure)
+    {
+        connect(m_figure,&SAFigureWindow::chartAdded
+                   ,this,&SAFigureLayoutWidget::onChartAdded);
+        connect(m_figure,&SAFigureWindow::chartRemoved
+                   ,this,&SAFigureLayoutWidget::onChartRemoved);
+    }
+    updateCurrentChart();
+
 }
 
 SAFigureWindow *SAFigureLayoutWidget::currentFigure() const
@@ -75,6 +94,29 @@ void SAFigureLayoutWidget::updateLayout()
            }
         }
     }
+}
+
+///
+/// \brief 更新当前选中的图表
+///
+void SAFigureLayoutWidget::updateCurrentChart()
+{
+    if(nullptr == m_figure)
+    {
+        return;
+    }
+    const QList<SAChart2D *>& plots = m_figure->get2DPlots();
+    ui->comboBoxCurrentChart->clear();
+    int selIndex = -1;
+    for(int i=0;i<plots.size();++i)
+    {
+        ui->comboBoxCurrentChart->addItem(plots[i]->title().text());
+        if(m_figure->current2DPlot()==plots[i])
+        {
+            selIndex = i;
+        }
+    }
+    ui->comboBoxCurrentChart->setCurrentIndex(selIndex);
 }
 ///
 /// \brief 表格点击
@@ -148,3 +190,41 @@ void SAFigureLayoutWidget::onToolButtonDeleteClicked(bool on)
 }
 
 
+///
+/// \brief 当前绘图选择改变
+/// \param index
+///
+void SAFigureLayoutWidget::onComboBoxCurrentChartCurrentIndexChanged(int index)
+{
+    if(nullptr == m_figure || index < 0)
+    {
+        return;
+    }
+    const QList<SAChart2D *>& plots = m_figure->get2DPlots();
+    if(index >= plots.size())
+    {
+        return;
+    }
+    m_figure->setCurrent2DPlot(plots[index]);
+    updateLayout();
+}
+
+///
+/// \brief 添加图表
+/// \param plot
+///
+void SAFigureLayoutWidget::onChartAdded(QwtPlot *plot)
+{
+    Q_UNUSED(plot);
+    updateCurrentChart();
+}
+
+///
+/// \brief 删除图表
+/// \param plot
+///
+void SAFigureLayoutWidget::onChartRemoved(QwtPlot *plot)
+{
+    Q_UNUSED(plot);
+    updateCurrentChart();
+}

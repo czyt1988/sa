@@ -30,6 +30,26 @@
     <number>1</number>
    </property>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>当前图像:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxCurrentChart"/>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTableView" name="tableView"/>
    </item>
    <item>

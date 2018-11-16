@@ -6,6 +6,7 @@ class SAPlotLayerModel;
 class SAFigureWindow;
 class SAChart2D;
 class QwtPlotItem;
+class QwtPlot;
 namespace Ui {
 class SAFigureLayoutWidget;
 }
@@ -49,11 +50,18 @@ signals:
 public slots:
     //更新图层
     void updateLayout();
+    //更新当前选中的图表
+    void updateCurrentChart();
 private slots:
     //表格点击
     void onTableViewLayerPressed(const QModelIndex &index);
     //清除按钮点击
     void onToolButtonDeleteClicked(bool on);
+    //当前绘图选择改变
+    void onComboBoxCurrentChartCurrentIndexChanged(int index);
+    //添加图表
+    void onChartAdded(QwtPlot* plot);
+    void onChartRemoved(QwtPlot* plot);
 private:
     Ui::SAFigureLayoutWidget *ui;
     SAPlotLayerModel* m_layoutModel;

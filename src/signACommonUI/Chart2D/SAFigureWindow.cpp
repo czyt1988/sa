@@ -327,6 +327,23 @@ void SAFigureWindow::appendCommand(SAFigureOptCommand *cmd)
     d_ptr->redoUndoStack.push(cmd);
 }
 
+///
+/// \brief 删除所有的命令
+///
+void SAFigureWindow::clearUndoCommand()
+{
+    d_ptr->redoUndoStack.clear();
+}
+
+///
+/// \brief 判断命令是否是空的
+/// \return
+///
+bool SAFigureWindow::isUndoCommandClean() const
+{
+    return d_ptr->redoUndoStack.isClean();
+}
+
 
 
 //void SAFigureWindow::dragEnterEvent(QDragEnterEvent *event)

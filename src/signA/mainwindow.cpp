@@ -3137,6 +3137,7 @@ QMdiSubWindow* load_sub_window(SAUIInterface *ui, const QString &filePath, QStri
             if(fig)
             {
                 in >> fig;
+                fig->clearUndoCommand();//加载的把命令清空
             }
 #if 0
 #else

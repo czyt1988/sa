@@ -56,6 +56,10 @@ public:
     void resizeWidget(QWidget* p,const QRect& newRect,const QRect& oldRect = QRect());
     //添加命令
     void appendCommand(SAFigureOptCommand* cmd);
+    //清空命令
+    void clearUndoCommand();
+    //判断命令是否是空的
+    bool isUndoCommandClean() const;
 public slots:
     //redo
     void redo();
