@@ -28,7 +28,7 @@ private slots:
     Q_SLOT void onCanvasBackgroundColorChanged(const QColor& clr);
     Q_SLOT void onBorderRadiusChanged(double v);
 signals:
-    void chartTitleChanged(const QString& text);
+    void chartTitleChanged(QwtPlot* chart,const QString& text);
 private:
     class UI;
     SAChartNormalSetWidget::UI* ui;

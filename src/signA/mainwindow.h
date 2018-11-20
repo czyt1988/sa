@@ -469,6 +469,9 @@ private slots:
     void onLayoutWidgetItemColorChanged(SAChart2D* chart,QwtPlotItem* item,QColor clr);
     //图层管理窗口删除了条目
     void onLayoutWidgetItemRemoved(SAChart2D* chart,QwtPlotItem* item);
+    //设置窗口改变了图表的标题触发的槽
+    void onChartTitleChanged(QwtPlot* plot,const QString& title);
+
 public:
     //设置皮肤
     void setSkin(const QString& name);

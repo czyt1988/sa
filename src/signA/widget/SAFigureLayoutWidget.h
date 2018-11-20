@@ -26,6 +26,8 @@ public:
     void setFigure(SAFigureWindow* fig);
     //获取当前的figure
     SAFigureWindow* currentFigure() const;
+    //图表标题改变
+    void setChartTitle(QwtPlot* chart,const QString& title);
 signals:
     ///
     /// \brief 图层修改item的可见性
@@ -47,6 +49,7 @@ signals:
     /// \param item
     ///
     void itemRemoved(SAChart2D* chart,QwtPlotItem* item);
+
 public slots:
     //更新图层
     void updateLayout();

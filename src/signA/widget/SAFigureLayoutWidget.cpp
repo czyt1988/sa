@@ -228,3 +228,25 @@ void SAFigureLayoutWidget::onChartRemoved(QwtPlot *plot)
     Q_UNUSED(plot);
     updateCurrentChart();
 }
+
+///
+/// \brief 图表标题改变
+/// \param chart
+/// \param title
+///
+void SAFigureLayoutWidget::setChartTitle(QwtPlot *chart, const QString &title)
+{
+    if(nullptr == m_figure)
+    {
+        return;
+    }
+    QList<SAChart2D *> charts = m_figure->get2DPlots();
+    for(int i=0;i<charts.size();++i)
+    {
+        if(charts[i] == chart)
+        {
+            ui->comboBoxCurrentChart->setItemText(i,title);
+            return;
+        }
+    }
+}

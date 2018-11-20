@@ -77,6 +77,8 @@ signals:
     void chartAdded(QwtPlot* plot);
     //删除了一个绘图发送的信号
     void chartRemoved(QwtPlot* plot);
+    //当前选中的发生改变
+    void currentWidgetChanged(QWidget* w);
 };
 
 SA_COMMON_UI_EXPORT QDataStream& operator <<(QDataStream & out,const SAFigureWindow* p);

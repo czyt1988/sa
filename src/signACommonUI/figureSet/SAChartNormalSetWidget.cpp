@@ -158,7 +158,7 @@ void SAChartNormalSetWidget::onTitleTextChanged(const QString &text)
     if(ui->chart)
     {
         ui->chart->setTitle(text);
-        emit chartTitleChanged(text);
+        emit chartTitleChanged(ui->chart,text);
     }
 }
 

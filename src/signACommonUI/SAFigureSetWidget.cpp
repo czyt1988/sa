@@ -46,8 +46,13 @@ public:
         chartSetWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         verticalLayout->addWidget(chartSetWidget);
         p->setLayout(verticalLayout);
+#if SAFiugreSetWidget_USE_COMBOX
         p->connect(chartSetWidget,&SAChartSetWidget::chartTitleChanged
                 ,p,&SAFigureSetWidget::onChartTitleChanged);
+#else
+        p->connect(chartSetWidget,&SAChartSetWidget::chartTitleChanged
+                ,p,&SAFigureSetWidget::chartTitleChanged);
+#endif
         retranslateUi(p);
 
     } // setupUi
@@ -112,6 +117,7 @@ void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
     if(m_fig)
     {
         disconnect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
+        disconnect(fig,&SAFigureWindow::currentWidgetChanged,this,&SAFigureSetWidget::onCurrentFigureWidgetChanged);
     }
     if(nullptr == fig)
     {
@@ -121,16 +127,11 @@ void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
     if(nullptr != fig && m_fig != fig)
     {
         connect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
+        connect(fig,&SAFigureWindow::currentWidgetChanged,this,&SAFigureSetWidget::onCurrentFigureWidgetChanged);
     }
     m_fig = nullptr;
-    SAChart2D* plot = fig->current2DPlot();
-    if(nullptr != plot)
-    {
-        //关联槽
-        connect(plot,&QObject::destroyed,this,&SAFigureSetWidget::onPlotDestroy);
-    }
-    ui->chartSetWidget->setChart(plot);
     m_fig = fig;
+    setCurrentChart(fig->current2DPlot());
 
 #endif
 }
@@ -167,13 +168,14 @@ void SAFigureSetWidget::updateNormalSet()
 }
 
 
-void SAFigureSetWidget::onChartTitleChanged(const QString &text)
-{
 #if SAFiugreSetWidget_USE_COMBOX
+void SAFigureSetWidget::onChartTitleChanged(QwtPlot* chart,const QString &text)
+{
+    Q_UNUSED(chart);
     //ui->chartSelectComboBox->setCurrentText(text);
     ui->chartSelectComboBox->setItemText(ui->chartSelectComboBox->currentIndex(),text);
-#endif
 }
+#endif
 
 void SAFigureSetWidget::onPlotDestroy(QObject *obj)
 {
@@ -201,6 +203,34 @@ void SAFigureSetWidget::onFigutrDestroy(QObject *obj)
 {
     Q_UNUSED(obj);
     m_fig = nullptr;
+}
+
+///
+/// \brief 当前绘图窗口选中的窗体对象发生改变
+/// \param w
+///
+void SAFigureSetWidget::onCurrentFigureWidgetChanged(QWidget *w)
+{
+    if(SAChart2D* chart = qobject_cast<SAChart2D*>(w))
+    {
+        setCurrentChart(chart);
+    }
+}
+
+///
+/// \brief 设置图表
+/// \param chart
+///
+void SAFigureSetWidget::setCurrentChart(SAChart2D *chart)
+{
+    ui->chartSetWidget->setChart(chart);
+#if SAFiugreSetWidget_USE_COMBOX
+    //关联槽
+    if(nullptr == chart)
+    {
+        connect(chart,&QObject::destroyed,this,&SAFigureSetWidget::onPlotDestroy);
+    }
+#endif
 }
 
 

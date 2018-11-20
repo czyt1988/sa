@@ -452,6 +452,10 @@ void MainWindow::initUI()
     connect(this,&MainWindow::cleanedProject,ui->tabWidget_valueViewer,&SATabValueViewerWidget::clearAndReleaseAll);
     ui->actionWindowMode->setChecked(QMdiArea::SubWindowView == ui->mdiArea->viewMode());
     ui->actionTabMode->setChecked(QMdiArea::TabbedView == ui->mdiArea->viewMode());
+
+    //SAFigureSetWidget 相关槽连接
+    connect(ui->figureSetWidget,&SAFigureSetWidget::chartTitleChanged
+            ,this,&MainWindow::onChartTitleChanged);
 }
 
 
@@ -746,6 +750,17 @@ void MainWindow::onLayoutWidgetItemRemoved(SAChart2D *chart, QwtPlotItem *item)
     Q_UNUSED(item);
     ui->figureSetWidget->updatePlotItemsSet();
 }
+
+///
+/// \brief 设置窗口改变了图表的标题触发的槽
+/// \param plot
+/// \param title
+///
+void MainWindow::onChartTitleChanged(QwtPlot *plot, const QString &title)
+{
+    ui->figureLayoutWidget->setChartTitle(plot,title);
+}
+
 
 
 void MainWindow::setSkin(const QString &name)

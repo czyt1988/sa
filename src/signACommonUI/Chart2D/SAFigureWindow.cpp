@@ -234,8 +234,13 @@ QRectF SAFigureWindow::getWidgetPos(QWidget *w) const
 ///
 void SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
 {
+    if(!d_ptr->centralwidget->isWidgetInContainer(p))
+    {
+        return;
+    }
     d_ptr->currentPlot = p;
     setFocusProxy(p);
+    emit currentWidgetChanged(p);
 }
 ///
 /// \brief 通过item查找对应的SAChart2D，如果没有返回nullptr

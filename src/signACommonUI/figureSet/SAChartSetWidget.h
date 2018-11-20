@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QScopedPointer>
+class QwtPlot;
 class SAChart2D;
 ///
 /// \brief
@@ -19,7 +20,7 @@ public:
     void updateAxesSet();
     void updateNormalSet();
 signals:
-    void chartTitleChanged(const QString& text);
+    void chartTitleChanged(QwtPlot* chart,const QString& text);
 private slots:
     void onChartDelete(QObject *obj);
 private:

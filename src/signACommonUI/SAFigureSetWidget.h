@@ -5,6 +5,7 @@
 #include "SACommonUIGlobal.h"
 #define SAFiugreSetWidget_USE_COMBOX 0
 class SAFigureWindow;
+class SAChart2D;
 
 ///
 /// \brief 绘图设置窗口
@@ -22,13 +23,20 @@ public:
     void updatePlotItemsSet();
     void updateAxesSet();
     void updateNormalSet();
+signals:
+    void chartTitleChanged(QwtPlot* chart,const QString& title);
 private slots:
-    void onChartTitleChanged(const QString& text);
     void onPlotDestroy(QObject* obj);
     void onFigutrDestroy(QObject* obj);
+    //当前绘图窗口选中的窗体对象发生改变
+    void onCurrentFigureWidgetChanged(QWidget* w);
 #if SAFiugreSetWidget_USE_COMBOX
+    void onChartTitleChanged(QwtPlot *chart, const QString& text);
     void onComboxChanged(int index);
 #endif
+private:
+    void setCurrentChart(SAChart2D* chart);
+
 private:
     class UI;
     SAFigureSetWidget::UI * ui;

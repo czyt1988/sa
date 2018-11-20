@@ -62,7 +62,6 @@ public:
         tabScrollArea1->setWidget(chartNormalSetWidget);
         par->connect(chartNormalSetWidget,&SAChartNormalSetWidget::chartTitleChanged
                      ,par,&SAChartSetWidget::chartTitleChanged);
-
         //Tab 2 -- SAChartAxesSetWidget
         tabScrollArea2 = new QScrollArea();
         tabWidget->addTab(tabScrollArea2,"");
