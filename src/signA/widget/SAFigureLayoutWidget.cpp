@@ -110,7 +110,12 @@ void SAFigureLayoutWidget::updateCurrentChart()
     int selIndex = -1;
     for(int i=0;i<plots.size();++i)
     {
-        ui->comboBoxCurrentChart->addItem(plots[i]->title().text());
+        QString title = plots[i]->title().text();
+        if(title.isEmpty())
+        {
+            title = tr("untitle[%1]").arg(i+1);
+        }
+        ui->comboBoxCurrentChart->addItem(title);
         if(m_figure->current2DPlot()==plots[i])
         {
             selIndex = i;
@@ -245,7 +250,14 @@ void SAFigureLayoutWidget::setChartTitle(QwtPlot *chart, const QString &title)
     {
         if(charts[i] == chart)
         {
-            ui->comboBoxCurrentChart->setItemText(i,title);
+            if(title.isEmpty())
+            {
+                ui->comboBoxCurrentChart->setItemText(i,tr("untitle[%1]").arg(i+1));
+            }
+            else
+            {
+                ui->comboBoxCurrentChart->setItemText(i,title);
+            }
             return;
         }
     }
