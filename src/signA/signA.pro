@@ -121,7 +121,6 @@ win32{
 }
 
 include($$PWD/mainWindows/mainWindows.pri)# the other MainWindows
-
 include($$PWD/widget/widget.pri)# the other widget
 include($$PWD/dialog/dialog.pri)# RefProp API
 

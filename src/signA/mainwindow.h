@@ -79,7 +79,6 @@ public:
 private:
     void init();
     void initUI();
-    void initMenu();
     void initPlugin();
     void initTheme();
     //初始化UIReflation
@@ -472,6 +471,10 @@ private slots:
     //设置窗口改变了图表的标题触发的槽
     void onChartTitleChanged(QwtPlot* plot,const QString& title);
 
+    //figure窗口请求菜单
+    void subwindowMouseRightClicked(const QPoint &pos);
+    //设置当前鼠标下的为激活的图形
+    void onActionSelectCurrentCursorToActiveChartTriggered(bool on);
 public:
     //设置皮肤
     void setSkin(const QString& name);
@@ -507,6 +510,7 @@ protected:
 //    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
 //    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
 //    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 private:
     //打开文件
     bool openFile(const QString& fullPath);
@@ -547,12 +551,11 @@ private:
     SAUI* m_uiInterface;
     progressStateWidget* ui_status_progress;///< 状态栏上的进度信息
     SAInformationStatusWidget* ui_status_info;///< 状态栏上的特殊信息
-    QMenu* m_menuTreeProjectItem;///< 项目树的弹出菜单
     SAPluginManager* m_pluginManager;///< 插件管理器
     int m_nProjectCount;//记录项目总数
 
     SAMdiSubWindowManager m_mdiManager;
-
+    SAChart2D* m_figureRightClickChart;///< 记录绘图右击时的2d图
     QScopedPointer<SADrawDelegate> m_drawDelegate;///< 绘图代理
     QActionGroup* m_chartRegionSelectionShapeActionGroup;///<选区选择形状的action group
     QActionGroup* m_chartRegionSelectionModeActionGroup;///<选区选择模式的action group

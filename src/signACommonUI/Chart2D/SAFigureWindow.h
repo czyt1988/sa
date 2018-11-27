@@ -60,6 +60,10 @@ public:
     void clearUndoCommand();
     //判断命令是否是空的
     bool isUndoCommandClean() const;
+    //返回当前光标下的widget
+    QWidget* cursorWidget() const;
+    //返回在当前光标下的2D图
+    SAChart2D* cursor2DChart() const;
 public slots:
     //redo
     void redo();

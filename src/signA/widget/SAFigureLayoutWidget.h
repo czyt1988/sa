@@ -65,6 +65,7 @@ private slots:
     //添加图表
     void onChartAdded(QwtPlot* plot);
     void onChartRemoved(QwtPlot* plot);
+    void onCurrentWidgetChanged(QWidget* w);
 private:
     Ui::SAFigureLayoutWidget *ui;
     SAPlotLayerModel* m_layoutModel;

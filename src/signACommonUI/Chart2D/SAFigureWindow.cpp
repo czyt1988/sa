@@ -9,6 +9,7 @@
 #include <QCoreApplication>
 #include <QScopedPointer>
 #include <QChildEvent>
+#include <QCursor>
 //sa chart
 #include "SAChart2D.h"
 #include "SAQwtSerialize.h"
@@ -347,6 +348,34 @@ void SAFigureWindow::clearUndoCommand()
 bool SAFigureWindow::isUndoCommandClean() const
 {
     return d_ptr->redoUndoStack.isClean();
+}
+
+///
+/// \brief 返回当前光标下的widget
+/// \return 如果当前没有返回nullptr
+///
+QWidget *SAFigureWindow::cursorWidget() const
+{
+  QPoint p = d_ptr->centralwidget->mapFromGlobal(QCursor::pos());
+  return d_ptr->centralwidget->childAt(p);
+}
+
+///
+/// \brief 返回在当前光标下的2D图
+/// \return 如果当前没有返回nullptr
+///
+SAChart2D *SAFigureWindow::cursor2DChart() const
+{
+    //return qobject_cast<SAChart2D *>(cursorWidget());
+    QList<SAChart2D*> charts = get2DPlots();
+    for(int i=0;i<charts.size();++i)
+    {
+        if(charts[i]->underMouse())
+        {
+            return charts[i];
+        }
+    }
+    return nullptr;
 }
 
 

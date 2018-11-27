@@ -119,8 +119,6 @@ FORMS += \
 include($$PWD/SAPropertyItem/SAPropertyItem.pri)
 #sa chart support
 include($$PWD/Private/Private.pri)
-#menu
-include($$PWD/menu/menu.pri)
 #figure set
 include($$PWD/figureSet/figureSet.pri)
 RESOURCES += \

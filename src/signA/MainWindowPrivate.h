@@ -291,13 +291,15 @@ public:
     QVBoxLayout *verticalLayout;
     SAFigureSetWidget *figureSetWidget;
         //QToolBar *toolBarChartTools;
-
+    QMenu* menuFigureWindow;///< 绘图窗口菜单
+    QAction* selectCurrentCursorToActiveChart;///< 选中当前光标所定位的图为激活图形
+    QAction* sectionActionForFigureMenuDataView;///< FigureWindow菜单的分区action【data view】
     MainWindowPrivate(MainWindow* p);
     void init();
     void retranslateUi(MainWindow *mainWinowPtr);
 private:
     void setupUi(MainWindow *mainWinowPtr);
-
+    void setupMenu(MainWindow *mainWinowPtr);
 };
 
 #endif // MAINWINDOWPRIVATE_H

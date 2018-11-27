@@ -124,9 +124,9 @@ MainWindow::MainWindow(QWidget *parent) :
   ,m_uiInterface(new SAUI(this))
   ,ui_status_progress(nullptr)
   ,ui_status_info(nullptr)
-  ,m_menuTreeProjectItem(nullptr)
   ,m_nProjectCount(0)
   ,m_nUserChartCount(0)
+  ,m_figureRightClickChart(nullptr)
 {
     saAddLog("start app");
 
@@ -138,7 +138,6 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
     init();
     initUI();
-    initMenu();
     initUIReflection();
     initProcess();
     saElapsed("init ui and menu");
@@ -437,6 +436,10 @@ void MainWindow::initUI()
     //数据特性窗口的message显示
     connect(ui->dataFeatureWidget,&SADataFeatureWidget::showMessageInfo
             ,this,&MainWindow::showMessageInfo);
+    //
+    connect(ui->selectCurrentCursorToActiveChart,&QAction::triggered
+            ,this,&MainWindow::onActionSelectCurrentCursorToActiveChartTriggered);
+
     //窗口关闭的消息在 on_subWindow_close里
 
 
@@ -459,11 +462,6 @@ void MainWindow::initUI()
 }
 
 
-
-void MainWindow::initMenu()
-{
-
-}
 
 void MainWindow::initPlugin()
 {
@@ -761,6 +759,50 @@ void MainWindow::onChartTitleChanged(QwtPlot *plot, const QString &title)
     ui->figureLayoutWidget->setChartTitle(plot,title);
 }
 
+///
+/// \brief 子窗口右键
+/// \param pos
+///
+void MainWindow::subwindowMouseRightClicked(const QPoint &pos)
+{
+    if(!ui->menuFigureWindow)
+    {
+        return;
+    }
+    SAFigureWindow* fig = getCurrentFigureWindow();
+    if(!fig)
+    {
+        return;
+    }
+    m_figureRightClickChart = fig->cursor2DChart();
+    bool isOnChart = (m_figureRightClickChart != nullptr);
+    if(isOnChart && m_figureRightClickChart != fig->current2DPlot())
+    {
+        ui->selectCurrentCursorToActiveChart->setEnabled(true);
+    }
+    else
+    {
+        ui->selectCurrentCursorToActiveChart->setEnabled(false);
+    }
+
+    ui->menuFigureWindow->exec(QCursor::pos());
+}
+
+///
+/// \brief 设置当前鼠标下的为激活的图形
+/// \param on
+///
+void MainWindow::onActionSelectCurrentCursorToActiveChartTriggered(bool on)
+{
+    SAFigureWindow* fig = getCurrentFigureWindow();
+    if(!fig)
+    {
+        return;
+    }
+    SA_SET_AUTO_WAIT_CURSOR();
+    fig->setCurrent2DPlot(m_figureRightClickChart);
+}
+
 
 
 void MainWindow::setSkin(const QString &name)
@@ -973,6 +1015,33 @@ SAValueManagerModel*MainWindow::getValueManagerModel() const
 SADrawDelegate*MainWindow::getDrawDelegate() const
 {
     return m_drawDelegate.data();
+}
+
+///
+/// \brief 鼠标点击事件
+/// \param event
+///
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if(!event)
+    {
+        return;
+    }
+    if(event->button() == Qt::RightButton)
+    {
+        m_figureRightClickChart = nullptr;
+        QMdiSubWindow* sub = ui->mdiArea->currentSubWindow();
+        if(sub)
+        {
+            if(sub->underMouse())
+            {
+                subwindowMouseRightClicked(sub->mapFromGlobal(QCursor::pos()));
+                return;
+            }
+
+        }
+    }
+    QMainWindow::mousePressEvent(event);
 }
 
 

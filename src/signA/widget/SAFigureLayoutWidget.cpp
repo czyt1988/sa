@@ -49,6 +49,8 @@ void SAFigureLayoutWidget::setFigure(SAFigureWindow *fig)
                    ,this,&SAFigureLayoutWidget::onChartAdded);
         disconnect(m_figure,&SAFigureWindow::chartRemoved
                    ,this,&SAFigureLayoutWidget::onChartRemoved);
+        disconnect(m_figure,&SAFigureWindow::currentWidgetChanged
+                ,this,&SAFigureLayoutWidget::onCurrentWidgetChanged);
     }
     m_figure = fig;
     if(m_figure)
@@ -57,6 +59,8 @@ void SAFigureLayoutWidget::setFigure(SAFigureWindow *fig)
                    ,this,&SAFigureLayoutWidget::onChartAdded);
         connect(m_figure,&SAFigureWindow::chartRemoved
                    ,this,&SAFigureLayoutWidget::onChartRemoved);
+        connect(m_figure,&SAFigureWindow::currentWidgetChanged
+                ,this,&SAFigureLayoutWidget::onCurrentWidgetChanged);
     }
     updateCurrentChart();
 
@@ -232,6 +236,26 @@ void SAFigureLayoutWidget::onChartRemoved(QwtPlot *plot)
 {
     Q_UNUSED(plot);
     updateCurrentChart();
+}
+
+///
+/// \brief figure 当前选中的图形发生了改变
+/// \param w
+///
+void SAFigureLayoutWidget::onCurrentWidgetChanged(QWidget *w)
+{
+    if(nullptr == m_figure)
+    {
+        return;
+    }
+    const QList<SAChart2D *>& plots = m_figure->get2DPlots();
+    for(int i=0;i<plots.size();++i)
+    {
+        if(plots[i] == w)
+        {
+            ui->comboBoxCurrentChart->setCurrentIndex(i);
+        }
+    }
 }
 
 ///

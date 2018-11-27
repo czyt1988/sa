@@ -3,6 +3,7 @@
 #include <QDebug>
 MainWindowPrivate::MainWindowPrivate(MainWindow* p)
     :Parent(p)
+    ,menuFigureWindow(nullptr)
 {
 
 }
@@ -842,7 +843,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 
-
+    setupMenu(mainWinowPtr);
 
     retranslateUi(mainWinowPtr);
     QObject::connect(actionQuit, SIGNAL(triggered()), mainWinowPtr, SLOT(close()));
@@ -851,6 +852,23 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
     QMetaObject::connectSlotsByName(mainWinowPtr);
+}
+
+void MainWindowPrivate::setupMenu(MainWindow *mainWinowPtr)
+{
+    menuFigureWindow = new QMenu(mainWinowPtr);
+    menuFigureWindow->setObjectName(QStringLiteral("menuFigureWindow"));
+    selectCurrentCursorToActiveChart = new QAction(mainWinowPtr);
+    selectCurrentCursorToActiveChart->setObjectName(QStringLiteral("selectCurrentCursorToActiveChart"));
+    selectCurrentCursorToActiveChart->setEnabled(false);
+
+    menuFigureWindow->addAction(selectCurrentCursorToActiveChart);
+    sectionActionForFigureMenuDataView = menuFigureWindow->addSection(QStringLiteral("Data View"));
+
+    menuFigureWindow->addAction(actionEnableChartCrossCursor);
+    menuFigureWindow->addAction(actionEnableChartPanner);
+    menuFigureWindow->addAction(actionYDataPicker);
+    menuFigureWindow->addAction(actionXYDataPicker);
 }
 
 
@@ -1039,5 +1057,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));
 
     ribbonApplicationButton->setText(QApplication::translate("MainWindow", "SA", 0));
-
+// figure window 菜单设置
+    selectCurrentCursorToActiveChart->setText(QApplication::translate("MainWindow", "set to active chart", 0));
+    sectionActionForFigureMenuDataView->setText(QApplication::translate("MainWindow", "Data View", 0));
 }
