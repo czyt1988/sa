@@ -294,16 +294,13 @@ void MainWindow::initUI()
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
-    ui->actionEnableChartCrossCursor->setCheckable(true);
     connect(ui->actionEnableChartCrossCursor,&QAction::triggered
             ,this,&MainWindow::onActionChartEnablePickerTriggered);
 
     //拖动
-    ui->actionEnableChartPanner->setCheckable(true);
     connect(ui->actionEnableChartPanner,&QAction::triggered
             ,this,&MainWindow::onActionChartEnablePannerTriggered);
     //区间缩放
-    ui->actionEnableChartZoom->setCheckable(true);
     connect(ui->actionEnableChartZoom,&QAction::triggered
             ,this,&MainWindow::onActionChartEnableZoomTriggered);
 

@@ -72,7 +72,6 @@ private:
     //获取选中的线形数据
     void getSelectLinerData(QHash<int, QVector<double> >& rawData) const;
     //获取选择的点集
-    void getSelectVectorPointData(QVector< std::shared_ptr<QVector<QPointF> > > &rawData,int dim = 0);
     bool getSelectVectorPointData(SAVectorPointF* data);
     //获取选择的列值
     static void getItemSelectionColumns(QItemSelectionModel* selModel

@@ -19,9 +19,10 @@
 
 # 当前进度
 - （完成）子图移动操作\子图的redo/undo(更改SACHart的redo/undo，转移到SAFigureWindow中，目前SAChart::appendCommand会删除无法加入的cmd，此操作有危险，建议返回false，在append后判断进行删除)
-- （在图层加一个combox来选择）figure添加鼠标点击切换currentChart
-- SAFigureLayoutWidget 在图表参数标题改变时，通知SAFigureLayoutWidget的current chart改变
-- 图表参数编辑dock的图表选择去掉，只留SAFigureLayoutWidget的图表选择
+- （完成）（在图层加一个combox来选择）figure添加鼠标点击切换currentChart
+- （完成）SAFigureLayoutWidget 在图表参数标题改变时，通知SAFigureLayoutWidget的current chart改变
+- （完成）图表参数编辑dock的图表选择去掉，只留SAFigureLayoutWidget的图表选择
+- variant table 的编辑，目前variant无法直接编辑
 - figure的图层界面进行修改，支持子图
 - 添加数据操作标签，主要功能有，数据操作面板 ： 新加数据(新建序列，新建表，新建包)
 - 绘图数据视图的导出csv功能、ctrl+c复制数值功能、ctrl+v添加数据功能、数据修改功能、导出为变量功能等

@@ -95,14 +95,17 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionEnableChartCrossCursor = new QAction(mainWinowPtr);
     actionEnableChartCrossCursor->setObjectName(QStringLiteral("actionEnableChartPicker"));
+    actionEnableChartCrossCursor->setCheckable(true);
     actionEnableChartCrossCursor->setIcon(QIcon(":/figureSet/icons/figureSet/crossCursor.svg"));
 
     actionEnableChartPanner = new QAction(mainWinowPtr);
     actionEnableChartPanner->setObjectName(QStringLiteral("actionEnableChartPanner"));
+    actionEnableChartPanner->setCheckable(true);
     actionEnableChartPanner->setIcon(QIcon(":/figureSet/icons/figureSet/pannerChart.png"));
 
     actionEnableChartZoom = new QAction(mainWinowPtr);
     actionEnableChartZoom->setObjectName(QStringLiteral("actionEnableChartZoom"));
+    actionEnableChartZoom->setCheckable(true);
     actionEnableChartZoom->setIcon(QIcon(":/figureSet/icons/figureSet/zoomChart.png"));
 
     actionYDataPicker = new QAction(mainWinowPtr);
@@ -416,6 +419,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     //menuGrid->setIcon(icon18);
 
     menuZoomSet = new SARibbonMenu(menuBar);
+    menuZoomSet->setIcon(QIcon(":/figureSet/icons/figureSet/zoomChart.png"));
     menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
 
     menuSkinList = new SARibbonMenu(menuBar);
@@ -869,6 +873,7 @@ void MainWindowPrivate::setupMenu(MainWindow *mainWinowPtr)
     menuFigureWindow->addAction(actionEnableChartPanner);
     menuFigureWindow->addAction(actionYDataPicker);
     menuFigureWindow->addAction(actionXYDataPicker);
+    menuFigureWindow->addMenu(menuZoomSet);
 }
 
 

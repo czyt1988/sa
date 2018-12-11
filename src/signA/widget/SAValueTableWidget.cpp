@@ -554,54 +554,7 @@ void SAValueTableWidget::getSelectLinerData(QHash<int, QVector<double> > &rawDat
         }
     }
 }
-///
-/// \brief 把选择的数据转为点序列
-/// \param rawData 输出rawData
-/// \param dim 选择数据的方向，0为向下，即为选择列，1为横向选择
-///
-void SAValueTableWidget::getSelectVectorPointData(QVector<std::shared_ptr<QVector<QPointF> > > &rawData, int dim)
-{
-    QItemSelectionModel* selModel = ui->tableView->selectionModel ();
-    if(0 == dim)
-    {
-        QMap<int, std::shared_ptr<QVector<QVariant> > > colVals;
-        getItemSelectionColumns(selModel,colVals);
-        if(colVals.size() == 0)
-        {
-            QMessageBox::warning(this,QStringLiteral("通知"),QStringLiteral("未获得有效的列"));
-            return;
-        }
-        else if(colVals.size()<2)
-        {
-            QMessageBox::information(this,QStringLiteral("通知"),QStringLiteral("至少选择2列以上"));
-            return;
-        }
-        bool isConver = false;
-        for(auto i = colVals.begin();i!=colVals.end();i+=2)
-        {
-            auto col1 = i.value();
-            if (i+1 == colVals.end())
-                break;
-            auto col2 = (i+1).value();
-            auto minSize = std::min(col1->size(),col2->size());
-            if (0 == minSize)
-                continue;
-            std::shared_ptr<QVector<QPointF> > onePointColumn;
-            onePointColumn.reset(new QVector<QPointF>());
-            for(auto j=0;j<minSize;++j)
-            {
-                double x = col1->at(j).toDouble(&isConver);
-                if(!isConver)
-                    continue;
-                double y = col2->at(j).toDouble(&isConver);
-                if(!isConver)
-                    continue;
-                onePointColumn->append(QPointF(x,y));
-            }
-            rawData.append(onePointColumn);
-        }
-    }
-}
+
 
 ///
 /// \brief 获取选中的两列数据作为SAVectorPointF的值
@@ -610,72 +563,43 @@ void SAValueTableWidget::getSelectVectorPointData(QVector<std::shared_ptr<QVecto
 ///
 bool SAValueTableWidget::getSelectVectorPointData(SAVectorPointF* data)
 {
-    QItemSelectionModel* selModel = ui->tableView->selectionModel ();
-    int xcolumn(0),ycolumn(0);
-    QVector<int> xrows,yrows;
-    //提取选中的x，y列
-    if(1){
-        QModelIndexList indexList = selModel->selectedIndexes ();
-
-        int rowStart(-1),rowEnd(-1);
-        const int size = indexList.size ();
-        xcolumn = ycolumn = indexList.first ().column ();
-        rowStart = rowEnd = indexList.first ().row ();
-        for(int i=1;i<size;++i)
-        {
-            ycolumn = indexList[i].column ();
-            if(xcolumn != ycolumn)//说明两个列不相等，可以提取
-                break;
-        }
-        if(xcolumn == ycolumn)
-            return false;
-        for (int i=0;i<size;++i)
-        {
-            if(xcolumn == indexList[i].column ())
-               xrows.push_back (indexList[i].row ());
-            else if(ycolumn == indexList[i].column ())
-               yrows.push_back (indexList[i].row ());
-        }
-    }
-    if(xrows.size ()>yrows.size ())
-        xrows.resize (yrows.size ());
-    else if(xrows.size ()<yrows.size ())
-        yrows.resize (xrows.size ());
-
     SADataTableModel* model = getDataModel ();
-
-    QList<SAAbstractDatas*> datasPtr;
-    datasPtr = model->getSADataPtrs ();
-    if(datasPtr.size ()<std::max(xcolumn,ycolumn))
-        return false;
-    SAAbstractDatas* xPtr = datasPtr[xcolumn];
-    SAAbstractDatas* yPtr = datasPtr[ycolumn];
-    QVector<double> x,y;
-    SADataConver::converToDoubleVector(xPtr,x);
-    SADataConver::converToDoubleVector(yPtr,y);
-
-    QVector<double> tmp;
-    tmp.reserve(xrows.size());
-    std::for_each(xrows.begin(),xrows.end(),[&](int i){
-        if(i < x.size())
-            tmp.push_back(i);
-    });
-    x.swap(tmp);
-
-    tmp.clear();
-    tmp.reserve(yrows.size());
-    std::for_each(yrows.begin(),yrows.end(),[&](int i){
-        if(i < y.size())
-            tmp.push_back(i);
-    });
-    y.swap(tmp);
-    tmp.clear();
-
-
-    int minSize = std::min(x.size (),y.size ());
-    for(int i=0;i<minSize;++i)
+    QItemSelectionModel* selModel = ui->tableView->selectionModel ();
+    QModelIndexList indexList = selModel->selectedIndexes ();
+    int xcolumn(0),ycolumn(0);
+    xcolumn = ycolumn = indexList.first ().column ();
+    for(int i=1;i<indexList.size();++i)
     {
-        data->append (QPointF(x[i],y[i]));
+        ycolumn = indexList[i].column ();
+        if(xcolumn != ycolumn)//说明两个列不相等，可以提取
+            break;
+    }
+    if(xcolumn == ycolumn)
+        return false;
+    QPointF p(0,0);
+    bool xOK,yOK;
+    for(int i=0;i<indexList.size();++i)
+    {
+        const QModelIndex& xindex = indexList[i];
+        if(xcolumn == xindex.column())
+        {
+            p.rx() = xindex.data().toDouble(&xOK);
+            if(!xOK)
+            {
+                continue;
+            }
+            QModelIndex yindex = model->index(xindex.row(),ycolumn);
+            if(!yindex.isValid())
+            {
+                continue;
+            }
+            p.ry() = yindex.data().toDouble(&yOK);
+            if(!yOK)
+            {
+                continue;
+            }
+            data->append(p);
+        }
     }
     return (data->getSize ())>0;
 }
