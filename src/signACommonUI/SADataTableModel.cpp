@@ -448,15 +448,18 @@ void SADataTableModel::reCalcRowAndColumnCount()
             if(size<0)
                 continue;
             if(size > m_rowCount)
-                m_rowCount = size;
-            size = (*i)->getSize(SA::Dim2);
-            for(int k=0;k<size;++k)
             {
+                m_rowCount = size;
+            }
+            size = (*i)->getSize(SA::Dim2);
+            int k=0;
+            do{
                 m_col2Ptr[col] = (*i);
                 m_ptr2Col.insert(*i,col);
                 col2ptrCol[col] = k;
                 ++col;
-            }
+                ++k;
+            }while(k<size);
             m_ptr2ColMap[(*i)] = col2ptrCol;
         }
 

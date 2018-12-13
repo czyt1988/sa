@@ -22,9 +22,10 @@
 - （完成）（在图层加一个combox来选择）figure添加鼠标点击切换currentChart
 - （完成）SAFigureLayoutWidget 在图表参数标题改变时，通知SAFigureLayoutWidget的current chart改变
 - （完成）图表参数编辑dock的图表选择去掉，只留SAFigureLayoutWidget的图表选择
-- variant table 的编辑，目前variant无法直接编辑
-- figure的图层界面进行修改，支持子图
-- 添加数据操作标签，主要功能有，数据操作面板 ： 新加数据(新建序列，新建表，新建包)
+- （完成）variant table 的编辑，目前variant无法直接编辑
+- （完成）figure的图层界面进行修改，支持子图
+- （完成）添加数据操作标签，主要功能有，数据操作面板 ： 新加数据(新建序列，新建表)
+- 添加数据打包功能，向量序列打包为点序列等功能
 - 绘图数据视图的导出csv功能、ctrl+c复制数值功能、ctrl+v添加数据功能、数据修改功能、导出为变量功能等
 - 完善目前支持的绘图
 - 完善subplot编辑模式
