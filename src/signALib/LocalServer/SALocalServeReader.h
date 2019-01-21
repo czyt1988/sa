@@ -26,6 +26,10 @@ protected:
     bool readFromSocket(void *p,int n);
 signals:
     ///
+    /// \brief 响应登录，并返回一个token
+    ///
+    void responseLogin(unsigned int tokenID);
+    ///
     /// \brief 有错误发生
     /// \param info 错误描述
     ///
@@ -46,6 +50,10 @@ signals:
     /// \param 字符协议
     ///
     void receivedString(const SALocalServeStringProtocol& protocol);
+    ///
+    /// \brief 断开连接
+    ///
+    void disconnectFromServe();
 private:
     //根据类型分发协议
     void deal(int type,const QByteArray& datas);

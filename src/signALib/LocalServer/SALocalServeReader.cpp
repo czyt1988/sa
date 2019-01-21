@@ -222,7 +222,7 @@ void SALocalServeReader::onReadyRead()
 
 void SALocalServeReader::onDisconnected()
 {
-
+    emit disconnectFromServe();
 }
 
 void SALocalServeReader::onError(QLocalSocket::LocalSocketError socketError)

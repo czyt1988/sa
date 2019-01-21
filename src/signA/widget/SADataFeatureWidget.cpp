@@ -505,7 +505,8 @@ void SADataFeatureWidget::connectToServer()
 {
     if(m_dataProcessSocket)
     {
-        delete m_dataProcessSocket;m_dataProcessSocket=nullptr;
+        delete m_dataProcessSocket;
+        m_dataProcessSocket=nullptr;
     }
     m_dataProcessSocket = new QLocalSocket(this);
     connect(m_dataProcessSocket,&QLocalSocket::disconnected

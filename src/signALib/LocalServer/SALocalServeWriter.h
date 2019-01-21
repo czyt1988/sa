@@ -18,6 +18,8 @@ public:
     //判断是否具有可写条件
     bool isEnableToWrite() const;
 public slots:
+    //登录，成功会返回token
+    Q_SLOT void login();
     //发送握手协议
     Q_SLOT void sendShakeHand();
     //发送数组
