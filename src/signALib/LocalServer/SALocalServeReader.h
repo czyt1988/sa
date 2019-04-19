@@ -2,7 +2,6 @@
 #define SALOCALSERVEREADER_H
 
 #include <QObject>
-#include "SALocalServeProtocol.h"
 #include "SALocalServeBaseHeader.h"
 #include "SALibGlobal.h"
 #include <QVector>
@@ -10,6 +9,9 @@
 #include <QPointF>
 #include <QLocalSocket>
 
+/**
+ * @brief 读取服务器信息
+ */
 class SALIB_EXPORT SALocalServeReader : public QObject
 {
     Q_OBJECT
@@ -21,48 +23,31 @@ public:
     QLocalSocket *getSocket() const;
     //设置套接字
     void setSocket(QLocalSocket *socket, bool autoDicConnect = false);
+    int getToken() const;
+    void setToken(int token);
+
 protected:
     //
     bool readFromSocket(void *p,int n);
 signals:
-    ///
-    /// \brief 响应登录，并返回一个token
-    ///
-    void responseLogin(unsigned int tokenID);
     ///
     /// \brief 有错误发生
     /// \param info 错误描述
     ///
     void errorOccure(const QString& info);
     ///
-    /// \brief 接收到握手协议
-    /// \param 握手协议
+    /// \brief 接收
+    /// \param head
+    /// \param datas
     ///
-    void receivedShakeHand(const SALocalServeShakeHandProtocol& protocol);
-    ///
-    /// \brief 接收到线性数组数据
-    /// \param header 文件头
-    /// \param ys 数据
-    ///
-    void receivedVectorPointFData(const SALocalServeVectorPointProtocol& protocol);
-    ///
-    /// \brief 接收到字符
-    /// \param 字符协议
-    ///
-    void receivedString(const SALocalServeStringProtocol& protocol);
+    void receive(const SALocalServeBaseHeader& head,const QByteArray& datas);
     ///
     /// \brief 断开连接
     ///
     void disconnectFromServe();
 private:
     //根据类型分发协议
-    void deal(int type,const QByteArray& datas);
-    //处理握手协议
-    void dealShakeHand(const QByteArray& datas);
-    //处理线性数组的数据
-    void dealVectorDoubleDataProcData(const QByteArray& datas);
-    //处理线性数组的数据
-    void dealString(const QByteArray& datas);
+    void deal(const SALocalServeBaseHeader& head,const QByteArray& datas);
 private slots:
     Q_SLOT void onReadyRead();
     Q_SLOT void onDisconnected();
@@ -73,6 +58,7 @@ private:
     bool m_isReadedMainHeader;///< 标记是否读取了包头
     QByteArray m_buffer;
     int m_index;
+    int m_token;
 };
 
 Q_DECLARE_METATYPE(QVector<double>)

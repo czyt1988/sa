@@ -2,15 +2,14 @@
 #define SADATAPROCSERVE_H
 #include <QObject>
 #include <QLocalSocket>
-#include "SALocalServeReader.h"
+#include "SALocalServeProtocol.h"
 #include "SALocalServeWriter.h"
 #include <QSet>
 #include <QTimer>
-#include "SALocalServeProtocol.h"
-class SADataProcessVectorPointF;
-class SADataFeatureItem;
+
 class QThread;
 class QLocalServer;
+class SADataProcessVectorPointF;
 ///
 /// \brief 数据处理服务
 ///
@@ -28,7 +27,7 @@ private:
     /// \brief 私有信号，用于调用数据处理线程
     ///
     Q_SIGNAL void callVectorPointFProcess(const QVector<QPointF>& points
-                                          ,const QHash<QString, QVariant>& args);
+                                          ,const QHash<QString, QVariant> &args);
 
     void initCalcThread();
 
@@ -37,12 +36,14 @@ private slots:
     Q_SLOT void onLocalServeNewConnection();
     //错误发生
     Q_SLOT void errorOccurred(QLocalSocket::LocalSocketError err);
-    //接收到客户端发的点数组
-    Q_SLOT void onReceivedVectorPointFData(const SALocalServeVectorPointProtocol &protocol);
-    //接收到客户端的文字
-    Q_SLOT void onReceivedString(const SALocalServeStringProtocol& protocol);
     //接收到握手协议
-    Q_SLOT void onRecShakeHand(const SALocalServeShakeHandProtocol& protocol);
+    Q_SLOT void onHeartbeatTimeOut(int ms,int tokenID, uint key);
+
+    //接收到客户端发的点数组
+    Q_SLOT void onReceive2DPointFs(const QVector<QPointF> &datas, uint key);
+    //接收到客户端的文字
+    Q_SLOT void onReceivedString(const QString& str,uint key);
+
 
     //接收到点数组的计算结果
     Q_SLOT void onProcessVectorPointFResult(const QString& res
@@ -54,7 +55,8 @@ private slots:
 private:
     QSet<QLocalSocket*> m_connectList;///< 连接的列表
     QMap<QLocalSocket*,SALocalServeWriter*> m_writerDict;
-    QMap<QLocalSocket*,SALocalServeReader*> m_readerDict;
+    QMap<QLocalSocket*,SALocalServeProtocol*> m_readerDict;
+    QMap<int,QPair<SALocalServeWriter*,SALocalServeProtocol*>> m_token2readwrite;
 private:
     QThread* m_calcThread;///< 处理计算的线程
     SADataProcessVectorPointF* m_pointFCalctor;///< 点集计算处理

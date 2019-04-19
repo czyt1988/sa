@@ -16,6 +16,7 @@
 #ifndef SA_XML_TAG_QUINTPTR
 #define SA_XML_TAG_QUINTPTR "quintptrVal"
 #endif
+
 /// \def <sa>的属性类型名<sa type="xxx">
 #ifndef SA_XML_ATT_NAME_SA_TYPE
 #define SA_XML_ATT_NAME_SA_TYPE "type"

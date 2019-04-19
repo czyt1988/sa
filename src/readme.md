@@ -2,7 +2,7 @@
 
 sa使用了如下第三方库，在进行编译前请先配置好，否则无法编译。
 
-目前版本的第三方库的代码都在[/src/3rdParty](https://github.com/czyt1988/sa/raw/master/src/3rdParty)文件夹下，由于像`qwtplot3d`已经不维护因此这里索性把第三方库的代码都放到此目录下，后续考虑移除
+目前版本的第三方库的代码都在[/src/3rdParty](https://github.com/czyt1988/sa/raw/master/src/3rdParty)文件夹下，由于像`qwtplot3d`已经不维护因此这里索性把第三方库的代码都放到此目录下，后续考虑移除、比较稳定在github更新的库只留下更新脚本，防止作者删库跑路，也留下了一个压缩包
 
 目前已经使用到如下第三方库或类：
 
@@ -18,6 +18,7 @@ sa使用了如下第三方库，在进行编译前请先配置好，否则无法
 - [qtcolorpicker - 颜色拾取按钮](https://github.com/czyt1988/sa/tree/master/src/3rdParty/qtcolorpicker)
 - [ctk - ctk项目的一些类](https://github.com/czyt1988/sa/tree/master/src/3rdParty/ctk)
 - [Qt的隐藏控件组qtpropertybrowser 激活方法见此链接](https://blog.csdn.net/czyt1988/article/details/78140050)
+- [基于Qt和C++11的json-rpc2.0](https://github.com/joncol/jcon-cpp)
 
 可能用到的库，目前还没用
 

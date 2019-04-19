@@ -57,9 +57,12 @@ bool SALocalServeReader::readFromSocket(void *p, int n)
 /// \param type
 /// \param datas
 ///
-void SALocalServeReader::deal(int type, const QByteArray &datas)
+void SALocalServeReader::deal(const SALocalServeBaseHeader &head, const QByteArray &datas)
 {
-    switch(type)
+    emit receive(head,datas);
+
+    /*
+    switch(head)
     {
     case SALocalServeBaseProtocol::TypeShakeHand://握手协议
         dealShakeHand(datas);
@@ -79,45 +82,35 @@ void SALocalServeReader::deal(int type, const QByteArray &datas)
         break;
     }
     }
-}
-///
-/// \brief 处理握手协议
-/// \param header
-/// \param datas
-///
-void SALocalServeReader::dealShakeHand(const QByteArray &datas)
-{
-    QDataStream io(datas);
-    SALocalServeShakeHandProtocol pl;
-    io >> pl;
-    emit receivedShakeHand(pl);
-}
-
-
-///
-/// \brief 处理线性数组的数据
-/// \param datas
-///
-void SALocalServeReader::dealVectorDoubleDataProcData(const QByteArray &datas)
-{
-#ifdef _DEBUG_PRINT
-    qDebug() << "SALocalServeReader::dealVectorDoubleDataProcData";
-#endif
-    QDataStream io(datas);
-    SALocalServeVectorPointProtocol pl;
-    io >> pl;
-    emit receivedVectorPointFData(pl);
+    */
 }
 
 
 
-void SALocalServeReader::dealString(const QByteArray &datas)
-{
-    QDataStream io(datas);
-    SALocalServeStringProtocol pl;
-    io >> pl;
-    emit receivedString(pl);
-}
+/////
+///// \brief 处理线性数组的数据
+///// \param datas
+/////
+//void SALocalServeReader::dealVectorDoubleDataProcData(const QByteArray &datas)
+//{
+//#ifdef _DEBUG_PRINT
+//    qDebug() << "SALocalServeReader::dealVectorDoubleDataProcData";
+//#endif
+//    QDataStream io(datas);
+//    SALocalServeVectorPointProtocol pl;
+//    io >> pl;
+//    emit receivedVectorPointFData(pl);
+//}
+
+
+
+//void SALocalServeReader::dealString(const QByteArray &datas)
+//{
+//    QDataStream io(datas);
+//    SALocalServeStringProtocol pl;
+//    io >> pl;
+//    emit receivedString(pl);
+//}
 
 
 ///
@@ -151,7 +144,7 @@ void SALocalServeReader::onReadyRead()
                 return;
             }
             m_index += m_mainHeader.dataSize;
-            deal(m_mainHeader.type,m_buffer);
+            deal(m_mainHeader,m_buffer);
             m_isReadedMainHeader = false;
             if(m_socket->bytesAvailable() >= s_headerSize)
             {
@@ -209,7 +202,7 @@ void SALocalServeReader::onReadyRead()
             qDebug() << "!!!!mainHeader dataSize == 0: type:"<<m_mainHeader.type
                             ;
 #endif
-            deal(m_mainHeader.type,m_buffer);
+            deal(m_mainHeader,m_buffer);
             m_isReadedMainHeader = false;
         }
 
@@ -229,6 +222,16 @@ void SALocalServeReader::onError(QLocalSocket::LocalSocketError socketError)
 {
     qDebug() << __FILE__<<":"<<__FUNCTION__ << "err code:"<<(int)socketError;
     qDebug() << __FILE__<<":"<<__FUNCTION__ << m_socket->errorString();
+}
+
+int SALocalServeReader::getToken() const
+{
+    return m_token;
+}
+
+void SALocalServeReader::setToken(int token)
+{
+    m_token = token;
 }
 ///
 /// \brief 获取套接字

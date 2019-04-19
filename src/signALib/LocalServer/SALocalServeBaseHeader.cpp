@@ -26,21 +26,13 @@ bool SALocalServeBaseHeader::isValid() const
 
 QDataStream &operator <<(QDataStream &io, const SALocalServeBaseHeader &d)
 {
-    io.writeRawData((const char*)(&(d.magic_start)),sizeof(uint));
-    io.writeRawData((const char*)(&(d.key)),sizeof(uint));
-    io.writeRawData((const char*)(&(d.type)),sizeof(int));
-    io.writeRawData((const char*)(&(d.dataSize)),sizeof(size_t));
-    io.writeRawData((const char*)(&(d.magic_end)),sizeof(uint));
+    io.writeRawData((const char*)(&d),sizeof(SALocalServeBaseHeader));
     return io;
 }
 
 QDataStream &operator >>(QDataStream &io, SALocalServeBaseHeader &d)
 {
-    io.readRawData((char*)(&(d.magic_start)),sizeof(uint));
-    io.readRawData((char*)(&(d.key)),sizeof(uint));
-    io.readRawData((char*)(&(d.type)),sizeof(int));
-    io.readRawData((char*)(&(d.dataSize)),sizeof(size_t));
-    io.readRawData((char*)(&(d.magic_end)),sizeof(uint));
+    io.readRawData((char*)(&d),sizeof(SALocalServeBaseHeader));
     return io;
 }
 
