@@ -5,17 +5,19 @@
 #include "SALibGlobal.h"
 #include <QVector>
 #include "SALocalServeBaseHeader.h"
+#include <QLocalSocket>
 #include <QTimer>
 class QLocalSocket;
-class SALocalServePrivate;
+class SALocalServeSocketOptPrivate;
 
-class SALIB_EXPORT SALocalServe : public QObject
+class SALIB_EXPORT SALocalServeSocketOpt : public QObject
 {
     Q_OBJECT
-    SA_IMPL(SALocalServe)
+    SA_IMPL(SALocalServeSocketOpt)
 public:
-    SALocalServe(QLocalSocket* localSocket,QObject* parent = nullptr);
-    SALocalServe(QObject* parent = nullptr);
+    SALocalServeSocketOpt(QLocalSocket* localSocket,QObject* parent = nullptr);
+    SALocalServeSocketOpt(QObject* parent = nullptr);
+    ~SALocalServeSocketOpt();
 public:
     QLocalSocket *getSocket() const;
     void setSocket(QLocalSocket *socket);

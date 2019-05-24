@@ -30,10 +30,12 @@ INCLUDEPATH += $$PWD
 
 
 SOURCES += main.cpp \
-    SADataProcServe.cpp
+    SADataProcServe.cpp \
+    SALocalServeSocketServeParse.cpp
 
 HEADERS += \
-    SADataProcServe.h
+    SADataProcServe.h \
+    SALocalServeSocketServeParse.h
     
 
 

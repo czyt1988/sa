@@ -30,9 +30,6 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
        qDebug() << tr("listern loacl server error");
     }
     qDebug() << "start DataProc Serve";
-    connect(&m_liveCheck,&QTimer::timeout
-            ,this,&SADataProcServe::onLifeCheckTimeOut);
-    m_liveCheck.start(5000);
 }
 
 
@@ -47,35 +44,24 @@ void SADataProcServe::onLocalServeNewConnection()
     }
     static uint tokenID = 100;
     ++tokenID;
-    SALocalServeWriter* writer = new SALocalServeWriter(socket,socket);
-    SALocalServeProtocol* reader = new SALocalServeProtocol(socket,socket);
-    writer->setToken(tokenID);
-    reader->setToken(tokenID);
-    m_token2readwrite[tokenID] = qMakePair(writer,reader);
-    m_connectList.insert(socket);
-    m_writerDict[socket] = writer;
-    m_readerDict[socket] = reader;
-
-    writer->sendLoginSucceed();
+    SALocalServeSocketServeParse* sp = new SALocalServeSocketServeParse(socket,socket);
+    sp->setToken(tokenID);
+    m_socketOptDict[socket] = sp;
+    m_tokenOptDict[tokenID] = sp;
+    //发送登录成功，把token发生到接收端
+    sp->sendLoginSucceed();
     //开始心跳检查
-    writer->startHeartbeat();
+    sp->startAutoHeartbeat();
 
 
-    connect(reader,&SALocalServeProtocol::receive2DPointFs
+    connect(sp,&SALocalServeSocketServeParse::rec2DPointFs
             ,this,&SADataProcServe::onReceive2DPointFs);
-    connect(reader,&SALocalServeProtocol::receiveString
+    connect(sp,&SALocalServeSocketServeParse::recString
             ,this,&SADataProcServe::onReceivedString);
-    connect(reader,&SALocalServeProtocol::heartbeatTimeOut
-            ,this,&SADataProcServe::onHeartbeatTimeOut);
-    /*
-    connect(reader,&SALocalServeReader::receivedString
-            ,this,&SADataProcServe::onReceivedString);
-    connect(reader,&SALocalServeReader::receivedShakeHand
-            ,this,&SADataProcServe::onRecShakeHand);
-    connect(socket,&QLocalSocket::disconnected,this,&SADataProcServe::onDisconnected);
-    */
-
-
+    connect(socket,static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error)
+            ,this,&SADataProcServe::errorOccurred);
+    connect(socket,&QLocalSocket::disconnected
+            ,this,&SADataProcServe::onDisconnected);
 }
 
 void SADataProcServe::initCalcThread()
@@ -105,29 +91,18 @@ void SADataProcServe::errorOccurred(QLocalSocket::LocalSocketError err)
     }
 }
 
-/**
- * @brief 心跳丢失
- * @param ms 丢失时间
- * @param tokenID 对应的token
- * @param key 对应的key
- */
-void SADataProcServe::onHeartbeatTimeOut(int ms, int tokenID, uint key)
-{
-    Q_UNUSED(key);
-    qDebug() << "unreach heart beat " << ms << " ms, token id:" << tokenID;
-    //TODO:这里暂时不作为
-}
+
 
 
 
 void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
 {
-    SALocalServeReader* reader  = qobject_cast<SALocalServeReader*>(sender());
-    if(reader)
+    SALocalServeSocketServeParse* sp = qobject_cast<SALocalServeSocketServeParse*>(sender());
+    if(sp)
     {
         QHash<QString, QVariant> args;
         args[ARG_DES_KEY_ID]=QVariant::fromValue(key);
-        args[ARG_DES_TOKEN_ID]=QVariant::fromValue(reader->getToken());
+        args[ARG_DES_TOKEN_ID]=QVariant::fromValue(sp->getToken());
 #ifdef _DEBUG_OUTPUT
     qDebug() << "onReceivedVectorPointFData-> data size:"<<protocol.getPoints().size()
              << " wndId:"<<wndId
@@ -141,46 +116,23 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
 
 void SADataProcServe::onReceivedString(const QString& str,uint key)
 {
-    SALocalServeReader* reader  = qobject_cast<SALocalServeReader*>(sender());
-    if(nullptr == reader)
+    SALocalServeSocketServeParse* sp = qobject_cast<SALocalServeSocketServeParse*>(sender());
+    if(nullptr == sp)
     {
         return;
     }
     if("__test__1m" == str)//这是一个特殊的测试请求，接收到这个字符串后，发送1000,000个点进行计时测试
     {
         qDebug() << "receive __test__1m : start 1m points test";
-        SALocalServeWriter* writer =  getWriter(reader);
-        if(nullptr == writer)
-        {
-            return;
-        }
         QVector<QPointF> points;
         for(int i=0;i<1000000;++i)
         {
             points.append(QPointF(1,1));
         }
         qDebug() << "send 1m points test";
-        writer->send2DPointFs(points);
+        sp->send2DPointFs(points);
     }
 }
-
-/*
-void SADataProcServe::onRecShakeHand(const SALocalServeShakeHandProtocol& protocol)
-{
-    if(!protocol.isValid())
-    {
-        qDebug() << "rec ShakeHand but invalid!";
-        return;
-    }
-    SALocalServeReader* reader  = qobject_cast<SALocalServeReader*>(sender());
-    SALocalServeWriter* writer =  getWriter(reader);
-    if(nullptr == writer)
-    {
-        return;
-    }
-    writer->sendShakeHand();
-}
-*/
 
 
 void SADataProcServe::onProcessVectorPointFResult(const QString& res
@@ -199,17 +151,13 @@ void SADataProcServe::onProcessVectorPointFResult(const QString& res
     }
     uint key = args[ARG_DES_KEY_ID].value<uint>();
     int token = args[ARG_DES_TOKEN_ID].value<int>();
-    if(!m_token2readwrite.contains(token))
+    SALocalServeSocketServeParse* sp = m_tokenOptDict.value(token,nullptr);
+    if(nullptr == sp)
     {
         qDebug() << "rec unknow token:" << token;
         return;
     }
-     SALocalServeWriter* writer = m_token2readwrite[token].first;
-     if(nullptr == writer)
-     {
-         qDebug() << "unknow writer! token:" << token;
-         return;
-     }
+
 #ifdef _DEBUG_OUTPUT
     QElapsedTimer t;
     t.start();
@@ -221,7 +169,7 @@ void SADataProcServe::onProcessVectorPointFResult(const QString& res
     st << res;
     st << "</" << SA_XML_TAG_SA << ">";
     st << endl;
-    writer->sendString(xml,key);
+    sp->sendString(xml,key);
 
 
 #ifdef _DEBUG_OUTPUT
@@ -241,39 +189,12 @@ void SADataProcServe::onDisconnected()
     {
         qDebug() <<"remove socket";
         m_connectList.remove(socket);
-        if(m_writerDict.contains(socket))
+        if(m_socketOptDict.contains(socket))
         {
-            int token = m_writerDict[socket]->getToken();
-            m_token2readwrite.remove(token);
+            int token = m_socketOptDict[socket]->getToken();
+            m_tokenOptDict.remove(token);
+            m_socketOptDict.remove(socket);
         }
-        m_writerDict.remove(socket);
-        if(m_readerDict.contains(socket))
-        {
-            //虽无必要，但保证代码无异常
-            int token = m_readerDict[socket]->getToken();
-            m_token2readwrite.remove(token);
-        }
-        m_readerDict.remove(socket);
-    }
-}
-
-void SADataProcServe::onLifeCheckTimeOut()
-{
-    if(m_connectList.size() <= 0)
-    {
-        if(m_willBeQuit)
-        {
-            qDebug() << "signADataProc Auto Quit!";
-            qApp->quit();
-        }
-        else
-        {
-            m_willBeQuit = true;
-        }
-    }
-    else
-    {
-        m_willBeQuit = false;
     }
 }
 
@@ -290,12 +211,3 @@ void SADataProcServe::setPid(const uint &pid)
 }
 
 
-
-SALocalServeWriter *SADataProcServe::getWriter(SALocalServeReader *reader)
-{
-    if(nullptr == reader)
-    {
-        return nullptr;
-    }
-    return m_writerDict.value(reader->getSocket(),nullptr);
-}

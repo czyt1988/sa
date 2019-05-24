@@ -1,75 +1,79 @@
-#include "SALocalServe.h"
+#include "SALocalServeSocketOpt.h"
 #include <QLocalSocket>
 #include "SALocalServeBaseHeader.h"
 #include <QTextCodec>
 #include <QBuffer>
 
-class SALocalServePrivate{
-    SA_IMPL_PUBLIC(SALocalServe)
+class SALocalServeSocketOptPrivate{
+    SA_IMPL_PUBLIC(SALocalServeSocketOpt)
 public:
-    SALocalServePrivate(SALocalServe* p)
+    SALocalServeSocketOptPrivate(SALocalServeSocketOpt* p)
         :q_ptr(p)
         ,m_socket(nullptr)
-        ,m_token(0)
+        ,m_tokenID(0)
         ,m_autoHeartBreakTimer(nullptr)
         ,m_isReadedMainHeader(false)
         ,m_index(0)
     {
     }
     QLocalSocket* m_socket;
-    int m_token;
+    int m_tokenID;
     QTimer* m_autoHeartBreakTimer;
 
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
     bool m_isReadedMainHeader;///< 标记是否读取了包头
     QByteArray m_buffer;
     int m_index;
-    int m_token;
 };
 
-SALocalServe::SALocalServe(QLocalSocket *localSocket, QObject *parent):QObject(parent)
-    ,d_ptr(new SALocalServePrivate(this))
+SALocalServeSocketOpt::SALocalServeSocketOpt(QLocalSocket *localSocket, QObject *parent):QObject(parent)
+    ,d_ptr(new SALocalServeSocketOptPrivate(this))
 {
     setSocket(localSocket);
 }
 
-SALocalServe::SALocalServe(QObject *parent):QObject(parent)
-    ,d_ptr(new SALocalServePrivate(this))
+SALocalServeSocketOpt::SALocalServeSocketOpt(QObject *parent):QObject(parent)
+    ,d_ptr(new SALocalServeSocketOptPrivate(this))
 {
 
 }
 
-QLocalSocket *SALocalServe::getSocket() const
+SALocalServeSocketOpt::~SALocalServeSocketOpt()
+{
+
+}
+
+QLocalSocket *SALocalServeSocketOpt::getSocket() const
 {
     return d_ptr->m_socket;
 }
 
-void SALocalServe::setSocket(QLocalSocket *socket)
+void SALocalServeSocketOpt::setSocket(QLocalSocket *socket)
 {
     if(d_ptr->m_socket)
     {
-        disconnect(d_ptr->m_socket,&QLocalSocket::readyRead,this,&SALocalServe::onReadyRead);
+        disconnect(d_ptr->m_socket,&QLocalSocket::readyRead,this,&SALocalServeSocketOpt::onReadyRead);
     }
     d_ptr->m_socket = socket;
     if(socket)
     {
-        connect(socket,&QLocalSocket::readyRead,this,&SALocalServe::onReadyRead);
-        connect(socket,&QLocalSocket::disconnected,this,&SALocalServe::onDisconnected);
+        connect(socket,&QLocalSocket::readyRead,this,&SALocalServeSocketOpt::onReadyRead);
+        connect(socket,&QLocalSocket::disconnected,this,&SALocalServeSocketOpt::onDisconnected);
         connect(socket,static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error)
-                ,this,&SALocalServe::onError);
+                ,this,&SALocalServeSocketOpt::onError);
     }
 }
 
-int SALocalServe::getToken() const
+int SALocalServeSocketOpt::getToken() const
 {
-    return d_ptr->m_token;
+    return d_ptr->m_tokenID;
 }
 
 /**
  * @brief 是否可写
  * @return
  */
-bool SALocalServe::isEnableToWrite() const
+bool SALocalServeSocketOpt::isEnableToWrite() const
 {
     if(nullptr == d_ptr->m_socket)
     {
@@ -86,9 +90,9 @@ bool SALocalServe::isEnableToWrite() const
     return true;
 }
 
-void SALocalServe::setToken(uint token)
+void SALocalServeSocketOpt::setToken(uint token)
 {
-    d_ptr->m_token = token;
+    d_ptr->m_tokenID = token;
 }
 
 /**
@@ -97,7 +101,7 @@ void SALocalServe::setToken(uint token)
  * @param n 读取的长度
  * @return
  */
-bool SALocalServe::readFromSocket(void *p, int n)
+bool SALocalServeSocketOpt::readFromSocket(void *p, int n)
 {
     int readLen = 0,index = 0;
     bool ret = false;
@@ -123,7 +127,7 @@ bool SALocalServe::readFromSocket(void *p, int n)
  * @param head 头描述
  * @param datas 数据
  */
-void SALocalServe::deal(const SALocalServeBaseHeader &head, const QByteArray &datas)
+void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByteArray &datas)
 {
     if(!head.isValid())
         return;
@@ -173,14 +177,14 @@ void SALocalServe::deal(const SALocalServeBaseHeader &head, const QByteArray &da
  * @brief 开始定时握手
  * @param freTime 握手频率
  */
-void SALocalServe::startAutoHeartbeat(int freTime)
+void SALocalServeSocketOpt::startAutoHeartbeat(int freTime)
 {
     if(nullptr == d_ptr->m_autoHeartBreakTimer)
     {
         d_ptr->m_autoHeartBreakTimer = new QTimer(this);
-        connect(&(d_ptr->m_autoHeartBreakTimer),&QTimer::timeout,this,&SALocalServe::onAutoHeartbeatTimeout);
+        connect(d_ptr->m_autoHeartBreakTimer,&QTimer::timeout,this,&SALocalServeSocketOpt::onAutoHeartbeatTimeout);
     }
-    d_ptr->m_autoHeartBreakTimer.start(freTime);
+    d_ptr->m_autoHeartBreakTimer->start(freTime);
 }
 
 /**
@@ -188,7 +192,7 @@ void SALocalServe::startAutoHeartbeat(int freTime)
  * @param header 头的文件大小必须设置
  * @param data 数据区
  */
-void SALocalServe::send(const SALocalServeBaseHeader &header, const QByteArray &data)
+void SALocalServeSocketOpt::send(const SALocalServeBaseHeader &header, const QByteArray &data)
 {
     if(!isEnableToWrite())
     {
@@ -206,7 +210,7 @@ void SALocalServe::send(const SALocalServeBaseHeader &header, const QByteArray &
  * @brief 登录(1-1)，成功会返回tokenID
  * @param key
  */
-void SALocalServe::sendLoginSucceed(uint key)
+void SALocalServeSocketOpt::sendLoginSucceed(uint key)
 {
     SALocalServeBaseHeader h;
     h.init();
@@ -226,7 +230,7 @@ void SALocalServe::sendLoginSucceed(uint key)
  * @brief 发送握手协议(2-1)
  * @param key 标识号，会随结果返回，用于标识
  */
-void SALocalServe::sendHeartbeat(uint key)
+void SALocalServeSocketOpt::sendHeartbeat(uint key)
 {
     SALocalServeBaseHeader h;
     h.init();
@@ -242,7 +246,7 @@ void SALocalServe::sendHeartbeat(uint key)
  * @param datas 数据
  * @param key 标识号，会随结果返回，用于标识
  */
-void SALocalServe::send2DPointFs(const QVector<QPointF> &datas, uint key)
+void SALocalServeSocketOpt::send2DPointFs(const QVector<QPointF> &datas, uint key)
 {
     SALocalServeBaseHeader h;
     h.init();
@@ -264,7 +268,7 @@ void SALocalServe::send2DPointFs(const QVector<QPointF> &datas, uint key)
  * @param str 字符串
  * @param key 标识号，会随结果返回，用于标识
  */
-void SALocalServe::sendString(const QString &str, uint key)
+void SALocalServeSocketOpt::sendString(const QString &str, uint key)
 {
     SALocalServeBaseHeader h;
     h.init();
@@ -286,7 +290,7 @@ void SALocalServe::sendString(const QString &str, uint key)
  * @param errCode 错误代码
  * @param key 标识号，会随结果返回，用于标识
  */
-void SALocalServe::sendError(const int errCode, uint key)
+void SALocalServeSocketOpt::sendError(const int errCode, uint key)
 {
     SALocalServeBaseHeader h;
     h.init();
@@ -307,7 +311,7 @@ void SALocalServe::sendError(const int errCode, uint key)
  * @brief 处理登录成功
  * @param datas
  */
-void SALocalServe::dealLoginSucceed(const QByteArray &datas, uint key)
+void SALocalServeSocketOpt::dealLoginSucceed(const QByteArray &datas, uint key)
 {
     d_ptr->m_tokenID = 0;
     QDataStream st(datas);
@@ -320,7 +324,7 @@ void SALocalServe::dealLoginSucceed(const QByteArray &datas, uint key)
 /**
  * @brief 处理心跳
  */
-void SALocalServe::dealHeartbeat(uint key)
+void SALocalServeSocketOpt::dealHeartbeat(uint key)
 {
     emit recHeartbeat(key);
 }
@@ -328,7 +332,7 @@ void SALocalServe::dealHeartbeat(uint key)
  * @brief 对二维序列进行统计
  * @param datas 数据集
  */
-void SALocalServe::deal2DPointFs(const QByteArray &datas, uint key)
+void SALocalServeSocketOpt::deal2DPointFs(const QByteArray &datas, uint key)
 {
     QVector<QPointF> arrs;
     QDataStream io(datas);
@@ -340,7 +344,7 @@ void SALocalServe::deal2DPointFs(const QByteArray &datas, uint key)
  * @param datas 数据
  * @param key 标识
  */
-void SALocalServe::dealString(const QByteArray &datas, uint key)
+void SALocalServeSocketOpt::dealString(const QByteArray &datas, uint key)
 {
     QString str;
     QDataStream io(datas);
@@ -350,17 +354,17 @@ void SALocalServe::dealString(const QByteArray &datas, uint key)
 
 
 
-void SALocalServe::onAutoHeartbeatTimeout()
+void SALocalServeSocketOpt::onAutoHeartbeatTimeout()
 {
     sendHeartbeat();
 }
 
-void SALocalServe::onReadyRead()
+void SALocalServeSocketOpt::onReadyRead()
 {
     const static unsigned int s_headerSize = sizeof(SALocalServeBaseHeader);
     if(d_ptr->m_isReadedMainHeader)
     {
-        if(d_ptr->m_socket->bytesAvailable() >= m_mainHeader.dataSize)
+        if(d_ptr->m_socket->bytesAvailable() >= d_ptr->m_mainHeader.dataSize)
         {
             //说明数据接收完
 #ifdef _DEBUG_PRINT
@@ -452,12 +456,12 @@ void SALocalServe::onReadyRead()
     }
 }
 
-void SALocalServe::onDisconnected()
+void SALocalServeSocketOpt::onDisconnected()
 {
     emit disconnectFromServe();
 }
 
-void SALocalServe::onError(QLocalSocket::LocalSocketError socketError)
+void SALocalServeSocketOpt::onError(QLocalSocket::LocalSocketError socketError)
 {
     qDebug() << __FILE__<<":"<<__FUNCTION__ << "err code:"<<(int)socketError;
     qDebug() << __FILE__<<":"<<__FUNCTION__ << m_socket->errorString();
