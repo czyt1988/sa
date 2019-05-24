@@ -34,8 +34,10 @@ public slots:
     Q_SLOT void sendShakeHand(uint key = 0);
     //发送数组
     Q_SLOT void send2DPointFs(const QVector<QPointF>& datas,uint key=0);
-    //
+    //发送文字
     Q_SLOT void sendString(const QString &str, uint key = 0);
+    //发送错误
+    Q_SLOT void sendError(const int errCode, uint key = 0);
 private slots:
     void onShakeHandeTimeout();
 private:

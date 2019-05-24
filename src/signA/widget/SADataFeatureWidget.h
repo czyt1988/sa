@@ -54,7 +54,7 @@ private slots:
 
     void on_toolButton_clearDataFeature_clicked();
 
-    void onShowErrorMessage(const QString& info);
+    void onErrorOccure(int errcode);
 
 private:
     SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
@@ -73,18 +73,24 @@ private:
     void initLocalServer();
     //连接服务器
     void connectToServer();
+    //重新连接
+    void reconnect();
+    //把错误码转为字符串
+    void setErrorCodeToString();
     //尝试连接服务器
     Q_SLOT void tryToConnectServer();
-    //接收主包头完毕
-    Q_SLOT void onReceivedShakeHand(const SALocalServeShakeHandProtocol& protocol);
+    //心跳丢失
+    Q_SLOT void onHeartbeatTimeOut(int misstimes,int tokenID,uint key);
     //接收到xml字符
-    Q_SLOT void onReceivedString(const SALocalServeStringProtocol& protocol);
+    Q_SLOT void onReceivedString(const QString& str,uint key);
     //接收到到点数组
-    Q_SLOT void onReceivedVectorPointFData(const SALocalServeVectorPointProtocol& protocol);
+    Q_SLOT void onReceive2DPointFs(const QVector<QPointF>& arrs,uint key);
     //
     Q_SLOT void onLocalSocketDisconnect();
     //
     Q_SLOT void tryToStartDataProc();
+    //连接成功触发的槽，会返回token id
+    Q_SLOT void onLoginSucceed(int tokenID,uint key);
 #endif
 private:
     Ui::SADataFeatureWidget *ui;
@@ -98,7 +104,22 @@ private://数据接收相关的类型
     SALocalServeReader* m_dataReader;
     SALocalServeWriter* m_dataWriter;
     short m_connectRetryCount;
+    QMap<int,QString> m_errcodeToString;///< 错误码对应文本
+    class TmpStru{
+    public:
+        TmpStru(const QwtPlotItem *p1,const QMdiSubWindow *p2,const SAChart2D *p3)
+            :plotitem(p1),mdiSubWnd(p2),chart2d(p3)
+        {
+
+        }
+        const QwtPlotItem *plotitem;
+        const QMdiSubWindow *mdiSubWnd;
+        const SAChart2D *chart2d;
+    };
+    unsigned int m_wndPtrKey;
+    QMap<unsigned int,TmpStru> m_key2wndPtr;
 #endif
+
 };
 
 #endif // DATAFEATUREWIDGET_H

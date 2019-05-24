@@ -34,6 +34,25 @@
 /// \def 2D序列类型
 #define SA_LOCAL_SER_2DPOINTF_FUN 2
 
+/// \def 错误类型
+#define SA_LOCAL_SER_ERROR_TYPE 4
+/// \def 错误类
+#define SA_LOCAL_SER_ERROR_CLASS 4
+/// \def 普通错误4-1
+#define SA_LOCAL_SER_ERROR_NORMAL_FUN 1
+
+namespace SALocalServe {
+    /**
+     * @brief 标记local的错误类型
+     */
+    enum SALocalServeError{
+        Unknow ///< 未知错误
+        ,ReceiveDataError ///< 接收的数据有误
+        ,ReceiveUnknowHeader ///< 接收到未知的文件头
+    };
+}
+
+
 class QString;
 ///
 /// \brief 用于sa local serve传递的表头数据结构

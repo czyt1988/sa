@@ -182,6 +182,24 @@ void SALocalServeWriter::sendString(const QString& str, uint key)
 */
 }
 
+void SALocalServeWriter::sendError(const int errCode, uint key)
+{
+    SALocalServeBaseHeader h;
+    h.init();
+    h.type = SA_LOCAL_SER_ERROR_TYPE;
+    h.classID = SA_LOCAL_SER_ERROR_CLASS;
+    h.functionID = SA_LOCAL_SER_ERROR_NORMAL_FUN;
+    h.tokenID = getToken();
+    h.key = key;
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
+    QDataStream io(&buffer);
+    io << errCode;
+    h.dataSize = byteArray.size();
+    send(h,byteArray);
+}
+
 /**
  * @brief SALocalServeWriter::onShakeHandeTimeout
  */

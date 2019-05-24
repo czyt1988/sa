@@ -41,9 +41,15 @@
             #define __SEND_1M_POINTS_TEST__
         #endif
 #endif
-
-
+/// \def 连接不上的计数
+#define CONNECT_RETRY_COUNT (50)
+/// \def 心跳丢失次数记为连接丢失
+#define HEART_BREAK_COUNT_AS_DISCONNECT (10)
 //====================================================================
+
+
+
+
 
 SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     QWidget(parent),
@@ -55,13 +61,15 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
   ,m_dataProcessSocket(nullptr)
   ,m_dataReader(nullptr)
   ,m_dataWriter(nullptr)
-  ,m_connectRetryCount(50)
+  ,m_connectRetryCount(CONNECT_RETRY_COUNT)
+  ,m_wndPtrKey(1)
 #endif
 {
     ui->setupUi(this);
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
+    setErrorCodeToString();
     initLocalServer();
 #endif
 }
@@ -177,7 +185,6 @@ void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const
             /*QwtPlotItem::Rtti_PlotCurve == plotitem->rtti()*/
             )
     {
-        //const QwtPlotCurve* cur = static_cast<const QwtPlotCurve*>(plotitem);
         const size_t size = cur->dataSize();
         QVector<QPointF> datas;
         datas.reserve(size);
@@ -188,7 +195,10 @@ void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const
         if(m_dataWriter)
         {
             qDebug() << "send item:" << plotitem->title().text() << " to calc";
-            m_dataWriter->sendDoubleVectorData((qintptr)arg1,(qintptr)arg2,(qintptr)plotitem,datas);
+            TmpStru ts(plotitem,arg1,arg2);
+            ++m_wndPtrKey;
+            m_key2wndPtr[m_wndPtrKey] = ts;
+            m_dataWriter->send2DPointFs(datas,m_wndPtrKey);
         }
     }
 }
@@ -253,26 +263,29 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
 
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
-void SADataFeatureWidget::onReceivedShakeHand(const SALocalServeShakeHandProtocol& protocol)
+void SADataFeatureWidget::onHeartbeatTimeOut(int misstimes,int tokenID,uint key)
 {
-    Q_UNUSED(protocol);
-#ifdef __SEND_1M_POINTS_TEST__
-    if(m_dataWriter)
+    Q_UNUSED(misstimes);
+    Q_UNUSED(tokenID);
+    Q_UNUSED(key);
+    static int s_count = 0;
+    if (0 == s_count)
     {
-        qDebug() << "start 1000000 points test";
-        s_send_speed_test = true;
-        s_vector_send_time_elaspade.restart();
-        m_dataWriter->sendString("__test__1m");//发送一个测试
+        emit showMessageInfo(tr("connect lost !"),SA::NormalMessage);
     }
-#endif
-    emit showMessageInfo(tr("data process connect sucess!"),SA::NormalMessage);
+    else if (s_count > HEART_BREAK_COUNT_AS_DISCONNECT)
+    {
+        //心跳多次无法到达，重新连接
+        reconnect();
+        s_count = 0;
+    }
 }
 #endif
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
-void SADataFeatureWidget::onReceivedString(const SALocalServeStringProtocol& protocol)
+void SADataFeatureWidget::onReceivedString(const QString& str,uint key)
 {
-    SAXMLReadHelper xmlHelper(protocol.string());
+    SAXMLReadHelper xmlHelper(str);
     if(xmlHelper.isValid())
     {
         //说明这个字符串是一个点数组处理的结果
@@ -335,23 +348,23 @@ void SADataFeatureWidget::onReceivedString(const SALocalServeStringProtocol& pro
 /// \param header
 /// \param ys
 ///
-void SADataFeatureWidget::onReceivedVectorPointFData(const SALocalServeVectorPointProtocol& protocol)
+void SADataFeatureWidget::onReceive2DPointFs(const QVector<QPointF>& arrs,uint key)
 {
 #ifdef _DEBUG_OUTPUT
     int costTime = s_vector_send_time_elaspade.restart();
     if(s_send_speed_test)
     {
         s_send_speed_test = false;
-        saDebug(QString("test time cost:%1 \n ys.size:%2").arg(costTime).arg(protocol.getPoints().size()));
-        int byteSize = protocol.getPoints().size() * 2*sizeof(qreal);
+        saDebug(QString("test time cost:%1 \n ys.size:%2").arg(costTime).arg(arrs.size()));
+        int byteSize = arrs.size() * 2*sizeof(qreal);
         byteSize += 16;
         saDebug(QString("send speed:%1 byte/ms(%2 MB/s)")
                 .arg((byteSize)/costTime)
                 .arg((byteSize/(1024.0*1024)) / (costTime/1000.0)));
     }
 #endif
-    Q_UNUSED(protocol);
-
+    Q_UNUSED(arrs);
+    Q_UNUSED(key);
 }
 
 void SADataFeatureWidget::onLocalSocketDisconnect()
@@ -366,9 +379,21 @@ void SADataFeatureWidget::tryToStartDataProc()
     QString path = qApp->applicationDirPath()+"/signADataProc.exe";
     QStringList args = {QString::number(qApp->applicationPid())};
     QProcess::startDetached(path,args);//signADataProc是一个单例进程，多个软件不会打开多个
-    m_connectRetryCount = 50;
+    m_connectRetryCount = CONNECT_RETRY_COUNT;
     saPrint() << "Start Try To Connect Server";
     tryToConnectServer();
+}
+
+/**
+ * @brief 连接成功触发的槽，会返回token id
+ * @param tokenID
+ * @param key
+ */
+void SADataFeatureWidget::onLoginSucceed(int tokenID, uint key)
+{
+    Q_UNUSED(key);
+    m_dataReader->setToken(tokenID);
+    m_dataWriter->setToken(tokenID);
 }
 #endif
 
@@ -473,9 +498,14 @@ void SADataFeatureWidget::on_toolButton_clearDataFeature_clicked()
     });
 }
 
-void SADataFeatureWidget::onShowErrorMessage(const QString &info)
+/**
+ * @brief SADataFeatureWidget::onShowErrorMessage
+ * @param errcode
+ */
+void SADataFeatureWidget::onErrorOccure(int errcode)
 {
-    emit showMessageInfo(info,SA::ErrorMessage);
+    QString str = QString("Error Occure,code:%1,msg:%2").arg(errcode).arg(m_errcodeToString.value(errcode));
+    emit showMessageInfo(str,SA::ErrorMessage);
 }
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
 ///
@@ -483,16 +513,26 @@ void SADataFeatureWidget::onShowErrorMessage(const QString &info)
 ///
 void SADataFeatureWidget::initLocalServer()
 {
-    m_dataReader = new SALocalServeReader(this);
+    if(m_dataReader)
+    {
+        delete m_dataReader;
+    }
+    if(m_dataWriter)
+    {
+        delete m_dataWriter;
+    }
+    m_dataReader = new SALocalServeProtocol(this);
     m_dataWriter = new SALocalServeWriter(this);
-    connect(m_dataReader,&SALocalServeReader::receivedShakeHand
-            ,this,&SADataFeatureWidget::onReceivedShakeHand);
-    connect(m_dataReader,&SALocalServeReader::receivedString
+    connect(m_dataReader,&SALocalServeProtocol::loginSucceed
+            ,this,&SADataFeatureWidget::onLoginSucceed);
+    connect(m_dataReader,&SALocalServeProtocol::heartbeatTimeOut
+            ,this,&SADataFeatureWidget::onHeartbeatTimeOut);
+    connect(m_dataReader,&SALocalServeProtocol::receiveString
             ,this,&SADataFeatureWidget::onReceivedString);
-    connect(m_dataReader,&SALocalServeReader::receivedVectorPointFData
-            ,this,&SADataFeatureWidget::onReceivedVectorPointFData);
+    connect(m_dataReader,&SALocalServeProtocol::receive2DPointFs
+            ,this,&SADataFeatureWidget::onReceive2DPointFs);
     connect(m_dataReader,&SALocalServeReader::errorOccure
-            ,this,&SADataFeatureWidget::onShowErrorMessage);
+            ,this,&SADataFeatureWidget::onErrorOccure);
     connectToServer();
 }
 #endif
@@ -511,8 +551,29 @@ void SADataFeatureWidget::connectToServer()
     m_dataProcessSocket = new QLocalSocket(this);
     connect(m_dataProcessSocket,&QLocalSocket::disconnected
             ,this,&SADataFeatureWidget::onLocalSocketDisconnect);
-    m_connectRetryCount = 50;
+    m_connectRetryCount = CONNECT_RETRY_COUNT;
     tryToConnectServer();
+}
+
+/**
+ * @brief 重新连接
+ */
+void SADataFeatureWidget::reconnect()
+{
+    //重新初始化-自动释放资源
+    initLocalServer();
+    //重新连接-自动释放资源
+    connectToServer();
+}
+
+/**
+ * @brief 把错误码转为字符串
+ */
+void SADataFeatureWidget::setErrorCodeToString()
+{
+    m_errcodeToString[SALocalServe::Unknow] = tr("unknow");
+    m_errcodeToString[SALocalServe::ReceiveDataError] = tr("Receive Data Error");
+    m_errcodeToString[SALocalServe::ReceiveUnknowHeader] = tr("Receive Unknow Header");
 }
 #endif
 

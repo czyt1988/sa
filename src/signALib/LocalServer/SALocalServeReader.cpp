@@ -137,7 +137,7 @@ void SALocalServeReader::onReadyRead()
             }
             if(!readFromSocket(m_buffer.data()+m_index,m_mainHeader.dataSize))
             {
-                emit errorOccure(tr("receive data error"));
+                emit errorOccure(SALocalServe::ReceiveDataError);
                 m_isReadedMainHeader = false;
                 m_socket->reset();
                 qDebug() << __FILE__ <<"[" << __FUNCTION__ << "][" << __LINE__ << "]can not read from socket io!";
@@ -167,7 +167,7 @@ void SALocalServeReader::onReadyRead()
         }
         if(!readFromSocket(m_buffer.data(),s_headerSize))
         {
-            emit errorOccure(tr("receive unknow header"));
+            emit errorOccure(SALocalServe::ReceiveUnknowHeader);
             m_isReadedMainHeader = false;
             m_socket->reset();
             return;
@@ -179,7 +179,7 @@ void SALocalServeReader::onReadyRead()
         {
             m_isReadedMainHeader = false;
             qDebug() << "receive unknow header";
-            emit errorOccure(tr("receive unknow header"));
+            emit errorOccure(SALocalServe::ReceiveUnknowHeader);
             m_socket->reset();
             return;
         }

@@ -34,7 +34,7 @@ signals:
     /// \brief 有错误发生
     /// \param info 错误描述
     ///
-    void errorOccure(const QString& info);
+    void errorOccure(int errcode);
     ///
     /// \brief 接收
     /// \param head
