@@ -45,7 +45,8 @@ HEADERS += \
     SADataProcessVectorPointF.h \
     SAValueManagerMimeData.h \
     SAValueManagerListModel.h \
-    SAHashTable.h
+    SAHashTable.h \
+    SAXMLWriteHelper.h
 
 
 SOURCES += \
@@ -68,7 +69,8 @@ SOURCES += \
     SAXMLReadHelper.cpp \
     SADataProcessVectorPointF.cpp \
     SAValueManagerMimeData.cpp \
-    SAValueManagerListModel.cpp
+    SAValueManagerListModel.cpp \
+    SAXMLWriteHelper.cpp
 
 
 include($$PWD/Private/Private.pri)

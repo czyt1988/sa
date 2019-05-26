@@ -104,13 +104,12 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
         args[ARG_DES_KEY_ID]=QVariant::fromValue(key);
         args[ARG_DES_TOKEN_ID]=QVariant::fromValue(sp->getToken());
 #ifdef _DEBUG_OUTPUT
-    qDebug() << "onReceivedVectorPointFData-> data size:"<<protocol.getPoints().size()
-             << " wndId:"<<wndId
-             << " figId:"<<figId
-             << " itemId:"<<itemId
+    qDebug() << "onReceivedVectorPointFData-> data size:"<<datas.size()
+             << " args:"<<args
+             << " key:"<<key
                 ;
 #endif
-        emit callVectorPointFProcess(datas,args);
+        emit callVectorPointFProcess(datas,args,key);
     }
 }
 
@@ -136,7 +135,7 @@ void SADataProcServe::onReceivedString(const QString& str,uint key)
 
 
 void SADataProcServe::onProcessVectorPointFResult(const QString& res
-                                                  , const QHash<QString, QVariant>& args)
+                                                  , uint key)
 {
     if(res.isEmpty())
     {
@@ -162,15 +161,8 @@ void SADataProcServe::onProcessVectorPointFResult(const QString& res
     QElapsedTimer t;
     t.start();
 #endif
-    QString xml;
-    QTextStream st(&xml);
-    st << "<" << SA_XML_TAG_SA << " " << SA_XML_ATT_TYPE << "=\"" <<  ATT_SA_TYPE_VPFR << "\">";
-    st << "<" << SA_XML_TAG_UINTVAL << " " << SA_XML_ATT_NAME << " =\"key\" >" << key << "</" << SA_XML_TAG_UINTVAL << ">";
-    st << res;
-    st << "</" << SA_XML_TAG_SA << ">";
-    st << endl;
-    sp->sendString(xml,key);
-
+    sp->sendString(res,key);
+    qDebug() << res;
 
 #ifdef _DEBUG_OUTPUT
     qDebug() << "onProcessVectorPointFResult cost:" << t.elapsed()

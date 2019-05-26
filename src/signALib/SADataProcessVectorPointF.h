@@ -23,7 +23,7 @@ public:
 public slots:
     //设置需要计算的点，并开始计算
     void setPoints(const QVector<QPointF>& points
-                   , const QHash<QString, QVariant>& args);
+                   , const QHash<QString, QVariant>& args,uint key);
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);
     //获取尖峰的点 - 所谓尖峰是指三点a,b,c b>a && b>c 就说明b是尖峰
@@ -43,10 +43,10 @@ signals:
     /// \param args 传入的参数
     ///
     //void result(SADataFeatureItem* result,const QHash<QString, QVariant>& args);
-    void result(const QString& result,const QHash<QString, QVariant>& args);
+    void result(const QString& result,uint key);
 private:
     //SADataFeatureItem* analysisData(const QVector<QPointF> &orgPoints);
-    QString analysisData(const QVector<QPointF> &orgPoints);
+    QString analysisData(const QVector<QPointF> &orgPoints,const QHash<QString, QVariant> &args);
 private:
     int m_sortCount;///< 记录要显示的排序条目
 };

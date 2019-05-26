@@ -6,7 +6,14 @@
 #include <QMap>
 #include "../global/SAGlobals.h"
 #include <memory>
-#include "SALocalServeProtocol.h"
+
+#ifdef USE_THREAD_CALC_FEATURE
+
+#else
+#include "SALocalServeBaseHeader.h"
+#include "SALocalServeSocketOpt.h"
+#endif
+
 class QwtPlotItem;
 class QMdiSubWindow;
 class QAbstractItemModel;
@@ -25,9 +32,7 @@ class SAFigureSetWidget;
     #define USE_IPC_CALC_FEATURE //使用多进程进行计算
     class QLocalServer;
     class QLocalSocket;
-    class SALocalServeReader;
-    class SALocalServeWriter;
-    #include "SALocalServeBaseHeader.h"
+    class SALocalServeSocketOpt;
 #endif
 
 namespace Ui {
@@ -101,8 +106,7 @@ private:
 #else
 private://数据接收相关的类型
     QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
-    SALocalServeReader* m_dataReader;
-    SALocalServeWriter* m_dataWriter;
+    SALocalServeSocketOpt* m_socketOpt;///< 处理m_dataProcessSocket的具体封装
     short m_connectRetryCount;
     QMap<int,QString> m_errcodeToString;///< 错误码对应文本
     class TmpStru{
@@ -117,7 +121,7 @@ private://数据接收相关的类型
         const SAChart2D *chart2d;
     };
     unsigned int m_wndPtrKey;
-    QMap<unsigned int,TmpStru> m_key2wndPtr;
+    QHash<uint,TmpStru> m_key2wndPtr;
 #endif
 
 };

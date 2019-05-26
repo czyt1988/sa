@@ -1,217 +1,111 @@
 ﻿#include "SAXMLReadHelper.h"
-#include "SAXMLTagDefined.h"
-#include <QXmlStreamReader>
+#include <QDomNodeList>
+#include <QDomNamedNodeMap>
+#include <QXmlStreamWriter>
 #include "SADataFeatureItem.h"
 #include "SAVariantCaster.h"
 #include <QDebug>
 SAXMLReadHelper::SAXMLReadHelper(const QString& str)
-    :m_xml(nullptr)
-    ,m_isvalid(false)
-    ,m_protocolType(SAXMLReadHelper::UnknowType)
-    ,m_strPtr(&str)
+    :m_isvalid(false)
+    ,m_protocolType(SA_XML::UnknowType)
 {
-    m_xml.reset(new QXmlStreamReader(str));
-    init();
+    if(m_doc.setContent(str,&m_errorMsg))
+    {
+        init();
+    }
 }
 
 void SAXMLReadHelper::init()
 {
-
-    while(!m_xml->atEnd())
+    m_rootEle =m_doc.documentElement();
+    QString rootName = m_rootEle.tagName();
+    if(SA_XML_TAG_SA == rootName)
     {
-        if(m_xml->readNextStartElement())
+        QDomNamedNodeMap atts = m_rootEle.attributes();
+        if(atts.contains(SA_XML_ATT_TYPE))
         {
-            if(m_xml->name() == SA_XML_TAG_SA)
+            QString typeStr = atts.namedItem(SA_XML_ATT_TYPE).nodeValue();
+            if(ATT_SA_TYPE_VPFR == typeStr)
             {
-                //是以<sa>打头的协议
-                QXmlStreamAttributes atts = m_xml->attributes();
-                for(int i=0;i<atts.size();++i)
-                {
-                    if(SA_XML_ATT_TYPE == atts[i].name())//取属性 type=“xx”
-                    {
-                        QString typeStr = atts[i].value().toString();
-                        if(ATT_SA_TYPE_VPFR == typeStr)
-                        {
-                            //说明是
-                            m_protocolType = TypeVectorPointFProcessResult;
-                            m_isvalid = true;
-                            return;
-                        }
-                    }
-                }
-
+                //说明是
+                m_protocolType = SA_XML::TypeVectorPointFProcessResult;
+                m_isvalid = true;
             }
         }
+        QDomNodeList nls = m_rootEle.elementsByTagName(SA_XML_TAG_HEADER_ROOT);
+        if(nls.size() > 0)
+        {
+            m_headerEle = nls.at(nls.size()-1).toElement();
+        }
+        nls = m_rootEle.elementsByTagName(SA_XML_TAG_CONTENT_ROOT);
+        if(nls.size() > 0)
+        {
+            m_contentEle = nls.at(nls.size()-1).toElement();
+        }
     }
-    qDebug() << m_xml->errorString();
 }
 
 
 
-SAXMLReadHelper::ProtocolType SAXMLReadHelper::getProtocolType() const
+QString SAXMLReadHelper::getErrorMsg() const
+{
+    return m_errorMsg;
+}
+
+
+
+SA_XML::ProtocolType SAXMLReadHelper::getProtocolType() const
 {
     return m_protocolType;
 }
 
-bool SAXMLReadHelper::getVectorPointFProcessResult(quintptr &wnd, quintptr &fig, quintptr &itp, SADataFeatureItem *item)
+/**
+ * @brief 获取点序列处理结果
+ * @param key 返回的key
+ * @param item 解析好的item
+ * @return 成功返回true，否则返回false
+ */
+bool SAXMLReadHelper::getVectorPointFProcessResult(uint &key, SADataFeatureItem *item)
 {
     //前两个是记录的指针
-    if(TypeVectorPointFProcessResult != m_protocolType)
+    if(SA_XML::TypeVectorPointFProcessResult != m_protocolType)
     {
         qDebug()<<"TypeVectorPointFProcessResult != m_protocolType";
         return false;
     }
-    int readCount = 0;
-    while(!m_xml->atEnd())
+    if(!m_headerEle.isNull())
     {
-        if(m_xml->readNextStartElement())
+        QDomNodeList els = m_headerEle.elementsByTagName(SA_XML_TAG_UINTVAL);
+        for(int i=0;i<els.size();++i)
         {
-            if(SA_XML_TAG_QUINTPTR == m_xml->name())
+            QDomElement el = els.at(i).toElement();
+            if(!el.isNull())
             {
-                if(0 == readCount)
+                QString name = el.attribute(SA_XML_ATT_NAME);
+                if(name == "key")
                 {
-                    wnd = m_xml->readElementText().toUInt();
-                    readCount++;
-                }
-                else if(1 == readCount)
-                {
-                    fig = m_xml->readElementText().toUInt();
-                    readCount++;
-                }
-                else if(2 == readCount)
-                {
-                    itp = m_xml->readElementText().toUInt();
-                    readCount++;
-                    break;
+                    bool isOK = false;
+                    uint v = el.text().toUInt(&isOK);
+                    if(isOK)
+                    {
+                        key = v;
+                    }
                 }
             }
         }
     }
-    return SADataProcessVectorPointFXMLHelper::read(*m_strPtr,item);
+    return readDfi(item);
 }
 
-bool SAXMLReadHelper::isValid() const
-{
-    return m_isvalid;
-}
-
-
-
-//====================================
-
-
-
-class SADataProcessVectorPointFXMLHelperPrivate
-{
-    SA_IMPL_PUBLIC(SADataProcessVectorPointFXMLHelper)
-public:
-    QScopedPointer<QXmlStreamWriter> xmlWriter;
-    SADataProcessVectorPointFXMLHelper* Parent;
-    SADataProcessVectorPointFXMLHelperPrivate(SADataProcessVectorPointFXMLHelper* p)
-        :Parent(p)
-        ,xmlWriter(nullptr)
-    {
-
-    }
-    void startWrite(QString *string)
-    {
-        xmlWriter.reset(new QXmlStreamWriter(string));
-        //为了便于观察，使用格式化
-        xmlWriter->setAutoFormatting(true);
-        xmlWriter->setAutoFormattingIndent(2);
-        xmlWriter->setCodec("UTF-8");
-        xmlWriter->writeStartElement(SA_XML_TAG_DFI_ROOT);
-    }
-    void endWrite()
-    {
-        xmlWriter->writeEndElement();
-    }
-    void startWriteGroup(const QString &name)
-    {
-        xmlWriter->writeStartElement(SA_XML_TAG_GROUP);
-        xmlWriter->writeAttribute(SA_XML_ATT_NAME,name);
-    }
-    void endWriteGroup()
-    {
-        xmlWriter->writeEndElement();
-    }
-
-    void writeValue(const QVariant& d, const QString &name)
-    {
-        xmlWriter->writeStartElement(SA_XML_TAG_ITEM);
-        QXmlStreamAttributes attrs;
-        attrs.append(QXmlStreamAttribute(SA_XML_ATT_TYPE,ATT_TYPE_VALUE));
-        attrs.append(QXmlStreamAttribute(SA_XML_ATT_NAME,name));
-        attrs.append(QXmlStreamAttribute(SA_XML_ATT_VALUE_TYPE,d.typeName()));
-        attrs.append(QXmlStreamAttribute(SA_XML_ATT_VALUE,SAVariantCaster::variantToString(d)));
-        xmlWriter->writeAttributes(attrs);
-        xmlWriter->writeEndElement();
-    }
-};
-
-SADataProcessVectorPointFXMLHelper::SADataProcessVectorPointFXMLHelper()
-    :d_ptr(new SADataProcessVectorPointFXMLHelperPrivate(this))
-{
-
-}
-
-SADataProcessVectorPointFXMLHelper::~SADataProcessVectorPointFXMLHelper()
-{
-
-}
-
-void SADataProcessVectorPointFXMLHelper::startWrite(QString *string)
-{
-    d_ptr->startWrite(string);
-}
-
-void SADataProcessVectorPointFXMLHelper::writeValue(const QVariant& d, const QString &name)
-{
-    if(d_ptr->xmlWriter.isNull())
-    {
-        return;
-    }
-    d_ptr->writeValue(d,name);
-}
-
-
-void SADataProcessVectorPointFXMLHelper::endWrite()
-{
-    if(d_ptr->xmlWriter.isNull())
-    {
-        return;
-    }
-    d_ptr->endWrite();
-}
-
-void SADataProcessVectorPointFXMLHelper::startWriteGroup(const QString &name)
-{
-    if(d_ptr->xmlWriter.isNull())
-    {
-        return;
-    }
-    d_ptr->startWriteGroup(name);
-}
-
-void SADataProcessVectorPointFXMLHelper::endWriteGroup()
-{
-    if(d_ptr->xmlWriter.isNull())
-    {
-        return;
-    }
-    d_ptr->endWriteGroup();
-}
-
-bool SADataProcessVectorPointFXMLHelper::read(const QString &xmlStr, SADataFeatureItem *item)
+/**
+ * @brief 读取dfi节点
+ * @param item
+ * @return 读取成功返回true
+ */
+bool SAXMLReadHelper::readDfi(SADataFeatureItem *item)
 {
     bool isOK = false;
-    QDomDocument doc;
-    isOK = doc.setContent(xmlStr,false);
-    if(!isOK)
-    {
-        return false;
-    }
-    QDomNodeList nodes = doc.elementsByTagName(SA_XML_TAG_DFI_ROOT);
+    QDomNodeList nodes = m_rootEle.elementsByTagName(SA_XML_TAG_DFI_ROOT);
     if(!nodes.isEmpty())
     {
         QDomNode nodeRoot = nodes.at(0);
@@ -223,16 +117,16 @@ bool SADataProcessVectorPointFXMLHelper::read(const QString &xmlStr, SADataFeatu
             {
                 //读取子对象
                 QString groupName;
-                if(!getGroupInfo(groupItem,groupName))
+                if(!getAttrValue(groupItem,SA_XML_ATT_NAME,groupName))
                 {
                     continue;
                 }
                 SADataFeatureItem* group = new SADataFeatureItem(groupName);
-                if(!readChildItem(groupItem,group))
+                if(readDfiChildItem(groupItem,group))
                 {
-                    delete group;
+                    isOK = true;
+                    item->appendItem(group);
                 }
-                item->appendItem(group);
             }
             else
             {
@@ -245,51 +139,30 @@ bool SADataProcessVectorPointFXMLHelper::read(const QString &xmlStr, SADataFeatu
         qDebug() << "can not find tag:"<<SA_XML_TAG_DFI_ROOT;
     }
     return isOK;
-
 }
 
-bool SADataProcessVectorPointFXMLHelper::readChildItem(const QDomNode &groupItem, SADataFeatureItem *parentItem)
+bool SAXMLReadHelper::isValid() const
 {
-    if(!groupItem.hasChildNodes())
+    return m_isvalid;
+}
+
+bool SAXMLReadHelper::getAttrValue(const QDomNode &xmlItem,const QString& name, QString &value)
+{
+    if(xmlItem.isNull())
     {
         return false;
     }
-    QDomNodeList itemList = groupItem.childNodes();//(XML_STR_ITEM__);
-    for(int i = 0;i<itemList.size();++i)
+    QDomNamedNodeMap attrs = xmlItem.attributes();
+    QDomNode att = attrs.namedItem(name);
+    if(!att.isAttr())
     {
-        if(SA_XML_TAG_ITEM == itemList.at(i).nodeName())
-        {
-            SADataFeatureItem* item = new SADataFeatureItem();
-            if(!getItemInfoFromElement(itemList.at(i),item))
-            {
-                delete item;
-                continue;
-            }
-            parentItem->appendItem(item);
-        }
-        else if(SA_XML_TAG_GROUP == itemList.at(i).nodeName())
-        {
-            //遇到嵌套group
-            QString groupName;
-            if(!getGroupInfo(itemList.at(i),groupName))
-            {
-                continue;
-            }
-            SADataFeatureItem* group = new SADataFeatureItem(groupName);
-            if(!readChildItem(itemList.at(i),group))
-            {
-                delete group;
-                continue;
-            }
-            parentItem->appendItem(group);
-
-        }
-
+        return false;
     }
+    value = att.toAttr().value();
     return true;
 }
 
-bool SADataProcessVectorPointFXMLHelper::getItemInfoFromElement(const QDomNode &xmlItem, SADataFeatureItem *item)
+bool SAXMLReadHelper::getDfiParamItem(const QDomNode &xmlItem, SADataFeatureItem *item)
 {
     if(xmlItem.isNull())
     {
@@ -329,19 +202,53 @@ bool SADataProcessVectorPointFXMLHelper::getItemInfoFromElement(const QDomNode &
     item->setValue(value);
     return true;
 }
-
-bool SADataProcessVectorPointFXMLHelper::getGroupInfo(const QDomNode &xmlItem, QString &name)
+/**
+ * @brief 读取dfi节点下的子节点
+ * @param groupItem
+ * @param parentItem
+ * @return
+ */
+bool SAXMLReadHelper::readDfiChildItem(const QDomNode &groupItem, SADataFeatureItem *parentItem)
 {
-    if(xmlItem.isNull())
+    if(!groupItem.hasChildNodes())
     {
         return false;
     }
-    QDomNamedNodeMap attrs = xmlItem.attributes();
-    QDomNode att = attrs.namedItem(SA_XML_ATT_NAME);
-    if(!att.isAttr())
+    QDomNodeList itemList = groupItem.childNodes();//(XML_STR_ITEM__);
+    for(int i = 0;i<itemList.size();++i)
     {
-        return false;
+        if(SA_XML_TAG_ITEM == itemList.at(i).nodeName())
+        {
+            SADataFeatureItem* item = new SADataFeatureItem();
+            if(!getDfiParamItem(itemList.at(i),item))
+            {
+                delete item;
+                continue;
+            }
+            parentItem->appendItem(item);
+        }
+        else if(SA_XML_TAG_GROUP == itemList.at(i).nodeName())
+        {
+            //遇到嵌套group
+            QString groupName;
+            if(!getAttrValue(itemList.at(i),SA_XML_ATT_NAME,groupName))
+            {
+                continue;
+            }
+            SADataFeatureItem* group = new SADataFeatureItem(groupName);
+            if(!readDfiChildItem(itemList.at(i),group))
+            {
+                delete group;
+                continue;
+            }
+            parentItem->appendItem(group);
+
+        }
+
     }
-    name = att.toAttr().value();
     return true;
 }
+
+//====================================
+
+

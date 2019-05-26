@@ -15,8 +15,6 @@
     #include <QLocalServer>
     #include <QLocalSocket>
     #include "SALocalServerDefine.h"
-    #include "SALocalServeReader.h"
-    #include "SALocalServeWriter.h"
     #include "SAXMLReadHelper.h"
 #endif
 
@@ -59,8 +57,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 
 #else
   ,m_dataProcessSocket(nullptr)
-  ,m_dataReader(nullptr)
-  ,m_dataWriter(nullptr)
+  ,m_socketOpt(nullptr)
   ,m_connectRetryCount(CONNECT_RETRY_COUNT)
   ,m_wndPtrKey(1)
 #endif
@@ -192,13 +189,13 @@ void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const
         {
             datas.append(cur->sample(c));
         }
-        if(m_dataWriter)
+        if(m_socketOpt)
         {
             qDebug() << "send item:" << plotitem->title().text() << " to calc";
             TmpStru ts(plotitem,arg1,arg2);
             ++m_wndPtrKey;
             m_key2wndPtr[m_wndPtrKey] = ts;
-            m_dataWriter->send2DPointFs(datas,m_wndPtrKey);
+            m_socketOpt->send2DPointFs(datas,m_wndPtrKey);
         }
     }
 }
@@ -282,6 +279,8 @@ void SADataFeatureWidget::onHeartbeatTimeOut(int misstimes,int tokenID,uint key)
 }
 #endif
 
+
+
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
 void SADataFeatureWidget::onReceivedString(const QString& str,uint key)
 {
@@ -296,6 +295,14 @@ void SADataFeatureWidget::onReceivedString(const QString& str,uint key)
 #endif
             quintptr w,chart,plotItemPtr;
             std::unique_ptr<SADataFeatureItem> item(new SADataFeatureItem);
+            TmpStru kw = m_key2wndPtr.value(key,TmpStru(nullptr,nullptr,nullptr));
+            if(nullptr == kw.mdiSubWnd)
+            {
+
+            }
+
+
+
             if(xmlHelper.getVectorPointFProcessResult(w,chart,plotItemPtr,item.get()))
             {
                 QMdiSubWindow* subWind = (QMdiSubWindow*)w;

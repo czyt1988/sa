@@ -5,6 +5,7 @@
 #include <memory>
 #include <QXmlStreamReader>
 #include <QDomDocument>
+#include "SAXMLTagDefined.h"
 //class QXmlStreamReader;
 class SADataFeatureItem;
 class SADataProcessVectorPointFXMLHelperPrivate;
@@ -15,54 +16,37 @@ class SADataProcessVectorPointFXMLHelperPrivate;
 class SALIB_EXPORT SAXMLReadHelper
 {
 public:
-    ///
-    /// \brief 协议类型
-    ///
-    enum ProtocolType
-    {
-        UnknowType
-        ,TypeVectorPointFProcessResult ///< 线性数组处理结果返回
-    };
 
     SAXMLReadHelper(const QString &str);
     //是否有效
     bool isValid() const;
     //获取协议类型
-    SAXMLReadHelper::ProtocolType getProtocolType() const;
+    SA_XML::ProtocolType getProtocolType() const;
     //获取线性数组的数据
-    bool getVectorPointFProcessResult(quintptr &wnd,quintptr &fig,quintptr& itp,SADataFeatureItem* item);
+    bool getVectorPointFProcessResult(uint& key,SADataFeatureItem* item);
+    //获取错误描述
+    QString getErrorMsg() const;
+
 protected:
     void init();
 private:
-    QScopedPointer<QXmlStreamReader> m_xml;
-    bool m_isvalid;///< 是否有效
-    ProtocolType m_protocolType;
-    const QString* m_strPtr;
-};
-
-
-///
-/// \brief 处理结果的xml读写帮助类
-/// <dfi>
-///     <group name=''>
-///     <group>
-/// <\dfi>
-///
-class SALIB_EXPORT SADataProcessVectorPointFXMLHelper
-{
-    SA_IMPL(SADataProcessVectorPointFXMLHelper)
-public:
-    SADataProcessVectorPointFXMLHelper();
-    ~SADataProcessVectorPointFXMLHelper();
-    void startWrite(QString* string);
-    void endWrite();
-    void startWriteGroup(const QString& name);
-    void endWriteGroup();
-    void writeValue(const QVariant &d, const QString& name);
-    static bool read(const QString& xmlStr,SADataFeatureItem *item);
+    //读取dfi节点
+    bool readDfi(SADataFeatureItem *item);
+    //读取dfi节点下的子节点
+    bool readDfiChildItem(const QDomNode &groupItem, SADataFeatureItem *parentItem);
+    //获取属性的值
+    bool getAttrValue(const QDomNode &xmlItem,const QString& name, QString &value);
+    //从dfi下面获取值
+    bool getDfiParamItem(const QDomNode &xmlItem, SADataFeatureItem *item);
 private:
-    static bool readChildItem(const QDomNode& groupItem,SADataFeatureItem *parentItem);
-    static bool getItemInfoFromElement(const QDomNode &xmlItem, SADataFeatureItem *item);
-    static bool getGroupInfo(const QDomNode &xmlItem, QString& name);
+    QDomDocument m_doc;
+    QDomElement m_rootEle;
+    QDomElement m_headerEle;
+    QDomElement m_contentEle;
+    QString m_errorMsg;
+    bool m_isvalid;///< 是否有效
+    SA_XML::ProtocolType m_protocolType;
 };
+
+
 #endif // SAXMLPARSEHELPER_H
