@@ -42,6 +42,7 @@ private slots:
 
     //接收到点数组的计算结果
     Q_SLOT void onProcessVectorPointFResult(const QString& res
+                                            , const QHash<QString, QVariant> &args
                                             , uint key);
 
     Q_SLOT void onDisconnected();

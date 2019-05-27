@@ -26,7 +26,7 @@ SADataProcessVectorPointF::SADataProcessVectorPointF(QObject *parent):QObject(pa
 ///
 void SADataProcessVectorPointF::setPoints(const QVector<QPointF> &points, const QHash<QString, QVariant> &args,uint key)
 {
-    emit result(analysisData(points,args),key);
+    emit result(analysisData(points,args),args,key);
 }
 
 void SADataProcessVectorPointF::getVectorPointY(const QVector<QPointF> &points, QVector<double> &ys)

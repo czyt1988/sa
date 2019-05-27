@@ -135,6 +135,7 @@ void SADataProcServe::onReceivedString(const QString& str,uint key)
 
 
 void SADataProcServe::onProcessVectorPointFResult(const QString& res
+                                                  ,const QHash<QString, QVariant>& args
                                                   , uint key)
 {
     if(res.isEmpty())
@@ -142,13 +143,6 @@ void SADataProcServe::onProcessVectorPointFResult(const QString& res
         qDebug() << "rec result is empty";
         return;
     }
-
-    if(2 != args.size())
-    {
-        qDebug() << "argList invalid";
-        return;
-    }
-    uint key = args[ARG_DES_KEY_ID].value<uint>();
     int token = args[ARG_DES_TOKEN_ID].value<int>();
     SALocalServeSocketServeParse* sp = m_tokenOptDict.value(token,nullptr);
     if(nullptr == sp)

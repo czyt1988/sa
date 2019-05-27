@@ -43,7 +43,7 @@ signals:
     /// \param args 传入的参数
     ///
     //void result(SADataFeatureItem* result,const QHash<QString, QVariant>& args);
-    void result(const QString& result,uint key);
+    void result(const QString& result,const QHash<QString, QVariant>& args,uint key);
 private:
     //SADataFeatureItem* analysisData(const QVector<QPointF> &orgPoints);
     QString analysisData(const QVector<QPointF> &orgPoints,const QHash<QString, QVariant> &args);
