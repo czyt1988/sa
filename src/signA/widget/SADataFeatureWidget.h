@@ -6,7 +6,8 @@
 #include <QMap>
 #include "../global/SAGlobals.h"
 #include <memory>
-
+#include <QTimer>
+#include <QDateTime>
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -74,8 +75,6 @@ private:
 private:
     //计算一个plot item
     void calcPlotItemFeature(const QwtPlotItem* plotitem,const QMdiSubWindow *arg1,const SAChart2D* arg2);
-    //初始化本地服务
-    void initLocalServer();
     //连接服务器
     void connectToServer();
     //重新连接
@@ -85,7 +84,7 @@ private:
     //尝试连接服务器
     Q_SLOT void tryToConnectServer();
     //心跳丢失
-    Q_SLOT void onHeartbeatTimeOut(int misstimes,int tokenID,uint key);
+    Q_SLOT void onRecHeartbeat(uint key);
     //接收到xml字符
     Q_SLOT void onReceivedString(const QString& str,uint key);
     //接收到到点数组
@@ -94,8 +93,8 @@ private:
     Q_SLOT void onLocalSocketDisconnect();
     //
     Q_SLOT void tryToStartDataProc();
-    //连接成功触发的槽，会返回token id
-    Q_SLOT void onLoginSucceed(int tokenID,uint key);
+    //定时心跳检测时间到达触发槽
+    Q_SLOT void onHeartbeatCheckerTimerout();
 #endif
 private:
     Ui::SADataFeatureWidget *ui;
@@ -107,18 +106,26 @@ private:
 private://数据接收相关的类型
     QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
     SALocalServeSocketOpt* m_socketOpt;///< 处理m_dataProcessSocket的具体封装
-    short m_connectRetryCount;
+    QDateTime m_lastHeartbeatTime;///< 记录心跳间隔时长
+    QTimer m_heartbeatChecker;///< 用于定时检测心跳
+    short m_connectRetryCount;///< 重连服务器次数
+    short m_lossHeartbeatCount;///<丢失心跳的次数
     QMap<int,QString> m_errcodeToString;///< 错误码对应文本
     class TmpStru{
     public:
-        TmpStru(const QwtPlotItem *p1,const QMdiSubWindow *p2,const SAChart2D *p3)
+        TmpStru(QwtPlotItem *p1,QMdiSubWindow *p2,SAChart2D *p3)
             :plotitem(p1),mdiSubWnd(p2),chart2d(p3)
         {
 
         }
-        const QwtPlotItem *plotitem;
-        const QMdiSubWindow *mdiSubWnd;
-        const SAChart2D *chart2d;
+        TmpStru()
+            :plotitem(nullptr),mdiSubWnd(nullptr),chart2d(nullptr)
+        {
+
+        }
+        QwtPlotItem *plotitem;
+        QMdiSubWindow *mdiSubWnd;
+        SAChart2D *chart2d;
     };
     unsigned int m_wndPtrKey;
     QHash<uint,TmpStru> m_key2wndPtr;

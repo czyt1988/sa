@@ -60,14 +60,16 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
   ,m_socketOpt(nullptr)
   ,m_connectRetryCount(CONNECT_RETRY_COUNT)
   ,m_wndPtrKey(1)
+  ,m_lossHeartbeatCount(0)
 #endif
 {
     ui->setupUi(this);
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
+    connect(&m_heartbeatChecker,&QTimer::timeout,this,&SADataFeatureWidget::onHeartbeatCheckerTimerout);
     setErrorCodeToString();
-    initLocalServer();
+    connectToServer();
 #endif
 }
 
@@ -75,6 +77,79 @@ SADataFeatureWidget::~SADataFeatureWidget()
 {
     delete ui;
 }
+
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
+
+/**
+ * @brief 连接服务器，此函数在进程返回准备完成后调用
+ */
+void SADataFeatureWidget::connectToServer()
+{
+    if(m_dataProcessSocket)
+    {
+        delete m_dataProcessSocket;
+        m_dataProcessSocket=nullptr;
+    }
+    m_dataProcessSocket = new QLocalSocket(this);
+    connect(m_dataProcessSocket,&QLocalSocket::disconnected
+            ,this,&SADataFeatureWidget::onLocalSocketDisconnect);
+    m_connectRetryCount = CONNECT_RETRY_COUNT;
+    tryToConnectServer();
+
+}
+#endif
+
+#ifdef USE_IPC_CALC_FEATURE//使用多进程
+///
+/// \brief 尝试连接服务器,此函数在connectToServer调用
+///
+void SADataFeatureWidget::tryToConnectServer()
+{
+#ifdef _DEBUG_OUTPUT
+    QElapsedTimer t;
+    t.start();
+    saPrint() << "start connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME)";
+#endif
+    m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
+
+#ifdef _DEBUG_OUTPUT
+    saPrint() << "start connectToServer cost:"<<t.elapsed();
+    t.restart();
+#endif
+    if(m_connectRetryCount <= 0)
+    {
+        QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
+        emit showMessageInfo(str,SA::ErrorMessage);
+        saDebug(str);
+        return;
+    }
+    if(!m_dataProcessSocket->waitForConnected(100))
+    {
+
+        QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
+        --m_connectRetryCount;
+        return;
+    }
+
+    saPrint() << "connect to dataProc serve success!";
+    //建立socket解析操作类
+    if(m_socketOpt)
+    {
+        delete m_socketOpt;
+    }
+    m_socketOpt = new SALocalServeSocketOpt(m_dataProcessSocket,this);
+    connect(m_socketOpt,&SALocalServeSocketOpt::recHeartbeat
+            ,this,&SADataFeatureWidget::onRecHeartbeat);
+    connect(m_socketOpt,&SALocalServeSocketOpt::recString
+            ,this,&SADataFeatureWidget::onReceivedString);
+    connect(m_socketOpt,&SALocalServeSocketOpt::rec2DPointFs
+            ,this,&SADataFeatureWidget::onReceive2DPointFs);
+    connect(m_socketOpt,&SALocalServeSocketOpt::errorOccure
+            ,this,&SADataFeatureWidget::onErrorOccure);
+}
+#endif
+
+
 ///
 /// \brief 子窗口激活槽
 /// \param arg1
@@ -192,7 +267,7 @@ void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const
         if(m_socketOpt)
         {
             qDebug() << "send item:" << plotitem->title().text() << " to calc";
-            TmpStru ts(plotitem,arg1,arg2);
+            TmpStru ts(const_cast<QwtPlotItem *>(plotitem),const_cast<QMdiSubWindow *>(arg1),const_cast<SAChart2D *>(arg2));
             ++m_wndPtrKey;
             m_key2wndPtr[m_wndPtrKey] = ts;
             m_socketOpt->send2DPointFs(datas,m_wndPtrKey);
@@ -260,22 +335,10 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
 
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
-void SADataFeatureWidget::onHeartbeatTimeOut(int misstimes,int tokenID,uint key)
+void SADataFeatureWidget::onRecHeartbeat(uint key)
 {
-    Q_UNUSED(misstimes);
-    Q_UNUSED(tokenID);
     Q_UNUSED(key);
-    static int s_count = 0;
-    if (0 == s_count)
-    {
-        emit showMessageInfo(tr("connect lost !"),SA::NormalMessage);
-    }
-    else if (s_count > HEART_BREAK_COUNT_AS_DISCONNECT)
-    {
-        //心跳多次无法到达，重新连接
-        reconnect();
-        s_count = 0;
-    }
+    m_lastHeartbeatTime = QDateTime::currentDateTime();
 }
 #endif
 
@@ -288,61 +351,61 @@ void SADataFeatureWidget::onReceivedString(const QString& str,uint key)
     if(xmlHelper.isValid())
     {
         //说明这个字符串是一个点数组处理的结果
-        if(SAXMLReadHelper::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
+        if(SA_XML::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
         {
 #ifdef _DEBUG_OUTPUT
             saPrint()<<"SAXMLReadHelper::TypeVectorPointFProcessResult";
 #endif
-            quintptr w,chart,plotItemPtr;
             std::unique_ptr<SADataFeatureItem> item(new SADataFeatureItem);
             TmpStru kw = m_key2wndPtr.value(key,TmpStru(nullptr,nullptr,nullptr));
             if(nullptr == kw.mdiSubWnd)
             {
-
+                qDebug() << tr("receive calc result ,but can not find widget");
+                return;
             }
-
-
-
-            if(xmlHelper.getVectorPointFProcessResult(w,chart,plotItemPtr,item.get()))
+            //确保子窗口未关闭
+            QList<QMdiSubWindow*> subWindList = saUI->getSubWindowList();
+            if(!subWindList.contains(kw.mdiSubWnd))
             {
-                QMdiSubWindow* subWind = (QMdiSubWindow*)w;
-                SAChart2D* chartWnd = (SAChart2D*)chart;
-                QwtPlotItem* itemPtr = (QwtPlotItem*)plotItemPtr;
-                QList<QMdiSubWindow*> subWindList = saUI->getSubWindowList();
-                if(!subWindList.contains(subWind))
-                {
-                    saDebug(tr("sa can not find subWind,subWind ptr:%1").arg((quintptr)subWind));
-                    return;
-                }
-                SAFigureWindow* figure = getChartWidgetFromSubWindow(subWind);
-                QList<SAChart2D*> plots = figure->get2DPlots();
-
-                if(!plots.contains(chartWnd))
-                {
-                    saDebug(tr("can not find figure in cur sub window:%1").arg((quintptr)subWind));
-                    return;
-                }
-                //查找model如果没有查找到新建一个model
-                DataFeatureTreeModel* model= qobject_cast<DataFeatureTreeModel*>(m_subWindowToDataInfo.value(subWind,nullptr));
-                if(nullptr == model)
-                {
-                    model = new DataFeatureTreeModel(this);
-                    m_subWindowToDataInfo[subWind] = model;
-                    ui->treeView->setModel(model);
-                }
-                //设置item的名字
-                item->setName(itemPtr->title().text());
-
-                //设置item的颜色
-                QColor clr = SAChart2D::getItemColor( itemPtr);
-                if(clr.isValid())
-                {
-                    clr.setAlpha(100);
-                    item->setBackgroundColor(clr);
-                }
-                model->setPlotItem(chartWnd,itemPtr,item.release());
-                ui->treeView->expandToDepth(1);
+                qDebug() << tr("receive calc result ,but can not find subWind");
+                return;
             }
+            //确保绘图窗口未关闭
+            SAFigureWindow* figure = getChartWidgetFromSubWindow(kw.mdiSubWnd);
+            QList<SAChart2D*> plots = figure->get2DPlots();
+            if(!plots.contains(kw.chart2d))
+            {
+                qDebug() << tr("receive calc result , but can not find figure in cur sub window");
+                return;
+            }
+            //确保plotitem存在
+            if(!kw.chart2d->itemList().contains(kw.plotitem))
+            {
+                qDebug() << tr("receive calc result , but can not find plot item in chart");
+                return;
+            }
+
+            //查找model如果没有查找到新建一个model
+
+            DataFeatureTreeModel* model= qobject_cast<DataFeatureTreeModel*>(m_subWindowToDataInfo.value(kw.mdiSubWnd,nullptr));
+            if(nullptr == model)
+            {
+                model = new DataFeatureTreeModel(this);
+                m_subWindowToDataInfo[kw.mdiSubWnd] = model;
+                ui->treeView->setModel(model);
+            }
+            //设置item的名字
+            item->setName(kw.plotitem->title().text());
+
+            //设置item的颜色
+            QColor clr = SAChart2D::getItemColor( kw.plotitem);
+            if(clr.isValid())
+            {
+                clr.setAlpha(100);
+                item->setBackgroundColor(clr);
+            }
+            model->setPlotItem(kw.chart2d,kw.plotitem,item.release());
+            ui->treeView->expandToDepth(1);
         }
     }
 
@@ -391,16 +454,24 @@ void SADataFeatureWidget::tryToStartDataProc()
     tryToConnectServer();
 }
 
+
+
 /**
- * @brief 连接成功触发的槽，会返回token id
- * @param tokenID
- * @param key
+ * @brief 定时心跳检测时间到达触发槽
  */
-void SADataFeatureWidget::onLoginSucceed(int tokenID, uint key)
+void SADataFeatureWidget::onHeartbeatCheckerTimerout()
 {
-    Q_UNUSED(key);
-    m_dataReader->setToken(tokenID);
-    m_dataWriter->setToken(tokenID);
+    if (0 == m_lossHeartbeatCount)
+    {
+        emit showMessageInfo(tr("connect lost !"),SA::NormalMessage);
+    }
+    ++m_lossHeartbeatCount;
+    if (m_lossHeartbeatCount > HEART_BREAK_COUNT_AS_DISCONNECT)
+    {
+        //心跳多次无法到达，重新连接
+        reconnect();
+        m_lossHeartbeatCount = 0;
+    }
 }
 #endif
 
@@ -514,61 +585,16 @@ void SADataFeatureWidget::onErrorOccure(int errcode)
     QString str = QString("Error Occure,code:%1,msg:%2").arg(errcode).arg(m_errcodeToString.value(errcode));
     emit showMessageInfo(str,SA::ErrorMessage);
 }
-#ifdef USE_IPC_CALC_FEATURE//使用多进程
-///
-/// \brief 初始化本地服务器
-///
-void SADataFeatureWidget::initLocalServer()
-{
-    if(m_dataReader)
-    {
-        delete m_dataReader;
-    }
-    if(m_dataWriter)
-    {
-        delete m_dataWriter;
-    }
-    m_dataReader = new SALocalServeProtocol(this);
-    m_dataWriter = new SALocalServeWriter(this);
-    connect(m_dataReader,&SALocalServeProtocol::loginSucceed
-            ,this,&SADataFeatureWidget::onLoginSucceed);
-    connect(m_dataReader,&SALocalServeProtocol::heartbeatTimeOut
-            ,this,&SADataFeatureWidget::onHeartbeatTimeOut);
-    connect(m_dataReader,&SALocalServeProtocol::receiveString
-            ,this,&SADataFeatureWidget::onReceivedString);
-    connect(m_dataReader,&SALocalServeProtocol::receive2DPointFs
-            ,this,&SADataFeatureWidget::onReceive2DPointFs);
-    connect(m_dataReader,&SALocalServeReader::errorOccure
-            ,this,&SADataFeatureWidget::onErrorOccure);
-    connectToServer();
-}
-#endif
+
+
+
 
 #ifdef USE_IPC_CALC_FEATURE//使用多进程
-///
-/// \brief 连接服务器，此函数在进程返回准备完成后调用
-///
-void SADataFeatureWidget::connectToServer()
-{
-    if(m_dataProcessSocket)
-    {
-        delete m_dataProcessSocket;
-        m_dataProcessSocket=nullptr;
-    }
-    m_dataProcessSocket = new QLocalSocket(this);
-    connect(m_dataProcessSocket,&QLocalSocket::disconnected
-            ,this,&SADataFeatureWidget::onLocalSocketDisconnect);
-    m_connectRetryCount = CONNECT_RETRY_COUNT;
-    tryToConnectServer();
-}
-
 /**
  * @brief 重新连接
  */
 void SADataFeatureWidget::reconnect()
 {
-    //重新初始化-自动释放资源
-    initLocalServer();
     //重新连接-自动释放资源
     connectToServer();
 }
@@ -584,45 +610,7 @@ void SADataFeatureWidget::setErrorCodeToString()
 }
 #endif
 
-#ifdef USE_IPC_CALC_FEATURE//使用多进程
-///
-/// \brief 尝试连接服务器,此函数在connectToServer调用
-///
-void SADataFeatureWidget::tryToConnectServer()
-{
-#ifdef _DEBUG_OUTPUT
-    QElapsedTimer t;
-    t.start();
-    saPrint() << "start connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME)";
-#endif
-    m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
 
-#ifdef _DEBUG_OUTPUT
-    saPrint() << "start connectToServer cost:"<<t.elapsed();
-    t.restart();
-#endif
-    if(m_connectRetryCount <= 0)
-    {
-        QString str = tr("can not connect dataProc Serve!%1").arg(m_dataProcessSocket->errorString());
-        emit showMessageInfo(str,SA::ErrorMessage);
-        saDebug(str);
-        return;
-    }
-    if(!m_dataProcessSocket->waitForConnected(100))
-    {
-
-        QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
-        --m_connectRetryCount;
-        return;
-    }
-
-    saPrint() << "connect to dataProc serve success!";
-    m_dataReader->setSocket(m_dataProcessSocket);
-    m_dataWriter->setSocket(m_dataProcessSocket);
-    m_dataWriter->sendShakeHand();
-
-}
-#endif
 
 
 
