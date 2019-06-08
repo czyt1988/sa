@@ -11,7 +11,7 @@
 
 #define ARG_DES_KEY_ID "key"
 #define ARG_DES_TOKEN_ID "token"
-//#define _DEBUG_OUTPUT
+#define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
 #endif
@@ -19,9 +19,11 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
   ,m_pid(0)
   ,m_localServer(new QLocalServer(this))
   ,m_willBeQuit(false)
+  ,m_checkLiveTime(10000)
 {
+    connect(&m_liveChecker,&QTimer::timeout,this,&SADataProcServe::onCheckLive);
+
     qRegisterMetaType<QVector<QPointF> >("QVector<QPointF>");
-    qRegisterMetaType<quintptr>("quintptr");
     initCalcThread();
     connect(m_localServer,&QLocalServer::newConnection
             ,this,&SADataProcServe::onLocalServeNewConnection);
@@ -29,21 +31,23 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
     {
        qDebug() << tr("listern loacl server error");
     }
-    qDebug() << "start DataProc Serve";
+    qInfo() << tr("start DataProc Serve");
+    m_liveChecker.start(m_checkLiveTime);
 }
 
 
 void SADataProcServe::onLocalServeNewConnection()
 {
-    qDebug() << "New Connection";
+    qDebug() << tr("New Connection");
     QLocalSocket* socket = m_localServer->nextPendingConnection();
     if(nullptr == socket)
     {
-        qDebug() << "can not exec m_localServer->nextPendingConnection();";
+        qDebug() << tr("can not exec m_localServer->nextPendingConnection();");
         return;
     }
     static uint tokenID = 100;
     ++tokenID;
+    socket->flush();
     SALocalServeSocketServeParse* sp = new SALocalServeSocketServeParse(socket,socket);
     sp->setToken(tokenID);
     m_socketOptDict[socket] = sp;
@@ -160,9 +164,8 @@ void SADataProcServe::onProcessVectorPointFResult(const QString& res
 
 #ifdef _DEBUG_OUTPUT
     qDebug() << "onProcessVectorPointFResult cost:" << t.elapsed()
-             << " WndPtr:"<<widget
-             << " FigPtr:"<<fig
-             << " ItemPtr:"<<item
+             << " token:"<<token
+             << " res:"<<res
                 ;
 #endif
 }
@@ -181,6 +184,18 @@ void SADataProcServe::onDisconnected()
             m_tokenOptDict.remove(token);
             m_socketOptDict.remove(socket);
         }
+    }
+}
+
+/**
+ * @brief 检查是否需要结束
+ */
+void SADataProcServe::onCheckLive()
+{
+    if(m_connectList.size() <= 0)
+    {
+        qDebug() << tr("no connection at %1 ms,quit signadataproc!").arg(m_checkLiveTime);
+        qApp->quit();
     }
 }
 

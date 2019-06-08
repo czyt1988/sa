@@ -54,7 +54,7 @@ class QThread;
                 fprintf(stderr,"\n");\
                 fprintf(stderr,">> [%d]-[%d]: ",M__i,M__i+9);\
             }\
-            fprintf(stderr,"%02X,",(int)__tmp_byte_array__[M__i]);\
+            fprintf(stderr,"%02X,",(unsigned char)(__tmp_byte_array__.at(M__i)));\
         }\
         fprintf(stderr,"\n]");\
     }while(0)

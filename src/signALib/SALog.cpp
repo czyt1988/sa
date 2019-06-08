@@ -587,6 +587,7 @@ void SALog::setLogFilePath(const QString &path)
     d_p->logFilePath = path;
     d_p->readwrite->setFileName(makefileName());
 }
+
 ///
 /// \brief 设置log文件保存路径为默认保存路径
 ///

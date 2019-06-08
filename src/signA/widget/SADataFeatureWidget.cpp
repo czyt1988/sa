@@ -108,12 +108,12 @@ void SADataFeatureWidget::tryToConnectServer()
 #ifdef _DEBUG_OUTPUT
     QElapsedTimer t;
     t.start();
-    saPrint() << "start connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME)";
+    qDebug() << tr("start connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME)");
 #endif
     m_dataProcessSocket->connectToServer(SA_LOCAL_SERVER_DATA_PROC_NAME);
 
 #ifdef _DEBUG_OUTPUT
-    saPrint() << "start connectToServer cost:"<<t.elapsed();
+    qDebug() << tr("start connectToServer cost:")<<t.elapsed();
     t.restart();
 #endif
     if(m_connectRetryCount <= 0)
@@ -125,13 +125,12 @@ void SADataFeatureWidget::tryToConnectServer()
     }
     if(!m_dataProcessSocket->waitForConnected(100))
     {
-
         QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
         --m_connectRetryCount;
         return;
     }
 
-    saPrint() << "connect to dataProc serve success!";
+    qInfo() << tr("connect to dataProc serve success!");
     //建立socket解析操作类
     if(m_socketOpt)
     {

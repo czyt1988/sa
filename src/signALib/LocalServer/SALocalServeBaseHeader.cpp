@@ -36,4 +36,20 @@ QDataStream &operator >>(QDataStream &io, SALocalServeBaseHeader &d)
     return io;
 }
 
+QDebug operator<<(QDebug debug, const SALocalServeBaseHeader &c)
+{
+     QDebugStateSaver saver(debug);
+     debug << "SALocalServeBaseHeader is valid:" << c.isValid()
+           << "\n{"
+           << "\n magic_start:" << c.magic_start
+           << "\n key:" << c.key
+           << "\n type:" << c.type
+           << "\n tokenID:" << c.tokenID
+           << "\n classID:" << c.classID
+           << "\n functionID:" << c.functionID
+           << "\n dataSize:" << c.dataSize
+           << "\n magic_end:" << c.magic_end
+           << "\n}";
 
+     return debug;
+}

@@ -2,6 +2,7 @@
 #define SALOCALSERVEBASEDATA_H
 #include "SALibGlobal.h"
 #include <QDataStream>
+#include <QDebug>
 /// \def 定义魔数头
 #ifndef SA_LOCAL_SER_HEADER_MAGIC_START
 #define SA_LOCAL_SER_HEADER_MAGIC_START (0xddf125a)
@@ -73,6 +74,8 @@ struct SALIB_EXPORT SALocalServeBaseHeader
 
 SALIB_EXPORT QDataStream& operator <<(QDataStream& io,const SALocalServeBaseHeader& d);
 SALIB_EXPORT QDataStream& operator >>(QDataStream& io,SALocalServeBaseHeader& d);
+SALIB_EXPORT QDebug operator<<(QDebug debug, const SALocalServeBaseHeader &c);
+
 
 Q_DECLARE_METATYPE(SALocalServeBaseHeader)
 

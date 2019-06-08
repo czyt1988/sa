@@ -71,7 +71,7 @@ SARibbon项目的地址为：[https://github.com/czyt1988/SARibbon](https://gith
 
 - `SARibbonBar.pri`文件，位于`src\SARibbonBar\SARibbon\SARibbonBar.pri`下
 
-- SARibbon的所有头文件位于`src\SARibbonBar\SARibbon\src\SARibbonBar\`下面
+- SARibbon的所有头文件位于`src\的\SARibbon\src\SARibbonBar\`下面
 
 ## 3.SA的编译
 

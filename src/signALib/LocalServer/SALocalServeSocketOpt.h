@@ -93,11 +93,6 @@ private slots:
     Q_SLOT void onReadyRead();
     Q_SLOT void onDisconnected();
     Q_SLOT void onError(QLocalSocket::LocalSocketError socketError);
-
-private:
-    QLocalSocket* m_socket;
-    int m_token;
-    QTimer m_timer;
 };
 
 #endif // SALOCALSERVE_H

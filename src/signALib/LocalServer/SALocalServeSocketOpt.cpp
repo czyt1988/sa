@@ -3,7 +3,8 @@
 #include "SALocalServeBaseHeader.h"
 #include <QTextCodec>
 #include <QBuffer>
-
+#include "SALog.h"
+#define _DEBUG_PRINT
 class SALocalServeSocketOptPrivate{
     SA_IMPL_PUBLIC(SALocalServeSocketOpt)
 public:
@@ -110,6 +111,11 @@ bool SALocalServeSocketOpt::readFromSocket(void *p, int n)
         readLen = d_ptr->m_socket->read((char*)p+index,n);
         if(readLen <= 0)
         {
+#ifdef _DEBUG_PRINT
+            qDebug() << "m_socket->read("<<n<<") return "<<readLen
+                     << " fun:" <<__FUNCTION__ << " [" <<__LINE__<<"]"
+                        ;
+#endif
             break;
         }
         index += readLen;
@@ -134,6 +140,9 @@ void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByte
     int classID = head.classID;
     int funID = head.functionID;
     uint key = head.key;
+#ifdef _DEBUG_PRINT
+    qDebug() << "deal: classID:" << classID << " funID:" << funID << " key:" << key;
+#endif
     switch (classID) {
     case SA_LOCAL_SER_LOGIN_CLASS:
         {
@@ -198,13 +207,18 @@ void SALocalServeSocketOpt::send(const SALocalServeBaseHeader &header, const QBy
     {
         return;
     }
+#ifdef _DEBUG_PRINT
+    qDebug() << tr("local socket send data:header:") << header << " data:" << data;
+#endif
     QDataStream out(d_ptr->m_socket);
     out << header;
     if(data.size()>0)
     {
-        out << data;
+        out.writeRawData(data.data(),data.size());
     }
+    d_ptr->m_socket->flush();//马上发送缓冲区书记
     d_ptr->m_socket->waitForBytesWritten();
+
 }
 /**
  * @brief 登录(1-1)，成功会返回tokenID
@@ -224,6 +238,7 @@ void SALocalServeSocketOpt::sendLoginSucceed(uint key)
     buffer.open(QIODevice::WriteOnly);
     QDataStream st(&buffer);
     st << h.tokenID;
+    h.dataSize = data.size();
     send(h,data);
 }
 /**
@@ -364,14 +379,18 @@ void SALocalServeSocketOpt::onReadyRead()
     const static unsigned int s_headerSize = sizeof(SALocalServeBaseHeader);
     if(d_ptr->m_isReadedMainHeader)
     {
+#ifdef _DEBUG_PRINT
+    qDebug() <<"receive data:=========================="
+                ;
+#endif
         if(d_ptr->m_socket->bytesAvailable() >= d_ptr->m_mainHeader.dataSize)
         {
             //说明数据接收完
 #ifdef _DEBUG_PRINT
-            qDebug() << "rec Data:"<<m_socket->bytesAvailable()
-                     << " bytes \r\n header.getDataSize:"<<m_mainHeader.dataSize
-                     << "\r\n header.type:"<<m_mainHeader.type
-                     << "current index:" << m_index
+            qDebug() << "rec Data:"<<d_ptr->m_socket->bytesAvailable()
+                     << " bytes \r\n header.getDataSize:"<<d_ptr->m_mainHeader.dataSize
+                     << "\r\n header.type:"<<d_ptr->m_mainHeader.type
+                     << "current index:" << d_ptr->m_index
                         ;
 #endif
             if(d_ptr->m_buffer.size() < s_headerSize+d_ptr->m_mainHeader.dataSize)
@@ -382,7 +401,7 @@ void SALocalServeSocketOpt::onReadyRead()
             {
                 emit errorOccure(SALocalServe::ReceiveDataError);
                 d_ptr->m_isReadedMainHeader = false;
-                d_ptr->m_socket->reset();
+                d_ptr->m_socket->abort();
                 qDebug() << __FILE__ <<"[" << __FUNCTION__ << "][" << __LINE__ << "]can not read from socket io!";
                 return;
             }
@@ -400,7 +419,7 @@ void SALocalServeSocketOpt::onReadyRead()
         //说明包头数据接收完
 #ifdef _DEBUG_PRINT
     qDebug() <<"main header may receive:"
-            << "\r\n byte available:"<<m_socket->bytesAvailable()
+            << "\r\n byte available:"<<d_ptr->m_socket->bytesAvailable()
                 ;
 #endif
         d_ptr->m_index = 0;
@@ -410,27 +429,33 @@ void SALocalServeSocketOpt::onReadyRead()
         }
         if(!readFromSocket(d_ptr->m_buffer.data(),s_headerSize))
         {
+            qDebug() << "can not read from socket" << __LINE__;
             emit errorOccure(SALocalServe::ReceiveUnknowHeader);
             d_ptr->m_isReadedMainHeader = false;
-            d_ptr->m_socket->reset();
+            d_ptr->m_socket->abort();
             return;
         }
+#ifdef _DEBUG_PRINT
+        qDebug() << "readed from socket";
+        printQByteArray(d_ptr->m_buffer);
+#endif
         d_ptr->m_index += s_headerSize;
         QDataStream io(d_ptr->m_buffer);
         io >> d_ptr->m_mainHeader;
         if(!(d_ptr->m_mainHeader.isValid()))
         {
+
             d_ptr->m_isReadedMainHeader = false;
-            qDebug() << "receive unknow header";
+            qDebug() << "receive unknow header[1]"
+                     << "\n" << d_ptr->m_mainHeader;
+            printQByteArray(d_ptr->m_buffer);
             emit errorOccure(SALocalServe::ReceiveUnknowHeader);
-            d_ptr->m_socket->reset();
+            d_ptr->m_socket->abort();
             return;
         }
 #ifdef _DEBUG_PRINT
-    qDebug() << "header.getDataSize:"<<m_mainHeader.dataSize
-             << "\r\n header.key:"<<m_mainHeader.key
-             << "\r\n header.type:"<<m_mainHeader.type
-             << "\r\n byte available:"<<m_socket->bytesAvailable()
+    qDebug() << "header:"<<d_ptr->m_mainHeader
+             << "\n byte available:"<<d_ptr->m_socket->bytesAvailable()
                 ;
 #endif
         if(d_ptr->m_mainHeader.dataSize > 0)
@@ -442,7 +467,7 @@ void SALocalServeSocketOpt::onReadyRead()
         {
             //说明文件头之后无数据
 #ifdef _DEBUG_PRINT
-            qDebug() << "!!!!mainHeader dataSize == 0: type:"<<m_mainHeader.type
+            qDebug() << "!!!!mainHeader dataSize == 0: type:"<<d_ptr->m_mainHeader.type
                             ;
 #endif
             deal(d_ptr->m_mainHeader,d_ptr->m_buffer);
@@ -451,6 +476,10 @@ void SALocalServeSocketOpt::onReadyRead()
 
         if(d_ptr->m_socket->bytesAvailable() > 0)
         {
+#ifdef _DEBUG_PRINT
+            qDebug() << "have avaliable data,size:"<<d_ptr->m_socket->bytesAvailable()
+                            ;
+#endif
             onReadyRead();
         }
     }
@@ -464,5 +493,5 @@ void SALocalServeSocketOpt::onDisconnected()
 void SALocalServeSocketOpt::onError(QLocalSocket::LocalSocketError socketError)
 {
     qDebug() << __FILE__<<":"<<__FUNCTION__ << "err code:"<<(int)socketError;
-    qDebug() << __FILE__<<":"<<__FUNCTION__ << m_socket->errorString();
+    qDebug() << __FILE__<<":"<<__FUNCTION__ << d_ptr->m_socket->errorString();
 }

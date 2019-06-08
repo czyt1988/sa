@@ -46,6 +46,8 @@ private slots:
                                             , uint key);
 
     Q_SLOT void onDisconnected();
+    //检查是否需要结束
+    Q_SLOT void onCheckLive();
 private:
     QSet<QLocalSocket*> m_connectList;///< 连接的列表
     QMap<QLocalSocket*,SALocalServeSocketServeParse*> m_socketOptDict;
@@ -56,6 +58,8 @@ private:
     uint m_pid;
     QLocalServer* m_localServer;///< 本地服务器
     bool m_willBeQuit;
+    QTimer m_liveChecker;///< 定时判断是否需要结束的定时器
+    uint m_checkLiveTime;///< 检查生命的时间
 };
 Q_DECLARE_METATYPE(QVector<QPointF>)
 #endif // SADATAPROCCLIENT_H
