@@ -28,7 +28,7 @@
 #include "SAMdiSubWindow.h"
 #include "DataFeatureTreeModel.h"
 #include "SADataFeatureItem.h"
-
+#define _DEBUG_PRINT
 #define _DEBUG_OUTPUT
 #ifdef _DEBUG_OUTPUT
     #include "SALog.h"
@@ -337,6 +337,9 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
 void SADataFeatureWidget::onRecHeartbeat(uint key)
 {
     Q_UNUSED(key);
+#ifdef _DEBUG_PRINT
+    qDebug() << "rec heart breat at:" << QDateTime::currentDateTime();
+#endif
     m_lastHeartbeatTime = QDateTime::currentDateTime();
 }
 #endif

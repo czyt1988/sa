@@ -141,7 +141,9 @@ void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByte
     int funID = head.functionID;
     uint key = head.key;
 #ifdef _DEBUG_PRINT
-    qDebug() << "deal: classID:" << classID << " funID:" << funID << " key:" << key;
+    qDebug() << "deal: classID:" << classID << " funID:" << funID << " key:" << key
+             << " QByteArray data size:"<<datas.size()
+                ;
 #endif
     switch (classID) {
     case SA_LOCAL_SER_LOGIN_CLASS:
@@ -208,7 +210,10 @@ void SALocalServeSocketOpt::send(const SALocalServeBaseHeader &header, const QBy
         return;
     }
 #ifdef _DEBUG_PRINT
-    qDebug() << tr("local socket send data:header:") << header << " data:" << data;
+    qDebug() << tr("local socket send data:header:") << header
+             << tr("\n data size:") << data.size()
+                ;
+    printQByteArray(data);
 #endif
     QDataStream out(d_ptr->m_socket);
     out << header;
@@ -331,6 +336,9 @@ void SALocalServeSocketOpt::dealLoginSucceed(const QByteArray &datas, uint key)
     d_ptr->m_tokenID = 0;
     QDataStream st(datas);
     st >> (d_ptr->m_tokenID);
+#ifdef _DEBUG_PRINT
+    qDebug() << "dealLoginSucceed:" << d_ptr->m_tokenID;
+#endif
     emit loginSucceed(d_ptr->m_tokenID,key);
 }
 
@@ -387,10 +395,10 @@ void SALocalServeSocketOpt::onReadyRead()
         {
             //说明数据接收完
 #ifdef _DEBUG_PRINT
-            qDebug() << "rec Data:"<<d_ptr->m_socket->bytesAvailable()
-                     << " bytes \r\n header.getDataSize:"<<d_ptr->m_mainHeader.dataSize
-                     << "\r\n header.type:"<<d_ptr->m_mainHeader.type
-                     << "current index:" << d_ptr->m_index
+            qDebug() << " rec Data:"<<d_ptr->m_socket->bytesAvailable()<< " bytes "
+                     <<"\n header.getDataSize:"<<d_ptr->m_mainHeader.dataSize
+                     << "\n header.type:"<<d_ptr->m_mainHeader.type
+                     << "\n current index:" << d_ptr->m_index
                         ;
 #endif
             if(d_ptr->m_buffer.size() < s_headerSize+d_ptr->m_mainHeader.dataSize)
@@ -402,9 +410,12 @@ void SALocalServeSocketOpt::onReadyRead()
                 emit errorOccure(SALocalServe::ReceiveDataError);
                 d_ptr->m_isReadedMainHeader = false;
                 d_ptr->m_socket->abort();
-                qDebug() << __FILE__ <<"[" << __FUNCTION__ << "][" << __LINE__ << "]can not read from socket io!";
+                qDebug() << "socket abort!!!  can not read from socket io!";
                 return;
             }
+#ifdef _DEBUG_PRINT
+            printQByteArray(d_ptr->m_buffer);
+#endif
             d_ptr->m_index += d_ptr->m_mainHeader.dataSize;
             deal(d_ptr->m_mainHeader,d_ptr->m_buffer);
             d_ptr->m_isReadedMainHeader = false;

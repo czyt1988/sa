@@ -60,7 +60,7 @@ class QThread;
     }while(0)
 #endif
 
-
+SALIB_EXPORT QDebug qPrintQByteArrayRawData(const QByteArray& d);
 
 ///
 /// \brief The SALogInfo class

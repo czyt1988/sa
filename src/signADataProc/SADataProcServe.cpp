@@ -45,6 +45,7 @@ void SADataProcServe::onLocalServeNewConnection()
         qDebug() << tr("can not exec m_localServer->nextPendingConnection();");
         return;
     }
+    m_connectList.insert(socket);
     static uint tokenID = 100;
     ++tokenID;
     socket->flush();
