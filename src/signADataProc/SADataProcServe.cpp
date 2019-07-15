@@ -53,6 +53,7 @@ void SADataProcServe::onLocalServeNewConnection()
     sp->setToken(tokenID);
     m_socketOptDict[socket] = sp;
     m_tokenOptDict[tokenID] = sp;
+    qDebug() << "New Connection token ID:" << tokenID;
     //发送登录成功，把token发生到接收端
     sp->sendLoginSucceed();
     //开始心跳检查

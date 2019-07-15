@@ -48,6 +48,7 @@ QDebug operator<<(QDebug debug, const SALocalServeBaseHeader &c)
            << "\n classID:" << c.classID
            << "\n functionID:" << c.functionID
            << "\n dataSize:" << c.dataSize
+           << "\n dataCrc32:" << hex << c.dataCrc32
            << "\n magic_end:0x" << hex << c.magic_end
            << "\n}";
 

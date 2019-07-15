@@ -123,7 +123,7 @@ void SADataFeatureWidget::tryToConnectServer()
         saDebug(str);
         return;
     }
-    if(!m_dataProcessSocket->waitForConnected(100))
+    if(!m_dataProcessSocket->waitForConnected(1000))
     {
         QTimer::singleShot(100,this,&SADataFeatureWidget::tryToConnectServer);
         --m_connectRetryCount;
@@ -145,6 +145,7 @@ void SADataFeatureWidget::tryToConnectServer()
             ,this,&SADataFeatureWidget::onReceive2DPointFs);
     connect(m_socketOpt,&SALocalServeSocketOpt::errorOccure
             ,this,&SADataFeatureWidget::onErrorOccure);
+    m_socketOpt->sendString("__test__1m");
 }
 #endif
 
@@ -337,9 +338,6 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
 void SADataFeatureWidget::onRecHeartbeat(uint key)
 {
     Q_UNUSED(key);
-#ifdef _DEBUG_PRINT
-    qDebug() << "rec heart breat at:" << QDateTime::currentDateTime();
-#endif
     m_lastHeartbeatTime = QDateTime::currentDateTime();
 }
 #endif

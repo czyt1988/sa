@@ -67,6 +67,7 @@ struct SALIB_EXPORT SALocalServeBaseHeader
     int classID;///< 类型号
     int functionID;///< 功能号
     uint32_t dataSize;///< 标记数据包的尺寸
+    uint32_t dataCrc32;///< 标记数据区的crc32值
     uint magic_end;///< 结束魔数，理论恒等于 \sa SA_LOCAL_SER_HEADER_MAGIC_END
     void init();
     bool isValid() const;

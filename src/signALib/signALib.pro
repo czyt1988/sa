@@ -46,7 +46,9 @@ HEADERS += \
     SAValueManagerMimeData.h \
     SAValueManagerListModel.h \
     SAHashTable.h \
-    SAXMLWriteHelper.h
+    SAXMLWriteHelper.h \
+    QCrc.h \
+    CRC.h
 
 
 SOURCES += \
@@ -70,7 +72,8 @@ SOURCES += \
     SADataProcessVectorPointF.cpp \
     SAValueManagerMimeData.cpp \
     SAValueManagerListModel.cpp \
-    SAXMLWriteHelper.cpp
+    SAXMLWriteHelper.cpp \
+    QCrc.cpp
 
 
 include($$PWD/Private/Private.pri)

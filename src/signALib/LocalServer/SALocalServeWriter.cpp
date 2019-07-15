@@ -3,8 +3,8 @@
 #include "SALocalServeBaseHeader.h"
 #include <QTextCodec>
 #include <QBuffer>
-#include "SALocalServeProtocol.h"
-#define _DEBUG_PRINT
+#include <QCrc.h>
+//#define _DEBUG_PRINT
 #ifdef _DEBUG_PRINT
 #include <QDebug>
 #endif
@@ -94,6 +94,7 @@ void SALocalServeWriter::sendLoginSucceed(uint key)
     buffer.open(QIODevice::WriteOnly);
     QDataStream st(&buffer);
     st << h.tokenID;
+    h.dataCrc32 = QCrc::crc32(data);
     send(h,data);
 }
 ///
@@ -109,6 +110,7 @@ void SALocalServeWriter::sendShakeHand(uint key)
     h.type = SA_LOCAL_SER_SHAKEHAND_TYPE;
     h.tokenID = getToken();
     h.key = key;
+    h.dataCrc32 = 0;
     send(h,QByteArray());
 }
 ///
@@ -131,6 +133,7 @@ void SALocalServeWriter::send2DPointFs(const QVector<QPointF>& datas,uint key)
     QDataStream io(&buffer);
     io << datas;
     h.dataSize = byteArray.size();
+    h.dataCrc32 = QCrc::crc32(byteArray);
     send(h,byteArray);
 
     /*
@@ -165,6 +168,7 @@ void SALocalServeWriter::sendString(const QString& str, uint key)
     QDataStream io(&buffer);
     io << str;
     h.dataSize = byteArray.size();
+    h.dataCrc32 = QCrc::crc32(byteArray);
     send(h,byteArray);
     /*
     if(!isEnableToWrite())
@@ -197,6 +201,7 @@ void SALocalServeWriter::sendError(const int errCode, uint key)
     QDataStream io(&buffer);
     io << errCode;
     h.dataSize = byteArray.size();
+    h.dataCrc32 = QCrc::crc32(byteArray);
     send(h,byteArray);
 }
 

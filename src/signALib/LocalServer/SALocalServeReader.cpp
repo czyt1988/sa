@@ -3,6 +3,7 @@
 #include <QLocalSocket>
 #include <QTextCodec>
 #include <QDebug>
+#include "QCrc.h"
 //#define _DEBUG_PRINT
 #ifdef _DEBUG_PRINT
 #include <QElapsedTimer>
@@ -59,30 +60,16 @@ bool SALocalServeReader::readFromSocket(void *p, int n)
 ///
 void SALocalServeReader::deal(const SALocalServeBaseHeader &head, const QByteArray &datas)
 {
-    emit receive(head,datas);
-
-    /*
-    switch(head)
+    if(0 == datas.size() && 0 == head.dataCrc32)
     {
-    case SALocalServeBaseProtocol::TypeShakeHand://握手协议
-        dealShakeHand(datas);
-        break;
-    case SALocalServeBaseProtocol::TypeVectorPointFData:
-        dealVectorDoubleDataProcData(datas);
-        break;
-    case SALocalServeBaseProtocol::TypeString:
-        dealString(datas);
-        break;
-    default:
+        emit receive(head,datas);
+    }
+    else if(QCrc::crc32(datas) == head.dataCrc32)
     {
-        qDebug() << "unknow protocol type!";
-        emit errorOccure(tr("unknow protocol type!"));
-        m_isReadedMainHeader = false;
-        m_socket->reset();
-        break;
+        emit receive(head,datas);
     }
-    }
-    */
+    qDebug() << "crc check invalid: head is " << head
+             << " datas crc is :" << QCrc::crc32(datas);
 }
 
 

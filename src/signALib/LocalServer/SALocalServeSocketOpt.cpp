@@ -4,7 +4,7 @@
 #include <QTextCodec>
 #include <QBuffer>
 #include "SALog.h"
-#define _DEBUG_PRINT
+//#define _DEBUG_PRINT
 class SALocalServeSocketOptPrivate{
     SA_IMPL_PUBLIC(SALocalServeSocketOpt)
 public:
