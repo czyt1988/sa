@@ -420,9 +420,9 @@ void SADataFeatureWidget::onReceive2DPointFs(const QVector<QPointF>& arrs,uint k
         if(m_startSpeedTestDatetime)
         {
             qint64 ms = QDateTime::currentDateTime().msecsTo(*m_startSpeedTestDatetime);
-            int byteSize = arrs.size() * 2*sizeof(qreal);
-            byteSize += 16;
-            QString msg = tr("test time cost:%1 ms\n ys.size:%2，\nsend speed:%1 byte/ms(%2 MB/s)")
+            ms = qAbs(ms);
+            int byteSize = 16000004;
+            QString msg = tr("test time cost:%1 ms ys.size:%2 , send speed:%3 byte/ms(%4 MB/s)")
                     .arg(ms)
                     .arg(arrs.size())
                     .arg((byteSize)/ms)

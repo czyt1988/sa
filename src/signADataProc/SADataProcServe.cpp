@@ -136,7 +136,7 @@ void SADataProcServe::onReceivedString(const QString& str,uint key)
             points.append(QPointF(1,1));
         }
         qDebug() << "send 1m points test";
-        sp->send2DPointFs(points);
+        sp->send2DPointFs(points,key);
     }
 }
 
