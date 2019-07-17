@@ -30,15 +30,7 @@
 #include "SADataFeatureItem.h"
 #define _DEBUG_PRINT
 #define _DEBUG_OUTPUT
-#ifdef _DEBUG_OUTPUT
-    #include "SALog.h"
-    #include <QElapsedTimer>
-        #ifdef USE_IPC_CALC_FEATURE
-            static bool s_send_speed_test = false;
-            static QElapsedTimer s_vector_send_time_elaspade = QElapsedTimer();
-            #define __SEND_1M_POINTS_TEST__
-        #endif
-#endif
+
 /// \def 连接不上的计数
 #define CONNECT_RETRY_COUNT (50)
 /// \def 心跳丢失次数记为连接丢失
@@ -46,7 +38,7 @@
 //====================================================================
 
 
-
+const uint c_test_key = 0x2312;
 
 
 SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
@@ -64,6 +56,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 #endif
 {
     ui->setupUi(this);
+    m_startSpeedTestDatetime.reset(nullptr);
 #ifdef USE_THREAD_CALC_FEATURE
 
 #else
@@ -136,16 +129,18 @@ void SADataFeatureWidget::tryToConnectServer()
     {
         delete m_socketOpt;
     }
-    m_socketOpt = new SALocalServeSocketOpt(m_dataProcessSocket,this);
+    m_socketOpt = new SALocalServeSocketClineParse(m_dataProcessSocket,this);
     connect(m_socketOpt,&SALocalServeSocketOpt::recHeartbeat
             ,this,&SADataFeatureWidget::onRecHeartbeat);
+    connect(m_socketOpt,&SALocalServeSocketOpt::loginSucceed
+            ,this,&SADataFeatureWidget::onLoginSucceed);
     connect(m_socketOpt,&SALocalServeSocketOpt::recString
             ,this,&SADataFeatureWidget::onReceivedString);
     connect(m_socketOpt,&SALocalServeSocketOpt::rec2DPointFs
             ,this,&SADataFeatureWidget::onReceive2DPointFs);
     connect(m_socketOpt,&SALocalServeSocketOpt::errorOccure
             ,this,&SADataFeatureWidget::onErrorOccure);
-    m_socketOpt->sendString("__test__1m");
+
 }
 #endif
 
@@ -420,21 +415,21 @@ void SADataFeatureWidget::onReceivedString(const QString& str,uint key)
 ///
 void SADataFeatureWidget::onReceive2DPointFs(const QVector<QPointF>& arrs,uint key)
 {
-#ifdef _DEBUG_OUTPUT
-    int costTime = s_vector_send_time_elaspade.restart();
-    if(s_send_speed_test)
+    if(c_test_key == key)
     {
-        s_send_speed_test = false;
-        saDebug(QString("test time cost:%1 \n ys.size:%2").arg(costTime).arg(arrs.size()));
-        int byteSize = arrs.size() * 2*sizeof(qreal);
-        byteSize += 16;
-        saDebug(QString("send speed:%1 byte/ms(%2 MB/s)")
-                .arg((byteSize)/costTime)
-                .arg((byteSize/(1024.0*1024)) / (costTime/1000.0)));
+        if(m_startSpeedTestDatetime)
+        {
+            qint64 ms = QDateTime::currentDateTime().msecsTo(*m_startSpeedTestDatetime);
+            int byteSize = arrs.size() * 2*sizeof(qreal);
+            byteSize += 16;
+            QString msg = tr("test time cost:%1 ms\n ys.size:%2，\nsend speed:%1 byte/ms(%2 MB/s)")
+                    .arg(ms)
+                    .arg(arrs.size())
+                    .arg((byteSize)/ms)
+                    .arg((byteSize/(1024.0*1024)) / (ms/1000.0));
+            emit showMessageInfo(msg);
+        }
     }
-#endif
-    Q_UNUSED(arrs);
-    Q_UNUSED(key);
 }
 
 void SADataFeatureWidget::onLocalSocketDisconnect()
@@ -472,6 +467,22 @@ void SADataFeatureWidget::onHeartbeatCheckerTimerout()
         reconnect();
         m_lossHeartbeatCount = 0;
     }
+}
+
+/**
+ * @brief 登录服务成功
+ * @param tokenID tokenID
+ * @param key 对应的key
+ */
+void SADataFeatureWidget::onLoginSucceed(int tokenID, uint key)
+{
+    if(nullptr == m_socketOpt)
+        return;
+    m_socketOpt->setToken(tokenID);
+    emit showMessageInfo(tr("connect calc serve success"));
+    m_startSpeedTestDatetime.reset(new QDateTime(QDateTime::currentDateTime()));
+    m_socketOpt->sendString("__test__1m",c_test_key);
+
 }
 #endif
 

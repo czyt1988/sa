@@ -3,6 +3,7 @@
 #include "SALocalServeBaseHeader.h"
 #include <QTextCodec>
 #include <QBuffer>
+#include "QCrc.h"
 #include "SALog.h"
 //#define _DEBUG_PRINT
 class SALocalServeSocketOptPrivate{
@@ -24,6 +25,7 @@ public:
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
     bool m_isReadedMainHeader;///< 标记是否读取了包头
     QByteArray m_buffer;
+    QByteArray m_dataBuffer;
     int m_index;
 };
 
@@ -137,14 +139,34 @@ void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByte
 {
     if(!head.isValid())
         return;
+    if(0 == datas.size())
+    {
+        if(0 != head.dataCrc32)
+        {
+            qDebug() << "crc check invalid:(0 size) head is " << head
+                     << " datas crc is :" << QCrc::crc32(datas);
+            return;
+        }
+    }
+    else
+    {
+        if(QCrc::crc32(datas) != head.dataCrc32)
+        {
+            qDebug() << "crc check invalid(not 0 size): head is " << head
+                     << " datas size is :" << datas.size()
+                     << " datas crc:" << QCrc::crc32(datas);
+            return;
+        }
+    }
     int classID = head.classID;
     int funID = head.functionID;
     uint key = head.key;
-#ifdef _DEBUG_PRINT
-    qDebug() << "deal: classID:" << classID << " funID:" << funID << " key:" << key
-             << " QByteArray data size:"<<datas.size()
-                ;
-#endif
+    if(2 != classID && 1 != funID)
+    {
+        qDebug() << "deal: classID:" << classID << " funID:" << funID << " key:" << key
+                 << " QByteArray data size:"<<datas.size()
+                    ;
+    }
     switch (classID) {
     case SA_LOCAL_SER_LOGIN_CLASS:
         {
@@ -203,7 +225,7 @@ void SALocalServeSocketOpt::startAutoHeartbeat(int freTime)
  * @param header 头的文件大小必须设置
  * @param data 数据区
  */
-void SALocalServeSocketOpt::send(const SALocalServeBaseHeader &header, const QByteArray &data)
+void SALocalServeSocketOpt::send(SALocalServeBaseHeader header, const QByteArray &data)
 {
     if(!isEnableToWrite())
     {
@@ -215,12 +237,22 @@ void SALocalServeSocketOpt::send(const SALocalServeBaseHeader &header, const QBy
                 ;
     printQByteArray(data);
 #endif
+    header.dataSize = data.size();
+    if(data.size() != 0)
+    {
+        header.dataCrc32 = QCrc::crc32(data);
+    }
+    else
+    {
+        header.dataCrc32 = 0;
+    }
     QDataStream out(d_ptr->m_socket);
     out << header;
     if(data.size()>0)
     {
         out.writeRawData(data.data(),data.size());
     }
+
     d_ptr->m_socket->flush();//马上发送缓冲区书记
     d_ptr->m_socket->waitForBytesWritten();
 
@@ -243,7 +275,6 @@ void SALocalServeSocketOpt::sendLoginSucceed(uint key)
     buffer.open(QIODevice::WriteOnly);
     QDataStream st(&buffer);
     st << h.tokenID;
-    h.dataSize = data.size();
     send(h,data);
 }
 /**
@@ -280,7 +311,6 @@ void SALocalServeSocketOpt::send2DPointFs(const QVector<QPointF> &datas, uint ke
     buffer.open(QIODevice::WriteOnly);
     QDataStream io(&buffer);
     io << datas;
-    h.dataSize = byteArray.size();
     send(h,byteArray);
 }
 /**
@@ -302,7 +332,6 @@ void SALocalServeSocketOpt::sendString(const QString &str, uint key)
     buffer.open(QIODevice::WriteOnly);
     QDataStream io(&buffer);
     io << str;
-    h.dataSize = byteArray.size();
     send(h,byteArray);
 }
 /**
@@ -324,7 +353,6 @@ void SALocalServeSocketOpt::sendError(const int errCode, uint key)
     buffer.open(QIODevice::WriteOnly);
     QDataStream io(&buffer);
     io << errCode;
-    h.dataSize = byteArray.size();
     send(h,byteArray);
 }
 /**
@@ -417,7 +445,7 @@ void SALocalServeSocketOpt::onReadyRead()
             printQByteArray(d_ptr->m_buffer);
 #endif
             d_ptr->m_index += d_ptr->m_mainHeader.dataSize;
-            deal(d_ptr->m_mainHeader,d_ptr->m_buffer);
+            deal(d_ptr->m_mainHeader,d_ptr->m_buffer.mid(s_headerSize));
             d_ptr->m_isReadedMainHeader = false;
             if(d_ptr->m_socket->bytesAvailable() >= s_headerSize)
             {
@@ -481,7 +509,7 @@ void SALocalServeSocketOpt::onReadyRead()
             qDebug() << "!!!!mainHeader dataSize == 0: type:"<<d_ptr->m_mainHeader.type
                             ;
 #endif
-            deal(d_ptr->m_mainHeader,d_ptr->m_buffer);
+            deal(d_ptr->m_mainHeader,QByteArray());
             d_ptr->m_isReadedMainHeader = false;
         }
 

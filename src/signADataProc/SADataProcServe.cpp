@@ -121,6 +121,7 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
 
 void SADataProcServe::onReceivedString(const QString& str,uint key)
 {
+    qDebug() << str;
     SALocalServeSocketServeParse* sp = qobject_cast<SALocalServeSocketServeParse*>(sender());
     if(nullptr == sp)
     {

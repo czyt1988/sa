@@ -12,7 +12,8 @@
 
 #else
 #include "SALocalServeBaseHeader.h"
-#include "SALocalServeSocketOpt.h"
+#include "SALocalServeSocketClineParse.h"
+
 #endif
 
 class QwtPlotItem;
@@ -53,7 +54,7 @@ public slots:
     void mdiSubWindowClosed(QMdiSubWindow *arg1);
 signals:
     //显示消息
-    void showMessageInfo(const QString& info,SA::MeaasgeType messageType);
+    void showMessageInfo(const QString& info,SA::MeaasgeType messageType = SA::NormalMessage);
 private slots:
 
     void on_treeView_clicked(const QModelIndex &index);
@@ -95,6 +96,8 @@ private:
     Q_SLOT void tryToStartDataProc();
     //定时心跳检测时间到达触发槽
     Q_SLOT void onHeartbeatCheckerTimerout();
+    //登录成功触发
+    Q_SLOT void onLoginSucceed(int tokenID,uint key);
 #endif
 private:
     Ui::SADataFeatureWidget *ui;
@@ -105,7 +108,8 @@ private:
 #else
 private://数据接收相关的类型
     QLocalSocket* m_dataProcessSocket;///< 数据处理对应的socket
-    SALocalServeSocketOpt* m_socketOpt;///< 处理m_dataProcessSocket的具体封装
+    std::unique_ptr<QDateTime> m_startSpeedTestDatetime;///< 记录开始测试的时间
+    SALocalServeSocketClineParse* m_socketOpt;///< 处理m_dataProcessSocket的具体封装
     QDateTime m_lastHeartbeatTime;///< 记录心跳间隔时长
     QTimer m_heartbeatChecker;///< 用于定时检测心跳
     short m_connectRetryCount;///< 重连服务器次数

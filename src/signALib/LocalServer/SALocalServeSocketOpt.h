@@ -36,7 +36,7 @@ public slots:
     //开始心跳
     Q_SLOT void startAutoHeartbeat(int freTime=5000);
     //发送内容
-    Q_SLOT void send(const SALocalServeBaseHeader& header,const QByteArray& data);
+    Q_SLOT void send(SALocalServeBaseHeader header, const QByteArray& data);
     //登录，成功会返回token
     Q_SLOT void sendLoginSucceed(uint key = 0);
     //发送握手协议
