@@ -3,18 +3,18 @@
 
 SAVectorInterval::SAVectorInterval()
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SAVectorInterval::SAVectorInterval(const QString &name):SAVectorDatas<QwtIntervalSample>(name)
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SAVectorInterval::SAVectorInterval(const QString &name, const QVector<QwtIntervalSample> &datas)
     :SAVectorDatas<QwtIntervalSample>(name,datas)
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 int SAVectorInterval::getDim() const

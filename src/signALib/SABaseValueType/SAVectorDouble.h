@@ -7,13 +7,13 @@ class SALIB_EXPORT SAVectorDouble : public SAVectorDatas<double>
 {
 public:
     SAVectorDouble()
-        :SAVectorDatas<double>(){setData (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
+        :SAVectorDatas<double>(){setProperty (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
     SAVectorDouble(const QString & name)
-        :SAVectorDatas<double>(name){setData (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
+        :SAVectorDatas<double>(name){setProperty (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
     SAVectorDouble(const QString& name,const QVector<double>& datas)
-        :SAVectorDatas<double>(name,datas){setData (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
+        :SAVectorDatas<double>(name,datas){setProperty (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
     SAVectorDouble(const QVector<double>& datas)
-        :SAVectorDatas<double>(datas){setData (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
+        :SAVectorDatas<double>(datas){setProperty (SA::VectorDouble,SA_ROLE_DATA_TYPE);}
     virtual ~SAVectorDouble(){}
     virtual int getType() const   {return SA::VectorDouble;}
     virtual int getSize(int dim=SA::Dim1) const;

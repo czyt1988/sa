@@ -4,19 +4,19 @@
 
 SAVectorVariant::SAVectorVariant()
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SAVectorVariant::SAVectorVariant(const QString &name)
     :SAVectorDatas<QVariant>(name)
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SAVectorVariant::SAVectorVariant(const QString &name, const QVector<QVariant> &datas)
     :SAVectorDatas<QVariant>(name,datas)
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 QString SAVectorVariant::displayAt(const std::initializer_list<size_t> &index) const

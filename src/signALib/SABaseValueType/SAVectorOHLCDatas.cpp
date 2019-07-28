@@ -9,18 +9,18 @@
 
 SAVectorOHLCDatas::SAVectorOHLCDatas():SAVectorDatas<QwtOHLCSample>()
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SAVectorOHLCDatas::SAVectorOHLCDatas(const QString &name):SAVectorDatas<QwtOHLCSample>(name)
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SAVectorOHLCDatas::SAVectorOHLCDatas(const QString &name, const QVector<QwtOHLCSample> &datas)
 :SAVectorDatas<QwtOHLCSample>(name,datas)
 {
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SAVectorOHLCDatas::~SAVectorOHLCDatas()

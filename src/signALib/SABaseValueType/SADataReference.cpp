@@ -4,13 +4,13 @@ SADataReference::SADataReference(SAAbstractDatas *origion)
     :SAAbstractDatas()
 {
     m_linkData = origion;
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 SADataReference::SADataReference(SAAbstractDatas *origion, const QString &text):SAAbstractDatas(text)
 {
     m_linkData = origion;
-    setData (getType(),SA_ROLE_DATA_TYPE);
+    setProperty (getType(),SA_ROLE_DATA_TYPE);
 }
 
 

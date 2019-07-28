@@ -25,14 +25,14 @@ public:
     //id
     int getID() const;
     //扩展数据操作相关
-    void setData(int roleID,const QVariant& var);
-    bool isHaveData(int id) const;
-    int getDataCount() const;
+    void setProperty(int roleID,const QVariant& var);
+    bool isHaveProperty(int id) const;
+    int getPropertyCount() const;
 
     //扩展数据的获取操作
-    const QVariant& getData(int id) const;
-    QVariant& getData(int id);
-    void getData(int index,int& id,QVariant& var) const;
+    const QVariant& getProperty(int id) const;
+    QVariant& getProperty(int id);
+    void getProperty(int index,int& id,QVariant& var) const;
     //父子条目操作相关
     int childCount() const;
     SAItem *child(int row) const;

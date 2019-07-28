@@ -114,7 +114,7 @@ int SAItem::getID() const
 /// \param roleID 标示id
 /// \param var 数据内容
 ///
-void SAItem::setData(int roleID, const QVariant &var)
+void SAItem::setProperty(int roleID, const QVariant &var)
 {
     d_ptr->m_datas[roleID] = var;
 }
@@ -123,7 +123,7 @@ void SAItem::setData(int roleID, const QVariant &var)
 /// \param id 标示id
 /// \return
 ///
-bool SAItem::isHaveData(int id) const
+bool SAItem::isHaveProperty(int id) const
 {
     return d_ptr->m_datas.contains(id);
 }
@@ -131,7 +131,7 @@ bool SAItem::isHaveData(int id) const
 /// \brief 扩展数据的个数
 /// \return
 ///
-int SAItem::getDataCount() const
+int SAItem::getPropertyCount() const
 {
     return d_ptr->m_datas.size();
 }
@@ -140,7 +140,7 @@ int SAItem::getDataCount() const
 /// \param id
 /// \return
 ///
-const QVariant &SAItem::getData(int id) const
+const QVariant &SAItem::getProperty(int id) const
 {
     return d_ptr->m_datas[id];
 }
@@ -149,7 +149,7 @@ const QVariant &SAItem::getData(int id) const
 /// \param id
 /// \return 获取为引用，修改将直接影响条目保存的数据内容
 ///
-QVariant &SAItem::getData(int id)
+QVariant &SAItem::getProperty(int id)
 {
     return d_ptr->m_datas[id];
 }
@@ -159,7 +159,7 @@ QVariant &SAItem::getData(int id)
 /// \param id
 /// \param var
 ///
-void SAItem::getData(int index, int &id, QVariant &var) const
+void SAItem::getProperty(int index, int &id, QVariant &var) const
 {
     auto ite = d_ptr->m_datas.cbegin();
     ite = ite + index;

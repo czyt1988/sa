@@ -248,6 +248,21 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
 ///
 void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const QMdiSubWindow *arg1, const SAChart2D *arg2)
 {
+    switch(plotitem->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+        QVector<QPointF> serise;
+        SAChart::getPlotCurveSample(plotitem,serise);
+        if(m_socketOpt)
+        {
+            qDebug() << "send item:" << plotitem->title().text() << " to calc";
+            TmpStru ts(const_cast<QwtPlotItem *>(plotitem),const_cast<QMdiSubWindow *>(arg1),const_cast<SAChart2D *>(arg2));
+            ++m_wndPtrKey;
+            m_key2wndPtr[m_wndPtrKey] = ts;
+            m_socketOpt->send2DPointFs(datas,m_wndPtrKey);
+        }
+    }
+
     if( const QwtSeriesStore<QPointF>* cur = dynamic_cast<const QwtSeriesStore<QPointF>*>(plotitem)
             /*QwtPlotItem::Rtti_PlotCurve == plotitem->rtti()*/
             )
@@ -349,7 +364,7 @@ void SADataFeatureWidget::onReceivedString(const QString& str,uint key)
         if(SA_XML::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
         {
 #ifdef _DEBUG_OUTPUT
-            saPrint()<<"SAXMLReadHelper::TypeVectorPointFProcessResult";
+            qDebug()<<"SAXMLReadHelper::TypeVectorPointFProcessResult";
 #endif
             std::unique_ptr<SADataFeatureItem> item(new SADataFeatureItem);
             TmpStru kw = m_key2wndPtr.value(key,TmpStru(nullptr,nullptr,nullptr));
@@ -417,12 +432,12 @@ void SADataFeatureWidget::onReceive2DPointFs(const QVector<QPointF>& arrs,uint k
 {
     if(c_test_key == key)
     {
-        if(m_startSpeedTestDatetime)
+        if(m_startSpeedTestDatetime!=nullptr)
         {
             qint64 ms = QDateTime::currentDateTime().msecsTo(*m_startSpeedTestDatetime);
             ms = qAbs(ms);
             int byteSize = 16000004;
-            QString msg = tr("test time cost:%1 ms ys.size:%2 , send speed:%3 byte/ms(%4 MB/s)")
+            QString msg = tr("1mil points test connect time cost:%1 ms ys.size:%2 , send speed:%3 byte/ms(%4 MB/s)")
                     .arg(ms)
                     .arg(arrs.size())
                     .arg((byteSize)/ms)

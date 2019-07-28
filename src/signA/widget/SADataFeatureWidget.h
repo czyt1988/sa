@@ -131,7 +131,7 @@ private://数据接收相关的类型
         QMdiSubWindow *mdiSubWnd;
         SAChart2D *chart2d;
     };
-    unsigned int m_wndPtrKey;
+    uint m_wndPtrKey;
     QHash<uint,TmpStru> m_key2wndPtr;
 #endif
 

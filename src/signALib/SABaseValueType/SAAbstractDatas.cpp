@@ -85,31 +85,29 @@ void SAAbstractDatas::read(QDataStream &in)
 {
     QIcon icon;
     QString name;
-    int dataCounts;
-    in >> icon >> name >> dataCounts;
+    int propCounts;
+    in >> icon >> name >> propCounts;
     setIcon(icon);
     setName(name);
-    for(int i=0;i<dataCounts;++i)
+    for(int i=0;i<propCounts;++i)
     {
         int id;
         QVariant var;
         in >> id >> var;
+        setProperty(id,var);
     }
-
-    //QStandardItem::read(in);
-    //setID(int(this));//read后会把id复写为旧的id，这里重新设置id
 }
 
 void SAAbstractDatas::write(QDataStream &out) const
 {
     //QStandardItem::write(out);
-    int dc = getDataCount();
+    int dc = getPropertyCount();
     out << getIcon() << getName() << dc;
     for(int i=0;i<dc;++i)
     {
         int id;
         QVariant var;
-        getData(i,id,var);
+        getProperty(i,id,var);
         out << id << var;
     }
 }

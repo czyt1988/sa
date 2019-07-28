@@ -3,13 +3,13 @@
 #include "SAVectorDouble.h"
 SATableVariant::SATableVariant()
 {
-    setData (getType (),SA_ROLE_DATA_TYPE);
+    setProperty (getType (),SA_ROLE_DATA_TYPE);
 }
 
 SATableVariant::SATableVariant(const QString &name)
     :SATableData<QVariant>(name)
 {
-    setData (getType (),SA_ROLE_DATA_TYPE);
+    setProperty (getType (),SA_ROLE_DATA_TYPE);
 }
 
 QVariant SATableVariant::getAt(const std::initializer_list<size_t> &index) const

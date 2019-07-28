@@ -3,12 +3,12 @@
 
 SATableDouble::SATableDouble():SATableData<double>()
 {
-    setData (getType (),SA_ROLE_DATA_TYPE);
+    setProperty (getType (),SA_ROLE_DATA_TYPE);
 }
 
 SATableDouble::SATableDouble(const QString &name):SATableData<double>(name)
 {
-    setData (getType (),SA_ROLE_DATA_TYPE);
+    setProperty (getType (),SA_ROLE_DATA_TYPE);
 }
 
 SATableDouble::~SATableDouble()

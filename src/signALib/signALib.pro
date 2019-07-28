@@ -48,7 +48,8 @@ HEADERS += \
     SAHashTable.h \
     SAXMLWriteHelper.h \
     QCrc.h \
-    CRC.h
+    CRC.h \
+    SATree.h
 
 
 SOURCES += \
@@ -73,7 +74,8 @@ SOURCES += \
     SAValueManagerMimeData.cpp \
     SAValueManagerListModel.cpp \
     SAXMLWriteHelper.cpp \
-    QCrc.cpp
+    QCrc.cpp \
+    SATree.cpp
 
 
 include($$PWD/Private/Private.pri)
