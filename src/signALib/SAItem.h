@@ -2,7 +2,7 @@
 #define SAITEM_H
 #include "SALibGlobal.h"
 #include <QStandardItem>
-
+class SATree;
 class SAItemPrivate;
 ///
 /// \ingroup SALib
@@ -11,6 +11,7 @@ class SAItemPrivate;
 class SALIB_EXPORT SAItem
 {
     SA_IMPL(SAItem)
+    friend class SATree;
 public:
     SAItem(SAItem* parentItem = nullptr);
     SAItem(const QString & text);
@@ -43,10 +44,6 @@ public:
     SAItem* parent() const;
     //用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级,如果没有parent，返回-1
     int fieldRow() const;
-public:
-    //接口，获取类型名称和类型id
-    virtual QString getTypeName() const = 0;
-    virtual int getType() const = 0;
 protected:
     void setID(int id);
 };

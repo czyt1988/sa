@@ -190,7 +190,7 @@ QVariant SAValueManagerModel::data(const QModelIndex &index, int role) const
             switch(index.column())
             {
             case COL_INDEX_NAME:return item->getName();
-            case COL_INDEX_TYPE:return item->getTypeName();
+            case COL_INDEX_TYPE:return ((nullptr != data) ? data->getTypeName() : "");
             case COL_INDEX_DES:
             {
                 if(data)

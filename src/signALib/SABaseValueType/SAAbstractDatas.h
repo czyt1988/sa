@@ -25,6 +25,10 @@ public:
     SAAbstractDatas(const QString & text);
     virtual ~SAAbstractDatas();
     //获取文件类型
+public:
+    //接口，获取类型名称和类型id
+    virtual QString getTypeName() const = 0;
+    //获取类型
     virtual int getType() const = 0;
     //获取尺寸，dim是维度，对应1为行，2为列，3就是第三维
     virtual int getSize(int dim=SA::Dim1) const = 0;
