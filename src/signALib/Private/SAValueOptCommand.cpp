@@ -48,16 +48,26 @@ SAValueRemoveCommand::SAValueRemoveCommand(const QString &cmdName, const std::sh
     :SAValueOptCommand(cmdName)
 {
     m_deletedPtr = ptr;
+    m_parent = ptr->parent();
+    m_row = ptr->fieldRow();
 }
 
 void SAValueRemoveCommand::redo()
 {
     saValueManager->__removeData(m_deletedPtr.get());
+    if(m_parent)
+    {
+        m_parent->takeChild(m_deletedPtr.get());
+    }
 }
 
 void SAValueRemoveCommand::undo()
 {
     saValueManager->__addData(m_deletedPtr);
+    if(m_parent)
+    {
+        m_parent->insertChild(m_deletedPtr.get(),m_row);
+    }
 }
 
 

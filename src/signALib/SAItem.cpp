@@ -25,13 +25,14 @@ public:
     }
     void clearChild()
     {
-        for(int i=0;i<m_childs.size();++i)
+        QList<SAItem*> childs = m_childs;
+        for(int i=0;i<childs.size();++i)
         {
-            delete m_childs[i];
+            delete childs[i];
         }
         m_childs.clear();
     }
-    void updateFieldCount(int startRow)
+    void updateFieldCount(int startRow = 0)
     {
         const int cc = m_childs.size();
         for(int i=startRow;i<cc;++i)
@@ -66,7 +67,16 @@ SAItem::SAItem(const QIcon &icon, const QString &text):d_ptr(new SAItemPrivate(t
 
 SAItem::~SAItem()
 {
-
+    SAItem* par = parent();
+    if(par)
+    {
+        int indexOfPar = par->childIndex(this);
+        if(indexOfPar >= 0)
+        {
+            par->d_ptr->m_childs.removeAt(indexOfPar);
+            par->d_ptr->updateFieldCount(indexOfPar);
+        }
+    }
 }
 ///
 /// \brief 设置条目名称
@@ -212,8 +222,17 @@ void SAItem::clearChild()
 {
     d_ptr->clearChild();
 }
+/**
+ * @brief 判断是否存在子节点
+ * @param item 节点
+ * @return 如果存在返回true
+ */
+bool SAItem::haveChild( SAItem *const item) const
+{
+    return d_ptr->m_childs.contains(item);
+}
 ///
-/// \brief 提取字条目，此时字条目的内容将不归此条目管理
+/// \brief 提取条目，此时字条目的内容将不归此条目管理
 /// \param row
 /// \return
 ///
@@ -224,6 +243,44 @@ SAItem *SAItem::takeChild(int row)
     //修改后面的item的m_fieldRow
     d_ptr->updateFieldCount(row+1);
     return item;
+}
+/**
+ * @brief 提取出子节点
+ * @param childItem
+ */
+bool SAItem::takeChild(SAItem * const item)
+{
+    int index = childIndex(item);
+    if(index < 0)
+        return false;
+    takeChild(index);
+    return true;
+}
+/**
+ * @brief 返回child的索引
+ * @param item
+ * @return 返回这个child对应的索引
+ * @note 此函数操作的时间复杂度为O(n),若没有，返回-1
+ */
+int SAItem::childIndex(SAItem * const item) const
+{
+    return d_ptr->m_childs.indexOf(item);
+}
+/**
+ * @brief 删除子对象
+ * @param item 子对象的指针，如果没有将忽略
+ * @note 此操作会回收内存
+ */
+void SAItem::removeChild(SAItem *item)
+{
+    int index = childIndex(item);
+    if(index >= 0)
+    {
+        //删除会自动和父节点的m_childs脱离关系
+        delete item;
+        //修改索引item的m_fieldRow
+        d_ptr->updateFieldCount(index);
+    }
 }
 ///
 /// \brief 获取条目的父级条目，如果没有，返回nullptr

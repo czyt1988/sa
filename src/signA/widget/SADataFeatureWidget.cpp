@@ -252,37 +252,37 @@ void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const
     {
     case QwtPlotItem::Rtti_PlotCurve:
         QVector<QPointF> serise;
-        SAChart::getPlotCurveSample(plotitem,serise);
+        SAChart::getPlotCurveSample(const_cast<QwtPlotItem *>(plotitem),serise);
         if(m_socketOpt)
         {
             qDebug() << "send item:" << plotitem->title().text() << " to calc";
             TmpStru ts(const_cast<QwtPlotItem *>(plotitem),const_cast<QMdiSubWindow *>(arg1),const_cast<SAChart2D *>(arg2));
             ++m_wndPtrKey;
             m_key2wndPtr[m_wndPtrKey] = ts;
-            m_socketOpt->send2DPointFs(datas,m_wndPtrKey);
+            m_socketOpt->send2DPointFs(serise,m_wndPtrKey);
         }
     }
 
-    if( const QwtSeriesStore<QPointF>* cur = dynamic_cast<const QwtSeriesStore<QPointF>*>(plotitem)
-            /*QwtPlotItem::Rtti_PlotCurve == plotitem->rtti()*/
-            )
-    {
-        const size_t size = cur->dataSize();
-        QVector<QPointF> datas;
-        datas.reserve(size);
-        for(size_t c = 0;c<size;++c)
-        {
-            datas.append(cur->sample(c));
-        }
-        if(m_socketOpt)
-        {
-            qDebug() << "send item:" << plotitem->title().text() << " to calc";
-            TmpStru ts(const_cast<QwtPlotItem *>(plotitem),const_cast<QMdiSubWindow *>(arg1),const_cast<SAChart2D *>(arg2));
-            ++m_wndPtrKey;
-            m_key2wndPtr[m_wndPtrKey] = ts;
-            m_socketOpt->send2DPointFs(datas,m_wndPtrKey);
-        }
-    }
+//    if( const QwtSeriesStore<QPointF>* cur = dynamic_cast<const QwtSeriesStore<QPointF>*>(plotitem)
+//            /*QwtPlotItem::Rtti_PlotCurve == plotitem->rtti()*/
+//            )
+//    {
+//        const size_t size = cur->dataSize();
+//        QVector<QPointF> datas;
+//        datas.reserve(size);
+//        for(size_t c = 0;c<size;++c)
+//        {
+//            datas.append(cur->sample(c));
+//        }
+//        if(m_socketOpt)
+//        {
+//            qDebug() << "send item:" << plotitem->title().text() << " to calc";
+//            TmpStru ts(const_cast<QwtPlotItem *>(plotitem),const_cast<QMdiSubWindow *>(arg1),const_cast<SAChart2D *>(arg2));
+//            ++m_wndPtrKey;
+//            m_key2wndPtr[m_wndPtrKey] = ts;
+//            m_socketOpt->send2DPointFs(datas,m_wndPtrKey);
+//        }
+//    }
 }
 #endif
 

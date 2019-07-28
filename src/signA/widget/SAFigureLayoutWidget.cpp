@@ -107,6 +107,7 @@ void SAFigureLayoutWidget::updateCurrentChart()
 {
     if(nullptr == m_figure)
     {
+        m_layoutModel->setPlot(nullptr);
         return;
     }
     const QList<SAChart2D *>& plots = m_figure->get2DPlots();

@@ -1948,6 +1948,9 @@ void MainWindow::onActionClearProjectTriggered()
     emit startCleanProject();
     //数据预览窗口清空
     ui->tabWidget_valueViewer->clearAndReleaseAll();
+    //
+    ui->figureLayoutWidget->setFigure(nullptr);
+    ui->chartDatasViewWidget->setFigure(nullptr);
     //窗口关闭
     QList<QMdiSubWindow*> subWindows = ui->mdiArea->subWindowList();
     for (auto ite = subWindows.begin();ite != subWindows.end();++ite)

@@ -40,7 +40,16 @@ public:
     void appendChild(SAItem* item);
     void insertChild(SAItem* item,int row);
     void clearChild();
+    //判断是否存在子节点
+    bool haveChild(SAItem * const item) const;
+    //提取子节点
     SAItem* takeChild(int row);
+    bool takeChild(SAItem * const item);
+    //返回child的索引 O(n)
+    int childIndex(SAItem* item) const;
+    //删除子对象
+    void removeChild(SAItem* item);
+    //获取父级指针
     SAItem* parent() const;
     //用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级,如果没有parent，返回-1
     int fieldRow() const;

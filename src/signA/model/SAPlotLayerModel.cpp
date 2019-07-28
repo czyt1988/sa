@@ -31,6 +31,10 @@ SAPlotLayerModel::~SAPlotLayerModel(void)
 void SAPlotLayerModel::setPlot(QwtPlot* plot)
 {
 	beginResetModel();
+    if(m_plot)
+    {
+        disconnect(m_plot,&QwtPlot::itemAttached,this,&SAPlotLayerModel::itemAttached);
+    }
 	m_plot = plot;
     if(plot)
     {

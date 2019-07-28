@@ -49,6 +49,8 @@ public:
     void undo();
 private:
     std::shared_ptr<SAAbstractDatas> m_deletedPtr;
+    SAItem* m_parent;
+    int m_row;
 };
 ///
 /// \brief 变量的删除命令
