@@ -1,7 +1,9 @@
 ﻿#ifndef SAITEM_H
 #define SAITEM_H
 #include "SALibGlobal.h"
-#include <QStandardItem>
+#include <QString>
+#include <QIcon>
+#include <QVariant>
 class SATree;
 class SAItemPrivate;
 ///
@@ -17,6 +19,8 @@ public:
     SAItem(const QString & text);
     SAItem(const QIcon & icon, const QString & text);
     virtual ~SAItem();
+    //重载等号操作符
+    SAItem& operator =(const SAItem& item);
     //名字
     void setName(const QString& name);
     QString getName() const;
@@ -35,8 +39,9 @@ public:
     QVariant& getProperty(int id);
     void getProperty(int index,int& id,QVariant& var) const;
     //父子条目操作相关
-    int childCount() const;
-    SAItem *child(int row) const;
+    int childItemCount() const;
+    SAItem *childItem(int row) const;
+    QList<SAItem*> getChildItems() const;
     void appendChild(SAItem* item);
     void insertChild(SAItem* item,int row);
     void clearChild();
@@ -56,4 +61,7 @@ public:
 protected:
     void setID(int id);
 };
+
+SALIB_EXPORT QDebug& operator<<(QDebug& dbg, const SAItem &item);
+
 #endif // SAITEM_H

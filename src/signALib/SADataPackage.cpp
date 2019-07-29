@@ -28,10 +28,10 @@ void SAABstractDataPackage::appendData(SAAbstractDatas *datas)
 ///
 bool SAABstractDataPackage::isfield(const QString &fieldName)
 {
-    const int r = childCount();
+    const int r = childItemCount();
     for(int i=0;i<r;++i)
     {
-        auto p = child(i);
+        auto p = childItem(i);
         if(nullptr == p)
         {
             continue;
@@ -58,17 +58,17 @@ SADataPackage::SADataPackage(const QString &text):SAABstractDataPackage(text)
 int SADataPackage::getSize(int sizeType) const
 {
     Q_UNUSED(sizeType);
-    return childCount();
+    return childItemCount();
 }
 
 QVariant SADataPackage::getAt(size_t index, size_t index2) const
 {
     Q_UNUSED(index2);
-    if((int)index >= childCount())
+    if((int)index >= childItemCount())
     {
         return QVariant();
     }
-    return child(index)->getName();
+    return childItem(index)->getName();
 }
 
 bool SADataPackage::toDoubleVector(QVector<double> &data, const QVector<int> *index) const

@@ -1,5 +1,24 @@
 ﻿#include "SAItem.h"
 #include <QHash>
+#include <QDebug>
+//把from的子对象都复制一份到to
+void copy_childs(const SAItem*  from, SAItem* to);
+//打印一个item内容
+QDebug& print_one_item(QDebug& dbg, const SAItem &item, const QString& prefix, bool isNewline=true);
+QDebug& print_item_and_child_items(QDebug& dbg, const SAItem &item, int indent);
+void copy_childs(const SAItem*  from, SAItem *to)
+{
+    QList<SAItem*> items = from->getChildItems();
+    const auto size = items.size();
+    for(auto i=0;i<size;++i)
+    {
+        SAItem* tmp = new SAItem();
+        //如果还有子item，会触发递归
+        *tmp = *(items[i]);
+        to->appendChild(tmp);
+    }
+}
+
 class SAItemPrivate
 {
     SA_IMPL_PUBLIC(SAItem)
@@ -37,10 +56,12 @@ public:
         const int cc = m_childs.size();
         for(int i=startRow;i<cc;++i)
         {
-            m_childs[cc]->d_ptr->m_fieldRow = i;
+            m_childs[i]->d_ptr->m_fieldRow = i;
         }
     }
+
 };
+
 
 
 SAItem::SAItem(SAItem *parentItem):d_ptr(new SAItemPrivate(this))
@@ -67,6 +88,7 @@ SAItem::SAItem(const QIcon &icon, const QString &text):d_ptr(new SAItemPrivate(t
 
 SAItem::~SAItem()
 {
+    clearChild();
     SAItem* par = parent();
     if(par)
     {
@@ -77,6 +99,23 @@ SAItem::~SAItem()
             par->d_ptr->updateFieldCount(indexOfPar);
         }
     }
+}
+
+/**
+ * @brief 等号操作符
+ * @param item 另外等待拷贝的item
+ * @return 返回自身引用
+ * @note m_parent,m_fieldRow,id 不会发生拷贝
+ */
+SAItem &SAItem::operator =(const SAItem &item)
+{
+    clearChild();
+    d_ptr->m_name = item.d_ptr->m_name;
+    d_ptr->m_icon = item.d_ptr->m_icon;
+    d_ptr->m_datas = item.d_ptr->m_datas;
+    //复制子对象
+    copy_childs(&item,this);
+    return *this;
 }
 ///
 /// \brief 设置条目名称
@@ -180,7 +219,7 @@ void SAItem::getProperty(int index, int &id, QVariant &var) const
 /// \brief 子条目的数目
 /// \return
 ///
-int SAItem::childCount() const
+int SAItem::childItemCount() const
 {
     return d_ptr->m_childs.size();
 }
@@ -189,13 +228,23 @@ int SAItem::childCount() const
 /// \param row
 /// \return
 ///
-SAItem *SAItem::child(int row) const
+SAItem *SAItem::childItem(int row) const
 {
     return d_ptr->m_childs[row];
+}
+
+/**
+ * @brief 获取所有子节点
+ * @return
+ */
+QList<SAItem *> SAItem::getChildItems() const
+{
+    return d_ptr->m_childs;
 }
 ///
 /// \brief 追加子条目
 /// \param item
+/// item的所有权交由父级item管理
 ///
 void SAItem::appendChild(SAItem *item)
 {
@@ -206,6 +255,7 @@ void SAItem::appendChild(SAItem *item)
 ///
 /// \brief 插入子条目
 /// \param item
+/// item的所有权交由父级item管理
 ///
 void SAItem::insertChild(SAItem *item, int row)
 {
@@ -303,4 +353,61 @@ int SAItem::fieldRow() const
 void SAItem::setID(int id)
 {
     d_ptr->m_id = id;
+}
+
+
+/**
+ * @brief 输出到qdebug
+ * @param dbg
+ * @param item
+ * @return
+ */
+QDebug& operator<<(QDebug& dbg, const SAItem &item)
+{
+    dbg = print_one_item(dbg,item,"sa item:\n");
+    QList<SAItem *> cis = item.getChildItems();
+    for(int i=0;i<cis.size();++i)
+    {
+        dbg = print_item_and_child_items(dbg,*cis[i],2);
+    }
+    return dbg;
+}
+
+QDebug& print_one_item(QDebug& dbg, const SAItem &item, const QString& prefix,bool isNewline)
+{
+    int pc = item.getPropertyCount();
+    if (pc>0)
+    {
+        dbg.noquote() << prefix << item.getName() << "{";
+        int id;
+        QVariant val;
+        item.getProperty(0,id,val);
+        dbg.noquote() << id << ":" << val;
+        for(int i=1;i<pc;++i)
+        {
+            item.getProperty(i,id,val);
+            dbg.noquote() << "," << id << ":" << val;
+        }
+        dbg.noquote() << "}";
+    }
+    else
+    {
+        dbg.noquote() << prefix << item.getName();
+    }
+    if(isNewline)
+        dbg << "\n";
+    return dbg;
+}
+
+QDebug& print_item_and_child_items(QDebug& dbg, const SAItem &item, int indent)
+{
+    QString str(indent,' ');
+    str += QStringLiteral("└");
+    print_one_item(dbg,item,str);
+    QList<SAItem *> cis = item.getChildItems();
+    for(int i=0;i<cis.size();++i)
+    {
+        print_item_and_child_items(dbg,*cis[i],indent+2);
+    }
+    return dbg;
 }

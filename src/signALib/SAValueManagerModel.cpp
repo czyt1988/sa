@@ -39,11 +39,11 @@ QModelIndex SAValueManagerModel::index(int row, int column, const QModelIndex &p
     if ((parItem == nullptr)
         || (row < 0)
         || (column < 0)
-        || (row >= parItem->childCount())
+        || (row >= parItem->childItemCount())
         || (column >= COL_COUNT)) {
         return QModelIndex();
     }
-    return createIndex(row, column, parItem->child(row));
+    return createIndex(row, column, parItem->childItem(row));
 }
 
 QModelIndexList SAValueManagerModel::datasToIndexs(const QSet<SAAbstractDatas *> &data)
@@ -145,7 +145,7 @@ int SAValueManagerModel::rowCount(const QModelIndex &parent) const
     if(!parent.isValid())
         return saValueManager->count();
     SAItem* item =  toItemPtr(parent);
-    return item ? item->childCount() : 0;
+    return item ? item->childItemCount() : 0;
 }
 
 int SAValueManagerModel::columnCount(const QModelIndex &parent) const
