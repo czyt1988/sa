@@ -17,7 +17,27 @@ class SALIB_EXPORT SATree
     friend class SAItem;
 public:
     SATree();
+    SATree(const SATree & c);
     ~SATree();
+    //重载等号操作符
+    SATree& operator =(const SATree& tree);
+    //清空所有节点
+    void clear();
+    //父子条目操作相关
+    int getItemCount() const;
+    //索引子条目
+    SAItem *getItem(int row) const;
+    //获取当前下的所有子节点
+    QList<SAItem*> getItems() const;
+    //追加子条目
+    void appendItem(SAItem* item);
+    //插入子条目
+    void insertItem(SAItem* item,int row);
+    //判断是否存在子节点
+    bool haveItem(SAItem *item) const;
+    //把item解除satree的关系
+    void takeItemPtr(SAItem* item);
+    SAItem* takeItem(int row);
 };
 
 #endif // SATREE_H

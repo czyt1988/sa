@@ -4,7 +4,6 @@
 #include <QString>
 #include <QIcon>
 #include <QVariant>
-class SATree;
 class SAItemPrivate;
 ///
 /// \ingroup SALib
@@ -18,6 +17,7 @@ public:
     SAItem(SAItem* parentItem = nullptr);
     SAItem(const QString & text);
     SAItem(const QIcon & icon, const QString & text);
+    SAItem(const SAItem & c);
     virtual ~SAItem();
     //重载等号操作符
     SAItem& operator =(const SAItem& item);
@@ -40,10 +40,15 @@ public:
     void getProperty(int index,int& id,QVariant& var) const;
     //父子条目操作相关
     int childItemCount() const;
+    //索引子条目
     SAItem *childItem(int row) const;
+    //获取当前下的所有子节点
     QList<SAItem*> getChildItems() const;
+    //追加子条目
     void appendChild(SAItem* item);
+    //插入子条目
     void insertChild(SAItem* item,int row);
+    //清空所有
     void clearChild();
     //判断是否存在子节点
     bool haveChild(SAItem * const item) const;
@@ -58,8 +63,13 @@ public:
     SAItem* parent() const;
     //用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级,如果没有parent，返回-1
     int fieldRow() const;
+    //判断是否在树节点上，如果此item是在satree上，此函数返回true，否则为false
+    bool isOnRoot() const;
 protected:
     void setID(int id);
+private:
+    void setTree(SATree* tree);
+    void __setTreePtr(SATree* tree);
 };
 
 SALIB_EXPORT QDebug& operator<<(QDebug& dbg, const SAItem &item);

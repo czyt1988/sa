@@ -1,6 +1,7 @@
 ﻿#include "SAItem.h"
 #include <QHash>
 #include <QDebug>
+#include "SATree.h"
 //把from的子对象都复制一份到to
 void copy_childs(const SAItem*  from, SAItem* to);
 //打印一个item内容
@@ -24,17 +25,19 @@ class SAItemPrivate
     SA_IMPL_PUBLIC(SAItem)
 public:
     SAItem* m_parent;
-    int m_fieldRow;///<用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级
     QList<SAItem*> m_childs;
+    int m_fieldRow;///<用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级
     QString m_name;
     QIcon m_icon;
     int m_id;
+    SATree* m_tree;///< 绑定的树
     QHash<int,QVariant> m_datas;
     SAItemPrivate(SAItem* par)
         :q_ptr(par)
         ,m_parent(nullptr)
         ,m_fieldRow(-1)
-        ,m_id(0)
+        ,m_id(int(par))
+        ,m_tree(nullptr)
     {
 
     }
@@ -66,7 +69,6 @@ public:
 
 SAItem::SAItem(SAItem *parentItem):d_ptr(new SAItemPrivate(this))
 {
-    setID(int(this));
     if(parentItem)
     {
         parentItem->appendChild(this);
@@ -76,14 +78,21 @@ SAItem::SAItem(SAItem *parentItem):d_ptr(new SAItemPrivate(this))
 SAItem::SAItem(const QString &text):d_ptr(new SAItemPrivate(this))
 {
     d_ptr->m_name = text;
-    setID(int(this));
 }
 
 SAItem::SAItem(const QIcon &icon, const QString &text):d_ptr(new SAItemPrivate(this))
 {
     d_ptr->m_name = text;
     d_ptr->m_icon = icon;
-    setID(int(this));
+}
+
+/**
+ * @brief 拷贝构造函数
+ * @param c
+ */
+SAItem::SAItem(const SAItem &c):d_ptr(new SAItemPrivate(this))
+{
+    *this = c;
 }
 
 SAItem::~SAItem()
@@ -98,6 +107,10 @@ SAItem::~SAItem()
             par->d_ptr->m_childs.removeAt(indexOfPar);
             par->d_ptr->updateFieldCount(indexOfPar);
         }
+    }
+    if(d_ptr->m_tree)
+    {
+        //d_ptr->m_tree->
     }
 }
 
@@ -224,8 +237,8 @@ int SAItem::childItemCount() const
     return d_ptr->m_childs.size();
 }
 ///
-/// \brief 字条目指针
-/// \param row
+/// \brief 索引子条目
+/// \param row 0base的行数索引
 /// \return
 ///
 SAItem *SAItem::childItem(int row) const
@@ -349,10 +362,40 @@ int SAItem::fieldRow() const
 {
     return d_ptr->m_fieldRow;
 }
+/**
+ * @brief 判断是否在树节点上
+ * @return 如果此item是在satree上，此函数返回true，否则为false
+ */
+bool SAItem::isOnRoot() const
+{
+    return (d_ptr->m_tree) != nullptr;
+}
 
 void SAItem::setID(int id)
 {
     d_ptr->m_id = id;
+}
+
+/**
+ * @brief 设置树
+ * @param tree
+ */
+void SAItem::setTree(SATree *tree)
+{
+    if(d_ptr->m_tree == tree)
+    {
+        return;
+    }
+    else if(d_ptr->m_tree)
+    {
+        d_ptr->m_tree->takeItemPtr(this);
+    }
+    d_ptr->m_tree = tree;
+}
+
+void SAItem::__setTreePtr(SATree *tree)
+{
+    d_ptr->m_tree = tree;
 }
 
 
