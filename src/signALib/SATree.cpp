@@ -1,5 +1,14 @@
 #include "SATree.h"
 #include "SAItem.h"
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QJsonObject>
+#include <QDataStream>
+#include "SAVariantCaster.h"
+QJsonObject write_item_to_json(SAItem* item);
+QJsonValue variant_to_jsonvalue(const QVariant& var);
+
 class SATreePrivate
 {
     SA_IMPL_PUBLIC(SATree)
@@ -130,3 +139,77 @@ SAItem *SATree::takeItem(int row)
 }
 
 
+
+QDebug &operator<<(QDebug &dbg, const SATree &tree)
+{
+    QList<SAItem*> items = tree.getItems();
+    const auto c = items.size();
+    for(auto i=0;i<c;++i)
+    {
+        dbg << *items[i];
+    }
+    return dbg;
+}
+
+/**
+ * @brief 转为json
+ * @param tree
+ * @return 输出为json
+ */
+QString toJson(const SATree *tree)
+{
+    QList<SAItem*> items = tree->getItems();
+    const auto c = items.size();
+    QJsonArray mainJTree;
+    for(auto i=0;i<c;++i)
+    {
+        SAItem* item = items[i];
+        mainJTree.append(write_item_to_json(item));
+    }
+    QJsonDocument json(mainJTree);
+    return json.toJson();
+}
+
+QJsonObject write_item_to_json(SAItem* item)
+{
+    QJsonObject itemObj;
+    itemObj.insert("name",item->getName());
+    QIcon icon = item->getIcon();
+    if(!icon.isNull())
+    {
+        QByteArray byte;
+        QDataStream st(&byte,QIODevice::ReadWrite);
+        st << icon;
+        itemObj.insert("icon",QString(byte.toBase64()));
+    }
+    const auto c = item->getPropertyCount();
+    if(c > 0)
+    {
+        QJsonObject propObj;
+        for(auto i=0;i<c;++i)
+        {
+            int id;
+            QVariant var;
+            item->getProperty(i,id,var);
+            propObj.insert(QString::number(id),variant_to_jsonvalue(var));
+        }
+        itemObj.insert("porperty",propObj);
+    }
+    const auto cc = item->childItemCount();
+    if(cc > 0)
+    {
+        QJsonArray jArrVal;
+        for(auto i=0;i<cc;++i)
+        {
+            QJsonObject cj = write_item_to_json(item->childItem(i));
+            jArrVal.append(cj);
+        }
+        itemObj.insert("childItems",jArrVal);
+    }
+    return itemObj;
+}
+
+QJsonValue variant_to_jsonvalue(const QVariant& var)
+{
+    return QJsonValue(SAVariantCaster::variantToString(var));
+}

@@ -39,5 +39,7 @@ public:
     void takeItemPtr(SAItem* item);
     SAItem* takeItem(int row);
 };
-
+//debug输出
+SALIB_EXPORT QDebug& operator<<(QDebug& dbg, const SATree &tree);
+SALIB_EXPORT QString toJson(const SATree* tree);
 #endif // SATREE_H

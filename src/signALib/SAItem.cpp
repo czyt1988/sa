@@ -407,7 +407,7 @@ void SAItem::__setTreePtr(SATree *tree)
  */
 QDebug& operator<<(QDebug& dbg, const SAItem &item)
 {
-    dbg = print_one_item(dbg,item,"sa item:\n");
+    dbg = print_one_item(dbg,item,"");
     QList<SAItem *> cis = item.getChildItems();
     for(int i=0;i<cis.size();++i)
     {

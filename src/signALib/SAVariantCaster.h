@@ -60,6 +60,7 @@ public:
         return QVariant::fromValue(ba);
     }
 
+
 };
 
 #endif // SAVARIANTCASTER_H

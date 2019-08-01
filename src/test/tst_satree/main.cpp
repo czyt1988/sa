@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QWidget>
 #include "SAItem.h"
+#include "SATree.h"
 void test_saitem_copy();
 void test_saitem_delete();
 int main(int argc, char *argv[])
@@ -82,4 +83,12 @@ void test_saitem_delete()
     delete c12;
     qDebug() << "delete 1.2:";
     qDebug() << *par;
+
+    SATree tree;
+    tree.appendItem(par);
+    SAItem* par2 = new SAItem("2");
+    *par2 = *par;
+    tree.appendItem(par2);
+    qDebug() << tree;
+    qDebug().resetFormat().noquote().nospace() << toJson(&tree);
 }
