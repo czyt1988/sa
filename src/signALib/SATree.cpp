@@ -7,8 +7,7 @@
 #include <QDataStream>
 #include "SAVariantCaster.h"
 QJsonObject write_item_to_json(SAItem* item);
-QJsonValue variant_to_jsonvalue(const QVariant& var);
-
+bool read_item_from_json(const QJsonObject &json, SAItem* item);
 class SATreePrivate
 {
     SA_IMPL_PUBLIC(SATree)
@@ -152,9 +151,9 @@ QDebug &operator<<(QDebug &dbg, const SATree &tree)
 }
 
 /**
- * @brief 转为json
- * @param tree
- * @return 输出为json
+ * @brief 把satree转换为json string
+ * @param tree tree指针
+ * @return
  */
 QString toJson(const SATree *tree)
 {
@@ -191,7 +190,7 @@ QJsonObject write_item_to_json(SAItem* item)
             int id;
             QVariant var;
             item->getProperty(i,id,var);
-            propObj.insert(QString::number(id),variant_to_jsonvalue(var));
+            propObj.insert(QString::number(id),QJsonValue::fromVariant(var));
         }
         itemObj.insert("porperty",propObj);
     }
@@ -209,7 +208,66 @@ QJsonObject write_item_to_json(SAItem* item)
     return itemObj;
 }
 
-QJsonValue variant_to_jsonvalue(const QVariant& var)
+bool read_item_from_json(const QJsonObject& json, SAItem* item)
 {
-    return QJsonValue(SAVariantCaster::variantToString(var));
+    auto i = json.find("name");
+    if(i != json.end())
+    {
+        item->setName(i.value().toString());
+    }
+    i = json.find("icon");
+    if(i != json.end())
+    {
+        QIcon icon;
+        QByteArray byte = QByteArray::fromBase64(i.value().toString().toLocal8Bit());
+        QDataStream st(&byte,QIODevice::ReadWrite);
+        st >>icon;
+        if(!icon.isNull())
+            item->setIcon(icon);
+    }
+    i = json.find("porperty");
+    if(i != json.end())
+    {
+        if(i.value().isObject())
+        {
+            QJsonObject propObj = i.value().toObject();
+            for(auto oi = propObj.begin();oi != propObj.end();++oi)
+            {
+                bool isKeyOk = false;
+                int propID = oi.key().toInt(&isKeyOk);
+                if(!isKeyOk)
+                    continue;
+                QVariant var = oi.value().toVariant();
+                item->setProperty(isKeyOk,var);
+            }
+        }
+    }
+    i = json.find("childItems");
+    if(i != json.end())
+    {
+        ==
+    }
+}
+
+/**
+ * @brief 从标准json sting转换到tree
+ * @param json jsonstring
+ * @param tree 待修改的tree
+ * @return 如果转换成功返回true
+ */
+bool fromJson(const QString &json, SATree *tree)
+{
+    QJsonParseError error;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(json.toUtf8(), &error);
+    if(!jsonDocument.isArray())
+    {
+        return false;
+    }
+    QJsonArray jsonArr = jsonDocument.array();
+    QList<SAItem*> items;
+    const auto size = jsonArr.size();
+    for(int i=0;i<size;++i)
+    {
+        QJsonValue v = jsonArr[i];
+    }
 }

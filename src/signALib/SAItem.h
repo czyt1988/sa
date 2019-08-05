@@ -70,6 +70,7 @@ protected:
 private:
     void setTree(SATree* tree);
     void __setTreePtr(SATree* tree);
+    void __removeParent();
 };
 
 SALIB_EXPORT QDebug& operator<<(QDebug& dbg, const SAItem &item);

@@ -398,6 +398,14 @@ void SAItem::__setTreePtr(SATree *tree)
     d_ptr->m_tree = tree;
 }
 
+/**
+ * @brief 移除父级，私有调用，用于移除父级关联，但不会联动父级清除itemlist的关系，一般用于父级批量删除子节点避免过多调用使用
+ */
+void SAItem::__removeParent()
+{
+    d_ptr->m_parent = nullptr;
+}
+
 
 /**
  * @brief 输出到qdebug

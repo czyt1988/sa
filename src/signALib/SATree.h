@@ -41,5 +41,8 @@ public:
 };
 //debug输出
 SALIB_EXPORT QDebug& operator<<(QDebug& dbg, const SATree &tree);
+//把satree转换为json string
 SALIB_EXPORT QString toJson(const SATree* tree);
+//从标准json sting转换到tree
+SALIB_EXPORT bool fromJson(const QString& json,SATree* tree);
 #endif // SATREE_H
