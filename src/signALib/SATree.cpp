@@ -6,6 +6,8 @@
 #include <QJsonObject>
 #include <QDataStream>
 #include "SAVariantCaster.h"
+#include <memory>
+
 QJsonObject write_item_to_json(SAItem* item);
 bool read_item_from_json(const QJsonObject &json, SAItem* item);
 class SATreePrivate
@@ -208,7 +210,8 @@ QJsonObject write_item_to_json(SAItem* item)
     return itemObj;
 }
 
-bool read_item_from_json(const QJsonObject& json, SAItem* item)
+
+bool read_item_from_json(const QJsonObject &json, SAItem* item)
 {
     auto i = json.find("name");
     if(i != json.end())
@@ -238,15 +241,28 @@ bool read_item_from_json(const QJsonObject& json, SAItem* item)
                 if(!isKeyOk)
                     continue;
                 QVariant var = oi.value().toVariant();
-                item->setProperty(isKeyOk,var);
+                item->setProperty(propID,var);
             }
         }
     }
     i = json.find("childItems");
     if(i != json.end())
     {
-        ==
+        //读取子节点
+        if(i.value().isArray())
+        {
+            QJsonArray jArrVal = i.value().toArray();
+            for(auto i=jArrVal.begin();i!=jArrVal.end();++i)
+            {
+                std::unique_ptr<SAItem> childitem = std::make_unique<SAItem>();
+                if(read_item_from_json((*i).toObject(),childitem.get()))
+                {
+                    item->appendChild(childitem.release());
+                }
+            }
+        }
     }
+    return true;
 }
 
 /**
@@ -264,10 +280,14 @@ bool fromJson(const QString &json, SATree *tree)
         return false;
     }
     QJsonArray jsonArr = jsonDocument.array();
-    QList<SAItem*> items;
     const auto size = jsonArr.size();
     for(int i=0;i<size;++i)
     {
+        std::unique_ptr<SAItem> item = std::make_unique<SAItem>();
         QJsonValue v = jsonArr[i];
+        if(read_item_from_json(v.toObject(),item.get()))
+        {
+            tree->appendItem(item.release());
+        }
     }
 }

@@ -89,6 +89,11 @@ void test_saitem_delete()
     SAItem* par2 = new SAItem("2");
     *par2 = *par;
     tree.appendItem(par2);
+
+    QString jsonstr = toJson(&tree);
     qDebug() << tree;
-    qDebug().resetFormat().noquote().nospace() << toJson(&tree);
+    qDebug().resetFormat().noquote().nospace() << jsonstr;
+    SATree tree2;
+    fromJson(jsonstr,&tree2);
+    qDebug() << tree2;
 }
