@@ -198,6 +198,10 @@ void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByte
             //3-2
             deal2DPointFs(datas,key);
             break;
+        case SA_LOCAL_SER_BIN_FUN:
+            //3-99
+            dealBin(datas,key);
+            break;
         default:
             break;
         }
@@ -355,6 +359,23 @@ void SALocalServeSocketOpt::sendError(const int errCode, uint key)
     io << errCode;
     send(h,byteArray);
 }
+
+/**
+ * @brief 发送二进制
+ * @param bin 二进制
+ * @param key 标识
+ */
+void SALocalServeSocketOpt::sendBin(const QByteArray &bin, uint key)
+{
+    SALocalServeBaseHeader h;
+    h.init();
+    h.type = SA_LOCAL_SER_PARAM_TYPE;
+    h.classID = SA_LOCAL_SER_PARAM_CLASS;
+    h.functionID = SA_LOCAL_SER_BIN_FUN;
+    h.tokenID = getToken();
+    h.key = key;
+    send(h,bin);
+}
 /**
  * @brief 处理登录成功
  * @param datas
@@ -401,6 +422,16 @@ void SALocalServeSocketOpt::dealString(const QByteArray &datas, uint key)
     QDataStream io(datas);
     io >> str;
     emit recString(str,key);
+}
+
+/**
+ * @brief 处理二进制
+ * @param datas 二进制数据
+ * @param key 标识
+ */
+void SALocalServeSocketOpt::dealBin(const QByteArray &datas, uint key)
+{
+    emit recBin(datas,key);
 }
 
 

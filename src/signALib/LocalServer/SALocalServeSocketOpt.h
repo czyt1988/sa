@@ -47,6 +47,8 @@ public slots:
     Q_SLOT void sendString(const QString &str, uint key = 0);
     //发送错误
     Q_SLOT void sendError(const int errCode, uint key = 0);
+    //发送二进制文件
+    Q_SLOT void sendBin(const QByteArray& bin, uint key = 0);
 signals:
     /**
      * @brief 登录成功 返回登录后的tokenID
@@ -79,6 +81,12 @@ signals:
      * @param 标识，默认为0
      */
     void recString(const QString& str,uint key);
+    /**
+     * @brief 接收到二进制
+     * @param bin 接收的二进制
+     * @param key 标识
+     */
+    void recBin(const QByteArray& bin,uint key);
 private:
     //处理登录1-1
     void dealLoginSucceed(const QByteArray& datas,uint key);
@@ -88,6 +96,8 @@ private:
     void deal2DPointFs(const QByteArray& datas, uint key);
     //处理字符串
     void dealString(const QByteArray& datas, uint key);
+    //处理二进制
+    void dealBin(const QByteArray& datas, uint key);
 private slots:
     Q_SLOT void onAutoHeartbeatTimeout();
     Q_SLOT void onReadyRead();

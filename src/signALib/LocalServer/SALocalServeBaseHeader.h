@@ -34,6 +34,8 @@
 #define SA_LOCAL_SER_STRING_FUN 1
 /// \def 2D序列类型
 #define SA_LOCAL_SER_2DPOINTF_FUN 2
+/// \def 二进制类型
+#define SA_LOCAL_SER_BIN_FUN 99
 
 /// \def 错误类型
 #define SA_LOCAL_SER_ERROR_TYPE 4
