@@ -10,6 +10,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     test_saitem_copy();
     test_saitem_delete();
+    qDebug() <<"done";
+    QWidget w;
+    w.show();
     return a.exec();
 }
 
