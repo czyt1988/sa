@@ -121,7 +121,6 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
 
 void SADataProcServe::onReceivedString(const QString& str,uint key)
 {
-    qDebug() << str;
     SALocalServeSocketServeParse* sp = qobject_cast<SALocalServeSocketServeParse*>(sender());
     if(nullptr == sp)
     {
@@ -140,7 +139,12 @@ void SADataProcServe::onReceivedString(const QString& str,uint key)
     }
 }
 
-
+/**
+ * @brief 接收到点数组的计算结果
+ * @param res
+ * @param args
+ * @param key
+ */
 void SADataProcServe::onProcessVectorPointFResult(const QString& res
                                                   ,const QHash<QString, QVariant>& args
                                                   , uint key)
