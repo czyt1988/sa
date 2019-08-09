@@ -23,9 +23,11 @@ DEFINES += SA_PROCESS_MAKE
 HEADERS += \
     SAProcessGlobal.h \
     SAAbstractProcess.h \
-    SAPointSeriesStatisticProcess.h
+    SAPointSeriesStatisticProcess.h \
+    SAVariantHashData.h
 
 SOURCES += \
     SAAbstractProcess.cpp \
-    SAPointSeriesStatisticProcess.cpp
+    SAPointSeriesStatisticProcess.cpp \
+    SAVariantHashData.cpp
 

@@ -138,7 +138,7 @@ int QTDMChannel::getDateTimeData(QDateTime* datas, size_t firstIndex, size_t len
     std::vector<type> p;\
     p.resize (length);\
     r = FunName (p.data(),firstIndex,length);\
-    array2arrayVariant(p.begin (),p.end (),datas);
+    array_to_qvariantarray(p.begin (),p.end (),datas);
 
 int QTDMChannel::getVariantData(QVariant* datas, size_t firstIndex, size_t length) const
 {

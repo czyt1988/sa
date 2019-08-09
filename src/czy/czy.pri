@@ -9,7 +9,6 @@ QT += core gui
 HEADERS += \
         $$PWD/czy.h \
         $$PWD/czyQtApp.h \
-        $$PWD/czyQArrayEx.h \
         $$PWD/czyQtUI.h \
         $$PWD/czyMath_DSP.h \
         $$PWD/czyMath.h \
@@ -18,7 +17,9 @@ HEADERS += \
         $$PWD/czySA.h \
         $$PWD/czyAlgorithm.h \
         $$PWD/czyMath_Smooth.h \
-    $$PWD/qt_extend/czyQtPointAlgorithm.h
+    $$PWD/qt_extend/czyQtPointAlgorithm.h \
+    $$PWD/czyArray.h \
+    $$PWD/czyQArray.h
 
 
 SOURCES +=  \

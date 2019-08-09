@@ -59,7 +59,7 @@ public:
     /// \param out_end 结果数据结束迭代器
     ///
     template<typename IT_in,typename IT_QVariant>
-    static void array2arrayVariant(const IT_in in_begin,const IT_in in_end
+    static void array_to_qvariantarray(const IT_in in_begin,const IT_in in_end
                             ,IT_QVariant out_begin)
     {
         IT_in in_ite;IT_QVariant out_ite;

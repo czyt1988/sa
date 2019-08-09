@@ -1,6 +1,7 @@
 #ifndef SAABSTRACTPROCESS_H
 #define SAABSTRACTPROCESS_H
 #include "SAProcessGlobal.h"
+#include "SAVariantHashData.h"
 #include <QObject>
 #include <QVariant>
 class SAAbstractProcessPrivate;
@@ -31,7 +32,7 @@ signals:
      * @param res 返回处理的结果
      * @param key 标识，标识通过\sa setKey 进行设置
      */
-    void result(QVariant& res,uint key);
+    void result(SAVariantHashData& res,uint key);
     /**
      * @brief 计算结束
      */
