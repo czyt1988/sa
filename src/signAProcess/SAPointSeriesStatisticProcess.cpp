@@ -17,7 +17,6 @@ public:
     uint mSortCount;
     QVector<QPointF> mPoints;
     SAVariantHashData mArgs;
-    uint mKey;
 };
 
 SAPointSeriesStatisticProcess::SAPointSeriesStatisticProcess(QObject *par):SAAbstractProcess(par)
@@ -59,19 +58,18 @@ void SAPointSeriesStatisticProcess::setSortCount(uint sortCount)
  * @param key 标识
  */
 void SAPointSeriesStatisticProcess::setPoints(const QVector<QPointF> &points
-                                              , const SAVariantHashData &args
-                                              , uint key)
+                                              , const SAVariantHashData &args)
 {
     d_ptr->mPoints = points;
     d_ptr->mArgs = args;
-    d_ptr->mKey = key;
 }
 /**
  * @brief 把vector points的y值提取
  * @param points 传入的vector point
  * @param ys 获取到的y值
  */
-void SAPointSeriesStatisticProcess::getVectorPointY(const QVector<QPointF> &points, QVector<double> &ys)
+void SAPointSeriesStatisticProcess::getVectorPointY(const QVector<QPointF> &points
+                                                    , QVector<double> &ys)
 {
     czy::QArray::get_qvectorpointf_y(points,ys.begin());
 }
@@ -81,31 +79,27 @@ void SAPointSeriesStatisticProcess::getVectorPointY(const QVector<QPointF> &poin
  * @param Points 需要获得的数据
  * @param isUpperPeak 获取的是上峰值
  */
-void SAPointSeriesStatisticProcess::getSharpPeakPoint(QVector<QPointF> &sharpPoints, const QVector<QPointF> &points, bool isUpperPeak)
+void SAPointSeriesStatisticProcess::getSharpPeakPoint(QVector<QPointF> &sharpPoints
+                                                      , const QVector<QPointF> &points
+                                                      , bool isUpperPeak)
 {
     sharpPoints.clear();
     sharpPoints.reserve(int(points.size()/2));
-    int maxLoop = points.size()-1;
-
     if(isUpperPeak)
     {
-        for(int i=1;i<maxLoop;++i)
-        {
-            if((points[i].y() > points[i-1].y()) && (points[i].y() > points[i+1].y()))
-            {
-                sharpPoints.append(points[i]);
-            }
-        }
+        czy::Array::find_upper_sharp_peak(points.begin(),points.end()
+                                          ,std::back_inserter(sharpPoints)
+                                          ,[](const QPointF& a,const QPointF& b)->bool{
+            return a.y() > b.y();
+        });
     }
     else
     {
-        for(int i=1;i<maxLoop;++i)
-        {
-            if((points[i].y() < points[i-1].y()) && (points[i].y() < points[i+1].y()))
-            {
-                sharpPoints.append(points[i]);
-            }
-        }
+        czy::Array::find_lower_sharp_peak(points.begin(),points.end()
+                                          ,std::back_inserter(sharpPoints)
+                                          ,[](const QPointF& a,const QPointF& b)->bool{
+            return a.y() < b.y();
+        });
     }
 }
 

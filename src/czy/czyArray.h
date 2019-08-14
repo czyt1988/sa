@@ -111,6 +111,132 @@ namespace Array {
             }
         }
     }
+    /**
+     * @brief 查找数组的上峰值
+     * @param begin 数组的开始迭代器
+     * @param end 数组的结束迭代器
+     * @param begin_out 输出数组的开始迭代器
+     * @param fun_greater 函数指针 fun_greater(IT1 a,IT1 b) ->bool,如果a>b 返回true
+     * @example
+     * @code
+     * void SAPointSeriesStatisticProcess::getSharpPeakPoint(QVector<QPointF> &sharpPoints
+     *                                                       , const QVector<QPointF> &points
+     *                                                       , bool isUpperPeak)
+     * {
+     *     sharpPoints.clear();
+     *     sharpPoints.reserve(int(points.size()/2));
+     *     if(isUpperPeak)
+     *     {
+     *         czy::Array::find_upper_sharp_peak(points.begin(),points.end()
+     *                                           ,std::back_inserter(sharpPoints)
+     *                                           ,[](const QPointF& a,const QPointF& b)->bool{
+     *             return a.y() > b.y();
+     *         });
+     *     }
+     *     else
+     *     {
+     *         czy::Array::find_lower_sharp_peak(points.begin(),points.end()
+     *                                           ,std::back_inserter(sharpPoints)
+     *                                           ,[](const QPointF& a,const QPointF& b)->bool{
+     *             return a.y() < b.y();
+     *         });
+     *     }
+     * }
+     * @endcode
+     */
+    template<typename IT1,typename IT2,typename FUN>
+    void find_upper_sharp_peak(INPUT IT1 begin,INPUT IT1 end,INPUT IT2 begin_out,FUN fun_greater)
+    {
+        if(std::distance(begin,end) < 3)
+        {
+            return;
+        }
+        IT1 i=begin+1;
+        IT2 o = begin_out;
+        for(;(i+1)!=end;++i)
+        {
+            if(fun_greater(*i,*(i-1)) && fun_greater(*i,*(i+1)))
+            {
+                *o = *i;
+                ++o;
+            }
+        }
+    }
+    /**
+     * @brief 查找数组的下峰值
+     * @param begin 数组的开始迭代器
+     * @param end 数组的结束迭代器
+     * @param begin_out 输出数组的开始迭代器
+     */
+    template<typename IT1,typename IT2>
+    void find_lower_sharp_peak(INPUT IT1 begin,INPUT IT1 end,INPUT IT2 begin_out)
+    {
+        if(std::distance(begin,end) < 3)
+        {
+            return;
+        }
+        IT1 i=begin+1;
+        IT2 o = begin_out;
+        for(;(i+1)!=end;++i)
+        {
+            if((*i < *(i-1)) && (*i < *(i+1)))
+            {
+                *o = *i;
+                ++o;
+            }
+        }
+    }
+    /**
+     * @brief 查找数组的下峰值
+     * @param begin 数组的开始迭代器
+     * @param end 数组的结束迭代器
+     * @param begin_out 输出数组的开始迭代器
+     * @param fun_small 函数指针 fun_small(IT1 a,IT1 b) ->bool,如果a<b 返回true
+     * @example
+     * @code
+     * void SAPointSeriesStatisticProcess::getSharpPeakPoint(QVector<QPointF> &sharpPoints
+     *                                                       , const QVector<QPointF> &points
+     *                                                       , bool isUpperPeak)
+     * {
+     *     sharpPoints.clear();
+     *     sharpPoints.reserve(int(points.size()/2));
+     *     if(isUpperPeak)
+     *     {
+     *         czy::Array::find_upper_sharp_peak(points.begin(),points.end()
+     *                                           ,std::back_inserter(sharpPoints)
+     *                                           ,[](const QPointF& a,const QPointF& b)->bool{
+     *             return a.y() > b.y();
+     *         });
+     *     }
+     *     else
+     *     {
+     *         czy::Array::find_lower_sharp_peak(points.begin(),points.end()
+     *                                           ,std::back_inserter(sharpPoints)
+     *                                           ,[](const QPointF& a,const QPointF& b)->bool{
+     *             return a.y() < b.y();
+     *         });
+     *     }
+     * }
+     * @endcode
+     */
+    template<typename IT1,typename IT2,typename FUN>
+    void find_lower_sharp_peak(INPUT IT1 begin,INPUT IT1 end,INPUT IT2 begin_out,FUN fun_small)
+    {
+        if(std::distance(begin,end) < 3)
+        {
+            return;
+        }
+        IT1 i=begin+1;
+        IT2 o = begin_out;
+        for(;(i+1)!=end;++i)
+        {
+            if(fun_small(*i,*(i-1)) && fun_small(*i,*(i+1)))
+            {
+                *o = *i;
+                ++o;
+            }
+        }
+    }
 }
 }
 #endif // CZYARRAY_H

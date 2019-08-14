@@ -12,7 +12,8 @@ HEADERS += \
         $$PWD/czyMath_Interpolation.h \
         $$PWD/czyMath_Fit.h \
         $$PWD/czyAlgorithm.h \
-        $$PWD/czyMath_Smooth.h
+        $$PWD/czyMath_Smooth.h \
+        $$PWD/czyArray.h
 
 
 SOURCES +=  \

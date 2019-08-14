@@ -90,4 +90,6 @@ build-*
 *.png
 *.jpg
 *.svg
-*src\3rdParty\qwt\lib\*
+*src/3rdParty/qwt/lib/*
+*src/3rdParty/qwt/doc*
+*src/czy/doc*

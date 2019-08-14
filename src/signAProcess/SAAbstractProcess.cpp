@@ -14,7 +14,6 @@ public:
     }
 
 public:
-    uint m_Key;
     std::atomic_bool m_isstop;
 };
 
@@ -30,22 +29,15 @@ SAAbstractProcess::~SAAbstractProcess()
 
 }
 
-/**
- * @brief 设置一个key
- * @param key 标识key
- */
-void SAAbstractProcess::setKey(uint key)
-{
-    d_ptr->m_Key = key;
-}
 
 /**
- * @brief SAAbstractProcess::getKey
+ * @brief 获取标识
+ * 标识可以用于区分工作任务
  * @return
  */
-uint SAAbstractProcess::getKey() const
+uint SAAbstractProcess::getID() const
 {
-    return d_ptr->m_Key;
+    return (uint)this;
 }
 
 void SAAbstractProcess::setStop(bool stop)

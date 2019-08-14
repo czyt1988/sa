@@ -16,16 +16,13 @@ class SA_PROCESS_EXPORT SAPointSeriesStatisticProcess : public SAAbstractProcess
     SA_IMPL(SAPointSeriesStatisticProcess)
 public:
     SAPointSeriesStatisticProcess(QObject* par=nullptr);
-    ~SAPointSeriesStatisticProcess();
+    virtual ~SAPointSeriesStatisticProcess();
     virtual void run();
     //设置返回的排序个数
     uint getSortCount() const;
     void setSortCount(uint sortCount);
-public slots:
-    //设置需要计算的点，并开始计算
-    Q_SLOT void setPoints(const QVector<QPointF>& points
-                          , const SAVariantHashData& args
-                          ,uint key);
+    //设置需要计算的点
+    void setPoints(const QVector<QPointF>& points,const SAVariantHashData& args);
 public:
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);
