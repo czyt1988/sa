@@ -43,6 +43,7 @@ HEADERS += \
 #{
 #sa api support
 include($$PWD/../signALib/signALib.pri)
+include($$PWD/../signAProcess/signAProcess.pri)
 #}
 
 
