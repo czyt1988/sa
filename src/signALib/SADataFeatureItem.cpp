@@ -4,8 +4,6 @@
 #include <QDomDocument>
 #include <QPointF>
 #include <QDebug>
-#include "SAVariantCaster.h"
-#include "SAXMLTagDefined.h"
 #define ROLE_ITEM_TYPE (Qt::UserRole + 1234)
 #define XML_STR_ROOT__ "dfi"
 #define XML_STR_ITEM__ "item"

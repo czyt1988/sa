@@ -39,6 +39,7 @@ public:
     void takeItemPtr(SAItem* item);
     SAItem* takeItem(int row);
 };
+Q_DECLARE_METATYPE(SATree)
 //debug输出
 SALIB_EXPORT QDebug& operator<<(QDebug& dbg, const SATree &tree);
 //把satree转换为json string

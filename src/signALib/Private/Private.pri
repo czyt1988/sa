@@ -3,10 +3,8 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
-    $$PWD/SAConfigXMLReadWriter.h \
     $$PWD/SAValueOptCommand.h
 
 
 SOURCES += \
-    $$PWD/SAConfigXMLReadWriter.cpp \
     $$PWD/SAValueOptCommand.cpp

@@ -28,25 +28,16 @@ HEADERS += \
     SAValueManagerModel.h \
     SARandColorMaker.h \
     SACsvStream.h \
-    SALog.h \
-    SAGlobalConfig.h \
+    SALog.h \ 
     SAPluginInterface.h \
     SATextReadWriter.h \
     SADataHeader.h \
     SALibResourDefine.h \
-    SAGlobalConfigDefine.h \
-    SAVariantCaster.h \
-    SAFigureGlobalConfig.h \
-    SAGUIGlobalConfig.h \
     SACRC.h \
     SADataFeatureItem.h \
-    SAXMLTagDefined.h \
-    SAXMLReadHelper.h \
-    SADataProcessVectorPointF.h \
     SAValueManagerMimeData.h \
     SAValueManagerListModel.h \
     SAHashTable.h \
-    SAXMLWriteHelper.h \
     QCrc.h \
     CRC.h \
     SATree.h
@@ -61,19 +52,12 @@ SOURCES += \
     SARandColorMaker.cpp \
     SACsvStream.cpp \
     SALog.cpp \
-    SAGlobalConfig.cpp \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
-    SAVariantCaster.cpp \
-    SAFigureGlobalConfig.cpp \
-    SAGUIGlobalConfig.cpp \
     SACRC.cpp \
     SADataFeatureItem.cpp \
-    SAXMLReadHelper.cpp \
-    SADataProcessVectorPointF.cpp \
     SAValueManagerMimeData.cpp \
     SAValueManagerListModel.cpp \
-    SAXMLWriteHelper.cpp \
     QCrc.cpp \
     SATree.cpp
 

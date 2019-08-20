@@ -5,7 +5,6 @@
 #include <QJsonValue>
 #include <QJsonObject>
 #include <QDataStream>
-#include "SAVariantCaster.h"
 #include <memory>
 
 QJsonObject write_item_to_json(SAItem* item);
