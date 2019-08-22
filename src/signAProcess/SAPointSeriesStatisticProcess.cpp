@@ -2,32 +2,8 @@
 #include "czyQArray.h"
 #include "czyMath.h"
 #include <algorithm>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QJsonArray>
-
-QJsonValue pointToJsonValue(const QPointF& p);
-QJsonValue pointArrToJsonValue(const QVector<QPointF>& p);
-
-
-QJsonValue pointToJsonValue(const QPointF& p)
-{
-    QJsonArray arr;
-    arr.push_back(p.x());
-    arr.push_back(p.y());
-    return QJsonValue(arr);
-}
-
-QJsonValue pointArrToJsonValue(const QVector<QPointF>& p)
-{
-    QJsonArray arr;
-    for(int i=0;i<p.size();++i)
-    {
-        arr.push_back(pointToJsonValue(p[i]));
-    }
-    return QJsonValue(arr);
-}
+#include "SAXMLTagDefined.h"
+#include "SAXMLWriteHelper.h"
 
 
 
@@ -99,41 +75,45 @@ void SAPointSeriesStatisticProcess::run()
     QPointF maxPoint = *(datas.cend()-1);
     QPointF midPoint = n>1 ? *(datas.cbegin() + int(n/2)) : minPoint;//中位数
     //
+    SAXMLWriteHelper xmlHelper(ATT_SA_TYPE_VPFR);
+    for(auto i = d_ptr->mArgs.begin();i != d_ptr->mArgs.end();++i)
+    {
+        xmlHelper.writeHeadValue(i.key(),i.value());
+    }
+    xmlHelper.startContentWriteGroup("param");
+    xmlHelper.writeContentValue("sum",sum);
+    xmlHelper.writeContentValue("min",min);
+    xmlHelper.writeContentValue("max",max);
+    xmlHelper.writeContentValue("mid",mid);
+    xmlHelper.writeContentValue("mean",mean);
+    xmlHelper.writeContentValue("var",var);
+    xmlHelper.writeContentValue("stdVar",stdVar);
+    xmlHelper.writeContentValue("skewness",skewness);
+    xmlHelper.writeContentValue("kurtosis",kurtosis);
+    xmlHelper.writeContentValue("peak2peak",peak2peak);
+    xmlHelper.writeContentValue("minPoint",minPoint);
+    xmlHelper.writeContentValue("maxPoint",maxPoint);
+    xmlHelper.writeContentValue("midPoint",midPoint);
+    xmlHelper.endContentWriteGroup();
 
-    QJsonObject res;
-    //res[SAVARKEY_ARGS] = d_ptr->mArgs;
-    res["sum"] = sum;
-    res["min"] = min;
-    res["max"] = max;
-    res["mid"] = mid;
-    res["mean"] = mean;
-    res["var"] = var;
-    res["stdvar"] = stdVar;
-    res["skewness"] = skewness;
-    res["kurtosis"] = kurtosis;
-    res["peak2peak"] = peak2peak;
-
-    res["minPoint"] = pointToJsonValue(minPoint);
-    res["maxPoint"] = pointToJsonValue(maxPoint);
-    res["midPoint"] = pointToJsonValue(midPoint);
     int sortCount = std::min(d_ptr->mSortCount,(uint)datas.size());
     const int datasSize = datas.size();
-    QJsonArray arrTop;
+    xmlHelper.startContentWriteGroup("top");
     for(int i=0;i<sortCount;++i)
     {
-        arrTop.push_back(pointToJsonValue(datas[datasSize-i-1]));
+        QPointF top = datas[datasSize-i-1];
+        xmlHelper.writeContentValue(QString("top:%1").arg(i+1),top);
     }
-    res["top"] = arrTop;
+    xmlHelper.endContentWriteGroup();
 
-    QJsonArray arrBottom;
+    xmlHelper.startContentWriteGroup("bottom");
     for(int i=0;i<sortCount;++i)
     {
-        arrBottom.push_back(pointToJsonValue(datas[i]));
+        QPointF top = datas[i];
+        xmlHelper.writeContentValue(QString("bottom:%1").arg(i+1),top);
     }
-    res["bottom"] = arrBottom;
-    QJsonDocument doc;
-    doc.setObject(res);
-    emit result(QString(doc.toJson()),getID());
+    xmlHelper.endContentWriteGroup();
+    emit result(xmlHelper.toString(),getID());
     emit finish(getID());
 }
 /**
