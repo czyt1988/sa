@@ -6,8 +6,9 @@
 #include <QLocalServer>
 #include <QThread>
 #include <QApplication>
-#include "SADataProcessVectorPointF.h"
+#include "SAPointSeriesStatisticProcess.h"
 #include "SAXMLTagDefined.h"
+#include <memory>
 
 #define ARG_DES_KEY_ID "key"
 #define ARG_DES_TOKEN_ID "token"
@@ -22,11 +23,11 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
   ,m_checkLiveTime(10000)
 {
     connect(&m_liveChecker,&QTimer::timeout,this,&SADataProcServe::onCheckLive);
-
-    qRegisterMetaType<QVector<QPointF> >("QVector<QPointF>");
-    initCalcThread();
     connect(m_localServer,&QLocalServer::newConnection
             ,this,&SADataProcServe::onLocalServeNewConnection);
+    connect(&m_process,&SAThreadProcessPool::result,this,&SADataProcServe::onProcessResult);
+    connect(&m_process,&SAThreadProcessPool::finish,this,&SADataProcServe::onProcessFinish);
+    connect(&m_process,&SAThreadProcessPool::progress,this,&SADataProcServe::onProcessProgress);
     if(!m_localServer->listen(SA_LOCAL_SERVER_DATA_PROC_NAME))
     {
        qDebug() << tr("listern loacl server error");
@@ -70,23 +71,6 @@ void SADataProcServe::onLocalServeNewConnection()
             ,this,&SADataProcServe::onDisconnected);
 }
 
-void SADataProcServe::initCalcThread()
-{
-    qDebug() << "init thread";
-    m_calcThread = new QThread;
-    m_pointFCalctor = new SADataProcessVectorPointF;
-    m_pointFCalctor->moveToThread(m_calcThread);
-
-    connect(m_calcThread,&QThread::finished,m_calcThread,&QThread::deleteLater);//内存释放
-    connect(m_calcThread,&QThread::finished,m_pointFCalctor,&SADataProcessVectorPointF::deleteLater);//内存释放
-    connect(m_pointFCalctor,&SADataProcessVectorPointF::result
-            ,this,&SADataProcServe::onProcessVectorPointFResult);
-    connect(this,&SADataProcServe::callVectorPointFProcess
-            ,m_pointFCalctor,&SADataProcessVectorPointF::setPoints);
-    m_calcThread->start();
-
-}
-
 void SADataProcServe::errorOccurred(QLocalSocket::LocalSocketError err)
 {
     Q_UNUSED(err);
@@ -106,7 +90,7 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
     SALocalServeSocketServeParse* sp = qobject_cast<SALocalServeSocketServeParse*>(sender());
     if(sp)
     {
-        QHash<QString, QVariant> args;
+        QVariantHash args;
         args[ARG_DES_KEY_ID]=QVariant::fromValue(key);
         args[ARG_DES_TOKEN_ID]=QVariant::fromValue(sp->getToken());
 #ifdef _DEBUG_OUTPUT
@@ -115,7 +99,12 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
              << " key:"<<key
                 ;
 #endif
-        emit callVectorPointFProcess(datas,args,key);
+        std::unique_ptr<SAPointSeriesStatisticProcess> ptr = std::make_unique<SAPointSeriesStatisticProcess>();
+        ptr->setPoints(datas);
+        ptr->setArgs(args);
+        //记录sp对应的id
+        m_processID2socket[ptr->getID()] = sp;
+        m_process.addTask(ptr.release());
     }
 }
 
@@ -139,43 +128,6 @@ void SADataProcServe::onReceivedString(const QString& str,uint key)
     }
 }
 
-/**
- * @brief 接收到点数组的计算结果
- * @param res
- * @param args
- * @param key
- */
-void SADataProcServe::onProcessVectorPointFResult(const QString& res
-                                                  ,const QHash<QString, QVariant>& args
-                                                  , uint key)
-{
-    if(res.isEmpty())
-    {
-        qDebug() << "rec result is empty";
-        return;
-    }
-    int token = args[ARG_DES_TOKEN_ID].value<int>();
-    SALocalServeSocketServeParse* sp = m_tokenOptDict.value(token,nullptr);
-    if(nullptr == sp)
-    {
-        qDebug() << "rec unknow token:" << token;
-        return;
-    }
-
-#ifdef _DEBUG_OUTPUT
-    QElapsedTimer t;
-    t.start();
-#endif
-    sp->sendString(res,key);
-    qDebug() << res;
-
-#ifdef _DEBUG_OUTPUT
-    qDebug() << "onProcessVectorPointFResult cost:" << t.elapsed()
-             << " token:"<<token
-             << " res:"<<res
-                ;
-#endif
-}
 
 void SADataProcServe::onDisconnected()
 {
@@ -206,6 +158,56 @@ void SADataProcServe::onCheckLive()
     }
 }
 
+/**
+ * @brief 接收到处理的结果
+ * @param res
+ * @param id
+ */
+void SADataProcServe::onProcessResult(const QVariant &res, uint id)
+{
+    SALocalServeSocketServeParse* sp = getSocketByProcessID(id);
+    if(nullptr == sp)
+    {
+        qDebug() << tr("process id:") << id << tr("in invalid socket");
+        return;
+    }
+
+}
+
+void SADataProcServe::onProcessFinish(uint id)
+{
+    //结果已经返回，删除id
+    removeSocketToProcessID(id);
+}
+
+void SADataProcServe::onProcessProgress(short present, uint id)
+{
+
+}
+
+/**
+ * @brief 根据处理id获取对应提交的socket
+ * @param id
+ * @return 如果没有找到，返回nullptr
+ */
+SALocalServeSocketServeParse *SADataProcServe::getSocketByProcessID(uint id) const
+{
+    auto i = m_processID2socket.find(id);
+    if(i == m_processID2socket.end())
+    {
+        return nullptr;
+    }
+    return i.value();
+}
+
+/**
+ * @brief 把id键值删除
+ * @param id
+ */
+void SADataProcServe::removeSocketToProcessID(uint id)
+{
+    m_processID2socket.remove(id);
+}
 
 
 uint SADataProcServe::getPid() const

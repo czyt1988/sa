@@ -1,7 +1,6 @@
 #ifndef SAABSTRACTPROCESS_H
 #define SAABSTRACTPROCESS_H
 #include "SAProcessGlobal.h"
-#include "SAVariantHashData.h"
 #include <QObject>
 #include <QVariant>
 #include <QRunnable>
@@ -30,7 +29,7 @@ signals:
      * @param res 返回处理的结果
      * @param id 标识，标识也可通过\sa getID 进行获取，每个任务会有一个唯一id
      */
-    void result(SAVariantHashData& res,uint id);
+    void result(const QVariant& res,uint id);
     /**
      * @brief 计算结束
      * @param id 标识，标识也可通过\sa getID 进行获取，每个任务会有一个唯一id

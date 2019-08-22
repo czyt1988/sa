@@ -1,6 +1,6 @@
 #ifndef SACONFIGXMLREADWRITER_H
 #define SACONFIGXMLREADWRITER_H
-#include "SALibGlobal.h"
+#include "SAProtocolGlobal.h"
 #include <QObject>
 #include <QVariant>
 #include <functional>
@@ -11,7 +11,7 @@ class SAConfigXMLReadWriterPrivate;
 ///
 /// \brief 用于读写SAConfig的xml类，可用于多线程
 ///
-class SAConfigXMLReadWriter : public QObject
+class SA_PROTOCOL_EXPORT SAConfigXMLReadWriter : public QObject
 {
     Q_OBJECT
     SA_IMPL(SAConfigXMLReadWriter)

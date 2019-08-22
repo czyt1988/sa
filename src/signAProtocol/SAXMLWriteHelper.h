@@ -1,10 +1,10 @@
 #ifndef SAXMLWRITEHELPER_H
 #define SAXMLWRITEHELPER_H
-#include "SALibGlobal.h"
+#include "SAProtocolGlobal.h"
 #include <QDomDocument>
 #include <QVariant>
 
-class SALIB_EXPORT SAXMLWriteHelper
+class SA_PROTOCOL_EXPORT SAXMLWriteHelper
 {
 public:
     SAXMLWriteHelper(const QString& type);

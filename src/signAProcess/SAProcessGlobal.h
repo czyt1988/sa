@@ -17,5 +17,12 @@
 #endif
 
 
+#ifndef SAVARKEY_ARGS
+/**
+ * @def key定义：输入参数
+ */
+#define SAVARKEY_ARGS "args"
+#endif
+
 
 #endif // SAPROCESSGLOBAL

@@ -1,6 +1,7 @@
 #include "SAXMLWriteHelper.h"
 #include "SAXMLTagDefined.h"
 #include "SAVariantCaster.h"
+
 SAXMLWriteHelper::SAXMLWriteHelper(const QString& type)
     :m_doc("SA_XML")
 {

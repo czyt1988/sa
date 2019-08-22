@@ -1,14 +1,6 @@
 #include "SAThreadProcessPool.h"
 #include <QThreadPool>
 
-//class SAThreadProcessPoolPrivate{
-//    SA_IMPL_PUBLIC(SAThreadProcessPool)
-//public:
-//    SAThreadProcessPoolPrivate(SAThreadProcessPool* p):q_ptr(p)
-//    {
-
-//    }
-//};
 
 SAThreadProcessPool::SAThreadProcessPool(QObject *par):QObject(par)
 {

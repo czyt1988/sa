@@ -22,6 +22,8 @@ DEFINES += SA_COMMON_UI_USE_DYNAMIC #定义使用dynamic_cast 而不是rtti
 DEPENDPATH += ../bin/lib
 #sa api support
 include($$PWD/../signALib/signALib.pri)
+#sa protocal support
+include($$PWD/../signAProtocol/signAProtocol.pri)
 #sa chart support
 include($$PWD/../signAChart/signAChart.pri)
 #czy
@@ -72,6 +74,7 @@ HEADERS += \
     SAWaitCursor.h \
     SAValueTableOptCommands.h \
     SAPlotDataModel.h \
+    SAGUIGlobalConfig.h \
     SAFigureSetWidget.h
 
 SOURCES += \
@@ -105,6 +108,7 @@ SOURCES += \
     SAValueTableOptPasteCommand_impl.cpp \
     SAValueTableOptDeleteCommand_impl.cpp \
     SAValueTableOptInsertCommand_impl.cpp \
+    SAGUIGlobalConfig.cpp \
     SAFigureSetWidget.cpp
 
 FORMS += \

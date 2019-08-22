@@ -2,7 +2,6 @@
 #include "SAChart.h"
 #include "SAAbstractDatas.h"
 #include "SARandColorMaker.h"
-#include "SAFigureGlobalConfig.h"
 #include "SAXYDataTracker.h"
 #include "SAYDataTracker.h"
 #include <memory>

@@ -24,12 +24,10 @@ HEADERS += \
     SAProcessGlobal.h \
     SAAbstractProcess.h \
     SAPointSeriesStatisticProcess.h \
-    SAVariantHashData.h \
     SAThreadProcessPool.h
 
 SOURCES += \
     SAAbstractProcess.cpp \
     SAPointSeriesStatisticProcess.cpp \
-    SAVariantHashData.cpp \
     SAThreadProcessPool.cpp
 

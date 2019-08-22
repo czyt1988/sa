@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
 SUBDIRS = \
           signALib\
+          signAProtocol\
+          signAProcess\
           signAChart\
           signACommonUI\
           signACoreFun\

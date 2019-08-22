@@ -22,7 +22,8 @@ public:
     uint getSortCount() const;
     void setSortCount(uint sortCount);
     //设置需要计算的点
-    void setPoints(const QVector<QPointF>& points,const SAVariantHashData& args);
+    void setPoints(const QVector<QPointF>& points);
+    void setArgs(const QVariantHash& args);
 public:
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);

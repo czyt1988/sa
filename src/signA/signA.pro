@@ -99,6 +99,10 @@ include($$PWD/../3rdParty/qwt/qwt_set.pri)
 #{
 #sa api support
 include($$PWD/../signALib/signALib.pri)
+#sa protocol support
+include($$PWD/../signAProtocol/signAProtocol.pri)
+#sa multiprocessing process support
+include($$PWD/../signAProcess/signAProcess.pri)
 #sa chart support
 include($$PWD/../signAChart/signAChart.pri)
 #sa signACommonUI support

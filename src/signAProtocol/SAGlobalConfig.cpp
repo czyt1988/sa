@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include "SAConfigXMLReadWriter.h"
-#include <QApplication>
+
 SAGlobalConfig* SAGlobalConfig::s_instance = nullptr;
 QString SAGlobalConfig::s_configFilePath = QString();
 QString SAGlobalConfig::s_configFileName = "sa.config";
@@ -287,7 +287,7 @@ QString SAGlobalConfig::makeDefaultConfigPath()
 {
     if(s_configFilePath.isNull())
     {
-        s_configFilePath = QApplication::applicationDirPath() + QDir::separator() + "config";
+        s_configFilePath = QDir::currentPath() + QDir::separator() + "config";
     }
     if(!QFileInfo::exists(s_configFilePath))
     {

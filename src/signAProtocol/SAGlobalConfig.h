@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QVariant>
 #include <memory>
-#include "SALibGlobal.h"
+#include "SAProtocolGlobal.h"
 class SAGlobalConfigPrivate;
 
 
@@ -13,7 +13,7 @@ class SAGlobalConfigPrivate;
 /// \brief sa的全局设置
 /// \note 此类为单例,非线程安全
 ///
-class SALIB_EXPORT SAGlobalConfig
+class SA_PROTOCOL_EXPORT SAGlobalConfig
 {
     SA_IMPL(SAGlobalConfig)
 private:

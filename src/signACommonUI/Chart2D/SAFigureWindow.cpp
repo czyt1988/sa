@@ -16,7 +16,6 @@
 //sa lib
 #include "SAData.h"
 #include "SARandColorMaker.h"
-#include "SAFigureGlobalConfig.h"
 #include "SAValueManager.h"
 #include "SAValueManagerMimeData.h"
 //sa common ui
