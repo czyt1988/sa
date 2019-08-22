@@ -113,7 +113,7 @@ void SAPointSeriesStatisticProcess::run()
         xmlHelper.writeContentValue(QString("bottom:%1").arg(i+1),top);
     }
     xmlHelper.endContentWriteGroup();
-    emit result(xmlHelper.toString(),getID());
+    emit result(xmlHelper.toString(),getID(),SAAbstractProcess::XmlString);
     emit finish(getID());
 }
 /**

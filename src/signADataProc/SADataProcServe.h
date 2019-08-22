@@ -36,7 +36,7 @@ private slots:
 
 private slots:
     //返回处理的结果
-    void onProcessResult(const QVariant& res,uint id);
+    void onProcessResult(const QVariant& res,uint id,int type);
     //线程结束
     void onProcessFinish(uint id);
     //线程有进度返回
@@ -51,6 +51,7 @@ private:
     QMap<QLocalSocket*,SALocalServeSocketServeParse*> m_socketOptDict;
     QMap<uint,SALocalServeSocketServeParse*> m_tokenOptDict;
     QMap<uint,SALocalServeSocketServeParse*> m_processID2socket;
+    QMap<uint,uint> m_processIDToKeyID;///< 记录计算的id对应的keyid
 private:
     SAThreadProcessPool m_process;///< 处理线程的线程池
 

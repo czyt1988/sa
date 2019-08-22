@@ -2,11 +2,11 @@
 #include "SAXMLTagDefined.h"
 #include "SAVariantCaster.h"
 #include <QDomDocument>
-
 class SAXMLWriteHelperPrivate{
     SA_IMPL_PUBLIC(SAXMLWriteHelper)
 public:
     SAXMLWriteHelperPrivate(SAXMLWriteHelper* p, const QString& type);
+    //由于是随机读写，不能用xmlstream
     QDomDocument mDoc;
     QDomElement mRootEle;
     QDomElement mHeaderEle;
@@ -16,9 +16,8 @@ public:
 };
 
 
-SAXMLWriteHelperPrivate::SAXMLWriteHelperPrivate(SAXMLWriteHelper *p, const QString& type)
-    :q_ptr(p)
-    ,mDoc("SA_XML")
+SAXMLWriteHelperPrivate::SAXMLWriteHelperPrivate(SAXMLWriteHelper *p, const QString& type):q_ptr(p)
+  ,mDoc("SA_XML")
 {
     mRootEle = mDoc.createElement(SA_XML_TAG_SA);
     mRootEle.setAttribute(SA_XML_ATT_TYPE,type);
@@ -32,6 +31,7 @@ SAXMLWriteHelperPrivate::SAXMLWriteHelperPrivate(SAXMLWriteHelper *p, const QStr
 
 SAXMLWriteHelper::SAXMLWriteHelper(const QString& type)
     :d_ptr(new SAXMLWriteHelperPrivate(this,type))
+
 {
 }
 

@@ -16,6 +16,12 @@ class SA_PROCESS_EXPORT SAAbstractProcess : public QObject, public QRunnable
     Q_OBJECT
     SA_IMPL(SAAbstractProcess)
 public:
+    enum ResultType{
+             XmlString   ///< xml协议
+             ,JsonString ///< json协议
+             ,UserDef    ///< 用户自定义协议
+    };
+
     SAAbstractProcess(QObject* par = nullptr);
     virtual ~SAAbstractProcess();
     //获取ID
@@ -27,9 +33,10 @@ signals:
     /**
      * @brief 返回处理的结果
      * @param res 返回处理的结果
-     * @param id 标识，标识也可通过\sa getID 进行获取，每个任务会有一个唯一id
+     * @param id 标识，标识也可通过 @sa getID 进行获取，每个任务会有一个唯一id
+     * @param type 标记结果的数据类型，具体类型见 @sa SAAbstractProcess::ResultType
      */
-    void result(const QVariant& res,uint id);
+    void result(const QVariant& res,uint id,int type);
     /**
      * @brief 计算结束
      * @param id 标识，标识也可通过\sa getID 进行获取，每个任务会有一个唯一id

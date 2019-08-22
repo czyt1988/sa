@@ -104,6 +104,7 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
         ptr->setArgs(args);
         //记录sp对应的id
         m_processID2socket[ptr->getID()] = sp;
+        m_processIDToKeyID[ptr->getID()] = key;
         m_process.addTask(ptr.release());
     }
 }
@@ -163,7 +164,7 @@ void SADataProcServe::onCheckLive()
  * @param res
  * @param id
  */
-void SADataProcServe::onProcessResult(const QVariant &res, uint id)
+void SADataProcServe::onProcessResult(const QVariant &res, uint id, int type)
 {
     SALocalServeSocketServeParse* sp = getSocketByProcessID(id);
     if(nullptr == sp)
@@ -171,7 +172,20 @@ void SADataProcServe::onProcessResult(const QVariant &res, uint id)
         qDebug() << tr("process id:") << id << tr("in invalid socket");
         return;
     }
-
+    switch(type)
+    {
+    case SAAbstractProcess::XmlString:
+        auto keyidIte = m_processIDToKeyID.find(id);
+        if(keyidIte != m_processIDToKeyID.end())
+        {
+            sp->sendString(res.toString(),keyidIte.value());
+            m_processIDToKeyID.erase(keyidIte);
+        }
+        else
+        {
+            sp->sendString(res.toString(),0);
+        }
+    }
 }
 
 void SADataProcServe::onProcessFinish(uint id)
