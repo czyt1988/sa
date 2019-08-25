@@ -496,7 +496,7 @@ void SADataFeatureWidget::onLoginSucceed(int tokenID, uint key)
     m_socketOpt->setToken(tokenID);
     emit showMessageInfo(tr("connect calc serve success"));
     m_startSpeedTestDatetime.reset(new QDateTime(QDateTime::currentDateTime()));
-    m_socketOpt->sendString("__test__1m",c_test_key);
+    //m_socketOpt->sendString("__test__1m",c_test_key);
 
 }
 #endif

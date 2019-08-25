@@ -20,7 +20,7 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
   ,m_pid(0)
   ,m_localServer(new QLocalServer(this))
   ,m_willBeQuit(false)
-  ,m_checkLiveTime(10000)
+  ,m_checkLiveTime(10000)//存活20s
 {
     connect(&m_liveChecker,&QTimer::timeout,this,&SADataProcServe::onCheckLive);
     connect(m_localServer,&QLocalServer::newConnection
@@ -172,6 +172,9 @@ void SADataProcServe::onProcessResult(const QVariant &res, uint id, int type)
         qDebug() << tr("process id:") << id << tr("in invalid socket");
         return;
     }
+#ifdef _DEBUG_OUTPUT
+    qDebug() << "process result-> id:" << id << " type:" << type << " value:" << res;
+#endif
     switch(type)
     {
     case SAAbstractProcess::XmlString:

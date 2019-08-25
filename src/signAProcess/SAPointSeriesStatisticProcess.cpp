@@ -4,8 +4,8 @@
 #include <algorithm>
 #include "SAXMLTagDefined.h"
 #include "SAXMLWriteHelper.h"
-
-
+#include <QDebug>
+#define IS_DEBUG_PRINT 1
 
 class SAPointSeriesStatisticProcessPrivate
 {
@@ -43,10 +43,12 @@ void SAPointSeriesStatisticProcess::run()
     getVectorPointY(d_ptr->mPoints,y);
     if(d_ptr->mPoints.size()<=0 || y.size()<=0)
     {
+#if IS_DEBUG_PRINT
+    qDebug() << "invalid datas";
+#endif
         emit finish(getID());
         return;
     }
-
     QVector<QPointF> datas = d_ptr->mPoints;
     double sum;
     double mean;
@@ -55,7 +57,6 @@ void SAPointSeriesStatisticProcess::run()
     double skewness;
     double kurtosis;
     size_t n = datas.size();
-
     czy::Math::get_statistics(y.begin(),y.end()
                               ,sum
                               ,mean
@@ -156,6 +157,10 @@ void SAPointSeriesStatisticProcess::setArgs(const QVariantHash &args)
 void SAPointSeriesStatisticProcess::getVectorPointY(const QVector<QPointF> &points
                                                     , QVector<double> &ys)
 {
+    if(ys.size() < points.size())
+    {
+        ys.resize(points.size());
+    }
     czy::QArray::get_qvectorpointf_y(points,ys.begin());
 }
 /**

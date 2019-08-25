@@ -6,6 +6,7 @@
 #include "QCrc.h"
 #include "SALog.h"
 //#define _DEBUG_PRINT
+
 class SALocalServeSocketOptPrivate{
     SA_IMPL_PUBLIC(SALocalServeSocketOpt)
 public:
@@ -144,7 +145,7 @@ void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByte
         if(0 != head.dataCrc32)
         {
             qDebug() << "crc check invalid:(0 size) head is " << head
-                     << " datas crc is :" << QCrc::crc32(datas);
+                     << " datas crc is :" << QCrc::crc32(datas) << "but datas size is 0";
             return;
         }
     }
@@ -406,6 +407,9 @@ void SALocalServeSocketOpt::dealHeartbeat(uint key)
  */
 void SALocalServeSocketOpt::deal2DPointFs(const QByteArray &datas, uint key)
 {
+#ifdef _DEBUG_PRINT
+    qDebug() << "deal2DPointFs , key:" <<key ;
+#endif
     QVector<QPointF> arrs;
     QDataStream io(datas);
     io >> arrs;

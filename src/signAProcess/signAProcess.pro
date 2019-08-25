@@ -11,9 +11,13 @@ TEMPLATE = lib
 
 CONFIG(debug, debug|release){
     DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
+    target.path = $$PWD/../bin_qt$$[QT_VERSION]_debug/
 }else {
     DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
+    target.path = $$PWD/../bin_qt$$[QT_VERSION]_release/
 }
+
+
 CONFIG += c++11
 
 include($$PWD/../czy/czy_math.pri)
