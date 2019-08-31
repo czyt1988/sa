@@ -48,7 +48,8 @@ SOURCES += main.cpp\
     MainWindowPrivate.cpp \
     SAValueDataTableView.cpp \
     SAChartDataTableView.cpp \
-    SALocalServeSocketClineParse.cpp
+    SALocalServeSocketClineParse.cpp \
+    SADataClient.cpp
 
 HEADERS  += mainwindow.h \
     DebugInfo.h \
@@ -67,7 +68,8 @@ HEADERS  += mainwindow.h \
     MainWindowPrivate.h \
     SAValueDataTableView.h \
     SAChartDataTableView.h \
-    SALocalServeSocketClineParse.h
+    SALocalServeSocketClineParse.h \
+    SADataClient.h
 
 
 

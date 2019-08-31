@@ -6,6 +6,7 @@
 #include <SAPlotMarker.h>
 #include <QItemSelectionModel>
 #include <QItemSelection>
+#include "SADataClient.h"
 #include "SAChart.h"
 #include "SAPlotMarker.h"
 #include "SAMarkSymbol.h"

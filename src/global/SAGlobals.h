@@ -9,6 +9,13 @@ class SAAbstractDatas;
 #define SA_USE_RIBBON_UI 1
 #endif
 ///
+/// \def 前置声明的定义
+///
+#ifndef SA_IMPL_FORWARD_DECL
+#define SA_IMPL_FORWARD_DECL(ClassName) \
+    class ClassName##Private;
+#endif
+///
 /// \def impl的简易实现
 ///
 #ifndef SA_IMPL
