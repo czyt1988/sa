@@ -17,7 +17,7 @@ public:
         :q_ptr(c)
     {
     }
-    QList<SAItem*> rootNodes;///< 记录所有根节点
+    QList<SAItem*> mRootNodes;///< 记录所有根节点
 };
 
 
@@ -56,12 +56,12 @@ SATree &SATree::operator =(const SATree &tree)
 
 void SATree::clear()
 {
-    const auto size = d_ptr->rootNodes.size();
+    const auto size = d_ptr->mRootNodes.size();
     for(auto i = 0;i<size;++i)
     {
-        delete d_ptr->rootNodes[i];
+        delete d_ptr->mRootNodes[i];
     }
-    d_ptr->rootNodes.clear();
+    d_ptr->mRootNodes.clear();
 }
 /**
  * @brief 获取子节点的个数
@@ -69,7 +69,7 @@ void SATree::clear()
  */
 int SATree::getItemCount() const
 {
-    return d_ptr->rootNodes.size();
+    return d_ptr->mRootNodes.size();
 }
 /**
  * @brief 索引子条目
@@ -78,7 +78,7 @@ int SATree::getItemCount() const
  */
 SAItem *SATree::getItem(int row) const
 {
-    return d_ptr->rootNodes[row];
+    return d_ptr->mRootNodes[row];
 }
 /**
  * @brief 获取所有子节点
@@ -86,7 +86,7 @@ SAItem *SATree::getItem(int row) const
  */
 QList<SAItem *> SATree::getItems() const
 {
-    return d_ptr->rootNodes;
+    return d_ptr->mRootNodes;
 }
 /**
  * @brief 追加子条目
@@ -95,7 +95,7 @@ QList<SAItem *> SATree::getItems() const
  */
 void SATree::appendItem(SAItem *item)
 {
-    d_ptr->rootNodes.append(item);
+    d_ptr->mRootNodes.append(item);
     item->setTree(this);
 }
 /**
@@ -105,7 +105,7 @@ void SATree::appendItem(SAItem *item)
  */
 void SATree::insertItem(SAItem *item, int row)
 {
-    d_ptr->rootNodes.insert(row,item);
+    d_ptr->mRootNodes.insert(row,item);
     item->setTree(this);
 }
 /**
@@ -115,7 +115,7 @@ void SATree::insertItem(SAItem *item, int row)
  */
 bool SATree::haveItem(SAItem* item) const
 {
-    return d_ptr->rootNodes.contains(item);
+    return d_ptr->mRootNodes.contains(item);
 }
 /**
  * @brief 把item解除satree的关系
@@ -123,7 +123,7 @@ bool SATree::haveItem(SAItem* item) const
  */
 void SATree::takeItemPtr(SAItem *item)
 {
-    d_ptr->rootNodes.removeOne(item);
+    d_ptr->mRootNodes.removeOne(item);
     //item->setTree(nullptr); 不能这样调用会循环调用
     item->__setTreePtr(nullptr);
 }
@@ -136,6 +136,15 @@ SAItem *SATree::takeItem(int row)
     SAItem* item = getItem(row);
     takeItemPtr(item);
     return item;
+}
+/**
+ * @brief 返回item对应的树层级
+ * @param item
+ * @return
+ */
+int SATree::indexOfItem(const SAItem *item) const
+{
+    return d_ptr->mRootNodes.indexOf(item);
 }
 
 

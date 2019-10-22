@@ -38,6 +38,8 @@ public:
     //把item解除satree的关系
     void takeItemPtr(SAItem* item);
     SAItem* takeItem(int row);
+    //返回item对应的树层级
+    int indexOfItem(const SAItem* item) const;
 };
 Q_DECLARE_METATYPE(SATree)
 //debug输出

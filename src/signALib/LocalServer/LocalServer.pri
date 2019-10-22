@@ -1,11 +1,6 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-HEADERS += \
-    $$PWD/SALocalServerDefine.h \
-    $$PWD/SALocalServeBaseHeader.h \
-    $$PWD/SALocalServeSocketOpt.h
+HEADERS +=
 
-SOURCES += \
-    $$PWD/SALocalServeBaseHeader.cpp \
-    $$PWD/SALocalServeSocketOpt.cpp
+SOURCES +=

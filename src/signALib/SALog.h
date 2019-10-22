@@ -23,24 +23,7 @@ class QThread;
 #ifndef saPrint
 #define saPrint() qDebug() << "["<<__FUNCTION__<<"]("<<__LINE__<<") ["<<__FILE__<<"]:\n"
 #endif
-/// \def 打印字节十六进制
-#ifndef printByteArray
-#define printByteArray(dataPtr,dataLen) \
-    do{\
-        const char* __c__char__ptr__ = (const char*)(dataPtr);\
-        fprintf(stderr,"[");\
-        for(int M__i=0;M__i<(dataLen);++M__i)\
-        {\
-            if(M__i % 10 == 0)\
-            {\
-                fprintf(stderr,"\n");\
-                fprintf(stderr,">> [%d]-[%d]: ",M__i,M__i+9);\
-            }\
-            fprintf(stderr,"%02X,",(int)__c__char__ptr__[M__i]);\
-        }\
-        fprintf(stderr,"\n]");\
-    }while(0)
-#endif
+
 /// \def 打印QByteArray的十六进制
 #ifndef printQByteArray
 #define printQByteArray(qBytearr)\

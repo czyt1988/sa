@@ -4,14 +4,8 @@
 #include <QDomDocument>
 #include <QPointF>
 #include <QDebug>
-#define ROLE_ITEM_TYPE (Qt::UserRole + 1234)
-#define XML_STR_ROOT__ "dfi"
-#define XML_STR_ITEM__ "item"
-#define XML_STR_CHILD__ "child"
-#define XML_ATT_TYPE__ "type"
-#define XML_ATT_NAME__ "name"
-#define XML_ATT_VALUE_TYPE__ "varType"
-#define XML_ATT_VALUE__ "var"
+
+
 
 class SADataFeatureItemPrivate
 {

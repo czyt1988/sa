@@ -33,14 +33,12 @@ HEADERS += \
     SATextReadWriter.h \
     SADataHeader.h \
     SALibResourDefine.h \
-    SACRC.h \
     SADataFeatureItem.h \
     SAValueManagerMimeData.h \
     SAValueManagerListModel.h \
     SAHashTable.h \
-    QCrc.h \
-    CRC.h \
-    SATree.h
+    SATree.h \
+    SATreeModel.h
 
 
 SOURCES += \
@@ -54,14 +52,15 @@ SOURCES += \
     SALog.cpp \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
-    SACRC.cpp \
     SADataFeatureItem.cpp \
     SAValueManagerMimeData.cpp \
     SAValueManagerListModel.cpp \
-    QCrc.cpp \
-    SATree.cpp
+    SATree.cpp \
+    SATreeModel.cpp
 
-
+#sa protocol support
+include($$PWD/../signAProtocol/signAProtocol.pri)
+#
 include($$PWD/Private/Private.pri)
 include($$PWD/SABaseValueType/SABaseValueType.pri)
 include($$PWD/LocalServer/LocalServer.pri)
