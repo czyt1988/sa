@@ -69,8 +69,8 @@ protected:
     void setID(int id);
 private:
     void setTree(SATree* tree);
-    void __setTreePtr(SATree* tree);
-    void __removeParent();
+    void _setTreePtr(SATree* tree);
+    void _removeParent();
 };
 
 SALIB_EXPORT QDebug& operator<<(QDebug& dbg, const SAItem &item);

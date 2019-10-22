@@ -10,6 +10,7 @@ class SALIB_EXPORT SATreeModel : public QAbstractItemModel
     SA_IMPL(SATreeModel)
 public:
     explicit SATreeModel(QObject *par = nullptr,int colCount = 1);
+    ~SATreeModel();
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
     virtual int rowCount(const QModelIndex &parent) const;

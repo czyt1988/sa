@@ -125,7 +125,7 @@ void SATree::takeItemPtr(SAItem *item)
 {
     d_ptr->mRootNodes.removeOne(item);
     //item->setTree(nullptr); 不能这样调用会循环调用
-    item->__setTreePtr(nullptr);
+    item->_setTreePtr(nullptr);
 }
 /**
  * @brief 根据索引把item返回，同时解除satree的关系
@@ -144,7 +144,7 @@ SAItem *SATree::takeItem(int row)
  */
 int SATree::indexOfItem(const SAItem *item) const
 {
-    return d_ptr->mRootNodes.indexOf(item);
+    return d_ptr->mRootNodes.indexOf(const_cast<SAItem *>(item));
 }
 
 

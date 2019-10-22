@@ -2,7 +2,10 @@
 #include "SATree.h"
 #include "SAVariantCaster.h"
 #include <QVector>
+#include <iostream>
 #include <memory>
+
+
 class SATreeModelPrivate
 {
     SA_IMPL_PUBLIC(SATreeModel)
@@ -13,7 +16,7 @@ public:
     SATree* mTreePtr;
     int mColumnCount;
     QVector<int> mColumnRoles;
-    QVector<std::share_ptr<SAItem*> > mHHeaderItem;///< 头所用的item，如果没有设置，则设置为nullptr
+    QVector<std::shared_ptr<SAItem> > mHHeaderItem;///< 头所用的item，如果没有设置，则设置为nullptr
 };
 
 SATreeModelPrivate::SATreeModelPrivate(SATreeModel *p):q_ptr(p)
@@ -36,7 +39,7 @@ void SATreeModelPrivate::setColumnCount(int col)
     {
         if(mHHeaderItem[i] == nullptr)
         {
-            mHHeaderItem[i] = std::make_share<SAItem>();
+            mHHeaderItem[i] = std::make_shared<SAItem>();
         }
     }
 }
@@ -45,6 +48,11 @@ SATreeModel::SATreeModel(QObject *par, int colCount):QAbstractItemModel(par)
   ,d_ptr(new SATreeModelPrivate(this))
 {
     d_ptr->setColumnCount(colCount);
+}
+
+SATreeModel::~SATreeModel()
+{
+
 }
 
 QModelIndex SATreeModel::index(int row, int column, const QModelIndex &parent) const
@@ -65,7 +73,7 @@ QModelIndex SATreeModel::index(int row, int column, const QModelIndex &parent) c
     }
     SAItem* parItem = toItemPtr(parent);
     if ((nullptr == parItem)
-        || (row >= parItem->getChildCount())
+        || (row >= parItem->childItemCount())
         || (column >= d_ptr->mColumnCount))
     {
         return QModelIndex();//不正常情况
@@ -130,7 +138,7 @@ QVariant SATreeModel::headerData(int section, Qt::Orientation orientation, int r
     {
         if(section < d_ptr->mHHeaderItem.size())
         {
-            std::share_ptr<SAItem> item = d_ptr->mHHeaderItem[section];
+            std::shared_ptr<SAItem> item = d_ptr->mHHeaderItem[section];
             if(item != nullptr)
             {
                 return item->getName();
@@ -221,7 +229,7 @@ void SATreeModel::setHorizontalHeaderItem(int column, SAItem *item)
 {
     const int size = d_ptr->mHHeaderItem.size();
     Q_ASSERT_X(column < size,"SATreeModel::setHorizontalHeaderItem","column set in setHorizontalHeaderItem is invalid");
-    d_ptr->mHHeaderItem[column] = std::share_ptr<SAItem>(item);
+    d_ptr->mHHeaderItem[column] = std::shared_ptr<SAItem>(item);
 }
 
 SAItem *SATreeModel::toItemPtr(const QModelIndex &index) const
