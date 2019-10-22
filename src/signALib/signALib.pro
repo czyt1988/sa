@@ -63,7 +63,6 @@ include($$PWD/../signAProtocol/signAProtocol.pri)
 #
 include($$PWD/Private/Private.pri)
 include($$PWD/SABaseValueType/SABaseValueType.pri)
-include($$PWD/LocalServer/LocalServer.pri)
 
 include($$PWD/../czy/czy.pri)
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
