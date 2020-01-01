@@ -23,7 +23,7 @@ public:
 public:
     uint mSortCount;
     QVector<QPointF> mPoints;
-    QVariantHash mArgs;
+    QVariantHash mKwargs;
 };
 
 SAPointSeriesStatisticProcess::SAPointSeriesStatisticProcess(QObject *par):SAAbstractProcess(par)
@@ -77,7 +77,7 @@ void SAPointSeriesStatisticProcess::run()
     QPointF midPoint = n>1 ? *(datas.cbegin() + int(n/2)) : minPoint;//中位数
     //
     SAXMLWriteHelper xmlHelper(ATT_SA_TYPE_VPFR);
-    for(auto i = d_ptr->mArgs.begin();i != d_ptr->mArgs.end();++i)
+    for(auto i = d_ptr->mKwargs.begin();i != d_ptr->mKwargs.end();++i)
     {
         xmlHelper.writeHeadValue(i.key(),i.value());
     }
@@ -140,14 +140,42 @@ void SAPointSeriesStatisticProcess::setSortCount(uint sortCount)
  * @param args 传参
  * @param key 标识
  */
-void SAPointSeriesStatisticProcess::setPoints(const QVector<QPointF> &points)
+SAPointSeriesStatisticProcess* SAPointSeriesStatisticProcess::setPoints(const QVector<QPointF> &points)
 {
     d_ptr->mPoints = points;
+    return this;
 }
 
-void SAPointSeriesStatisticProcess::setArgs(const QVariantHash &args)
+void SAPointSeriesStatisticProcess::setKwargs(const QVariantHash &kwargs)
 {
-    d_ptr->mArgs = args;
+    d_ptr->mKwargs = kwargs;
+}
+
+QString SAPointSeriesStatisticProcess::getName() const
+{
+   return "sa_point_series_statistic_process";
+}
+
+QString SAPointSeriesStatisticProcess::getNameSpace() const
+{
+    return "sa";
+}
+
+bool SAPointSeriesStatisticProcess::setArgs(const QVariantList &args)
+{
+   if(args.size()!=2)
+   {
+       return false;
+   }
+   const QVariant& v0 = args[0];
+   const QVariant& v1 = args[1];
+   if(!v0.canConvert<QVector<QPointF>>() || v1.canConvert<QVariantHash>())
+   {
+       return false;
+   }
+   setPoints(v0.value<QVector<QPointF>>());
+   setKwargs(v1.value<QVariantHash>());
+   return true;
 }
 /**
  * @brief 把vector points的y值提取

@@ -3,7 +3,7 @@
 /*
 <sa>
     <header></header>
-    <header></header>
+    <content></content>
 </sa>
 */
 /// \def sa打头的标签，表示这是一个sa协议
@@ -61,10 +61,16 @@
 #endif
 /// \def type属性标签对应的值：value
 #ifndef ATT_TYPE_VALUE
-#define ATT_TYPE_VALUE "value"
+#define ATT_TYPE_VALUE "var-value"
 #endif
-
-
+/// \def type属性标签对应的值：vectorpointf
+#ifndef ATT_TYPE_VECTORPOINTF
+#define ATT_TYPE_VECTORPOINTF "vectorpointf-value"
+#endif
+/// \def type属性标签对应的值：vectorpointf
+#ifndef ATT_TYPE_VECTORPOINT
+#define ATT_TYPE_VECTORPOINT "vectorpoint-value"
+#endif
 /// \def name属性标签 用于描述属性"name"
 #ifndef SA_XML_ATT_NAME
 #define SA_XML_ATT_NAME "name"
@@ -73,6 +79,11 @@
 /// \def varType属性标签 用于描述属性"varType"
 #ifndef SA_XML_ATT_VALUE_TYPE
 #define SA_XML_ATT_VALUE_TYPE "varType"
+#endif
+
+/// \def varType属性标签值vectorpointf,标识点序列的数值
+#ifndef SA_XML_ATT_VALUE_TYPE_VECTORPOINTF
+#define SA_XML_ATT_VALUE_TYPE_VECTORPOINTF "vectorpointf"
 #endif
 
 /// \def val属性标签 用于描述属性"val"

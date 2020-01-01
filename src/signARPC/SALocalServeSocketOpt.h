@@ -39,13 +39,13 @@ protected:
 protected slots:
     //发送内容
     Q_SLOT void send(SALocalServeBaseHeader header, const QByteArray& data);
+    //发送握手协议
+    Q_SLOT void sendHeartbeat(uint key = 0);
 public slots:
     //开始心跳
     Q_SLOT void startAutoHeartbeat(int freTime=5000);
     //通知登录，成功会返回token
     Q_SLOT void sendLoginSucceed(uint key = 0);
-    //发送握手协议
-    Q_SLOT void sendHeartbeat(uint key = 0);
     //点序列统计服务
     Q_SLOT void sendPointFSeries(const QVector<QPointF>& datas,uint key=0);
     //发送文字

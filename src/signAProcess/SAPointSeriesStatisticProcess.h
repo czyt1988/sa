@@ -2,11 +2,14 @@
 #define SAPOINTSERIESSTATISTICPROCESS_H
 #include "SAAbstractProcess.h"
 #include <QPointF>
+#include <QVariantHash>
 class SAPointSeriesStatisticProcessPrivate;
 /**
  * @brief 对点集的计算和统计
  *
  * 此类用于对点集进行统计分析
+ *
+ * 通过invoke 实现反射调用方法
  * @author czy
  * @date 2019-08-08
  */
@@ -22,8 +25,11 @@ public:
     uint getSortCount() const;
     void setSortCount(uint sortCount);
     //设置需要计算的点
-    void setPoints(const QVector<QPointF>& points);
-    void setArgs(const QVariantHash& args);
+    SAPointSeriesStatisticProcess* setPoints(const QVector<QPointF>& points);
+    void setKwargs(const QVariantHash& kwargs);
+    virtual QString getName() const override;
+    virtual QString getNameSpace() const override;
+    virtual bool setArgs(const QVariantList& args) override;
 public:
     //从点集获取y值
     static void getVectorPointY(const QVector<QPointF>& points, QVector<double>& ys);

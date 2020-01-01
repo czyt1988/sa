@@ -24,7 +24,7 @@ public:
 private slots:
     Q_SLOT void onLocalServeNewConnection();
     //错误发生
-    Q_SLOT void errorOccurred(QLocalSocket::LocalSocketError err);
+    Q_SLOT void onErrorOccurred(QLocalSocket::LocalSocketError err);
     //接收到客户端发的点数组
     Q_SLOT void onReceive2DPointFs(const QVector<QPointF> &datas, uint key);
     //接收到客户端的文字

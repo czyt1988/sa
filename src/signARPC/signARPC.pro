@@ -1,7 +1,7 @@
 #-------------------------------------------------
 #
-# Project created by czy 2016-10-14
-# sa api lib
+# Project created by czy 2019-10-14
+# sa rpc lib by qt bin stream
 #
 #-------------------------------------------------
 QT += core

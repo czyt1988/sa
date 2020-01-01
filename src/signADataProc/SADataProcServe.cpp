@@ -66,12 +66,12 @@ void SADataProcServe::onLocalServeNewConnection()
     connect(sp,&SALocalServeSocketServeParse::recString
             ,this,&SADataProcServe::onReceivedString);
     connect(socket,static_cast<void(QLocalSocket::*)(QLocalSocket::LocalSocketError)>(&QLocalSocket::error)
-            ,this,&SADataProcServe::errorOccurred);
+            ,this,&SADataProcServe::onErrorOccurred);
     connect(socket,&QLocalSocket::disconnected
             ,this,&SADataProcServe::onDisconnected);
 }
 
-void SADataProcServe::errorOccurred(QLocalSocket::LocalSocketError err)
+void SADataProcServe::onErrorOccurred(QLocalSocket::LocalSocketError err)
 {
     Q_UNUSED(err);
     QLocalSocket* socket  = qobject_cast<QLocalSocket*>(sender());
@@ -101,7 +101,7 @@ void SADataProcServe::onReceive2DPointFs(const QVector<QPointF>& datas,uint key)
 #endif
         std::unique_ptr<SAPointSeriesStatisticProcess> ptr = std::make_unique<SAPointSeriesStatisticProcess>();
         ptr->setPoints(datas);
-        ptr->setArgs(args);
+        ptr->setKwargs(args);
         //记录sp对应的id
         m_processID2socket[ptr->getID()] = sp;
         m_processIDToKeyID[ptr->getID()] = key;
@@ -125,7 +125,7 @@ void SADataProcServe::onReceivedString(const QString& str,uint key)
             points.append(QPointF(1,1));
         }
         qDebug() << "send 1m points test";
-        sp->send2DPointFs(points,key);
+        sp->sendPointFSeries(points,key);
     }
 }
 

@@ -4,10 +4,13 @@
 #include <QObject>
 #include <QVariant>
 #include <QRunnable>
+#include <QVariantList>
 class SAAbstractProcessPrivate;
 /**
  * @brief sa处理基类
  * 此类封装了QRunnable，用于QThreadPool,处理密集的处理请求，并通过信号槽传递数据
+ *
+ * 处理类都是一些耗时较长的操作进行计算，如果简单计算，不应该使用处理类来执行
  * @author czy
  * @date 2019-08-06
  */
@@ -29,6 +32,22 @@ public:
     //设置停止运算
     void setStop(bool stop = true);
     bool isStop() const;
+   /**
+    * @brief 返回名字
+    * @return 返回名字
+    */
+    virtual QString getName() const = 0;
+    /**
+     * @brief 获取命名空间
+     * @return 命名空间，如果没有返回empty字符串
+     */
+    virtual QString getNameSpace() const = 0;
+    /**
+     * @brief 设置参数
+     * @param args 参数
+     * @return 设置成功返回true
+     */
+    virtual bool setArgs(const QVariantList& args) = 0;
 signals:
     /**
      * @brief 返回处理的结果

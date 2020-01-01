@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 SUBDIRS = \
           signALib\
           signAProtocol\
+          signARPC\
           signAProcess\
           signAChart\
           signACommonUI\

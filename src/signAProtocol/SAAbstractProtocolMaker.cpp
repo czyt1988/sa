@@ -1,6 +1,11 @@
-#include "SAProtocolMaker.h"
+#include "SAAbstractProtocolMaker.h"
 
-SAProtocolMaker::SAProtocolMaker()
+SAAbstractProtocolMaker::SAAbstractProtocolMaker()
+{
+
+}
+
+SAAbstractProtocolMaker::~SAAbstractProtocolMaker()
 {
 
 }

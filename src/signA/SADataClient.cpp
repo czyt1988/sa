@@ -2,10 +2,15 @@
 #include <QLocalSocket>
 #include "SALocalServeSocketClineParse.h"
 #include "SALocalServerDefine.h"
+#include <QApplication>
 #include <memory>
 #include <QDebug>
 #include <QDateTime>
 #include <QMap>
+#include <QProcess>
+#include "SAXMLReadHelper.h"
+
+
 /// \def 连接不上的计数
 #define CONNECT_RETRY_COUNT (50)
 /// \def 心跳丢失次数记为连接丢失
@@ -38,9 +43,9 @@ SADataClientPrivate::SADataClientPrivate(SADataClient *p)
     ,mLastHeartbeatTime(QDateTime::currentDateTime())
     ,mLossHeartbeatCount(0)
 {
-    mErrcodeToString[SALocalServe::Unknow] = tr("unknow");
-    mErrcodeToString[SALocalServe::ReceiveDataError] = tr("Receive Data Error");
-    mErrcodeToString[SALocalServe::ReceiveUnknowHeader] = tr("Receive Unknow Header");
+    mErrcodeToString[SALocalServe::Unknow] = QObject::tr("unknow");
+    mErrcodeToString[SALocalServe::ReceiveDataError] = QObject::tr("Receive Data Error");
+    mErrcodeToString[SALocalServe::ReceiveUnknowHeader] = QObject::tr("Receive Unknow Header");
 }
 
 SADataClientPrivate::~SADataClientPrivate()
@@ -60,6 +65,11 @@ SADataClient::SADataClient(QObject *p):QObject(p)
             ,this,&SADataClient::onHeartbeatCheckerTimerout);
 }
 
+SADataClient::~SADataClient()
+{
+
+}
+
 /**
  * @brief 连接服务器
  */
@@ -70,12 +80,26 @@ void SADataClient::connectToServer()
         d_ptr->mDataProcessSocket.reset();
     }
     d_ptr->mDataProcessSocket = std::make_unique<QLocalSocket>(this);
-    connect(d_ptr->mDataProcessSocket,&QLocalSocket::disconnected
+    connect(d_ptr->mDataProcessSocket.get(),&QLocalSocket::disconnected
             ,this,&SADataClient::onLocalSocketDisconnect);
      d_ptr->mConnectRetryCount = CONNECT_RETRY_COUNT;
      tryToConnectServer();
 }
+/**
+ * @brief 进行点集统计
+ * @param points 点集
+ * @param key 标识
+ */
+void SADataClient::callSeriesPointStatistic(const QVector<QPointF> &points, int key)
+{
+   //d_ptr->mSocketOpt->
+}
 
+/**
+ * @brief 成功登陆，成功登陆后会返回tokenid，tokenid用于标识此用户的标记
+ * @param tokenID tokenid
+ * @param key 默认为0
+ */
 void SADataClient::onLoginSucceed(int tokenID, uint key)
 {
     if(nullptr == d_ptr->mSocketOpt)
@@ -103,7 +127,69 @@ void SADataClient::onRecHeartbeat(uint key)
  */
 void SADataClient::onReceivedString(const QString &str, uint key)
 {
+    /*
+    SAXMLReadHelper xmlHelper(str);
+    if(xmlHelper.isValid())
+    {
+        //说明这个字符串是一个点数组处理的结果
+        if(SA_XML::TypeVectorPointFProcessResult == xmlHelper.getProtocolType())
+        {
+#ifdef _DEBUG_OUTPUT
+            qDebug()<<"SAXMLReadHelper::TypeVectorPointFProcessResult";
+#endif
+            std::unique_ptr<SADataFeatureItem> item(new SADataFeatureItem);
+            TmpStru kw = m_key2wndPtr.value(key,TmpStru(nullptr,nullptr,nullptr));
+            if(nullptr == kw.mdiSubWnd)
+            {
+                qDebug() << tr("receive calc result ,but can not find widget");
+                return;
+            }
+            //确保子窗口未关闭
+            QList<QMdiSubWindow*> subWindList = saUI->getSubWindowList();
+            if(!subWindList.contains(kw.mdiSubWnd))
+            {
+                qDebug() << tr("receive calc result ,but can not find subWind");
+                return;
+            }
+            //确保绘图窗口未关闭
+            SAFigureWindow* figure = getChartWidgetFromSubWindow(kw.mdiSubWnd);
+            QList<SAChart2D*> plots = figure->get2DPlots();
+            if(!plots.contains(kw.chart2d))
+            {
+                qDebug() << tr("receive calc result , but can not find figure in cur sub window");
+                return;
+            }
+            //确保plotitem存在
+            if(!kw.chart2d->itemList().contains(kw.plotitem))
+            {
+                qDebug() << tr("receive calc result , but can not find plot item in chart");
+                return;
+            }
 
+            //查找model如果没有查找到新建一个model
+
+            DataFeatureTreeModel* model= qobject_cast<DataFeatureTreeModel*>(m_subWindowToDataInfo.value(kw.mdiSubWnd,nullptr));
+            if(nullptr == model)
+            {
+                model = new DataFeatureTreeModel(this);
+                m_subWindowToDataInfo[kw.mdiSubWnd] = model;
+                ui->treeView->setModel(model);
+            }
+            //设置item的名字
+            item->setName(kw.plotitem->title().text());
+
+            //设置item的颜色
+            QColor clr = SAChart2D::getItemColor( kw.plotitem);
+            if(clr.isValid())
+            {
+                clr.setAlpha(100);
+                item->setBackgroundColor(clr);
+            }
+            model->setPlotItem(kw.chart2d,kw.plotitem,item.release());
+            ui->treeView->expandToDepth(1);
+        }
+    }
+    */
 }
 /**
  * @brief 接收到点数组
@@ -132,14 +218,15 @@ void SADataClient::onReceive2DPointFs(const QVector<QPointF> &arrs, uint key)
 void SADataClient::onLocalSocketDisconnect()
 {
     qInfo() << tr("disconnect from serve,try to reconnect");
-    QTimer::singleShot(100,this,&SADataFeatureWidget::tryToStartDataProc);
+    QTimer::singleShot(100,this,&SADataClient::tryToStartDataProc);
 }
 
 void SADataClient::onHeartbeatCheckerTimerout()
 {
     if (0 == d_ptr->mLossHeartbeatCount)
     {
-        emit messageInfo(tr("connect lost !"),SA::NormalMessage);
+        emit heartbeatCheckerTimerout();
+        //emit messageInfo(tr("connect lost !"),SA::NormalMessage);
     }
     ++(d_ptr->mLossHeartbeatCount);
     if (d_ptr->mLossHeartbeatCount > HEART_BREAK_COUNT_AS_DISCONNECT)
@@ -149,7 +236,10 @@ void SADataClient::onHeartbeatCheckerTimerout()
         d_ptr->mLossHeartbeatCount = 0;
     }
 }
-
+/**
+ * @brief 错误发生
+ * @param errcode
+ */
 void SADataClient::onErrorOccure(int errcode)
 {
     QString str = QString("Error Occure,code:%1,msg:%2").arg(errcode).arg(d_ptr->errorCodeToString(errcode));
@@ -176,7 +266,7 @@ void SADataClient::tryToConnectServer()
 
     qInfo() << tr("connect to dataProc serve success!");
     //建立socket解析操作类
-    d_ptr->mSocketOpt = std::make_unique<SALocalServeSocketClineParse>(d_ptr->mDataProcessSocket,this);
+    d_ptr->mSocketOpt = std::make_unique<SALocalServeSocketClineParse>(d_ptr->mDataProcessSocket.get(),this);
     connect(d_ptr->mSocketOpt.get(),&SALocalServeSocketOpt::recHeartbeat
             ,this,&SADataClient::onRecHeartbeat);
     connect(d_ptr->mSocketOpt.get(),&SALocalServeSocketOpt::loginSucceed
@@ -188,6 +278,16 @@ void SADataClient::tryToConnectServer()
     connect(d_ptr->mSocketOpt.get(),&SALocalServeSocketOpt::errorOccure
             ,this,&SADataClient::onErrorOccure);
 
+}
+
+void SADataClient::tryToStartDataProc()
+{
+    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
+    QStringList args = {QString::number(qApp->applicationPid())};
+    QProcess::startDetached(path,args);//signADataProc是一个单例进程，多个软件不会打开多个
+    d_ptr->mConnectRetryCount = CONNECT_RETRY_COUNT;
+    qInfo() << "Start Try To Connect RPC Server";
+    tryToConnectServer();
 }
 
 

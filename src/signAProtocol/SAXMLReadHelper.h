@@ -6,8 +6,6 @@
 #include <QXmlStreamReader>
 #include <QDomDocument>
 #include "SAXMLTagDefined.h"
-//class QXmlStreamReader;
-class SADataFeatureItem;
 class SADataProcessVectorPointFXMLHelperPrivate;
 
 ///
