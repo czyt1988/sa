@@ -40,7 +40,8 @@ class SAXMLProtocolReadWriterPrivate;
  * @code
  * <sa>
  *  <root>
- *   <header></header>
+ *   <header>
+ *   </header>
  *   <content>
  *     <item type="var-value" name="point-size" varType="uint">4</item>
  *     <item type="var-value" name="sequenceID" varType="int">123</item>
@@ -55,18 +56,22 @@ class SA_PROTOCOL_EXPORT SAXMLProtocolReadWriter
 {
     SA_IMPL(SAXMLProtocolReadWriter)
 public:
-    SAXMLProtocolReadWriter(const QString& type);
+    SAXMLProtocolReadWriter();
     ~SAXMLProtocolReadWriter();
     //切换分组
     void changeGroup(const QString& name,bool createGopIfNone = true);
     //切换到content分组
     void changeToDefaultGroup();
+    //切换到头部分区
+    void changeToHeaderGroup();
     //判断当前是否在默认分组
     bool isInDefaultGroup() const;
     //在内容区写入数据
-    void writeValue(const QString& name, const QVariant &d);
+    void writeValue(const QString& name, const QString &d);
+    void writeValue(const QString& name, int d);
     void writeValue(const QString& name, const QVector<QPoint>& d);
     void writeValue(const QString& name, const QVector<QPointF>& d);
+    void writeVariantValue(const QString& name, const QVariant &d);
     //转换为文本
     QString toString(int indent = 1) const;
 public:
@@ -76,8 +81,8 @@ public:
     QList<QString> getContentGroupValueNames() const;
 public:
     //把vector,list等类容器数据类型转换为文本
-    template<typename ContainerLike,typename T>
-    static QString castToString(const ContainerLike<T>& d,const QString& seprator = "|");
+    template<typename T>
+    static QString castToString(const QVector<T>& d,const QString& seprator = "|");
     //把接受QString::arg的数据类型转换为文本
     template<typename T>
     static QString castToString(const T& d);
@@ -93,8 +98,8 @@ public:
  * @param seprator 分隔符，默认为|
  * @return 返回如"xx|xx|xxx|xx"的文本
  */
-template<typename ContainerLike,typename T>
-QString SAXMLProtocolReadWriter::castToString(const ContainerLike<T> &d, const QString &seprator)
+template<typename T>
+QString SAXMLProtocolReadWriter::castToString(const QVector<T>& d, const QString &seprator)
 {
     QString res;
     for (const T& v : d)
@@ -110,7 +115,7 @@ QString SAXMLProtocolReadWriter::castToString(const ContainerLike<T> &d, const Q
  * @return 参照QString::arg的返回
  */
 template<typename T>
-QString SAXMLProtocolReadWriter::castToString(const SAXMLProtocolReadWriter::T &d)
+QString SAXMLProtocolReadWriter::castToString(const T &d)
 {
     return QString("%1").arg(d);
 }

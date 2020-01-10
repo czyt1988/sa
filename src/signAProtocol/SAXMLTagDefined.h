@@ -59,9 +59,17 @@
 #ifndef SA_XML_ATT_TYPE
 #define SA_XML_ATT_TYPE "type"
 #endif
-/// \def type属性标签对应的值：value
-#ifndef ATT_TYPE_VALUE
-#define ATT_TYPE_VALUE "var-value"
+/// \def type属性标签对应的值：string
+#ifndef ATT_TYPE_STRING
+#define ATT_TYPE_STRING "string"
+#endif
+/// \def type属性标签对应的值：int
+#ifndef ATT_TYPE_INT
+#define ATT_TYPE_INT "int"
+#endif
+/// \def type属性标签对应的值：variant
+#ifndef ATT_TYPE_VARIANT
+#define ATT_TYPE_VARIANT "variant"
 #endif
 /// \def type属性标签对应的值：vectorpointf
 #ifndef ATT_TYPE_VECTORPOINTF

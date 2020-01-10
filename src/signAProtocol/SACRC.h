@@ -1,8 +1,8 @@
 #ifndef SACRC_H
 #define SACRC_H
 #include <QByteArray>
-#include "SARPCGlobal.h"
-class SARPC_EXPORT SACRC
+#include "SAProtocolGlobal.h"
+class SA_PROTOCOL_EXPORT SACRC
 {
 public:
     SACRC();

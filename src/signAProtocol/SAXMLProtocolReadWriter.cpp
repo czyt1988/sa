@@ -4,9 +4,9 @@
 #include <QDomDocument>
 #include <QHash>
 class SAXMLProtocolReadWriterPrivate{
-    SA_IMPL_PUBLIC(SAXMLWriteHelper)
+    SA_IMPL_PUBLIC(SAXMLProtocolReadWriter)
 public:
-    SAXMLProtocolReadWriterPrivate(SAXMLProtocolReadWriter* p, const QString& type);
+    SAXMLProtocolReadWriterPrivate(SAXMLProtocolReadWriter* p);
     //由于是随机读写，不能用xmlstream
     QDomDocument mDoc;
     QDomElement mRootEle; //根节点
@@ -22,11 +22,12 @@ public:
 };
 
 
-SAXMLProtocolReadWriterPrivate::SAXMLProtocolReadWriterPrivate(SAXMLProtocolReadWriter *p, const QString& type):q_ptr(p)
-  ,mDoc("SA_XML_PROTOCOL")
+SAXMLProtocolReadWriterPrivate::SAXMLProtocolReadWriterPrivate(SAXMLProtocolReadWriter *p)
+    :q_ptr(p)
+    ,mDoc("SA_XML_PROTOCOL")
 {
     mRootEle = mDoc.createElement(SA_XML_TAG_SA);
-    mRootEle.setAttribute(SA_XML_ATT_TYPE,type);
+    mRootEle.setAttribute(SA_XML_ATT_TYPE,"IPC");
     mDoc.appendChild(mRootEle);
     mHeaderEle = mDoc.createElement(SA_XML_TAG_HEADER_ROOT);
     mRootEle.appendChild(mHeaderEle);
@@ -38,25 +39,25 @@ SAXMLProtocolReadWriterPrivate::SAXMLProtocolReadWriterPrivate(SAXMLProtocolRead
 
 void SAXMLProtocolReadWriterPrivate::testEle()
 {
-    if(mCurrentEle.isNull())
+    if(this->mCurrentEle.isNull())
     {
-        mCurrentEle = mContentEle;
-        mCurrentGroupName = SA_XML_TAG_CONTENT_ROOT;
+        this->mCurrentEle = this->mContentEle;
+        this->mCurrentGroupName = SA_XML_TAG_CONTENT_ROOT;
     }
 }
 
 void SAXMLProtocolReadWriterPrivate::recordGroupValueType(const QString &valuename, const QString &valuetype)
 {
-    if (!mGroupValue2Type.contains(mCurrentGroupName))
+    if (!this->mGroupValue2Type.contains(this->mCurrentGroupName))
     {
-        mGroupValue2Type[mCurrentGroupName] = QHash<QString,QString>();
+        this->mGroupValue2Type[this->mCurrentGroupName] = QHash<QString,QString>();
     }
-    mGroupValue2Type[mCurrentGroupName].insert(valuename,valuetype);
+    this->mGroupValue2Type[this->mCurrentGroupName].insert(valuename,valuetype);
 }
 
 
-SAXMLProtocolReadWriter::SAXMLProtocolReadWriter(const QString& type)
-    :d_ptr(new SAXMLProtocolReadWriterPrivate(this,type))
+SAXMLProtocolReadWriter::SAXMLProtocolReadWriter()
+    :d_ptr(new SAXMLProtocolReadWriterPrivate(this))
 
 {
 }
@@ -72,7 +73,7 @@ SAXMLProtocolReadWriter::~SAXMLProtocolReadWriter()
  */
 void SAXMLProtocolReadWriter::changeGroup(const QString &name, bool createGopIfNone)
 {
-    else if(SA_XML_TAG_CONTENT_ROOT == name)
+    if(SA_XML_TAG_CONTENT_ROOT == name)
     {
         d_ptr->mCurrentEle = d_ptr->mContentEle;
         d_ptr->mCurrentGroupName = SA_XML_TAG_CONTENT_ROOT;
@@ -102,12 +103,49 @@ void SAXMLProtocolReadWriter::changeToDefaultGroup()
 }
 
 /**
+ * @brief 切换到header分组
+ */
+void SAXMLProtocolReadWriter::changeToHeaderGroup()
+{
+    changeGroup(SA_XML_TAG_HEADER_ROOT);
+}
+
+/**
  * @brief 判断当前是否在默认分组
  * @return 如果是返回true
  */
 bool SAXMLProtocolReadWriter::isInDefaultGroup() const
 {
     return d_ptr->mCurrentEle == d_ptr->mContentEle;
+}
+
+/**
+ * @brief 写入文本
+ * @param name 键值名
+ * @param d 文本
+ */
+void SAXMLProtocolReadWriter::writeValue(const QString &name, const QString &d)
+{
+    QDomElement ei;
+    ei = d_ptr->mDoc.createElement(SA_XML_TAG_ITEM);
+    ei.setAttribute(SA_XML_ATT_TYPE,ATT_TYPE_STRING);
+    ei.setAttribute(SA_XML_ATT_NAME,name);
+    ei.setNodeValue(d);
+    d_ptr->testEle();
+    d_ptr->mCurrentEle.appendChild(ei);
+    d_ptr->recordGroupValueType(name,ATT_TYPE_STRING);
+}
+
+void SAXMLProtocolReadWriter::writeValue(const QString &name, int d)
+{
+    QDomElement ei;
+    ei = d_ptr->mDoc.createElement(SA_XML_TAG_ITEM);
+    ei.setAttribute(SA_XML_ATT_TYPE,ATT_TYPE_INT);
+    ei.setAttribute(SA_XML_ATT_NAME,name);
+    ei.setNodeValue(castToString(d));
+    d_ptr->testEle();
+    d_ptr->mCurrentEle.appendChild(ei);
+    d_ptr->recordGroupValueType(name,ATT_TYPE_INT);
 }
 
 
@@ -130,17 +168,17 @@ bool SAXMLProtocolReadWriter::isInDefaultGroup() const
  * </sa>
  * @endcode
  */
-void SAXMLProtocolReadWriter::writeValue(const QString &name, const QVariant &d)
+void SAXMLProtocolReadWriter::writeVariantValue(const QString &name, const QVariant &d)
 {
     QDomElement ei;
     ei = d_ptr->mDoc.createElement(SA_XML_TAG_ITEM);
-    ei.setAttribute(SA_XML_ATT_TYPE,ATT_TYPE_VALUE);
+    ei.setAttribute(SA_XML_ATT_TYPE,ATT_TYPE_VARIANT);
     ei.setAttribute(SA_XML_ATT_NAME,name);
     ei.setAttribute(SA_XML_ATT_VALUE_TYPE,d.typeName());
     ei.setNodeValue(SAVariantCaster::variantToString(d));
     d_ptr->testEle();
     d_ptr->mCurrentEle.appendChild(ei);
-    d_ptr->recordGroupValueType(name,ATT_TYPE_VALUE);
+    d_ptr->recordGroupValueType(name,ATT_TYPE_VARIANT);
 }
 
 /**
@@ -219,7 +257,7 @@ QList<QString> SAXMLProtocolReadWriter::getUserGroup() const
  */
 QList<QString> SAXMLProtocolReadWriter::getContentGroupValueNames() const
 {
-
+    return d_ptr->mGroupValue2Type[SA_XML_TAG_CONTENT_ROOT].keys();
 }
 
 /**

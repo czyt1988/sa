@@ -13,7 +13,7 @@ public:
     virtual ~SAAbstractProtocolMaker();
 public:
     //制造2维点数组的协议
-    virtual QByteArray make2DPointsStatistic(const QVector<QPointF>& points,uint sequenceID) = 0;
+    virtual QByteArray make2DPointsDescribe(const QVector<QPointF>& points,uint sequenceID) = 0;
 };
 
 #endif // SAABSTRACTPROTOCOLMAKER_H

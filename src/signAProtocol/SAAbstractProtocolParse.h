@@ -12,12 +12,8 @@ public:
     SAAbstractProtocolParse(QObject* par = nullptr);
     virtual ~SAAbstractProtocolParse();
 public:
-    virtual bool setProtocolData(const QByteArray& data);
-signals:
-    /**
-     * @brief 解析出2维点群的统计结果
-     */
-    void parse2DPointsStatistic(int key,);
+    virtual bool setProtocolData(const QByteArray& data) = 0;
+
 };
 
 #endif // SAABSTRACTPROTOCOLPARSE_H
