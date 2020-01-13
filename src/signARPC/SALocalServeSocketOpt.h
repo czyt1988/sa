@@ -4,7 +4,7 @@
 #include <QPointF>
 #include "SARPCGlobal.h"
 #include <QVector>
-#include "SALocalServeBaseHeader.h"
+#include "SAProtocolHeader.h"
 #include <QLocalSocket>
 #include <QTimer>
 class QLocalSocket;
@@ -25,17 +25,13 @@ public:
 public:
     QLocalSocket *getSocket() const;
     void setSocket(QLocalSocket *socket);
-    //获取token
-    int getToken() const;
     //判断是否具有可写条件
     bool isEnableToWrite() const;
 protected:
-    //设置token - 仅用于服务端
-    void setToken(uint token);
     //处理socket数据
     bool readFromSocket(void *p,int n);
     //根据类型分发协议
-    virtual void deal(const SALocalServeBaseHeader& head,const QByteArray& datas);
+    virtual void deal(const SAProtocolHeader& head,const QByteArray& datas);
 protected slots:
     //发送内容
     Q_SLOT void send(SALocalServeBaseHeader header, const QByteArray& data);

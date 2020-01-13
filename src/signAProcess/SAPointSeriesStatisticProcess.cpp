@@ -2,8 +2,6 @@
 #include "czyQArray.h"
 #include "czyMath.h"
 #include <algorithm>
-#include "SAXMLTagDefined.h"
-#include "SAXMLWriteHelper.h"
 #include <QDebug>
 #define IS_DEBUG_PRINT 1
 
@@ -12,7 +10,7 @@ class SAPointSeriesStatisticProcessPrivate
     SA_IMPL_PUBLIC(SAPointSeriesStatisticProcess)
 public:
     SAPointSeriesStatisticProcessPrivate(SAPointSeriesStatisticProcess* p):q_ptr(p)
-    ,mSortCount(10)
+    ,mSortCount(50)
     {
 
     }
@@ -23,7 +21,6 @@ public:
 public:
     uint mSortCount;
     QVector<QPointF> mPoints;
-    QVariantHash mKwargs;
 };
 
 SAPointSeriesStatisticProcess::SAPointSeriesStatisticProcess(QObject *par):SAAbstractProcess(par)
@@ -75,46 +72,30 @@ void SAPointSeriesStatisticProcess::run()
     QPointF minPoint = *datas.cbegin();
     QPointF maxPoint = *(datas.cend()-1);
     QPointF midPoint = n>1 ? *(datas.cbegin() + int(n/2)) : minPoint;//中位数
-    //
-    SAXMLWriteHelper xmlHelper(ATT_SA_TYPE_VPFR);
-    for(auto i = d_ptr->mKwargs.begin();i != d_ptr->mKwargs.end();++i)
-    {
-        xmlHelper.writeHeadValue(i.key(),i.value());
-    }
-    xmlHelper.startContentWriteGroup("param");
-    xmlHelper.writeContentValue("sum",sum);
-    xmlHelper.writeContentValue("min",min);
-    xmlHelper.writeContentValue("max",max);
-    xmlHelper.writeContentValue("mid",mid);
-    xmlHelper.writeContentValue("mean",mean);
-    xmlHelper.writeContentValue("var",var);
-    xmlHelper.writeContentValue("stdVar",stdVar);
-    xmlHelper.writeContentValue("skewness",skewness);
-    xmlHelper.writeContentValue("kurtosis",kurtosis);
-    xmlHelper.writeContentValue("peak2peak",peak2peak);
-    xmlHelper.writeContentValue("minPoint",minPoint);
-    xmlHelper.writeContentValue("maxPoint",maxPoint);
-    xmlHelper.writeContentValue("midPoint",midPoint);
-    xmlHelper.endContentWriteGroup();
-
-    int sortCount = std::min(d_ptr->mSortCount,(uint)datas.size());
-    const int datasSize = datas.size();
-    xmlHelper.startContentWriteGroup("top");
-    for(int i=0;i<sortCount;++i)
-    {
-        QPointF top = datas[datasSize-i-1];
-        xmlHelper.writeContentValue(QString("top:%1").arg(i+1),top);
-    }
-    xmlHelper.endContentWriteGroup();
-
-    xmlHelper.startContentWriteGroup("bottom");
-    for(int i=0;i<sortCount;++i)
-    {
-        QPointF top = datas[i];
-        xmlHelper.writeContentValue(QString("bottom:%1").arg(i+1),top);
-    }
-    xmlHelper.endContentWriteGroup();
-    emit result(xmlHelper.toString(),getID(),SAAbstractProcess::XmlString);
+    QVariantHash res;
+    res["sum"] = sum;
+    res["mean"] = mean;
+    res["var"] = var;
+    res["std-var"] = stdVar;
+    res["skewness"] = skewness;
+    res["kurtosis"] = kurtosis;
+    res["min"] = min;
+    res["min"] = max;
+    res["mid"] = mid;
+    res["peak-peak"] = peak2peak;
+    res["min-point"] = minPoint;
+    res["min-point"] = maxPoint;
+    res["min-point"] = midPoint;
+    int sortedcount = d_ptr->mSortCount < n ? d_ptr->mSortCount : n;
+    QVector<QPointF> tops(sortedcount);
+    QVector<QPointF> lows(sortedcount);
+    //拷贝tops
+    std::copy(datas.rbegin(),datas.rbegin()+sortedcount,tops.begin());
+    //拷贝lows
+    std::copy(datas.begin(),datas.begin()+sortedcount,lows.begin());
+    res["sorted-tops"] = QVariant::fromValue(tops);
+    res["sorted-lows"] = QVariant::fromValue(lows);
+    emit result(res,getID());
     emit finish(getID());
 }
 /**
@@ -127,6 +108,7 @@ uint SAPointSeriesStatisticProcess::getSortCount() const
 }
 /**
  * @brief 设置排序的个数，返回的内容排序的个数包含的长度，此值默认100，这个设置为了避免返回内容过多
+ * 对应参数描述：ret-sorted-count
  * @param sortCount 排序个数
  */
 void SAPointSeriesStatisticProcess::setSortCount(uint sortCount)
@@ -136,20 +118,15 @@ void SAPointSeriesStatisticProcess::setSortCount(uint sortCount)
 
 /**
  * @brief 设置参数，系列点
+ * 对应参数描述：points
  * @param points 点集
- * @param args 传参
- * @param key 标识
  */
-SAPointSeriesStatisticProcess* SAPointSeriesStatisticProcess::setPoints(const QVector<QPointF> &points)
+void SAPointSeriesStatisticProcess::setPoints(const QVector<QPointF> &points)
 {
     d_ptr->mPoints = points;
-    return this;
 }
 
-void SAPointSeriesStatisticProcess::setKwargs(const QVariantHash &kwargs)
-{
-    d_ptr->mKwargs = kwargs;
-}
+
 
 QString SAPointSeriesStatisticProcess::getName() const
 {
@@ -161,20 +138,28 @@ QString SAPointSeriesStatisticProcess::getNameSpace() const
     return "sa";
 }
 
-bool SAPointSeriesStatisticProcess::setArgs(const QVariantList &args)
+bool SAPointSeriesStatisticProcess::setArgs(const QVariantHash &args)
 {
-   if(args.size()!=2)
+   if(!args.contains("points"))
    {
        return false;
    }
-   const QVariant& v0 = args[0];
-   const QVariant& v1 = args[1];
-   if(!v0.canConvert<QVector<QPointF>>() || v1.canConvert<QVariantHash>())
+   const QVariant& v0 = args["points"];
+   if(!v0.canConvert<QVector<QPointF>>())
    {
        return false;
    }
    setPoints(v0.value<QVector<QPointF>>());
-   setKwargs(v1.value<QVariantHash>());
+   //获取其他参数
+   if(args.contains("ret-sorted-count"))
+   {
+       const QVariant& v = args["ret-sorted-count"];
+       if(!v.canConvert<int>())
+       {
+           return false;
+       }
+       setSortCount(v.value<int>());
+   }
    return true;
 }
 /**

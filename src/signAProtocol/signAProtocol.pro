@@ -47,3 +47,5 @@ SOURCES += \
     SAProtocolHeader.cpp \
     SACRC.cpp \
     SAXMLProtocolReadWriter.cpp
+
+OTHER_FILES += readme.md

@@ -35,5 +35,3 @@ SOURCES += \
     SAPointSeriesStatisticProcess.cpp \
     SAThreadProcessPool.cpp
 
-#sa protocol support
-include($$PWD/../signAProtocol/signAProtocol.pri)

@@ -1,6 +1,12 @@
-# signAProcess 介绍
+# signAProtocol 介绍
 
-`signAProcess`库用于描述所有后台处理类，其基类是`SAAbstractProcess`，这个类继承于`QObject`和`QRunnable`，这样每个继承`SAAbstractProcess`的类，都可以用在线程池中，`SAThreadProcessPool`线程池类就是用于管理`SAAbstractProcess`的封装。
+`signAProtocol`库用于描述所有后台处理协议
 
-这个类主要在`signADataProc`程序中调用
+`SAAbstractProtocolMaker`用于定义协议的接口
+`SAAbstractProtocolParse` 用于定义解析协议的接口
 
+# 关于协议
+
+sa xml协议
+
+基于xml的交互协议

@@ -1,6 +1,6 @@
 #include "SALocalServeSocketOpt.h"
 #include <QLocalSocket>
-#include "SALocalServeBaseHeader.h"
+#include "SAProtocolHeader.h"
 #include <QTextCodec>
 #include <QBuffer>
 #include "SACRC.h"
@@ -12,14 +12,12 @@ public:
     SALocalServeSocketOptPrivate(SALocalServeSocketOpt* p)
         :q_ptr(p)
         ,m_socket(nullptr)
-        ,m_tokenID(0)
         ,m_autoHeartBreakTimer(nullptr)
         ,m_isReadedMainHeader(false)
         ,m_index(0)
     {
     }
     QLocalSocket* m_socket;
-    int m_tokenID;
     QTimer* m_autoHeartBreakTimer;
 
     SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
@@ -67,10 +65,6 @@ void SALocalServeSocketOpt::setSocket(QLocalSocket *socket)
     }
 }
 
-int SALocalServeSocketOpt::getToken() const
-{
-    return d_ptr->m_tokenID;
-}
 
 /**
  * @brief 是否可写
@@ -93,10 +87,7 @@ bool SALocalServeSocketOpt::isEnableToWrite() const
     return true;
 }
 
-void SALocalServeSocketOpt::setToken(uint token)
-{
-    d_ptr->m_tokenID = token;
-}
+
 
 /**
  * @brief 从socket中安全的读取文件
@@ -135,7 +126,7 @@ bool SALocalServeSocketOpt::readFromSocket(void *p, int n)
  * @param head 头描述
  * @param datas 数据
  */
-void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByteArray &datas)
+void SALocalServeSocketOpt::deal(const SAProtocolHeader &head, const QByteArray &datas)
 {
     if(!head.isValid())
         return;
@@ -160,7 +151,6 @@ void SALocalServeSocketOpt::deal(const SALocalServeBaseHeader &head, const QByte
     }
     int classID = head.classID;
     int funID = head.functionID;
-    uint key = head.key;
     if(2 != classID && 1 != funID)
     {
         qDebug() << "deal: classID:" << classID << " funID:" << funID << " key:" << key

@@ -1,25 +1,8 @@
 #include "SAAbstractProcess.h"
-#include <atomic>
-class SAAbstractProcessPrivate
-{
-    SA_IMPL_PUBLIC(SAAbstractProcess)
-public:
-    SAAbstractProcessPrivate(SAAbstractProcess* p):q_ptr(p)
-        ,m_isstop(true)
-    {
-
-    }
-    ~SAAbstractProcessPrivate(){
-
-    }
-
-public:
-    std::atomic_bool m_isstop;
-};
+#include <memory>
 
 
-SAAbstractProcess::SAAbstractProcess(QObject* par):QObject(par)
-  ,d_ptr(new SAAbstractProcessPrivate(this))
+SAAbstractProcess::SAAbstractProcess(QObject* par):QObject(par),m_isStop(false)
 {
 
 }
@@ -45,7 +28,7 @@ uint SAAbstractProcess::getID() const
  */
 void SAAbstractProcess::setStop(bool stop)
 {
-    d_ptr->m_isstop = stop;
+    m_isStop = stop;
 }
 /**
  * @brief 判断是否停止
@@ -53,6 +36,8 @@ void SAAbstractProcess::setStop(bool stop)
  */
 bool SAAbstractProcess::isStop() const
 {
-    return d_ptr->m_isstop;
+    return m_isStop;
 }
+
+
 

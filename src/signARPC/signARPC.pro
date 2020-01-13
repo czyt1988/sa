@@ -22,22 +22,20 @@ HEADERS += \
     /../global/SAGlobals.h \
     SARPCGlobal.h \
     SAAbstractRPCServe.h \
-    SALocalServeBaseHeader.h \
     SALocalServerDefine.h \
     SALocalServeSocketOpt.h \
     SAProcedure.h \
     SARPCGlobal.h \
-    SACRC.h \
-    3rdParty/CRC.h
+    3rdParty/CRC.h \
+    SAXMLRPCServe.h
 
 
 
 SOURCES += \
     SAAbstractRPCServe.cpp \
-    SALocalServeBaseHeader.cpp \
     SALocalServeSocketOpt.cpp \
     SAProcedure.cpp \
-    SACRC.cpp
+    SAXMLRPCServe.cpp
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
