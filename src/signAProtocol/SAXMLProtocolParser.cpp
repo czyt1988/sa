@@ -16,7 +16,8 @@ public:
     bool isHasKey(const QString &groupName, const QString &keyName) const;
     QString makeFullItemName(const QString &groupName, const QString &keyName) const;
     QDomElement getGroup(const QString &groupName) const;
-    QVariant getValue(const QString &groupName, const QString &keyName, const QVariant &defaultVal) const;
+    QVariant getValue(const QString &groupName, const QString &keyName, const QVariant &defaultVal = QVariant()) const;
+    QVariant getValue(QDomElement item, const QVariant &defaultVal = QVariant()) const;
     QDomElement getValueEle(const QString &groupName, const QString &keyName) const;
     QDomDocument mDoc;
     QString mErrorMsg;// 错误信息
@@ -106,12 +107,80 @@ QDomElement SAXMLProtocolParserPrivate::getGroup(const QString &groupName) const
 QVariant SAXMLProtocolParserPrivate::getValue(const QString &groupName, const QString &keyName, const QVariant &defaultVal) const
 {
     QDomElement item = getValueEle(groupName,keyName);
+    return getValue(item,defaultVal);
+}
+
+QVariant SAXMLProtocolParserPrivate::getValue(QDomElement item, const QVariant &defaultVal) const
+{
     if (item.isNull())
         return defaultVal;
     //
-    QString varstr = item.nodeValue();
+
     QString vartype = item.attribute(SA_XML_ATT_TYPE);
-    if(QString::compare(vartype,""))
+    if(0 == QString::compare(vartype,SA_XML_VAR_ARR_LIST))
+    {
+        QList<QVariant> res;
+        //获取子节点数
+        QDomNodeList ci = item.elementsByTagName(SA_XML_TAG_ITEM);
+        auto size = ci.size();
+        for (auto i = 0;i<size;++i)
+        {
+            QVariant v = getValue(ci.at(i).toElement(),QVariant());
+            if(v.isValid())
+            {
+                res.append(v);
+            }
+        }
+        return QVariant(res);
+    }
+    else if(0 == QString::compare(vartype,SA_XML_VAR_ARR_STRLIST,Qt::CaseInsensitive))
+    {
+        QStringList res;
+        //获取子节点数
+        QDomNodeList ci = item.elementsByTagName(SA_XML_TAG_ITEM);
+        auto size = ci.size();
+        for (auto i = 0;i<size;++i)
+        {
+            QVariant v = getValue(ci.at(i).toElement(),QVariant());
+            if(v.isValid())
+            {
+                QString s = v.toString();
+                res.append(s);
+            }
+        }
+        return QVariant(res);
+    }
+    else if(0 == QString::compare(vartype,SA_XML_VAR_ARR_MAP,Qt::CaseInsensitive))
+    {
+        QMap<QString, QVariant> res;
+        //获取子节点数
+        QDomNodeList ci = item.elementsByTagName(SA_XML_TAG_ITEM);
+        auto size = ci.size();
+        for (auto i = 0;i<size;++i)
+        {
+            QDomElement childitem = ci.at(i).toElement();
+            QString itemkeyname = childitem.attribute(SA_XML_ATT_NAME);
+            QVariant v = getValue(childitem,QVariant());
+            res[itemkeyname] = v;
+        }
+        return QVariant(res);
+    }
+    else if(0 == QString::compare(vartype,SA_XML_VAR_ARR_HASH,Qt::CaseInsensitive))
+    {
+        QHash<QString, QVariant> res;
+        //获取子节点数
+        QDomNodeList ci = item.elementsByTagName(SA_XML_TAG_ITEM);
+        auto size = ci.size();
+        for (auto i = 0;i<size;++i)
+        {
+            QDomElement childitem = ci.at(i).toElement();
+            QString itemkeyname = childitem.attribute(SA_XML_ATT_NAME);
+            QVariant v = getValue(childitem,QVariant());
+            res[itemkeyname] = v;
+        }
+        return QVariant(res);
+    }
+    QString varstr = item.nodeValue();
     return SAVariantCaster::stringToVariant(varstr,vartype);
 }
 

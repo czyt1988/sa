@@ -60,48 +60,7 @@ QDomElement SAXMLProtocolMakerPrivate::getGroupEle_const(const QString &name) co
 void SAXMLProtocolMakerPrivate::setValue(const QString &groupName, const QString &keyName, const QVariant &var)
 {
     QDomElement g = getGroupEle(groupName);
-    QDomElement item = mDoc.createElement(SA_XML_TAG_ITEM);
-    QString vartype = var.typeName();
-    item.setAttribute(SA_XML_ATT_NAME,keyName);
-    item.setAttribute(SA_XML_ATT_TYPE,vartype);
-    //对数组类型进行特殊处理
-    if(0 == QString::compare(vartype,SA_XML_VAR_ARR_LIST,Qt::CaseInsensitive))
-    {
-        QList<QVariant> l = var.toList();
-        for (auto i = l.begin();i!=l.end();++i)
-        {
-            setValue("",*i,item);
-        }
-    }
-    else if (0 == QString::compare(vartype,SA_XML_VAR_ARR_MAP,Qt::CaseInsensitive))
-    {
-        QMap<QString, QVariant> l = var.toMap();
-        for (auto i = l.begin();i!=l.end();++i)
-        {
-            setValue(i.key(),i.value(),item);
-        }
-    }
-    else if (0 == QString::compare(vartype,SA_XML_VAR_ARR_HASH,Qt::CaseInsensitive))
-    {
-        QHash<QString, QVariant> l = var.toHash();
-        for (auto i = l.begin();i!=l.end();++i)
-        {
-            setValue(i.key(),i.value(),item);
-        }
-    }
-    else if (0 == QString::compare(vartype,SA_XML_VAR_ARR_STRLIST,Qt::CaseInsensitive))
-    {
-        QStringList l = var.toStringList();
-        for (auto i = l.begin();i!=l.end();++i)
-        {
-            setValue("",*i,item);
-        }
-    }
-    else
-    {
-        item.setNodeValue(SAVariantCaster::variantToString(var));
-    }
-    g.appendChild(item);
+    setValue(keyName,var,g);
 }
 
 void SAXMLProtocolMakerPrivate::setValue(const QString &keyName, const QVariant &var, QDomElement par)
