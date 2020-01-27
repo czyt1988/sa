@@ -1,11 +1,11 @@
-#include "SAAbstractProtocolParse.h"
+#include "SAAbstractProtocolParser.h"
 
-SAAbstractProtocolParse::SAAbstractProtocolParse(QObject *par):QObject(par)
+SAAbstractProtocolParser::SAAbstractProtocolParser(QObject *par):QObject(par)
 {
     
 }
 
-SAAbstractProtocolParse::~SAAbstractProtocolParse()
+SAAbstractProtocolParser::~SAAbstractProtocolParser()
 {
     
 }

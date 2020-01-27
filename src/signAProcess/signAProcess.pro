@@ -1,9 +1,14 @@
 #-------------------------------------------------
 #
 # Project created by czy 2016-12-21
-# sa core fun
+# SA Process Model
 #
 #-------------------------------------------------
+
+message("")
+message("--------------SA Process Model--------------------------")
+message(Qt version: $$[QT_VERSION])
+message(Qt is installed in $$[QT_INSTALL_PREFIX])
 
 QT += core
 TARGET = signAProcess

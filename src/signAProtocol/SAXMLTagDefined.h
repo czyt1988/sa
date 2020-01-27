@@ -2,13 +2,37 @@
 #define SAXMLTAGDEFINED_H
 /*
 <sa>
-    <header></header>
-    <content></content>
+    <values>
+        <group name="">
+            <item type='int'>5<item>
+        </group>
+    </values>
 </sa>
 */
+
+/// \def 定义特殊处理的数组类型 QVariantList
+#ifndef SA_XML_VAR_ARR_LIST
+#define SA_XML_VAR_ARR_LIST "QVariantList"
+#endif
+/// \def 定义特殊处理的数组类型 QStringList
+#ifndef SA_XML_VAR_ARR_STRLIST
+#define SA_XML_VAR_ARR_STRLIST "QStringList"
+#endif
+/// \def 定义特殊处理的数组类型 QVariantMap
+#ifndef SA_XML_VAR_ARR_MAP
+#define SA_XML_VAR_ARR_MAP "QVariantMap"
+#endif
+/// \def 定义特殊处理的数组类型 QVariantHash
+#ifndef SA_XML_VAR_ARR_HASH
+#define SA_XML_VAR_ARR_HASH "QVariantHash"
+#endif
 /// \def sa打头的标签，表示这是一个sa协议
 #ifndef SA_XML_TAG_SA
 #define SA_XML_TAG_SA "sa"
+#endif
+/// \def sa打头的标签，表示这是一个sa协议
+#ifndef SA_XML_TAG_VALUES
+#define SA_XML_TAG_VALUES "values"
 #endif
 /// \def int val int型数据
 #ifndef SA_XML_TAG_INTVAL

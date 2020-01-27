@@ -1,6 +1,6 @@
 #include "SAAbstractProtocolMaker.h"
 
-SAAbstractProtocolMaker::SAAbstractProtocolMaker()
+SAAbstractProtocolMaker::SAAbstractProtocolMaker(QObject *par):QObject(par)
 {
 
 }

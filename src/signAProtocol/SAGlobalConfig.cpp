@@ -21,7 +21,7 @@ public:
 SAGlobalConfigPrivate::SAGlobalConfigPrivate(SAGlobalConfig* par):q_ptr(par)
 {
     SAGlobalConfig::makeDefaultConfigPath();
-    m_xmlConfig.setFile(SAGlobalConfig::getConfigFullPath());
+    m_xmlConfig.setFilePath(SAGlobalConfig::getConfigFullPath());
 }
 
 //============================================
@@ -99,7 +99,7 @@ void SAGlobalConfig::setValue(const QString &group, const QString &key, const QV
 ///
 QStringList SAGlobalConfig::getGroupList() const
 {
-    return d_ptr->m_xmlConfig.getGroupList();
+    return d_ptr->m_xmlConfig.getGroupNames();
 }
 ///
 /// \brief 获取目录下对应的所有关键字
@@ -108,7 +108,7 @@ QStringList SAGlobalConfig::getGroupList() const
 ///
 QStringList SAGlobalConfig::getKeyList(const QString &group) const
 {
-    return d_ptr->m_xmlConfig.getKeyList(group);
+    return d_ptr->m_xmlConfig.getKeyNames(group);
 }
 ///
 /// \brief 保存

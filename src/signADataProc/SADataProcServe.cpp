@@ -25,7 +25,7 @@ SADataProcServe::SADataProcServe(QObject *parent):QObject(parent)
     connect(&m_liveChecker,&QTimer::timeout,this,&SADataProcServe::onCheckLive);
     connect(m_localServer,&QLocalServer::newConnection
             ,this,&SADataProcServe::onLocalServeNewConnection);
-    connect(&m_process,&SAThreadProcessPool::result,this,&SADataProcServe::onProcessResult);
+    connect(&m_process,& cSAThreadProcessPool::result,this,&SADataProcServe::onProcessResult);
     connect(&m_process,&SAThreadProcessPool::finish,this,&SADataProcServe::onProcessFinish);
     connect(&m_process,&SAThreadProcessPool::progress,this,&SADataProcServe::onProcessProgress);
     if(!m_localServer->listen(SA_LOCAL_SERVER_DATA_PROC_NAME))

@@ -8,19 +8,20 @@
 class QDomDocument;
 class QDomNode;
 class SAConfigXMLReadWriterPrivate; 
-///
-/// \brief 用于读写SAConfig的xml类，可用于多线程
-///
+
+/**
+ * @brief 用于生成xml协议的封装
+ */
 class SA_PROTOCOL_EXPORT SAConfigXMLReadWriter : public QObject
 {
     Q_OBJECT
     SA_IMPL(SAConfigXMLReadWriter)
 public:
     SAConfigXMLReadWriter(QObject* par = nullptr);
-    SAConfigXMLReadWriter(const QString& cfgPath,QObject* par = nullptr);
+    SAConfigXMLReadWriter(const QString& filepath,QObject* par = nullptr);
     ~SAConfigXMLReadWriter();
 public:
-    bool setFile(const QString& filePath);
+    bool setFilePath(const QString& filePath);
     //检测是否存在目录
     bool isHasGroup(const QString& groupName) const;
     //检测是否存在对应索引
@@ -35,9 +36,9 @@ public:
     template<typename T>
     T valueFromKey(const QString& groupName,const QString& keyName,const T& defaultVal = T());
     //获取所有目录关键字
-    QStringList getGroupList() const;
+    QStringList getGroupNames() const;
     //获取目录下对应的所有关键字
-    QStringList getKeyList(const QString& groupName) const;
+    QStringList getKeyNames(const QString& groupName) const;
     //判断是否有改动
     bool isDirty() const;
     //保存

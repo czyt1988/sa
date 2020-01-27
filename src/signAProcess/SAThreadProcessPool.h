@@ -6,6 +6,9 @@
 
 //class SAThreadProcessPoolPrivate;
 
+/**
+ * @brief The SAThreadProcessPool class SAAbstractProcess的执行器
+ */
 class SA_PROCESS_EXPORT SAThreadProcessPool : public QObject
 {
     Q_OBJECT

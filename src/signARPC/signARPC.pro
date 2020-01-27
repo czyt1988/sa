@@ -4,6 +4,12 @@
 # sa rpc lib by qt bin stream
 #
 #-------------------------------------------------
+
+message("")
+message("--------------SA Serve about lib--------------------------")
+message(Qt version: $$[QT_VERSION])
+message(Qt is installed in $$[QT_INSTALL_PREFIX])
+
 QT += core
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

@@ -8,14 +8,13 @@
 #
 #-------------------------------------------------
 message("")
-message("--------------SA---------------------------")
+message("--------------SA Data Process Serve--------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])
 
 QT += core gui
 QT += network
 QT += xml
-QT += remoteobjects
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -42,8 +41,6 @@ HEADERS += \
     SADataProcServe.h \
     SALocalServeSocketServeParse.h
     
-REPC_SOURCE += \
-    $$PWD/../reps/SAROInterface.rep
 
 #sa api support
 #{

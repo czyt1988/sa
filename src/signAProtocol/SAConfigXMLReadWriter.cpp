@@ -276,8 +276,8 @@ SAConfigXMLReadWriter::SAConfigXMLReadWriter(QObject *par):QObject(par)
     
 }
 
-SAConfigXMLReadWriter::SAConfigXMLReadWriter(const QString &cfgPath, QObject *par):QObject(par)
-	,d_ptr(new SAConfigXMLReadWriterPrivate(this,cfgPath))
+SAConfigXMLReadWriter::SAConfigXMLReadWriter(const QString &filepath, QObject *par):QObject(par)
+    ,d_ptr(new SAConfigXMLReadWriterPrivate(this,filepath))
 {
     
 }
@@ -291,7 +291,7 @@ SAConfigXMLReadWriter::~SAConfigXMLReadWriter()
 /// \param filePath
 /// \return
 ///
-bool SAConfigXMLReadWriter::setFile(const QString &filePath)
+bool SAConfigXMLReadWriter::setFilePath(const QString &filePath)
 {
     return d_ptr->setCfgFile(filePath);
 }
@@ -385,7 +385,7 @@ void SAConfigXMLReadWriter::setValue(const QString &namePath, const QVariant &va
 /// \brief 获取所有组名
 /// \return
 ///
-QStringList SAConfigXMLReadWriter::getGroupList() const
+QStringList SAConfigXMLReadWriter::getGroupNames() const
 {
     return d_ptr->getGroupList();
 }
@@ -394,7 +394,7 @@ QStringList SAConfigXMLReadWriter::getGroupList() const
 /// \param groupName
 /// \return
 ///
-QStringList SAConfigXMLReadWriter::getKeyList(const QString &groupName) const
+QStringList SAConfigXMLReadWriter::getKeyNames(const QString &groupName) const
 {
     return d_ptr->getKeyList(groupName);
 }

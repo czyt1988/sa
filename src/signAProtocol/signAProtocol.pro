@@ -5,6 +5,11 @@
 #
 #-------------------------------------------------
 
+message("")
+message("--------------SA protocol about lib--------------------------")
+message(Qt version: $$[QT_VERSION])
+message(Qt is installed in $$[QT_INSTALL_PREFIX])
+
 QT += core gui xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signAProtocol
@@ -31,10 +36,11 @@ HEADERS += \
     SAConfigXMLReadWriter.h \
     SAAbstractProtocolMaker.h \
     SAXMLProtocolMaker.h \
-    SAAbstractProtocolParse.h \
     SAProtocolHeader.h \
     SACRC.h \
-    SAXMLProtocolReadWriter.h
+    SAXMLProtocolReadWriter.h \
+    SAXMLProtocolParser.h \
+    SAAbstractProtocolParser.h
 
 SOURCES += \
     SAVariantCaster.cpp \
@@ -46,6 +52,7 @@ SOURCES += \
     SAAbstractProtocolParse.cpp \
     SAProtocolHeader.cpp \
     SACRC.cpp \
-    SAXMLProtocolReadWriter.cpp
+    SAXMLProtocolReadWriter.cpp \
+    SAXMLProtocolParser.cpp
 
 OTHER_FILES += readme.md
