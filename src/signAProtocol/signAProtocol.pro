@@ -30,29 +30,23 @@ HEADERS += \
     SAProtocolGlobal.h \
     SAVariantCaster.h \
     SAXMLTagDefined.h \
-    SAXMLReadHelper.h \
     SAGlobalConfig.h \
     SAGlobalConfigDefine.h \
-    SAConfigXMLReadWriter.h \
-    SAAbstractProtocolMaker.h \
-    SAXMLProtocolMaker.h \
     SAProtocolHeader.h \
     SACRC.h \
     SAXMLProtocolReadWriter.h \
     SAXMLProtocolParser.h \
-    SAAbstractProtocolParser.h
+    SAAbstractProtocolParser.h \
+    SAXMLConfigParser.h
 
 SOURCES += \
     SAVariantCaster.cpp \
-    SAXMLReadHelper.cpp \
     SAGlobalConfig.cpp \
-    SAConfigXMLReadWriter.cpp \
-    SAAbstractProtocolMaker.cpp \
-    SAXMLProtocolMaker.cpp \
     SAAbstractProtocolParse.cpp \
     SAProtocolHeader.cpp \
     SACRC.cpp \
     SAXMLProtocolReadWriter.cpp \
-    SAXMLProtocolParser.cpp
+    SAXMLProtocolParser.cpp \
+    SAXMLConfigParser.cpp
 
 OTHER_FILES += readme.md

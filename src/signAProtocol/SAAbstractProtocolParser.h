@@ -20,6 +20,30 @@ public:
      */
     virtual bool setProtocolData(const QByteArray& data) = 0;
     /**
+     * @brief 设置键值
+     * @param groupName 分组名
+     * @param keyName 键值名
+     * @param var 值
+     * @note 斜杠是分组和键值的分割符，因此键值不应该存在斜杠，否则会有无法预料的结果
+     */
+    virtual void setValue(const QString& groupName, const QString& keyName, const QVariant& var) = 0;
+    /**
+     * @brief 获取所有目录关键字
+     * @return
+     */
+    virtual QStringList getGroupNames() const = 0;
+    /**
+     * @brief 获取目录下对应的所有关键字
+     * @param groupName
+     * @return
+     */
+    virtual QStringList getKeyNames(const QString& groupName) const = 0;
+    /**
+     * @brief 转换为文本
+     * @return utf8编码的文本
+     */
+    virtual QString toString() const = 0;
+    /**
      * @brief 检测是否存在分组
      * @param groupName 分组名
      * @return

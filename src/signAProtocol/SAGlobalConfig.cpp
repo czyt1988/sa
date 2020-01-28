@@ -5,7 +5,7 @@
 #include <QSet>
 #include <QDir>
 #include <QFileInfo>
-#include "SAConfigXMLReadWriter.h"
+#include "SAXMLConfigParser.h"
 
 SAGlobalConfig* SAGlobalConfig::s_instance = nullptr;
 QString SAGlobalConfig::s_configFilePath = QString();
@@ -15,7 +15,7 @@ class SAGlobalConfigPrivate
     SA_IMPL_PUBLIC(SAGlobalConfig)
 public:
     SAGlobalConfigPrivate(SAGlobalConfig* par);
-    SAConfigXMLReadWriter m_xmlConfig;
+    SAXMLConfigParser m_xmlConfig;
 };
 
 SAGlobalConfigPrivate::SAGlobalConfigPrivate(SAGlobalConfig* par):q_ptr(par)
@@ -26,8 +26,8 @@ SAGlobalConfigPrivate::SAGlobalConfigPrivate(SAGlobalConfig* par):q_ptr(par)
 
 //============================================
 
-SAGlobalConfig::SAGlobalConfig()
-    :d_ptr(new SAGlobalConfigPrivate(this))
+SAGlobalConfig::SAGlobalConfig():SAXMLConfigParser(nullptr)
+    ,d_ptr(new SAGlobalConfigPrivate(this))
 {
 }
 
@@ -38,85 +38,6 @@ SAGlobalConfig::~SAGlobalConfig()
         delete s_instance;
         s_instance = NULL;
     }
-}
-
-///
-/// \brief 检测是否存在目录
-/// \param content 目录名称
-/// \return
-///
-bool SAGlobalConfig::isHasGroup(const QString &group) const
-{
-    return d_ptr->m_xmlConfig.isHasGroup(group);
-}
-///
-/// \brief 检测是否存在对应索引
-/// \param content 目录名称
-/// \param key 索引名称
-/// \return
-///
-bool SAGlobalConfig::isHasKey(const QString &group, const QString &key) const
-{
-    return d_ptr->m_xmlConfig.isHasKey(group,key);
-}
-
-QVariant SAGlobalConfig::getValue(const QString &namePath, const QVariant &defaultVal) const
-{
-    return d_ptr->m_xmlConfig.getValue(namePath,defaultVal);
-}
-///
-/// \brief 获取键值对应的内容
-/// \param content 目录名称
-/// \param key 索引名称
-/// \return 如果没有内容，返回为QVariant(),可以通过isValid判断
-///
-QVariant SAGlobalConfig::getValue(const QString &group, const QString &key,const QVariant& defaultVal) const
-{
-    return d_ptr->m_xmlConfig.getValue(group,key,defaultVal);
-}
-///
-/// \brief 设置内容
-/// \param namePath
-/// \param var
-///
-void SAGlobalConfig::setValue(const QString &namePath, const QVariant &var)
-{
-    d_ptr->m_xmlConfig.setValue(namePath,var);
-}
-///
-/// \brief 设置内容
-/// \param content 目录名称
-/// \param key 索引名称
-/// \param var 值
-///
-void SAGlobalConfig::setValue(const QString &group, const QString &key, const QVariant &var)
-{
-    d_ptr->m_xmlConfig.setValue(group,key,var);
-}
-///
-/// \brief 获取所有目录关键字
-/// \return 目录关键字列表
-///
-QStringList SAGlobalConfig::getGroupList() const
-{
-    return d_ptr->m_xmlConfig.getGroupNames();
-}
-///
-/// \brief 获取目录下对应的所有关键字
-/// \param content 目录名
-/// \return 关键字列表
-///
-QStringList SAGlobalConfig::getKeyList(const QString &group) const
-{
-    return d_ptr->m_xmlConfig.getKeyNames(group);
-}
-///
-/// \brief 保存
-/// \return
-///
-bool SAGlobalConfig::save()
-{
-    return d_ptr->m_xmlConfig.saveAs(getConfigFullPath());
 }
 
 

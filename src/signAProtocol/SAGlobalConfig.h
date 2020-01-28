@@ -5,41 +5,21 @@
 #include <QVariant>
 #include <memory>
 #include "SAProtocolGlobal.h"
+#include "SAXMLConfigParser.h"
 class SAGlobalConfigPrivate;
 
 
-
-///
-/// \brief sa的全局设置
-/// \note 此类为单例,非线程安全
-///
-class SA_PROTOCOL_EXPORT SAGlobalConfig
+/**
+ * @brief sa的全局设置
+ * @note 此类为单例,非线程安全
+ */
+class SA_PROTOCOL_EXPORT SAGlobalConfig : public SAXMLConfigParser
 {
     SA_IMPL(SAGlobalConfig)
 private:
     explicit SAGlobalConfig();
     ~SAGlobalConfig();
     Q_DISABLE_COPY(SAGlobalConfig)
-public:
-    //检测是否存在目录
-    bool isHasGroup(const QString& group) const;
-    //检测是否存在对应索引
-    bool isHasKey(const QString& group, const QString& key) const;
-    //获取键值对应的内容
-    QVariant getValue(const QString& namePath,const QVariant& defaultVal = QVariant()) const;
-    QVariant getValue(const QString& group, const QString& key,const QVariant& defaultVal = QVariant()) const;
-    //设置键值
-    void setValue(const QString& namePath, const QVariant& var);
-    void setValue(const QString& group, const QString& key, const QVariant& var);
-    //获取数据，确保数据有默认构造函数
-    template<typename T>
-    T valueFromKey(const QString& content,const QString& key,const T& defaultVal = T());
-    //获取所有目录关键字
-    QStringList getGroupList() const;
-    //获取目录下对应的所有关键字
-    QStringList getKeyList(const QString& group) const;
-    //保存
-    bool save();
 public:
     //获取uint型的配置
     unsigned int getUIntValue(const QString& content,const QString& key,const unsigned int& defaultVal = -1) const;
