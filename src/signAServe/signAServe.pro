@@ -13,7 +13,7 @@ message(Qt is installed in $$[QT_INSTALL_PREFIX])
 QT += core
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-TARGET = signARPC
+TARGET = signAServe
 TEMPLATE = lib
 
 CONFIG(debug, debug|release){
@@ -21,19 +21,18 @@ CONFIG(debug, debug|release){
 }else {
     DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
 }
-DEFINES += SARPC_MAKE #定义此宏将构建库
+DEFINES += SASERVE_MAKE #定义此宏将构建库
 CONFIG += c++11
 
 HEADERS += \
     /../global/SAGlobals.h \
-    SARPCGlobal.h \
-    SAAbstractRPCServe.h \
+    SAServeGlobal.h \
+    SAAbstractServe.h \
     SALocalServerDefine.h \
     SALocalServeSocketOpt.h \
     SAProcedure.h \
-    SARPCGlobal.h \
     3rdParty/CRC.h \
-    SAXMLRPCServe.h
+    SATCPServe.h
 
 
 
@@ -41,7 +40,7 @@ SOURCES += \
     SAAbstractRPCServe.cpp \
     SALocalServeSocketOpt.cpp \
     SAProcedure.cpp \
-    SAXMLRPCServe.cpp
+    SATCPServe.cpp
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)

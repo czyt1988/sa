@@ -20,7 +20,7 @@ public:
     QLocalSocket* m_socket;
     QTimer* m_autoHeartBreakTimer;
 
-    SALocalServeBaseHeader m_mainHeader;///< 当前的主包头
+    SAProtocolHeader m_mainHeader;///< 当前的主包头
     bool m_isReadedMainHeader;///< 标记是否读取了包头
     QByteArray m_buffer;
     QByteArray m_dataBuffer;
@@ -153,7 +153,7 @@ void SALocalServeSocketOpt::deal(const SAProtocolHeader &head, const QByteArray 
     int funID = head.functionID;
     if(2 != classID && 1 != funID)
     {
-        qDebug() << "deal: classID:" << classID << " funID:" << funID << " key:" << key
+        qDebug() << "deal: classID:" << classID << " funID:" << funID
                  << " QByteArray data size:"<<datas.size()
                     ;
     }

@@ -2,7 +2,7 @@
 #define SALOCALSERVE_H
 #include <QObject>
 #include <QPointF>
-#include "SARPCGlobal.h"
+#include "SAServeGlobal.h"
 #include <QVector>
 #include "SAProtocolHeader.h"
 #include <QLocalSocket>
@@ -14,7 +14,7 @@ class SALocalServeSocketOptPrivate;
  *
  * 此类封装了几种特殊的数据类型的传输，如vector pointf，这样是为了快速的传递数据。
  */
-class SARPC_EXPORT SALocalServeSocketOpt : public QObject
+class SASERVE_EXPORT SALocalServeSocketOpt : public QObject
 {
     Q_OBJECT
     SA_IMPL(SALocalServeSocketOpt)
@@ -34,7 +34,7 @@ protected:
     virtual void deal(const SAProtocolHeader& head,const QByteArray& datas);
 protected slots:
     //发送内容
-    Q_SLOT void send(SALocalServeBaseHeader header, const QByteArray& data);
+    Q_SLOT void send(SAProtocolHeader header, const QByteArray& data);
     //发送握手协议
     Q_SLOT void sendHeartbeat(uint key = 0);
 public slots:

@@ -30,6 +30,7 @@
 struct SA_PROTOCOL_EXPORT SAProtocolHeader
 {
     uint32_t magic_start;///< 开始魔数，理论恒等于 \sa SA_PROTOCOL_HEADER_MAGIC_START
+    int token;///< token编号，每次请求通过token来区分是否登录
     int32_t sequenceID;///< 流水编号，对于多个同类型请求的区分
     int32_t classID;///< 类型号
     int32_t functionID;///< 功能号

@@ -34,7 +34,6 @@ HEADERS += \
     SAGlobalConfigDefine.h \
     SAProtocolHeader.h \
     SACRC.h \
-    SAXMLProtocolReadWriter.h \
     SAXMLProtocolParser.h \
     SAAbstractProtocolParser.h \
     SAXMLConfigParser.h
@@ -45,7 +44,6 @@ SOURCES += \
     SAAbstractProtocolParse.cpp \
     SAProtocolHeader.cpp \
     SACRC.cpp \
-    SAXMLProtocolReadWriter.cpp \
     SAXMLProtocolParser.cpp \
     SAXMLConfigParser.cpp
 
