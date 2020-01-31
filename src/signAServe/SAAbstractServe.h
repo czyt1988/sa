@@ -2,6 +2,7 @@
 #define SAABSTRACTSERVE_H
 #include <QObject>
 #include <QAbstractSocket>
+#include <QHostAddress>
 #include "SAServeGlobal.h"
 /**
  * @brief sa的服务基类
@@ -11,7 +12,7 @@
 class SASERVE_EXPORT SAAbstractServe
 {
 public:
-    SAAbstractServe(QObject* par = nullptr);
+    SAAbstractServe();
     virtual ~SAAbstractServe();
     //监听
     virtual bool listen(int port,const QHostAddress &address = QHostAddress::Any) = 0;

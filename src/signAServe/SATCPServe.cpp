@@ -2,6 +2,9 @@
 #include <QTcpServer>
 #include <QMap>
 #include <QCryptographicHash>
+#include <QThread>
+#include "SATCPSection_private.h"
+
 class SATCPServePrivate
 {
 public:
@@ -16,10 +19,15 @@ public:
     QString getToken(QTcpSocket* socket) const;
     //通过token获取socket 如果没有返回nullptr
     QTcpSocket* getSocket(const QString& token) const;
+    //把socket分配到对应的section
+    void assignSection(const QString& token, QTcpSocket* socket);
+    //创建一个多线程的section
+    SATCPSection* createSection(const QString &token);
 private:
     QTcpServer m_serve;
     QMap<QTcpSocket*,QString> m_socket2token;
     QMap<QString,QTcpSocket*> m_token2socket;
+    QHash<QString,SATCPSection*> m_token2section;
 };
 
 
@@ -81,6 +89,30 @@ QString SATCPServePrivate::makeToken(int pid, const QString &appID)
 QString SATCPServePrivate::getToken(QTcpSocket *socket) const
 {
     return m_socket2token.value(socket);
+}
+
+/**
+ * @brief 把socket分配到对应的section
+ * @param tocken
+ * @param socket
+ */
+void SATCPServePrivate::assignSection(const QString &token, QTcpSocket *socket)
+{
+    SATCPSection* section = m_token2section.value(token,nullptr);
+    if(nullptr == section)
+    {
+
+    }
+}
+
+SATCPSection *SATCPServePrivate::createSection(const QString &token)
+{
+    SATCPSection* section = new SATCPSection(q_ptr);
+    //记录section
+    m_token2section[token] = section;
+    //给section分配线程
+    QThread* thread = new QThread();
+    section->moveToThread(thread);
 }
 
 /**
@@ -156,5 +188,7 @@ void SATCPServe::_init()
     //信号转发
     connect(&(d_ptr->serve()),&QTcpServer::acceptError,this,&SATCPServe::acceptError);
 }
+
+
 
 

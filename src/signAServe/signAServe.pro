@@ -32,15 +32,17 @@ HEADERS += \
     SALocalServeSocketOpt.h \
     SAProcedure.h \
     3rdParty/CRC.h \
-    SATCPServe.h
+    SATCPServe.h \
+    SATCPSection_private.h
 
 
 
 SOURCES += \
-    SAAbstractRPCServe.cpp \
     SALocalServeSocketOpt.cpp \
     SAProcedure.cpp \
-    SATCPServe.cpp
+    SATCPServe.cpp \
+    SATCPSection.cpp \
+    SAAbstractServe.cpp
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
