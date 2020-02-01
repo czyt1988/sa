@@ -18,10 +18,6 @@ public:
     virtual bool listen(int port,const QHostAddress &address = QHostAddress::Any) = 0;
     //关闭
     virtual void close() = 0;
-    //
-    virtual bool hasPendingConnections() const = 0;
-    //
-    virtual QAbstractSocket *nextPendingConnection() = 0;
 
 };
 

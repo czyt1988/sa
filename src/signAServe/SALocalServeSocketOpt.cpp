@@ -126,8 +126,10 @@ bool SALocalServeSocketOpt::readFromSocket(void *p, int n)
  * @param head 头描述
  * @param datas 数据
  */
+
 void SALocalServeSocketOpt::deal(const SAProtocolHeader &head, const QByteArray &datas)
 {
+    /*
     if(!head.isValid())
         return;
     if(0 == datas.size())
@@ -199,6 +201,7 @@ void SALocalServeSocketOpt::deal(const SAProtocolHeader &head, const QByteArray 
     default:
         break;
     }
+    */
 }
 /**
  * @brief 开始定时握手
@@ -219,7 +222,7 @@ void SALocalServeSocketOpt::startAutoHeartbeat(int freTime)
  * @param header 头的文件大小必须设置
  * @param data 数据区
  */
-void SALocalServeSocketOpt::send(SALocalServeBaseHeader header, const QByteArray &data)
+void SALocalServeSocketOpt::send(SAProtocolHeader header, const QByteArray &data)
 {
     if(!isEnableToWrite())
     {
@@ -257,7 +260,8 @@ void SALocalServeSocketOpt::send(SALocalServeBaseHeader header, const QByteArray
  */
 void SALocalServeSocketOpt::sendLoginSucceed(uint key)
 {
-    SALocalServeBaseHeader h;
+    /*
+    SAProtocolHeader h;
     h.init();
     h.classID = SA_LOCAL_SER_LOGIN_CLASS;
     h.functionID = SA_LOCAL_SER_FUN_LOGINED;
@@ -270,6 +274,7 @@ void SALocalServeSocketOpt::sendLoginSucceed(uint key)
     QDataStream st(&buffer);
     st << h.tokenID;
     send(h,data);
+    */
 }
 /**
  * @brief 发送握手协议(2-1)
@@ -277,6 +282,7 @@ void SALocalServeSocketOpt::sendLoginSucceed(uint key)
  */
 void SALocalServeSocketOpt::sendHeartbeat(uint key)
 {
+    /*
     SALocalServeBaseHeader h;
     h.init();
     h.classID = SA_LOCAL_SER_SHAKEHAND_CLASS;
@@ -285,6 +291,7 @@ void SALocalServeSocketOpt::sendHeartbeat(uint key)
     h.tokenID = getToken();
     h.key = key;
     send(h,QByteArray());
+    */
 }
 /**
  * @brief 发送线性数组数据，应用于绘图程序绘制完图片后把绘图的点下发给处理进程进行进一步的数据分析
@@ -293,6 +300,7 @@ void SALocalServeSocketOpt::sendHeartbeat(uint key)
  */
 void SALocalServeSocketOpt::sendPointFSeries(const QVector<QPointF> &datas, uint key)
 {
+    /*
     SALocalServeBaseHeader h;
     h.init();
     h.type = SA_LOCAL_SER_PARAM_TYPE;
@@ -306,6 +314,7 @@ void SALocalServeSocketOpt::sendPointFSeries(const QVector<QPointF> &datas, uint
     QDataStream io(&buffer);
     io << datas;
     send(h,byteArray);
+    */
 }
 /**
  * @brief 发送字符串
@@ -314,6 +323,7 @@ void SALocalServeSocketOpt::sendPointFSeries(const QVector<QPointF> &datas, uint
  */
 void SALocalServeSocketOpt::sendString(const QString &str, uint key)
 {
+    /*
     SALocalServeBaseHeader h;
     h.init();
     h.type = SA_LOCAL_SER_PARAM_TYPE;
@@ -327,6 +337,7 @@ void SALocalServeSocketOpt::sendString(const QString &str, uint key)
     QDataStream io(&buffer);
     io << str;
     send(h,byteArray);
+    */
 }
 /**
  * @brief 发送错误
@@ -335,6 +346,7 @@ void SALocalServeSocketOpt::sendString(const QString &str, uint key)
  */
 void SALocalServeSocketOpt::sendErrorCode(const int errCode, uint key)
 {
+    /*
     SALocalServeBaseHeader h;
     h.init();
     h.type = SA_LOCAL_SER_ERROR_TYPE;
@@ -348,6 +360,7 @@ void SALocalServeSocketOpt::sendErrorCode(const int errCode, uint key)
     QDataStream io(&buffer);
     io << errCode;
     send(h,byteArray);
+    */
 }
 
 /**
@@ -357,6 +370,7 @@ void SALocalServeSocketOpt::sendErrorCode(const int errCode, uint key)
  */
 void SALocalServeSocketOpt::sendBin(const QByteArray &bin, uint key)
 {
+    /*
     SALocalServeBaseHeader h;
     h.init();
     h.type = SA_LOCAL_SER_PARAM_TYPE;
@@ -365,6 +379,7 @@ void SALocalServeSocketOpt::sendBin(const QByteArray &bin, uint key)
     h.tokenID = getToken();
     h.key = key;
     send(h,bin);
+    */
 }
 /**
  * @brief 处理登录成功
@@ -372,6 +387,7 @@ void SALocalServeSocketOpt::sendBin(const QByteArray &bin, uint key)
  */
 void SALocalServeSocketOpt::dealLoginSucceed(const QByteArray &datas, uint key)
 {
+    /*
     d_ptr->m_tokenID = 0;
     QDataStream st(datas);
     st >> (d_ptr->m_tokenID);
@@ -379,6 +395,7 @@ void SALocalServeSocketOpt::dealLoginSucceed(const QByteArray &datas, uint key)
     qDebug() << "dealLoginSucceed:" << d_ptr->m_tokenID;
 #endif
     emit loginSucceed(d_ptr->m_tokenID,key);
+    */
 }
 
 
@@ -436,6 +453,7 @@ void SALocalServeSocketOpt::onAutoHeartbeatTimeout()
 
 void SALocalServeSocketOpt::onReadyRead()
 {
+    /*
     const static unsigned int s_headerSize = sizeof(SALocalServeBaseHeader);
     if(d_ptr->m_isReadedMainHeader)
     {
@@ -545,6 +563,7 @@ void SALocalServeSocketOpt::onReadyRead()
             onReadyRead();
         }
     }
+    */
 }
 
 void SALocalServeSocketOpt::onDisconnected()
