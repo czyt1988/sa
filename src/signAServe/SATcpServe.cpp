@@ -1,4 +1,4 @@
-#include "SATCPServe.h"
+#include "SATcpServe.h"
 #include <SATcpSocket.h>
 #include <QList>
 #include <QThread>

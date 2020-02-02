@@ -13,17 +13,17 @@ class SASERVE_EXPORT SATCPServe : public QTcpServer
     Q_OBJECT
     SA_IMPL(SATCPServe)
 public:
-    SATCPServe(QObject *par);
+    SATCPServe(QObject *par = nullptr);
     ~SATCPServe();
     //获取当前所有socket
     QList<SATcpSocket*> getSockets() const;
+    virtual QTcpSocket * nextPendingConnection() override;
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
 protected slots:
 protected:
     //多线程模式，不允许调用此函数
     virtual bool hasPendingConnections() const override;
-    virtual QTcpSocket * nextPendingConnection() override;
 private slots:
     //处理线程结束触发的槽，用于清理变量
     void onThreadFinished();

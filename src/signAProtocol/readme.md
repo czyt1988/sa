@@ -14,3 +14,13 @@
 sa 协议分为xml和json两个版本
 
 基于xml的交互协议
+
+@startuml
+
+Class01 <|-- Class02:泛化
+Class03 <-- Class04:关联
+Class05 *-- Class06:组合
+Class07 o-- Class08:聚合
+Class09 -- Class10
+
+@enduml

@@ -12,7 +12,7 @@ class SATCPAssignServePrivate;
  * - 首先客户端必须和服务端进行连接并分配token，后续token是所有交互的关键，如果token失效需要从新建立注册
  * - 本类每对应一个token会创建一个线程进行处理
  */
-class SASERVE_EXPORT SATCPAssignServe : public QObject,SAAbstractServe
+class SASERVE_EXPORT SATCPAssignServe : public QObject, public SAAbstractServe
 {
     Q_OBJECT
     SA_IMPL(SATCPAssignServe)
@@ -23,8 +23,6 @@ public:
     virtual bool listen(int port,const QHostAddress &address = QHostAddress::Any);
     //关闭
     virtual void close();
-    //
-    virtual bool hasPendingConnections() const;
     //获取所有的连接
     QList<QAbstractSocket*> getAllConnection() const;
 signals:

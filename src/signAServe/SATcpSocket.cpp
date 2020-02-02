@@ -12,19 +12,21 @@ public:
     uint m_dataSize;
     uint m_index;
     QByteArray m_buffer;
+    SATcpSocketDelegate* m_delegate;
 };
 
 SATcpSocketPrivate::SATcpSocketPrivate(SATcpSocket *p):q_ptr(p)
   ,m_isReadedMainHeader(false)
   ,m_dataSize(0)
   ,m_index(0)
+  ,m_delegate(new SATcpSocketDelegate(p))
 {
 
 }
 
 void SATcpSocketPrivate::deal(const SAProtocolHeader &header, const QByteArray &data)
 {
-
+    m_delegate->deal(header,data);
 }
 
 SATcpSocket::SATcpSocket(QObject *par)
@@ -64,9 +66,38 @@ bool SATcpSocket::readFromSocket(void *p, int n)
     return ret;
 }
 
+SATcpSocketDelegate *SATcpSocket::getDelegate() const
+{
+    return d_ptr->m_delegate;
+}
+
+/**
+ * @brief 设置新代理，代理会自动把parent设定为satcpsocket
+ * @param delegate
+ * @note 旧的代理会被销毁，用户不需要手动销毁
+ */
+void SATcpSocket::setupDelegate(SATcpSocketDelegate *delegate)
+{
+    SATcpSocketDelegate* old = d_ptr->m_delegate;
+    if(old == delegate)
+    {
+        return;
+    }
+    if(nullptr != old)
+    {
+        delete old;
+    }
+    if(delegate->parent() != this)
+    {
+        delegate->setParent(this);
+    }
+    d_ptr->m_delegate = delegate;
+}
+
 void SATcpSocket::onReadyRead()
 {
     const static unsigned int s_headerSize = sizeof(SAProtocolHeader);
+
     if(d_ptr->m_isReadedMainHeader)
     {
         //此时已经读取了头
@@ -152,5 +183,6 @@ void SATcpSocket::onReadyRead()
         }
     }
 }
+
 
 
