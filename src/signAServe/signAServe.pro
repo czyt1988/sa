@@ -32,12 +32,10 @@ HEADERS += \
     SAProcedure.h \
     3rdParty/CRC.h \
     SATcpSocket.h \
-    SATcpSocketDelegate.h \
     SATcpServe.h \
     SATcpAssignServe.h \
     SAServeShareMemory.h \
     SATcpClient.h \
-    SATcpXMLSocketDelegate.h \
     SAServerDefine.h
 
 
@@ -47,12 +45,10 @@ SOURCES += \
     SAProcedure.cpp \
     SAAbstractServe.cpp \
     SATcpSocket.cpp \
-    SATcpSocketDelegate.cpp \
     SATcpServe.cpp \
     SATcpAssignServe.cpp \
     SAServeShareMemory.cpp \
-    SATcpClient.cpp \
-    SATcpXMLSocketDelegate.cpp
+    SATcpClient.cpp
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)

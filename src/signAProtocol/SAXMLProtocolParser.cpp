@@ -12,7 +12,7 @@ class SAXMLProtocolParserPrivate
     SA_IMPL_PUBLIC(SAXMLProtocolParser)
 public:
     SAXMLProtocolParserPrivate(SAXMLProtocolParser* p);
-    SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate& other);
+    SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate& other,SAXMLProtocolParser* p);
     ~SAXMLProtocolParserPrivate();
     //
     void copy(const SAXMLProtocolParserPrivate* other);
@@ -74,9 +74,10 @@ SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(SAXMLProtocolParser *p)
     mValuesEle.appendChild(mDefaultGroup);
 }
 
-SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate &other)
+SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate &other,SAXMLProtocolParser* p)
 {
     copy(&other);
+    q_ptr = p;
 }
 
 SAXMLProtocolParserPrivate::~SAXMLProtocolParserPrivate()
@@ -452,8 +453,8 @@ SAXMLProtocolParser &SAXMLProtocolParser::operator =(const SAXMLProtocolParser &
     {
         return *this;
     }
-    this->d_ptr.reset(new SAXMLProtocolParserPrivate(*(other.d_ptr.data())));
-    this->d_ptr->q_ptr = this;//这个尤为关键
+    this->d_ptr.reset(new SAXMLProtocolParserPrivate(*(other.d_ptr.data()),this));
+    //this->d_ptr->q_ptr = this;//这个尤为关键
     return *this;
 }
 

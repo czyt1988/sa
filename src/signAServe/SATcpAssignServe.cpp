@@ -4,7 +4,6 @@
 #include <QMap>
 #include <QCryptographicHash>
 #include <QThread>
-#include "SATcpSocketDelegate.h"
 
 class SATCPAssignServePrivate
 {

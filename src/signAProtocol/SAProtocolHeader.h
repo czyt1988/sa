@@ -13,9 +13,14 @@
 #define SA_PROTOCOL_HEADER_MAGIC_END (0xAA900615)
 #endif
 
+/// \def 定义type id - ：心跳
+#ifndef SA_PROTOCOL_TYPE_ID_HEARTBREAT
+#define SA_PROTOCOL_TYPE_ID_HEARTBREAT 0x1
+#endif
+
 /// \def 定义type id - ：xml协议
 #ifndef SA_PROTOCOL_TYPE_ID_XML_PROTOCOL
-#define SA_PROTOCOL_TYPE_ID_XML_PROTOCOL 0x10
+#define SA_PROTOCOL_TYPE_ID_XML_PROTOCOL 0x101
 #endif
 
 /**

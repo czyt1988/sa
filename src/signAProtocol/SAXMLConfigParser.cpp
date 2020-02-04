@@ -105,6 +105,12 @@ SAXMLConfigParser::SAXMLConfigParser(const SAXMLConfigParser &other)
     *this = other;
 }
 
+SAXMLConfigParser::SAXMLConfigParser(SAXMLConfigParser &&other):SAXMLConfigParser(other)
+{
+    this->d_ptr.reset(other.d_ptr.take());
+    d_ptr->q_ptr = this;//这个尤为关键
+}
+
 SAXMLConfigParser &SAXMLConfigParser::operator =(const SAXMLConfigParser &other)
 {
     //SAXMLProtocolParser::operator =(*(static_cast<const SAXMLProtocolParser*>(&other)));
@@ -114,6 +120,7 @@ SAXMLConfigParser &SAXMLConfigParser::operator =(const SAXMLConfigParser &other)
     }
     SAXMLProtocolParser::operator =(other);
     this->d_ptr.reset(new SAXMLConfigParserPrivate(*(other.d_ptr.data()),this));
+    //this->d_ptr->q_ptr = this;//这个尤为关键
     return *this;
 }
 

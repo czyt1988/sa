@@ -15,6 +15,7 @@ public:
     SAXMLConfigParser();
     SAXMLConfigParser(const QString& filepath);
     SAXMLConfigParser(const SAXMLConfigParser& other);
+    SAXMLConfigParser(SAXMLConfigParser&& other);
     SAXMLConfigParser& operator =(const SAXMLConfigParser& other);
     ~SAXMLConfigParser();
 public:

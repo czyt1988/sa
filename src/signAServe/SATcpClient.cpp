@@ -1,13 +1,12 @@
 #include "SATcpClient.h"
 #include <QHostAddress>
+#include <QCryptographicHash>
+#include <QDateTime>
 #include "SAServeShareMemory.h"
 #include "SATcpSocket.h"
-#include "SATcpSocketDelegate.h"
-#include "SATcpXMLSocketDelegate.h"
 #include "SACRC.h"
 #include "SAXMLProtocolParser.h"
 #include "SAServerDefine.h"
-
 class SATcpClientPrivate{
     SA_IMPL_PUBLIC(SATcpClient)
 public:
@@ -16,15 +15,22 @@ public:
     bool ensureWrite(const QByteArray& data);
     bool write(const SAProtocolHeader &header, const QByteArray &data);
     bool writeXml(const SAXMLProtocolParser *xml, int sequenceID = 0, uint32_t extendValue = 0);
+    // xml协议
     bool dealXmlProtocol(const SAProtocolHeader &header, const QByteArray &data);
     bool dealXmlRequestToken(const SAProtocolHeader &header,SAXMLProtocolParser& xml);
     bool dealXmlReplyToken(const SAProtocolHeader &header,SAXMLProtocolParser& xml);
     bool requestToken(int pid,const QString& appid);
+    //心跳协议
+    bool dealHeartbreatProtocol(const SAProtocolHeader &header, const QByteArray &data);
+    bool requestHeartbreat();
+public:
     SATcpSocket* m_socket;
+    QDateTime m_lastRecHeartbreakDatetime;
 };
 
 SATcpClientPrivate::SATcpClientPrivate(SATcpClient *p):q_ptr(p)
   ,m_socket(new SATcpSocket(p))
+  ,m_lastRecHeartbreakDatetime(QDateTime::currentDateTime())
 {
 
 }
@@ -56,7 +62,11 @@ bool SATcpClientPrivate::write(const SAProtocolHeader &header, const QByteArray 
 {
     bool stat = false;
     stat = ensureWrite((const char*)(&header),sizeof(SAProtocolHeader));
-    stat &= ensureWrite(data);
+    if(data.size()>0)
+    {
+        stat &= ensureWrite(data);
+    }
+    m_socket->flush();
     return stat;
 }
 
@@ -87,11 +97,11 @@ bool SATcpClientPrivate::dealXmlProtocol(const SAProtocolHeader &header, const Q
         switch (funid) {
         case SA_SERVER_FUN_TOKEN_REQ:
             //收到token请求，生成token并答复
-            return dealRequestToken(header,xml);
+            return dealXmlRequestToken(header,xml);
             break;
         case SA_SERVER_FUN_TOKEN_REPLY:
             //收到生成的token，并发送信号
-            dealReplyToken(header,xml);
+            dealXmlReplyToken(header,xml);
             return true;
         default:
             break;
@@ -103,16 +113,64 @@ bool SATcpClientPrivate::dealXmlProtocol(const SAProtocolHeader &header, const Q
     return false;
 }
 
+/**
+ * @brief 处理token的请求
+ *
+ * 此操作主要在服务端会触发，在接收到SA_SERVER_FUN_TOKEN_REQ时会调用
+ * @param header
+ * @param xml
+ * @return
+ */
 bool SATcpClientPrivate::dealXmlRequestToken(const SAProtocolHeader &header, SAXMLProtocolParser &xml)
 {
+    FUNCTION_RUN_PRINT();
+    int pid = xml.getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"pid",0).toInt();
+    QString appid = xml.getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"appid","").toString();
+    QString token = SATcpClient::makeToken(pid,appid);
+    SAXMLProtocolParser data;
+    data.setClassID(SA_SERVER_CLASS_TOKEN);
+    data.setFunctionID(SA_SERVER_FUN_TOKEN_REPLY);
+    data.setValue("token",token);
+    return writeXml(&data,header.sequenceID,header.extendValue);
 
 }
 
 bool SATcpClientPrivate::dealXmlReplyToken(const SAProtocolHeader &header, SAXMLProtocolParser &xml)
 {
-
+    FUNCTION_RUN_PRINT();
+    QString token = xml.getValue("token").toString();
+    q_ptr->emitReplyToken(token,header.sequenceID);
+    return true;
 }
 
+bool SATcpClientPrivate::dealHeartbreatProtocol(const SAProtocolHeader &header, const QByteArray &data)
+{
+    Q_UNUSED(header);
+    Q_UNUSED(data);
+    m_lastRecHeartbreakDatetime = QDateTime::currentDateTime();
+    return true;
+}
+
+/**
+ * @brief 心跳请求
+ * @return
+ */
+bool SATcpClientPrivate::requestHeartbreat()
+{
+    FUNCTION_RUN_PRINT();
+    SAProtocolHeader header;
+    header.init();
+    header.dataSize = 0;
+    header.typeID = SA_PROTOCOL_TYPE_ID_HEARTBREAT;
+    header.extendValue = 1; // 心跳请求值为1
+    return write(header,QByteArray());
+}
+/**
+ * @brief 发送token请求
+ * @param pid
+ * @param appid
+ * @return
+ */
 bool SATcpClientPrivate::requestToken(int pid, const QString &appid)
 {
     FUNCTION_RUN_PRINT();
@@ -155,11 +213,41 @@ bool SATcpClient::deal(const SAProtocolHeader &header, const QByteArray &data)
     {
         return false;
     }
-    if(header.typeID == SA_PROTOCOL_TYPE_ID_XML_PROTOCOL)
+    switch (header.typeID)
     {
-        return d_ptr->dealXmlProtocol(header,&p);
+    case SA_PROTOCOL_TYPE_ID_HEARTBREAT:
+        return d_ptr->dealHeartbreatProtocol(header,data);
+    case SA_PROTOCOL_TYPE_ID_XML_PROTOCOL:
+        return d_ptr->dealXmlProtocol(header,data);
+    default:
+        break;
     }
     return false;
+}
+
+/**
+ * @brief 根据pid和appid创建token
+ * @param pid
+ * @param appID
+ * @return
+ */
+QString SATcpClient::makeToken(int pid, const QString &appID)
+{
+    QByteArray pidraw;
+    pidraw.setNum(pid);
+    QByteArray mixcode = QCryptographicHash::hash(pidraw,QCryptographicHash::Md5)
+            + QCryptographicHash::hash(appID.toUtf8(),QCryptographicHash::Sha3_256);
+    QString res = QString(mixcode.toBase64()).toUtf8();
+    return res;
+}
+
+/**
+ * @brief 获取socket指针
+ * @return
+ */
+SATcpSocket *SATcpClient::getSocket() const
+{
+    return d_ptr->m_socket;
 }
 
 bool SATcpClient::connectToServe(int timeout)
@@ -187,6 +275,11 @@ void SATcpClient::requestToken(int pid, const QString &appid)
     d_ptr->requestToken(pid,appid);
 }
 
+void SATcpClient::requestHeartbreat()
+{
+    d_ptr->requestHeartbreat();
+}
+
 void SATcpClient::socketConnected()
 {
 
@@ -204,9 +297,14 @@ void SATcpClient::onReceivedData(const SAProtocolHeader &header, const QByteArra
 
 void SATcpClient::init()
 {
-    connect(&(d_ptr->m_socket),&QAbstractSocket::connected,this,&SATcpClient::socketConnected);
-    connect(&(d_ptr->m_socket),&QAbstractSocket::disconnected,this,&SATcpClient::socketDisconnected);
-    connect(&(d_ptr->m_socket),&SATcpSocket::receivedData,this,&SATcpClient::onReceivedData);
+    connect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::socketConnected);
+    connect(d_ptr->m_socket,&QAbstractSocket::disconnected,this,&SATcpClient::socketDisconnected);
+    connect(d_ptr->m_socket,&SATcpSocket::receivedData,this,&SATcpClient::onReceivedData);
+}
+
+void SATcpClient::emitReplyToken(const QString &token, int sequenceID)
+{
+    emit replyToken(token,sequenceID);
 }
 
 
