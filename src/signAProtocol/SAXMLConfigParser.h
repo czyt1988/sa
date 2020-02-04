@@ -1,7 +1,6 @@
 #ifndef SAXMLCONFIGPARSER_H
 #define SAXMLCONFIGPARSER_H
 #include "SAProtocolGlobal.h"
-#include <QObject>
 #include <QVariant>
 #include "SAXMLProtocolParser.h"
 class SAXMLConfigParserPrivate;
@@ -11,11 +10,12 @@ class SAXMLConfigParserPrivate;
  */
 class SA_PROTOCOL_EXPORT SAXMLConfigParser : public SAXMLProtocolParser
 {
-    Q_OBJECT
     SA_IMPL(SAXMLConfigParser)
 public:
-    SAXMLConfigParser(QObject* par = nullptr);
-    SAXMLConfigParser(const QString& filepath,QObject* par = nullptr);
+    SAXMLConfigParser();
+    SAXMLConfigParser(const QString& filepath);
+    SAXMLConfigParser(const SAXMLConfigParser& other);
+    SAXMLConfigParser& operator =(const SAXMLConfigParser& other);
     ~SAXMLConfigParser();
 public:
     bool setFilePath(const QString& filePath);

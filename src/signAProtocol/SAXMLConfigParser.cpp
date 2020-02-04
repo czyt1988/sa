@@ -24,12 +24,14 @@ class SAXMLConfigParserPrivate
 {
     SA_IMPL_PUBLIC(SAXMLConfigParser)
 public:
-    QString m_cfgPath;
-    bool m_isDirty;
     SAXMLConfigParserPrivate(SAXMLConfigParser* par);
     SAXMLConfigParserPrivate(SAXMLConfigParser* par,const QString& cfgPath);
+    SAXMLConfigParserPrivate(const SAXMLConfigParserPrivate& other,SAXMLConfigParser* p);
     bool setCfgFile(const QString& cfgPath);
     bool save(const QString& saveFilePath);
+public:
+    QString m_cfgPath;
+    bool m_isDirty;
 };
 
 
@@ -44,6 +46,13 @@ SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(SAXMLConfigParser *par, const
     ,m_isDirty(false)
 {
     setCfgFile(cfgPath);
+}
+
+SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(const SAXMLConfigParserPrivate &other,SAXMLConfigParser *p)
+{
+    this->q_ptr = p;
+    this->m_cfgPath = other.m_cfgPath;
+    this->m_isDirty = other.m_isDirty;
 }
 
 
@@ -79,16 +88,33 @@ bool SAXMLConfigParserPrivate::save(const QString &saveFilePath)
 }
 
 
-SAXMLConfigParser::SAXMLConfigParser(QObject *par):SAXMLProtocolParser(par)
+SAXMLConfigParser::SAXMLConfigParser():SAXMLProtocolParser()
     ,d_ptr(new SAXMLConfigParserPrivate(this))
 {
     
 }
 
-SAXMLConfigParser::SAXMLConfigParser(const QString &filepath, QObject *par):SAXMLProtocolParser(par)
+SAXMLConfigParser::SAXMLConfigParser(const QString &filepath):SAXMLProtocolParser()
     ,d_ptr(new SAXMLConfigParserPrivate(this,filepath))
 {
     
+}
+
+SAXMLConfigParser::SAXMLConfigParser(const SAXMLConfigParser &other)
+{
+    *this = other;
+}
+
+SAXMLConfigParser &SAXMLConfigParser::operator =(const SAXMLConfigParser &other)
+{
+    //SAXMLProtocolParser::operator =(*(static_cast<const SAXMLProtocolParser*>(&other)));
+    if (this == (&other))
+    {
+        return *this;
+    }
+    SAXMLProtocolParser::operator =(other);
+    this->d_ptr.reset(new SAXMLConfigParserPrivate(*(other.d_ptr.data()),this));
+    return *this;
 }
 
 SAXMLConfigParser::~SAXMLConfigParser()

@@ -12,7 +12,10 @@ class SAXMLProtocolParserPrivate
     SA_IMPL_PUBLIC(SAXMLProtocolParser)
 public:
     SAXMLProtocolParserPrivate(SAXMLProtocolParser* p);
+    SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate& other);
     ~SAXMLProtocolParserPrivate();
+    //
+    void copy(const SAXMLProtocolParserPrivate* other);
     bool isValid() const;
     bool fromByteArray(const QByteArray &data);
     bool fromString(const QString &str);
@@ -38,6 +41,8 @@ public:
     void setFunID(int funid);
     //清空内容
     void _clear();
+
+public:
     int mClassID;
     int mFunID;
     QDomDocument mDoc;
@@ -69,9 +74,29 @@ SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(SAXMLProtocolParser *p)
     mValuesEle.appendChild(mDefaultGroup);
 }
 
+SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate &other)
+{
+    copy(&other);
+}
+
 SAXMLProtocolParserPrivate::~SAXMLProtocolParserPrivate()
 {
 
+}
+
+void SAXMLProtocolParserPrivate::copy(const SAXMLProtocolParserPrivate *other)
+{
+    this->mClassID = other->mClassID;
+    this->mDefaultGroup = other->mDefaultGroup;
+    this->mDoc = other->mDoc;
+    this->mErrorMsg = other->mErrorMsg;
+    this->mFunID = other->mFunID;
+    this->mGroupEle = other->mGroupEle;
+    this->mIsValid = other->mIsValid;
+    this->mItemEles = other->mItemEles;
+    this->mRootEle = other->mRootEle;
+    this->mValuesEle = other->mValuesEle;
+    //this->q_ptr = other->q_ptr; //这个绝对不能有
 }
 
 bool SAXMLProtocolParserPrivate::isValid() const
@@ -401,10 +426,35 @@ void SAXMLProtocolParserPrivate::_clear()
 }
 
 
-SAXMLProtocolParser::SAXMLProtocolParser(QObject *par):SAAbstractProtocolParser(par)
+
+
+SAXMLProtocolParser::SAXMLProtocolParser():SAAbstractProtocolParser()
   ,d_ptr(new SAXMLProtocolParserPrivate(this))
 {
 
+}
+
+SAXMLProtocolParser::SAXMLProtocolParser(const SAXMLProtocolParser &other):SAAbstractProtocolParser()
+{
+    (*this) = other;
+}
+
+SAXMLProtocolParser::SAXMLProtocolParser(SAXMLProtocolParser &&other):SAAbstractProtocolParser()
+{
+    this->d_ptr.reset(other.d_ptr.take());
+    d_ptr->q_ptr = this;//这个尤为关键
+}
+
+SAXMLProtocolParser &SAXMLProtocolParser::operator =(const SAXMLProtocolParser &other)
+{
+    // 1.防止自身赋值
+    if (this == (&other))
+    {
+        return *this;
+    }
+    this->d_ptr.reset(new SAXMLProtocolParserPrivate(*(other.d_ptr.data())));
+    this->d_ptr->q_ptr = this;//这个尤为关键
+    return *this;
 }
 
 SAXMLProtocolParser::~SAXMLProtocolParser()

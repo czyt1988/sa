@@ -4,17 +4,9 @@
 #include "SAXMLProtocolParser.h"
 #include "SAServerDefine.h"
 #include "SACRC.h"
-#define __PRINT_DEBUG_INFO 1
 
-#if __PRINT_DEBUG_INFO
-#include <QDebug>
-#define RECORD_PRINT() \
-    do{\
-      qDebug() << " >> fun:" << __FUNCTION__ << " line:" << __LINE__;\
-    }while(0)
-#else
-#define RECORD_PRINT()
-#endif
+
+
 
 class SATcpXMLSocketDelegatePrivate
 {

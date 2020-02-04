@@ -1,16 +1,14 @@
 #ifndef SAABSTRACTPROTOCOLPARSER_H
 #define SAABSTRACTPROTOCOLPARSER_H
-#include <QObject>
 #include <QVariant>
 /**
  * @brief sa协议解析基类
  * @see SAAbstractProtocolMaker
  */
-class SAAbstractProtocolParser : public QObject
+class SAAbstractProtocolParser
 {
-    Q_OBJECT
 public:
-    SAAbstractProtocolParser(QObject* par = nullptr);
+    SAAbstractProtocolParser();
     virtual ~SAAbstractProtocolParser();
 public:
     /**

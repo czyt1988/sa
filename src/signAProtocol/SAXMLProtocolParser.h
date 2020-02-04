@@ -58,11 +58,15 @@ class SAXMLProtocolParserPrivate;
  */
 class SA_PROTOCOL_EXPORT SAXMLProtocolParser : public SAAbstractProtocolParser
 {
-    Q_OBJECT
     SA_IMPL(SAXMLProtocolParser)
 public:
-    SAXMLProtocolParser(QObject* par = nullptr);
-    ~SAXMLProtocolParser();
+    SAXMLProtocolParser();
+    SAXMLProtocolParser(const SAXMLProtocolParser& other);
+    //移动构造函数
+    SAXMLProtocolParser(SAXMLProtocolParser&& other);
+    SAXMLProtocolParser &operator =(const SAXMLProtocolParser& other);
+    virtual ~SAXMLProtocolParser();
+
     //设置协议功能号
     virtual void setFunctionID(int funid);
     //获取协议功能号
