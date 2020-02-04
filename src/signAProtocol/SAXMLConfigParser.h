@@ -30,7 +30,7 @@ public:
     bool saveAs(const QString& filePath);
 protected:
     // 设置协议的内容
-    virtual bool setProtocolData(const QByteArray& data) override;
+    virtual bool fromByteArray(const QByteArray& data) override;
 private:
     static void splitNamePath(const QString& namePaht, QString& groupName, QString& keyName);
 };

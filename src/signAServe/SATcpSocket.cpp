@@ -1,12 +1,14 @@
 #include "SATcpSocket.h"
 #include "SAProtocolHeader.h"
 #include "SAXMLProtocolParser.h"
+#include "SATcpXMLSocketDelegate.h"
 class SATcpSocketPrivate
 {
     SA_IMPL_PUBLIC(SATcpSocket)
 public:
     SATcpSocketPrivate(SATcpSocket* p);
-    void deal(const SAProtocolHeader& header,const QByteArray& data);
+    void reset();
+    void mallocBuffer(size_t size);
     SAProtocolHeader m_mainHeader;
     bool m_isReadedMainHeader;
     uint m_dataSize;
@@ -19,14 +21,23 @@ SATcpSocketPrivate::SATcpSocketPrivate(SATcpSocket *p):q_ptr(p)
   ,m_isReadedMainHeader(false)
   ,m_dataSize(0)
   ,m_index(0)
-  ,m_delegate(new SATcpSocketDelegate(p))
+  ,m_delegate(new SATcpXMLSocketDelegate(p))
 {
 
 }
 
-void SATcpSocketPrivate::deal(const SAProtocolHeader &header, const QByteArray &data)
+void SATcpSocketPrivate::reset()
 {
-    m_delegate->deal(header,data);
+    m_isReadedMainHeader = false;
+    m_dataSize = 0;
+    m_index = 0;
+}
+
+void SATcpSocketPrivate::mallocBuffer(size_t size)
+{
+    m_buffer.resize(size);
+    m_index = 0;
+    m_dataSize = size;
 }
 
 SATcpSocket::SATcpSocket(QObject *par)
@@ -94,6 +105,12 @@ void SATcpSocket::setupDelegate(SATcpSocketDelegate *delegate)
     d_ptr->m_delegate = delegate;
 }
 
+void SATcpSocket::deal(const SAProtocolHeader &header, const QByteArray &data)
+{
+    d_ptr->m_delegate->deal(header,data);
+    emit receivedData(header, data);
+}
+
 void SATcpSocket::onReadyRead()
 {
     const static unsigned int s_headerSize = sizeof(SAProtocolHeader);
@@ -115,7 +132,7 @@ void SATcpSocket::onReadyRead()
             }
             if(!readFromSocket(d_ptr->m_buffer.data()+d_ptr->m_index,d_ptr->m_mainHeader.dataSize-d_ptr->m_index))
             {
-                d_ptr->m_isReadedMainHeader = false;
+                d_ptr->reset();
                 abort();
                 qDebug() << "socket abort!!!  can not read from socket io!";
                 return;
@@ -123,23 +140,28 @@ void SATcpSocket::onReadyRead()
 #ifdef _DEBUG_PRINT
             printQByteArray(d_ptr->m_buffer);
 #endif
-            d_ptr->m_index += d_ptr->m_mainHeader.dataSize;
-            d_ptr->m_isReadedMainHeader = false;
+            deal(d_ptr->m_mainHeader,d_ptr->m_buffer);
+            d_ptr->reset();
             if(bytesAvailable() >= s_headerSize)
             {
                 onReadyRead();
             }
         }
+        else
+        {
+            //说明一次没把数据接收完
+
+        }
     }
     else if(bytesAvailable() >= s_headerSize)
     {
-        //说明包头数据接收完
+        //说明包头还未接收
+        //但socket收到的数据已经满足包头数据需要的数据
 #ifdef _DEBUG_PRINT
         qDebug() <<"main header may receive:"
                 << "\r\n byte available:"<<bytesAvailable()
                     ;
 #endif
-        d_ptr->m_index = 0;
         if(!readFromSocket((void*)(&(d_ptr->m_mainHeader)),s_headerSize))
         {
             qDebug() << "can not read from socket" << __LINE__;
@@ -152,24 +174,28 @@ void SATcpSocket::onReadyRead()
                  << d_ptr->m_mainHeader
                  ;
 #endif
-        d_ptr->m_index = 0;
+        d_ptr->m_index = 0; // 不需要mallocBuffer会设置此值
         if(!(d_ptr->m_mainHeader.isValid()))
         {
-            d_ptr->m_isReadedMainHeader = false;
+            d_ptr->reset();
             qDebug() << "receive unknow header[1]"
                      << "\n" << d_ptr->m_mainHeader;
             abort();
             return;
         }
+
         if(d_ptr->m_mainHeader.dataSize > 0)
         {
             //说明文件头之后有数据
             d_ptr->m_isReadedMainHeader = true;
+            //分配好内存
+            d_ptr->mallocBuffer(d_ptr->m_mainHeader.dataSize);
         }
         else
         {
             //说明文件头之后无数据
-            d_ptr->deal(d_ptr->m_mainHeader,QByteArray());
+            deal(d_ptr->m_mainHeader,QByteArray());
+            d_ptr->reset();
             d_ptr->m_isReadedMainHeader = false;
         }
 

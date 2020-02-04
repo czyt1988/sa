@@ -20,8 +20,23 @@ public:
     SATcpSocketDelegate(SATcpSocket* socket);
     ~SATcpSocketDelegate();
     //处理数据
-    virtual bool deal(const SAProtocolHeader& header,const QByteArray& data);
-
+    virtual bool deal(const SAProtocolHeader& header,const QByteArray& data) = 0;
+    //写入数据
+    virtual bool write(const SAProtocolHeader& header,const QByteArray& data);
+    //
+    SATcpSocket* socket();
+    const SATcpSocket* socket() const;
+public slots:
+    //请求token
+    virtual void requestToken(int pid,const QString& appid) = 0;
+signals:
+    /**
+     * @brief 应答返回token
+     * @param token token值
+     * @param sequenceID 流水id
+     * @return
+     */
+    Q_SIGNAL void replyToken(const QString& token,int sequenceID);
 };
 
 #endif // SATCPSECTION_PRIVATE_H

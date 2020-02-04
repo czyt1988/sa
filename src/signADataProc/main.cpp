@@ -6,11 +6,12 @@
 #include "SADataProcServe.h"
 #include <QDebug>
 #include <QMessageBox>
-#include <QSharedMemory>
 #include <stdio.h>
 #include <stdlib.h>
 #include <QFile>
 #include <QDateTime>
+#include <QHostInfo>
+#include "SAServeShareMemory.h"
 #include "SACsvStream.h"
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -52,12 +53,11 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
-    QSharedMemory share("signaDataProc.Main");
-    if(share.attach())
+    SAServeShareMemory& sharemem = SAServeShareMemory::getInstance(true);
+    if(!sharemem.isValid())
     {
-        return 0;
+        return -1;
     }
-    share.create(1);
     qInstallMessageHandler(myMessageOutput);
     QApplication a(argc, argv);
     QStringList argsList = a.arguments();
@@ -78,7 +78,24 @@ int main(int argc, char *argv[])
         qDebug() << "arg2 invalid ret 2";
         return 2;
     }
-    SADataProcServe client;
-    client.setPid(pid);
+    SADataProcServe serve;
+    serve.setPid(pid);
+    int islisten = 0;
+    int port = 10098;
+    do
+    {
+        ++port;
+        if(serve.listen(port))
+        {
+            qDebug() << "listen success,port is:" << port;
+            islisten = 1;
+            break;
+        }
+    }while(1 != islisten && port < 65536);
+    //监听成功后写入端口
+    sharemem.setListenState(1 == islisten);
+    sharemem.setPort(port);
     return a.exec();
 }
+
+

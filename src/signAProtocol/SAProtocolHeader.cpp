@@ -40,10 +40,8 @@ QDebug& operator<<(QDebug& debug, const SAProtocolHeader &d)
     debug << "SAProtocolHeader is valid:" << d.isValid()
           << "\n{"
           << "\n magic_start:0x" << hex << d.magic_start
-          << "\n token:" << token
           << "\n sequenceID:" << dec << d.sequenceID
-          << "\n classID:" << d.classID
-          << "\n functionID:" << d.functionID
+          << "\n typeID:" << d.typeID
           << "\n dataSize:" << d.dataSize
           << "\n extendValue:" << d.extendValue
           << "\n dataCrc32:0x" << hex << d.dataCrc32

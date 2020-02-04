@@ -14,11 +14,39 @@ public:
     virtual ~SAAbstractProtocolParser();
 public:
     /**
+     * @brief setFunctionID 设置协议功能号
+     * @param funid 功能号
+     */
+    virtual void setFunctionID(int funid) = 0;
+    /**
+     * @brief getFunctionID 获取协议功能号
+     * @return
+     */
+    virtual int getFunctionID() const = 0;
+    /**
+     * @brief setClassID 设置协议类号
+     * @param classid
+     */
+    virtual void setClassID(int classid) = 0;
+    /**
+     * @brief getClassID 获取协议类号
+     * @return
+     */
+    virtual int getClassID() const = 0;
+    /**
      * @brief 设置协议的内容
      * @param data
      * @return
+     * @see toByteArray
      */
-    virtual bool setProtocolData(const QByteArray& data) = 0;
+    virtual bool fromByteArray(const QByteArray& data) = 0;
+    /**
+     * @brief 从字符串转换到协议
+     * @param str
+     * @return
+     * @see toString
+     */
+    virtual bool fromString(const QString& str) = 0;
     /**
      * @brief 设置键值
      * @param groupName 分组名
@@ -27,6 +55,13 @@ public:
      * @note 斜杠是分组和键值的分割符，因此键值不应该存在斜杠，否则会有无法预料的结果
      */
     virtual void setValue(const QString& groupName, const QString& keyName, const QVariant& var) = 0;
+    /**
+     * @brief 设置键值
+     * @param keyName 键值名
+     * @param var 值
+     * @note 没有指定分组，会写入默认分组中
+     */
+    virtual void setValue(const QString& keyName, const QVariant& var) = 0;
     /**
      * @brief 获取所有目录关键字
      * @return
@@ -43,6 +78,12 @@ public:
      * @return utf8编码的文本
      */
     virtual QString toString() const = 0;
+    /**
+     * @brief 转换为bytearray
+     * @return
+     * @see fromByteArray
+     */
+    virtual QByteArray toByteArray() const = 0;
     /**
      * @brief 检测是否存在分组
      * @param groupName 分组名
@@ -62,9 +103,15 @@ public:
      * @param keyName 键值名
      * @param defaultVal 默认值（如果键值不存在，返回默认值）
      * @return 如果键值不存在，返回默认值，如果存在返回键值对应的内容
-     * @note 斜杠是分组和键值的分割符，因此键值不应该存在斜杠，否则会有无法预料的结果
      */
     virtual QVariant getValue(const QString& groupName, const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
+    /**
+     * @brief 从默认分组获取键值对应的内容
+     * @param keyName 键值名
+     * @param defaultVal 默认值（如果键值不存在，返回默认值）
+     * @return
+     */
+    virtual QVariant getValue(const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
 
 };
 

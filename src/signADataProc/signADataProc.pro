@@ -34,12 +34,10 @@ INCLUDEPATH += $$PWD
 
 
 SOURCES += main.cpp \
-    SADataProcServe.cpp \
-    SALocalServeSocketServeParse.cpp
+    SADataProcServe.cpp
 
 HEADERS += \
-    SADataProcServe.h \
-    SALocalServeSocketServeParse.h
+    SADataProcServe.h
     
 
 #sa api support
@@ -48,6 +46,7 @@ HEADERS += \
 include($$PWD/../signALib/signALib.pri)
 include($$PWD/../signAProcess/signAProcess.pri)
 include($$PWD/../signAProtocol/signAProtocol.pri)
+include($$PWD/../signAServe/signAServe.pri)
 #}
 
 

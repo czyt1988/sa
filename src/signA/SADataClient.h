@@ -1,6 +1,7 @@
 #ifndef SADATACLIENT_H
 #define SADATACLIENT_H
 #include "../global/SAGlobals.h"
+#include "SATcpClient.h"
 #include <QObject>
 
 SA_IMPL_FORWARD_DECL(SADataClient)
@@ -16,15 +17,13 @@ SA_IMPL_FORWARD_DECL(SADataClient)
  *
  * @endcode
  */
-class SADataClient : public QObject
+class SADataClient : public SATcpClient
 {
     SA_IMPL(SADataClient)
     Q_OBJECT
 public:
     SADataClient(QObject* p=nullptr);
     ~SADataClient();
-    //连接到服务器
-    void connectToServer();
 signals:
     /**
      * @brief 通知消息投递

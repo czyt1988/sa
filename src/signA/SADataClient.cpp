@@ -1,6 +1,5 @@
 #include "SADataClient.h"
 #include <QLocalSocket>
-#include "SALocalServeSocketClineParse.h"
 #include "SALocalServerDefine.h"
 #include <QApplication>
 #include <memory>
@@ -8,7 +7,8 @@
 #include <QDateTime>
 #include <QMap>
 #include <QProcess>
-#include "SAXMLReadHelper.h"
+#include <QTimer>
+#include "SATcpSocket.h"
 
 
 /// \def 连接不上的计数
@@ -23,8 +23,7 @@ public:
     SADataClientPrivate(SADataClient* p);
     ~SADataClientPrivate();
     short mConnectRetryCount;///< 重连服务器次数
-    std::unique_ptr<QLocalSocket> mDataProcessSocket;///< 数据处理对应的socket
-    std::unique_ptr<SALocalServeSocketClineParse> mSocketOpt;///< 处理m_dataProcessSocket的具体封装
+    std::unique_ptr<SATcpSocket> mDataProcessSocket;///< 数据处理对应的socket
     QDateTime mLastHeartbeatTime;///< 记录心跳间隔时长
     std::unique_ptr<QDateTime> mStartSpeedTestDatetime;///< 记录开始测试的时间
     QTimer mHeartbeatChecker;///< 用于定时检测心跳
@@ -39,13 +38,10 @@ SADataClientPrivate::SADataClientPrivate(SADataClient *p)
     :q_ptr(p)
     ,mConnectRetryCount(CONNECT_RETRY_COUNT)
     ,mDataProcessSocket(nullptr)
-    ,mSocketOpt(nullptr)
     ,mLastHeartbeatTime(QDateTime::currentDateTime())
     ,mLossHeartbeatCount(0)
 {
-    mErrcodeToString[SALocalServe::Unknow] = QObject::tr("unknow");
-    mErrcodeToString[SALocalServe::ReceiveDataError] = QObject::tr("Receive Data Error");
-    mErrcodeToString[SALocalServe::ReceiveUnknowHeader] = QObject::tr("Receive Unknow Header");
+
 }
 
 SADataClientPrivate::~SADataClientPrivate()
@@ -79,7 +75,7 @@ void SADataClient::connectToServer()
     {
         d_ptr->mDataProcessSocket.reset();
     }
-    d_ptr->mDataProcessSocket = std::make_unique<QLocalSocket>(this);
+    d_ptr->mDataProcessSocket = std::make_unique<SATcpSocket>(this);
     connect(d_ptr->mDataProcessSocket.get(),&QLocalSocket::disconnected
             ,this,&SADataClient::onLocalSocketDisconnect);
      d_ptr->mConnectRetryCount = CONNECT_RETRY_COUNT;

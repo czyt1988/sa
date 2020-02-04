@@ -54,7 +54,7 @@ bool SAXMLConfigParserPrivate::setCfgFile(const QString &cfgPath)
     {
         return false;
     }
-    if(q_ptr->setProtocolData(file.readAll()))
+    if(q_ptr->fromByteArray(file.readAll()))
     {
         m_cfgPath = cfgPath;
         return true;
@@ -165,9 +165,9 @@ bool SAXMLConfigParser::saveAs(const QString &filePath)
  * @param data
  * @return
  */
-bool SAXMLConfigParser::setProtocolData(const QByteArray &data)
+bool SAXMLConfigParser::fromByteArray(const QByteArray &data)
 {
-    return SAXMLProtocolParser::setProtocolData(data);
+    return SAXMLProtocolParser::fromByteArray(data);
 }
 
 /**

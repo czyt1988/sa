@@ -22,6 +22,15 @@ public:
     //创建delegate
     template<typename T, typename... _Args>
     SATcpSocketDelegate* makeDelegate(_Args&&... __args) const;
+protected:
+    virtual void deal(const SAProtocolHeader &header, const QByteArray &data);
+signals:
+    /**
+     * @brief 数据到达
+     * @param header 包头
+     * @param data 数据
+     */
+    void receivedData(const SAProtocolHeader &header, const QByteArray &data);
 private slots:
     void onReadyRead();
     

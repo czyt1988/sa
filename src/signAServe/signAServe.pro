@@ -28,14 +28,17 @@ HEADERS += \
     /../global/SAGlobals.h \
     SAServeGlobal.h \
     SAAbstractServe.h \
-    SALocalServerDefine.h \
     SALocalServeSocketOpt.h \
     SAProcedure.h \
     3rdParty/CRC.h \
     SATcpSocket.h \
     SATcpSocketDelegate.h \
     SATcpServe.h \
-    SATcpAssignServe.h
+    SATcpAssignServe.h \
+    SAServeShareMemory.h \
+    SATcpClient.h \
+    SATcpXMLSocketDelegate.h \
+    SAServerDefine.h
 
 
 
@@ -46,9 +49,13 @@ SOURCES += \
     SATcpSocket.cpp \
     SATcpSocketDelegate.cpp \
     SATcpServe.cpp \
-    SATcpAssignServe.cpp
+    SATcpAssignServe.cpp \
+    SAServeShareMemory.cpp \
+    SATcpClient.cpp \
+    SATcpXMLSocketDelegate.cpp
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
 include($$PWD/../czy/czy.pri)
 
+OTHER_FILES += readme.md

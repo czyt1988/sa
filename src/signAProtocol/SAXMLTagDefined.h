@@ -34,6 +34,18 @@
 #ifndef SA_XML_TAG_VALUES
 #define SA_XML_TAG_VALUES "values"
 #endif
+/// \def default-group标签 用于标记一默认分组
+#ifndef SA_XML_TAG_DEFAULTGROUP
+#define SA_XML_TAG_DEFAULTGROUP "default-group"
+#endif
+/// \def group标签 用于标记一组项目
+#ifndef SA_XML_TAG_GROUP
+#define SA_XML_TAG_GROUP "group"
+#endif
+/// \def item标签 用于标记一个项目
+#ifndef SA_XML_TAG_ITEM
+#define SA_XML_TAG_ITEM "item"
+#endif
 /// \def int val int型数据
 #ifndef SA_XML_TAG_INTVAL
 #define SA_XML_TAG_INTVAL "intVal"
@@ -45,6 +57,16 @@
 /// \def quintptr型数据
 #ifndef SA_XML_TAG_QUINTPTR
 #define SA_XML_TAG_QUINTPTR "quintptrVal"
+#endif
+
+/// \def <sa>的属性类号<sa classid="xxx">
+#ifndef SA_XML_ATT_NAME_CLASSID
+#define SA_XML_ATT_NAME_CLASSID "classid"
+#endif
+
+/// \def <sa>的属性功能号<sa funid="xxx">
+#ifndef SA_XML_ATT_NAME_FUNID
+#define SA_XML_ATT_NAME_FUNID "funid"
 #endif
 
 /// \def <sa>的属性类型名<sa type="xxx">
@@ -62,14 +84,7 @@
 #ifndef SA_XML_TAG_DFI_ROOT
 #define SA_XML_TAG_DFI_ROOT "dfi"
 #endif
-/// \def group标签 用于标记一组项目
-#ifndef SA_XML_TAG_GROUP
-#define SA_XML_TAG_GROUP "group"
-#endif
-/// \def item标签 用于标记一个项目
-#ifndef SA_XML_TAG_ITEM
-#define SA_XML_TAG_ITEM "item"
-#endif
+
 
 /// \def type属性标签 用于描述属性"type"
 #ifndef SA_XML_ATT_TYPE

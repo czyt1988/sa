@@ -48,7 +48,6 @@ SOURCES += main.cpp\
     MainWindowPrivate.cpp \
     SAValueDataTableView.cpp \
     SAChartDataTableView.cpp \
-    SALocalServeSocketClineParse.cpp \
     SADataClient.cpp
 
 HEADERS  += mainwindow.h \
@@ -68,7 +67,6 @@ HEADERS  += mainwindow.h \
     MainWindowPrivate.h \
     SAValueDataTableView.h \
     SAChartDataTableView.h \
-    SALocalServeSocketClineParse.h \
     SADataClient.h
 
 
@@ -101,8 +99,8 @@ include($$PWD/../3rdParty/qwt/qwt_set.pri)
 #{
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
-#sa protocol support
-include($$PWD/../signARPC/signARPC.pri)
+#sa serve support
+include($$PWD/../signAServe/signAServe.pri)
 #sa api support
 include($$PWD/../signALib/signALib.pri)
 #sa multiprocessing process support
