@@ -12,28 +12,31 @@
 #ifndef SA_SERVER_MAIN_APP_ID
 #define SA_SERVER_MAIN_APP_ID "sa"
 #endif
-///
-/// \def token相关的请求
-///
-#ifndef SA_SERVER_CLASS_TOKEN
-#define SA_SERVER_CLASS_TOKEN 0x20
-#endif
-///
-/// \def 请求token
-///
-#ifndef SA_SERVER_FUN_TOKEN_REQ
-#define SA_SERVER_FUN_TOKEN_REQ 0x1
-#endif
-///
-/// \def 请求token的返回
-///
-#ifndef SA_SERVER_FUN_TOKEN_REPLY
-#define SA_SERVER_FUN_TOKEN_REPLY 0x2
-#endif
+
 ///
 /// \def 参数默认分组
 ///
 #ifndef SA_SERVER_VALUE_GROUP_SA_DEFAULT
 #define SA_SERVER_VALUE_GROUP_SA_DEFAULT "@sa-default"
 #endif
+
+namespace SA {
+/**
+ * @brief 协议类型
+ */
+enum ServeProtocolClassType{
+    ProtocolTypeUnknow = 0
+    ,ProtocolTypeHeartbreat ///< 心跳协议
+    ,ProtocolTypeXml ///< xml协议
+};
+
+enum ServeProtocolFunctionType{
+    ProtocolFunUnknow = 0
+    ,ProtocolFunReqHeartbreat
+    ,ProtocolFunReplyHeartbreat
+    ,ProtocolFunReqToken
+    ,ProtocolFunReplyToken
+};
+}
+
 #endif // SALOCALSERVERDEFINE_H

@@ -1,10 +1,13 @@
 #ifndef SADATACLIENT_H
 #define SADATACLIENT_H
-#include "../global/SAGlobals.h"
-#include "SATcpClient.h"
 #include <QObject>
+#include <QDateTime>
+#include <QAbstractSocket>
+#include "../global/SAGlobals.h"
+class SATcpDataProcessClient;
+class QThread;
 
-SA_IMPL_FORWARD_DECL(SADataClient)
+//对于不暴露的接口，不使用impl方式
 
 /**
  * @brief 作为客户端，负责和服务端连接
@@ -17,13 +20,13 @@ SA_IMPL_FORWARD_DECL(SADataClient)
  *
  * @endcode
  */
-class SADataClient : public SATcpClient
+class SADataClient : public QObject
 {
-    SA_IMPL(SADataClient)
     Q_OBJECT
 public:
     SADataClient(QObject* p=nullptr);
     ~SADataClient();
+
 signals:
     /**
      * @brief 通知消息投递
@@ -36,29 +39,35 @@ signals:
      * 心跳超时是根据HEART_BREAK_COUNT_AS_DISCONNECT统计的累积超时才会发出此消息，期间有任何在链接情况都会打断此触发
      */
     void heartbeatCheckerTimerout();
+    /**
+     * @brief 连接服务的结果，此信号是在tryToConnectToServe后触发，tryToConnectToServe连接成功后会发射此信号
+     */
+    void connectedServeResult(bool state);
+    /**
+     * @brief 连接服务器发射的信号
+     * @param timeout 超时时间
+     */
+    void startConnectToServe(int timeout);
 public slots:
-    //进行点集统计
-    void callSeriesPointStatistic(const QVector<QPointF>& points,int key);
+    //尝试连接服务器，此函数失败会继续重连，由于失败会继续，因此会阻塞
+    void tryConnectToServe(int retrycount = 5, int timeout = 5000);
 private slots:
-    //登录成功触发
-    Q_SLOT void onLoginSucceed(int tokenID,uint key);
-    //心跳丢失
-    Q_SLOT void onRecHeartbeat(uint key);
-    //接收到xml字符
-    Q_SLOT void onReceivedString(const QString& str,uint key);
-    //接收到到点数组
-    Q_SLOT void onReceive2DPointFs(const QVector<QPointF>& arrs,uint key);
+    //连接成功槽
+    Q_SLOT void onSocketConnected();
+    //连接失败槽
+    Q_SLOT void onSocketDisconnected();
+    //连接服务超时
+    Q_SLOT void onConnectServeTimeout();
     //定时心跳检测时间到达触发槽
-    Q_SLOT void onHeartbeatCheckerTimerout();
+    Q_SLOT void onHeartbeatCheckerTimerout(const QDateTime& lastdate);
     //错误发生
-    Q_SLOT void onErrorOccure(int errcode);
-    //连接丢失
-    Q_SLOT void onLocalSocketDisconnect();
+    Q_SLOT void onErrorOccure(QAbstractSocket::SocketError socketError);
 private:
-    //尝试连接服务器
-    void tryToConnectServer();
-    //尝试启动计算进程
-    void tryToStartDataProc();
+    SATcpDataProcessClient* m_client;
+    QThread* m_thread;
+    bool m_isCanConnectServe;///< 标记是否能连接服务器
+    int m_maxConnectRetryCount;///< 记录重试连接的最大次数
+    int m_connectRetryCount;///< 记录重试连接的次数
 };
 
 #endif // SADATACLIENT_H

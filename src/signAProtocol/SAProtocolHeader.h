@@ -13,15 +13,6 @@
 #define SA_PROTOCOL_HEADER_MAGIC_END (0xAA900615)
 #endif
 
-/// \def 定义type id - ：心跳
-#ifndef SA_PROTOCOL_TYPE_ID_HEARTBREAT
-#define SA_PROTOCOL_TYPE_ID_HEARTBREAT 0x1
-#endif
-
-/// \def 定义type id - ：xml协议
-#ifndef SA_PROTOCOL_TYPE_ID_XML_PROTOCOL
-#define SA_PROTOCOL_TYPE_ID_XML_PROTOCOL 0x101
-#endif
 
 /**
  * @brief sa 协议的帧头，固定长度
@@ -31,7 +22,8 @@ struct SA_PROTOCOL_EXPORT SAProtocolHeader
 {
     uint32_t magic_start;///< 开始魔数，理论恒等于 \sa SA_PROTOCOL_HEADER_MAGIC_START
     int32_t sequenceID;///< 流水编号，对于多个同类型请求的区分
-    int32_t typeID;///< 分类号，区分协议
+    int32_t protocolTypeID;///< 分类号，区分协议
+    int32_t protocolFunID;///< 功能号，区分协议功能
     uint32_t dataSize;///< 标记数据包的尺寸
     uint32_t extendValue;///< 扩展值，目前无用
     uint32_t dataCrc32;///< 标记数据区的crc32值

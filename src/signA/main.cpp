@@ -6,12 +6,16 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QScopedPointer>
+#include <QProcess>
+#include <QElapsedTimer>
 #include "SAThemeManager.h"
 #include "SACsvStream.h"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 #pragma execution_character_set("utf-8")
 #endif
+
+const int max_start_serve_retry_count = 10;
 
 //日志文件指针
 static QFile* g_log_file = nullptr;
@@ -23,6 +27,9 @@ QString get_log_file_path();
 QString make_log_file_name();
 //重定向qdebug的打印
 void sa_log_out_put(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+//开启服务进程
+void start_serve_process(int trycount = 20);
+
 
 int main(int argc, char *argv[])
 {
@@ -46,13 +53,29 @@ int main(int argc, char *argv[])
 
     //加载本地语言
     load_local_language();
-
+    //启动服务程序
+    start_serve_process(max_start_serve_retry_count);
     //样式设置
     MainWindow w;
     w.show();
 
     int r = a.exec();
     return r;
+}
+
+void start_serve_process(int trycount)
+{
+    QElapsedTimer timer;
+    timer.start();
+    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
+    QStringList args = {QString::number(qApp->applicationPid())};
+    bool startstat = false;
+    int retrycout = 0;
+    do
+    {
+        startstat = QProcess::startDetached(path,args);//signADataProc是一个单例进程，多个软件不会打开多个
+    }while(retrycout < trycount && !startstat);
+    qInfo() << QObject::tr("start data process server , cost:%1 ms").arg(timer.elapsed());
 }
 
 
@@ -120,32 +143,38 @@ void sa_log_out_put(QtMsgType type, const QMessageLogContext &context, const QSt
     QByteArray localMsg = msg.toLocal8Bit();
     switch (type) {
     case QtDebugMsg:
-      fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
     case QtInfoMsg:
-      fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
     case QtWarningMsg:
-      fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
     case QtCriticalMsg:
-      fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
     case QtFatalMsg:
-      fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       abort();
     }
     if(g_log_file)
     {
         if(g_log_file->isOpen())
         {
-          SACsvStream csv(g_log_file);
-          csv << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
-              << context.function
-              << msg
-              << context.file
-              << endl;
+          static SACsvStream s_csv(g_log_file);
+          s_csv << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
+                << context.function
+                << msg
+                << context.file
+                << endl;
           ;
+#ifdef QT_NO_DEBUG
+          s_csv.flush();
+#endif
         }
     }
+#ifdef QT_NO_DEBUG
+    fflush(stdout);
+#endif
 }

@@ -41,7 +41,8 @@ QDebug& operator<<(QDebug& debug, const SAProtocolHeader &d)
           << "\n{"
           << "\n magic_start:0x" << hex << d.magic_start
           << "\n sequenceID:" << dec << d.sequenceID
-          << "\n typeID:" << d.typeID
+          << "\n typeID:" << d.protocolTypeID
+          << "\n fun id:" << d.protocolFunID
           << "\n dataSize:" << d.dataSize
           << "\n extendValue:" << d.extendValue
           << "\n dataCrc32:0x" << hex << d.dataCrc32

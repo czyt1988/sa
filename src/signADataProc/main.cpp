@@ -13,25 +13,26 @@
 #include <QHostInfo>
 #include "SAServeShareMemory.h"
 #include "SACsvStream.h"
+#include "SAServeHandleFun.h"
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
   static QFile s_log_file("saDataProcDebug.csv");
   QByteArray localMsg = msg.toLocal8Bit();
   switch (type) {
   case QtDebugMsg:
-      fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
   case QtInfoMsg:
-      fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
   case QtWarningMsg:
-      fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
   case QtCriticalMsg:
-      fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       break;
   case QtFatalMsg:
-      fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
       abort();
   }
   if(!s_log_file.isOpen())
@@ -40,25 +41,34 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
   }
   if(s_log_file.isOpen())
   {
-      SACsvStream csv(&s_log_file);
-      csv << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
-          << context.function
-          << msg
-          << context.file
-          << endl;
+      static SACsvStream s_csv(&s_log_file);
+      s_csv << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
+            << context.function
+            << msg
+            << context.file
+            << endl;
       ;
+#ifdef QT_NO_DEBUG
+      s_csv.flush();
+#endif
   }
+#ifdef QT_NO_DEBUG
+  fflush(stdout);
+#endif
 }
 
 
 int main(int argc, char *argv[])
 {
+    qInstallMessageHandler(myMessageOutput);
     SAServeShareMemory& sharemem = SAServeShareMemory::getInstance(true);
     if(!sharemem.isValid())
     {
         return -1;
     }
-    qInstallMessageHandler(myMessageOutput);
+    //初始化服务
+    SA::init_serve_funciotn_handle();
+    //
     QApplication a(argc, argv);
     QStringList argsList = a.arguments();
    // QMessageBox::information(nullptr,"pro",argsList.join(','));

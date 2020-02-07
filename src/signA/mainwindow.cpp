@@ -61,7 +61,6 @@
 #include "SAWaitCursor.h"
 //===signALib
 #include "SAData.h"
-#include "SALocalServerDefine.h"
 #include "SAValueManager.h"//变量管理
 #include "SAValueManagerModel.h"//变量管理的model
 #include "SAPluginInterface.h"
@@ -873,12 +872,12 @@ void MainWindow::loadSetting()
 ///
 void MainWindow::saveSetting()
 {
-    saConfig.setValue("StartTimes/firstStart",false);
-    saConfig.setValue("mainWindow/geometry",saveGeometry());
-    saConfig.setValue("mainWindow/windowState",saveState());
-    saConfig.setValue("skin/name",SAThemeManager::currentStyleName());
-    saConfig.setValue("path/openFiles",m_recentOpenFiles);
-    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.setValue("sa","StartTimes/firstStart",false);
+    saConfig.setValue("sa","mainWindow/geometry",saveGeometry());
+    saConfig.setValue("sa","mainWindow/windowState",saveState());
+    saConfig.setValue("sa","skin/name",SAThemeManager::currentStyleName());
+    saConfig.setValue("sa","path/openFiles",m_recentOpenFiles);
+    saConfig.setValue("sa","path/openProjectFolders",m_recentOpenProjectFolders);
     saConfig.save();
 }
 

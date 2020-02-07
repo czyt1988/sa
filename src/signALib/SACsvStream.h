@@ -37,6 +37,7 @@ public:
     QStringList readCsvLine();
     //判断是否到文件末端
     bool atEnd() const;
+    void flush();
 private:
     static int advquoted(const QString &s, QString &fld, int i);
     static int advplain(const QString &s, QString &fld, int i);

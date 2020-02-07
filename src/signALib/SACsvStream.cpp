@@ -231,6 +231,11 @@ bool SACsvStream::atEnd() const
     return stream().atEnd();
 }
 
+void SACsvStream::flush()
+{
+    stream().flush();
+}
+
 int SACsvStream::advquoted(const QString &s, QString &fld, int i)
 {
     int j;

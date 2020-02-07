@@ -159,7 +159,16 @@ void SAXMLConfigParser::setValue(const QString &groupName, const QString &keyNam
     d_ptr->m_isDirty = true;
     SAXMLProtocolParser::setValue(groupName,keyName,var);
 }
-
+/**
+ * @brief 设置内容，调用此函数会使dirty为true
+ * @param keyName
+ * @param var
+ */
+void SAXMLConfigParser::setValue(const QString &keyName, const QVariant &var)
+{
+    d_ptr->m_isDirty = true;
+    SAXMLProtocolParser::setValue(keyName,var);
+}
 /**
  * @brief 判断是否有改变
  * @return
@@ -228,6 +237,8 @@ void SAXMLConfigParser::splitNamePath(const QString &namePath, QString &groupNam
         keyName = namePath;
     }
 }
+
+
 
 
 

@@ -23,6 +23,7 @@ public:
     QString getFilePath() const;
     //设置内容，调用此函数会使dirty为true
     virtual void setValue(const QString& groupName, const QString& keyName, const QVariant& var) override;
+    virtual void setValue(const QString& keyName, const QVariant& var) override;
     //判断是否有改动
     bool isDirty() const;
     //保存

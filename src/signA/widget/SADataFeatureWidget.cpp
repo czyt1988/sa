@@ -10,15 +10,7 @@
 #include "SAChart.h"
 #include "SAPlotMarker.h"
 #include "SAMarkSymbol.h"
-#ifdef USE_THREAD_CALC_FEATURE
-
-#else
-    #include <QLocalServer>
-    #include <QLocalSocket>
-    #include "SALocalServerDefine.h"
-    #include "SAXMLReadHelper.h"
-#endif
-
+#include "SADataClient.h"
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include "SALog.h"
@@ -44,7 +36,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     //消息转发
     connect(&m_client,&SADataClient::messageInfo,this,&SADataFeatureWidget::showMessageInfo);
     connect(&m_client,&SADataClient::heartbeatCheckerTimerout,this,&SADataFeatureWidget::onHeartbeatCheckerTimerout);
-    m_client.connectToServer();
+    m_client.tryConnectToServe();
 }
 
 SADataFeatureWidget::~SADataFeatureWidget()

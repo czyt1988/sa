@@ -35,9 +35,6 @@ signals:
      * @brief 等同 QTcpServer::newConnection()
      */
     void newConnection();
-
-private slots:
-    void onNewConnection();
 private:
     void _init();
 };

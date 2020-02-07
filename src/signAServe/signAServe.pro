@@ -36,7 +36,10 @@ HEADERS += \
     SATcpAssignServe.h \
     SAServeShareMemory.h \
     SATcpClient.h \
-    SAServerDefine.h
+    SAServerDefine.h \
+    SATcpDataProcessClient.h \
+    SATcpSection.h \
+    SAServeHandleFun.h
 
 
 
@@ -48,7 +51,10 @@ SOURCES += \
     SATcpServe.cpp \
     SATcpAssignServe.cpp \
     SAServeShareMemory.cpp \
-    SATcpClient.cpp
+    SATcpClient.cpp \
+    SATcpDataProcessClient.cpp \
+    SATcpSection.cpp \
+    SAServeHandleFun.cpp
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
