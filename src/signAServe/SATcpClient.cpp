@@ -158,14 +158,19 @@ SATcpSocket *SATcpClient::getSocket() const
  */
 bool SATcpClient::connectToServe(int timeout)
 {
-    SAServeShareMemory& ssm = SAServeShareMemory::getInstance();
-    if(!ssm.isValid())
+    qDebug() << tr("start connect to serve,timeout set to ") << timeout << " ms";
+    SAServeShareMemory ssm;
+    if(!ssm.isReady())
     {
+        qDebug() << tr("share mem not ready");
+        emit clientError(SharedMemoryNotReadyError);
         return false;
     }
     int port = ssm.getPort();
     if(port <= 0)
     {
+        qDebug() << tr("get invalid serve port:") << port;
+        emit clientError(SharedMemoryGetPortError);
         return false;
     }
     if(d_ptr->m_socket)
@@ -178,7 +183,8 @@ bool SATcpClient::connectToServe(int timeout)
     {
         return true;
     }
-    emit connectTimeout();
+    qDebug() << tr("connect time out");
+    emit clientError(ConnectTimeout);
     return false;
 }
 

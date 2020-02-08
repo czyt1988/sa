@@ -60,6 +60,7 @@ QList<SATcpSocket *> SATcpServe::getSockets() const
 
 void SATcpServe::incomingConnection(qintptr socketDescriptor)
 {
+    FUNCTION_RUN_PRINT();
     SATcpSocket *socket = new SATcpSocket();
     if(!socket->setSocketDescriptor(socketDescriptor))
     {

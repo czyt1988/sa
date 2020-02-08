@@ -169,12 +169,12 @@ void sa_log_out_put(QtMsgType type, const QMessageLogContext &context, const QSt
                 << context.file
                 << endl;
           ;
-#ifdef QT_NO_DEBUG
+#ifndef QT_NO_DEBUG_OUTPUT
           s_csv.flush();
 #endif
         }
     }
-#ifdef QT_NO_DEBUG
+#ifndef QT_NO_DEBUG_OUTPUT
     fflush(stdout);
 #endif
 }

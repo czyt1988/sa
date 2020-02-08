@@ -2,74 +2,122 @@
 #include <QSharedMemory>
 #include <QDebug>
 
-const int SHARE_MEM_SIZE = 8;
+struct SAServeShareMemoryPrivateData
+{
+    int serve_state; //4
+    int serve_port; //8
+};
 
 #define OFFSET_STATE 0 //状态的内存偏移
 #define OFFSET_PORT 4 //端口号的内存偏移
-
 
 class SAServeShareMemoryPrivate
 {
     SA_IMPL_PUBLIC(SAServeShareMemory)
 public:
-    SAServeShareMemoryPrivate(SAServeShareMemory* p,bool iscreate);
+    SAServeShareMemoryPrivate(SAServeShareMemory* p);
     void getFromShareMem(void *des,size_t offset, size_t size);
     void setToShareMem(void const* des,size_t offset,size_t size);
+    bool updateDataFromSharedMem();
+    bool updateDataToSharedMem();
     QSharedMemory m_sharemem;
-    bool m_state;
+    SAServeShareMemoryPrivateData m_data;
 };
 
 
-SAServeShareMemoryPrivate::SAServeShareMemoryPrivate(SAServeShareMemory *p,bool iscreate)
+SAServeShareMemoryPrivate::SAServeShareMemoryPrivate(SAServeShareMemory *p)
     :q_ptr(p)
-    ,m_sharemem("signaDataProc.Main")
+    ,m_sharemem("signaDataProc.Serve")
 {
-    if(iscreate)
+    FUNCTION_RUN_PRINT();
+    memset(&m_data,0,sizeof(SAServeShareMemoryPrivateData));
+    if(!m_sharemem.create(sizeof(SAServeShareMemoryPrivateData)))
     {
-        m_state = m_sharemem.create(SHARE_MEM_SIZE);//创建8字节共享内存，端口号将写入这个共享内存中
+        // 如果创建失败，说明已经有别的进程创建了该key对应的共享内存，那么本进程直接attach，不需要创建/也不能创建
+        if(!m_sharemem.attach())
+        {
+            qDebug() << ("create share memory failed:") << m_sharemem.errorString() << " err code:" << m_sharemem.error();
+        }
     }
     else
     {
-        m_state = m_sharemem.attach();
-    }
-    if(!m_state)
-    {
-        qDebug() << "share mem attach or create failed:" << m_sharemem.error();
+        //说明是第一次创建
+        updateDataToSharedMem();
     }
 }
 
 void SAServeShareMemoryPrivate::getFromShareMem(void *des,size_t offset, size_t size)
 {
     m_sharemem.lock();
-    char* p = (char*)m_sharemem.data();
-    memcpy(des,p+offset,size);
+    memcpy(des,(char*)m_sharemem.data()+offset,size);
     m_sharemem.unlock();
 }
 
 void SAServeShareMemoryPrivate::setToShareMem(const void *des, size_t offset, size_t size)
 {
     m_sharemem.lock();
-    char* p = (char*)m_sharemem.data();
-    memcpy(p+offset,des,size);
+    memcpy((char*)m_sharemem.data()+offset,des,size);
     m_sharemem.unlock();
 }
 
-SAServeShareMemory::SAServeShareMemory(bool iscreate):d_ptr(new SAServeShareMemoryPrivate(this,iscreate))
+bool SAServeShareMemoryPrivate::updateDataFromSharedMem()
+{
+    if(m_sharemem.isAttached())
+    {
+        m_sharemem.lock();
+        memcpy(&m_data,m_sharemem.data(),sizeof(SAServeShareMemoryPrivateData));
+        m_sharemem.unlock();
+        return true;
+    }
+    return false;
+}
+
+bool SAServeShareMemoryPrivate::updateDataToSharedMem()
+{
+    if(m_sharemem.isAttached())
+    {
+        m_sharemem.lock();
+        memcpy(m_sharemem.data(),&m_data,sizeof(SAServeShareMemoryPrivateData));
+        m_sharemem.unlock();
+        return true;
+    }
+    return false;
+}
+
+SAServeShareMemory::SAServeShareMemory():d_ptr(new SAServeShareMemoryPrivate(this))
 {
 }
 
 SAServeShareMemory::~SAServeShareMemory()
 {
+    
+}
 
+bool SAServeShareMemory::isAttach() const
+{
+    return d_ptr->m_sharemem.isAttached();   
 }
 
 /**
  * @brief 判断共享内存是否有效
  * @return 有效返回true
  */
-bool SAServeShareMemory::isValid() const
+bool SAServeShareMemory::isReady() const
 {
-    return d_ptr->m_state;
+    return (d_ptr->m_data.serve_state == ServeIsReady);
+}
+
+/**
+ * @brief 设置服务器状态
+ * @param state
+ */
+void SAServeShareMemory::setServeState(SAServeShareMemory::ServeState state)
+{
+    if(isAttach())
+    {
+        d_ptr->m_data.serve_state = (int)state;
+        d_ptr->updateDataToSharedMem();
+    }
 }
 
 /**
@@ -78,26 +126,22 @@ bool SAServeShareMemory::isValid() const
  */
 int SAServeShareMemory::getPort() const
 {
-    int port = -1;
-    if(isValid())
-    {
-        d_ptr->getFromShareMem(&port,OFFSET_PORT,sizeof(int));
-    }
-    return port;
+    return d_ptr->m_data.serve_port;
 }
 
 void SAServeShareMemory::setPort(int port)
 {
-    if(isValid())
+    if(isAttach())
     {
-        d_ptr->setToShareMem(&port,OFFSET_PORT,sizeof(int));
+        d_ptr->m_data.serve_port = port;
+        d_ptr->updateDataToSharedMem();
     }
 }
 
 bool SAServeShareMemory::isListen() const
 {
     int islisten = 0;
-    if(isValid())
+    if(isReady())
     {
         d_ptr->getFromShareMem(&islisten,OFFSET_STATE,sizeof(int));
     }
@@ -107,15 +151,14 @@ bool SAServeShareMemory::isListen() const
 void SAServeShareMemory::setListenState(bool islisten)
 {
     int v = (islisten ? 1 : 0);
-    if(isValid())
+    if(isReady())
     {
         d_ptr->setToShareMem(&v,OFFSET_STATE,sizeof(int));
     }
 }
 
-SAServeShareMemory &SAServeShareMemory::getInstance(bool iscreate)
+void SAServeShareMemory::updateFromMem()
 {
-    static SAServeShareMemory s_sharemem(iscreate);
-    return s_sharemem;
+    d_ptr->updateDataFromSharedMem();
 }
 

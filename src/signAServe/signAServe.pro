@@ -21,7 +21,8 @@ CONFIG(debug, debug|release){
 }else {
     DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
 }
-DEFINES += SASERVE_MAKE #定义此宏将构建库
+DEFINES += SASERVE_MAKE \#定义此宏将构建库
+           SA_SERVE_DEBUG_PRINT #debug时打印
 CONFIG += c++11
 
 HEADERS += \

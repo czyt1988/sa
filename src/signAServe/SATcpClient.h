@@ -31,6 +31,15 @@ class SASERVE_EXPORT SATcpClient : public QObject
     SA_IMPL(SATcpClient)
     Q_OBJECT
 public:
+    enum ClientError{
+        UnknowError ///< 未知错误
+        ,SharedMemoryNotReadyError = 1///< 共享内存还未准备好
+        ,SharedMemoryGetPortError ///< 从共享内存获取的port不正确
+        ,ConnectTimeout ///< 连接服务器超时
+
+        ,UserDefineError = 1000 ///< 用户自定义错误
+    };
+
     SATcpClient(QObject* par = nullptr);
     ~SATcpClient();
     //向socket写数据
@@ -65,9 +74,10 @@ private:
     void disconnectSocket();
 signals:
     /**
-     * @brief 连接服务器超时
+     * @brief 客户端的错误
+     * @note 默认的错误见 @see SATcpSocket::ClientError
      */
-    void connectTimeout();
+    void clientError(int errcode);
     /**
      * @brief 返回请求的token
      * @param token

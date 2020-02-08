@@ -50,24 +50,26 @@ signals:
     void startConnectToServe(int timeout);
 public slots:
     //尝试连接服务器，此函数失败会继续重连，由于失败会继续，因此会阻塞
-    void tryConnectToServe(int retrycount = 5, int timeout = 5000);
+    Q_SLOT void tryConnectToServe(int retrycount = 5, int timeout = 5000);
 private slots:
     //连接成功槽
     Q_SLOT void onSocketConnected();
     //连接失败槽
     Q_SLOT void onSocketDisconnected();
-    //连接服务超时
-    Q_SLOT void onConnectServeTimeout();
     //定时心跳检测时间到达触发槽
     Q_SLOT void onHeartbeatCheckerTimerout(const QDateTime& lastdate);
     //错误发生
-    Q_SLOT void onErrorOccure(QAbstractSocket::SocketError socketError);
+    Q_SLOT void onSocketErrorOccure(int socketError);
+    //客户错误发生
+    Q_SLOT void onClientErrorOccure(int clientError);
+    //重新连接服务器
+    Q_SLOT void reconnectToServe();
 private:
     SATcpDataProcessClient* m_client;
     QThread* m_thread;
-    bool m_isCanConnectServe;///< 标记是否能连接服务器
     int m_maxConnectRetryCount;///< 记录重试连接的最大次数
     int m_connectRetryCount;///< 记录重试连接的次数
+    int m_timeout;///< 连接服务器超时时间
 };
 
 #endif // SADATACLIENT_H

@@ -20,19 +20,19 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
   QByteArray localMsg = msg.toLocal8Bit();
   switch (type) {
   case QtDebugMsg:
-      fprintf(stdout, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.function, context.line, context.file);
       break;
   case QtInfoMsg:
-      fprintf(stdout, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.function, context.line, context.file);
       break;
   case QtWarningMsg:
-      fprintf(stdout, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.function, context.line, context.file);
       break;
   case QtCriticalMsg:
-      fprintf(stdout, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.function, context.line, context.file);
       break;
   case QtFatalMsg:
-      fprintf(stdout, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      fprintf(stdout, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.function, context.line, context.file);
       abort();
   }
   if(!s_log_file.isOpen())
@@ -43,17 +43,18 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
   {
       static SACsvStream s_csv(&s_log_file);
       s_csv << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
-            << context.function
             << msg
+            << context.function
+            << context.line
             << context.file
             << endl;
       ;
-#ifdef QT_NO_DEBUG
       s_csv.flush();
+#ifdef QT_NO_DEBUG_OUTPUT
 #endif
   }
-#ifdef QT_NO_DEBUG
   fflush(stdout);
+#ifdef QT_NO_DEBUG_OUTPUT
 #endif
 }
 
@@ -61,13 +62,16 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 int main(int argc, char *argv[])
 {
     qInstallMessageHandler(myMessageOutput);
-    SAServeShareMemory& sharemem = SAServeShareMemory::getInstance(true);
-    if(!sharemem.isValid())
+    SAServeShareMemory sharemem;
+    if(!sharemem.isAttach())
     {
-        return -1;
+        qDebug() << QStringLiteral("共享内存初始化失败，已经有服务进程在运行，本进程退出");
+        return 1;
     }
     //初始化服务
+    qDebug() << QStringLiteral("开始初始化服务句柄");
     SA::init_serve_funciotn_handle();
+
     //
     QApplication a(argc, argv);
     QStringList argsList = a.arguments();
@@ -79,14 +83,14 @@ int main(int argc, char *argv[])
     if(argsList.size()<2)
     {
         qDebug() << "arg num invalid ret 1";
-        return 1;
+        return 2;
     }
     bool isSuccess = false;
     uint pid = argsList[1].toUInt(&isSuccess);
     if(!isSuccess)
     {
         qDebug() << "arg2 invalid ret 2";
-        return 2;
+        return 3;
     }
     SADataProcServe serve;
     serve.setPid(pid);
@@ -103,8 +107,11 @@ int main(int argc, char *argv[])
         }
     }while(1 != islisten && port < 65536);
     //监听成功后写入端口
+    qDebug() << QStringLiteral("服务器建立完成，服务器状态写入共享内存");
+    sharemem.setServeState(SAServeShareMemory::ServeIsReady);
     sharemem.setListenState(1 == islisten);
     sharemem.setPort(port);
+    qDebug() << QStringLiteral("服务器正常运行，时间：") << QDateTime::currentDateTime();
     return a.exec();
 }
 

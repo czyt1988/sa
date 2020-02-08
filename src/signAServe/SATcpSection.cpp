@@ -54,6 +54,7 @@ SATcpSocket *SATcpSection::socket() const
  */
 bool SATcpSection::dealReceiveData(const SAProtocolHeader &header, const QByteArray &data)
 {
+    FUNCTION_RUN_PRINT();
     SA::FunHandle fun = SA::get_serve_funciton_handle(header.protocolFunID);
     if(nullptr == fun)
     {
@@ -79,6 +80,7 @@ bool SATcpSection::dealReceiveData(const SAProtocolHeader &header, const QByteAr
  */
 bool SATcpSection::dealResult(const SAProtocolHeader &header, const QVariantHash &data)
 {
+    FUNCTION_RUN_PRINT();
     Q_UNUSED(header);
     Q_UNUSED(data);
     return false;

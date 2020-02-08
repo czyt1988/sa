@@ -872,12 +872,12 @@ void MainWindow::loadSetting()
 ///
 void MainWindow::saveSetting()
 {
-    saConfig.setValue("sa","StartTimes/firstStart",false);
-    saConfig.setValue("sa","mainWindow/geometry",saveGeometry());
-    saConfig.setValue("sa","mainWindow/windowState",saveState());
-    saConfig.setValue("sa","skin/name",SAThemeManager::currentStyleName());
-    saConfig.setValue("sa","path/openFiles",m_recentOpenFiles);
-    saConfig.setValue("sa","path/openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.setValue("StartTimes/firstStart",false);
+    saConfig.setValue("mainWindow/geometry",saveGeometry());
+    saConfig.setValue("mainWindow/windowState",saveState());
+    saConfig.setValue("skin/name",SAThemeManager::currentStyleName());
+    saConfig.setValue("path/openFiles",m_recentOpenFiles);
+    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
     saConfig.save();
 }
 

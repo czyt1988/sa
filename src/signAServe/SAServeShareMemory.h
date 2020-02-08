@@ -9,19 +9,30 @@ class SAServeShareMemoryPrivate;
 class SASERVE_EXPORT SAServeShareMemory
 {
     SA_IMPL(SAServeShareMemory)
-protected:
-    SAServeShareMemory(bool iscreate);
 public:
+    SAServeShareMemory();
     ~SAServeShareMemory();
-    //判断是否有效
-    bool isValid() const;
+    enum ServeState{
+        ServeNotReady = 0
+        ,ServeIsReady = 1
+    };
+
+    //是否连接内存
+    bool isAttach() const;
+    //判断是否准备好
+    bool isReady() const;
+    //设置服务器状态
+    void setServeState(ServeState state);
     //获取端口
     int getPort() const;
     //设置端口
     void setPort(int port);
+    //
     bool isListen() const;
+    //
     void setListenState(bool islisten);
-    static SAServeShareMemory& getInstance(bool iscreate = false);
+    //从共享内存中更新数据
+    void updateFromMem();
 };
 
 #endif // SASERVESHAREMEMORY_H

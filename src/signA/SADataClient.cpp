@@ -13,7 +13,9 @@
 
 
 SADataClient::SADataClient(QObject *p):QObject(p)
-  ,m_isCanConnectServe(true)
+  ,m_maxConnectRetryCount(5)
+  ,m_connectRetryCount(0)
+  ,m_timeout(5000)
 {
     m_client = new SATcpDataProcessClient();
     m_thread = new QThread();
@@ -23,11 +25,11 @@ SADataClient::SADataClient(QObject *p):QObject(p)
     connect(m_client,&SATcpDataProcessClient::aboutToClose,m_thread,&QThread::quit);
     //非线程相关的信号槽
     connect(this,&SADataClient::startConnectToServe,m_client,&SATcpDataProcessClient::connectToServe);
+    connect(m_client,&SATcpDataProcessClient::clientError,this,&SADataClient::onClientErrorOccure);
 
-    connect(m_client,&SATcpDataProcessClient::connectTimeout,this,&SADataClient::onConnectServeTimeout);
     connect(m_client,&SATcpDataProcessClient::connected,this,&SADataClient::onSocketConnected);
     connect(m_client,&SATcpDataProcessClient::disconnected,this,&SADataClient::onSocketDisconnected);
-    connect(m_client,&SATcpDataProcessClient::error,this,&SADataClient::onErrorOccure);
+    connect(m_client,&SATcpDataProcessClient::error,this,&SADataClient::onSocketErrorOccure);
 
     //线程启动
     m_thread->start();
@@ -44,14 +46,25 @@ SADataClient::~SADataClient()
  */
 void SADataClient::tryConnectToServe(int retrycount,int timeout)
 {
-    if(!m_isCanConnectServe)
-    {
-        return;
-    }
     m_connectRetryCount = 0;
     m_maxConnectRetryCount = retrycount;
+    m_timeout = timeout;
     //开始连接服务器，连接成功会触发onSocketConnected，从而触发connectedServeResult(true)
     emit startConnectToServe(timeout);
+}
+
+/**
+ * @brief 重试连接服务器
+ */
+void SADataClient::reconnectToServe()
+{
+    if(m_connectRetryCount >= m_maxConnectRetryCount)
+    {
+        emit connectedServeResult(false);
+        return;
+    }
+    ++m_connectRetryCount;
+    emit startConnectToServe(m_timeout);
 }
 
 /**
@@ -59,7 +72,6 @@ void SADataClient::tryConnectToServe(int retrycount,int timeout)
  */
 void SADataClient::onSocketConnected()
 {
-    m_isCanConnectServe = true;
     m_connectRetryCount = 0;
     emit connectedServeResult(true);
     emit messageInfo(tr("connect calc serve success"));
@@ -69,18 +81,10 @@ void SADataClient::onSocketConnected()
  */
 void SADataClient::onSocketDisconnected()
 {
-    m_isCanConnectServe = true;
     m_connectRetryCount = 0;
     emit messageInfo(tr("calc serve disconnect"),SA::WarningMessage);
 }
 
-/**
- * @brief 连接服务超时
- */
-void SADataClient::onConnectServeTimeout()
-{
-    emit connectedServeResult(false);
-}
 
 /**
  * @brief 心跳超时
@@ -93,10 +97,36 @@ void SADataClient::onHeartbeatCheckerTimerout(const QDateTime &lastdate)
 }
 
 /**
+ * @brief 客户端错误
+ * @param clientError
+ */
+void SADataClient::onClientErrorOccure(int clientError)
+{
+    switch (clientError) {
+    case SATcpClient::ConnectTimeout:
+        emit connectedServeResult(false);
+        break;
+    case SATcpClient::SharedMemoryNotReadyError:
+        //说明共享内存还没准备好，过1s再进行连接
+        qDebug() << tr("shared memory not ready,will reconnect after 1 second");
+        QTimer::singleShot(1000,this,&SADataClient::reconnectToServe);
+        break;
+    case SATcpClient::SharedMemoryGetPortError:
+        //说明共享内存里的端口号异常
+        emit messageInfo(tr("data process serve return invalid port"),SA::ErrorMessage);
+        break;
+    default:
+        break;
+    }
+}
+
+
+
+/**
  * @brief 错误发生
  * @param errcode
  */
-void SADataClient::onErrorOccure(QAbstractSocket::SocketError socketError)
+void SADataClient::onSocketErrorOccure(int socketError)
 {
     emit messageInfo(tr("data client error,code:%1").arg(socketError),SA::ErrorMessage);
 }

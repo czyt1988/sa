@@ -2,6 +2,11 @@
 #define SAGLOBALS_H
 class SAAbstractDatas;
 #include <QScopedPointer>
+//需要预定义SA_DEBUG_PRINT 才会打印
+#ifdef QT_NO_DEBUG
+#include <stdlib.h>
+#include <stdio.h>
+#endif
 ///
 /// \def 包含Ribbon界面
 ///
@@ -68,17 +73,6 @@ class SAAbstractDatas;
 
 
 namespace SA {
-//    enum ThermoChartPARAM{
-//        T//< 温度
-//        ,P///< 压力
-//        ,S///< 熵
-//        ,H///< 焓
-//    };
-//    enum ThermoChartMODE{
-//        TS
-//        ,HS
-//        ,PT
-//    };
 
     enum DataSelectRange{
         InSelectionRange = 0x1///<在可视范围内
@@ -190,6 +184,55 @@ namespace SA {
 
 
 }
+
+#ifndef QT_NO_DEBUG_OUTPUT
+/// \def 打印字节十六进制
+#ifndef printByteArray
+#define printByteArray(dataPtr,dataLen) \
+    do{\
+        const char* __c__char__ptr__ = (const char*)(dataPtr);\
+        fprintf(stderr,"[");\
+        for(int M__i=0;M__i<(dataLen);++M__i)\
+        {\
+            if(M__i % 10 == 0)\
+            {\
+                fprintf(stderr,"\n");\
+                fprintf(stderr,">> [%d]-[%d]: ",M__i,M__i+9);\
+            }\
+            fprintf(stderr,"%02X,",(int)__c__char__ptr__[M__i]);\
+        }\
+        fprintf(stderr,"\n]");\
+    }while(0)
+#endif
+/// \def 打印QByteArray的十六进制
+#ifndef printQByteArray
+#define printQByteArray(qBytearr)\
+    do{\
+        QByteArray __tmp_byte_array__ = qBytearr;\
+        fprintf(stderr,"[");\
+        for(int M__i=0;M__i<__tmp_byte_array__.size();++M__i)\
+        {\
+            if(M__i % 10 == 0)\
+            {\
+                fprintf(stderr,"\n");\
+                fprintf(stderr,">> [%d]-[%d]: ",M__i,M__i+9);\
+            }\
+            fprintf(stderr,"%02X,",(int)__tmp_byte_array__[M__i]);\
+        }\
+        fprintf(stderr,"\n]");\
+    }while(0)
+#endif
+#else
+#ifndef saPrint
+#define saPrint()
+#endif
+#ifndef printByteArray
+#define printByteArray(dataPtr,dataLen) Q_UNUSED(dataPtr);Q_UNUSED(dataLen);
+#endif
+#ifndef printQByteArray
+#define printQByteArray(qBytearr) Q_UNUSED(qBytearr);
+#endif
+#endif
 
 #define ROLE_ITEM_MARK Qt::UserRole + 1///< 标志角色
 #define ROLE_ITEM_WIDGET Qt::UserRole + 10///< 关联窗口角色
