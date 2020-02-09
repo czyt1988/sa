@@ -10,7 +10,7 @@ class SATcpServePrivate
     SA_IMPL_PUBLIC(SATcpServe)
 public:
     SATcpServePrivate(SATcpServe* p);
-    void recordSection(QThread* p,SATcpSection* s);
+    void recordSectionThread(SATcpSection* s,QThread* p);
     void removeSection(SATcpSection* s);
     QList<SATcpSocket*> m_socketList;
     QMap<SATcpSection*,QThread*> m_section2thread;
@@ -22,7 +22,7 @@ SATcpServePrivate::SATcpServePrivate(SATcpServe *p):q_ptr(p)
     
 }
 
-void SATcpServePrivate::recordSection(QThread *p, SATcpSection *s)
+void SATcpServePrivate::recordSectionThread(SATcpSection* s,QThread* p)
 {
     m_section2thread[s] = p;
 }
@@ -34,6 +34,7 @@ void SATcpServePrivate::removeSection(SATcpSection* s)
 }
 
 SATcpServe::SATcpServe(QObject *par):QTcpServer(par)
+  ,d_ptr(new SATcpServePrivate(this))
 {
     
 }
@@ -61,6 +62,7 @@ QList<SATcpSocket *> SATcpServe::getSockets() const
 void SATcpServe::incomingConnection(qintptr socketDescriptor)
 {
     FUNCTION_RUN_PRINT();
+    qDebug() << "incomingConnection:"<<socketDescriptor;
     SATcpSocket *socket = new SATcpSocket();
     if(!socket->setSocketDescriptor(socketDescriptor))
     {
@@ -74,8 +76,9 @@ void SATcpServe::incomingConnection(qintptr socketDescriptor)
     //断开自动结束线程
     connect(section, &SATcpSection::socketDisconnected, this, &SATcpServe::onSectionFinished);
     connect(section, &SATcpSection::socketDisconnected, pt, &QThread::quit);
-    d_ptr->recordSection(pt,section);
+    d_ptr->recordSectionThread(section,pt);
     pt->start();
+    addPendingConnection(socket);
     emit newConnection();
 }
 

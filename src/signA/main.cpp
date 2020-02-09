@@ -8,6 +8,7 @@
 #include <QScopedPointer>
 #include <QProcess>
 #include <QElapsedTimer>
+#include <QAbstractSocket>
 #include "SAThemeManager.h"
 #include "SACsvStream.h"
 
@@ -28,7 +29,7 @@ QString make_log_file_name();
 //重定向qdebug的打印
 void sa_log_out_put(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 //开启服务进程
-void start_serve_process(int trycount = 20);
+void start_serve_process(int maxTrycount = 20);
 
 
 int main(int argc, char *argv[])
@@ -41,13 +42,15 @@ int main(int argc, char *argv[])
 #endif
 #endif
     QApplication a(argc, argv);
+    qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
+    qInstallMessageHandler(sa_log_out_put);
+    qDebug() << "==============start at" << QDateTime::currentDateTime() << "=====================";
     g_log_file = new QFile(get_log_file_path() + QDir::separator() + make_log_file_name());
     if(!g_log_file->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
     {
         qDebug() << "can not open log file";
     }
-    qInstallMessageHandler(sa_log_out_put);
     //
     qDebug() << "libs path:" << QCoreApplication::libraryPaths();
 
@@ -63,7 +66,7 @@ int main(int argc, char *argv[])
     return r;
 }
 
-void start_serve_process(int trycount)
+void start_serve_process(int maxTrycount)
 {
     QElapsedTimer timer;
     timer.start();
@@ -74,7 +77,9 @@ void start_serve_process(int trycount)
     do
     {
         startstat = QProcess::startDetached(path,args);//signADataProc是一个单例进程，多个软件不会打开多个
-    }while(retrycout < trycount && !startstat);
+        ++retrycout;
+        qDebug() << "try start data precess serve "<<retrycout << " times";
+    }while(retrycout < maxTrycount && !startstat);
     qInfo() << QObject::tr("start data process server , cost:%1 ms").arg(timer.elapsed());
 }
 

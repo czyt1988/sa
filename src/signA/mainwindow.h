@@ -83,8 +83,6 @@ private:
     void initTheme();
     //初始化UIReflation
     void initUIReflection();
-    //初始化其它进程
-    void initProcess();
 
 public:
     static QIcon getIconByWndType(SA::SubWndType type);

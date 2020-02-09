@@ -12,6 +12,13 @@ message("--------------SA Data Process Serve--------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])
 
+win32: QMAKE_CXXFLAGS_RELEASE -= -Zc:strictStrings
+win32: QMAKE_CFLAGS_RELEASE -= -Zc:strictStrings
+win32: QMAKE_CFLAGS -= -Zc:strictStrings
+win32: QMAKE_CXXFLAGS -= -Zc:strictStrings
+CONFIG+=force_debug_info separate_debug_info
+
+
 QT += core gui
 QT += network
 QT += xml
@@ -34,10 +41,12 @@ INCLUDEPATH += $$PWD
 
 
 SOURCES += main.cpp \
-    SADataProcServe.cpp
+    SADataProcServe.cpp \
+    SAMiniDump.cpp
 
 HEADERS += \
-    SADataProcServe.h
+    SADataProcServe.h \
+    SAMiniDump.h
     
 
 #sa api support
@@ -54,5 +63,11 @@ include($$PWD/../signAServe/signAServe.pri)
 #{
 include($$PWD/../czy/czy.pri)#the czy extern support
 #}
+
+# 给dump文件生成用
+win32{
+    LIBS += -luser32
+}
+
 
 

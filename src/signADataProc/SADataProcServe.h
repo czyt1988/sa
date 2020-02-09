@@ -22,8 +22,6 @@ public:
     ~SADataProcServe();
     uint getPid() const;
     void setPid(const uint &pid);
-private slots:
-    Q_SLOT void onLocalServeNewConnection();
 private:
     SAThreadProcessPool m_process;///< 处理线程的线程池
 

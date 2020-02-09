@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QHostInfo>
+#include "SAMiniDump.h"
 #include "SAServeShareMemory.h"
 #include "SACsvStream.h"
 #include "SAServeHandleFun.h"
@@ -61,7 +62,11 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
+#ifdef Q_OS_WIN
+    SA_MINIDUMP_RECORD
+#endif
     qInstallMessageHandler(myMessageOutput);
+    qDebug() << "==============start===================";
     SAServeShareMemory sharemem;
     if(!sharemem.isAttach())
     {
@@ -77,39 +82,41 @@ int main(int argc, char *argv[])
     QStringList argsList = a.arguments();
    // QMessageBox::information(nullptr,"pro",argsList.join(','));
     //调用必须后面跟随调用者的pid
-    qDebug() << "==============start===================";
-    qDebug() << argsList;
+    qDebug() << "arg:" << argsList;
 
     if(argsList.size()<2)
     {
         qDebug() << "arg num invalid ret 1";
-        return 2;
+        return 1;
     }
     bool isSuccess = false;
     uint pid = argsList[1].toUInt(&isSuccess);
     if(!isSuccess)
     {
         qDebug() << "arg2 invalid ret 2";
-        return 3;
+        return 2;
     }
+
     SADataProcServe serve;
     serve.setPid(pid);
-    int islisten = 0;
+    bool islisten = false;
     int port = 10098;
     do
     {
         ++port;
-        if(serve.listen(port))
+        islisten = serve.listen(port);
+        if(islisten)
         {
             qDebug() << "listen success,port is:" << port;
-            islisten = 1;
             break;
         }
-    }while(1 != islisten && port < 65536);
+    }while(!islisten && port < 65536);
     //监听成功后写入端口
     qDebug() << QStringLiteral("服务器建立完成，服务器状态写入共享内存");
-    sharemem.setServeState(SAServeShareMemory::ServeIsReady);
-    sharemem.setListenState(1 == islisten);
+    if(islisten)
+        sharemem.setServeState(SAServeShareMemory::ServeIsReady);
+    else
+        sharemem.setServeState(SAServeShareMemory::ServeNotReady);
     sharemem.setPort(port);
     qDebug() << QStringLiteral("服务器正常运行，时间：") << QDateTime::currentDateTime();
     return a.exec();

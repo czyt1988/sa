@@ -138,7 +138,6 @@ MainWindow::MainWindow(QWidget *parent) :
     init();
     initUI();
     initUIReflection();
-    initProcess();
     saElapsed("init ui and menu");
 
     saStartElapsed("start load plugin");
@@ -509,15 +508,6 @@ void MainWindow::initUIReflection()
     };
     saProjectManager->addSaveFunctionAction(funSaveAction);
     saProjectManager->addLoadFunctionAction(funLoadAction);
-}
-///
-/// \brief 打开用户界面支持的其它进程
-///
-void MainWindow::initProcess()
-{
-    QString path = qApp->applicationDirPath()+"/signADataProc.exe";
-    QStringList args = {QString::number(qApp->applicationPid())};
-    QProcess::startDetached(path,args);//signADataProc是一个单例进程，多个软件不会打开多个
 }
 
 ///

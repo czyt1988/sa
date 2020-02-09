@@ -40,9 +40,4 @@ void SADataProcServe::setPid(const uint &pid)
     m_pid = pid;
 }
 
-void SADataProcServe::onLocalServeNewConnection()
-{
-
-}
-
 

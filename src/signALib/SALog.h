@@ -21,7 +21,7 @@ class QThread;
 #include <stdio.h>
 /// \def 增强型打印
 #ifndef saPrint
-#define saPrint() qDebug() << "["<<__FUNCTION__<<"]("<<__LINE__<<") ["<<__FILE__<<"]:\n"
+#define saPrint() qDebug()
 #endif
 
 /// \def 打印QByteArray的十六进制
@@ -336,7 +336,7 @@ private:
 #define saDebug(...)\
     do{\
        QString __str_global_log_tmp__ = SALog::printf(__VA_ARGS__);\
-       qDebug()<<"["<<__FUNCTION__<<"]["<<__LINE__<<"] at (" <<__FILE__ << ")->  "<< __str_global_log_tmp__;\
+       qDebug()<< __str_global_log_tmp__;\
        saLog->addLog(SALog::TypeDebug,__str_global_log_tmp__,__FILE__,__FUNCTION__,__LINE__);\
     }while(0)
 #endif
@@ -345,7 +345,7 @@ private:
 #define saError(...)\
     do{\
        QString __str_global_log_tmp__ = SALog::printf(__VA_ARGS__);\
-       qDebug()<<"["<<__FUNCTION__<<"]["<<__LINE__<<"] at (" <<__FILE__ << ")->  "<< __str_global_log_tmp__;\
+       qDebug()<<__str_global_log_tmp__;\
        saLog->addLog(SALog::TypeError,__str_global_log_tmp__,__FILE__,__FUNCTION__,__LINE__);\
     }while(0)
 #endif
@@ -354,7 +354,7 @@ private:
 #define saWarning(...)\
     do{\
        QString __str_global_log_tmp__ = SALog::printf(__VA_ARGS__);\
-       qWarning()<<"["<<__FUNCTION__<<"]["<<__LINE__<<"] at (" <<__FILE__ << ")->  "<< __str_global_log_tmp__;\
+       qWarning()<<__str_global_log_tmp__;\
        saLog->addLog(SALog::TypeWarning,__str_global_log_tmp__,__FILE__,__FUNCTION__,__LINE__);\
     }while(0)
 #endif
@@ -363,7 +363,7 @@ private:
 #define saCritical(...)\
     do{\
        QString __str_global_log_tmp__ = SALog::printf(__VA_ARGS__);\
-       qCritical()<<"["<<__FUNCTION__<<"]["<<__LINE__<<"] at (" <<__FILE__ << ")->  "<< __str_global_log_tmp__;\
+       qCritical()<< __str_global_log_tmp__;\
        saLog->addLog(SALog::TypeCritical,__str_global_log_tmp__,__FILE__,__FUNCTION__,__LINE__);\
     }while(0)
 #endif
@@ -381,7 +381,7 @@ private:
     do{\
         QString __str_global_saElapsed__ = SALog::printf(__VA_ARGS__);\
         __str_global_saElapsed__ = QString("%1 elapsed: %2 ms").arg(__str_global_saElapsed__).arg(saLog->elapsed());\
-        qDebug()<<"["<<__FUNCTION__<<"]["<<__LINE__<<"] at (" <<__FILE__ << ")->  "<< __str_global_saElapsed__;\
+        qDebug()<< __str_global_saElapsed__;\
         saLog->addLog(SALog::TypeDebug,__str_global_saElapsed__,__FILE__,__FUNCTION__,__LINE__);\
     }while(0)
 #endif

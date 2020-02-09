@@ -60,6 +60,7 @@ void SADataClient::reconnectToServe()
 {
     if(m_connectRetryCount >= m_maxConnectRetryCount)
     {
+        qDebug()<< "connect retry " << m_connectRetryCount << " times,but can not success";
         emit connectedServeResult(false);
         return;
     }

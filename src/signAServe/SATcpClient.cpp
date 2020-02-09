@@ -160,9 +160,10 @@ bool SATcpClient::connectToServe(int timeout)
 {
     qDebug() << tr("start connect to serve,timeout set to ") << timeout << " ms";
     SAServeShareMemory ssm;
+    ssm.updateFromMem();
     if(!ssm.isReady())
     {
-        qDebug() << tr("share mem not ready");
+        qDebug() << tr("share mem not ready:") << ssm.describe();
         emit clientError(SharedMemoryNotReadyError);
         return false;
     }

@@ -4,8 +4,8 @@
 
 struct SAServeShareMemoryPrivateData
 {
-    int serve_state; //4
-    int serve_port; //8
+    int serve_state; //0
+    int serve_port; //4
 };
 
 #define OFFSET_STATE 0 //状态的内存偏移
@@ -38,6 +38,7 @@ SAServeShareMemoryPrivate::SAServeShareMemoryPrivate(SAServeShareMemory *p)
         {
             qDebug() << ("create share memory failed:") << m_sharemem.errorString() << " err code:" << m_sharemem.error();
         }
+        updateDataFromSharedMem();
     }
     else
     {
@@ -121,6 +122,15 @@ void SAServeShareMemory::setServeState(SAServeShareMemory::ServeState state)
 }
 
 /**
+ * @brief 返回服务状态
+ * @return
+ */
+SAServeShareMemory::ServeState SAServeShareMemory::getServeState() const
+{
+    return static_cast<ServeState>(d_ptr->m_data.serve_state);
+}
+
+/**
  * @brief 获取端口
  * @return
  */
@@ -138,27 +148,41 @@ void SAServeShareMemory::setPort(int port)
     }
 }
 
-bool SAServeShareMemory::isListen() const
-{
-    int islisten = 0;
-    if(isReady())
-    {
-        d_ptr->getFromShareMem(&islisten,OFFSET_STATE,sizeof(int));
-    }
-    return (0 != islisten);
-}
-
-void SAServeShareMemory::setListenState(bool islisten)
-{
-    int v = (islisten ? 1 : 0);
-    if(isReady())
-    {
-        d_ptr->setToShareMem(&v,OFFSET_STATE,sizeof(int));
-    }
-}
-
+/**
+ * @brief 把共享内存的内容更新到本地内存
+ */
 void SAServeShareMemory::updateFromMem()
 {
     d_ptr->updateDataFromSharedMem();
 }
 
+/**
+ * @brief 返回描述
+ * @return
+ */
+QString SAServeShareMemory::describe() const
+{
+    QString str;
+    QTextStream io(&str);
+    io << (*this);
+    io.flush();
+    return std::move(str);
+}
+
+/**
+ * @brief 对SAServeShareMemory进行格式化文本输出
+ * @param mem
+ * @return
+ */
+QTextStream &operator <<(QTextStream &io, const SAServeShareMemory &mem)
+{
+    io << "SAServeShareMemory->"
+       << "\n shared memory key:" << mem.d_ptr->m_sharemem.key()
+       << "\n is attached:" << mem.d_ptr->m_sharemem.isAttached()
+        << "\n size:" << mem.d_ptr->m_sharemem.size()
+       << "\n error:" << (int)mem.d_ptr->m_sharemem.error() << " ,error string:" << mem.d_ptr->m_sharemem.errorString()
+       << "\n serve_state:" << mem.getServeState()
+       << "\n serve_port:" << mem.getPort()
+          ;
+    return io;
+}
