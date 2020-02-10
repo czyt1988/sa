@@ -11,6 +11,7 @@
 #include <QAbstractSocket>
 #include "SAThemeManager.h"
 #include "SACsvStream.h"
+#include "SAServeHandleFun.h"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 #pragma execution_character_set("utf-8")
@@ -46,6 +47,9 @@ int main(int argc, char *argv[])
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
     qInstallMessageHandler(sa_log_out_put);
     qDebug() << "==============start at" << QDateTime::currentDateTime() << "=====================";
+    //初始化服务端
+    SA::init_serve_funciotn_handle();
+    //初始化日志
     g_log_file = new QFile(get_log_file_path() + QDir::separator() + make_log_file_name());
     if(!g_log_file->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
     {
@@ -57,7 +61,7 @@ int main(int argc, char *argv[])
     //加载本地语言
     load_local_language();
     //启动服务程序
-    start_serve_process(max_start_serve_retry_count);
+//    start_serve_process(max_start_serve_retry_count);
     //样式设置
     MainWindow w;
     w.show();

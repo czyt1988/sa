@@ -18,14 +18,15 @@
 #define SASERVE_EXPORT
 #endif
 
-// #define SA_SERVE_DEBUG_PRINT //定义这个宏会产生打印
 #ifdef SA_SERVE_DEBUG_PRINT
     #ifndef QT_NO_DEBUG_OUTPUT
         #include <QDebug>
+        #ifndef FUNCTION_RUN_PRINT
         #define FUNCTION_RUN_PRINT() \
             do{\
               qDebug() << " >> fun:" << __FUNCTION__ << " line:" << __LINE__;\
             }while(0)
+        #endif
     #else
         #define FUNCTION_RUN_PRINT()
     #endif

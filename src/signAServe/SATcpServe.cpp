@@ -87,12 +87,12 @@ bool SATcpServe::hasPendingConnections() const
     return QTcpServer::hasPendingConnections();
 }
 
-QTcpSocket *SATcpServe::nextPendingConnection()
-{
-    if(d_ptr->m_socketList.isEmpty())
-        return nullptr;
-    return d_ptr->m_socketList.back();
-}
+//QTcpSocket *SATcpServe::nextPendingConnection()
+//{
+//    if(d_ptr->m_socketList.isEmpty())
+//        return nullptr;
+//    return d_ptr->m_socketList.back();
+//}
 
 
 void SATcpServe::onSectionFinished()

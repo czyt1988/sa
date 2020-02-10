@@ -55,7 +55,7 @@ public slots:
     //断开和服务器的连接
     void disconnectFromServe();
     //心跳检测设置 - 默认为false，30秒
-    void setHeartbreakCheck(bool enable,int checkFreS = 30);
+    void setHeartbreakCheck(bool enable);
     //请求token
     void requestToken(int pid,const QString& appid);
     //主动请求心跳,服务器收到会立马回复一个心跳协议

@@ -11,46 +11,46 @@
 #include "SAServerDefine.h"
 #include "SAServeHandleFun.h"
 
-const int HEARTBREAT_TIME_OUT_INTV_S = 5;
 
 class SATcpClientPrivate{
     SA_IMPL_PUBLIC(SATcpClient)
 public:
     SATcpClientPrivate(SATcpClient* p);
-    void startHeartbreakCheck(int checkFreS);
+    void startHeartbreakCheck();
     void stopHeartbreakCheck();
     //心跳检测的间隔，如果为0代表没有开启，最小1
     int getHeartbreakInterval() const;
-
+    //设置心跳检测的间隔
+    void setHeartbreatInterval(int ms);
 public:
+    int mHeartbreatMs;///< 心跳检测的频率ms 默认20s
     SATcpSocket* m_socket;
     QDateTime m_lastRecHeartbreakDatetime;
+    QDateTime m_lastRequestHeartbreakDatetime; ///< 请求心跳的时间
     std::unique_ptr<QTimer> m_timer;
 };
 
 SATcpClientPrivate::SATcpClientPrivate(SATcpClient *p):q_ptr(p)
+  ,mHeartbreatMs(20000)
   ,m_socket(nullptr)
   ,m_lastRecHeartbreakDatetime(QDateTime::currentDateTime())
+  ,m_lastRequestHeartbreakDatetime(QDateTime::currentDateTime())
   ,m_timer(nullptr)
 {
 
 }
 
-void SATcpClientPrivate::startHeartbreakCheck(int checkFreS)
+void SATcpClientPrivate::startHeartbreakCheck()
 {
-    checkFreS *= 1000;
-    if(checkFreS < 1000)
-    {
-        checkFreS = 1000;
-    }
     if(nullptr == m_timer)
     {
         m_timer = std::make_unique<QTimer>();
         m_timer->connect(m_timer.get(),&QTimer::timeout,q_ptr,&SATcpClient::onHeartbreatCheckTimeout);
     }
-    m_timer->setInterval(checkFreS);
+    m_timer->setInterval(mHeartbreatMs);
     m_timer->start();
     m_lastRecHeartbreakDatetime = QDateTime::currentDateTime();
+    q_ptr->requestHeartbreat();
 }
 
 void SATcpClientPrivate::stopHeartbreakCheck()
@@ -62,6 +62,10 @@ void SATcpClientPrivate::stopHeartbreakCheck()
     }
 }
 
+/**
+ * @brief 获取心跳间隔
+ * @return 单位为s
+ */
 int SATcpClientPrivate::getHeartbreakInterval() const
 {
     if(m_timer)
@@ -69,6 +73,15 @@ int SATcpClientPrivate::getHeartbreakInterval() const
         return (m_timer->interval()) / 1000;
     }
     return 0;
+}
+
+/**
+ * @brief 设置心跳检测的间隔
+ * @param ms 默认为20000ms，既20s
+ */
+void SATcpClientPrivate::setHeartbreatInterval(int ms)
+{
+    mHeartbreatMs = ms;
 }
 
 
@@ -182,6 +195,7 @@ bool SATcpClient::connectToServe(int timeout)
     d_ptr->m_socket->connectToHost(QHostAddress::LocalHost,port);
     if(d_ptr->m_socket->waitForConnected(timeout))
     {
+        qDebug() << tr("success connect to LocalHost:") << port;
         return true;
     }
     qDebug() << tr("connect time out");
@@ -207,11 +221,11 @@ void SATcpClient::disconnectFromServe()
  * @param checkFreS 检测频率，单位为秒S,默认30秒
  * @see heartbreatTimeout
  */
-void SATcpClient::setHeartbreakCheck(bool enable, int checkFreS)
+void SATcpClient::setHeartbreakCheck(bool enable)
 {
     if(enable)
     {
-        d_ptr->startHeartbreakCheck(checkFreS);
+        d_ptr->startHeartbreakCheck();
     }
     else
     {
@@ -226,14 +240,14 @@ void SATcpClient::requestToken(int pid, const QString &appid)
 
 void SATcpClient::requestHeartbreat()
 {
+    d_ptr->m_lastRequestHeartbreakDatetime = QDateTime::currentDateTime();
     SA::request_heartbreat(d_ptr->m_socket);
 }
 
 void SATcpClient::onSocketConnected()
 {
     //连接成功先请求一个心跳
-    requestHeartbreat();
-    emit connected();
+    setHeartbreakCheck(true);
 }
 
 void SATcpClient::cloese()
@@ -252,10 +266,8 @@ void SATcpClient::onReceivedData(const SAProtocolHeader &header, const QByteArra
 void SATcpClient::onHeartbreatCheckTimeout()
 {
     int intverals = d_ptr->getHeartbreakInterval();
-    QDateTime cur = QDateTime::currentDateTime();
-    int sec = cur.secsTo(d_ptr->m_lastRecHeartbreakDatetime);
-    intverals = (abs(sec)-abs(intverals));
-    if(intverals > HEARTBREAT_TIME_OUT_INTV_S)
+    int sec = d_ptr->m_lastRequestHeartbreakDatetime.secsTo(d_ptr->m_lastRecHeartbreakDatetime);
+    if(abs(sec) >= abs(intverals))
     {
         emit heartbreatTimeout(d_ptr->m_lastRecHeartbreakDatetime);
     }
@@ -277,6 +289,7 @@ void SATcpClient::destroySocket()
 void SATcpClient::connectSocket()
 {
     connect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::connected);
+    connect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::onSocketConnected);
     connect(d_ptr->m_socket,&QAbstractSocket::disconnected,this,&SATcpClient::disconnected);
     connect(d_ptr->m_socket,static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error)
             ,this,&SATcpClient::error);

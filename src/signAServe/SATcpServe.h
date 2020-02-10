@@ -17,7 +17,7 @@ public:
     ~SATcpServe();
     //获取当前所有socket
     QList<SATcpSocket*> getSockets() const;
-    virtual QTcpSocket * nextPendingConnection() override;
+    //virtual QTcpSocket * nextPendingConnection() override;
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
 protected slots:

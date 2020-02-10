@@ -29,8 +29,6 @@ HEADERS += \
     /../global/SAGlobals.h \
     SAServeGlobal.h \
     SAAbstractServe.h \
-    SALocalServeSocketOpt.h \
-    SAProcedure.h \
     3rdParty/CRC.h \
     SATcpSocket.h \
     SATcpServe.h \
@@ -45,8 +43,6 @@ HEADERS += \
 
 
 SOURCES += \
-    SALocalServeSocketOpt.cpp \
-    SAProcedure.cpp \
     SAAbstractServe.cpp \
     SATcpSocket.cpp \
     SATcpServe.cpp \

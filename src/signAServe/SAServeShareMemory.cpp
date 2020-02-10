@@ -29,7 +29,6 @@ SAServeShareMemoryPrivate::SAServeShareMemoryPrivate(SAServeShareMemory *p)
     :q_ptr(p)
     ,m_sharemem("signaDataProc.Serve")
 {
-    FUNCTION_RUN_PRINT();
     memset(&m_data,0,sizeof(SAServeShareMemoryPrivateData));
     if(!m_sharemem.create(sizeof(SAServeShareMemoryPrivateData)))
     {
@@ -43,6 +42,7 @@ SAServeShareMemoryPrivate::SAServeShareMemoryPrivate(SAServeShareMemory *p)
     else
     {
         //说明是第一次创建
+        qDebug() << ("create share memory sucess,will update data to share memory");
         updateDataToSharedMem();
     }
 }

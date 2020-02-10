@@ -32,10 +32,10 @@ enum ServeProtocolClassType{
 
 enum ServeProtocolFunctionType{
     ProtocolFunUnknow = 0
-    ,ProtocolFunReqHeartbreat
-    ,ProtocolFunReplyHeartbreat
-    ,ProtocolFunReqToken
-    ,ProtocolFunReplyToken
+    ,ProtocolFunReqHeartbreat //1
+    ,ProtocolFunReplyHeartbreat //2
+    ,ProtocolFunReqToken //3
+    ,ProtocolFunReplyToken //4
 };
 }
 

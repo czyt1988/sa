@@ -225,7 +225,6 @@ bool SA::request_heartbreat(SATcpSocket *socket)
 bool SA::deal_request_heartbreat(const SAProtocolHeader &header, const QByteArray &data, SATcpSocket *socket, QVariantHash *res)
 {
     FUNCTION_RUN_PRINT();
-    Q_UNUSED(header);
     Q_UNUSED(data);
     Q_UNUSED(res);
     SAProtocolHeader replyheader;
@@ -235,7 +234,7 @@ bool SA::deal_request_heartbreat(const SAProtocolHeader &header, const QByteArra
     replyheader.protocolTypeID = SA::ProtocolTypeHeartbreat;
     replyheader.protocolFunID = SA::ProtocolFunReplyHeartbreat;
     replyheader.extendValue = 0; // 心跳返回给客户端，此时值为0
-    return write(header,QByteArray(),socket);
+    return write(replyheader,QByteArray(),socket);
 }
 
 

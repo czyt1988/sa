@@ -1,6 +1,8 @@
 #include "SATcpSocket.h"
 #include "SAProtocolHeader.h"
 #include "SAXMLProtocolParser.h"
+
+
 class SATcpSocketPrivate
 {
     SA_IMPL_PUBLIC(SATcpSocket)
@@ -37,7 +39,8 @@ void SATcpSocketPrivate::mallocBuffer(size_t size)
     m_dataSize = size;
 }
 
-SATcpSocket::SATcpSocket(QObject *par)
+SATcpSocket::SATcpSocket(QObject *par):QTcpSocket(par)
+  ,d_ptr(new SATcpSocketPrivate(this))
 {
     connect(this,&QIODevice::readyRead,this,&SATcpSocket::onReadyRead);
 }
@@ -89,7 +92,7 @@ void SATcpSocket::onReadyRead()
         if(bytesAvailable() >= d_ptr->m_mainHeader.dataSize)
         {
             //说明数据接收完
-#ifdef _DEBUG_PRINT
+#ifdef SA_SERVE_DEBUG_PRINT
             qDebug() << " rec Data:"<<bytesAvailable()<< " bytes "
                      <<"\n header:"<<d_ptr->m_mainHeader
                         ;
@@ -105,7 +108,7 @@ void SATcpSocket::onReadyRead()
                 qDebug() << "socket abort!!!  can not read from socket io!";
                 return;
             }
-#ifdef _DEBUG_PRINT
+#ifdef SA_SERVE_DEBUG_PRINT
             printQByteArray(d_ptr->m_buffer);
 #endif
             deal(d_ptr->m_mainHeader,d_ptr->m_buffer);
@@ -125,7 +128,7 @@ void SATcpSocket::onReadyRead()
     {
         //说明包头还未接收
         //但socket收到的数据已经满足包头数据需要的数据
-#ifdef _DEBUG_PRINT
+#ifdef SA_SERVE_DEBUG_PRINT
         qDebug() <<"main header may receive:"
                 << "\r\n byte available:"<<bytesAvailable()
                     ;
@@ -137,7 +140,7 @@ void SATcpSocket::onReadyRead()
             abort();
             return;
         }
-#ifdef _DEBUG_PRINT
+#ifdef SA_SERVE_DEBUG_PRINT
         qDebug() << "readed header from socket:"
                  << d_ptr->m_mainHeader
                  ;
@@ -169,7 +172,7 @@ void SATcpSocket::onReadyRead()
 
         if(bytesAvailable() > 0)
         {
-#ifdef _DEBUG_PRINT
+#ifdef SA_SERVE_DEBUG_PRINT
         qDebug() << "have avaliable data,size:"<<bytesAvailable()
                         ;
 #endif
