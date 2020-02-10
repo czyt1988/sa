@@ -58,6 +58,7 @@ SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(const SAXMLConfigParserPrivat
 
 bool SAXMLConfigParserPrivate::setCfgFile(const QString &cfgPath)
 {
+    m_cfgPath = cfgPath;
     QFile file(cfgPath);
     if(!file.open(QIODevice::ReadWrite))
     {
@@ -65,7 +66,6 @@ bool SAXMLConfigParserPrivate::setCfgFile(const QString &cfgPath)
     }
     if(q_ptr->fromByteArray(file.readAll()))
     {
-        m_cfgPath = cfgPath;
         return true;
     }
     return false;
@@ -97,7 +97,7 @@ SAXMLConfigParser::SAXMLConfigParser():SAXMLProtocolParser()
 SAXMLConfigParser::SAXMLConfigParser(const QString &filepath):SAXMLProtocolParser()
     ,d_ptr(new SAXMLConfigParserPrivate(this,filepath))
 {
-    
+
 }
 
 SAXMLConfigParser::SAXMLConfigParser(const SAXMLConfigParser &other)
@@ -164,10 +164,10 @@ void SAXMLConfigParser::setValue(const QString &groupName, const QString &keyNam
  * @param keyName
  * @param var
  */
-void SAXMLConfigParser::setValue(const QString &keyName, const QVariant &var)
+void SAXMLConfigParser::setValueInDefaultGroup(const QString &keyName, const QVariant &var)
 {
     d_ptr->m_isDirty = true;
-    SAXMLProtocolParser::setValue(keyName,var);
+    SAXMLProtocolParser::setValueInDefaultGroup(keyName,var);
 }
 /**
  * @brief 判断是否有改变
@@ -237,9 +237,3 @@ void SAXMLConfigParser::splitNamePath(const QString &namePath, QString &groupNam
         keyName = namePath;
     }
 }
-
-
-
-
-
-

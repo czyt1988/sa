@@ -7,8 +7,7 @@
 #include <QFileInfo>
 #include "SAXMLConfigParser.h"
 
-SAGlobalConfig* SAGlobalConfig::s_instance = nullptr;
-QString SAGlobalConfig::s_configFilePath = QString();
+QString SAGlobalConfig::s_configFilePath = SAGlobalConfig::makeDefaultConfigPath();
 QString SAGlobalConfig::s_configFileName = "sa.config";
 class SAGlobalConfigPrivate
 {
@@ -26,18 +25,13 @@ SAGlobalConfigPrivate::SAGlobalConfigPrivate(SAGlobalConfig* par):q_ptr(par)
 
 //============================================
 
-SAGlobalConfig::SAGlobalConfig():SAXMLConfigParser(nullptr)
-    ,d_ptr(new SAGlobalConfigPrivate(this))
+SAGlobalConfig::SAGlobalConfig(const QString &cfgPath):SAXMLConfigParser(cfgPath)
+  ,d_ptr(new SAGlobalConfigPrivate(this))
 {
 }
 
 SAGlobalConfig::~SAGlobalConfig()
 {
-    if(NULL != s_instance)
-    {
-        delete s_instance;
-        s_instance = NULL;
-    }
 }
 
 
@@ -186,7 +180,7 @@ SET_XX_CONFIG(QString,setStringValue)
 ///
 SAGlobalConfig& SAGlobalConfig::getInstance()
 {
-    static SAGlobalConfig s_g_cfg;
+    static SAGlobalConfig s_g_cfg(getConfigFullPath());
     return s_g_cfg;
 }
 
@@ -206,16 +200,13 @@ QString SAGlobalConfig::getConfigPath()
 ///
 QString SAGlobalConfig::makeDefaultConfigPath()
 {
-    if(s_configFilePath.isNull())
+    QString path = QDir::currentPath() + QDir::separator() + "config";
+    if(!QFileInfo::exists(path))
     {
-        s_configFilePath = QDir::currentPath() + QDir::separator() + "config";
+        QDir dir(path);
+        dir.mkpath(path);
     }
-    if(!QFileInfo::exists(s_configFilePath))
-    {
-        QDir dir(s_configFilePath);
-        dir.mkpath(s_configFilePath);
-    }
-    return s_configFilePath;
+    return std::move(path);
 }
 ///
 /// \brief 获取配置文件名
@@ -228,11 +219,7 @@ QString SAGlobalConfig::getConfigFileName()
 
 QString SAGlobalConfig::getConfigFullPath()
 {
-    if(s_configFilePath.isNull())
-    {
-        makeDefaultConfigPath();
-    }
-    return makeDefaultConfigPath() +  QDir::separator() + getConfigFileName();
+    return s_configFilePath +  QDir::separator() + s_configFileName;
 }
 
 

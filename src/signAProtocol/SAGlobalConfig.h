@@ -17,7 +17,7 @@ class SA_PROTOCOL_EXPORT SAGlobalConfig : public SAXMLConfigParser
 {
     SA_IMPL(SAGlobalConfig)
 private:
-    explicit SAGlobalConfig();
+    explicit SAGlobalConfig(const QString& cfgPath = QString());
     ~SAGlobalConfig();
     Q_DISABLE_COPY(SAGlobalConfig)
 public:
@@ -51,7 +51,6 @@ public:
 public:
     static SAGlobalConfig& getInstance();
 private:
-    static SAGlobalConfig* s_instance;
     static QString s_configFilePath;///< 配置文件路径
     static QString s_configFileName;///< 配置文件名
 };

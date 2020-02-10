@@ -170,7 +170,7 @@ bool SA::deal_xml_request_token(const SAProtocolHeader &header, const QByteArray
     SAXMLProtocolParser reply;
     reply.setClassID(SA::ProtocolTypeXml);
     reply.setFunctionID(SA::ProtocolFunReplyToken);
-    reply.setValue("token",token);
+    reply.setValueInDefaultGroup("token",token);
     return write_xml_protocol(socket,&reply,SA::ProtocolFunReplyToken,header.sequenceID,header.extendValue);
 }
 
@@ -193,7 +193,7 @@ bool SA::deal_xml_reply_token(const SAProtocolHeader &header, const QByteArray &
     {
         return false;
     }
-    QString token = xml.getValue("token").toString();
+    QString token = xml.getValueInDefaultGroup("token").toString();
     res->insert("token",token);
     return true;
 }

@@ -59,7 +59,7 @@ public:
      * @param var 值
      * @note 没有指定分组，会写入默认分组中
      */
-    virtual void setValue(const QString& keyName, const QVariant& var) = 0;
+    virtual void setValueInDefaultGroup(const QString& keyName, const QVariant& var) = 0;
     /**
      * @brief 获取所有目录关键字
      * @return
@@ -109,7 +109,7 @@ public:
      * @param defaultVal 默认值（如果键值不存在，返回默认值）
      * @return
      */
-    virtual QVariant getValue(const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
+    virtual QVariant getValueInDefaultGroup(const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
 
 };
 

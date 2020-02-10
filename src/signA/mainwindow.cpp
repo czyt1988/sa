@@ -827,21 +827,22 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadSetting()
 {
-    bool isFirstStart = saConfig.getValue("StartTimes/firstStart",true).toBool();
+    bool isFirstStart = saConfig.getValue("StartTimes","firstStart",true).toBool();
     qDebug() << "first start:" << isFirstStart;
     if(isFirstStart)
     {
         onActionSetDefalutDockPosTriggered();
+        //初次打开后把值设置为false
+        saConfig.setValue("StartTimes","firstStart",false);
     }
 
-    QVariant var = saConfig.getValue("mainWindow/geometry");
+    QVariant var = saConfig.getValue("mainWindow","geometry");
     bool isLoadGeometry = false;
     if(var.isValid())
     {
-        QByteArray arr = var.toByteArray();
         isLoadGeometry |= restoreGeometry(var.toByteArray());
     }
-    var = saConfig.getValue("mainWindow/windowState");
+    var = saConfig.getValue("mainWindow","windowState");
     if(var.isValid())
     {
         isLoadGeometry |= restoreState(var.toByteArray());
@@ -850,7 +851,7 @@ void MainWindow::loadSetting()
     {
         showMaximized();
     }
-    var = saConfig.getValue("skin/name");
+    var = saConfig.getValue("skin","name");
     if(var.isValid())
         setSkin(var.toString());
     else
@@ -862,12 +863,12 @@ void MainWindow::loadSetting()
 ///
 void MainWindow::saveSetting()
 {
-    saConfig.setValue("StartTimes/firstStart",false);
-    saConfig.setValue("mainWindow/geometry",saveGeometry());
-    saConfig.setValue("mainWindow/windowState",saveState());
-    saConfig.setValue("skin/name",SAThemeManager::currentStyleName());
-    saConfig.setValue("path/openFiles",m_recentOpenFiles);
-    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.setValue("StartTimes","firstStart",false);
+    saConfig.setValue("mainWindow","geometry",saveGeometry());
+    saConfig.setValue("mainWindow","windowState",saveState());
+    saConfig.setValue("skin","name",SAThemeManager::currentStyleName());
+    saConfig.setValue("path","openFiles",m_recentOpenFiles);
+    saConfig.setValue("path","openProjectFolders",m_recentOpenProjectFolders);
     saConfig.save();
 }
 
@@ -877,8 +878,8 @@ void MainWindow::saveSetting()
 ///
 void MainWindow::saveRecentPath()
 {
-    saConfig.setValue("path/openFiles",m_recentOpenFiles);
-    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.setValue("path","openFiles",m_recentOpenFiles);
+    saConfig.setValue("path","openProjectFolders",m_recentOpenProjectFolders);
     saConfig.save();
 }
 ///
@@ -887,15 +888,15 @@ void MainWindow::saveRecentPath()
 ///
 void MainWindow::loadRecentPath()
 {
-    m_recentOpenFiles = saConfig.getValue("path/openFiles").toStringList();
-    m_recentOpenProjectFolders = saConfig.getValue("path/openProjectFolders").toStringList();
-    saPrint() << m_recentOpenProjectFolders;
-    updateRecentPathMenu();
+    m_recentOpenFiles = saConfig.getValue("path","openFiles").toStringList();
+    m_recentOpenProjectFolders = saConfig.getValue("path","openProjectFolders").toStringList();
+    updateRecentOpenFilesMenu();
+    updateRecentOpenProjectsMenu();
 }
 ///
-/// \brief 刷新最近打开菜单
+/// \brief 刷新最近打开文件的菜单
 ///
-void MainWindow::updateRecentPathMenu()
+void MainWindow::updateRecentOpenFilesMenu()
 {
     QList<QAction*> ofacts = ui->menuRecentOpenFile->actions();
     std::for_each(ofacts.begin(),ofacts.end(),[&](QAction* a){
@@ -913,7 +914,15 @@ void MainWindow::updateRecentPathMenu()
         ui->menuRecentOpenFile->addAction(act);
     });
 
-    ofacts = ui->menuRecentOpenProject->actions();
+
+}
+
+/**
+ * @brief 刷新最近打开工程的菜单
+ */
+void MainWindow::updateRecentOpenProjectsMenu()
+{
+    QList<QAction*> ofacts = ui->menuRecentOpenProject->actions();
     std::for_each(ofacts.begin(),ofacts.end(),[&](QAction* a){
         if(!a->isSeparator() && a != ui->actionClearRecentOpenProjectorHistroy){
             ui->menuRecentOpenProject->removeAction(a);
@@ -1030,6 +1039,54 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     QMainWindow::mousePressEvent(event);
 }
 
+/**
+ * @brief 更新最近打开工程的路径，此函数会更新配置文件，同时更新界面
+ * @param path
+ */
+void MainWindow::appendRecentOpenProjectsPath(const QString &path)
+{
+    //成功打开，记录到最近打开列表中
+    if(m_recentOpenProjectFolders.contains(path))
+    {
+        m_recentOpenProjectFolders.removeOne(path);
+        m_recentOpenProjectFolders.push_front(path);
+    }
+    else
+    {
+        int count = saConfig.getValue("path","recOpenProjectFolderCount",10).toInt();
+        m_recentOpenProjectFolders.push_front(path);
+        if(count > 0 && m_recentOpenProjectFolders.size()>count)
+        {
+            m_recentOpenProjectFolders.removeLast();
+        }
+    }
+    saConfig.setValue("path","openProjectFolders",m_recentOpenProjectFolders);
+    saConfig.save();
+    updateRecentOpenProjectsMenu();
+}
+
+void MainWindow::appendRecentOpenFilesPath(const QString &path)
+{
+    //成功打开，记录到最近打开列表中
+    if(m_recentOpenFiles.contains(path))
+    {
+        m_recentOpenFiles.removeOne(path);
+        m_recentOpenFiles.push_front(path);
+    }
+    else
+    {
+        int count = saConfig.getValue("path","recOpenFilesCount",10).toInt();
+        m_recentOpenFiles.push_front(path);
+        if(count > 0 && m_recentOpenFiles.size()>count)
+        {
+            m_recentOpenFiles.removeLast();
+        }
+    }
+    saConfig.setValue("path","openFiles",m_recentOpenFiles);
+    saConfig.save();
+    updateRecentOpenFilesMenu();
+}
+
 
 
 
@@ -1106,34 +1163,7 @@ void MainWindow::onActionOpenTriggered()
         return;
     }
     //成功打开，记录到最近打开列表中
-    if(m_recentOpenFiles.contains(strFile))
-    {
-        return;
-    }
-    int openFilesCount = saConfig.getValue("path/openFilesCount",10).toInt();
-    m_recentOpenFiles.push_front(strFile);
-    if(openFilesCount > 0 && m_recentOpenFiles.size()>openFilesCount)
-    {
-        QString takePath = m_recentOpenFiles.takeLast();
-        QList<QAction*> acts = ui->menuRecentOpenFile->actions();
-        for(int i=0;i<acts.size();++i)
-        {
-            if(acts[i]->text() == takePath)
-            {
-                acts[i]->deleteLater();
-                break;
-            }
-        }
-    }
-    //QSettings setting = getSetting();
-    saConfig.setValue("path/openFiles",m_recentOpenFiles);
-    saConfig.save();
-    QAction* act = new QAction(strFile,this);
-    connect(act,&QAction::triggered,this,[this,act](bool on){
-        Q_UNUSED(on);
-        this->openFile(act->text());
-    });
-    ui->menuRecentOpenFile->addAction(act);
+    appendRecentOpenFilesPath(strFile);
 }
 
 ///
@@ -1181,40 +1211,7 @@ void MainWindow::onActionOpenProjectTriggered()
         return;
     }
     raiseValueManageDock();
-    //成功打开，记录到最近打开列表中
-    if(m_recentOpenProjectFolders.contains(path))
-    {
-        return;
-    }
-    int openFilesCount = saConfig.getValue("path/openProjectsCount",10).toInt();
-    m_recentOpenProjectFolders.push_front(path);
-    if(m_recentOpenProjectFolders.size() > 10)
-    {
-        m_recentOpenProjectFolders.pop_back();
-    }
-
-
-    if(openFilesCount > 0 && m_recentOpenProjectFolders.size()>openFilesCount)
-    {
-        QString takePath = m_recentOpenProjectFolders.takeLast();
-        QList<QAction*> acts = ui->menuRecentOpenProject->actions();
-        for(int i=0;i<acts.size();++i)
-        {
-            if(acts[i]->text() == takePath)
-            {
-                acts[i]->deleteLater();
-                break;
-            }
-        }
-    }
-    saConfig.setValue("path/openProjectFolders",m_recentOpenProjectFolders);
-    saConfig.save();
-    QAction* act = new QAction(path,this);
-    connect(act,&QAction::triggered,this,[this,act](bool on){
-        Q_UNUSED(on);
-        this->openProject(act->text());
-    });
-    ui->menuRecentOpenProject->addAction(act);
+    appendRecentOpenProjectsPath(path);
 }
 
 
@@ -1246,11 +1243,17 @@ void MainWindow::onActionSaveTriggered()
 ///
 void MainWindow::onActionSaveAsTriggered()
 {
+    if(!setProjectInfomation())
+    {
+        showWarningMessageInfo(tr("you need to set a project name"));
+        return;
+    }
     QString path = QFileDialog::getSaveFileName(this,QStringLiteral("保存"),QString()
                                  ,QString(),0,QFileDialog::ShowDirsOnly);
     if(path.isEmpty())
         return;
     saProjectManager->saveAs(path);
+    appendRecentOpenProjectsPath(path);
 }
 
 
@@ -2738,11 +2741,6 @@ void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
 {
     if(old && now)
     {
-        if(old->metaObject() && now->metaObject())
-        {
-            qDebug() << "old widget:" << old->metaObject()->className()
-                 << " new widget:" << now->metaObject()->className();
-        }
         if(QwtPlotCanvas* c = qobject_cast<QwtPlotCanvas*>(now))
         {
             Q_UNUSED(c);

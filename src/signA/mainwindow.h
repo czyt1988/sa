@@ -510,6 +510,9 @@ protected:
 //    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 private:
+    //加入最近打开的路径
+    void appendRecentOpenProjectsPath(const QString& path);
+    void appendRecentOpenFilesPath(const QString& path);
     //打开文件
     bool openFile(const QString& fullPath);
     //打开项目文件夹
@@ -523,7 +526,9 @@ private:
     //保存最近打开的文件内容信息
     void loadRecentPath();
     //刷新最近打开菜单
-    void updateRecentPathMenu();
+    void updateRecentOpenFilesMenu();
+    //刷新最近打开工程的菜单
+    void updateRecentOpenProjectsMenu();
     //更新变量管理的树形控件
     void updateValueManagerTreeView();
     //释放chart的附加editor

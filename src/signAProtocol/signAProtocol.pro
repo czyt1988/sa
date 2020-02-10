@@ -36,7 +36,8 @@ HEADERS += \
     SACRC.h \
     SAXMLProtocolParser.h \
     SAAbstractProtocolParser.h \
-    SAXMLConfigParser.h
+    SAXMLConfigParser.h \
+    tstSignAProtocol.h
 
 SOURCES += \
     SAVariantCaster.cpp \
@@ -45,6 +46,7 @@ SOURCES += \
     SAProtocolHeader.cpp \
     SACRC.cpp \
     SAXMLProtocolParser.cpp \
-    SAXMLConfigParser.cpp
+    SAXMLConfigParser.cpp \
+    tstSAVariantCaster.cpp
 
 OTHER_FILES += readme.md
