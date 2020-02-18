@@ -18,19 +18,7 @@ class SAFigureWindow;
 class DataFeatureTreeModel;
 class SAChart2D;
 class SAFigureSetWidget;
-/// \def 使用多线程来进行数据特征的计算，否则使用多进程，
-/// 如果程序不希望使用多线程进行计算，把这个宏注释掉，会使用多进程进行计算
-//#define USE_THREAD_CALC_FEATURE
 
-//数据接收相关
-#ifdef USE_THREAD_CALC_FEATURE
-
-#else
-    #define USE_IPC_CALC_FEATURE //使用多进程进行计算
-    class QLocalServer;
-    class QLocalSocket;
-    class SALocalServeSocketOpt;
-#endif
 
 namespace Ui {
 class SADataFeatureWidget;
@@ -51,12 +39,22 @@ signals:
     //显示消息
     void showMessageInfo(const QString& info,SA::MeaasgeType messageType = SA::NormalMessage);
 private slots:
-
-    void on_treeView_clicked(const QModelIndex &index);
-
-    void on_toolButton_clearDataFeature_clicked();
-
+    //树形控件点击
+    void onTreeViewClicked(const QModelIndex &index);
+    //点击清除属性按钮
+    void onToolButtonClearDataFeatureClicked();
+    //图片隐藏触发的槽，隐藏绘图需要对显示的信息也隐藏
+    void onChartHide();
+    //绘图销毁触发的槽，绘图销毁，对数据进行销毁
+    void onChartDestroy();
+    //fig窗口销毁
+    void onFigureDestroy();
 private:
+    //对MdiSubWindow进行绑定
+    void bindMdiSubWindow(QMdiSubWindow *w);
+    //对已经绑定的MdiSubWindow进行解绑
+    void unbindMdiSubWindow(QMdiSubWindow *w);
+    //获取mdisubwindow的FigureWindow
     SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature
     void callCalcFigureWindowFeature(SAFigureWindow* figure);
@@ -64,7 +62,7 @@ private:
     void checkModelItem(QAbstractItemModel* baseModel,QMdiSubWindow *subWndPtr);
 private:
     //计算一个plot item
-    void calcPlotItemFeature(const QwtPlotItem* plotitem,const QMdiSubWindow *arg1,const SAChart2D* arg2);
+    void calcPlotItemFeature(const QwtPlotItem* plotitem,const QMdiSubWindow *midwidget,const SAChart2D* chartptr);
     //定时心跳检测时间到达触发槽
     Q_SLOT void onHeartbeatCheckerTimerout();
 private:

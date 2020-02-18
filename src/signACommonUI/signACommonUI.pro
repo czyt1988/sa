@@ -75,7 +75,8 @@ HEADERS += \
     SAValueTableOptCommands.h \
     SAPlotDataModel.h \
     SAGUIGlobalConfig.h \
-    SAFigureSetWidget.h
+    SAFigureSetWidget.h \
+    SAMainWindow.h
 
 SOURCES += \
     SAUIReflection.cpp \
@@ -109,7 +110,8 @@ SOURCES += \
     SAValueTableOptDeleteCommand_impl.cpp \
     SAValueTableOptInsertCommand_impl.cpp \
     SAGUIGlobalConfig.cpp \
-    SAFigureSetWidget.cpp
+    SAFigureSetWidget.cpp \
+    SAMainWindow.cpp
 
 FORMS += \
     SAValueSelectDialog.ui \

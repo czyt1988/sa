@@ -10,8 +10,10 @@
 struct SA_COMMON_UI_EXPORT SAMdiSubWindowSerializeHead
 {
 
-    union{
-        struct {
+    union
+    {
+        struct
+        {
             unsigned int magic1;///< 判断文件的魔数
             int type;
         } param;

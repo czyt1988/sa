@@ -11,9 +11,10 @@
 ///
 /////////////////////////////////////////////////////////////////////
 class SAFigureTableEditSeriesCommandPrivate;
-///
-/// \brief 编辑序列数值的命令在编辑的位置超过原有位置时，会把长度扩展到指定的长度，并初始化为默认的数据
-///
+
+/**
+ * @brief 编辑序列数值的命令在编辑的位置超过原有位置时，会把长度扩展到指定的长度，并初始化为默认的数据
+ */
 class SA_COMMON_UI_EXPORT SAFigureTableEditSeriesCommand : public SAFigureOptCommand
 {
 public:
@@ -42,9 +43,10 @@ private:
 ///
 /////////////////////////////////////////////////////////////////////
 class SAFigureTablePasteInSeriesCommandPrivate;
-///
-/// \brief 粘贴内容到figure的命令 处理ctrl+v
-///
+
+/**
+ * @brief 粘贴内容到figure的命令 处理ctrl+v
+ */
 class SA_COMMON_UI_EXPORT SAFigureTablePasteInSeriesCommand : public SAFigureOptCommand
 {
 public:
