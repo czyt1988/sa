@@ -103,7 +103,7 @@ void SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem<T,PlotItemTyp
     curDatas.reserve(m_oldDataSize);
     newDatas.reserve(m_oldDataSize - m_inRangeDatas.size());
     SAChart::getSeriesData(curDatas,m_series);
-    czy::copy_out_of_indexs(curDatas.begin(),curDatas.end(),m_inRangeIndexs.begin(),m_inRangeIndexs.end(),std::back_inserter(newDatas));
+    SA::copy_out_of_indexs(curDatas.begin(),curDatas.end(),m_inRangeIndexs.begin(),m_inRangeIndexs.end(),std::back_inserter(newDatas));
     m_fpSetSample(item(),newDatas);
 }
 template<typename T,typename PlotItemType,typename FpSetSeriesSampleFun,typename FpCheckValueInRange>
@@ -117,7 +117,7 @@ void SAFigureRemoveSeriesDatasInRangCommandPrivate_SeriesStoreItem<T,PlotItemTyp
     curDatas.reserve(dataSize);
     newDatas.reserve(m_oldDataSize);
     SAChart::getSeriesData(curDatas,m_series);
-    czy::insert_inner_indexs(m_inRangeIndexs.begin()
+    SA::insert_inner_indexs(m_inRangeIndexs.begin()
                              ,m_inRangeIndexs.end()
                              ,m_inRangeDatas.begin()
                              ,curDatas.begin()

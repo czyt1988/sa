@@ -7,10 +7,8 @@ QT += core gui
 HEADERS += \
 		$$PWD/czy.h \
         $$PWD/czyQtApp.h \
-        $$PWD/czyQArrayEx.h \
-        $$PWD/czyQtUI.h
+        $$PWD/czyQArrayEx.h 
 
 
 SOURCES +=  \
-        $$PWD/czyQtUI.cpp \
         $$PWD/czyQtApp.cpp

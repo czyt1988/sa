@@ -49,6 +49,8 @@ private slots:
     void onChartDestroy();
     //fig窗口销毁
     void onFigureDestroy();
+    //心跳超时
+    void onHeartbeatCheckerTimerout();
 private:
     //对MdiSubWindow进行绑定
     void bindMdiSubWindow(QMdiSubWindow *w);
@@ -63,8 +65,6 @@ private:
 private:
     //计算一个plot item
     void calcPlotItemFeature(const QwtPlotItem* plotitem,const QMdiSubWindow *midwidget,const SAChart2D* chartptr);
-    //定时心跳检测时间到达触发槽
-    Q_SLOT void onHeartbeatCheckerTimerout();
 private:
     Ui::SADataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口

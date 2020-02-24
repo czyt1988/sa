@@ -11,7 +11,7 @@ namespace gsl{
     #include <gsl/gsl_multifit.h>
 }
 
-namespace czy {
+namespace SA {
     ///
     /// \brief The Math class 用于处理简单数学计算
     ///
@@ -53,7 +53,7 @@ namespace czy {
                 const double* y,const double* yi,size_t length
                 ,double& out_ssr,double& out_sse,double& out_sst,double& out_rmse,double& out_RSquare)
             {
-                double y_mean = czy::Math::mean(y,y+length);
+                double y_mean = SA::Math::mean(y,y+length);
                 out_ssr = 0.0;
                 for (size_t i =0;i<length;++i)
                 {

@@ -149,7 +149,7 @@ void SAValueTableOptVectorDeleteCommandPrivate<T>::redo()
     QVector<T>& datas = m_data->getValueDatas();
     QVector<T> newDatas;
     newDatas.reserve(datas.size());
-    czy::copy_out_of_indexs(datas.begin(),datas.end(),m_deleteIndexs.begin(),m_deleteIndexs.end(),std::back_inserter(newDatas));
+    SA::copy_out_of_indexs(datas.begin(),datas.end(),m_deleteIndexs.begin(),m_deleteIndexs.end(),std::back_inserter(newDatas));
     datas.swap(newDatas);
     m_data->setDirty(true);
 }
@@ -162,7 +162,7 @@ void SAValueTableOptVectorDeleteCommandPrivate<T>::undo()
     QVector<T>& datas = m_data->getValueDatas();
     QVector<T> newDatas;
     newDatas.reserve(m_oldDataSize);
-    czy::insert_inner_indexs(m_deleteIndexs.begin(),m_deleteIndexs.end()
+    SA::insert_inner_indexs(m_deleteIndexs.begin(),m_deleteIndexs.end()
                              ,m_deleteDatas.begin()
                              ,datas.begin(),datas.end()
                              ,std::back_inserter(newDatas));

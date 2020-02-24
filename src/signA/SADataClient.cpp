@@ -26,7 +26,7 @@ SADataClient::SADataClient(QObject *p):QObject(p)
     //非线程相关的信号槽
     connect(this,&SADataClient::startConnectToServe,m_client,&SATcpDataProcessClient::connectToServe);
     connect(m_client,&SATcpDataProcessClient::clientError,this,&SADataClient::onClientErrorOccure);
-
+    connect(m_client,&SATcpDataProcessClient::heartbreatTimeout,this,&SADataClient::onHeartbeatCheckerTimerout);
     connect(m_client,&SATcpDataProcessClient::connected,this,&SADataClient::onSocketConnected);
     connect(m_client,&SATcpDataProcessClient::disconnected,this,&SADataClient::onSocketDisconnected);
     connect(m_client,&SATcpDataProcessClient::error,this,&SADataClient::onSocketErrorOccure);

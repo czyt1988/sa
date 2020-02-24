@@ -9,7 +9,7 @@
 #include <QPointF>
 #include <QDebug>
 #include "czyArray.h"
-namespace czy
+namespace SA
 {
 /**
  * @brief 此命名空间用于对Qt类型的数组扩展

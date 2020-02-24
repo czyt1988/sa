@@ -4,7 +4,7 @@
 #include <czyMath.h>
 #include <czyMath_DSP.h>
 #include <vector>
-namespace czy
+namespace SA
 {
 namespace SA
 {

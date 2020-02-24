@@ -78,8 +78,8 @@ void sigmaDetect(SAUIInterface* ui)
             if(isMark)
             {
                 QVector<double> oxs,oys;
-                czy::copy_inner_indexs(xs.begin(),indexs.begin(),indexs.end(),std::back_inserter(oxs));
-                czy::copy_inner_indexs(ys.begin(),indexs.begin(),indexs.end(),std::back_inserter(oys));
+                SA::copy_inner_indexs(xs.begin(),indexs.begin(),indexs.end(),std::back_inserter(oxs));
+                SA::copy_inner_indexs(ys.begin(),indexs.begin(),indexs.end(),std::back_inserter(oys));
                 QwtPlotCurve* curs = new QwtPlotCurve(QString("%1_outSigmaMarker").arg(title));
                 curs->setSamples(oxs,oys);
                 SAChart::setCurvePenStyle(curs,Qt::NoPen);
@@ -103,10 +103,10 @@ void sigmaDetect(SAUIInterface* ui)
                 {
                     allIndex.append(i);
                 }
-                czy::copy_out_of_indexs(allIndex.begin(),allIndex.end(),indexs.begin(),indexs.end(),std::back_inserter(innerIndex));
+                SA::copy_out_of_indexs(allIndex.begin(),allIndex.end(),indexs.begin(),indexs.end(),std::back_inserter(innerIndex));
                 QVector<double> oxs,oys;
-                czy::copy_inner_indexs(xs.begin(),innerIndex.begin(),innerIndex.end(),std::back_inserter(oxs));
-                czy::copy_inner_indexs(ys.begin(),innerIndex.begin(),innerIndex.end(),std::back_inserter(oys));
+                SA::copy_inner_indexs(xs.begin(),innerIndex.begin(),innerIndex.end(),std::back_inserter(oxs));
+                SA::copy_inner_indexs(ys.begin(),innerIndex.begin(),innerIndex.end(),std::back_inserter(oys));
                 QVector<QPointF> oxys;
                 saFun::makeVectorPointF(oxs,oys,oxys);;
 

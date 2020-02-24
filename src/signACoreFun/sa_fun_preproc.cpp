@@ -48,19 +48,19 @@ bool saFun::pointSmooth(const SAAbstractDatas *wave, int points, int power, SAVe
     }
     smoothY.resize (orData.size ());
     if(3 == points && 1 == power)
-        czy::Math::linear_smooth_3 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::linear_smooth_3 (orData.begin (),orData.end (),smoothY.begin ());
     else if(5 == points && 1 == power)
-        czy::Math::linear_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::linear_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
     else if(7 == points && 1 == power)
-        czy::Math::linear_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::linear_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
     else if(5 == points && 2 == power)
-        czy::Math::quadratic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::quadratic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
     else if(7 == points && 2 == power)
-        czy::Math::quadratic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::quadratic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
     else if(5 == points && 3 == power)
-        czy::Math::cubic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::cubic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
     else if(7 == points && 3 == power)
-        czy::Math::cubic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::cubic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
     else
     {
         saFun::setErrorString( (TR("can not deal [%1 points %2 power],"
@@ -82,19 +82,19 @@ bool saFun::pointSmooth(const SAVectorPointF *wave, int points, int power, SAVec
     SAVectorPointF::getYs(wave,std::back_inserter(orData));
     smoothY.resize (orData.size ());
     if(3 == points && 1 == power)
-        czy::Math::linear_smooth_3 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::linear_smooth_3 (orData.begin (),orData.end (),smoothY.begin ());
     else if(5 == points && 1 == power)
-        czy::Math::linear_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::linear_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
     else if(7 == points && 1 == power)
-        czy::Math::linear_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::linear_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
     else if(5 == points && 2 == power)
-        czy::Math::quadratic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::quadratic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
     else if(7 == points && 2 == power)
-        czy::Math::quadratic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::quadratic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
     else if(5 == points && 3 == power)
-        czy::Math::cubic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::cubic_smooth_5 (orData.begin (),orData.end (),smoothY.begin ());
     else if(7 == points && 3 == power)
-        czy::Math::cubic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
+        SA::Math::cubic_smooth_7 (orData.begin (),orData.end (),smoothY.begin ());
     else
     {
         saFun::setErrorString( (TR("can not deal [%1 points %2 power],"
@@ -156,12 +156,12 @@ bool saFun::sigmaDenoising(const SAAbstractDatas *wave, double sigma, SAVectorDo
     }
     QVector<int> indexOutRang;//记录超出范围的索引
     QVector<int> indexInRang;//记录在范围的索引
-    czy::Math::get_n_sigma_rang(orData.cbegin (),orData.cend (),sigma
+    SA::Math::get_n_sigma_rang(orData.cbegin (),orData.cend (),sigma
                                     ,std::back_inserter(indexOutRang)
                                     ,std::back_inserter(indexInRang));
     beRemoveData.reserve(indexOutRang.size());
     denoisingData.reserve(orData.size() - indexOutRang.size());
-    czy::split_with_indexs(orData.cbegin(),orData.cend()
+    SA::split_with_indexs(orData.cbegin(),orData.cend()
                        ,indexOutRang.begin(),indexOutRang.end()
                        ,std::back_inserter(beRemoveData)
                        ,std::back_inserter(denoisingData));
@@ -200,12 +200,12 @@ bool saFun::sigmaDenoising(const SAVectorPointF *wave, double sigma, SAVectorPoi
     QVector<QPointF> denoisingData,beRemoveData;
     QVector<int> indexOutRang;//记录超出范围的索引
     QVector<int> indexInRang;//记录在范围的索引
-    czy::Math::get_n_sigma_rang(ys.begin (),ys.end (),sigma
+    SA::Math::get_n_sigma_rang(ys.begin (),ys.end (),sigma
                                  ,std::back_inserter(indexOutRang)
                                  ,std::back_inserter(indexInRang));
     beRemoveData.reserve(indexOutRang.size());
     denoisingData.reserve(ys.size() - indexOutRang.size());
-    czy::split_with_indexs(wave->cbegin(),wave->cend()
+    SA::split_with_indexs(wave->cbegin(),wave->cend()
                        ,indexOutRang.begin(),indexOutRang.end()
                        ,std::back_inserter(beRemoveData)
                        ,std::back_inserter(denoisingData));
@@ -236,7 +236,7 @@ void saFun::sigmaDenoising(const QVector<double>& xs
                            , QVector<int> &index
                            )
 {
-    czy::Math::get_out_n_sigma_rang(ys.begin (),ys.end ()
+    SA::Math::get_out_n_sigma_rang(ys.begin (),ys.end ()
                                     ,sigma
                                     ,std::back_inserter(index));
 }
@@ -247,19 +247,19 @@ bool saFun::pointSmooth(const QVector<double> &orData, int points, int power, QV
 {
     smoothY.resize (orData.size ());
     if(3 == points && 1 == power)
-        czy::Math::linear_smooth_3 (orData.cbegin (),orData.cend (),smoothY.begin ());
+        SA::Math::linear_smooth_3 (orData.cbegin (),orData.cend (),smoothY.begin ());
     else if(5 == points && 1 == power)
-        czy::Math::linear_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
+        SA::Math::linear_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
     else if(7 == points && 1 == power)
-        czy::Math::linear_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
+        SA::Math::linear_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
     else if(5 == points && 2 == power)
-        czy::Math::quadratic_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
+        SA::Math::quadratic_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
     else if(7 == points && 2 == power)
-        czy::Math::quadratic_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
+        SA::Math::quadratic_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
     else if(5 == points && 3 == power)
-        czy::Math::cubic_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
+        SA::Math::cubic_smooth_5 (orData.cbegin (),orData.cend (),smoothY.begin ());
     else if(7 == points && 3 == power)
-        czy::Math::cubic_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
+        SA::Math::cubic_smooth_7 (orData.cbegin (),orData.cend (),smoothY.begin ());
     else
     {
         saFun::setErrorString( (TR("can not deal [%1 points %2 power],"

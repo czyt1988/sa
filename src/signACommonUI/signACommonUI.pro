@@ -30,7 +30,7 @@ include($$PWD/../signAChart/signAChart.pri)
 include($$PWD/../czy/czy.pri)
 #propertybrowser
 #include($$PWD/../3rdParty/qtpropertybrowser/src/qtpropertybrowser.pri)#propertybrowser support
-include($$[QT_INSTALL_PREFIX]/../Src/qttools/src/shared/qtpropertybrowser/qtpropertybrowser.pri)
+include($$PWD/../3rdParty/qtpropertybrowser/propertyBrowser.pri)
 #QWT
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
 #color picker support

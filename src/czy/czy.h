@@ -15,7 +15,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-namespace czy{
+namespace SA{
 
 const double PI = 3.1415926535897932384626;
 const double PI2 = 6.2831853071795864769252;

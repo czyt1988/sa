@@ -9,7 +9,6 @@ QT += core gui
 HEADERS += \
         $$PWD/czy.h \
         $$PWD/czyQtApp.h \
-        $$PWD/czyQtUI.h \
         $$PWD/czyMath_DSP.h \
         $$PWD/czyMath.h \
         $$PWD/czyMath_Interpolation.h \
@@ -24,7 +23,6 @@ HEADERS += \
 
 SOURCES +=  \
         $$PWD/czyMath_DSP.cpp\
-        $$PWD/czyQtUI.cpp \
         $$PWD/czySA.cpp\
         $$PWD/czyAlgorithm.cpp \
         $$PWD/czyMath_Smooth.cpp \

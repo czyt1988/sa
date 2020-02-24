@@ -14,12 +14,12 @@
 #endif
 
 
-czy::Math::DSP::DSP(void)
+SA::Math::DSP::DSP(void)
 {
 }
 
 
-czy::Math::DSP::~DSP(void)
+SA::Math::DSP::~DSP(void)
 {
 }
 
@@ -30,7 +30,7 @@ czy::Math::DSP::~DSP(void)
 /// \param n 数值
 /// \return
 ///
-bool czy::Math::DSP::isPower2( int n )
+bool SA::Math::DSP::isPower2( int n )
 {
     int bits = 0;
     while( n )
@@ -53,7 +53,7 @@ bool czy::Math::DSP::isPower2( int n )
 /// WINDOWFLAG=4     blackman window
 /// WINDOWFLAG=5     bartlett window
 ///
-void czy::Math::DSP::windowed(double *x, size_t n, WindowType windowflag )
+void SA::Math::DSP::windowed(double *x, size_t n, WindowType windowflag )
 {   
     double  multiplier;
     size_t i;
@@ -100,7 +100,7 @@ void czy::Math::DSP::windowed(double *x, size_t n, WindowType windowflag )
 /// \param pImageData 虚数部分,同时作为虚数的输入，变换完后会作为变换结果的虚部
 /// \param nNumCount 数组长度
 ///
-bool czy::Math::DSP::fft(double* pRealData,double* pImageData,int nNumCount)
+bool SA::Math::DSP::fft(double* pRealData,double* pImageData,int nNumCount)
 {
     int i(0);
     fftw_complex *pOutPut;
@@ -152,7 +152,7 @@ bool czy::Math::DSP::fft(double* pRealData,double* pImageData,int nNumCount)
 /// \param pImageData 虚数部分,同时作为虚数的输入，变换完后会作为变换结果的虚部
 /// \param nNumCount 数组长度
 ///
-bool czy::Math::DSP::ifft(double* pRealData,double* pImageData,int nNumCount)
+bool SA::Math::DSP::ifft(double* pRealData,double* pImageData,int nNumCount)
 {
     int i(0);
     fftw_complex *pOutPut;
@@ -209,7 +209,7 @@ bool czy::Math::DSP::ifft(double* pRealData,double* pImageData,int nNumCount)
 /// \param nNumCount 原始数据长度
 /// \param nfftSize 傅里叶变换长度
 ///
-bool czy::Math::DSP::rfft(const double* pOrignData, double* pRealData, double* pImageData, int nNumCount, int nfftSize)
+bool SA::Math::DSP::rfft(const double* pOrignData, double* pRealData, double* pImageData, int nNumCount, int nfftSize)
 {
     int i(0);
     std::vector<double> pData;
@@ -255,7 +255,7 @@ bool czy::Math::DSP::rfft(const double* pOrignData, double* pRealData, double* p
     return true;
 }
 
-size_t czy::Math::DSP::getFFTRealDataCount(size_t fftSize)
+size_t SA::Math::DSP::getFFTRealDataCount(size_t fftSize)
 {
     return (unsigned int)floor((double)(fftSize/2));
 }

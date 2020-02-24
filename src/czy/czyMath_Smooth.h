@@ -3,7 +3,7 @@
 #include <czy.h>
 #include <math.h>
 #include <iterator>
-namespace czy{
+namespace SA{
 
 ///
 /// \brief The Math namespace 用于处理简单数学计算

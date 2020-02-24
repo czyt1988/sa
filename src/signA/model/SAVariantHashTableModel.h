@@ -16,7 +16,7 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     void update();
 public:
-    typedef czy::QtApp::QczyHashTable<QVariant> Table;
+    typedef SA::SAHashTable<QVariant> Table;
     void setHashTableData(Table* prt);
     const Table* getHashTableData() const;
     Table* getHashTableData();

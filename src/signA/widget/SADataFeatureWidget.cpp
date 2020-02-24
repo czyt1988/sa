@@ -313,6 +313,11 @@ void SADataFeatureWidget::onFigureDestroy()
 
 }
 
+void SADataFeatureWidget::onHeartbeatCheckerTimerout()
+{
+   emit showMessageInfo(tr("data process serve heartbreat time out"),SA::WarningMessage);
+}
+
 /**
  * @brief 对MdiSubWindow进行绑定
  * @param w

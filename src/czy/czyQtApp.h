@@ -11,7 +11,7 @@
 #include <limits>
 #include <QDebug>
 #include <QDataStream>
-namespace czy{
+namespace SA{
     namespace QtApp{
 	
         class QPointEx : public QPoint
@@ -401,21 +401,21 @@ namespace czy{
 }
 
 template<typename T>
-QDataStream &operator<<(QDataStream & out, const czy::QtApp::QczyHashTable<T> & item);
+QDataStream &operator<<(QDataStream & out, const SA::QtApp::QczyHashTable<T> & item);
 template<typename T>
-QDataStream &operator>>(QDataStream & in, czy::QtApp::QczyHashTable<T> & item);
+QDataStream &operator>>(QDataStream & in, SA::QtApp::QczyHashTable<T> & item);
 
 template<typename T>
-QDataStream &operator<<(QDataStream & out, const czy::QtApp::QczyHashTable<T> & item)
+QDataStream &operator<<(QDataStream & out, const SA::QtApp::QczyHashTable<T> & item)
 {
     out << item.data();
     return out;
 }
 
 template<typename T>
-QDataStream &operator>>(QDataStream & in, czy::QtApp::QczyHashTable<T> & item)
+QDataStream &operator>>(QDataStream & in, SA::QtApp::QczyHashTable<T> & item)
 {
-    typename czy::QtApp::QczyHashTable<T>::Table table;
+    typename SA::QtApp::QczyHashTable<T>::Table table;
     in >> table;
     item.setDatas(table);
     return in;

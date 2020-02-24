@@ -132,7 +132,7 @@ void SAFigureTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSerie
     {
         QVector<T> newDatas;
         newDatas.reserve(m_oldDataSize-m_deleteIndexs.size());
-        czy::copy_out_of_indexs(oldDatas.begin(),oldDatas.end(),m_deleteIndexs.begin(),m_deleteIndexs.end(),std::back_inserter(newDatas));
+        SA::copy_out_of_indexs(oldDatas.begin(),oldDatas.end(),m_deleteIndexs.begin(),m_deleteIndexs.end(),std::back_inserter(newDatas));
         m_fpSetSample(item(),newDatas);
     }
     else
@@ -151,7 +151,7 @@ void SAFigureTableDeleteCommandPrivate_SeriesStoreItem<T,PlotItemType,FpSetSerie
     oldDatas.reserve(m_plotItem->dataSize());
     SAChart::getSeriesData(oldDatas,m_plotItem);
     newDatas.reserve(m_oldDataSize);
-    czy::insert_inner_indexs(m_deleteIndexs.begin(),m_deleteIndexs.end()
+    SA::insert_inner_indexs(m_deleteIndexs.begin(),m_deleteIndexs.end()
                              ,m_deleteDatas.begin()
                              ,oldDatas.begin(),oldDatas.end()
                              ,std::back_inserter(newDatas));

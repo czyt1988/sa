@@ -4,7 +4,7 @@
 /// \param model
 /// \param pFun 为回调函数，输入为当前迭代的QStandardItem指针，回调函数返回true代表继续迭代，回调函数返回false代表结束迭代
 ///
-void czy::QtUI::StandardItemModel::ergodicAllItem(const QStandardItemModel* model, czy::QtUI::StandardItemModel::callback_ergodicFun_ptr pFun)
+void SA::QtUI::SAStandardItemModel::ergodicAllItem(const QStandardItemModel* model, SA::QtUI::SAStandardItemModel::callback_ergodicFun_ptr pFun)
 {
     int rows = model->rowCount();
     int column = model->columnCount();
@@ -27,7 +27,7 @@ void czy::QtUI::StandardItemModel::ergodicAllItem(const QStandardItemModel* mode
 /// \param pFun 为回调函数，输入为当前迭代的QStandardItem指针，回调函数返回true代表继续迭代，回调函数返回false代表结束迭代
 /// \return false 代表迭代结束
 ///
-bool czy::QtUI::StandardItemModel::ergodicItem(QStandardItem* item, czy::QtUI::StandardItemModel::callback_ergodicFun_ptr pFun)
+bool SA::QtUI::SAStandardItemModel::ergodicItem(QStandardItem* item, SA::QtUI::SAStandardItemModel::callback_ergodicFun_ptr pFun)
 {
     int rows = item->rowCount();
     int column = item->columnCount();
@@ -49,13 +49,13 @@ bool czy::QtUI::StandardItemModel::ergodicItem(QStandardItem* item, czy::QtUI::S
 
 #include <QEvent>
 #include <QtWidgets/QWidget>
-void czy::QtUI::MainWindowEx::setHidden()
+void SA::QtUI::MainWindowEx::setHidden()
 {
     hide();
     emit hiddenWindow(this);
 }
 
-bool czy::QtUI::MainWindowEx::eventFilter(QObject *object, QEvent *e)
+bool SA::QtUI::MainWindowEx::eventFilter(QObject *object, QEvent *e)
 {
     if (e->type() == QEvent::ContextMenu && object == this->window()){
         emit showContextMenu();
@@ -64,20 +64,20 @@ bool czy::QtUI::MainWindowEx::eventFilter(QObject *object, QEvent *e)
     return QMainWindow::eventFilter(object, e);
 }
 
-void czy::QtUI::MainWindowEx::closeEvent(QCloseEvent *e)
+void SA::QtUI::MainWindowEx::closeEvent(QCloseEvent *e)
 {
     QMainWindow::closeEvent(e);
     emit closedWindow(this);
 }
 
 
-void czy::QtUI::QWidgetEx::setHidden()
+void SA::QtUI::QWidgetEx::setHidden()
 {
     hide();
     emit hiddenWindow(this);
 }
 
-bool czy::QtUI::QWidgetEx::eventFilter(QObject* object, QEvent* e)
+bool SA::QtUI::QWidgetEx::eventFilter(QObject* object, QEvent* e)
 {
     if (e->type() == QEvent::ContextMenu && object == this->window()){
         emit showContextMenu();
@@ -86,7 +86,7 @@ bool czy::QtUI::QWidgetEx::eventFilter(QObject* object, QEvent* e)
     return QWidget::eventFilter(object, e);
 }
 
-void czy::QtUI::QWidgetEx::closeEvent(QCloseEvent* e)
+void SA::QtUI::QWidgetEx::closeEvent(QCloseEvent* e)
 {
     QWidget::closeEvent(e);
     emit closedWindow(this);

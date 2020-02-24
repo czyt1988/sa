@@ -3,7 +3,7 @@
 #include <math.h>
 #include <algorithm>
 #include <czy.h>
-namespace czy
+namespace SA
 {
 /**
  * \brief 此命名空间封装了数组的相关操作

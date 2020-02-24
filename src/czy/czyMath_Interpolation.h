@@ -12,7 +12,7 @@ namespace gsl{
     #include <gsl/gsl_spline.h> /* 样条插值支持 */
 }
 //#include <QDebug>
-namespace czy {
+namespace SA {
 ///
 /// \brief The Math class 用于处理简单数学计算
 ///

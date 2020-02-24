@@ -85,14 +85,11 @@ private:
     void initUIReflection();
 
 public:
-    static QIcon getIconByWndType(SA::SubWndType type);
+    //根据类名来获取图标
+    static QIcon getIconByWndClassName(QWidget* w);
     //-----------------------状态栏响应-------------------------
     //状态栏 - 显示进度状态
     //显示消息，如果interval大于0，将会在状态栏上也显示，显示的时间为interval(ms)的值
-
-
-
-
 public slots:
     /// \group 进度栏 消息窗口的相关操作
     /// \{
@@ -483,12 +480,12 @@ public:
 
     // 子窗口的创建
     template<typename INNERWIDGET>
-    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,const QString& title);
+    SAMdiSubWindow* createMdiSubWindow(const QString& title);
     // 子窗口的创建
     template<typename INNERWIDGET,typename Arg0>
-    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,const QString& title,Arg0 arg0);
+    SAMdiSubWindow* createMdiSubWindow(const QString& title,Arg0 arg0);
     // 子窗口的创建
-    SAMdiSubWindow* createMdiSubWindow(SA::SubWndType type,QWidget* w,const QString& title);
+    SAMdiSubWindow* createMdiSubWindow(QWidget* w, const QString& title);
 
 
 
@@ -566,6 +563,7 @@ private:
     unsigned int m_nUserChartCount;
     QStringList m_recentOpenFiles;///< 记录最近打开的文件
     QStringList m_recentOpenProjectFolders; ///< 记录最近打开的项目目录
+
 };
 
 ///
@@ -575,14 +573,13 @@ private:
 /// \return MdiSubWindow的指针,若没创建成功返回nullptr
 ///
 template<typename INNERWIDGET>
-SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QString &title)
+SAMdiSubWindow *MainWindow::createMdiSubWindow(const QString &title)
 {
     SAMdiSubWindow* pSubw = m_mdiManager.newMdiSubWnd<SAMdiSubWindow,INNERWIDGET>();
     if(nullptr == pSubw)
         return pSubw;
-    pSubw->setType(type);
     pSubw->setWindowTitle(title);
-    pSubw->setWindowIcon(getIconByWndType(type));
+    pSubw->setWindowIcon(getIconByWndClassName(pSubw->widget()));
     connect(pSubw,&SAMdiSubWindow::closedWindow
             ,this,&MainWindow::onSubWindowClosed);
     emit subWindowHaveCreated(pSubw);
@@ -590,14 +587,13 @@ SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QStrin
 }
 
 template<typename INNERWIDGET,typename Arg0>
-SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QString &title, Arg0 arg0)
+SAMdiSubWindow *MainWindow::createMdiSubWindow(const QString &title, Arg0 arg0)
 {
     SAMdiSubWindow* pSubw = m_mdiManager.newMdiSubWnd<SAMdiSubWindow,INNERWIDGET>(arg0);
     if(nullptr == pSubw)
         return pSubw;
-    pSubw->setType(type);
     pSubw->setWindowTitle(title);
-    pSubw->setWindowIcon(getIconByWndType(type));
+    pSubw->setWindowIcon(getIconByWndClassName(pSubw->widget()));
     connect(pSubw,&SAMdiSubWindow::closedWindow
             ,this,&MainWindow::onSubWindowClosed);
     emit subWindowHaveCreated(pSubw);
@@ -611,7 +607,7 @@ SAMdiSubWindow *MainWindow::createMdiSubWindow(SA::SubWndType type, const QStrin
 /// \param type 子窗口类型
 /// \return 后缀名
 ///
-QString get_sub_window_type_suffix(SA::SubWndType type);
+QString get_sub_window_suffix_by_inner_widget(QWidget *w);
 //保存子窗口到文件
 bool save_sub_window(SAMdiSubWindow* w, const QString &folderPath, QString *errString);
 //重文件加载子窗口

@@ -13,8 +13,8 @@
 #define TR(str)\
     QCoreApplication::translate("sa_fun_dsp", str, 0)
 
-std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::WindowType window);
-std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF *wave, czy::Math::DSP::WindowType window);
+std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, SA::Math::DSP::WindowType window);
+std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF *wave, SA::Math::DSP::WindowType window);
 std::shared_ptr<SAVectorPointF> _detrendDirect(const SAVectorPointF *wave);
 std::shared_ptr<SAVectorDouble> _detrendDirect(QVector<double>& wave);
 
@@ -23,12 +23,12 @@ std::shared_ptr<SAVectorPointF> _detrendDirect(const SAVectorPointF* wave)
     QVector<double> x,y;
     wave->getYs(y);
     wave->getXs(x);
-    czy::Math::DSP::detrend(y.begin(),y.end());
+    SA::Math::DSP::detrend(y.begin(),y.end());
     return SAValueManager::makeData<SAVectorPointF>(wave->getName() + "detrendDirect",x,y);
 }
 std::shared_ptr<SAVectorDouble> _detrendDirect(QVector<double>& wave)
 {
-    czy::Math::DSP::detrend(wave.begin(),wave.end());
+    SA::Math::DSP::detrend(wave.begin(),wave.end());
     return SAValueManager::makeData<SAVectorDouble>(wave);
 }
 
@@ -56,7 +56,7 @@ std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(const SAAbstractDatas *wav
     }
     setErrorString(TR("can not conver data to double vector!"));
     return nullptr;
-    czy::Math::DSP::detrend(waveData.begin(),waveData.end());
+    SA::Math::DSP::detrend(waveData.begin(),waveData.end());
 
 }
 ///
@@ -65,7 +65,7 @@ std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(const SAAbstractDatas *wav
 ///
 void saFun::detrendDirect(QVector<double> &y)
 {
-    czy::Math::DSP::detrend(y.begin(),y.end());
+    SA::Math::DSP::detrend(y.begin(),y.end());
 }
 
 
@@ -93,7 +93,7 @@ std::tuple<std::shared_ptr<SAVectorDouble>,std::shared_ptr<SAVectorDouble> >
 saFun::spectrum(const SAAbstractDatas *wave
                                   , double fs
                                   , size_t fftSize
-                                  , czy::Math::DSP::SpectrumType ampType)
+                                  , SA::Math::DSP::SpectrumType ampType)
 {
     QVector<double> waveArr;
     if(SA::VectorPoint == wave->getType())
@@ -118,7 +118,7 @@ saFun::spectrum(const SAAbstractDatas *wave
 
     std::back_insert_iterator<SAVectorDouble> freIte(*(fre.get()));
     std::back_insert_iterator<SAVectorDouble> magIte(*(mag.get()));
-    int len = czy::Math::DSP::spectrum(waveArr.begin(),waveArr.end()
+    int len = SA::Math::DSP::spectrum(waveArr.begin(),waveArr.end()
                                    ,freIte,magIte
                                        ,fs,fftSize
                                        ,ampType);
@@ -131,13 +131,13 @@ saFun::spectrum(const SAAbstractDatas *wave
 }
 
 
-void saFun::spectrum(const QVector<double> &input, double fs, size_t fftSize, czy::Math::DSP::SpectrumType ampType, QVector<double> &out_fre, QVector<double> &out_mag)
+void saFun::spectrum(const QVector<double> &input, double fs, size_t fftSize, SA::Math::DSP::SpectrumType ampType, QVector<double> &out_fre, QVector<double> &out_mag)
 {
     out_fre.reserve(fftSize/2);
     out_mag.reserve(fftSize/2);
     std::back_insert_iterator<QVector<double> > freIte(out_fre);
     std::back_insert_iterator<QVector<double> > magIte(out_mag);
-    czy::Math::DSP::spectrum(input.cbegin(),input.cend()
+    SA::Math::DSP::spectrum(input.cbegin(),input.cend()
                              ,freIte
                              ,magIte
                              ,fs
@@ -184,8 +184,8 @@ saFun::powerSpectrum(const SAAbstractDatas *wave
     mag->setName(QString("%1-mag").arg(wave->getName()));
     std::back_insert_iterator<SAVectorDouble> freIte(*(fre.get()));
     std::back_insert_iterator<SAVectorDouble> magIte(*(mag.get()));
-    czy::Math::DSP::PowerDensityWay pdwTmp = static_cast<czy::Math::DSP::PowerDensityWay>(pdw);
-    int len = czy::Math::DSP::powerSpectrum(waveArr.begin(),waveArr.end()
+    SA::Math::DSP::PowerDensityWay pdwTmp = static_cast<SA::Math::DSP::PowerDensityWay>(pdw);
+    int len = SA::Math::DSP::powerSpectrum(waveArr.begin(),waveArr.end()
                                    ,freIte,magIte
                                        ,fs,fftSize
                                        ,pdwTmp
@@ -200,7 +200,7 @@ saFun::powerSpectrum(const SAAbstractDatas *wave
 void saFun::powerSpectrum(const QVector<double> &input
                           , double fs
                           , size_t fftSize
-                          , czy::Math::DSP::PowerDensityWay pdwType
+                          , SA::Math::DSP::PowerDensityWay pdwType
                           , QVector<double> &out_fre
                           , QVector<double> &out_mag
                           , double ti)
@@ -209,7 +209,7 @@ void saFun::powerSpectrum(const QVector<double> &input
     out_mag.reserve(fftSize/2);
     std::back_insert_iterator<QVector<double> > freIte(out_fre);
     std::back_insert_iterator<QVector<double> > magIte(out_mag);
-    czy::Math::DSP::powerSpectrum(input.begin(),input.end()
+    SA::Math::DSP::powerSpectrum(input.begin(),input.end()
                                   ,freIte
                                   ,magIte
                                   ,fs
@@ -219,17 +219,17 @@ void saFun::powerSpectrum(const QVector<double> &input
                                   );
 }
 
-std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, czy::Math::DSP::WindowType window)
+std::shared_ptr<SAVectorDouble> _setWindow(QVector<double>& y, SA::Math::DSP::WindowType window)
 {
-    czy::Math::DSP::windowed (y.begin (),y.end (),window);
+    SA::Math::DSP::windowed (y.begin (),y.end (),window);
     return SAValueManager::makeData<SAVectorDouble>(y);
 }
-std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF* wave, czy::Math::DSP::WindowType window)
+std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF* wave, SA::Math::DSP::WindowType window)
 {
     QVector<double> x,y;
     wave->getYs(y);
     wave->getXs(x);
-    czy::Math::DSP::windowed (y.begin (),y.end (),window);
+    SA::Math::DSP::windowed (y.begin (),y.end (),window);
     return SAValueManager::makeData<SAVectorPointF>(wave->getName() + "window",x,y);
 }
 ///
@@ -238,7 +238,7 @@ std::shared_ptr<SAVectorPointF> _setWindow(const SAVectorPointF* wave, czy::Math
 /// \param window 窗类型
 /// \return 设置窗后的波形
 ///
-std::shared_ptr<SAAbstractDatas> saFun::setWindow(const SAAbstractDatas *wave, czy::Math::DSP::WindowType window)
+std::shared_ptr<SAAbstractDatas> saFun::setWindow(const SAAbstractDatas *wave, SA::Math::DSP::WindowType window)
 {
     QVector<double> waveArr;
     if(SA::VectorPoint == wave->getType())
@@ -269,12 +269,12 @@ std::shared_ptr<SAAbstractDatas> saFun::setWindow(const SAAbstractDatas *wave, c
 /// \param input
 /// \param window
 ///
-void saFun::setWindow(QVector<double> &input, czy::Math::DSP::WindowType window)
+void saFun::setWindow(QVector<double> &input, SA::Math::DSP::WindowType window)
 {
-    czy::Math::DSP::windowed (input.begin (),input.end (),window);
+    SA::Math::DSP::windowed (input.begin (),input.end (),window);
 }
 
-void saFun::setWindow(QVector<QPointF> &input, czy::Math::DSP::WindowType window)
+void saFun::setWindow(QVector<QPointF> &input, SA::Math::DSP::WindowType window)
 {
 
 }
@@ -284,15 +284,15 @@ void saFun::setWindow(QVector<QPointF> &input, czy::Math::DSP::WindowType window
 /// \param window 窗类型
 /// \return
 ///
-QString saFun::windowName(czy::Math::DSP::WindowType window)
+QString saFun::windowName(SA::Math::DSP::WindowType window)
 {
     switch(window)
     {
-    case czy::Math::DSP::WindowRect:return TR("Rect Window");
-    case czy::Math::DSP::WindowHanning:return TR("Hanning Window");
-    case czy::Math::DSP::WindowHamming:return TR("Hamming Window");
-    case czy::Math::DSP::WindowBlackman:return TR("Blackman Window");
-    case czy::Math::DSP::WindowBartlett:return TR("Bartlett Window");
+    case SA::Math::DSP::WindowRect:return TR("Rect Window");
+    case SA::Math::DSP::WindowHanning:return TR("Hanning Window");
+    case SA::Math::DSP::WindowHamming:return TR("Hamming Window");
+    case SA::Math::DSP::WindowBlackman:return TR("Blackman Window");
+    case SA::Math::DSP::WindowBartlett:return TR("Bartlett Window");
     }
     return TR("Rect Window");
 }

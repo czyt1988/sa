@@ -14,7 +14,7 @@
 #include <czyMath.h>
 
 
-namespace czy {
+namespace SA {
 namespace Math {
 class DSP
 {
@@ -96,7 +96,7 @@ public:
     template<typename T>
     static void detrend(T _begin,T _end)
     {
-        double m = czy::Math::mean(_begin,_end);
+        double m = SA::Math::mean(_begin,_end);
         for(T i=_begin;i!=_end;++i)
         {
             (*i) = (*i)-m;

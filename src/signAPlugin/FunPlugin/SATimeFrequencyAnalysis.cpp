@@ -207,7 +207,7 @@ void SATimeFrequencyAnalysis::onButtonGroupMagSetToggled(int id, bool checked)
 {
     if(checked)
     {
-        m_magType = static_cast<czy::Math::DSP::SpectrumType>(id);
+        m_magType = static_cast<SA::Math::DSP::SpectrumType>(id);
         updateSpectrumChart();
     }
 }
@@ -220,7 +220,7 @@ void SATimeFrequencyAnalysis::onButtonGroupPSDSetToggled(int id, bool checked)
 {
     if(checked)
     {
-        m_psdType = static_cast<czy::Math::DSP::PowerDensityWay>(id);
+        m_psdType = static_cast<SA::Math::DSP::PowerDensityWay>(id);
         updateSpectrumChart();
     }
 }
@@ -303,21 +303,21 @@ void SATimeFrequencyAnalysis::initUI()
     //幅值选择
     ui->radioButton_amp->setChecked (true);//默认选中，避免触发
     m_groupMagSet = new QButtonGroup(this);
-    m_groupMagSet->addButton (ui->radioButton_mag,czy::Math::DSP::Magnitude);
-    m_groupMagSet->addButton (ui->radioButton_magDB,czy::Math::DSP::MagnitudeDB);
-    m_groupMagSet->addButton (ui->radioButton_amp,czy::Math::DSP::Amplitude);
-    m_groupMagSet->addButton(ui->radioButton_ampDB,czy::Math::DSP::AmplitudeDB);
-    m_magType = czy::Math::DSP::Amplitude;
+    m_groupMagSet->addButton (ui->radioButton_mag,SA::Math::DSP::Magnitude);
+    m_groupMagSet->addButton (ui->radioButton_magDB,SA::Math::DSP::MagnitudeDB);
+    m_groupMagSet->addButton (ui->radioButton_amp,SA::Math::DSP::Amplitude);
+    m_groupMagSet->addButton(ui->radioButton_ampDB,SA::Math::DSP::AmplitudeDB);
+    m_magType = SA::Math::DSP::Amplitude;
     connect (m_groupMagSet,static_cast<void (QButtonGroup::*)(int,bool)>(&QButtonGroup::buttonToggled)
              ,this,&SATimeFrequencyAnalysis::onButtonGroupMagSetToggled);
 
     //psd估计方式
     ui->radioButton_msa->setChecked (true);//默认选中，避免触发
     m_groupPSDSet = new QButtonGroup(this);
-    m_groupPSDSet->addButton (ui->radioButton_msa,czy::Math::DSP::MSA);
-    m_groupPSDSet->addButton (ui->radioButton_ssa,czy::Math::DSP::SSA);
-    m_groupPSDSet->addButton (ui->radioButton_tisa,czy::Math::DSP::TISA);
-    m_psdType = czy::Math::DSP::MSA;
+    m_groupPSDSet->addButton (ui->radioButton_msa,SA::Math::DSP::MSA);
+    m_groupPSDSet->addButton (ui->radioButton_ssa,SA::Math::DSP::SSA);
+    m_groupPSDSet->addButton (ui->radioButton_tisa,SA::Math::DSP::TISA);
+    m_psdType = SA::Math::DSP::MSA;
     connect (m_groupPSDSet,static_cast<void (QButtonGroup::*)(int,bool)>(&QButtonGroup::buttonToggled)
              ,this,&SATimeFrequencyAnalysis::onButtonGroupPSDSetToggled);
 
@@ -330,16 +330,16 @@ void SATimeFrequencyAnalysis::initUI()
     //窗函数复选框
     connect(ui->comboBox_window,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             ,this,[&](int index){
-        m_signalWindow = static_cast<czy::Math::DSP::WindowType>(ui->comboBox_window->itemData (index).toInt ());
+        m_signalWindow = static_cast<SA::Math::DSP::WindowType>(ui->comboBox_window->itemData (index).toInt ());
         updateSpectrumChart ();
     });
-    ui->comboBox_window->addItem (tr("Rect"),int(czy::Math::DSP::WindowRect));
-    ui->comboBox_window->addItem (tr("Hanning"),int(czy::Math::DSP::WindowHanning));
-    ui->comboBox_window->addItem (tr("Hamming"),int(czy::Math::DSP::WindowHamming));
-    ui->comboBox_window->addItem (tr("Blackman"),int(czy::Math::DSP::WindowBlackman));//巴克曼窗
-    ui->comboBox_window->addItem (tr("Bartlett"),int(czy::Math::DSP::WindowBartlett));//巴特利窗
+    ui->comboBox_window->addItem (tr("Rect"),int(SA::Math::DSP::WindowRect));
+    ui->comboBox_window->addItem (tr("Hanning"),int(SA::Math::DSP::WindowHanning));
+    ui->comboBox_window->addItem (tr("Hamming"),int(SA::Math::DSP::WindowHamming));
+    ui->comboBox_window->addItem (tr("Blackman"),int(SA::Math::DSP::WindowBlackman));//巴克曼窗
+    ui->comboBox_window->addItem (tr("Bartlett"),int(SA::Math::DSP::WindowBartlett));//巴特利窗
     ui->comboBox_window->setCurrentIndex (0);
-    m_signalWindow = czy::Math::DSP::WindowRect;
+    m_signalWindow = SA::Math::DSP::WindowRect;
     //按钮
     connect (ui->pushButton_import,&QAbstractButton::clicked,this,&SATimeFrequencyAnalysis::onPushButtonImport);
     //connect (ui->pushButton_upData,&QAbstractButton::clicked,this,&SATimeFrequencyAnalysis::onPushbuttonUpdata);
@@ -610,12 +610,12 @@ void SATimeFrequencyAnalysis::dealFFT()
     double samRate = getWaveData(wave);
     if(samRate <= 0)
         return;
-    czy::Math::DSP::windowed (wave.begin (),wave.end (),m_signalWindow);
+    SA::Math::DSP::windowed (wave.begin (),wave.end (),m_signalWindow);
     if(m_isDetrend)
     {
-        czy::Math::DSP::detrend(wave.begin(),wave.end());
+        SA::Math::DSP::detrend(wave.begin(),wave.end());
     }
-    czy::Math::DSP::spectrum(wave.begin(),wave.end()
+    SA::Math::DSP::spectrum(wave.begin(),wave.end()
                              ,std::back_inserter(x)
                              ,std::back_inserter(y)
                              ,samRate
@@ -635,12 +635,12 @@ void SATimeFrequencyAnalysis::dealPSD()
     double samRate = getWaveData(wave);
     if(samRate <= 0)
         return;
-    czy::Math::DSP::windowed (wave.begin (),wave.end (),m_signalWindow);
+    SA::Math::DSP::windowed (wave.begin (),wave.end (),m_signalWindow);
     if(m_isDetrend)
     {
-        czy::Math::DSP::detrend(wave.begin(),wave.end());
+        SA::Math::DSP::detrend(wave.begin(),wave.end());
     }
-    czy::Math::DSP::powerSpectrum(wave.begin(),wave.end()
+    SA::Math::DSP::powerSpectrum(wave.begin(),wave.end()
                              ,std::back_inserter(x)
                              ,std::back_inserter(y)
                              ,samRate

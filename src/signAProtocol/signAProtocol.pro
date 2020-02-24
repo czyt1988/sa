@@ -5,7 +5,7 @@
 #
 #-------------------------------------------------
 
-message("")
+
 message("--------------SA protocol about lib--------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])
@@ -36,8 +36,7 @@ HEADERS += \
     SACRC.h \
     SAXMLProtocolParser.h \
     SAAbstractProtocolParser.h \
-    SAXMLConfigParser.h \
-    tstSignAProtocol.h
+    SAXMLConfigParser.h
 
 SOURCES += \
     SAVariantCaster.cpp \
@@ -46,7 +45,6 @@ SOURCES += \
     SAProtocolHeader.cpp \
     SACRC.cpp \
     SAXMLProtocolParser.cpp \
-    SAXMLConfigParser.cpp \
-    tstSAVariantCaster.cpp
+    SAXMLConfigParser.cpp
 
 OTHER_FILES += readme.md

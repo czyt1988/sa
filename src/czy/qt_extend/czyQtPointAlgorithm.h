@@ -14,7 +14,7 @@
 #ifndef PI
 #define PI (3.141592653587979)
 #endif
-namespace czy {
+namespace SA {
 
 ///
 /// \brief realCompare 浮点数比较等于算法

@@ -456,7 +456,7 @@ bool SASelectRegionDataEditor::completeEdit(const QPoint& screenPoint)
     //选区进行移动
     QPointF currentPoint = editor->invTransform(screenPoint);
     QPointF originPoint = editor->invTransform(d_ptr->m_firstPressedScreenPoint);
-    QPointF offset = czy::calcOffset(currentPoint,originPoint);
+    QPointF offset = SA::calcOffset(currentPoint,originPoint);
     QPainterPath p = d_ptr->m_selectRegionOrigin.translated(offset);
     new SAFigureChartSelectionRegionAddCommand(chart2D()
                                                 ,d_ptr->m_selectRegionOrigin
