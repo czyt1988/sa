@@ -5,7 +5,6 @@
 #
 #-------------------------------------------------
 
-message("")
 message("--------------SA Serve about lib--------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])

@@ -4,7 +4,7 @@
 #include <czy.h>
 #include <algorithm>
 
-namespace czy{
+namespace SA{
 
 ///
 /// \brief 把索引范围之外的内容拷贝

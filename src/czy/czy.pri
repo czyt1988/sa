@@ -29,10 +29,19 @@ SOURCES +=  \
         $$PWD/czyQtApp.cpp
 
 win32{
-    HEADERS += \
-        $$PWD/fftw/fftw3.h
-    LIBS += -L$$PWD\fftw -llibfftw3-3
-    INCLUDEPATH += $$PWD\fftw
+    contains(DEFINES, WIN64) {
+        message("win64")
+        HEADERS += \
+            $$PWD/fftw64/fftw3.h
+        LIBS += -L$$PWD\fftw64 -llibfftw3-3
+        INCLUDEPATH += $$PWD\fftw64
+    } else {
+        message("win32")
+        HEADERS += \
+            $$PWD/fftw/fftw3.h
+        LIBS += -L$$PWD\fftw -llibfftw3-3
+        INCLUDEPATH += $$PWD\fftw
+    }
 }#unix下直接安装部署fftw
 unix{
     INCLUDEPATH += usr/local/include
