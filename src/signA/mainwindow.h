@@ -539,9 +539,6 @@ private:
     void updateChartGridActionState(SAChart2D *chart);
     void updateSelectActionState(SAChart2D *chart);
     void updateChartEditorActionState(SAChart2D *chart);
-    //子窗口序列化
-    void __saveSubWindowToFolder(const QString& folderPath);
-    void __loadSubWindowFromFolder(const QString& folderPath);
 private:
 #ifdef SA_USE_RIBBON_UI
     QScopedPointer<MainWindowPrivate> ui;
@@ -601,17 +598,4 @@ SAMdiSubWindow *MainWindow::createMdiSubWindow(const QString &title, Arg0 arg0)
 }
 
 
-
-///
-/// \brief 根据子窗口类型获取后缀名
-/// \param type 子窗口类型
-/// \return 后缀名
-///
-QString get_sub_window_suffix_by_inner_widget(QWidget *w);
-//保存子窗口到文件
-bool save_sub_window(SAMdiSubWindow* w, const QString &folderPath, QString *errString);
-//重文件加载子窗口
-QMdiSubWindow* load_sub_window(SAUIInterface *ui, const QString& filePath, QString *errString);
-//把没能和SubWindowList对应的文件删除
-void remove_figure_file_not_in_sub_window_list(const QString &folderPath,const QList<QMdiSubWindow*>& subWindows);
 #endif // MAINWINDOW_H

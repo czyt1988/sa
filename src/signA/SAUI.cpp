@@ -152,12 +152,12 @@ QProgressBar *SAUI::getProgressStatusBar()
     return m_mainWnd->getProgressStatusBar();
 }
 
-QMdiSubWindow *SAUI::createFigureWindow(const QString &title)
+SAMdiSubWindow *SAUI::createFigureWindow(const QString &title)
 {
     return m_mainWnd->createFigureWindow(title);
 }
 
-QMdiSubWindow *SAUI::createFigureWindow(SAFigureWindow *fig, const QString &title)
+SAMdiSubWindow *SAUI::createFigureWindow(SAFigureWindow *fig, const QString &title)
 {
     return m_mainWnd->createFigureWindow(fig,title);
 }

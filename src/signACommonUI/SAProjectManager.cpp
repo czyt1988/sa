@@ -279,7 +279,11 @@ int SAProjectManager::loadSubWindowFromFolder(const QString &folderPath)
             emit messageInformation(errString,SA::WarningMessage);
             --size;
         }
-
+        SAMdiSubWindow* subw = ui()->createMdiSubWindow(w,w->windowTitle());
+        if(subw)
+        {
+            subw->show();
+        }
     }
     return size;
 }
