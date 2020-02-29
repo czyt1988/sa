@@ -39,6 +39,13 @@ void SAUI::updateValueManagerTreeView()
         m_mainWnd->updateValueManagerTreeView();
 }
 
+SAMdiSubWindow *SAUI::createMdiSubWindow(QWidget *w, const QString &title)
+{
+    if(m_mainWnd)
+        return m_mainWnd->createMdiSubWindow(w,title);
+    return nullptr;
+}
+
 QWidget *SAUI::getMainWindowPtr()
 {
     return m_mainWnd;

@@ -127,8 +127,8 @@ public:
     /// \group 子窗口相关操作
     /// \{
     //创建一个绘图窗口
-    QMdiSubWindow* createFigureWindow(const QString& title = QString());
-    QMdiSubWindow* createFigureWindow(SAFigureWindow* fig,const QString& title = QString());
+    SAMdiSubWindow* createFigureWindow(const QString& title = QString());
+    SAMdiSubWindow* createFigureWindow(SAFigureWindow* fig,const QString& title = QString());
     //判断mdi中是否存在指定的子窗口
     bool isHaveSubWnd(QMdiSubWindow* wndToCheck) const;
     //判断是否存在绘图窗口

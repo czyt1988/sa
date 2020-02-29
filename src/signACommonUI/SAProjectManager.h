@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QMap>
 #include <QSet>
+#include <functional>
 #include "SACommonUIGlobal.h"
 #include "SAUIInterface.h"
 #include <functional>
@@ -12,6 +13,7 @@ class QDomDocument;
 class QDomNode;
 class SAValueManager;
 class SAProjectManagerPrivate;
+class SAMdiSubWindow;
 class SA_COMMON_UI_EXPORT SAProjectManager : public QObject
 {
     Q_OBJECT
@@ -19,7 +21,17 @@ private:
     explicit SAProjectManager();
     Q_DISABLE_COPY(SAProjectManager)
 public:
+    /**
+     * @brief 保存加载的回调函数，用于插件需要进行特殊的保存
+     */
     typedef std::function<void(SAProjectManager*)> FunAction;
+    /**
+     * @brief 保存窗口的函数指针
+     *
+     * QFile* 文件指针，QWidget* 内置窗口指针，SAUIInterface* ui，QString* 错误信息
+     */
+    typedef std::function<bool(QFile*,QWidget*,SAUIInterface*,QString*)> SubWndSaveFun;
+    typedef std::function<QWidget*(QFile*,SAUIInterface*,QString*)> SubWndLoadFun;
     ~SAProjectManager();
     //是否是可用项目
     bool isValid() const;
@@ -57,15 +69,9 @@ public:
     //获取每个数据对应的文件路径
     //QString getDataFilePath(const SAAbstractDatas* dataPtr) const;
     //添加保存时的额外动作
-    void registerSaveAction(FunAction fun);
-    const QList<SAProjectManager::FunAction>& getSavActionList() const;
-    void removeSaveAction(FunAction fun);
-    //添加加载时的额外动作
-    void registerLoadAction(FunAction fun);
-    const QList<SAProjectManager::FunAction>& getLoadActionList() const;
-    void removeLoadAction(FunAction fun);
+    void registerExternAction(FunAction savefun,FunAction loadfun);
     //注册资窗口类名和子窗口后缀名，如果不注册，将无法保存子窗口到文件，也无法打开对应的子窗口
-    void registerMdiSubWindowClass(const QString& className,const QString& suffix);
+    void registerMdiSubWindow(const QString& className,SubWndSaveFun savefun,SubWndLoadFun loadFun);
     //建立ui的关联
     void setupUI(SAUIInterface* ui);
     SAUIInterface* ui();
@@ -77,6 +83,12 @@ private:
     void saveProjectInfo(const QString &projectFullPath);
     //把子窗口保存到目录下,isremoveNoneSubWndFile默认为true，就是会把当前目录下和getSubWindowList不匹配的窗口文件删除
     bool saveSubWindowToFolder(const QString &folderPath, bool isremoveNoneSubWndFile=true);
+    //从文件夹中加载窗口
+    int loadSubWindowFromFolder(const QString &folderPath);
+    //保存子窗口
+    bool saveSubWindow(SAMdiSubWindow *w,const QString& folderPath,QString* errString);
+    //从文件加载子窗口
+    QWidget* loadSubWindow(const QString& filepath,QString* errString);
     //加载项目信息
     bool loadProjectInfo(const QString &projectFullPath,QStringList& valuesNameList);
     //加载项目信息中的变量信息

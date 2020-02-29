@@ -85,7 +85,7 @@
 // |-----宏-----------------
 #include "DebugInfo.h"
 // |-----czy
-#include <czyQtUI.h>
+
 #include <czyQtApp.h>
 #include <czyMath_Interpolation.h>
 // |-----model class --------------
@@ -172,9 +172,6 @@ void MainWindow::init()
     ui_status_progress = new progressStateWidget(this);
     ui->statusBar->addWidget(ui_status_progress);
     ui_status_progress->setVisible(false);
-
-    //注册子窗口类名
-    registerMdiSubWindowClass("SAFigureWindow",C_SUBWND_FIGURE_WND_SUFFIX);
 }
 
     ///
@@ -508,8 +505,7 @@ void MainWindow::initUIReflection()
         QString folderPath = pm->getProjectSubWindowFolderPath(true);
         __loadSubWindowFromFolder(folderPath);
     };
-    saProjectManager->registerSaveAction(funSaveAction);
-    saProjectManager->registerLoadAction(funLoadAction);
+    saProjectManager->registerExternAction(funSaveAction,funLoadAction);
 }
 
 ///
@@ -2143,7 +2139,7 @@ QProgressBar *MainWindow::getProgressStatusBar()
 /// \note 注意，若没有显示，getCurrentFigureWindow返回的还是上次显示的figureWidget
 /// \return 绘图窗口Pointer,如果内存溢出返回nullptr
 ///
-QMdiSubWindow *MainWindow::createFigureWindow(const QString &title)
+SAMdiSubWindow *MainWindow::createFigureWindow(const QString &title)
 {
     m_nUserChartCount++;
     QString str = title;
@@ -2166,7 +2162,7 @@ QMdiSubWindow *MainWindow::createFigureWindow(const QString &title)
     return pSubWnd;
 }
 
-QMdiSubWindow *MainWindow::createFigureWindow(SAFigureWindow *fig, const QString &title)
+SAMdiSubWindow *MainWindow::createFigureWindow(SAFigureWindow *fig, const QString &title)
 {
     m_nUserChartCount++;
     QString str = title;
