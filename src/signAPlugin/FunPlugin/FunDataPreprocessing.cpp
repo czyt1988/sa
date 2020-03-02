@@ -17,9 +17,10 @@
 #include "SAChart.h"
 #include "qwt_symbol.h"
 #include <QMdiSubWindow>
+#include "SAMdiSubWindow.h"
 #include "SAGUIGlobalConfig.h"
 #include "ui_opt.h"
-#include "czyAlgorithm.h"
+#include "SAAlgorithm.h"
 #include "SARandColorMaker.h"
 #include <QApplication>
 #define TR(str)\
@@ -399,7 +400,7 @@ void sigmaDetectInValue(SAUIInterface* ui)
     //========================
     if(dlg.getDataByID<bool>(idPlotInNewFigure))
     {
-        QMdiSubWindow* sub = ui->createFigureWindow();
+        SAMdiSubWindow* sub = ui->createFigureWindow();
         SAFigureWindow* fig = ui->getFigureWidgetFromMdiSubWindow(sub);
         SAChart2D* chart = fig->current2DPlot();
         if(nullptr == chart)
@@ -596,7 +597,7 @@ void FunDataPreprocessing::pointSmoothInValue()
     saValueManager->addData(res);
     if(dlg.getDataByID<bool>(idIsPlot))
     {
-        QMdiSubWindow* sub = saUI->createFigureWindow();
+        SAMdiSubWindow* sub = saUI->createFigureWindow();
         SAFigureWindow* fig = saUI->getFigureWidgetFromMdiSubWindow(sub);
         SAChart2D* chart = fig->current2DPlot();
         if(nullptr == chart)

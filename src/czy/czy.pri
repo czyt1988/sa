@@ -8,25 +8,16 @@ QT += core gui
 
 HEADERS += \
         $$PWD/czy.h \
-        $$PWD/czyQtApp.h \
         $$PWD/czyMath_DSP.h \
         $$PWD/czyMath.h \
         $$PWD/czyMath_Interpolation.h \
         $$PWD/czyMath_Fit.h \
-        $$PWD/czySA.h \
-        $$PWD/czyAlgorithm.h \
-        $$PWD/czyMath_Smooth.h \
-    $$PWD/qt_extend/czyQtPointAlgorithm.h \
-    $$PWD/czyArray.h \
-    $$PWD/czyQArray.h
+        $$PWD/czyMath_Smooth.h
 
 
 SOURCES +=  \
         $$PWD/czyMath_DSP.cpp\
-        $$PWD/czySA.cpp\
-        $$PWD/czyAlgorithm.cpp \
-        $$PWD/czyMath_Smooth.cpp \
-        $$PWD/czyQtApp.cpp
+        $$PWD/czyMath_Smooth.cpp
 
 win32{
     contains(DEFINES, WIN64) {

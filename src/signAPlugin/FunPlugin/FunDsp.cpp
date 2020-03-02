@@ -14,6 +14,7 @@
 #include "SAGUIGlobalConfig.h"
 #include "SAChart2D.h"
 #include "SAChart.h"
+#include "SAMdiSubWindow.h"
 #include "SAFigureOptCommands.h"
 #include "SAFigureReplaceDatasCommand.h"
 #include "ui_opt.h"
@@ -438,7 +439,7 @@ void spectrumInChart(SAUIInterface* ui)
     }
     QStringList lineNameList,newLineNameList;
     ui->raiseMainDock();
-    QMdiSubWindow* sub = ui->createFigureWindow(QString("%1-fft").arg(ui->getCurrentActiveSubWindow()->windowTitle()));
+    SAMdiSubWindow* sub = ui->createFigureWindow(QString("%1-fft").arg(ui->getCurrentActiveSubWindow()->windowTitle()));
     SAFigureWindow* w = ui->getFigureWidgetFromMdiSubWindow(sub);
     chart = w->create2DPlot();
 
@@ -726,7 +727,7 @@ void powerSpectrumInChart(SAUIInterface* ui)
     }
     QStringList lineNameList,newLineNameList;
     ui->raiseMainDock();
-    QMdiSubWindow* sub = ui->createFigureWindow(QString("%1-fft").arg(ui->getCurrentActiveSubWindow()->windowTitle()));
+    SAMdiSubWindow* sub = ui->createFigureWindow(QString("%1-fft").arg(ui->getCurrentActiveSubWindow()->windowTitle()));
     SAFigureWindow* w = ui->getFigureWidgetFromMdiSubWindow(sub);
     chart = w->create2DPlot();
     for (int i = 0;i<curs.size();++i)

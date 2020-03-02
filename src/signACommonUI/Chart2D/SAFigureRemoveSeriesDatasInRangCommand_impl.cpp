@@ -1,6 +1,6 @@
 ﻿#include "SAFigureOptCommands.h"
 #include "SAChart.h"
-#include "czyAlgorithm.h"
+#include "SAAlgorithm.h"
 class SAFigureRemoveSeriesDatasInRangCommandPrivate
 {
 public:

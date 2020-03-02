@@ -24,6 +24,8 @@ HEADERS += \
     SADataPackage.h \
     SAItem.h \
     SALibGlobal.h \
+    SAPoint.h \
+    SATable.h \
     SAValueManager.h \
     SAValueManagerModel.h \
     SARandColorMaker.h \
@@ -45,6 +47,7 @@ SOURCES += \
     SAData.cpp \
     SADataPackage.cpp \
     SAItem.cpp \
+    SAPoint.cpp \
     SAValueManager.cpp \
     SAValueManagerModel.cpp \
     SARandColorMaker.cpp \
@@ -60,11 +63,8 @@ SOURCES += \
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
-#
 include($$PWD/Private/Private.pri)
 include($$PWD/SABaseValueType/SABaseValueType.pri)
-
-include($$PWD/../czy/czy.pri)
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
 DEFINES += SALIB_MAKE #定义此宏将构建库
 #RESOURCES += \

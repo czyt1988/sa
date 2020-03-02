@@ -3,7 +3,7 @@
 #include <QVector>
 #include "czyMath_Smooth.h"
 #include "SAValueManager.h"
-#include "czyAlgorithm.h"
+#include "SAAlgorithm.h"
 #include <QCoreApplication>
 
 #define TR(str)\

@@ -84,12 +84,8 @@
 #include "SAChart2D.h"
 // |-----宏-----------------
 #include "DebugInfo.h"
-// |-----czy
-
-#include <czyQtApp.h>
-#include <czyMath_Interpolation.h>
 // |-----model class --------------
-#include <MdiWindowModel.h>
+#include "MdiWindowModel.h"
 #include "DataFeatureTreeModel.h"
 #include <SAVariantHashTableModel.h>
 #include <SACsvFileTableModel.h>

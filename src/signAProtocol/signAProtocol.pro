@@ -22,7 +22,7 @@ CONFIG(debug, debug|release){
 }
 CONFIG += c++11
 
-include($$PWD/../czy/czy_math.pri)
+#include($$PWD/../czy/czy_math.pri)
 
 DEFINES += SA_PROTOCOL_MAKE
 

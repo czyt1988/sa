@@ -21,8 +21,7 @@ include($$PWD/../../signACommonUI/signACommonUIWith3thLib.pri)
 
 DEFINES += SA_COMMON_PLUGIN_LIB_MAKE#创建插件必须添加此宏
 #DEFINES += SA_QT_PLUGIN_MAKE#创建Qt插件必须添加此宏
-#czy qt api support
-include($$PWD/../../czy/czy_qt.pri)
+
 
 TARGET        = textImport
 

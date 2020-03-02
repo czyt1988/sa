@@ -2,7 +2,7 @@
 #include "SAChart2D.h"
 #include "SAChart.h"
 #include "SAAbstractRegionSelectEditor.h"
-#include "czyQtPointAlgorithm.h"
+#include "SAQtSeriesAlgorithm.h"
 #include <QHash>
 #include "SALog.h"
 #include "SAFigureOptCommands.h"

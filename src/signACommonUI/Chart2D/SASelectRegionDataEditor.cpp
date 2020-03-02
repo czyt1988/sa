@@ -3,13 +3,12 @@
 #include "SAChart.h"
 #include "qwt_plot_barchart.h"
 #include "SAAbstractRegionSelectEditor.h"
-#include "czyQtPointAlgorithm.h"
 #include "SAFigureOptCommands.h"
 #include "SAFigureReplaceDatasCommand.h"
 #include <QHash>
 #include "SALog.h"
 #include <memory>
-#include "SALog.h"
+#include "SAQtSeriesAlgorithm.h"
 class chart2d_base_info
 {
 public:

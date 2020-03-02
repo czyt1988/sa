@@ -14,6 +14,7 @@
 #include "SAChart.h"
 #include "SAVectorInterval.h"
 #include "SAGUIGlobalConfig.h"
+#include "SAMdiSubWindow.h"
 #include "ui_opt.h"
 #include <QMdiSubWindow>
 #include <QTextStream>
@@ -172,7 +173,7 @@ void hist(SAUIInterface *ui)
     saValueManager->addData(res);
     if(dlg.getDataByID<bool>(idIsPlot))
     {
-        QMdiSubWindow* sub = ui->createFigureWindow();
+        SAMdiSubWindow* sub = ui->createFigureWindow();
         SAFigureWindow* fig = ui->getFigureWidgetFromMdiSubWindow(sub);
         SAChart2D* chart = fig->create2DPlot();
         if(chart)

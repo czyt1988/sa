@@ -1,7 +1,7 @@
 ﻿#include "SAValueTableOptCommands.h"
 #include "SAData.h"
 #include <iterator>
-#include "czyAlgorithm.h"
+
 ///
 /// \brief SAValueTableOptPasteCommand的内部处理类，会根据参数类型不一样实例化不一样的内容
 ///

@@ -7,7 +7,7 @@
 #include "qwt_plot_barchart.h"
 #include "SAAbstractRegionSelectEditor.h"
 #include "qwt_series_data.h"
-#include "czyAlgorithm.h"
+//#include "czyAlgorithm.h"
 
 
 ///

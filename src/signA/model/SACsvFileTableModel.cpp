@@ -101,7 +101,7 @@ Qt::ItemFlags SACsvFileTableModel::flags(const QModelIndex& index) const
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
-bool SACsvFileTableModel::getCzyHashTable(const QString& fileName, SA::SAHashTable<QVariant>& data)
+bool SACsvFileTableModel::getCzyHashTable(const QString& fileName, SAHashTable<QVariant>& data)
 {
     QFile file(fileName);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))

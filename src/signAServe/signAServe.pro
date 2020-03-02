@@ -54,6 +54,5 @@ SOURCES += \
 
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
-include($$PWD/../czy/czy.pri)
 
 OTHER_FILES += readme.md

@@ -14,8 +14,7 @@ CONFIG       += C++11
 include($$PWD/../../signALib/signALib.pri)
 #sa signACommonUI support
 include($$PWD/../../signACommonUI/signACommonUIWith3thLib.pri)
-#czy
-include($$PWD/../../czy/czy.pri)
+
 
 DEFINES += SA_COMMON_PLUGIN_LIB_MAKE#创建插件必须添加此宏
 

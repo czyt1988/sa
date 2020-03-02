@@ -1,7 +1,7 @@
 #ifndef QCZYHASHTABLEMODEL_H
 #define QCZYHASHTABLEMODEL_H
 #include <QAbstractTableModel>
-#include <czyQtApp.h>//QczyHashTable使用
+#include "SAHashTable.h"
 class SAVariantHashTableModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -16,7 +16,7 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     void update();
 public:
-    typedef SA::SAHashTable<QVariant> Table;
+    typedef SAHashTable<QVariant> Table;
     void setHashTableData(Table* prt);
     const Table* getHashTableData() const;
     Table* getHashTableData();

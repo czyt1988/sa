@@ -2,7 +2,6 @@
 #define TEXTIMPORTCONFIG_H
 #include <QString>
 #include <QList>
-#include "czyQtApp.h"
 #include "SATextParser.h"
 #include "SATableVariant.h"
 class SATextParser;

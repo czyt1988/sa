@@ -1,6 +1,6 @@
 ﻿#include "SAFigureTableCommands.h"
 #include "SAData.h"
-#include "czyAlgorithm.h"
+#include "SAAlgorithm.h"
 #include "SAChart.h"
 
 //////////////////////////////////////////////

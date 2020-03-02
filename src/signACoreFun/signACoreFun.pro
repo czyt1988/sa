@@ -17,6 +17,7 @@ CONFIG(debug, debug|release){
 CONFIG += c++11
 
 include($$PWD/../czy/czy_math.pri)
+include($$PWD/../signAUtil/signAUtil.pri)
 #sa api support
 include($$PWD/../signALib/signALib.pri)
 include($$PWD/../3rdParty/qwt/qwt_set.pri)

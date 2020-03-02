@@ -1,7 +1,7 @@
-﻿#ifndef CZYALGORITHM_H
-#define CZYALGORITHM_H
+﻿#ifndef SAALGORITHM_H
+#define SAALGORITHM_H
 
-#include <czy.h>
+#include "SAUtilGlobal.h"
 #include <algorithm>
 
 namespace SA{
@@ -320,4 +320,4 @@ OutputIterator transform (InputIterator1 first1, InputIterator1 last1
 
 }
 
-#endif // CZYALGORITHM_H
+#endif // SAALGORITHM_H

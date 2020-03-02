@@ -1,7 +1,8 @@
 #include "SAPointSeriesStatisticProcess.h"
-#include "czyQArray.h"
 #include "czyMath.h"
 #include <algorithm>
+#include "SASeriesAlgorithm.h"
+#include "SAQtSeriesAlgorithm.h"
 #include <QDebug>
 #define IS_DEBUG_PRINT 1
 
@@ -174,7 +175,7 @@ void SAPointSeriesStatisticProcess::getVectorPointY(const QVector<QPointF> &poin
     {
         ys.resize(points.size());
     }
-    SA::QArray::get_qvectorpointf_y(points,ys.begin());
+    SA::get_qvectorpointf_y(points,ys.begin());
 }
 /**
  * @brief 获取尖峰的点 - 所谓尖峰是指三点a,b,c b>a && b>c 就说明b是尖峰
@@ -190,7 +191,7 @@ void SAPointSeriesStatisticProcess::getSharpPeakPoint(QVector<QPointF> &sharpPoi
     sharpPoints.reserve(int(points.size()/2));
     if(isUpperPeak)
     {
-        SA::Array::find_upper_sharp_peak(points.begin(),points.end()
+        SA::find_upper_sharp_peak(points.begin(),points.end()
                                           ,std::back_inserter(sharpPoints)
                                           ,[](const QPointF& a,const QPointF& b)->bool{
             return a.y() > b.y();
@@ -198,7 +199,7 @@ void SAPointSeriesStatisticProcess::getSharpPeakPoint(QVector<QPointF> &sharpPoi
     }
     else
     {
-        SA::Array::find_lower_sharp_peak(points.begin(),points.end()
+        SA::find_lower_sharp_peak(points.begin(),points.end()
                                           ,std::back_inserter(sharpPoints)
                                           ,[](const QPointF& a,const QPointF& b)->bool{
             return a.y() < b.y();
