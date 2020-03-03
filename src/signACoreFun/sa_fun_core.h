@@ -4,8 +4,6 @@
 /// \file 这是SA的核心内置函数
 ///
 #include "SACoreFunGlobal.h"
-#include "czyMath.h"
-#include "czyMath_DSP.h"
 #include <QList>
 #include <QString>
 #include <memory>

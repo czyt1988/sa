@@ -3,6 +3,18 @@
 
 #include <QtCore/qglobal.h>
 
+#ifndef INPUT
+#define INPUT
+#endif
+
+#ifndef OUTPUT
+#define OUTPUT
+#endif
+
+#ifndef IN_OUTPUT
+#define IN_OUTPUT
+#endif
+
 #if defined(SASCIENCE_MAKELIB)
 #  define SASCIENCE_API Q_DECL_EXPORT
 #else

@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include "SAVectorInterval.h"
 #include "SADataConver.h"
+#include "SAMath.h"
 
 #define TR(str)\
     QCoreApplication::translate("sa_fun_num", str, 0)
@@ -29,7 +30,7 @@ std::shared_ptr<SAVariantDatas> saFun::mean(SAAbstractDatas* data)
         setErrorString(TR("data can not conver to double vector"));
         return false;
     }
-    double meanData = SA::Math::mean(vd.begin(),vd.end());
+    double meanData = SA::mean(vd.begin(),vd.end());
     return SAValueManager::makeData<SAVariantDatas>(meanData);
 }
 ///
@@ -56,7 +57,7 @@ std::shared_ptr<SAVariantDatas> saFun::sum(SAAbstractDatas* data)
         setErrorString( TR("data can not conver to double vector"));
         return nullptr;
     }
-    double sumData = SA::Math::sum(vd.begin(),vd.end());
+    double sumData = SA::sum(vd.begin(),vd.end());
     return SAValueManager::makeData<SAVariantDatas>(sumData);
 }
 ///
@@ -140,7 +141,7 @@ std::shared_ptr<SAVectorDouble> saFun::diff(SAAbstractDatas *data, unsigned diff
     }
     QVector<double> dy;
     std::back_insert_iterator< QVector<double> > bi(dy);
-    SA::Math::difference(waveData.begin (),waveData.end (),bi,diffCount);
+    SA::difference(waveData.begin (),waveData.end (),bi,diffCount);
     QString name = QString("%1_diff%2").arg(data->getName()).arg(diffCount);
     return SAValueManager::makeData<SAVectorDouble>(name,waveData);
 }
@@ -158,7 +159,7 @@ std::shared_ptr<SATableVariant> saFun::statistics(SAAbstractDatas *data)
         return nullptr;
     }
     double sum,mean,var,std,skewness,kurtosis;
-    SA::Math::get_statistics(vd.begin (),vd.end (),sum,mean,var,std,skewness,kurtosis);
+    SA::get_statistics(vd.begin (),vd.end (),sum,mean,var,std,skewness,kurtosis);
     double ppv;//峰峰值
     auto minmax = std::minmax_element(vd.begin (),vd.end ());
     ppv = *minmax.second - *minmax.first;
@@ -193,7 +194,7 @@ std::shared_ptr<SAVectorInterval> saFun::hist(const SAAbstractDatas *wave, unsig
     std::vector<int> freCount;
     sectionRang.resize( section+1,0);
     freCount.resize (section,0);
-    SA::Math::count_frequency(ys.begin (),ys.end ()
+    SA::count_frequency(ys.begin (),ys.end ()
                                ,section
                                ,sectionRang.begin()
                                ,freCount.begin());
@@ -212,7 +213,7 @@ QMap<QString, double> saFun::statistics(const QVector<double> &data)
 {
     QMap<QString, double> res;
     double sum,mean,var,std,skewness,kurtosis;
-    SA::Math::get_statistics(data.begin (),data.end (),sum,mean,var,std,skewness,kurtosis);
+    SA::get_statistics(data.begin (),data.end (),sum,mean,var,std,skewness,kurtosis);
     double ppv;//峰峰值
     auto minmax = std::minmax_element(data.begin (),data.end ());
     ppv = *minmax.second - *minmax.first;

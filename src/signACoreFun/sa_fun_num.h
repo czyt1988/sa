@@ -1,7 +1,6 @@
 ﻿#ifndef SAFUNNUM_H
 #define SAFUNNUM_H
 #include "SACoreFunGlobal.h"
-#include "czyMath.h"
 #include "sa_fun_core.h"
 #include <QString>
 #include <QMap>

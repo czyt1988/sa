@@ -16,12 +16,37 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += \
+SOURCES += \ \
+    SADsp.cpp \
+    SAMath.cpp
 
 
 HEADERS += \
+    SADsp.h \
+    SAMath.h \
     SAScienceGlobal.h
 
+include($$PWD/gsl/gsl.pri)#the gsl lib support
+win32{
+    contains(DEFINES, WIN64) {
+        message("win64")
+        HEADERS += \
+            $$PWD/fftw64/fftw3.h
+        LIBS += -L$$PWD\fftw64 -llibfftw3-3
+        INCLUDEPATH += $$PWD\fftw64
+    } else {
+        message("win32")
+        HEADERS += \
+            $$PWD/fftw/fftw3.h
+        LIBS += -L$$PWD\fftw -llibfftw3-3
+        INCLUDEPATH += $$PWD\fftw
+    }
+}#unix下直接安装部署fftw
+unix{
+    INCLUDEPATH += usr/local/include
+    DEPENDPATH += usr/local/lib
+    LIBS += -L/usr/local/lib -lfftw3
+}
 # Default rules for deployment.
 unix {
     target.path = /usr/lib
