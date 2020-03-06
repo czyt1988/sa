@@ -1,6 +1,6 @@
 #ifndef SAMATH_H
 #define SAMATH_H
-#include "SAScienceGlobal.h"
+#include "SAScienceDefine.h"
 #include <iostream>
 #include <algorithm>
 #include <vector>

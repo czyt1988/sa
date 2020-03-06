@@ -25,7 +25,7 @@ CONFIG(debug, debug|release){
 
 CONFIG += c++11
 
-include($$PWD/../czy/czy_math.pri)
+include($$PWD/../signAScience/signAScience.pri)
 include($$PWD/../signAUtil/signAUtil.pri)
 
 DEFINES += SA_PROCESS_MAKE

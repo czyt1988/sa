@@ -15,16 +15,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-namespace SA{
 
-#ifndef PI
-#define PI (3.1415926535897932384626)
-#endif
-#ifndef PI2
-#define PI2 (6.2831853071795864769252)
-#endif
-
-}
 
 
 /// \def 打印字节十六进制

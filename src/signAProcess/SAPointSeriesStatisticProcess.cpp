@@ -1,5 +1,5 @@
 #include "SAPointSeriesStatisticProcess.h"
-#include "czyMath.h"
+#include "SAMath.h"
 #include <algorithm>
 #include "SASeriesAlgorithm.h"
 #include "SAQtSeriesAlgorithm.h"
@@ -55,7 +55,7 @@ void SAPointSeriesStatisticProcess::run()
     double skewness;
     double kurtosis;
     size_t n = datas.size();
-    SA::Math::get_statistics(y.begin(),y.end()
+    SA::get_statistics(y.begin(),y.end()
                               ,sum
                               ,mean
                               ,var

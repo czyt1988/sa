@@ -10,7 +10,6 @@ class SAAbstractDatas;
 class SAVariantDatas;
 class SAVectorDouble;
 class SATableVariant;
-
 namespace saFun {
 
 ///
@@ -83,7 +82,7 @@ SA_CORE_FUN__EXPORT
 void polyval(const QVector<double> &x,const SAVectorDouble* factor,SAVectorDouble* res);
 SA_CORE_FUN__EXPORT
 void polyval(const QVector<double> &x,const SAVectorDouble* factor,SAVectorPointF* res);
-void setFitInfo(SATableVariant* info,const SA::Math::PolyFit* fit);
+
 }
 
 #endif // SA_FUN_FIT_H

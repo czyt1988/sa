@@ -1,15 +1,17 @@
 #include "SADsp.h"
+#include "SAScienceDefine.h"
 #include "fftw3.h"
 #include <math.h>
 #include <memory>
 #include <memory.h>
 #include <array>
-SADsp::SADsp()
+
+SA::SADsp::SADsp()
 {
 
 }
 
-SADsp::~SADsp()
+SA::SADsp::~SADsp()
 {
 
 }
@@ -56,21 +58,21 @@ void SA::SADsp::windowed(double *x, size_t n, WindowType windowflag )
     case WindowHanning://hanning window
         for(i=0;i<n;++i,++x)
         {
-            multiplier=(double)(0.5-0.5*cos(TWOPI*i/(n-1)));
+            multiplier=(double)(0.5-0.5*cos(PI2*i/(n-1)));
             (*x) *= multiplier;
         }
         break;
     case WindowHamming://hamming window
         for(i=0;i<n;++i,++x)
         {
-            multiplier=(double)(0.54-0.46*cos(TWOPI*i/(n-1)));
+            multiplier=(double)(0.54-0.46*cos(PI2*i/(n-1)));
             (*x) *= multiplier;
         }
         break;
     case WindowBlackman://blackman window
         for(i=0;i<n;++i,++x)
         {
-            multiplier=(double)(0.42-0.5*cos(TWOPI*i/(n-1))+0.08*cos(4*PI*i/(n-1)));
+            multiplier=(double)(0.42-0.5*cos(PI2*i/(n-1))+0.08*cos(4*PI*i/(n-1)));
             (*x) *= multiplier;
         }
         break;
