@@ -23,9 +23,8 @@ include($$PWD/../../3rdParty/qtpropertybrowser/propertybrowser.pri)
 
 #czy qt api support
 
-include($$PWD/../../czy/czy_math.pri)
 include($$PWD/../../signAUtil/signAUtil.pri)
-
+include($$PWD/../../signAScience/signAScience.pri)
 DEFINES += SA_COMMON_PLUGIN_LIB_MAKE#创建插件必须添加此宏
 
 

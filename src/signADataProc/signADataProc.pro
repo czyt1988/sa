@@ -59,10 +59,6 @@ include($$PWD/../signAServe/signAServe.pri)
 #}
 
 
-#the czy extern support
-#{
-include($$PWD/../czy/czy.pri)#the czy extern support
-#}
 
 # 给dump文件生成用
 win32{

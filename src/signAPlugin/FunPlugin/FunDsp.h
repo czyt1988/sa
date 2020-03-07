@@ -2,7 +2,7 @@
 #define FUN_DSP_H
 #include <memory>
 #include <QString>
-#include "czyMath_DSP.h"
+
 class SAUIInterface;
 class SATimeFrequencyAnalysis;
 ///

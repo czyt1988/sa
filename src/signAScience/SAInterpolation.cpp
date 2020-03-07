@@ -12,6 +12,9 @@
 #include "gsl/gsl_interp.h"
 #include "gsl/gsl_spline.h" /* 样条插值支持 */
 
+
+
+
 #include "gsl/gsl_spline.h"
 
 class SA::SAInterpolationPrivate

@@ -34,12 +34,14 @@ HEADERS += \
     SAScienceGlobal.h\
     SADsp.h \
     SAMath.h \
-    SAScienceDefine.h
+    SAScienceDefine.h \
+    SASmooth.h
 
 SOURCES += \
     SADsp.cpp \
     SAInterpolation.cpp \
-    SAPolyFit.cpp
+    SAPolyFit.cpp \
+    SASmooth.cpp
 
 
 #the gsl lib support

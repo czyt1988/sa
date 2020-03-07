@@ -2,8 +2,6 @@
 #define SA_FUN_FIT_H
 
 #include "SACoreFunGlobal.h"
-#include "czyMath.h"
-#include "czyMath_Fit.h"
 #include "sa_fun_core.h"
 class SAVectorPointF;
 class SAAbstractDatas;

@@ -134,7 +134,7 @@ void saFun::polyval(const QVector<double> &x, const SAVectorDouble *factor,SAVec
 
 void saFun::polyval(const QVector<double> &x, const SAVectorDouble *factor, SAVectorPointF *res)
 {
-    SA::Math::PolyFit fit;
+    SA::SAPolyFit fit;
     fit.setFactors(factor->cbegin(),factor->cend());
     if(res)
     {

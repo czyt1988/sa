@@ -2,7 +2,6 @@
 #include "ui_SATimeFrequencyAnalysis.h"
 #include <algorithm>
 #include <QButtonGroup>
-#include <czyMath_DSP.h>
 #include <qwt_plot_zoneitem.h>
 #include "SAUIReflection.h"
 #include "SAUIInterface.h"
@@ -11,9 +10,9 @@
 SATimeFrequencyAnalysis::SATimeFrequencyAnalysis(QWidget *parent) :
     QWidget(parent)
   ,ui(new Ui::SATimeFrequencyAnalysis)
-  ,m_interval(0.001)
   ,m_wave(new QwtPlotCurve)
   ,m_spectrum(new QwtPlotCurve)
+  ,m_interval(0.001)
   ,m_xIntervalStart(0),m_xIntervalEnd(0)
   ,m_xIntervalStartIndex(0),m_xIntervalEndIndex(0)
   ,m_rangLength(256)
@@ -143,7 +142,7 @@ void SATimeFrequencyAnalysis::onLineEditIntervalFinished()
         m_interval = m_wave->dataSize();
     QVector<QPointF> series;
     size_t size = m_wave->dataSize();
-    for(int i=0;i<size;++i)
+    for(size_t i=0;i<size;++i)
     {
         series.push_back(QPointF(0+m_interval*double(i)
                                  ,m_wave->sample(i).y()));
@@ -207,7 +206,7 @@ void SATimeFrequencyAnalysis::onButtonGroupMagSetToggled(int id, bool checked)
 {
     if(checked)
     {
-        m_magType = static_cast<SA::Math::DSP::SpectrumType>(id);
+        m_magType = static_cast<SA::SADsp::SpectrumType>(id);
         updateSpectrumChart();
     }
 }
@@ -220,7 +219,7 @@ void SATimeFrequencyAnalysis::onButtonGroupPSDSetToggled(int id, bool checked)
 {
     if(checked)
     {
-        m_psdType = static_cast<SA::Math::DSP::PowerDensityWay>(id);
+        m_psdType = static_cast<SA::SADsp::PowerDensityWay>(id);
         updateSpectrumChart();
     }
 }
@@ -303,21 +302,21 @@ void SATimeFrequencyAnalysis::initUI()
     //幅值选择
     ui->radioButton_amp->setChecked (true);//默认选中，避免触发
     m_groupMagSet = new QButtonGroup(this);
-    m_groupMagSet->addButton (ui->radioButton_mag,SA::Math::DSP::Magnitude);
-    m_groupMagSet->addButton (ui->radioButton_magDB,SA::Math::DSP::MagnitudeDB);
-    m_groupMagSet->addButton (ui->radioButton_amp,SA::Math::DSP::Amplitude);
-    m_groupMagSet->addButton(ui->radioButton_ampDB,SA::Math::DSP::AmplitudeDB);
-    m_magType = SA::Math::DSP::Amplitude;
+    m_groupMagSet->addButton (ui->radioButton_mag,SA::SADsp::Magnitude);
+    m_groupMagSet->addButton (ui->radioButton_magDB,SA::SADsp::MagnitudeDB);
+    m_groupMagSet->addButton (ui->radioButton_amp,SA::SADsp::Amplitude);
+    m_groupMagSet->addButton(ui->radioButton_ampDB,SA::SADsp::AmplitudeDB);
+    m_magType = SA::SADsp::Amplitude;
     connect (m_groupMagSet,static_cast<void (QButtonGroup::*)(int,bool)>(&QButtonGroup::buttonToggled)
              ,this,&SATimeFrequencyAnalysis::onButtonGroupMagSetToggled);
 
     //psd估计方式
     ui->radioButton_msa->setChecked (true);//默认选中，避免触发
     m_groupPSDSet = new QButtonGroup(this);
-    m_groupPSDSet->addButton (ui->radioButton_msa,SA::Math::DSP::MSA);
-    m_groupPSDSet->addButton (ui->radioButton_ssa,SA::Math::DSP::SSA);
-    m_groupPSDSet->addButton (ui->radioButton_tisa,SA::Math::DSP::TISA);
-    m_psdType = SA::Math::DSP::MSA;
+    m_groupPSDSet->addButton (ui->radioButton_msa,SA::SADsp::MSA);
+    m_groupPSDSet->addButton (ui->radioButton_ssa,SA::SADsp::SSA);
+    m_groupPSDSet->addButton (ui->radioButton_tisa,SA::SADsp::TISA);
+    m_psdType = SA::SADsp::MSA;
     connect (m_groupPSDSet,static_cast<void (QButtonGroup::*)(int,bool)>(&QButtonGroup::buttonToggled)
              ,this,&SATimeFrequencyAnalysis::onButtonGroupPSDSetToggled);
 
@@ -330,16 +329,16 @@ void SATimeFrequencyAnalysis::initUI()
     //窗函数复选框
     connect(ui->comboBox_window,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             ,this,[&](int index){
-        m_signalWindow = static_cast<SA::Math::DSP::WindowType>(ui->comboBox_window->itemData (index).toInt ());
+        m_signalWindow = static_cast<SA::SADsp::WindowType>(ui->comboBox_window->itemData (index).toInt ());
         updateSpectrumChart ();
     });
-    ui->comboBox_window->addItem (tr("Rect"),int(SA::Math::DSP::WindowRect));
-    ui->comboBox_window->addItem (tr("Hanning"),int(SA::Math::DSP::WindowHanning));
-    ui->comboBox_window->addItem (tr("Hamming"),int(SA::Math::DSP::WindowHamming));
-    ui->comboBox_window->addItem (tr("Blackman"),int(SA::Math::DSP::WindowBlackman));//巴克曼窗
-    ui->comboBox_window->addItem (tr("Bartlett"),int(SA::Math::DSP::WindowBartlett));//巴特利窗
+    ui->comboBox_window->addItem (tr("Rect"),int(SA::SADsp::WindowRect));
+    ui->comboBox_window->addItem (tr("Hanning"),int(SA::SADsp::WindowHanning));
+    ui->comboBox_window->addItem (tr("Hamming"),int(SA::SADsp::WindowHamming));
+    ui->comboBox_window->addItem (tr("Blackman"),int(SA::SADsp::WindowBlackman));//巴克曼窗
+    ui->comboBox_window->addItem (tr("Bartlett"),int(SA::SADsp::WindowBartlett));//巴特利窗
     ui->comboBox_window->setCurrentIndex (0);
-    m_signalWindow = SA::Math::DSP::WindowRect;
+    m_signalWindow = SA::SADsp::WindowRect;
     //按钮
     connect (ui->pushButton_import,&QAbstractButton::clicked,this,&SATimeFrequencyAnalysis::onPushButtonImport);
     //connect (ui->pushButton_upData,&QAbstractButton::clicked,this,&SATimeFrequencyAnalysis::onPushbuttonUpdata);
@@ -440,7 +439,7 @@ void SATimeFrequencyAnalysis::updateData()
 ///
 void SATimeFrequencyAnalysis::updateIntervalLength()
 {
-    size_t size = m_wave->dataSize();
+    int size = m_wave->dataSize();
     int nTemp = m_rangLength;
     m_rangLength = ui->spinBox_intervalLength->value();
     if(m_rangLength > size)
@@ -610,12 +609,12 @@ void SATimeFrequencyAnalysis::dealFFT()
     double samRate = getWaveData(wave);
     if(samRate <= 0)
         return;
-    SA::Math::DSP::windowed (wave.begin (),wave.end (),m_signalWindow);
+    SA::SADsp::windowed (wave.begin (),wave.end (),m_signalWindow);
     if(m_isDetrend)
     {
-        SA::Math::DSP::detrend(wave.begin(),wave.end());
+        SA::SADsp::detrend(wave.begin(),wave.end());
     }
-    SA::Math::DSP::spectrum(wave.begin(),wave.end()
+    SA::SADsp::spectrum(wave.begin(),wave.end()
                              ,std::back_inserter(x)
                              ,std::back_inserter(y)
                              ,samRate
@@ -635,12 +634,12 @@ void SATimeFrequencyAnalysis::dealPSD()
     double samRate = getWaveData(wave);
     if(samRate <= 0)
         return;
-    SA::Math::DSP::windowed (wave.begin (),wave.end (),m_signalWindow);
+    SA::SADsp::windowed (wave.begin (),wave.end (),m_signalWindow);
     if(m_isDetrend)
     {
-        SA::Math::DSP::detrend(wave.begin(),wave.end());
+        SA::SADsp::detrend(wave.begin(),wave.end());
     }
-    SA::Math::DSP::powerSpectrum(wave.begin(),wave.end()
+    SA::SADsp::powerSpectrum(wave.begin(),wave.end()
                              ,std::back_inserter(x)
                              ,std::back_inserter(y)
                              ,samRate

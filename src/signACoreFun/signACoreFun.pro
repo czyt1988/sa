@@ -16,7 +16,6 @@ CONFIG(debug, debug|release){
 }
 CONFIG += c++11
 
-include($$PWD/../czy/czy_math.pri)
 #常用程序算法封装
 include($$PWD/../signAUtil/signAUtil.pri)
 #科学计算相关库
