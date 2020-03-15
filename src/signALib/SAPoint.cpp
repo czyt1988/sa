@@ -1,6 +1,6 @@
 #include "SAPoint.h"
 
-SAPoint::SAPoint()
+SAPoint::SAPoint():QPoint()
 {
 
 }

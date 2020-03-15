@@ -8,7 +8,9 @@
 #include "SACRC.h"
 
 
-static QMap<int,SA::FunHandle> fun_handle_map = QMap<int,SA::FunHandle>();
+#include "SAPoint.h"
+
+static QMap<SAPoint,SA::FunHandle> fun_handle_map = QMap<SAPoint,SA::FunHandle>();
 QMutex fun_handle_mutex;
 
 bool SA::ensure_write(const char *data, qint64 len,SATcpSocket* socket,short maxtry)
@@ -81,10 +83,10 @@ bool SA::write_xml_protocol(SATcpSocket *socket, const SAXMLProtocolParser *xml,
  * @param funid 函数id
  * @param fun 函数指针
  */
-void SA::register_serve_funciton_handle(int funid, SA::FunHandle fun)
+void SA::register_serve_funciton_handle(int classid, int funid, SA::FunHandle fun)
 {
     QMutexLocker locker(&fun_handle_mutex);
-    fun_handle_map[funid] = fun;
+    fun_handle_map[SAPoint(classid,funid)] = fun;
 }
 
 
@@ -93,10 +95,10 @@ void SA::register_serve_funciton_handle(int funid, SA::FunHandle fun)
  * @param funid 功能id
  * @return 对应处理方法指针，如果没有返回nullptr
  */
-SA::FunHandle SA::get_serve_funciton_handle(int funid)
+SA::FunHandle SA::get_serve_funciton_handle(int classid,int funid)
 {
     QMutexLocker locker(&fun_handle_mutex);
-    return fun_handle_map.value(funid,nullptr);
+    return fun_handle_map.value(SAPoint(classid,funid),nullptr);
 }
 
 /**
@@ -104,10 +106,7 @@ SA::FunHandle SA::get_serve_funciton_handle(int funid)
  */
 void SA::init_serve_funciotn_handle()
 {
-    QMutexLocker locker(&fun_handle_mutex);
-    fun_handle_map[SA::ProtocolFunReqToken] = &deal_xml_request_token;
-    fun_handle_map[SA::ProtocolFunReplyToken] = &deal_xml_reply_token;
-    fun_handle_map[SA::ProtocolFunReqHeartbreat] = &deal_request_heartbreat;
+
 }
 
 /**
@@ -145,58 +144,12 @@ bool SA::request_token_xml(int pid, const QString &appid, SATcpSocket *socket, i
     return write_xml_protocol(socket,&data,SA::ProtocolFunReqToken,sequenceID,extendValue);
 }
 
-/**
- * @brief 处理token的请求,此函数主要服务端使用
- * @param header
- * @param data
- * @param socket
- * @param res 无结果返回
- * @return 成功执行后会回复socket的token
- */
-bool SA::deal_xml_request_token(const SAProtocolHeader &header, const QByteArray &data, SATcpSocket *socket, QVariantHash *res)
-{
-    FUNCTION_RUN_PRINT();
-    Q_UNUSED(res);
-    SAXMLProtocolParser xml;
-    if(!xml.fromByteArray(data))
-    {
-        return false;
-    }
-    int pid = xml.getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"pid",0).toInt();
-    QString appid = xml.getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"appid","").toString();
-    QString token = make_token(pid,appid);
-
-    //回复
-    SAXMLProtocolParser reply;
-    reply.setClassID(SA::ProtocolTypeXml);
-    reply.setFunctionID(SA::ProtocolFunReplyToken);
-    reply.setValueInDefaultGroup("token",token);
-    return write_xml_protocol(socket,&reply,SA::ProtocolFunReplyToken,header.sequenceID,header.extendValue);
-}
 
 
 
-/**
- * @brief 处理token的返回
- * @param header
- * @param data
- * @param socket
- * @param res
- * @return
- * @note 函数不对指针的是否为null做检查，请确保指针的有效性
- */
-bool SA::deal_xml_reply_token(const SAProtocolHeader &header, const QByteArray &data, SATcpSocket *socket, QVariantHash *res)
-{
-    FUNCTION_RUN_PRINT();
-    SAXMLProtocolParser xml;
-    if(!xml.fromByteArray(data))
-    {
-        return false;
-    }
-    QString token = xml.getValueInDefaultGroup("token").toString();
-    res->insert("token",token);
-    return true;
-}
+
+
+
 /**
  * @brief 请求心跳
  * @param socket
@@ -214,27 +167,9 @@ bool SA::request_heartbreat(SATcpSocket *socket)
     return write(header,QByteArray(),socket);
 }
 
-/**
- * @brief 处理心跳的请求
- * @param header
- * @param data
- * @param socket
- * @param res
- * @return
- */
-bool SA::deal_request_heartbreat(const SAProtocolHeader &header, const QByteArray &data, SATcpSocket *socket, QVariantHash *res)
-{
-    FUNCTION_RUN_PRINT();
-    Q_UNUSED(data);
-    Q_UNUSED(res);
-    SAProtocolHeader replyheader;
-    replyheader.init();
-    replyheader.sequenceID = header.sequenceID;
-    replyheader.dataSize = 0;
-    replyheader.protocolTypeID = SA::ProtocolTypeHeartbreat;
-    replyheader.protocolFunID = SA::ProtocolFunReplyHeartbreat;
-    replyheader.extendValue = 0; // 心跳返回给客户端，此时值为0
-    return write(replyheader,QByteArray(),socket);
-}
+
+
+
+
 
 

@@ -24,6 +24,9 @@ namespace Ui {
 class SADataFeatureWidget;
 }
 
+/**
+ * @brief 数据属性显示窗口
+ */
 class SADataFeatureWidget : public QWidget
 {
     Q_OBJECT
@@ -57,38 +60,28 @@ private:
     //对已经绑定的MdiSubWindow进行解绑
     void unbindMdiSubWindow(QMdiSubWindow *w);
     //获取mdisubwindow的FigureWindow
-    SAFigureWindow* getChartWidgetFromSubWindow(QMdiSubWindow* sub);
+    SAFigureWindow* getFigureFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature
     void callCalcFigureWindowFeature(SAFigureWindow* figure);
     //检测model是否需要重新计算datafeature
     void checkModelItem(QAbstractItemModel* baseModel,QMdiSubWindow *subWndPtr);
 private:
     //计算一个plot item
-    void calcPlotItemFeature(const QwtPlotItem* plotitem,const QMdiSubWindow *midwidget,const SAChart2D* chartptr);
+    void calc2DPlotItemDataInfo(const QwtPlotItem* plotitem,const QMdiSubWindow *midwidget,const SAChart2D* chartptr);
+public://数据接收相关的类型
+    class _DataInfo{
+    public:
+        _DataInfo();
+        QAbstractItemModel* model;
+    };
 private:
     Ui::SADataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口
-    QMap<QMdiSubWindow*,QAbstractItemModel*> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
-private://数据接收相关的类型
+    QMap<QMdiSubWindow*,_DataInfo> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
     SADataClient m_client;
-    class TmpStru{
-    public:
-        TmpStru(QwtPlotItem *p1,QMdiSubWindow *p2,SAChart2D *p3)
-            :plotitem(p1),mdiSubWnd(p2),chart2d(p3)
-        {
-
-        }
-        TmpStru()
-            :plotitem(nullptr),mdiSubWnd(nullptr),chart2d(nullptr)
-        {
-
-        }
-        QwtPlotItem *plotitem;
-        QMdiSubWindow *mdiSubWnd;
-        SAChart2D *chart2d;
-    };
-    uint m_wndPtrKey;
-    QHash<uint,TmpStru> m_key2wndPtr;
+    QHash<_DataInfo,_DataInfo> m_key2wndPtr;
 };
+
+uint qHash(const SADataFeatureWidget::_DataInfo &key, uint seed);
 
 #endif // DATAFEATUREWIDGET_H

@@ -14,7 +14,7 @@ public:
     /// \param b
     /// \return
     ///
-    friend bool operator<(const SAPoint &a,const SAPoint &b);
+    SALIB_EXPORT friend bool operator<(const SAPoint &a,const SAPoint &b);
 };
 
 #endif // SAPOINT_H

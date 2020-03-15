@@ -173,13 +173,12 @@ QVariant SATreeModel::data(const QModelIndex &index, int role) const
         {
         case 0:
         {
-            const QString& tmp = item->getName();
-            return tmp;
+            return item->getName();
         }
         default:
             Q_ASSERT_X(index.column() < d_ptr->mColumnRoles.size(), "SATreeModel::data", "column is large than columnRoles");
             int propRole = d_ptr->mColumnRoles[index.column()];
-            return SAVariantCaster::variantToString(item->getProperty(propRole));
+            return SAVariantCaster::variantToString(item->property(propRole));
         }
     }
     else if(Qt::BackgroundRole == role)

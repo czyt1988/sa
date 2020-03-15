@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
 #endif
 #endif
     QApplication a(argc, argv);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling,true);
     qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
     qInstallMessageHandler(sa_log_out_put);

@@ -119,8 +119,8 @@ MainWindow::MainWindow(QWidget *parent) :
   ,ui_status_progress(nullptr)
   ,ui_status_info(nullptr)
   ,m_nProjectCount(0)
-  ,m_nUserChartCount(0)
   ,m_figureRightClickChart(nullptr)
+  ,m_nUserChartCount(0)
 {
     saAddLog("start app");
 

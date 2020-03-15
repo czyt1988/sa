@@ -14,10 +14,12 @@ public:
     void removeSection(SATcpSection* s);
     QList<SATcpSocket*> m_socketList;
     QMap<SATcpSection*,QThread*> m_section2thread;
+    SATcpServe::FactroyFunPtr m_factoryFun;
 
 };
 
-SATcpServePrivate::SATcpServePrivate(SATcpServe *p):q_ptr(p)
+SATcpServePrivate::SATcpServePrivate(SATcpServe *p):q_ptr(p),
+    m_factoryFun(nullptr)
 {
     
 }
@@ -30,7 +32,7 @@ void SATcpServePrivate::recordSectionThread(SATcpSection* s,QThread* p)
 void SATcpServePrivate::removeSection(SATcpSection* s)
 {
     m_section2thread.remove(s);
-    m_socketList.removeOne(s->socket());
+    m_socketList.removeOne(s->getSocket());
 }
 
 SATcpServe::SATcpServe(QObject *par):QTcpServer(par)
@@ -59,16 +61,39 @@ QList<SATcpSocket *> SATcpServe::getSockets() const
     return d_ptr->m_socketList;
 }
 
+/**
+ * @brief 注册section创建函数指针
+ *
+ * 如果需要使用特殊的section，调用此函数注册特殊的socket 处理 section
+ * @param factoryPtr section创建函数指针
+ *
+ */
+void SATcpServe::registerSectionFactory(SATcpServe::FactroyFunPtr factoryPtr)
+{
+    d_ptr->m_factoryFun = factoryPtr;
+}
+
 void SATcpServe::incomingConnection(qintptr socketDescriptor)
 {
     FUNCTION_RUN_PRINT();
     qDebug() << "incomingConnection:"<<socketDescriptor;
+
     SATcpSocket *socket = new SATcpSocket();
     if(!socket->setSocketDescriptor(socketDescriptor))
     {
         return;
     }
-    SATcpSection* section = new SATcpSection(socket);
+    SATcpSection* section = nullptr;
+    if(d_ptr->m_factoryFun)
+    {
+        //存在创建线程不一致
+        section = d_ptr->m_factoryFun(socket);
+    }
+    else
+    {
+        //没有指定就用默认section
+        section = new SATcpSection(socket);
+    }
     QThread* pt = new QThread();
     section->moveToThread(pt);
     connect(pt, &QThread::finished, section, &QObject::deleteLater);
@@ -86,13 +111,6 @@ bool SATcpServe::hasPendingConnections() const
 {
     return QTcpServer::hasPendingConnections();
 }
-
-//QTcpSocket *SATcpServe::nextPendingConnection()
-//{
-//    if(d_ptr->m_socketList.isEmpty())
-//        return nullptr;
-//    return d_ptr->m_socketList.back();
-//}
 
 
 void SATcpServe::onSectionFinished()

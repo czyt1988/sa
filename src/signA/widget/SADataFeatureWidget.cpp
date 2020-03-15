@@ -26,11 +26,20 @@
 
 
 
+
+SADataFeatureWidget::_DataInfo::_DataInfo():
+    model(nullptr)
+{
+
+}
+
+
+
+
 SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SADataFeatureWidget)
   ,m_lastActiveSubWindow(nullptr)
-  ,m_wndPtrKey(1)
 {
     ui->setupUi(this);
     connect(ui->treeView,&QTreeView::clicked,this,&SADataFeatureWidget::onTreeViewClicked);
@@ -57,9 +66,9 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
         return;
     }
     m_lastActiveSubWindow = arg1;
-
     setWindowTitle(tr("data feature[%1]").arg(arg1->windowTitle()));
-    QAbstractItemModel* model = m_subWindowToDataInfo.value(arg1,nullptr);
+    _DataInfo info = m_subWindowToDataInfo.value(arg1,_DataInfo());
+    QAbstractItemModel* model = info.model;
     if(model)
     {
         checkModelItem(model,arg1);
@@ -69,7 +78,7 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
     else
     {
         //说明没有对应的内容，把数据下发给数据处理进程进行处理
-        SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
+        SAFigureWindow* figure = getFigureFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
         if(figure)
         {
             callCalcFigureWindowFeature(figure);
@@ -87,7 +96,7 @@ void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
     if(modelIte != m_subWindowToDataInfo.end())
     {
         //子窗口关闭，把对应的对应model删除，如果正在显示这个model，先设置为null
-        QAbstractItemModel* model = modelIte.value();
+        QAbstractItemModel* model = modelIte.value().model;
         if(ui->treeView->model() == model)
         {
             ui->treeView->setModel(nullptr);
@@ -104,7 +113,7 @@ void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
 /// \param sub
 /// \return
 ///
-SAFigureWindow *SADataFeatureWidget::getChartWidgetFromSubWindow(QMdiSubWindow *sub)
+SAFigureWindow *SADataFeatureWidget::getFigureFromSubWindow(QMdiSubWindow *sub)
 {
     if(nullptr == sub)
     {
@@ -124,7 +133,7 @@ void SADataFeatureWidget::callCalcFigureWindowFeature(SAFigureWindow *figure)
         QwtPlotItemList itemList = (*i)->itemList();
         for(auto j=itemList.begin();j!=itemList.end();++j)
         {
-            calcPlotItemFeature(*j,m_lastActiveSubWindow,*i);
+            calc2DPlotItemDataInfo(*j,m_lastActiveSubWindow,*i);
         }
     }
 }
@@ -137,7 +146,7 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
     {
         return;
     }
-    SAFigureWindow * fig = SAUIInterface::getFigureWidgetFromMdiSubWindow(subWndPtr);
+    SAFigureWindow * fig = getFigureFromSubWindow(subWndPtr);
     if(nullptr == fig)
     {
         return;
@@ -192,9 +201,15 @@ void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubW
  * @param midwidget
  * @param chartptr
  */
-void SADataFeatureWidget::calcPlotItemFeature(const QwtPlotItem *plotitem, const QMdiSubWindow *midwidget, const SAChart2D *chartptr)
+void SADataFeatureWidget::calc2DPlotItemDataInfo(const QwtPlotItem *plotitem, const QMdiSubWindow *midwidget, const SAChart2D *chartptr)
 {
+    switch(plotitem->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+        QVector<QPointF> xys;
+        SAChart::getXYDatas(xys,static_cast<const QwtPlotCurve*>(plotitem));
 
+    }
 }
 
 
@@ -208,7 +223,7 @@ void SADataFeatureWidget::onTreeViewClicked(const QModelIndex &index)
         return;
     if(nullptr == m_lastActiveSubWindow)
         return;
-    SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
+    SAFigureWindow* figure = getFigureFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
     if(nullptr == figure)
     {
         saPrint() << "can not find FigureWindow";
@@ -289,7 +304,7 @@ void SADataFeatureWidget::onToolButtonClearDataFeatureClicked()
 {
     if(nullptr == m_lastActiveSubWindow)
         return;
-    SAFigureWindow* figure = getChartWidgetFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
+    SAFigureWindow* figure = getFigureFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
     if(nullptr == figure)
         return;
     QList<SAChart2D*> charts= figure->get2DPlots();
@@ -328,7 +343,7 @@ void SADataFeatureWidget::bindMdiSubWindow(QMdiSubWindow *w)
     {
         return;
     }
-    SAFigureWindow* fig = getChartWidgetFromSubWindow(w);
+    SAFigureWindow* fig = getFigureFromSubWindow(w);
     if(nullptr == fig)
     {
         return;
@@ -345,6 +360,7 @@ void SADataFeatureWidget::unbindMdiSubWindow(QMdiSubWindow *w)
 {
 
 }
+
 
 
 

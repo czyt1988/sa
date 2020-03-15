@@ -52,6 +52,8 @@ SOURCES += \
     SATcpSection.cpp \
     SAServeHandleFun.cpp
 
+#sa lib
+include($$PWD/../signALib/signALib.pri)
 #sa protocol support
 include($$PWD/../signAProtocol/signAProtocol.pri)
 

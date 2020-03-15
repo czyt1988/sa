@@ -204,6 +204,10 @@ template<typename T>
 void SAChart::getSeriesData(QVector<T> &vec, const QwtSeriesStore<T> *series)
 {
     const int size = series->dataSize();
+    if(vec.size() < size)
+    {
+        vec.reserve(size);
+    }
     for(int i=0;i<size;++i)
     {
         vec.push_back(series->sample(i));

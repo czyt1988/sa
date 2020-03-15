@@ -6,17 +6,20 @@
 #include "SAProtocolHeader.h"
 #include "SATcpSocket.h"
 #include "SAXMLProtocolParser.h"
-
+class QObject;
 /**
   *
   * @brief 根据classid和funid来实现请求处理的函数库
   *
   * 所有请求的函数形式为bool(const SAProtocolHeader &,const QByteArray &,SATcpSocket*,QVariantHash*)
   *
+  * 任何进程需要先进行初始化：@see init_serve_funciotn_handle,通过注册函数可以注入一些外部的处理函数@register_serve_funciton_handle
+  * 大部分的特殊处理函数不会注册，需要继承SATcpSection或SATcpClient来进行处理
+  *
  */
 namespace SA {
 //定义函数句柄
-typedef std::function<bool(const SAProtocolHeader &,const QByteArray &,SATcpSocket*,QVariantHash*)> FunHandle;
+typedef std::function<bool(const SAProtocolHeader &,const QByteArray &,SATcpSocket*,QObject*)> FunHandle;
 
 
 
@@ -39,9 +42,9 @@ SASERVE_EXPORT bool write_xml_protocol(SATcpSocket* socket,const SAXMLProtocolPa
 /////////////////////////////////////////////////////////////
 
 // 注册处理函数 - 线程安全
-SASERVE_EXPORT void register_serve_funciton_handle(int funid,FunHandle fun);
+SASERVE_EXPORT void register_serve_funciton_handle(int classid,int funid,FunHandle fun);
 //获取处理方法 - 线程安全
-SASERVE_EXPORT FunHandle get_serve_funciton_handle(int funid);
+SASERVE_EXPORT FunHandle get_serve_funciton_handle(int classid,int funid);
 //初始化 - 线程安全
 SASERVE_EXPORT void init_serve_funciotn_handle();
 /////////////////////////////////////////////////////////////
@@ -55,25 +58,9 @@ SASERVE_EXPORT bool request_token_xml(int pid
                                       , const QString& appid
                                       , SATcpSocket* socket
                                       , int sequenceID = 0, uint32_t extendValue = 0);
-//服务端处理请求token的命令
-SASERVE_EXPORT bool deal_xml_request_token(const SAProtocolHeader &header
-                                           , const QByteArray &data
-                                           , SATcpSocket* socket
-                                           , QVariantHash* res = nullptr);
-//客户端处理服务端发回的token请求
-SASERVE_EXPORT bool deal_xml_reply_token(const SAProtocolHeader &header
-                                         , const QByteArray &data
-                                         , SATcpSocket* socket
-                                         , QVariantHash* res);
+
 //请求心跳
 SASERVE_EXPORT bool request_heartbreat(SATcpSocket* socket);
-//服务端 - 处理心跳请求
-SASERVE_EXPORT bool deal_request_heartbreat(const SAProtocolHeader &header
-                                         , const QByteArray &data
-                                         , SATcpSocket* socket
-                                         , QVariantHash* res);
-
-
 }
 
 

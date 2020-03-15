@@ -36,6 +36,7 @@ enum ServeProtocolFunctionType{
     ,ProtocolFunReplyHeartbreat //2
     ,ProtocolFunReqToken //3
     ,ProtocolFunReplyToken //4
+    ,ProtocolFunReq2DPointsDescribe ///< 请求2维点序列的描述
 };
 }
 
