@@ -161,7 +161,7 @@ bool SATcpClient::dealXmlProtocol(const SAProtocolHeader &header, SAXMLProtocolP
         return true;
     case SA::ProtocolFunReplyToken:
         {
-            QString token = xml->getValueInDefaultGroup("token").toString();
+            QString token = xml->getValue("token").toString();
             if(!token.isEmpty())
             {
                 emit replyToken(token,header.sequenceID);

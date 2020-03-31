@@ -1,5 +1,9 @@
 # 进度记录
 
+## [2020/3/15] 开始实现SADataProce的功能
+- SAServe轻度封装
+- 在SADataProce中实现signAScience的调用
+
 ## [2020/3/7] 开始完善SADataFeatureWidget的功能
 - 实现多进程的曲线关键参数计算
 - 实现计算进程的计算功能

@@ -32,11 +32,13 @@ enum ServeProtocolClassType{
 
 enum ServeProtocolFunctionType{
     ProtocolFunUnknow = 0
-    ,ProtocolFunReqHeartbreat //1
-    ,ProtocolFunReplyHeartbreat //2
-    ,ProtocolFunReqToken //3
-    ,ProtocolFunReplyToken //4
+    ,ProtocolFunReqHeartbreat //1 心跳请求
+    ,ProtocolFunReplyHeartbreat //2 心跳回复
+    ,ProtocolFunReqToken //3 token请求
+    ,ProtocolFunReplyToken //4 token回复
+
     ,ProtocolFunReq2DPointsDescribe ///< 请求2维点序列的描述
+    ,ProtocolFunReply2DPointsDescribe ///< 请求2维点序列的描述
 };
 }
 

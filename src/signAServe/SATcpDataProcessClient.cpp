@@ -98,14 +98,16 @@ QVector<QPointF> SATcpDataProcessClient::variantToVectorpoints(const QVariant &v
  * @brief 请求2维数据的统计描述
  * @param arrs 待计算的点序列
  * @param key 标致，返回的reply中会带着此key，用于区别请求的回复
+ * @param sortcount 返回排序的前后n个值
  */
-void SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key)
+void SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key, int sortcount)
 {
     SAXMLProtocolParser data;
     data.setClassID(SA::ProtocolTypeXml);
     data.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
-    data.setValueInDefaultGroup("key",key);
-    data.setValueInDefaultGroup("points",vectorpointsToVariant(arrs));
+    data.setValue("key",key);
+    data.setValue("points",vectorpointsToVariant(arrs));
+    data.setValue("sort-count",sortcount);
     SA::write_xml_protocol(getSocket(),&data,SA::ProtocolFunReq2DPointsDescribe,key,0);
 }
 

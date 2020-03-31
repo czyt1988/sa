@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     do
     {
         ++port;
-        islisten = serve.listen(port);
+        islisten = serve.listen(QHostAddress::Any,port);
         if(islisten)
         {
             qDebug() << "listen success,port is:" << port;

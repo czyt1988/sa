@@ -20,6 +20,7 @@ CONFIG+=force_debug_info separate_debug_info
 
 
 QT += core gui
+QT += concurrent
 QT += network
 QT += xml
 
@@ -41,21 +42,27 @@ INCLUDEPATH += $$PWD
 
 
 SOURCES += main.cpp \
+    SADataProcFunctions.cpp \
     SADataProcServe.cpp \
+    SADataProcSession.cpp \
     SAMiniDump.cpp
 
 HEADERS += \
+    SADataProcFunctions.h \
     SADataProcServe.h \
+    SADataProcSession.h \
     SAMiniDump.h
     
 
 #sa api support
 #{
 #sa api support
+include($$PWD/../signAUtil/signAUtil.pri)
 include($$PWD/../signALib/signALib.pri)
 include($$PWD/../signAProcess/signAProcess.pri)
 include($$PWD/../signAProtocol/signAProtocol.pri)
 include($$PWD/../signAServe/signAServe.pri)
+include($$PWD/../signAScience/signAScience.pri)
 #}
 
 

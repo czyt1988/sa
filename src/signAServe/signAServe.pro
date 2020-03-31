@@ -29,27 +29,25 @@ HEADERS += \
     SAServeGlobal.h \
     SAAbstractServe.h \
     3rdParty/CRC.h \
+    SASession.h \
     SATcpSocket.h \
     SATcpServe.h \
-    SATcpAssignServe.h \
     SAServeShareMemory.h \
     SATcpClient.h \
     SAServerDefine.h \
     SATcpDataProcessClient.h \
-    SATcpSection.h \
     SAServeHandleFun.h
 
 
 
 SOURCES += \
     SAAbstractServe.cpp \
+    SASession.cpp \
     SATcpSocket.cpp \
     SATcpServe.cpp \
-    SATcpAssignServe.cpp \
     SAServeShareMemory.cpp \
     SATcpClient.cpp \
     SATcpDataProcessClient.cpp \
-    SATcpSection.cpp \
     SAServeHandleFun.cpp
 
 #sa lib

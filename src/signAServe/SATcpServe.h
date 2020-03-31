@@ -5,7 +5,7 @@
 #include "SAServeGlobal.h"
 class SATcpServePrivate;
 class SATcpSocket;
-class SATcpSection;
+class SASession;
 /**
  * @brief QTcpServer的多线程支持
  * SATCPServe 以长链接为基础，每个socket都应该是长链接，由于每个socket都在一个线程中，短连接的效率会比较低
@@ -19,7 +19,7 @@ public:
      * @brief section的工厂函数，此函数提供SATcpSection的创建
      * section的生命周期由SATcpServe管理
      */
-    typedef std::function<SATcpSection*(SATcpSocket*)> FactroyFunPtr;
+    typedef std::function<SASession*(SATcpSocket*,QObject*)> FactroyFunPtr;
     SATcpServe(QObject *par = nullptr);
     ~SATcpServe();
     //获取当前所有socket

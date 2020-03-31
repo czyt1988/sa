@@ -36,7 +36,7 @@ class SAXMLProtocolParserPrivate;
  * 上诉输出结果为：
  *
  * @code
- * <sa>
+ * <sa type="xml" classid="" funid="">
  *  <values>
  *   <default-group>
  *     <item type="int" name="value">1</item>
@@ -77,7 +77,7 @@ public:
     virtual int getClassID() const;
     //设置值
     virtual void setValue(const QString& groupName, const QString& keyName, const QVariant& var);
-    virtual void setValueInDefaultGroup(const QString& keyName, const QVariant& var);
+    virtual void setValue(const QString& keyName, const QVariant& var);
     // 复杂度O(1)
     virtual QStringList getGroupNames() const;
     // 复杂度O(n)
@@ -95,8 +95,8 @@ public:
     // 检查在分组名下是否存在对应的键值 复杂度O(1)
     virtual bool isHasKey(const QString& groupName, const QString& keyName) const;
     // 获取键值对应的内容
-    virtual QVariant getValue(const QString& groupName, const QString& keyName,const QVariant& defaultVal = QVariant()) const;
-    virtual QVariant getValueInDefaultGroup(const QString& keyName,const QVariant& defaultVal = QVariant()) const;
+    virtual QVariant getValueInGroup(const QString& groupName, const QString& keyName,const QVariant& defaultVal = QVariant()) const;
+    virtual QVariant getValue(const QString& keyName,const QVariant& defaultVal = QVariant()) const;
 public:
     // 获取错误信息
     QString getErrorString() const;

@@ -20,7 +20,7 @@ public:
     static QVector<QPointF> variantToVectorpoints(const QVariant& var);
 public slots:
     //请求2维数据的统计描述
-    void request2DPointsDescribe(const QVector<QPointF>& arrs,uint key);
+    void request2DPointsDescribe(const QVector<QPointF>& arrs,uint key,int sortcount = 20);
 signals:
 };
 

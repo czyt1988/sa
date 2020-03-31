@@ -164,10 +164,10 @@ void SAXMLConfigParser::setValue(const QString &groupName, const QString &keyNam
  * @param keyName
  * @param var
  */
-void SAXMLConfigParser::setValueInDefaultGroup(const QString &keyName, const QVariant &var)
+void SAXMLConfigParser::setValue(const QString &keyName, const QVariant &var)
 {
     d_ptr->m_isDirty = true;
-    SAXMLProtocolParser::setValueInDefaultGroup(keyName,var);
+    SAXMLProtocolParser::setValue(keyName,var);
 }
 /**
  * @brief 判断是否有改变
