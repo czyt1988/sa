@@ -1,9 +1,8 @@
 #include "SADataProcSession.h"
 #include "SAServerDefine.h"
 #include "SADataProcFunctions.h"
-#include <QtConcurrent>
-#include <QFuture>
-
+#include <QThreadPool>
+#include "runnable/SADataStatisticRunable.h"
 
 SASession *createDataProcSession(SATcpSocket *socket, QObject *p)
 {
@@ -48,16 +47,19 @@ bool SADataProcSession::dealXmlProtocol(const SAProtocolHeader &header, XMLDataP
     return false;
 }
 
-void SADataProcSession::onFinishedFuture()
+/**
+ * @brief 相对安全的写函数
+ * @param header
+ * @param data
+ * @return
+ */
+bool SADataProcSession::safe_write(const SAProtocolHeader &header, const QByteArray &data)
 {
-    QFutureWatcher<SASession::XMLDataPtr>* w = qobject_cast<QFutureWatcher<SASession::XMLDataPtr>*>(sender());
-    if(nullptr == w)
-    {
-        return;
-    }
-    SASession::XMLDataPtr res = w->result();
-    write()
+    QMutexLocker lock(&m_writemutex);
+    return SASession::write(header,data);
 }
+
+
 
 
 /**
@@ -68,10 +70,8 @@ void SADataProcSession::onFinishedFuture()
  */
 bool SADataProcSession::deal2DPointsDescribe(const SAProtocolHeader &header, SASession::XMLDataPtr xml)
 {
-    QFutureWatcher<SASession::XMLDataPtr>* watcher = new QFutureWatcher<SASession::XMLDataPtr>(this);
-    connect(watcher, &QFutureWatcher<SASession::XMLDataPtr>::finished, this, &SADataProcSession::onFinishedFuture);
-    QFuture<SASession::XMLDataPtr> future = QtConcurrent::run(reply2DPointsDescribe,header,xml);
-    watcher->setFuture(future);
+    SADataStatisticRunable* runnable = new SADataStatisticRunable(shared_from_this(),header,xml);
+    QThreadPool::globalInstance()->start(runnable);
     return true;
 }
 

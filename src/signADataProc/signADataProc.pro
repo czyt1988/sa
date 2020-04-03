@@ -45,13 +45,15 @@ SOURCES += main.cpp \
     SADataProcFunctions.cpp \
     SADataProcServe.cpp \
     SADataProcSession.cpp \
-    SAMiniDump.cpp
+    SAMiniDump.cpp \
+    runnable/SADataStatisticRunable.cpp
 
 HEADERS += \
     SADataProcFunctions.h \
     SADataProcServe.h \
     SADataProcSession.h \
-    SAMiniDump.h
+    SAMiniDump.h \
+    runnable/SADataStatisticRunable.h
     
 
 #sa api support
@@ -59,7 +61,6 @@ HEADERS += \
 #sa api support
 include($$PWD/../signAUtil/signAUtil.pri)
 include($$PWD/../signALib/signALib.pri)
-include($$PWD/../signAProcess/signAProcess.pri)
 include($$PWD/../signAProtocol/signAProtocol.pri)
 include($$PWD/../signAServe/signAServe.pri)
 include($$PWD/../signAScience/signAScience.pri)

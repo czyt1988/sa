@@ -4,7 +4,6 @@ SUBDIRS = \
           signALib\
           signAScience\
           signAServe\
-          signAProcess\
           signAChart\
           signACommonUI\
           signACoreFun\

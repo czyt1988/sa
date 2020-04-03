@@ -102,8 +102,6 @@ include($$PWD/../signAProtocol/signAProtocol.pri)
 include($$PWD/../signAServe/signAServe.pri)
 #sa api support
 include($$PWD/../signALib/signALib.pri)
-#sa multiprocessing process support
-include($$PWD/../signAProcess/signAProcess.pri)
 #sa chart support
 include($$PWD/../signAChart/signAChart.pri)
 #sa signACommonUI support
