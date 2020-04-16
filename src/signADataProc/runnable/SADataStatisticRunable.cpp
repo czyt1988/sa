@@ -53,7 +53,7 @@ void SADataStatisticRunable::run2DPointsDescribe()
     QVector<double> ys;
     QVector<QPointF> points;
     {
-        QVariant pv = m_xml->getValue("points");
+        QVariant pv = m_xml->getDefaultGroupValue("points");
         points = SATcpDataProcessClient::variantToVectorpoints(pv);
     }
     ys.reserve(points.size());
@@ -62,7 +62,7 @@ void SADataStatisticRunable::run2DPointsDescribe()
         ys.append(p.y());
     }
     //获取排序数
-    int sortcount = m_xml->getValue("sort-count").toInt();
+    int sortcount = m_xml->getDefaultGroupValue("sort-count").toInt();
     if (sortcount<0 || sortcount>1000)
     {
        sortcount = 20;
@@ -131,7 +131,6 @@ void SADataStatisticRunable::write(SASession::XMLDataPtr xml, int funid)
     std::shared_ptr<SADataProcSession> ptr = m_session.lock();
     if(ptr)
     {
-        //发送失败结果
         ptr->safe_write(header,data);
     }
 }

@@ -133,13 +133,13 @@ bool SATcpClient::deal(const SAProtocolHeader &header, const QByteArray &data)
     case SA::ProtocolTypeXml:
     {
         //解析xml协议
-        SAXMLProtocolParser xml;
-        if(!xml.fromByteArray(data))
+        XMLDataPtr xml = std::make_shared<SAXMLProtocolParser>();
+        if(!xml->fromByteArray(data))
         {
             emit clientError(InvalidXmlProtocol);
             return false;
         }
-        return dealXmlProtocol(header,&xml);
+        return dealXmlProtocol(header,xml);
     }
     default:
         break;
@@ -152,7 +152,7 @@ bool SATcpClient::deal(const SAProtocolHeader &header, const QByteArray &data)
     return fun(header,data,getSocket(),this);
 }
 
-bool SATcpClient::dealXmlProtocol(const SAProtocolHeader &header, SAXMLProtocolParser *xml)
+bool SATcpClient::dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml)
 {
     switch (header.protocolFunID)
     {
@@ -161,7 +161,7 @@ bool SATcpClient::dealXmlProtocol(const SAProtocolHeader &header, SAXMLProtocolP
         return true;
     case SA::ProtocolFunReplyToken:
         {
-            QString token = xml->getValue("token").toString();
+            QString token = xml->getDefaultGroupValue("token").toString();
             if(!token.isEmpty())
             {
                 emit replyToken(token,header.sequenceID);

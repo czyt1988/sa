@@ -56,7 +56,7 @@ public:
     virtual void setValue(const QString& keyName, const QVariant& var) = 0;
     /**
      * @brief 获取所有目录关键字
-     * @return
+     * @return 包含默认分组
      */
     virtual QStringList getGroupNames() const = 0;
     /**
@@ -96,14 +96,14 @@ public:
      * @param defaultVal 默认值（如果键值不存在，返回默认值）
      * @return 如果键值不存在，返回默认值，如果存在返回键值对应的内容
      */
-    virtual QVariant getValueInGroup(const QString& groupName, const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
+    virtual QVariant getValue(const QString& groupName, const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
     /**
      * @brief 从默认分组获取键值对应的内容
      * @param keyName 键值名
      * @param defaultVal 默认值（如果键值不存在，返回默认值）
      * @return
      */
-    virtual QVariant getValue(const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
+    virtual QVariant getDefaultGroupValue(const QString& keyName,const QVariant& defaultVal = QVariant()) const = 0;
 
 };
 

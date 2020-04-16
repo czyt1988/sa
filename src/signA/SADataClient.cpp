@@ -60,7 +60,7 @@ void SADataClient::tryConnectToServe(int retrycount,int timeout)
  */
 void SADataClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key)
 {
-    //m_client->request2DPointsDescribe()
+    m_client->request2DPointsDescribe(arrs,key);
 }
 
 /**

@@ -15,6 +15,16 @@ class SALIB_EXPORT SAItem
     SA_IMPL(SAItem)
     friend class SATree;
 public:
+    /**
+     * @brief 预设好的一些属性角色
+     */
+    enum Role{
+        RoleNone = 0,
+        RoleName, ///< 名字
+        RoleIcon, ///< 图标
+        RoleValue, ///< 值
+        UserDefine = 1000 ///< 用户自定义
+    };
     SAItem(SAItem* parentItem = nullptr);
     SAItem(const QString & text);
     SAItem(const QIcon & icon, const QString & text);
@@ -27,12 +37,12 @@ public:
     QString getName() const;
     //图标
     void setIcon(const QIcon& icon);
-    const QIcon& getIcon() const;
+    QIcon getIcon() const;
     //id
     int getID() const;
     //扩展数据操作相关
     void setProperty(int roleID,const QVariant& var);
-    bool isHaveProperty(int id) const;
+    bool isHaveProperty(int roleID) const;
     int getPropertyCount() const;
 
     //扩展数据的获取操作

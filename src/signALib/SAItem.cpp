@@ -28,10 +28,9 @@ public:
     QList<SAItem*> m_childs;
     int m_fieldRow;///<用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级
     QString m_name;
-    QIcon m_icon;
     int m_id;
     SATree* m_tree;///< 绑定的树
-    QHash<int,QVariant> m_datas;
+    QMap<int,QVariant> m_datas;//在数据量很少的情况下，遍历qlist比hash还快
     SAItemPrivate(SAItem* par)
         :q_ptr(par)
         ,m_parent(nullptr)
@@ -62,7 +61,42 @@ public:
             m_childs[i]->d_ptr->m_fieldRow = i;
         }
     }
-
+    /** 当定义为QList<QPair<int,QVariant>> m_datas;时使用
+    void setProperty(int roleID,const QVariant& var)
+    {
+        auto end = m_datas.end();
+        for(auto i = m_datas.begin();i!=end;++i)
+        {
+            if(roleID == i->first)
+            {
+                if(var.isValid())
+                {
+                    i->second = var;
+                    return;
+                }
+                else
+                {
+                    //无效就把role擦除
+                    m_datas.erase(i);
+                    return;
+                }
+            }
+        }
+        m_datas.append(qMakePair(roleID,var));
+    }
+    bool isHaveProperty(int id) const
+    {
+        auto end = m_datas.end();
+        for(auto i = m_datas.begin();i!=end;++i)
+        {
+            if(i->first == id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    */
 };
 
 
@@ -77,13 +111,13 @@ SAItem::SAItem(SAItem *parentItem):d_ptr(new SAItemPrivate(this))
 
 SAItem::SAItem(const QString &text):d_ptr(new SAItemPrivate(this))
 {
-    d_ptr->m_name = text;
+    setName(text);
 }
 
 SAItem::SAItem(const QIcon &icon, const QString &text):d_ptr(new SAItemPrivate(this))
 {
-    d_ptr->m_name = text;
-    d_ptr->m_icon = icon;
+    setName(text);
+    setIcon(icon);
 }
 
 /**
@@ -124,7 +158,6 @@ SAItem &SAItem::operator =(const SAItem &item)
 {
     clearChild();
     d_ptr->m_name = item.d_ptr->m_name;
-    d_ptr->m_icon = item.d_ptr->m_icon;
     d_ptr->m_datas = item.d_ptr->m_datas;
     //复制子对象
     copy_childs(&item,this);
@@ -152,15 +185,20 @@ QString SAItem::getName() const
 ///
 void SAItem::setIcon(const QIcon &icon)
 {
-    d_ptr->m_icon = icon;
+    d_ptr->m_datas[RoleIcon] = icon;
 }
 ///
 /// \brief 获取条目图标
 /// \return
 ///
-const QIcon &SAItem::getIcon() const
+QIcon SAItem::getIcon() const
 {
-    return d_ptr->m_icon;
+    auto i = d_ptr->m_datas.find(RoleIcon);
+    if(i == d_ptr->m_datas.end())
+    {
+        return QIcon();
+    }
+    return i.value().value<QIcon>();
 }
 ///
 /// \brief 条目id
@@ -178,6 +216,11 @@ int SAItem::getID() const
 ///
 void SAItem::setProperty(int roleID, const QVariant &var)
 {
+    if(RoleName == roleID)
+    {
+        d_ptr->m_name = var.toString();
+        return;
+    }
     d_ptr->m_datas[roleID] = var;
 }
 ///
@@ -185,9 +228,13 @@ void SAItem::setProperty(int roleID, const QVariant &var)
 /// \param id 标示id
 /// \return
 ///
-bool SAItem::isHaveProperty(int id) const
+bool SAItem::isHaveProperty(int roleID) const
 {
-    return d_ptr->m_datas.contains(id);
+    if(RoleName == roleID)
+    {
+        return true;
+    }
+    return d_ptr->m_datas.contains(roleID);
 }
 ///
 /// \brief 扩展数据的个数

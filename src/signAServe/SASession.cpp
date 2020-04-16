@@ -25,8 +25,8 @@ SASessionPrivate::SASessionPrivate(SASession *p, SATcpSocket *socket):q_ptr(p)
 
 bool SASessionPrivate::dealXmlRequestToken(const SAProtocolHeader &header, SASession::XMLDataPtr xml)
 {
-    int pid = xml->getValueInGroup(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"pid",0).toInt();
-    QString appid = xml->getValueInGroup(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"appid","").toString();
+    int pid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"pid",0).toInt();
+    QString appid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"appid","").toString();
     QString token = SA::make_token(pid,appid);
     //回复
     SAXMLProtocolParser reply;

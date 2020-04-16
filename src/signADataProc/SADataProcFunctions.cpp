@@ -20,7 +20,7 @@ SASession::XMLDataPtr createXMLDataPtr(int funid,SASession::XMLDataPtr reqxml)
     SASession::XMLDataPtr res = SASession::makeXMLDataPtr();
     res->setClassID(SA::ProtocolTypeXml);
     res->setFunctionID(funid);
-    QVariant key = reqxml->getValue("key");
+    QVariant key = reqxml->getDefaultGroupValue("key");
     res->setValue("key",key);
     return res;
 }

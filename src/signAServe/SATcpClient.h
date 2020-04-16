@@ -5,7 +5,7 @@
 #include "SAProtocolHeader.h"
 #include <QAbstractSocket>
 #include <QObject>
-
+#include <memory>
 #define __PRINT_FUNCTION_RUN_INFO 1
 #if __PRINT_FUNCTION_RUN_INFO
 #include <QDebug>
@@ -32,6 +32,7 @@ class SASERVE_EXPORT SATcpClient : public QObject
     SA_IMPL(SATcpClient)
     Q_OBJECT
 public:
+    typedef std::shared_ptr<SAXMLProtocolParser> XMLDataPtr;
     enum ClientError{
         UnknowError = 0///< 未知错误
         ,SharedMemoryNotReadyError = 1///< 共享内存还未准备好
@@ -49,7 +50,7 @@ public:
     bool write(const SAProtocolHeader& header,const QByteArray& data);
     //处理协议数据的函数
     virtual bool deal(const SAProtocolHeader &header, const QByteArray &data);
-    virtual bool dealXmlProtocol(const SAProtocolHeader &header, SAXMLProtocolParser* xml);
+    virtual bool dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml);
     //获取socket
     inline SATcpSocket* getSocket() const;
 public slots:

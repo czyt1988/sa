@@ -4,7 +4,6 @@
 #include <QLocalSocket>
 #include <QSet>
 #include <QTimer>
-#include "SAThreadProcessPool.h"
 #include "SATree.h"
 #include "SATcpServe.h"
 ///
@@ -21,8 +20,6 @@ public:
     uint getPid() const;
     void setPid(const uint &pid);
 private:
-    SAThreadProcessPool m_process;///< 处理线程的线程池
-
     uint m_pid;
     bool m_willBeQuit;
     QTimer m_liveChecker;///< 定时判断是否需要结束的定时器

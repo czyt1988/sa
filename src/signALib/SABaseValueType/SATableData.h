@@ -28,20 +28,20 @@ public:
     SATableData();
     SATableData(const QString& name);
     virtual ~SATableData();
-    virtual int getType() const;
-    virtual QVariant getAt(const std::initializer_list<size_t>& index) const;
-    virtual QString displayAt(const std::initializer_list<size_t>& index) const;
-    int getSize(int dim=SA::Dim1) const;
-    int getDim() const;
-    virtual void read(QDataStream & in);
+    virtual int getType() const override;
+    virtual QVariant getAt(const std::initializer_list<size_t>& index) const override;
+    virtual QString displayAt(const std::initializer_list<size_t>& index) const override;
+    int getSize(int dim=SA::Dim1) const override;
+    int getDim() const override;
+    virtual void read(QDataStream & in) override;
     //判断该数据在上次write之后是否内存有变更
-    virtual bool isDirty() const;
+    virtual bool isDirty() const override;
     //设置内存有变更
-    virtual void setDirty(bool dirty);
+    virtual void setDirty(bool dirty) override;
     //根据类型判断是否是数据,如nan就返回true，如空的一维数据都返回true
-    virtual bool isEmpty() const;
+    virtual bool isEmpty() const override;
     //设置数据
-    virtual bool setAt(const QVariant& val,const std::initializer_list<size_t>& index);
+    virtual bool setAt(const QVariant& val,const std::initializer_list<size_t>& index) override;
 public:
     bool isHaveData(uint r,uint c) const;
     void setTableData(uint row,uint col,const T& d);

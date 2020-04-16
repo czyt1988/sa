@@ -27,9 +27,9 @@ public:
     SAVariantDatas(const QHash<QString, QVariant>& d);
     SAVariantDatas(const QMap<QString, QVariant>& d);
     SAVariantDatas(const QList<QVariant>& d);
-    virtual int getType() const;
-    virtual QString getTypeName() const;
-    virtual bool isEmpty() const;
+    virtual int getType() const override;
+    virtual QString getTypeName() const override;
+    virtual bool isEmpty() const override;
 
     ///
     /// \brief 转换为某数据，需要调用canConvert进行预先判断
@@ -57,7 +57,7 @@ public:
     bool canConvert() const;
 
 
-    bool setAt(const QVariant &val, const std::initializer_list<size_t> &index);
+    virtual bool setAt(const QVariant &val, const std::initializer_list<size_t> &index) override;
 
 
 };

@@ -62,7 +62,7 @@ T SAGlobalConfig::valueFromKey(const QString &content, const QString &key,const 
     {
         return defaultVal;
     }
-    QVariant var = getValue(content,key);
+    QVariant var = getDefaultGroupValue(content,key);
     if(!var.isValid())
     {
         return defaultVal;

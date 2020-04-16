@@ -25,41 +25,6 @@ SATcpDataProcessClient::~SATcpDataProcessClient()
 
 }
 
-bool SATcpDataProcessClient::deal(const SAProtocolHeader &header, const QByteArray &data)
-{
-    if(SATcpClient::deal(header,data))
-    {
-        return true;
-    }
-    switch(header.protocolTypeID)
-    {
-    case SA::ProtocolTypeXml:
-    {
-        SAXMLProtocolParser xml;
-        if(!xml.fromByteArray(data))
-        {
-            return false;
-        }
-        break;
-    }
-    default:
-        break;
-    }
-
-
-//    SAXMLProtocolParser xml;
-//    if(!xml.fromByteArray(data))
-//    {
-//        return false;
-//    }
-//    QVariant var = xml.getValueInDefaultGroup("points");
-//    QVector<QPointF> arr = variant2vectorpoints(var);
-//    if(arr.size() <= 0)
-//    {
-
-//    }
-    return false;
-}
 /**
  * @brief 把点序列转换为variant
  * @param arrs 点序列
@@ -92,6 +57,42 @@ QVector<QPointF> SATcpDataProcessClient::variantToVectorpoints(const QVariant &v
         }
     }
     return arr;
+}
+
+/**
+ * @brief 处理xml协议
+ * @param header
+ * @param xml
+ * @return
+ */
+bool SATcpDataProcessClient::dealXmlProtocol(const SAProtocolHeader &header, SATcpDataProcessClient::XMLDataPtr xml)
+{
+    if(SATcpClient::dealXmlProtocol(header,xml))
+    {
+        return true;
+    }
+    //SATcpClient::dealXmlProtocol返回false说明有没有处理的协议
+    switch (header.protocolFunID) {
+    case SA::ProtocolFunReply2DPointsDescribe:
+        dealReply2DPointsDescribe(header,xml);
+        break;
+    default:
+        break;
+    }
+    return false;
+}
+
+/**
+ * @brief SATcpDataProcessClient::dealReply2DPointsDescribe
+ * @param header
+ * @param xml
+ * @return
+ */
+bool SATcpDataProcessClient::dealReply2DPointsDescribe(const SAProtocolHeader &header,
+                                                       SATcpDataProcessClient::XMLDataPtr xml)
+{
+    emit reply2DPointsDescribe(xml);
+    return true;
 }
 
 /**

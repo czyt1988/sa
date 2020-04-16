@@ -6,7 +6,6 @@
 #include <QLocalServer>
 #include <QThread>
 #include <QApplication>
-#include "SAPointSeriesStatisticProcess.h"
 #include "SAXMLTagDefined.h"
 #include <memory>
 
