@@ -803,7 +803,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadSetting()
 {
-    bool isFirstStart = saConfig.getDefaultGroupValue("StartTimes","firstStart",true).toBool();
+    bool isFirstStart = saConfig.getValue("StartTimes","firstStart",true).toBool();
     qDebug() << "first start:" << isFirstStart;
     if(isFirstStart)
     {
@@ -812,13 +812,13 @@ void MainWindow::loadSetting()
         saConfig.setValue("StartTimes","firstStart",false);
     }
 
-    QVariant var = saConfig.getDefaultGroupValue("mainWindow","geometry");
+    QVariant var = saConfig.getValue("mainWindow","geometry");
     bool isLoadGeometry = false;
     if(var.isValid())
     {
         isLoadGeometry |= restoreGeometry(var.toByteArray());
     }
-    var = saConfig.getDefaultGroupValue("mainWindow","windowState");
+    var = saConfig.getValue("mainWindow","windowState");
     if(var.isValid())
     {
         isLoadGeometry |= restoreState(var.toByteArray());
@@ -827,7 +827,7 @@ void MainWindow::loadSetting()
     {
         showMaximized();
     }
-    var = saConfig.getDefaultGroupValue("skin","name");
+    var = saConfig.getValue("skin","name");
     if(var.isValid())
         setSkin(var.toString());
     else
@@ -845,6 +845,8 @@ void MainWindow::saveSetting()
     saConfig.setValue("skin","name",SAThemeManager::currentStyleName());
     saConfig.setValue("path","openFiles",m_recentOpenFiles);
     saConfig.setValue("path","openProjectFolders",m_recentOpenProjectFolders);
+    qDebug() << m_recentOpenFiles;
+    qDebug() << m_recentOpenProjectFolders;
     saConfig.save();
 }
 
@@ -864,8 +866,8 @@ void MainWindow::saveRecentPath()
 ///
 void MainWindow::loadRecentPath()
 {
-    m_recentOpenFiles = saConfig.getDefaultGroupValue("path","openFiles").toStringList();
-    m_recentOpenProjectFolders = saConfig.getDefaultGroupValue("path","openProjectFolders").toStringList();
+    m_recentOpenFiles = saConfig.getValue("path","openFiles").toStringList();
+    m_recentOpenProjectFolders = saConfig.getValue("path","openProjectFolders").toStringList();
     updateRecentOpenFilesMenu();
     updateRecentOpenProjectsMenu();
 }
@@ -1029,7 +1031,7 @@ void MainWindow::appendRecentOpenProjectsPath(const QString &path)
     }
     else
     {
-        int count = saConfig.getDefaultGroupValue("path","recOpenProjectFolderCount",10).toInt();
+        int count = saConfig.getValue("path","recOpenProjectFolderCount",10).toInt();
         m_recentOpenProjectFolders.push_front(path);
         if(count > 0 && m_recentOpenProjectFolders.size()>count)
         {
@@ -1051,7 +1053,7 @@ void MainWindow::appendRecentOpenFilesPath(const QString &path)
     }
     else
     {
-        int count = saConfig.getDefaultGroupValue("path","recOpenFilesCount",10).toInt();
+        int count = saConfig.getValue("path","recOpenFilesCount",10).toInt();
         m_recentOpenFiles.push_front(path);
         if(count > 0 && m_recentOpenFiles.size()>count)
         {

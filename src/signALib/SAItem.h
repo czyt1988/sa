@@ -49,7 +49,8 @@ public:
     const QVariant& property(int id) const;
     QVariant& property(int id);
     void property(int index,int& id,QVariant& var) const;
-    QVariant getProperty(int id,const QVariant& defaultvar = QVariant());
+    QVariant getProperty(int id,const QVariant& defaultvar = QVariant()) const;
+    QMap<int,QVariant> getPropertys() const;
     //父子条目操作相关
     int childItemCount() const;
     //索引子条目

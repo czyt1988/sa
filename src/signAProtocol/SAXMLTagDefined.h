@@ -30,9 +30,13 @@
 #ifndef SA_XML_TAG_SA
 #define SA_XML_TAG_SA "sa"
 #endif
-/// \def sa打头的标签，表示这是一个sa协议
+/// \def value标签，value下是group，group下是item
 #ifndef SA_XML_TAG_VALUES
 #define SA_XML_TAG_VALUES "values"
+#endif
+/// \def prop标签，用于描述属性，下是item
+#ifndef SA_XML_TAG_PROPERTY
+#define SA_XML_TAG_PROPERTY "prop"
 #endif
 /// \def default-group标签 用于标记一默认分组
 #ifndef SA_XML_TAG_DEFAULTGROUP
@@ -114,10 +118,18 @@
 #ifndef SA_XML_ATT_NAME
 #define SA_XML_ATT_NAME "name"
 #endif
-
+/// \def id属性标签 用于描述属性"id"
+#ifndef SA_XML_ATT_ID
+#define SA_XML_ATT_ID "id"
+#endif
 /// \def varType属性标签 用于描述属性"varType"
 #ifndef SA_XML_ATT_VALUE_TYPE
 #define SA_XML_ATT_VALUE_TYPE "varType"
+#endif
+
+/// \def icon属性标签 用于描述属性"icon",内容是一个base64
+#ifndef SA_XML_ATT_ICON
+#define SA_XML_ATT_ICON "icon"
 #endif
 
 /// \def varType属性标签值vectorpointf,标识点序列的数值

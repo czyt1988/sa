@@ -6,6 +6,7 @@
 #include "SAProtocolHeader.h"
 #include "SATcpSocket.h"
 #include "SAXMLProtocolParser.h"
+#include "SATree.h"
 class QObject;
 /**
   *
@@ -61,6 +62,11 @@ SASERVE_EXPORT bool request_token_xml(int pid
 
 //请求心跳
 SASERVE_EXPORT bool request_heartbreat(SATcpSocket* socket);
+
+//把SAXMLProtocolParser 转换为tree
+SASERVE_EXPORT bool cast_protocol_to_satree(const SAXMLProtocolParser* xml,SATree* tree);
+//把satree 转换为标准xml
+SASERVE_EXPORT QString cast_satree_to_xml(const SATree* tree);
 }
 
 

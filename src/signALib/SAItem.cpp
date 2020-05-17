@@ -282,9 +282,18 @@ void SAItem::property(int index, int &id, QVariant &var) const
  * @param defaultvar
  * @return
  */
-QVariant SAItem::getProperty(int id, const QVariant &defaultvar)
+QVariant SAItem::getProperty(int id, const QVariant &defaultvar) const
 {
     return d_ptr->m_datas.value(id,defaultvar);
+}
+
+/**
+ * @brief 获取所有属性
+ * @return
+ */
+QMap<int, QVariant> SAItem::getPropertys() const
+{
+    return d_ptr->m_datas;
 }
 ///
 /// \brief 子条目的数目

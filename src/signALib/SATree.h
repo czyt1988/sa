@@ -21,7 +21,7 @@ public:
     ~SATree();
     //重载等号操作符
     SATree& operator =(const SATree& tree);
-    //清空所有节点
+    //清空所有节点和属性
     void clear();
     //父子条目操作相关
     int getItemCount() const;
@@ -40,6 +40,16 @@ public:
     SAItem* takeItem(int row);
     //返回item对应的树层级
     int indexOfItem(const SAItem* item) const;
+    //设置tree的属性，是的tree可以携带附加信息
+    void setProperty(const QString& name,const QVariant& var);
+    //获取属性
+    QVariant getProperty(const QString& name,const QVariant& defaultVal = QVariant()) const;
+    //移除属性
+    void removeProperty(const QString& name);
+    //获取所有属性名
+    QList<QString> getPropertyNames() const;
+    //获取所有属性
+    QMap<QString,QVariant> getPropertys() const;
 };
 Q_DECLARE_METATYPE(SATree)
 //debug输出

@@ -32,7 +32,7 @@ signals:
      * @brief 返回数据点描述结果
      * @param res 结果以satree来进行描述
      */
-    void reply2DPointsDescribe(XMLDataPtr res);
+    void reply2DPointsDescribe(const SAProtocolHeader &header, XMLDataPtr res);
 };
 
 #endif // SADATAPROCESSCLIENT_H

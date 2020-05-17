@@ -91,7 +91,7 @@ bool SATcpDataProcessClient::dealXmlProtocol(const SAProtocolHeader &header, SAT
 bool SATcpDataProcessClient::dealReply2DPointsDescribe(const SAProtocolHeader &header,
                                                        SATcpDataProcessClient::XMLDataPtr xml)
 {
-    emit reply2DPointsDescribe(xml);
+    emit reply2DPointsDescribe(header,xml);
     return true;
 }
 

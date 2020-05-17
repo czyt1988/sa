@@ -337,7 +337,10 @@ QDomElement SAXMLProtocolParserPrivate::setValue(const QString &keyName, const Q
 {
     QDomElement item = mDoc.createElement(SA_XML_TAG_ITEM);
     QString vartype = var.typeName();
-    item.setAttribute(SA_XML_ATT_NAME,keyName);
+    if (!keyName.isNull())
+    {
+        item.setAttribute(SA_XML_ATT_NAME,keyName);
+    }
     item.setAttribute(SA_XML_ATT_TYPE,vartype);
     //对数组类型进行特殊处理
     if(0 == QString::compare(vartype,SA_XML_VAR_ARR_LIST,Qt::CaseInsensitive))
@@ -345,7 +348,7 @@ QDomElement SAXMLProtocolParserPrivate::setValue(const QString &keyName, const Q
         QList<QVariant> l = var.toList();
         for (auto i = l.begin();i!=l.end();++i)
         {
-            setValue("",*i,item);
+            setValue(QString::null,*i,item);
         }
     }
     else if (0 == QString::compare(vartype,SA_XML_VAR_ARR_MAP,Qt::CaseInsensitive))
@@ -369,7 +372,7 @@ QDomElement SAXMLProtocolParserPrivate::setValue(const QString &keyName, const Q
         QStringList l = var.toStringList();
         for (auto i = l.begin();i!=l.end();++i)
         {
-            setValue("",*i,item);
+            setValue(QString::null,*i,item);
         }
     }
     else

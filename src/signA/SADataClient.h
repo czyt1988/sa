@@ -4,7 +4,8 @@
 #include <QDateTime>
 #include <QAbstractSocket>
 #include "../global/SAGlobals.h"
-class SATcpDataProcessClient;
+#include "SAProtocolHeader.h"
+#include "SATcpDataProcessClient.h"
 class QThread;
 
 //对于不暴露的接口，不使用impl方式
@@ -66,6 +67,13 @@ private slots:
     Q_SLOT void onClientErrorOccure(int clientError);
     //重新连接服务器
     Q_SLOT void reconnectToServe();
+signals:
+    /**
+     * @brief 接收到2d点描述
+     * @param header 通讯头
+     * @param res 描述的协议
+     */
+    void rec2DPointsDescribe(const SAProtocolHeader &header, SATcpDataProcessClient::XMLDataPtr res);
 private:
     SATcpDataProcessClient* m_client;
     QThread* m_thread;
