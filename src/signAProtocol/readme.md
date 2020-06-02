@@ -9,7 +9,7 @@
 
 # 关于协议
 
-sa 协议分为xml和json两个版本
+sa 协议z主要使用xml协议
 
 ## 基于xml的交互协议
 
@@ -75,19 +75,19 @@ root
                 "value": [
                     {
                         "type": "QPointF",
-                        "value": "1;2"
+                        "value": [1.0,2.0]
                     },
                     {
                         "type": "QPointF",
-                        "value": "1;3"
+                        "value": [1.0,3.0]
                     },
                     {
                         "type": "QPointF",
-                        "value": "2;3"
+                        "value": [2.0,3.0]
                     },
                     {
                         "type": "QPointF",
-                        "value": "4;5"
+                        "value": [4.0,5.0]
                     }
                 ]
             }
@@ -136,19 +136,19 @@ root
                     "value": [
                         {
                             "type": "QPointF",
-                            "value": "1;2"
+                            "value": [1.0,2.0]
                         },
                         {
                             "type": "QPointF",
-                            "value": "1;3"
+                            "value": [1.0,3.0]
                         },
                         {
                             "type": "QPointF",
-                            "value": "2;3"
+                            "value": [2.0,3.0]
                         },
                         {
                             "type": "QPointF",
-                            "value": "4;5"
+                            "value": [4.0,5.0]
                         }
                     ]
                 }
@@ -162,6 +162,12 @@ root
 
 通过此协议表征一个有较强关系的数据结构，尤其是树形结构，主要是为了返回复杂关系的参数
 
+# 协议的思路
+
+思路很简单，就是一个树形结构，顶层为sa，sa下有分组group，分组下为item的三级结构
+
+item是可嵌套的，group也是可嵌套的，但接口协议中并不提供明确嵌套方法，因为实际协议并不喜欢如此深层级的嵌套行为
+
 # 主要接口
 
 - `setFunctionID`/`getFunctionID`设置功能码，用于区分协议类型
@@ -169,4 +175,3 @@ root
 - `setValue`通过分组名和key设置一个参数，如果不输入分组名，会写入到默认分组，默认分组使用`getDefaultGroupValue`来获取
 - `getValue`通过分组名和key获取一个参数
 
-# 关于组

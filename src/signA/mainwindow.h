@@ -52,7 +52,7 @@ class QActionGroup;
 class SAInformationStatusWidget;
 class ValueDataViewer;
 class SAPlotLayerModel;
-class DataFeatureTreeModel;
+class SADataFeatureTreeModel;
 class SATabValueViewerWidget;
 class SAValueManagerModel;
 class SAFigureWindow;

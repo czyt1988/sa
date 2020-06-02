@@ -15,7 +15,7 @@ class QwtPlotItem;
 class QMdiSubWindow;
 class QAbstractItemModel;
 class SAFigureWindow;
-class DataFeatureTreeModel;
+class SADataFeatureTreeModel;
 class SAChart2D;
 class SAFigureSetWidget;
 
@@ -54,6 +54,8 @@ private slots:
     void onFigureDestroy();
     //心跳超时
     void onHeartbeatCheckerTimerout();
+    //获取服务器的反馈
+    void onRec2DPointsDescribe(const SAProtocolHeader &header, SAXMLProtocolParserPtr res);
 private:
     //对MdiSubWindow进行绑定
     void bindMdiSubWindow(QMdiSubWindow *w);
@@ -62,26 +64,32 @@ private:
     //获取mdisubwindow的FigureWindow
     SAFigureWindow* getFigureFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature
-    void callCalcFigureWindowFeature(SAFigureWindow* figure);
+    void calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindow* figure, SADataFeatureTreeModel *model);
     //检测model是否需要重新计算datafeature
     void checkModelItem(QAbstractItemModel* baseModel,QMdiSubWindow *subWndPtr);
 private:
     //计算一个plot item
-    void calc2DPlotItemDataInfo(const QwtPlotItem* plotitem,const QMdiSubWindow *midwidget,const SAChart2D* chartptr);
+    void calcPlotItemFeature(QMdiSubWindow *subwnd,SAChart2D *chart,SADataFeatureTreeModel* model,QwtPlotItem *plotitem,int key);
 public://数据接收相关的类型
     class _DataInfo{
     public:
-        _DataInfo();
-        QAbstractItemModel* model;
+        _DataInfo(QwtPlotItem* plotitem, QMdiSubWindow *midwidget, SAChart2D *chartptr);
+        QwtPlotItem *item;
+        QMdiSubWindow *midwidget;
+        SAChart2D * chart;
+        bool operator <(const _DataInfo& other);
     };
+
 private:
     Ui::SADataFeatureWidget *ui;
     QMdiSubWindow* m_lastActiveSubWindow;///< 记录最后激活的子窗口
-    QMap<QMdiSubWindow*,_DataInfo> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
+    QMap<QMdiSubWindow*,SADataFeatureTreeModel*> m_mdiToModel;///< 子窗口对应的数据模型
+    QMap<int,_DataInfo> m_keyToDatainfo;
+    //QMap<QMdiSubWindow*,_DataInfo> m_subWindowToDataInfo;///< 记录子窗口对应的数据属性表上显示的model
     SADataClient m_client;
-    QHash<_DataInfo,_DataInfo> m_key2wndPtr;
+
 };
 
-uint qHash(const SADataFeatureWidget::_DataInfo &key, uint seed);
+
 
 #endif // DATAFEATUREWIDGET_H

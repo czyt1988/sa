@@ -53,7 +53,7 @@ public slots:
     //尝试连接服务器，此函数失败会继续重连，由于失败会继续，因此会阻塞
     Q_SLOT void tryConnectToServe(int retrycount = 5, int timeout = 5000);
     //请求2维数据的统计描述
-    Q_SLOT void request2DPointsDescribe(const QVector<QPointF>& arrs,uint key);
+    Q_SLOT bool request2DPointsDescribe(const QVector<QPointF>& arrs,uint key);
 private slots:
     //连接成功槽
     Q_SLOT void onSocketConnected();
@@ -73,7 +73,7 @@ signals:
      * @param header 通讯头
      * @param res 描述的协议
      */
-    void rec2DPointsDescribe(const SAProtocolHeader &header, SATcpDataProcessClient::XMLDataPtr res);
+    void rec2DPointsDescribe(const SAProtocolHeader &header, SAXMLProtocolParserPtr res);
 private:
     SATcpDataProcessClient* m_client;
     QThread* m_thread;

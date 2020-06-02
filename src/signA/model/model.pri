@@ -4,9 +4,9 @@ DEPENDPATH += $$PWD
 HEADERS += \
     $$PWD/MdiWindowModel.h \
     $$PWD/SACsvFileTableModel.h \
+    $$PWD/SADataFeatureTreeModel.h \
     $$PWD/SAPlotLayerModel.h \
     $$PWD/SALayerItemDelegate.h \
-    $$PWD/DataFeatureTreeModel.h \
     $$PWD/SAVariantHashTableModel.h
 
 
@@ -15,9 +15,9 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/SACsvFileTableModel.cpp \
+    $$PWD/SADataFeatureTreeModel.cpp \
     $$PWD/SAPlotLayerModel.cpp \
     $$PWD/SALayerItemDelegate.cpp \
-    $$PWD/DataFeatureTreeModel.cpp \
     $$PWD/SAVariantHashTableModel.cpp
 
 

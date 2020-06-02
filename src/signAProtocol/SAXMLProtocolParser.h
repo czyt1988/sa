@@ -2,6 +2,7 @@
 #define SAXMLPROTOCOLPARSER_H
 #include "SAProtocolGlobal.h"
 #include "SAAbstractProtocolParser.h"
+#include <memory>
 class SAXMLProtocolParserPrivate;
 
 /**
@@ -48,10 +49,10 @@ class SAXMLProtocolParserPrivate;
  *     <item type="int" name="point-size">4</item>
  *     <item type="int" name="sequenceID">123</item>
  *     <item type="QVariantList" name="points">
- *        <item type="QPointF" name="">1;2</item>
- *        <item type="QPointF" name="">1;3</item>
- *        <item type="QPointF" name="">2;3</item>
- *        <item type="QPointF" name="">4;5</item>
+ *        <item type="QPointF">1;2</item>
+ *        <item type="QPointF">1;3</item>
+ *        <item type="QPointF">2;3</item>
+ *        <item type="QPointF">4;5</item>
  *     </item>
  *   </group>
  *  </values>
@@ -107,6 +108,7 @@ public:
     QString getErrorString() const;
 };
 
-
+typedef std::shared_ptr<SAXMLProtocolParser> SAXMLProtocolParserPtr;
+SA_PROTOCOL_EXPORT SAXMLProtocolParserPtr makeXMLProtocolParserPtr();
 
 #endif // SAXMLPROTOCOLPARSER_H

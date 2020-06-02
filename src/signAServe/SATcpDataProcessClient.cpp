@@ -10,7 +10,7 @@ public:
     SATcpDataProcessClientPrivate(SATcpDataProcessClient* p);
 };
 
-SATcpDataProcessClientPrivate::SATcpDataProcessClientPrivate(SATcpDataProcessClient *p)
+SATcpDataProcessClientPrivate::SATcpDataProcessClientPrivate(SATcpDataProcessClient *p):q_ptr(p)
 {
 
 }
@@ -65,7 +65,7 @@ QVector<QPointF> SATcpDataProcessClient::variantToVectorpoints(const QVariant &v
  * @param xml
  * @return
  */
-bool SATcpDataProcessClient::dealXmlProtocol(const SAProtocolHeader &header, SATcpDataProcessClient::XMLDataPtr xml)
+bool SATcpDataProcessClient::dealXmlProtocol(const SAProtocolHeader &header, SAXMLProtocolParserPtr xml)
 {
     if(SATcpClient::dealXmlProtocol(header,xml))
     {
@@ -89,7 +89,7 @@ bool SATcpDataProcessClient::dealXmlProtocol(const SAProtocolHeader &header, SAT
  * @return
  */
 bool SATcpDataProcessClient::dealReply2DPointsDescribe(const SAProtocolHeader &header,
-                                                       SATcpDataProcessClient::XMLDataPtr xml)
+                                                       SAXMLProtocolParserPtr xml)
 {
     emit reply2DPointsDescribe(header,xml);
     return true;
@@ -101,7 +101,7 @@ bool SATcpDataProcessClient::dealReply2DPointsDescribe(const SAProtocolHeader &h
  * @param key 标致，返回的reply中会带着此key，用于区别请求的回复
  * @param sortcount 返回排序的前后n个值
  */
-void SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key, int sortcount)
+bool SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key, int sortcount)
 {
     SAXMLProtocolParser data;
     data.setClassID(SA::ProtocolTypeXml);
@@ -109,7 +109,7 @@ void SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF> &arr
     data.setValue("key",key);
     data.setValue("points",vectorpointsToVariant(arrs));
     data.setValue("sort-count",sortcount);
-    SA::write_xml_protocol(getSocket(),&data,SA::ProtocolFunReq2DPointsDescribe,key,0);
+    return SA::write_xml_protocol(getSocket(),&data,SA::ProtocolFunReq2DPointsDescribe,key,0);
 }
 
 

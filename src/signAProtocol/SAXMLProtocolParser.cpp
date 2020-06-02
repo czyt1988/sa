@@ -600,3 +600,8 @@ QString SAXMLProtocolParser::getErrorString() const
 }
 
 
+
+SAXMLProtocolParserPtr makeXMLProtocolParserPtr()
+{
+    return std::make_shared<SAXMLProtocolParser>();
+}

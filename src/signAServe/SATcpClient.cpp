@@ -133,7 +133,7 @@ bool SATcpClient::deal(const SAProtocolHeader &header, const QByteArray &data)
     case SA::ProtocolTypeXml:
     {
         //解析xml协议
-        XMLDataPtr xml = std::make_shared<SAXMLProtocolParser>();
+        SAXMLProtocolParserPtr xml = makeXMLProtocolParserPtr();
         if(!xml->fromByteArray(data))
         {
             emit clientError(InvalidXmlProtocol);
@@ -152,7 +152,7 @@ bool SATcpClient::deal(const SAProtocolHeader &header, const QByteArray &data)
     return fun(header,data,getSocket(),this);
 }
 
-bool SATcpClient::dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml)
+bool SATcpClient::dealXmlProtocol(const SAProtocolHeader &header, SAXMLProtocolParserPtr xml)
 {
     switch (header.protocolFunID)
     {

@@ -13,6 +13,7 @@
 #include <QDataStream>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <memory>
 #include "SAVariantCaster.h"
 #include "SACRC.h"
 #include "SAPoint.h"
@@ -193,7 +194,39 @@ bool SA::request_heartbreat(SATcpSocket *socket)
  */
 bool SA::cast_protocol_to_satree(const SAXMLProtocolParser *xml, SATree *tree)
 {
-
+    tree->setProperty("classid",xml->getClassID());
+    tree->setProperty("funid",xml->getFunctionID());
+    QStringList dfk = xml->getKeyNames();//获取默认分组的item
+    for(const QString& k : dfk)
+    {
+        QVariant v = xml->getDefaultGroupValue(k);
+        if (v.isValid())
+        {
+            std::unique_ptr<SAItem> i = std::make_unique<SAItem>();
+            i->setName(k);
+            i->setProperty(SAItem::RoleValue,v);
+            tree->appendItem(i.release());
+        }
+    }
+    QStringList gs = xml->getGroupNames();
+    for (const QString& g : gs)
+    {
+        SAItem* gi = new SAItem(g);
+        QStringList dfk = xml->getKeyNames(g);
+        for(const QString& k : dfk)
+        {
+            QVariant v = xml->getValue(g,k);
+            if (v.isValid())
+            {
+                std::unique_ptr<SAItem> i = std::make_unique<SAItem>();
+                i->setName(k);
+                i->setProperty(SAItem::RoleValue,v);
+                tree->appendItem(i.release());
+            }
+        }
+        tree->appendItem(gi);
+    }
+    return true;
 }
 
 /**

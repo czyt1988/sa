@@ -1,4 +1,4 @@
-#include "DataFeatureTreeModel.h"
+#include "SADataFeatureTreeModel.h"
 #include "SAFigureWindow.h"
 #include "SAVariantCaster.h"
 #include "SAChart2D.h"
@@ -15,12 +15,12 @@
 #ifndef ROLE_PLOT_ITEM_PTR
 #define ROLE_PLOT_ITEM_PTR (Qt::UserRole+3)
 #endif
-DataFeatureTreeModel::DataFeatureTreeModel(QObject *parent) : QAbstractItemModel(parent)
+SADataFeatureTreeModel::SADataFeatureTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
 
 }
 
-QModelIndex DataFeatureTreeModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex SADataFeatureTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (row < 0 || column < 0)
         return QModelIndex();
@@ -47,7 +47,7 @@ QModelIndex DataFeatureTreeModel::index(int row, int column, const QModelIndex &
     return createIndex(row, column, parItem->getChild(row));
 }
 
-QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
+QModelIndex SADataFeatureTreeModel::parent(const QModelIndex &index) const
 {
     if(!index.isValid())
     {
@@ -79,7 +79,7 @@ QModelIndex DataFeatureTreeModel::parent(const QModelIndex &index) const
     return createIndex(parItem->getCurrentRowIndex(), 0, parItem);//挂载parent的都是只有一列的
 }
 
-int DataFeatureTreeModel::rowCount(const QModelIndex &parent) const
+int SADataFeatureTreeModel::rowCount(const QModelIndex &parent) const
 {
     if(!parent.isValid())
     {
@@ -89,12 +89,12 @@ int DataFeatureTreeModel::rowCount(const QModelIndex &parent) const
     return parItem ? parItem->getChildCount() : 0;
 }
 
-int DataFeatureTreeModel::columnCount(const QModelIndex &parent) const
+int SADataFeatureTreeModel::columnCount(const QModelIndex &parent) const
 {
     return 2;
 }
 
-QVariant DataFeatureTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant SADataFeatureTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -109,14 +109,14 @@ QVariant DataFeatureTreeModel::headerData(int section, Qt::Orientation orientati
     return QVariant();
 }
 
-Qt::ItemFlags DataFeatureTreeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags SADataFeatureTreeModel::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
         return Qt::NoItemFlags;
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
-QVariant DataFeatureTreeModel::data(const QModelIndex &index, int role) const
+QVariant SADataFeatureTreeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
     {
@@ -158,14 +158,14 @@ QVariant DataFeatureTreeModel::data(const QModelIndex &index, int role) const
 
 
 
-void DataFeatureTreeModel::clear()
+void SADataFeatureTreeModel::clear()
 {
     beginResetModel();
     m_items.clear();
     endResetModel();
 }
 
-bool DataFeatureTreeModel::takeRootItem(SADataFeatureItem *item)
+bool SADataFeatureTreeModel::takeRootItem(SADataFeatureItem *item)
 {
     bool ret = false;
     beginResetModel();
@@ -176,7 +176,7 @@ bool DataFeatureTreeModel::takeRootItem(SADataFeatureItem *item)
     return ret;
 }
 
-void DataFeatureTreeModel::setPlotItem(SAChart2D *chartPtr, QwtPlotItem *itemPtr, SADataFeatureItem *items)
+void SADataFeatureTreeModel::setPlotItem(SAChart2D *chartPtr, QwtPlotItem *itemPtr, SADataFeatureItem *items)
 {
     SADataFeatureItem *itemChart = findChartItem(chartPtr,true);
     if(nullptr == itemChart)
@@ -218,7 +218,7 @@ void DataFeatureTreeModel::setPlotItem(SAChart2D *chartPtr, QwtPlotItem *itemPtr
     endResetModel();
 }
 
-SADataFeatureItem *DataFeatureTreeModel::createChartItems(SAChart2D *chart)
+SADataFeatureItem *SADataFeatureTreeModel::createChartItems(SAChart2D *chart)
 {
     beginResetModel();
     SADataFeatureItem* figItem = new SADataFeatureItem(chart->title().text());
@@ -235,7 +235,7 @@ SADataFeatureItem *DataFeatureTreeModel::createChartItems(SAChart2D *chart)
 /// \param autoCreate 如果没找到对应的item，自动创建一个，默认为false
 /// \return 如果没有对应的item，返回nullptr
 ///
-SADataFeatureItem *DataFeatureTreeModel::findChartItem(SAChart2D *p, bool autoCreate)
+SADataFeatureItem *SADataFeatureTreeModel::findChartItem(SAChart2D *p, bool autoCreate)
 {
     SADataFeatureItem *item = m_fig2item.value(p,nullptr);
     if(autoCreate)
@@ -252,7 +252,7 @@ SADataFeatureItem *DataFeatureTreeModel::findChartItem(SAChart2D *p, bool autoCr
 /// \param p
 /// \return
 ///
-SADataFeatureItem *DataFeatureTreeModel::findChartItem(SAChart2D *p)
+SADataFeatureItem *SADataFeatureTreeModel::findChartItem(SAChart2D *p)
 {
     SADataFeatureItem *item = m_fig2item.value(p,nullptr);
     return item;
@@ -261,7 +261,7 @@ SADataFeatureItem *DataFeatureTreeModel::findChartItem(SAChart2D *p)
 /// \brief 获取顶层节点
 /// \return
 ///
-QList<SADataFeatureItem *> DataFeatureTreeModel::getRootItems() const
+QList<SADataFeatureItem *> SADataFeatureTreeModel::getRootItems() const
 {
     return m_items;
 }
@@ -270,7 +270,7 @@ QList<SADataFeatureItem *> DataFeatureTreeModel::getRootItems() const
 /// \param item
 /// \return
 ///
-SAChart2D *DataFeatureTreeModel::getChartPtrFromItem(const SADataFeatureItem *item)
+SAChart2D *SADataFeatureTreeModel::getChartPtrFromItem(const SADataFeatureItem *item)
 {
     QVariant v = item->getData(ROLE_FIGURE_PTR);
     if(v.isValid())
@@ -288,7 +288,7 @@ SAChart2D *DataFeatureTreeModel::getChartPtrFromItem(const SADataFeatureItem *it
 /// \param item 必须是getRootItems 获取的顶层节点或者findChartItem查找的顶层节点
 /// \return
 ///
-QList<QwtPlotItem *> DataFeatureTreeModel::getItemListFromItem(const SADataFeatureItem *item)
+QList<QwtPlotItem *> SADataFeatureTreeModel::getItemListFromItem(const SADataFeatureItem *item)
 {
     QList<QwtPlotItem *> res;
     QVariant var = item->getData(ROLE_FIGURE_PTR);
@@ -316,7 +316,7 @@ QList<QwtPlotItem *> DataFeatureTreeModel::getItemListFromItem(const SADataFeatu
     return res;
 }
 
-QSet<QwtPlotItem *> DataFeatureTreeModel::getItemSetFromItem(const SADataFeatureItem *item)
+QSet<QwtPlotItem *> SADataFeatureTreeModel::getItemSetFromItem(const SADataFeatureItem *item)
 {
     QSet<QwtPlotItem *> res;
     QVariant var = item->getData(ROLE_FIGURE_PTR);
@@ -345,7 +345,7 @@ QSet<QwtPlotItem *> DataFeatureTreeModel::getItemSetFromItem(const SADataFeature
 }
 
 
-SADataFeatureItem *DataFeatureTreeModel::toItemPtr(const QModelIndex &index) const
+SADataFeatureItem *SADataFeatureTreeModel::toItemPtr(const QModelIndex &index) const
 {
     return static_cast<SADataFeatureItem *>(index.internalPointer());
 }

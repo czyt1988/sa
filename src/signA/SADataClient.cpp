@@ -30,7 +30,8 @@ SADataClient::SADataClient(QObject *p):QObject(p)
     connect(m_client,&SATcpDataProcessClient::connected,this,&SADataClient::onSocketConnected);
     connect(m_client,&SATcpDataProcessClient::disconnected,this,&SADataClient::onSocketDisconnected);
     connect(m_client,&SATcpDataProcessClient::socketError,this,&SADataClient::onSocketErrorOccure);
-
+    //连接相关的信号
+    connect(m_client,&SATcpDataProcessClient::reply2DPointsDescribe,this,&SADataClient::rec2DPointsDescribe);
     //线程启动
     m_thread->start();
 }
@@ -58,9 +59,9 @@ void SADataClient::tryConnectToServe(int retrycount,int timeout)
  * @param arrs
  * @param key
  */
-void SADataClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key)
+bool SADataClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key)
 {
-    m_client->request2DPointsDescribe(arrs,key);
+    return m_client->request2DPointsDescribe(arrs,key);
 }
 
 /**

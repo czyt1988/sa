@@ -1,5 +1,5 @@
-#ifndef DATAFEATURETREEMODEL_H
-#define DATAFEATURETREEMODEL_H
+#ifndef SADATAFEATURETREEMODEL_H
+#define SADATAFEATURETREEMODEL_H
 
 #include <QAbstractItemModel>
 #include <QList>
@@ -9,11 +9,14 @@
 #include "SADataFeatureItem.h"
 class SAChart2D;
 class QwtPlotItem;
-class DataFeatureTreeModel : public QAbstractItemModel
+/**
+ * @brief 保存绘图参数的统计以及一些计算结果的model
+ */
+class SADataFeatureTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    explicit DataFeatureTreeModel(QObject *parent = 0);
+    explicit SADataFeatureTreeModel(QObject *parent = 0);
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
     virtual int rowCount(const QModelIndex &parent) const;

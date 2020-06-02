@@ -86,7 +86,7 @@
 #include "DebugInfo.h"
 // |-----model class --------------
 #include "MdiWindowModel.h"
-#include "DataFeatureTreeModel.h"
+#include "SADataFeatureTreeModel.h"
 #include <SAVariantHashTableModel.h>
 #include <SACsvFileTableModel.h>
 #include <SAPlotLayerModel.h>
