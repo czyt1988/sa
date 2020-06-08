@@ -6,17 +6,23 @@
 #include <QSet>
 #include <QMap>
 #include <memory>
+#include "SAFigureWindow.h"
+#include "SAItem.h"
 #include "SADataFeatureItem.h"
 class SAChart2D;
 class QwtPlotItem;
 /**
  * @brief 保存绘图参数的统计以及一些计算结果的model
+ * 显示层级为 SAChart2D
+ *               |_ PlotItem
+ *                       |_ feature(SAItem)
+ * 数据区域保留了QwtPlotItem 和 feature的映射
  */
 class SADataFeatureTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    explicit SADataFeatureTreeModel(QObject *parent = 0);
+    explicit SADataFeatureTreeModel(SAFigureWindow* fig,QObject *parent = 0);
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
     virtual int rowCount(const QModelIndex &parent) const;
@@ -26,32 +32,35 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     void clear();
 public:
-    //移除根节点
-    bool takeRootItem(SADataFeatureItem* item);
+    void setFigure(SAFigureWindow* fig);
+public:
     //把item挂载到对应的条目上
-    void setPlotItem(SAChart2D* chartPtr, QwtPlotItem *itemPtr, SADataFeatureItem* items);
-    //获取顶层节点
-    QList<SADataFeatureItem* > getRootItems() const;
+    void setPlotItem(QwtPlotItem *plotitem, std::shared_ptr<SAItem> item);
     //通过节点获取图形指针
-    static SAChart2D* getChartPtrFromItem(const SADataFeatureItem *item);
-    //通过节点获取对应的itemlist
-    static QList<QwtPlotItem*> getItemListFromItem(const SADataFeatureItem *item);
-    static QSet<QwtPlotItem*> getItemSetFromItem(const SADataFeatureItem *item);
-    //通过figure指针查找到对应的item条目
-    SADataFeatureItem* findChartItem(SAChart2D* p);
-protected:
-    //创建一个figureitem，其他item挂载在这个figureitem下面
-    SADataFeatureItem* createChartItems(SAChart2D *chart);
-    //通过figure指针查找到对应的item条目，figure指针对应以第一层item
-    SADataFeatureItem* findChartItem(SAChart2D* p,bool autoCreate);
+    SAChart2D* getChartPtrFromItem(SAItem *item);
 signals:
 
-public slots:
+private slots:
+    //添加了一个绘图发送的信号
+    void onChartAdded(QwtPlot* plot);
+    //删除了一个绘图发送的信号
+    void onChartRemoved(QwtPlot* plot);
 private:
+    //根据指针，返回item的名字
+    static QString plotitemToTitleName(QwtPlotItem* item);
+    //
     SADataFeatureItem *toItemPtr(const QModelIndex &index) const;
+    //刷新数据，会把绘图（SAChart2D*）的数据进行更新，但item数据不进行修订
+    void reflashData();
 private:
     QList<SADataFeatureItem* > m_items;
     QMap<SAChart2D *,SADataFeatureItem*> m_fig2item;
+
+    SAFigureWindow* m_fig;
+    QList<SAChart2D*> m_2dcharts;///< 保存2d绘图的数量，避免每次都调用m_fig->get2DPlots()
+    QSet<std::shared_ptr<SAItem>> m_features;
+    QMap<QwtPlotItem*,QList<SAItem*>> m_plotitemFeatures; ///< 记录每个plotitem下面的feature
+    QMap<SAItem*,QwtPlotItem*> m_featureToPlotitem;
 };
 
 #endif // DATAFEATURETREEMODEL_H

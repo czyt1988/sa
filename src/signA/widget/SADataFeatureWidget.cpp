@@ -82,8 +82,6 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
     {
         //说明已经有model。把model设置进tree里
         ui->treeView->setModel(im.value());
-        //再检查一下数据是否最新
-        checkModelItem(im.value(),arg1);
     }
     else
     {
@@ -199,62 +197,6 @@ SAFigureWindow *SADataFeatureWidget::getFigureFromSubWindow(QMdiSubWindow *sub)
     }
     return qobject_cast<SAFigureWindow*>(sub->widget());
 }
-
-
-void SADataFeatureWidget::checkModelItem(QAbstractItemModel *baseModel, QMdiSubWindow *subWndPtr)
-{
-    SADataFeatureTreeModel* featureModel = qobject_cast<SADataFeatureTreeModel*>(baseModel);
-    if(nullptr == featureModel)
-    {
-        return;
-    }
-    SAFigureWindow * fig = getFigureFromSubWindow(subWndPtr);
-    if(nullptr == fig)
-    {
-        return;
-    }
-    QList<SAChart2D *> plots = fig->get2DPlots();
-    QList<SADataFeatureItem* >  chartItems = featureModel->getRootItems();
-    //检测有没有chart被删除了
-    for(SADataFeatureItem* c : chartItems)
-    {
-        SAChart2D* p = SADataFeatureTreeModel::getChartPtrFromItem(c);
-        if(p)
-        {
-            if(!plots.contains(p))
-            {
-                if(featureModel->takeRootItem(c))
-                {
-                    if(c)
-                    {
-                        delete c;
-                    }
-                }
-            }
-        }
-    }
-    //检测item有没有新加或删除
-    for(SAChart2D * p : plots)
-    {
-        QwtPlotItemList itemLists = p->itemList();
-        SADataFeatureItem* ci = featureModel->findChartItem(p);
-        if(nullptr == ci)
-        {
-            continue;
-        }
-        QSet<QwtPlotItem*> itemSet = featureModel->getItemSetFromItem(ci);
-        for(int j=0;j<itemLists.size();++j)
-        {
-            if(!itemSet.contains(itemLists[j]))
-            {
-
-            }
-        }
-    }
-}
-
-
-
 
 ///
 /// \brief 数据特性树点击

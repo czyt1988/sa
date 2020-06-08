@@ -65,8 +65,6 @@ private:
     SAFigureWindow* getFigureFromSubWindow(QMdiSubWindow* sub);
     //计算绘图窗口的dataFeature
     void calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindow* figure, SADataFeatureTreeModel *model);
-    //检测model是否需要重新计算datafeature
-    void checkModelItem(QAbstractItemModel* baseModel,QMdiSubWindow *subWndPtr);
 private:
     //计算一个plot item
     void calcPlotItemFeature(QMdiSubWindow *subwnd,SAChart2D *chart,SADataFeatureTreeModel* model,QwtPlotItem *plotitem,int key);
