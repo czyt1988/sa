@@ -37,7 +37,7 @@ QModelIndex SADataFeatureTreeModel::index(int row, int column, const QModelIndex
         }
         return createIndex(row, column, m_items[row]);//顶层节点
     }
-    SADataFeatureItem* parItem = toItemPtr(parent);
+    SADataFeatureItem* parItem = toPtr(parent);
     if ((nullptr == parItem)
         || (row < 0)
         || (column < 0)
@@ -55,7 +55,7 @@ QModelIndex SADataFeatureTreeModel::parent(const QModelIndex &index) const
     {
         return QModelIndex();
     }
-    SADataFeatureItem* item =  toItemPtr(index);
+    SADataFeatureItem* item =  toPtr(index);
     if(!item)
     {
         return QModelIndex();
@@ -87,7 +87,7 @@ int SADataFeatureTreeModel::rowCount(const QModelIndex &parent) const
     {
         return m_items.size();
     }
-    SADataFeatureItem* parItem = toItemPtr(parent);
+    SADataFeatureItem* parItem = toPtr(parent);
     return parItem ? parItem->getChildCount() : 0;
 }
 
@@ -159,7 +159,7 @@ QVariant SADataFeatureTreeModel::data(const QModelIndex &index, int role) const
             return title;
         }
     }
-    SADataFeatureItem* item = toItemPtr(index);
+    SADataFeatureItem* item = toPtr(index);
     if(nullptr == item)
     {
         return QVariant();
@@ -198,9 +198,10 @@ QVariant SADataFeatureTreeModel::data(const QModelIndex &index, int role) const
 void SADataFeatureTreeModel::clear()
 {
     beginResetModel();
-    m_fig = nullptr;
-    m_items.clear();
     m_2dcharts.clear();
+    m_features.clear();
+    m_plotitemFeatures.clear();
+    m_featureToPlotitem.clear();
     endResetModel();
 }
 
@@ -213,7 +214,6 @@ void SADataFeatureTreeModel::clear()
  */
 void SADataFeatureTreeModel::setFigure(SAFigureWindow *fig)
 {
-    clear();
     if(m_fig)
     {
         //解除绑定
@@ -229,29 +229,6 @@ void SADataFeatureTreeModel::setFigure(SAFigureWindow *fig)
     }
     reflashData();
 }
-
-
-/**
- * @brief SADataFeatureTreeModel::setPlotItem
- * @param chartPtr
- * @param itemPtr
- * @param items
- */
-void SADataFeatureTreeModel::setPlotItem(QwtPlotItem *plotitem, std::shared_ptr<SAItem> item)
-{
-    Q_CHECK_PTR(plotitem);
-    beginResetModel();
-    m_features.insert(item);
-    auto il = m_plotitemFeatures.find(plotitem);
-    if(il == m_plotitemFeatures.end())
-    {
-        il = m_plotitemFeatures.insert(plotitem,QList<SAItem*>());
-    }
-    il.value().append(item.get());
-    m_featureToPlotitem[item.get()] = plotitem;
-    endResetModel();
-}
-
 
 /**
  * @brief figure 有绘图窗口加入触发
@@ -279,15 +256,42 @@ void SADataFeatureTreeModel::onChartRemoved(QwtPlot *plot)
         auto i = m_plotitemFeatures.find(item);
         if(i != m_plotitemFeatures.end())
         {
-            QList<SAItem*> items = i.value();
-            for(SAItem* it : items)
+            QList<ItemPtr> items = i.value();
+            for(ItemPtr it : items)
             {
                 m_featureToPlotitem.remove(it);
+                m_features.remove(it);
             }
         }
+        m_plotitemFeatures.remove(item);
     }
     m_2dcharts = m_fig->get2DPlots();
     endResetModel();
+}
+
+/**
+ * @brief 判断QwtPlotItem是否允许显示
+ * @param item
+ * @return
+ */
+bool SADataFeatureTreeModel::isPlotitemCanDisplay(QwtPlotItem *item)
+{
+    switch (item->rtti()) {
+    case QwtPlotItem::Rtti_PlotCurve:
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    case QwtPlotItem::Rtti_PlotScale:
+    case QwtPlotItem::Rtti_PlotBarChart:
+    case QwtPlotItem::Rtti_PlotHistogram:
+    case QwtPlotItem::Rtti_PlotSpectroCurve:
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    case QwtPlotItem::Rtti_PlotSpectrogram:
+    case QwtPlotItem::Rtti_PlotTradingCurve:
+    case QwtPlotItem::Rtti_PlotShape:
+        return true;
+    default:
+        break;
+    }
+    return false;
 }
 
 /**
@@ -323,33 +327,10 @@ QString SADataFeatureTreeModel::plotitemToTitleName(QwtPlotItem *item)
 }
 
 
-///
-/// \brief 通过节点获取图形指针
-/// \param item
-/// \return
-///
-SAChart2D *SADataFeatureTreeModel::getChartPtrFromItem(SAItem *item)
+
+QObject *SADataFeatureTreeModel::toPtr(const QModelIndex &index) const
 {
-    SAItem* top = item;
-    while (nullptr != item->parent()) {
-        top = item->parent();
-    }
-    if(top)
-    {
-        auto i = m_featureToPlotitem.find(top);
-        if(i != m_featureToPlotitem.end())
-        {
-            return qobject_cast<SAChart2D*>(i.value()->plot());
-        }
-    }
-    return nullptr;
-}
-
-
-
-SADataFeatureItem *SADataFeatureTreeModel::toItemPtr(const QModelIndex &index) const
-{
-    return static_cast<SADataFeatureItem *>(index.internalPointer());
+    return static_cast<QObject*>(index.internalPointer());
 }
 
 /**
@@ -357,24 +338,13 @@ SADataFeatureItem *SADataFeatureTreeModel::toItemPtr(const QModelIndex &index) c
  */
 void SADataFeatureTreeModel::reflashData()
 {
+    //clear在null判断前面，以防止跳过清除
+    clear();
     if(nullptr == m_fig)
     {
         return;
     }
     //匹配m_plotitemFeatures，把不存在的plot删除
-    QSet<QwtPlotItem*> plotitems = m_plotitemFeatures.keys().toSet();
     m_2dcharts = m_fig->get2DPlots();
-    for(SAChart2D* chart : m_2dcharts)
-    {
-        QwtPlotItemList items = chart->itemList();
-        for(QwtPlotItem* i : items)
-        {
-            if(!plotitems.contains(i))
-            {
-                m_plotitemFeatures.remove(i);
-            }
-        }
-    }
-
 }
 
