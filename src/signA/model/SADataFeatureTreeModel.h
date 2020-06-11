@@ -9,8 +9,10 @@
 #include "SAFigureWindow.h"
 #include "SAItem.h"
 #include "SADataFeatureItem.h"
+#include "qwt_plot.h"
 class SAChart2D;
-class QwtPlotItem;
+
+
 /**
  * @brief 保存绘图参数的统计以及一些计算结果的model
  * 显示层级为 SAChart2D
@@ -22,7 +24,7 @@ class SADataFeatureTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    typedef std::shared_ptr<SADataFeatureItem> ItemPtr;
+    typedef std::shared_ptr<SAItem> ItemPtr;
     explicit SADataFeatureTreeModel(SAFigureWindow* fig,QObject *parent = 0);
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
@@ -42,19 +44,24 @@ private slots:
     //删除了一个绘图发送的信号
     void onChartRemoved(QwtPlot* plot);
 private:
+    //筛选可显示的items
+    static QwtPlotItemList filterCanDisplayItems(const QwtPlotItemList& its);
+    //判断item是否可用
     static bool isPlotitemCanDisplay(QwtPlotItem *item);
     //根据指针，返回item的名字
     static QString plotitemToTitleName(QwtPlotItem* item);
-    //
-    QObject *toPtr(const QModelIndex &index) const;
+    //判断是否记录的chart2d指针
+    bool isChart2DPtr(void* p) const;
+    //判断是否QwtPlotItem指针
+    bool isQwtPlotItemPtr(void* p) const;
     //刷新数据，会把绘图（SAChart2D*）的数据进行更新，但item数据不进行修订
     void reflashData();
 private:
     SAFigureWindow* m_fig;
     QList<SAChart2D*> m_2dcharts;///< 保存2d绘图的数量，避免每次都调用m_fig->get2DPlots()
     QSet<ItemPtr> m_features;
-    QMap<QwtPlotItem*,QList<ItemPtr>> m_plotitemFeatures; ///< 记录每个plotitem下面的feature
-    QMap<ItemPtr,QwtPlotItem*> m_featureToPlotitem;
+    QMap<QwtPlotItem*,QList<ItemPtr::element_type*>> m_plotitemFeatures; ///< 记录每个plotitem下面的feature
+    QMap<ItemPtr::element_type*,QwtPlotItem*> m_featureToPlotitem;
 };
 
 #endif // DATAFEATURETREEMODEL_H
