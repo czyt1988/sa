@@ -27,6 +27,14 @@
 
 
 
+SADataFeatureWidget::_DataInfo::_DataInfo():
+    item(nullptr)
+    ,midwidget(nullptr)
+    ,chart(nullptr)
+{
+
+}
+
 SADataFeatureWidget::_DataInfo::_DataInfo(QwtPlotItem* plotitem, QMdiSubWindow *midwidget, SAChart2D *chartptr):
     item(plotitem)
     ,midwidget(midwidget)
@@ -91,7 +99,7 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
         {
             //说明是绘图窗口，进入这个函数，说明是首次建立的窗口，此时就建立空模型
             //先建立空模型
-            SADataFeatureTreeModel* m = new SADataFeatureTreeModel();
+            SADataFeatureTreeModel* m = new SADataFeatureTreeModel(figure,this);
             //记录子窗口和模型对应关系
             m_mdiToModel[arg1] = m;
             //请求远程计算，计算完结果返回后会自动填充进模型中从而在界面上显示
@@ -111,8 +119,6 @@ void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd,SAFigureWindow
     Q_CHECK_PTR(subwnd);
     Q_CHECK_PTR(figure);
     Q_CHECK_PTR(model);
-    //先清空model
-    model->clear();
     //用于进行请求的key标识，这里将记录key和_DataInfo的关系，以便reply能找到对应是哪个item的内容
     static int s_key = 0;
     ++s_key;
@@ -148,7 +154,6 @@ void SADataFeatureWidget::calcPlotItemFeature(QMdiSubWindow *subwnd,SAChart2D *c
         SAChart::getXYDatas(xys,static_cast<const QwtPlotCurve*>(plotitem));
         m_keyToDatainfo[key] = d;
         //建立初步的DataFeatureTreeModel先把类型设置进去
-        model.
         if(!m_client.request2DPointsDescribe(xys,key))
         {
             //如果发送请求失败，把记录清除
@@ -218,6 +223,8 @@ void SADataFeatureWidget::onTreeViewClicked(const QModelIndex &index)
     QSet<SAChart2D*> chartPlots = figure->get2DPlots().toSet();
 
     QItemSelectionModel* selModel = ui->treeView->selectionModel();
+
+    /*
     SADataFeatureTreeModel* curFeatureModel = static_cast<SADataFeatureTreeModel*>(ui->treeView->model());
     if(!selModel || !curFeatureModel)
     {
@@ -281,6 +288,7 @@ void SADataFeatureWidget::onTreeViewClicked(const QModelIndex &index)
             return;
         }
     }
+    */
 }
 ///
 /// \brief 清除标记按钮

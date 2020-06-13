@@ -71,6 +71,7 @@ private:
 public://数据接收相关的类型
     class _DataInfo{
     public:
+        _DataInfo();
         _DataInfo(QwtPlotItem* plotitem, QMdiSubWindow *midwidget, SAChart2D *chartptr);
         QwtPlotItem *item;
         QMdiSubWindow *midwidget;

@@ -35,7 +35,10 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     void clear();
 public:
+    //设置fig
     void setFigure(SAFigureWindow* fig);
+    //绑定item
+    bool bindItem(QwtPlotItem* plotitem,ItemPtr item);
 signals:
 
 private slots:
@@ -44,6 +47,8 @@ private slots:
     //删除了一个绘图发送的信号
     void onChartRemoved(QwtPlot* plot);
 private:
+    QVariant dataDisplayRole(const QModelIndex &index) const;
+    QVariant dataBackgroundRole(const QModelIndex &index) const;
     //筛选可显示的items
     static QwtPlotItemList filterCanDisplayItems(const QwtPlotItemList& its);
     //判断item是否可用
@@ -59,9 +64,9 @@ private:
 private:
     SAFigureWindow* m_fig;
     QList<SAChart2D*> m_2dcharts;///< 保存2d绘图的数量，避免每次都调用m_fig->get2DPlots()
-    QSet<ItemPtr> m_features;
     QMap<QwtPlotItem*,QList<ItemPtr::element_type*>> m_plotitemFeatures; ///< 记录每个plotitem下面的feature
     QMap<ItemPtr::element_type*,QwtPlotItem*> m_featureToPlotitem;
+    QMap<ItemPtr::element_type*,ItemPtr> m_ptr2smtptr;
 };
 
 #endif // DATAFEATURETREEMODEL_H

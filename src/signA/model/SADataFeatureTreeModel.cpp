@@ -2,6 +2,7 @@
 #include <QSet>
 #include "SAFigureWindow.h"
 #include "SAVariantCaster.h"
+#include "SAChart.h"
 #include "SAChart2D.h"
 //#define DEBUG_OUTPUT__
 //#define DEBUG_OUTPUT__INDEX_
@@ -207,71 +208,14 @@ QVariant SADataFeatureTreeModel::data(const QModelIndex &index, int role) const
     {
         return QVariant();
     }
-    if(!index.parent().isValid())
-    {
-        //第1层
-        //说明是chart
-        if(index.row() < m_2dcharts.size())
-        {
-            //说明是2d图形，如果有3d图形，会在后面继续
-            SAChart2D* chart = static_cast<SAChart2D*>(index.internalPointer());
-            if(Qt::DisplayRole == role && 0 == index.column())
-            {
-                QString title = chart->title().text();
-                if(title.isEmpty())
-                {
-                    title = tr("figure%1").arg(index.row()+1);
-                }
-                return title;
-            }
-        }
+    switch (role) {
+    case Qt::DisplayRole:
+        return dataDisplayRole(index);
+    case Qt::BackgroundRole:
+        return dataBackgroundRole(index);
+    default:
+        break;
     }
-    else if(index.parent().parent().isValid())
-    {
-        //第2层
-        //说明是plotitem层
-        QwtPlotItem* item = static_cast<QwtPlotItem*>(index.internalPointer());
-        if(Qt::DisplayRole == role)
-        {
-            QString title = item->title().text();
-            if(title.isEmpty())
-            {
-                title = tr("figure%1").arg(index.row()+1);
-            }
-            return title;
-        }
-    }
-    SADataFeatureItem* item = toPtr(index);
-    if(nullptr == item)
-    {
-        return QVariant();
-    }
-
-    if(Qt::DisplayRole == role)
-    {
-        switch(index.column())
-        {
-        case 0:
-        {
-            const QString& tmp = item->getName();
-            if(tmp.isEmpty())
-            {
-                if(!index.parent().isValid())
-                {
-                    return tr("chart %1").arg(index.row()+1);//如果图没有命名，默认按照顺序命名
-                }
-            }
-            return tmp;
-        }
-        case 1:
-            return SAVariantCaster::variantToString(item->getValue());
-        }
-    }
-    else if(Qt::BackgroundRole == role)
-    {
-        return item->getBackground();
-    }
-
     return QVariant();
 }
 
@@ -281,9 +225,9 @@ void SADataFeatureTreeModel::clear()
 {
     beginResetModel();
     m_2dcharts.clear();
-    m_features.clear();
     m_plotitemFeatures.clear();
     m_featureToPlotitem.clear();
+    m_ptr2smtptr.clear();
     endResetModel();
 }
 
@@ -313,6 +257,25 @@ void SADataFeatureTreeModel::setFigure(SAFigureWindow *fig)
 }
 
 /**
+ * @brief 绑定item
+ * @param plotitem
+ * @param item
+ * @return
+ */
+bool SADataFeatureTreeModel::bindItem(QwtPlotItem *plotitem, SADataFeatureTreeModel::ItemPtr item)
+{
+    auto i = m_plotitemFeatures.find(plotitem);
+    if(i == m_plotitemFeatures.end())
+    {
+        return false;
+    }
+    i.value().append(item.get());
+    m_featureToPlotitem[item.get()] = plotitem;
+    m_ptr2smtptr[item.get()] = item;
+    return true;
+}
+
+/**
  * @brief figure 有绘图窗口加入触发
  * @param plot
  */
@@ -338,17 +301,69 @@ void SADataFeatureTreeModel::onChartRemoved(QwtPlot *plot)
         auto i = m_plotitemFeatures.find(item);
         if(i != m_plotitemFeatures.end())
         {
-            QList<ItemPtr> items = i.value();
-            for(ItemPtr it : items)
+            QList<ItemPtr::element_type*> items = i.value();
+            for(ItemPtr::element_type* it : items)
             {
                 m_featureToPlotitem.remove(it);
-                m_features.remove(it);
+                m_ptr2smtptr.remove(it);
             }
         }
         m_plotitemFeatures.remove(item);
     }
     m_2dcharts = m_fig->get2DPlots();
     endResetModel();
+}
+
+QVariant SADataFeatureTreeModel::dataDisplayRole(const QModelIndex &index) const
+{
+    void* p = index.internalPointer();
+    if(isChart2DPtr(p))
+    {
+        SAChart2D* chart = static_cast<SAChart2D*>(p);
+        QString title = chart->title().text();
+        if(title.isEmpty())
+        {
+            int r = m_2dcharts.indexOf(chart);
+            return tr("chart %1").arg(r+1);
+        }
+        return title;
+    }
+    else if(isQwtPlotItemPtr(p))
+    {
+        QwtPlotItem* item = static_cast<QwtPlotItem*>(p);
+        QString title = item->title().text();
+        if(title.isEmpty())
+        {
+            return plotitemToTitleName(item);
+        }
+        return title;
+    }
+    else
+    {
+        SAItem* i = static_cast<SAItem*>(p);
+        if(0 == index.column())
+        {
+            return i->getName();
+        }
+        return SAVariantCaster::variantToString( i->getProperty(SAItem::RoleValue) );
+    }
+    return QVariant();
+}
+
+QVariant SADataFeatureTreeModel::dataBackgroundRole(const QModelIndex &index) const
+{
+    void* p = index.internalPointer();
+    if(isQwtPlotItemPtr(p))
+    {
+        QwtPlotItem* item = static_cast<QwtPlotItem*>(p);
+        QColor color = SAChart::getItemColor(item,QColor());
+        if(color.isValid())
+        {
+            color.setAlpha(30);
+            return QBrush(color);
+        }
+    }
+    return QVariant();
 }
 
 /**

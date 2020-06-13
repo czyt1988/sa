@@ -103,6 +103,8 @@ bool SATcpDataProcessClient::dealReply2DPointsDescribe(const SAProtocolHeader &h
  */
 bool SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF> &arrs, uint key, int sortcount)
 {
+    if(!getSocket())
+        return false;
     SAXMLProtocolParser data;
     data.setClassID(SA::ProtocolTypeXml);
     data.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
