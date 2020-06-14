@@ -70,6 +70,7 @@ bool SADataProcSession::safe_write(const SAProtocolHeader &header, const QByteAr
  */
 bool SADataProcSession::deal2DPointsDescribe(const SAProtocolHeader &header, SASession::XMLDataPtr xml)
 {
+    qDebug() << QStringLiteral("开始执行deal2DPointsDescribe") << xml->toString();
     SADataStatisticRunable* runnable = new SADataStatisticRunable(shared_from_this(),header,xml);
     QThreadPool::globalInstance()->start(runnable);
     return true;

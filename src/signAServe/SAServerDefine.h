@@ -1,6 +1,5 @@
 #ifndef SASERVERDEFINE_H
 #define SASERVERDEFINE_H
-
 ///
 /// \file sa 服务的相关宏定义
 ///

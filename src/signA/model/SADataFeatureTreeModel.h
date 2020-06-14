@@ -39,6 +39,8 @@ public:
     void setFigure(SAFigureWindow* fig);
     //绑定item
     bool bindItem(QwtPlotItem* plotitem,ItemPtr item);
+    //筛选可显示的items
+    static QwtPlotItemList filterCanDisplayItems(const QwtPlotItemList& its);
 signals:
 
 private slots:
@@ -49,8 +51,7 @@ private slots:
 private:
     QVariant dataDisplayRole(const QModelIndex &index) const;
     QVariant dataBackgroundRole(const QModelIndex &index) const;
-    //筛选可显示的items
-    static QwtPlotItemList filterCanDisplayItems(const QwtPlotItemList& its);
+
     //判断item是否可用
     static bool isPlotitemCanDisplay(QwtPlotItem *item);
     //根据指针，返回item的名字

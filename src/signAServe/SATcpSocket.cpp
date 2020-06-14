@@ -129,9 +129,7 @@ void SATcpSocket::onReadyRead()
         //说明包头还未接收
         //但socket收到的数据已经满足包头数据需要的数据
 #ifdef SA_SERVE_DEBUG_PRINT
-        qDebug() <<"main header may receive:"
-                << "\r\n byte available:"<<bytesAvailable()
-                    ;
+        qDebug() <<"main header may receive:byte available:"<<bytesAvailable();
 #endif
         if(!readFromSocket((void*)(&(d_ptr->m_mainHeader)),s_headerSize))
         {
@@ -141,8 +139,11 @@ void SATcpSocket::onReadyRead()
             return;
         }
 #ifdef SA_SERVE_DEBUG_PRINT
-        qDebug() << "readed header from socket:"
-                 << d_ptr->m_mainHeader
+        qDebug() << "readed header from socket"
+                 << ",type:" << d_ptr->m_mainHeader.protocolTypeID
+                 << ",fun:" << d_ptr->m_mainHeader.protocolFunID
+                 << ",size:" << d_ptr->m_mainHeader.dataSize
+                 << ",sequenceID:" << d_ptr->m_mainHeader.sequenceID
                  ;
 #endif
         d_ptr->m_index = 0; // 不需要mallocBuffer会设置此值

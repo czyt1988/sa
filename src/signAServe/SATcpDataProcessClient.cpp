@@ -111,6 +111,9 @@ bool SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF> &arr
     data.setValue("key",key);
     data.setValue("points",vectorpointsToVariant(arrs));
     data.setValue("sort-count",sortcount);
+#ifdef SA_SERVE_DEBUG_PRINT
+    qDebug().noquote() << data.toString();
+#endif
     return SA::write_xml_protocol(getSocket(),&data,SA::ProtocolFunReq2DPointsDescribe,key,0);
 }
 

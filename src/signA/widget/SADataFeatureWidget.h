@@ -35,7 +35,7 @@ public:
     ~SADataFeatureWidget();
 public slots:
     //子窗口激活槽
-    void mdiSubWindowActived(QMdiSubWindow *arg1);
+    void mdiSubWindowActived(QMdiSubWindow *subwnd);
     //子窗口关闭槽
     void mdiSubWindowClosed(QMdiSubWindow *arg1);
 signals:

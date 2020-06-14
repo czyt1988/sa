@@ -75,17 +75,17 @@ SADataFeatureWidget::~SADataFeatureWidget()
  * @brief 子窗口激活槽
  * @param arg1
  */
-void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
+void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *subwnd)
 {
-    if(nullptr == arg1)
+    if(nullptr == subwnd)
     {
         return;
     }
     //记录最后一次激活的窗口
-    m_lastActiveSubWindow = arg1;
-    setWindowTitle(tr("data feature[%1]").arg(arg1->windowTitle()));
+    m_lastActiveSubWindow = subwnd;
+    setWindowTitle(tr("data feature[%1]").arg(subwnd->windowTitle()));
     //查找此窗口是否有对应的模型
-    auto im = m_mdiToModel.find(arg1);
+    auto im = m_mdiToModel.find(subwnd);
     if(im != m_mdiToModel.end())
     {
         //说明已经有model。把model设置进tree里
@@ -94,16 +94,16 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *arg1)
     else
     {
         //说明没有对应的内容，把数据下发给数据处理进程进行处理
-        SAFigureWindow* figure = getFigureFromSubWindow(arg1);//记录当前的绘图窗口
+        SAFigureWindow* figure = getFigureFromSubWindow(subwnd);//记录当前的绘图窗口
         if(figure)
         {
             //说明是绘图窗口，进入这个函数，说明是首次建立的窗口，此时就建立空模型
-            //先建立空模型
+            //先建立空模型，建立模型会把figure的chart和item处理好，等待计算的绑定
             SADataFeatureTreeModel* m = new SADataFeatureTreeModel(figure,this);
             //记录子窗口和模型对应关系
-            m_mdiToModel[arg1] = m;
+            m_mdiToModel[subwnd] = m;
             //请求远程计算，计算完结果返回后会自动填充进模型中从而在界面上显示
-            calcFigureFeature(arg1,figure,m);
+            calcFigureFeature(subwnd,figure,m);
         }
     }
 
@@ -126,7 +126,8 @@ void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd,SAFigureWindow
     QList<SAChart2D*> charts = figure->get2DPlots();
     for(SAChart2D* c : charts)
     {
-        QwtPlotItemList itemList = c->itemList();
+        //把可计算的item筛选出来
+        QwtPlotItemList itemList = SADataFeatureTreeModel::filterCanDisplayItems(c->itemList());
         for(auto i : itemList)
         {
             calcPlotItemFeature(subwnd,c,model,i,s_key);

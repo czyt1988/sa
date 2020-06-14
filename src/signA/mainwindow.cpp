@@ -1171,7 +1171,14 @@ bool MainWindow::openProject(const QString &projectPath)
     if(projectPath.isEmpty())
         return false;
     if(saProjectManager->load(projectPath))
+    {
+        QMdiSubWindow* w = getCurrentActiveSubWindow();
+        //文件加载生成的mdiwindow不触发MdiAreaSubWindowActivated
+        //ui->dataFeatureWidget->mdiSubWindowActived不能放到onMdiAreaSubWindowActivated中
+        onMdiAreaSubWindowActivated(w);
+        ui->dataFeatureWidget->mdiSubWindowActived(w);
         return true;
+    }
     return false;
 }
 
@@ -2010,6 +2017,7 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
     ui->figureLayoutWidget->setFigure(fig);
     //更新dock - dataviewer
     ui->chartDatasViewWidget->setFigure(fig);
+    //
 }
 
 void MainWindow::onSubWindowClosed(QMdiSubWindow *arg1)
