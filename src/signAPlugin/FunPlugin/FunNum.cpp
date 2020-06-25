@@ -150,7 +150,7 @@ void hist(SAUIInterface *ui)
     }
     const QString idHistCount = "histCount";
     const QString idIsPlot = "isPlot";
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     dlg.appendIntProperty(idHistCount,TR("hist count")
                           ,1,std::numeric_limits<int>::max()
@@ -192,7 +192,7 @@ void diff(SAUIInterface *ui)
     {
         return;
     }
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     auto tmp = dlg.appendIntProperty(TR("diff count")
                              ,1,std::numeric_limits<int>::max()

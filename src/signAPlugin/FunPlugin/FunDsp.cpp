@@ -530,7 +530,7 @@ bool getSpectrumProperty(double* samFre
                          ,SAUIInterface* ui
                          )
 {
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     QtVariantProperty* tmp = nullptr;
     if(samFre)
@@ -827,7 +827,7 @@ bool getPowerSpectrumProperty(double *samFre
 {
 
     QtVariantProperty* tmp = nullptr;
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     if(samFre)
     {
@@ -950,7 +950,7 @@ void tmeFrequency(SAUIInterface* ui)
 ///
 bool getWindowProperty(SA::SADsp::WindowType & windowType, bool &isDetrend, SAUIInterface *ui)
 {
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     QtVariantProperty* tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
                                                    ,TR("Hanning")

@@ -309,7 +309,7 @@ void sigmaDetectInValue(SAUIInterface* ui)
         return;
     }
     QList<SAFigureWindow*> figList;//用于保存当前主界面所有的绘图窗口
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     const QString idSigma = "sigma";
     const QString idPlotInNewFigure = "isPlotInNewFigure";
     const QString idPlotOriginDataAndOutRangDataInNewFigure = "isPlotOriginDataAndOutRangDataInNewFigure";
@@ -506,7 +506,7 @@ void sigmaDetectInValue(SAUIInterface* ui)
 ///
 bool getPointSmoothPorperty(int &m, int &n,SAUIInterface* ui)
 {
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     dlg.appendEnumProperty("m",TR("points")
                            ,{"3","5","7"}
@@ -553,7 +553,7 @@ void FunDataPreprocessing::pointSmoothInValue()
     const QString idPoint = "points";
     const QString idPower = "power";
     const QString idIsPlot = "isPlot";
-    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(saUI->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     dlg.appendEnumProperty(idPoint,TR("points")
                            ,{"3","5","7"}
@@ -615,7 +615,7 @@ void FunDataPreprocessing::pointSmoothInValue()
 
 bool getSigmaDetectPorperty(double &sigma,bool* isMark,bool* isChangPlot,SAUIInterface* ui)
 {
-    SAPropertySetDialog dlg(ui->getMainWindowPtr(),static_cast<SAPropertySetDialog::BrowserType>(SAGUIGlobalConfig::getDefaultPropertySetDialogType()));
+    SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     dlg.appendDoubleProperty("sigma",TR("sigma")
                              ,0,std::numeric_limits<double>::max()

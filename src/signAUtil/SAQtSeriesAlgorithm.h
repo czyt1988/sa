@@ -12,6 +12,10 @@
 #include <math.h>
 #include "SAUtilGlobal.h"
 
+#ifndef PI
+#define PI (3.1415926535897932384626433832795)
+#endif
+
 namespace SA {
 /**
  * @brief 把一个QStringList的文本转换为double，并存入IT的迭代器中

@@ -44,7 +44,7 @@ void SATcpClientPrivate::startHeartbreakCheck()
 {
     if(nullptr == m_timer)
     {
-        m_timer = std::make_unique<QTimer>();
+        m_timer.reset(new QTimer());
         m_timer->connect(m_timer.get(),&QTimer::timeout,q_ptr,&SATcpClient::onHeartbreatCheckTimeout);
     }
     m_timer->setInterval(mHeartbreatMs);

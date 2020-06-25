@@ -202,7 +202,7 @@ bool SA::cast_protocol_to_satree(const SAXMLProtocolParser *xml, SATree *tree)
         QVariant v = xml->getDefaultGroupValue(k);
         if (v.isValid())
         {
-            std::unique_ptr<SAItem> i = std::make_unique<SAItem>();
+            std::unique_ptr<SAItem> i(new SAItem());
             i->setName(k);
             i->setProperty(SAItem::RoleValue,v);
             tree->appendItem(i.release());
@@ -218,7 +218,7 @@ bool SA::cast_protocol_to_satree(const SAXMLProtocolParser *xml, SATree *tree)
             QVariant v = xml->getValue(g,k);
             if (v.isValid())
             {
-                std::unique_ptr<SAItem> i = std::make_unique<SAItem>();
+                std::unique_ptr<SAItem> i(new SAItem());
                 i->setName(k);
                 i->setProperty(SAItem::RoleValue,v);
                 tree->appendItem(i.release());

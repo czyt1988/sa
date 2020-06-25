@@ -67,7 +67,7 @@ QWidget* load_figure_wnd(QFile* file,SAUIInterface* ui,QString* err)
         }
         return nullptr;
     }
-    std::unique_ptr<SAFigureWindow> w = std::make_unique<SAFigureWindow>();
+    std::unique_ptr<SAFigureWindow> w(new SAFigureWindow());
     QString classname(header.param.typeName);
     if(classname != w->metaObject()->className())
     {
