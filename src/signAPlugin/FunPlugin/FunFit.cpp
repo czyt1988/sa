@@ -247,6 +247,7 @@ void polyfitInValue(SAUIInterface* ui)
 
 bool getPolyfitConfig(int &order,SAUIInterface* ui)
 {
+    Q_UNUSED(ui);
     const QString idPolyN = "polyN";
     SAPropertySetDialog dlg(saUI->getMainWindowPtr()
                             ,SAPropertySetDialog::GroupBoxType);

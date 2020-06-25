@@ -427,6 +427,7 @@ void TextFileImportDialog::onTextReadComplete(const QString &text, bool isOK)
 
 void TextFileImportDialog::onTextThreadDestroyed(QObject *obj)
 {
+    Q_UNUSED(obj);
     QMutexLocker lock(&m_mutex);
     m_textReaderThread = nullptr;
     m_textReader = nullptr;

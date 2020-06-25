@@ -171,7 +171,7 @@ bool SATextDataImport::openFile(const QStringList &filePaths)
     {
         isOpen = loadFile(filePaths,(int)TextFileImportDialog::Txt);
     }
-    return false;
+    return isOpen;
 }
 
 ///

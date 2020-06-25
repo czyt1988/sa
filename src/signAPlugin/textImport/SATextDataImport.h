@@ -55,6 +55,9 @@ private slots:
 private:
     bool loadFile(const QStringList &filePaths,int type);
 private:
+    //
+    SAUIInterface* m_ui;
+    //
     QString m_filePath;///< 保存文件路径
     QList<SAAbstractDatas *> m_resPtr;///< 保存生成的数据指针
     bool m_isOpen;///< 记录是否成功打开
@@ -62,8 +65,6 @@ private:
     QAction * m_actionTextImport;///< 构建ui用的action
     QAction * m_actionCsvImport;///< 构建ui用的action
     QAction * m_actionCFXCsvImport;///< 构建ui用的action
-    //
-    SAUIInterface* m_ui;
 };
 
 #endif // SAABSTRACTDATAIMPORT

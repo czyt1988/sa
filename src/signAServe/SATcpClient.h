@@ -10,10 +10,12 @@
 #define __PRINT_FUNCTION_RUN_INFO 1
 #if __PRINT_FUNCTION_RUN_INFO
 #include <QDebug>
+#ifndef FUNCTION_RUN_PRINT
 #define FUNCTION_RUN_PRINT() \
     do{\
       qDebug() << " >> fun:" << __FUNCTION__ << " line:" << __LINE__;\
     }while(0)
+#endif
 #else
 #define FUNCTION_RUN_PRINT()
 #endif

@@ -11,13 +11,13 @@
 #include "SAVectorDouble.h"
 TextImportConfig::TextImportConfig(QObject *par)
     :QObject(par)
-    ,m_parser(new SATextParser(this))
     ,m_startLine(1)
     ,m_endLine(-1)
     ,m_codec("UTF-8")
     ,m_toOneColumn(false)
     ,m_seperator("")
     ,m_isAutoParser(true)
+    ,m_parser(new SATextParser(this))
     ,m_textType(Txt)
 {
 
@@ -309,7 +309,7 @@ QString TextImportConfig::getRawRow(int row)
 {
     if(!m_parser->isValid())
     {
-        return false;
+        return QString::null;
     }
     qint64 prePos = m_parser->pos();
     m_parser->seek(0);
