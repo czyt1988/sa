@@ -5,6 +5,7 @@
 #include <QIcon>
 #include <QVariant>
 class SAItemPrivate;
+class SATree;
 ///
 /// \ingroup SALib
 /// \brief 基本树形结构的条目，是SAAbstractData的基类，提供了名称和图标以及父子关系管理功能

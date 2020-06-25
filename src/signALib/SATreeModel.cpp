@@ -121,6 +121,7 @@ int SATreeModel::rowCount(const QModelIndex &parent) const
 
 int SATreeModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return d_ptr->mColumnCount;
 }
 /**

@@ -337,7 +337,7 @@ bool read_item_from_json(const QJsonObject &json, SAItem* item)
             QJsonArray jArrVal = i.value().toArray();
             for(auto i=jArrVal.begin();i!=jArrVal.end();++i)
             {
-                std::unique_ptr<SAItem> childitem = std::make_unique<SAItem>();
+                std::unique_ptr<SAItem> childitem(new SAItem());
                 if(read_item_from_json((*i).toObject(),childitem.get()))
                 {
                     item->appendChild(childitem.release());
@@ -376,7 +376,7 @@ bool fromJson(const QString &json, SATree *tree)
     const auto size = jsonArr.size();
     for(int i=0;i<size;++i)
     {
-        std::unique_ptr<SAItem> item = std::make_unique<SAItem>();
+        std::unique_ptr<SAItem> item(new SAItem());
         QJsonValue v = jsonArr[i];
         if(read_item_from_json(v.toObject(),item.get()))
         {

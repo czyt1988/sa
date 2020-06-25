@@ -55,24 +55,6 @@ private:
     static QString s_configFileName;///< 配置文件名
 };
 
-template<typename T>
-T SAGlobalConfig::valueFromKey(const QString &content, const QString &key,const T& defaultVal)
-{
-    if(!isHasKey(content,key))
-    {
-        return defaultVal;
-    }
-    QVariant var = getDefaultGroupValue(content,key);
-    if(!var.isValid())
-    {
-        return defaultVal;
-    }
-    if(!var.canConvert<T>())
-    {
-        return defaultVal;
-    }
-    return var.value<T>();
-}
 
 #ifndef saConfig
 #define saConfig SAGlobalConfig::getInstance()
