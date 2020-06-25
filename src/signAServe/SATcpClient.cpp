@@ -321,9 +321,9 @@ void SATcpClient::destroySocket()
 
 void SATcpClient::connectSocket()
 {
-    connect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::connected);
+    connect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::connectedServe);
     connect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::onSocketConnected);
-    connect(d_ptr->m_socket,&QAbstractSocket::disconnected,this,&SATcpClient::disconnected);
+    connect(d_ptr->m_socket,&QAbstractSocket::disconnected,this,&SATcpClient::disconnectedServe);
     connect(d_ptr->m_socket,static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error)
             ,this,&SATcpClient::socketError);
     connect(d_ptr->m_socket,&SATcpSocket::receivedData,this,&SATcpClient::onReceivedData);
@@ -332,8 +332,8 @@ void SATcpClient::connectSocket()
 
 void SATcpClient::disconnectSocket()
 {
-    disconnect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::connected);
-    disconnect(d_ptr->m_socket,&QAbstractSocket::disconnected,this,&SATcpClient::disconnected);
+    disconnect(d_ptr->m_socket,&QAbstractSocket::connected,this,&SATcpClient::connectedServe);
+    disconnect(d_ptr->m_socket,&QAbstractSocket::disconnected,this,&SATcpClient::disconnectedServe);
     disconnect(d_ptr->m_socket,static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error)
             ,this,&SATcpClient::socketError);
     disconnect(d_ptr->m_socket,&SATcpSocket::receivedData,this,&SATcpClient::onReceivedData);

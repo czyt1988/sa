@@ -27,8 +27,8 @@ SADataClient::SADataClient(QObject *p):QObject(p)
     connect(this,&SADataClient::startConnectToServe,m_client,&SATcpDataProcessClient::connectToServe);
     connect(m_client,&SATcpDataProcessClient::clientError,this,&SADataClient::onClientErrorOccure);
     connect(m_client,&SATcpDataProcessClient::heartbreatTimeout,this,&SADataClient::onHeartbeatCheckerTimerout);
-    connect(m_client,&SATcpDataProcessClient::connected,this,&SADataClient::onSocketConnected);
-    connect(m_client,&SATcpDataProcessClient::disconnected,this,&SADataClient::onSocketDisconnected);
+    connect(m_client,&SATcpDataProcessClient::connectedServe,this,&SADataClient::onSocketConnected);
+    connect(m_client,&SATcpDataProcessClient::disconnectedServe,this,&SADataClient::onSocketDisconnected);
     connect(m_client,&SATcpDataProcessClient::socketError,this,&SADataClient::onSocketErrorOccure);
     //连接相关的信号
     connect(m_client,&SATcpDataProcessClient::reply2DPointsDescribe,this,&SADataClient::rec2DPointsDescribe);

@@ -28,7 +28,6 @@ public:
     void registerSectionFactory(FactroyFunPtr factoryPtr);
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
-protected slots:
 protected:
     //多线程模式，不允许调用此函数
     virtual bool hasPendingConnections() const override;

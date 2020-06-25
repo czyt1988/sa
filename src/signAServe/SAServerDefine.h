@@ -36,7 +36,7 @@ enum ServeProtocolFunctionType{
     ,ProtocolFunReqToken //3 token请求
     ,ProtocolFunReplyToken //4 token回复
 
-    ,ProtocolFunReq2DPointsDescribe ///< 请求2维点序列的描述
+    ,ProtocolFunReq2DPointsDescribe ///< 5 请求2维点序列的描述
     ,ProtocolFunReply2DPointsDescribe ///< 请求2维点序列的描述
 };
 }

@@ -96,11 +96,11 @@ signals:
     /**
      * @brief socket连接成功的信号
      */
-    void connected();
+    void connectedServe();
     /**
      * @brief socket连接丢失的信号
      */
-    void disconnected();
+    void disconnectedServe();
     /**
      * @brief 心跳超时
      * @param lastDatetime 上次心跳的时间
