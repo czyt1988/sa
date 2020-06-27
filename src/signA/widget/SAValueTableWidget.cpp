@@ -288,6 +288,7 @@ void SAValueTableWidget::undo()
 
 void SAValueTableWidget::onTableViewCustomContextMenuRequested(const QPoint &pos)
 {
+    Q_UNUSED(pos);
     if(nullptr == m_menu)
     {
         createMenu();
@@ -351,7 +352,8 @@ void SAValueTableWidget::onActionInsertTriggered()
     QScopedPointer<QUndoCommand> topCmd(new QUndoCommand);
     for(auto i=res.begin();i!=res.end();++i)
     {
-        SAValueTableOptInsertCommand* cmd = new SAValueTableOptInsertCommand(i.key(),i.value(),topCmd.data());
+        //指定了父对象，不会内存泄漏
+        new SAValueTableOptInsertCommand(i.key(),i.value(),topCmd.data());
     }
     if(topCmd->childCount() > 0)
     {
@@ -519,7 +521,8 @@ void SAValueTableWidget::onActionDeleteTriggered()
     QScopedPointer<QUndoCommand> topCmd(new QUndoCommand);
     for(auto i=res.begin();i!=res.end();++i)
     {
-        SAValueTableOptDeleteCommand* cmd = new SAValueTableOptDeleteCommand(i.key(),i.value(),topCmd.data());
+        //指定了父对象，不会内存泄漏
+        new SAValueTableOptDeleteCommand(i.key(),i.value(),topCmd.data());
     }
     if(topCmd->childCount() > 0)
     {
