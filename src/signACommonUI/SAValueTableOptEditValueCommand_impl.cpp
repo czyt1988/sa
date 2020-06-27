@@ -105,8 +105,8 @@ SAValueTableOptEditTableValueCommandPrivate<T>::SAValueTableOptEditTableValueCom
         , int startRow
         , int startCol)
     :SAValueTableOptEditValueCommandPrivateBase()
-    ,m_isValid(false)
     ,m_data(nullptr)
+    ,m_isValid(false)
     ,m_startRow(startRow)
     ,m_startCol(startCol)
     ,m_isOldDirty(false)
@@ -282,8 +282,8 @@ SAValueTableOptEditVectorMultValuesCommandPrivate<T>::SAValueTableOptEditVectorM
         , int startRow
         , int startCol)
     :SAValueTableOptEditValueCommandPrivateBase()
-    ,m_isValid(false)
     ,m_data(nullptr)
+    ,m_isValid(false)
     ,m_startRow(startRow)
     ,m_startCol(startCol)
 {

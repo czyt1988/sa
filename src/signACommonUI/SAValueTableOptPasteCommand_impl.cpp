@@ -111,9 +111,10 @@ SAValueTableOptVectorPasteCommandPrivate<T,FunMakeT>::SAValueTableOptVectorPaste
         , int startCol
         , FunMakeT fp)
     :SAAbstractValueTableOptPasteCommandPrivate()
+    ,m_funPtr(fp)
+    ,m_isvalid(false)
     ,m_startRow(startRow)
     ,m_startCol(startCol)
-    ,m_funPtr(fp)
     ,m_isOldDirty(true)
     ,m_data(nullptr)
     ,m_oldDataSize(0)

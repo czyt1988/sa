@@ -54,7 +54,7 @@ public:
     virtual bool deal(const SAProtocolHeader &header, const QByteArray &data);
     virtual bool dealXmlProtocol(const SAProtocolHeader &header, SAXMLProtocolParserPtr xml);
     //获取socket
-    inline SATcpSocket* getSocket() const;
+    SATcpSocket* getSocket() const;
 public slots:
     //连接服务器
     bool connectToServe(int timeout = 5000);

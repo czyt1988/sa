@@ -69,7 +69,7 @@ void sigmaDetect(SAUIInterface* ui)
             QString info;
             QString title = item->title().text();
             QVector<int> indexs;
-            saFun::sigmaDenoising(xs,ys,sigma,indexs);
+            saFun::sigmaDenoising(ys,sigma,indexs);
             info = QString("sigma(\"%1\") out range datas count:%2").arg(title).arg(indexs.size());
             infos.append(info);
             if(0 == indexs.size())

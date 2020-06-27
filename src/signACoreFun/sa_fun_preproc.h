@@ -108,8 +108,7 @@ bool sigmaDenoising(const SAVectorPointF* wave,double sigma
 
 
 SA_CORE_FUN__EXPORT
-void sigmaDenoising(const QVector<double>& xs
-                    , const QVector<double>& ys
+void sigmaDenoising(const QVector<double>& ys
                     , double sigma
                     , QVector<int> &index);
 

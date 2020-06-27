@@ -56,8 +56,6 @@ std::shared_ptr<SAAbstractDatas> saFun::detrendDirect(const SAAbstractDatas *wav
     }
     setErrorString(TR("can not conver data to double vector!"));
     return nullptr;
-    SA::SADsp::detrend(waveData.begin(),waveData.end());
-
 }
 ///
 /// \brief 去直流
@@ -274,10 +272,6 @@ void saFun::setWindow(QVector<double> &input, SA::SADsp::WindowType window)
     SA::SADsp::windowed (input.begin (),input.end (),window);
 }
 
-void saFun::setWindow(QVector<QPointF> &input, SA::SADsp::WindowType window)
-{
-
-}
 
 ///
 /// \brief 窗函数名

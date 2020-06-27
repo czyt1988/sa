@@ -1,6 +1,6 @@
 #ifndef SAGUICONFIG_H
 #define SAGUICONFIG_H
-#include "SALibGlobal.h"
+#include "SACommonUIGlobal.h"
 #include <QObject>
 #include <memory>
 class SAConfigPrivate;
@@ -10,7 +10,7 @@ class SAConfigPrivate;
 /// \author czy
 /// \date 2017-05-23
 ///
-class SALIB_EXPORT SAGUIGlobalConfig
+class SA_COMMON_UI_EXPORT SAGUIGlobalConfig
 {
 private:
     Q_DISABLE_COPY(SAGUIGlobalConfig)

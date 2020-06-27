@@ -261,7 +261,7 @@ public:
         {
             return;
         }
-        QScopedPointer<SAFigureOptCommand> cmd(new SAFigureOptCommand(q_ptr,q_ptr->tr("remove chart items")));
+        QScopedPointer<SAFigureOptCommand> cmd(new SAFigureOptCommand(q_ptr,des));
         bool isAutoReplot = q_ptr->autoReplot();
         q_ptr->setAutoReplot(false);
         QPainterPath region = m_seclectRegionItem->shape();

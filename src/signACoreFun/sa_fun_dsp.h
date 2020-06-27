@@ -42,7 +42,6 @@ SA_CORE_FUN__EXPORT void powerSpectrum(const QVector<double>& input
 //设置窗函数
 SA_CORE_FUN__EXPORT std::shared_ptr<SAAbstractDatas> setWindow(const SAAbstractDatas *wave, SA::SADsp::WindowType window);
 SA_CORE_FUN__EXPORT void setWindow(QVector<double>& input,SA::SADsp::WindowType window);
-SA_CORE_FUN__EXPORT void setWindow(QVector<QPointF>& input,SA::SADsp::WindowType window);
 //窗函数名
 SA_CORE_FUN__EXPORT QString windowName(SA::SADsp::WindowType window);
 }

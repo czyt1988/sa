@@ -231,8 +231,7 @@ bool saFun::sigmaDenoising(const SAVectorPointF *wave, double sigma, SAVectorPoi
 
 
 
-void saFun::sigmaDenoising(const QVector<double>& xs
-                           , const QVector<double>& ys
+void saFun::sigmaDenoising(const QVector<double>& ys
                            , double sigma
                            , QVector<int> &index
                            )
