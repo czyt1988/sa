@@ -727,6 +727,7 @@ void MainWindow::onChartTitleChanged(QwtPlot *plot, const QString &title)
 ///
 void MainWindow::subwindowMouseRightClicked(const QPoint &pos)
 {
+    Q_UNUSED(pos);
     if(!ui->menuFigureWindow)
     {
         return;
@@ -756,6 +757,7 @@ void MainWindow::subwindowMouseRightClicked(const QPoint &pos)
 ///
 void MainWindow::onActionSelectCurrentCursorToActiveChartTriggered(bool on)
 {
+    Q_UNUSED(on);
     SAFigureWindow* fig = getCurrentFigureWindow();
     if(!fig)
     {
@@ -1587,7 +1589,7 @@ void MainWindow::onActionChartMoveDataInSelectionRegion(bool on)
     }
     if(on)
     {
-        if(SAAbstractRegionSelectEditor* selectEditor = chart->getRegionSelectEditor())
+        if(chart->getRegionSelectEditor())
         {
             saAddLog("Selection Region Datas Move");
             if(!chart->isCurrentSelectItemsHaveChartItem())
