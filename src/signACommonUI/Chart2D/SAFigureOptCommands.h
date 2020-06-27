@@ -51,8 +51,8 @@ public:
     virtual void undo();
 private:
     QWidget* m_widget;
-    QRect m_oldSize;
     QRect m_newSize;
+    QRect m_oldSize;
 };
 
 ///////////////////////////////////////////////////////////////////////

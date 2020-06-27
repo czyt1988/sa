@@ -532,22 +532,21 @@ bool getSpectrumProperty(double* samFre
 {
     SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
-    QtVariantProperty* tmp = nullptr;
     if(samFre)
     {
-        tmp = dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
+        dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
                                  ,0,std::numeric_limits<double>::max()
                                  ,1024,TR("sample frequency"));
     }
     if(fftsize)
     {
-        tmp = dlg.appendIntProperty("fftsize",TR("fft size")
+        dlg.appendIntProperty("fftsize",TR("fft size")
                               ,0,std::numeric_limits<int>::max()
                               ,dataSize,TR("fft size"));
     }
     if(magType)
     {
-        tmp = dlg.appendEnumProperty("amptype",TR("amplitude type"),{TR("Magnitude")
+        dlg.appendEnumProperty("amptype",TR("amplitude type"),{TR("Magnitude")
                                                            ,TR("MagnitudeDB")
                                                            ,TR("Amplitude")
                                                            ,TR("AmplitudeDB")}
@@ -556,7 +555,7 @@ bool getSpectrumProperty(double* samFre
     }
     if(window)
     {
-        tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
+        dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
                                                        ,TR("Hanning")
                                                        ,TR("Hamming")
                                                        ,TR("Blackman")
@@ -566,7 +565,7 @@ bool getSpectrumProperty(double* samFre
     }
     if(isDetrend)
     {
-        tmp = dlg.appendBoolProperty("detrend",TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
+        dlg.appendBoolProperty("detrend",TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
     }
 
     if(QDialog::Accepted != dlg.exec())
@@ -825,13 +824,11 @@ bool getPowerSpectrumProperty(double *samFre
                                       , size_t dataSize
                                       , SAUIInterface* ui)
 {
-
-    QtVariantProperty* tmp = nullptr;
     SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
     if(samFre)
     {
-        tmp = dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
+        dlg.appendDoubleProperty("fs",TR("sample frequency(Hz)")
                                             ,0,std::numeric_limits<double>::max()
                                             ,1024
                                             ,TR("sample frequency(Hz)")
@@ -839,7 +836,7 @@ bool getPowerSpectrumProperty(double *samFre
     }
     if(fftsize)
     {
-        tmp = dlg.appendIntProperty("fftsize",TR("fft size")
+        dlg.appendIntProperty("fftsize",TR("fft size")
                                     ,-1,std::numeric_limits<int>::max()
                                     ,dataSize
                                     ,TR("fft size,if you do not know how to set the fft size , please set 0,sa will auto set to you ")
@@ -877,7 +874,7 @@ bool getPowerSpectrumProperty(double *samFre
     }
     if(isDetrend)
     {
-        tmp = dlg.appendBoolProperty("detrend"
+        dlg.appendBoolProperty("detrend"
                                      ,TR("is detrend")
                                      ,true
                                      ,TR("if this is set true,the data will sub the mean value")
@@ -885,7 +882,7 @@ bool getPowerSpectrumProperty(double *samFre
     }
     if(window)
     {
-        tmp = dlg.appendEnumProperty("windowtype"
+        dlg.appendEnumProperty("windowtype"
                                      ,TR("window type")
                                      ,{TR("Rect"),TR("Hanning"),TR("Hamming"),TR("Blackman"),TR("Bartlett")}
                                      ,0
@@ -936,6 +933,7 @@ bool getPowerSpectrumProperty(double *samFre
 ///
 void tmeFrequency(SAUIInterface* ui)
 {
+    Q_UNUSED(ui);
     if(nullptr == g_timeFrequencyWidget)
     {
         g_timeFrequencyWidget.reset(new SATimeFrequencyAnalysis());
@@ -952,14 +950,14 @@ bool getWindowProperty(SA::SADsp::WindowType & windowType, bool &isDetrend, SAUI
 {
     SAPropertySetDialog dlg(ui->getMainWindowPtr(),SAPropertySetDialog::GroupBoxType);
     dlg.appendGroup(TR("property set"));
-    QtVariantProperty* tmp = dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
+    dlg.appendEnumProperty("windowtype",TR("window type"),{TR("Rect")
                                                    ,TR("Hanning")
                                                    ,TR("Hamming")
                                                    ,TR("Blackman")
                                                    ,TR("Bartlett")}
                            ,0
                            ,TR("set window to wave"));
-    tmp = dlg.appendBoolProperty("detrend",TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
+    dlg.appendBoolProperty("detrend",TR("is detrend"),true,TR("if this is set true,the data will sub the mean value"));
     if(QDialog::Accepted != dlg.exec())
     {
         return false;

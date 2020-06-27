@@ -100,12 +100,12 @@ SAXMLConfigParser::SAXMLConfigParser(const QString &filepath):SAXMLProtocolParse
 
 }
 
-SAXMLConfigParser::SAXMLConfigParser(const SAXMLConfigParser &other)
+SAXMLConfigParser::SAXMLConfigParser(const SAXMLConfigParser &other):SAXMLProtocolParser()
 {
     *this = other;
 }
 
-SAXMLConfigParser::SAXMLConfigParser(SAXMLConfigParser &&other):SAXMLConfigParser(other)
+SAXMLConfigParser::SAXMLConfigParser(SAXMLConfigParser &&other):SAXMLProtocolParser()
 {
     this->d_ptr.reset(other.d_ptr.take());
     d_ptr->q_ptr = this;//这个尤为关键

@@ -30,11 +30,11 @@ QString SAYDataTracker::itemInfoAt(const QwtPlotItem *item, const QPointF &pos) 
 #if 1
     if(const QwtPlotCurve *pc = dynamic_cast<const QwtPlotCurve *>(item))
     {
-        curveInfo = curveInfoAt(static_cast<const QwtPlotCurve *>( item ), pos );
+        curveInfo = curveInfoAt(pc, pos );
     }
     else if(const QwtPlotBarChart * pb = dynamic_cast<const QwtPlotBarChart *>(item))
     {
-        curveInfo = barInfoAt(static_cast<const QwtPlotBarChart *>( item ), pos );
+        curveInfo = barInfoAt(pb, pos );
     }
 #else
     switch(item->rtti())

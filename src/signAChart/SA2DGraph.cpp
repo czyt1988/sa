@@ -1110,10 +1110,9 @@ void SA2DGraph::enableGridYMin(bool enable)
 /// \param data 值
 /// \param strLabel 描述
 /// \param clr 颜色
-/// \param type
 /// \todo type show be use
 ///
-void SA2DGraph::markYValue(double data, const QString &strLabel, QColor clr, int type)
+void SA2DGraph::markYValue(double data, const QString &strLabel, QColor clr)
 {
     double x = axisXmax();
     SAYValueMarker* valueMark = new SAYValueMarker(data);

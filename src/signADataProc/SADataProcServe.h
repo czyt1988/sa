@@ -15,10 +15,14 @@ class SADataProcServe : public SATcpServe
 {
     Q_OBJECT
 public:
-    SADataProcServe(QObject *parent = nullptr);
+    //idealTimeSecond 超过30秒没有连接就退出
+    SADataProcServe(QObject *parent = nullptr,int idealTimeSecond = 30);
     ~SADataProcServe();
     uint getPid() const;
     void setPid(const uint &pid);
+private slots:
+    //检测存活周期到
+    void onCkeckLiveTimeout();
 private:
     uint m_pid;
     bool m_willBeQuit;

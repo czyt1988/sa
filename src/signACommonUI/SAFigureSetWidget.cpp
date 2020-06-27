@@ -19,9 +19,6 @@ class SAFigureSetWidget::UI
 public:
     QVBoxLayout *verticalLayout;
     SAChartSetWidget* chartSetWidget;
-#if SAFiugreSetWidget_USE_COMBOX
-    QComboBox* chartSelectComboBox;
-#endif
     QMap<QwtPlot*,SAChartSetWidget*> plotMapToWidget;
 
     void setupUi(SAFigureSetWidget *p)
@@ -34,25 +31,13 @@ public:
         verticalLayout->setSpacing(4);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-#if SAFiugreSetWidget_USE_COMBOX
-        chartSelectComboBox = new QComboBox(p);
-        chartSelectComboBox->setObjectName(QStringLiteral("SAFiugreSetWidgetChartSelectComboBox"));
-        verticalLayout->addWidget(chartSelectComboBox);
-        p->connect(chartSelectComboBox,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
-                   ,p,&SAFigureSetWidget::onComboxChanged);
-#endif
         chartSetWidget = new SAChartSetWidget(p);
         chartSetWidget->setObjectName(QStringLiteral("ChartSetWidget"));
         chartSetWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         verticalLayout->addWidget(chartSetWidget);
         p->setLayout(verticalLayout);
-#if SAFiugreSetWidget_USE_COMBOX
-        p->connect(chartSetWidget,&SAChartSetWidget::chartTitleChanged
-                ,p,&SAFigureSetWidget::onChartTitleChanged);
-#else
         p->connect(chartSetWidget,&SAChartSetWidget::chartTitleChanged
                 ,p,&SAFigureSetWidget::chartTitleChanged);
-#endif
         retranslateUi(p);
 
     } // setupUi
@@ -78,42 +63,6 @@ SAFigureSetWidget::~SAFigureSetWidget()
 
 void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
-#if SAFiugreSetWidget_USE_COMBOX
-    if(m_fig)
-    {
-        disconnect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
-    }
-    if(nullptr == fig)
-    {
-        clear();
-        return;
-    }
-    if(nullptr != fig && m_fig != fig)
-    {
-        connect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
-    }
-    m_fig = nullptr;
-    ui->chartSelectComboBox->clear();
-    QList<SAChart2D*> plots = fig->get2DPlots();
-    for(int i=0;i<plots.size();++i)
-    {
-        QString title = plots[i]->title().text();
-        if(title.isEmpty())
-        {
-            title = tr("chart %1").arg(i+1);
-        }
-        //combox 插入条目
-        ui->chartSelectComboBox->addItem(title,QVariant::fromValue((quintptr)plots[i]));
-        //关联槽
-        connect(plots[i],&QObject::destroyed,this,&SAFigureSetWidget::onPlotDestroy);
-    }
-    if(!plots.isEmpty())
-    {
-        ui->chartSetWidget->setChart(plots.first());
-    }
-
-    m_fig = fig;
-#else
     if(m_fig)
     {
         disconnect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
@@ -132,18 +81,10 @@ void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
     m_fig = nullptr;
     m_fig = fig;
     setCurrentChart(fig->current2DPlot());
-
-#endif
 }
 
 void SAFigureSetWidget::clear()
 {
-#if SAFiugreSetWidget_USE_COMBOX
-    while(ui->chartSelectComboBox->count())
-    {
-        ui->chartSelectComboBox->removeItem(0);
-    }
-#endif
     ui->chartSetWidget->setChart(nullptr);
 }
 
@@ -168,36 +109,7 @@ void SAFigureSetWidget::updateNormalSet()
 }
 
 
-#if SAFiugreSetWidget_USE_COMBOX
-void SAFigureSetWidget::onChartTitleChanged(QwtPlot* chart,const QString &text)
-{
-    Q_UNUSED(chart);
-    //ui->chartSelectComboBox->setCurrentText(text);
-    ui->chartSelectComboBox->setItemText(ui->chartSelectComboBox->currentIndex(),text);
-}
-#endif
 
-void SAFigureSetWidget::onPlotDestroy(QObject *obj)
-{
-#if SAFiugreSetWidget_USE_COMBOX
-    int count = ui->chartSelectComboBox->count();
-    for(int i=0;i<count;++i)
-    {
-        QVariant var = ui->chartSelectComboBox->itemData(i);
-        if(var.canConvert<qintptr>())
-        {
-            qintptr ptr = var.value<qintptr>();
-            if(ptr == ((qintptr)obj))
-            {
-                ui->chartSelectComboBox->removeItem(i);
-                return;
-            }
-        }
-    }
-#else
-
-#endif
-}
 
 void SAFigureSetWidget::onFigutrDestroy(QObject *obj)
 {
@@ -224,30 +136,6 @@ void SAFigureSetWidget::onCurrentFigureWidgetChanged(QWidget *w)
 void SAFigureSetWidget::setCurrentChart(SAChart2D *chart)
 {
     ui->chartSetWidget->setChart(chart);
-#if SAFiugreSetWidget_USE_COMBOX
-    //关联槽
-    if(nullptr == chart)
-    {
-        connect(chart,&QObject::destroyed,this,&SAFigureSetWidget::onPlotDestroy);
-    }
-#endif
 }
 
 
-
-#if SAFiugreSetWidget_USE_COMBOX
-void SAFigureSetWidget::onComboxChanged(int index)
-{
-    if(nullptr == m_fig||index<0)
-    {
-        return;
-    }
-    QList<SAChart2D*> plots = m_fig->get2DPlots();
-    if(index >= 0 && index < plots.size())
-    {
-        SAChart2D* p = plots[index];
-        ui->chartSetWidget->setChart(p);
-    }
-}
-
-#endif

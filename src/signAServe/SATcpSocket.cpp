@@ -97,7 +97,7 @@ void SATcpSocket::onReadyRead()
                      <<"\n header:"<<d_ptr->m_mainHeader
                         ;
 #endif
-            if(d_ptr->m_buffer.size() < d_ptr->m_mainHeader.dataSize)
+            if((uint32_t)d_ptr->m_buffer.size() < d_ptr->m_mainHeader.dataSize)
             {
                 d_ptr->m_buffer.resize(d_ptr->m_mainHeader.dataSize);
             }

@@ -86,7 +86,7 @@ QtColorPicker *SAColorSetPropertyItem::getColorPickerButton()
 
 void SAColorSetPropertyItem::onColorChanged(const QColor &c)
 {
-    emit colorChanged(getCurrentColor());
+    emit colorChanged(c);
 }
 
 void SAColorSetPropertyItem::onCurrentPenColorAlphaChanged(int v)

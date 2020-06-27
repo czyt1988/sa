@@ -159,17 +159,6 @@ namespace SA {
         ,DataPackageTypeEnd = 2000000
     };
 
-//    enum FunType
-//    {
-//        FunctionBoundaryDataTypeStart = 10000///< 函数类型
-//        ,FunctionFFt = 10010 ///< 傅里叶变换函数
-//        ,FunctionPolyfit = 10020 ///<多项式拟合函数
-//        ,FunctionFilter = 10030 ///<滤波函数
-//        ,FunctionStatistics = 10040 ///<统计学相关函数
-//        ,FunctionNum = 10050///< 数值计算相关函数
-//        ,FunctionBoundaryDataTypeEnd = 90000///< 函数类型结束
-//    };
-
     enum SizeType{
         Row=1
         ,Column=2
@@ -240,27 +229,6 @@ namespace SA {
 #define ROLE_DATATYPE_MARK Qt::UserRole + 30 ///< 数据标记,所有需要绘制的条目都需要设置这个ROLE_DATATYPE_MARK，用于标定DATAMODE \see DATAMODE
 #define ROLE_ID Qt::UserRole + 40 ///< 数据标记
 
-//#define MARK_PROJECT 0x80000000 ///< 顶层项目标记位
-//#define MARK_FOLDER 0x40000000 ///< 文件夹标记位
-//#define MARK_ITEM 0x20000000 ///< 项目标记位
-
-//#define MARK_PROJECT_ID_BIT 0xFF ///< 顶层项目个数存放位置，MARK与此位&（于）操作后，即可提取该条目或文件夹所属的项目,因此项目的最大数目为0xFF
-
-#define ICON_Project QIcon(":/treeItemIcon/res_treeItemIcon/Project.png")
-#define ICON_folder QIcon(":/treeItemIcon/res_treeItemIcon/folder.png")
-#define ICON_FolderUserChart QIcon(":/treeItemIcon/res_treeItemIcon/folder-ansys.png")
-#define ICON_TdmsGroup QIcon(":/treeItemIcon/res_treeItemIcon/group.png")
-
-#define ICON_folderOriginal QIcon(":/treeItemIcon/res_treeItemIcon/folder_original.png")
-#define ICON_DataItem QIcon(":/treeItemIcon/res_treeItemIcon/dataItem.png")
-
-
-
-
-#define ICON_CountFrequency  QIcon(":/image/res_image/count_frequency.png")
-#define ICON_TdmsChannel QIcon(":/treeItemIcon/res_treeItemIcon/channel.png")
-#define ICON_ItemDouble QIcon(":/treeItemIcon/res_treeItemIcon/doubles.png")
-#define ICON_ItemPoint QIcon(":/treeItemIcon/res_treeItemIcon/points.png")
 
 #define SA_MIME_ProjectItem "sa/projectItem"
 #define SA_MIME_ValueManagerItem "sa/ValueManagerItem"

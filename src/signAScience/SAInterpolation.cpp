@@ -88,13 +88,21 @@ bool SA::SAInterpolation::init(const double *x,
                                SA::SAInterpolation::InterpType type)
 {
     if(length <= 0)
+    {
         return false;
+    }
+
     gsl_spline* spl = gsl_spline_alloc (d_ptr->castInterpType2GslInterpType(type), length);
     if(nullptr == spl)
+    {
         return false;
+    }
+
     gsl_interp_accel* accel = gsl_interp_accel_alloc();//插值加速，用在gsl_spline_eval里
     if(nullptr == accel)
+    {
         return false;
+    }
 
     //样条插值初始化，根据插值的样式和长度分配空间
     if(d_ptr->m_spline != nullptr)
@@ -107,6 +115,8 @@ bool SA::SAInterpolation::init(const double *x,
         gsl_interp_accel_free (d_ptr->m_accel);
     }
     d_ptr->m_accel = accel;//插值加速，用在gsl_spline_eval里
+
+    gsl_spline_init (d_ptr->m_spline, x, y, length);
     return true;
 }
 

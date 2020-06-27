@@ -291,7 +291,7 @@ public slots:
 	void enableLegend(bool enable = true);
 	void enableLegendPanel(bool enable = true);
 
-    void markYValue(double data,const QString& strLabel, QColor clr = Qt::black,int type = 0);
+    void markYValue(double data,const QString& strLabel, QColor clr = Qt::black);
 
 
 
