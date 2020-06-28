@@ -17,6 +17,8 @@ git clone https://github.com/czyt1988/sa.git
 
 ### 2.下载并构建第三方库
 
+目前第三方库的构建已经自动集成到`sa3rdParty.pro`,运行`sa3rdParty.pro`即可构建
+
 - 1.下载`FFTW`库
 
 打开网址`FFTW For Windows` : [http://www.fftw.org/install/windows.html](http://www.fftw.org/install/windows.html)
@@ -24,19 +26,18 @@ git clone https://github.com/czyt1988/sa.git
 
 ![fftw for windows download page](https://github.com/czyt1988/sa/raw/master/doc/build/02.png)
 
-虽然是用MinGW编译的，但是经测试vs2003到vs2015都可以正常使用，所以为了免去不必要麻烦，建议直接使用它们已经编译好的dll,这里我们后续需要用到`libfftw3-3.dll`,`lib`文件和头文件已经在`src/czy/fftw`中配置好，理论不需要重新配置，若想重新配置`fftw`的`lib`请参考文档：[doc/buildFFTW.md](https://github.com/czyt1988/sa/tree/master/doc/buildFFTW.md)
+虽然是用MinGW编译的，但是经测试vs2003到vs2015都可以正常使用，所以为了免去不必要麻烦，建议直接使用它们已经编译好的dll,这里我们后续需要用到`libfftw3-3.dll`,`lib`文件和头文件已经在`./src/signAScience/fftw`中配置好，理论不需要重新配置，若想重新配置`fftw`的`lib`请参考文档：[doc/buildFFTW.md](https://github.com/czyt1988/sa/tree/master/doc/buildFFTW.md)
 
 - 2.下载GSL库
 
 `GSL For Window`人家也像我一样很贴心的把所有东西都打包好了，包括dll和lib文件，你都不用费劲自己编译，下载地址见:[GSL for windows](http://gnuwin32.sourceforge.net/packages/gsl.htm)
 
-`SA`把这些打了一个压缩包位于`src\czy\gsl\GnuWin32.7z`，包括头文件，lib文件，dll文件，lib文件位于[src\czy\gsl\lib\libgsl.lib](https://github.com/czyt1988/sa/tree/master/src/czy/gsl/lib)和[src\czy\gsl\lib\libgslcblas.lib](https://github.com/czyt1988/sa/tree/master/src/czy/gsl/lib)
-
-其实只要用到压缩包里的dll文件，若想自己配置，可以下载上面链接，把头文件和lib文件替换掉进行，这里不进行详细介绍
+`SA`把gsl相关文件放置在[./src/signAScience/gsl](https://github.com/czyt1988/sa/tree/master/src/signAScience/gsl)，包括头文件，lib文件，dll文件。
+dll文件具体见[百度网盘-gsl文件](https://pan.baidu.com/s/1Y1xKO9eJELbFf8RtFafVgQ) 提取码：k5e5
 
 - 3.QWT库的构建
 
-为了省事，`SA`把`QWT`的源码都放置在[src\3rdParty\qwt\](https://github.com/czyt1988/sa/tree/master/src/3rdParty/qwt)中，这样不太好，以后考虑移除。
+为了省事，`SA`把`QWT`的源码都放置在[src/3rdParty/qwt/](https://github.com/czyt1988/sa/tree/master/src/3rdParty/qwt)中，这样不太好，以后考虑移除。
 
 要编译`qwt`只需要用`Qt Creator`运行`src\3rdParty\qwt\qwt.pro`，点build，等待10分钟即可，若不做特殊处理，将会在目录`src\3rdParty`上生成一个build-qwt-xx文件夹：
 
@@ -52,13 +53,13 @@ git clone https://github.com/czyt1988/sa.git
 
 - fftw:
 
-> src/czy/fftw/libfftw3-3.lib
+> src/signAScience/fftw/libfftw3-3.lib
 
 - gsl:
 
-> src/czy/gsl/lib/libgsl.lib
+> src/signAScience/gsl/lib/libgsl.lib
 
-> src/czy/gsl/lib/libgslcblas.lib
+> src/signAScience/gsl/lib/libgslcblas.lib
 
 - qwt 会根据编译环境而不同(qwt编译的lib路径不要改变，编译sa.pro时会自动寻找)
 
@@ -92,9 +93,9 @@ windows下，直接进入目录双击脚本也可以，如果没有安装gitbash
 
 - 1. `qwt`库 ，根据编译环境不同和Qt版本不同会有不同路径，如Qt5.9.0下msvc编译将产生：`src/3rdParty/qwt/lib/msvc/5_9_0/qwt.lib`
 
-- 2. `fftw`库，位于`src/czy/fftw/libfftw3-3.lib`,头文件位于`src/czy/fftw/fftw.h`
+- 2. `fftw`库，位于`src/signAScience/fftw/libfftw3-3.lib`,头文件位于`src/signAScience/fftw/fftw.h`
 
-- 3. `gsl`库，位于`src/czy/gsl/lib/libgsl.lib`和`src/czy/gsl/lib/libgslcblas.lib`,头文件位于`src/czy/gsl/include/gsl/*.h`
+- 3. `gsl`库，位于`src/signAScience/gsl/lib/libgsl.lib`和`src/signAScience/gsl/lib/libgslcblas.lib`,头文件位于`src/signAScience/gsl/include/gsl/*.h`
 
 - 4. `SARibbonBar`库的源码，`SARibbonBar`可以不需要提前编译，但必须保证源码SARibbon目录位于`src/SARibbonBar`文件夹下,若已经编译，不要改变编译生成的bin_qtx.x.x_{debug/release}文件夹名称
 
