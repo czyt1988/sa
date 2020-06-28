@@ -49,31 +49,8 @@ SOURCES += \
 
 
 #the gsl lib support
-include($$PWD/gsl/gsl.pri)
+include($$PWD/../3rdParty/gsl/gsl.pri)
 
 #the fftw lib support
-win32{
-    contains(DEFINES, WIN64) {
-        message("win64")
-        HEADERS += \
-            $$PWD/fftw64/fftw3.h
-        LIBS += -L$$PWD\fftw64 -llibfftw3-3
-        INCLUDEPATH += $$PWD\fftw64
-    } else {
-        message("win32 will load fftw3")
-        HEADERS += \
-            $$PWD/fftw/fftw3.h
-        LIBS += -L$$PWD\fftw -llibfftw3-3
-        INCLUDEPATH += $$PWD\fftw
-    }
-}#unix下直接安装部署fftw
-unix{
-    INCLUDEPATH += usr/local/include
-    DEPENDPATH += usr/local/lib
-    LIBS += -L/usr/local/lib -lfftw3
-}
-# Default rules for deployment.
-unix {
-    target.path = /usr/lib
-}
-!isEmpty(target.path): INSTALLS += target
+include($$PWD/../3rdParty/fftw/fftw.pri)
+

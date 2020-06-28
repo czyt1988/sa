@@ -4,6 +4,15 @@
 
 下面将记录为windows下构建SA的流水记录：
 
+总结出来有以下操作：
+- 1、拉取项目
+- 2、 运行`src/SARibbonBar/updateSARibbon.sh`拉取SARibbonBar
+- 3、运行3rdParty.pro
+- 4、运行sa.pro
+
+完成
+
+
 ### 1.拉取`SA`项目
 
 打开`gitbash`，`cd`到一个英文路径下，注意路径别有中文，敲入下面的脚本拉取`SA`
@@ -17,10 +26,11 @@ git clone https://github.com/czyt1988/sa.git
 
 ### 2.下载并构建第三方库
 
-目前第三方库的构建已经自动集成到`sa3rdParty.pro`,运行`sa3rdParty.pro`即可构建
+目前第三方库的构建已经自动集成到`sa3rdParty.pro`,运行`sa3rdParty.pro`即可构建,想了解详情可细看下面小点介绍
 
 - 1.下载`FFTW`库
 
+我已经把必要文件放置在`src/3rdParty/fftw`，此步骤可忽略
 打开网址`FFTW For Windows` : [http://www.fftw.org/install/windows.html](http://www.fftw.org/install/windows.html)
 下载对应的版本
 
@@ -30,6 +40,8 @@ git clone https://github.com/czyt1988/sa.git
 
 - 2.下载GSL库
 
+我已经把必要文件放置在`src/3rdParty/gsl`，此步骤可忽略
+
 `GSL For Window`人家也像我一样很贴心的把所有东西都打包好了，包括dll和lib文件，你都不用费劲自己编译，下载地址见:[GSL for windows](http://gnuwin32.sourceforge.net/packages/gsl.htm)
 
 `SA`把gsl相关文件放置在[./src/signAScience/gsl](https://github.com/czyt1988/sa/tree/master/src/signAScience/gsl)，包括头文件，lib文件，dll文件。
@@ -37,7 +49,7 @@ dll文件具体见[百度网盘-gsl文件](https://pan.baidu.com/s/1Y1xKO9eJELbF
 
 - 3.QWT库的构建
 
-为了省事，`SA`把`QWT`的源码都放置在[src/3rdParty/qwt/](https://github.com/czyt1988/sa/tree/master/src/3rdParty/qwt)中，这样不太好，以后考虑移除。
+为了省事，`SA`把`QWT`的源码都放置在[src/3rdParty/qwt/](https://github.com/czyt1988/sa/tree/master/src/3rdParty/qwt)中
 
 要编译`qwt`只需要用`Qt Creator`运行`src\3rdParty\qwt\qwt.pro`，点build，等待10分钟即可，若不做特殊处理，将会在目录`src\3rdParty`上生成一个build-qwt-xx文件夹：
 
@@ -53,7 +65,11 @@ dll文件具体见[百度网盘-gsl文件](https://pan.baidu.com/s/1Y1xKO9eJELbF
 
 - fftw:
 
-> src/signAScience/fftw/libfftw3-3.lib
+根据系统位数会加载下面的一个
+
+> src/3rdParty/fftw/fftw32/libfftw3-3.lib
+
+> src/3rdParty/fftw/fftw64/libfftw3-3.lib
 
 - gsl:
 
