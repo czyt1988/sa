@@ -21,7 +21,7 @@ QT += opengl
 QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+win32-msvc*:QMAKE_CXXFLAGS += /wd"4819" #忽略warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 
 TARGET = signA
 TEMPLATE = app

@@ -7,11 +7,10 @@
 # 因此，客户端和服务端的交互，使用tcp/ip协议，内容自我封装为json进行解析
 #
 #-------------------------------------------------
-message("")
-message("--------------SA Data Process Serve--------------------------")
+message("--------------SA Data Process Serve 进程处理服务--------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])
-
+win32-msvc*:QMAKE_CXXFLAGS += /wd"4819" #忽略warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 win32: QMAKE_CXXFLAGS_RELEASE -= -Zc:strictStrings
 win32: QMAKE_CFLAGS_RELEASE -= -Zc:strictStrings
 win32: QMAKE_CFLAGS -= -Zc:strictStrings

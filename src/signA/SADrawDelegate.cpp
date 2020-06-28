@@ -281,7 +281,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawLineWithWizard()
     case SAAddLineChartSetDialog::AddInNewSubplot:
     {
         SAFigureWindow* fig = getCurrentFigureWindow();
-        chart = fig->create2DSubPlot(0.5,0.5,0.4,0.4);
+        chart = fig->create2DSubPlot(0.5f,0.5f,0.4f,0.4f);
         chart->show();
         break;
     }
@@ -624,7 +624,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawScatterWithWizard()
     case SAAddLineChartSetDialog::AddInNewSubplot:
     {
         SAFigureWindow* fig = getCurrentFigureWindow();
-        chart = fig->create2DSubPlot(0.5,0.5,0.4,0.4);
+        chart = fig->create2DSubPlot(0.5f,0.5f,0.4f,0.4f);
         chart->show();
         break;
     }
@@ -1016,6 +1016,7 @@ QList<QwtPlotHistogram *> SADrawDelegate::drawHistogramWithWizard()
 
 QwtPlotHistogram *SADrawDelegate::drawHistogramWithWizard(SAAbstractDatas *boxSeries)
 {
+    //TODO
     QwtPlotHistogram* p = nullptr;
     return p;
 }
@@ -1142,6 +1143,7 @@ QList<QwtPlotCurve *> SADrawDelegate::drawBoxWithWizard()
 
 QwtPlotTradingCurve *SADrawDelegate::drawBoxWithWizard(SAAbstractDatas *boxSeries)
 {
+    //TODO
     QwtPlotTradingCurve* p = nullptr;
     return p;
 }

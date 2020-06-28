@@ -632,7 +632,6 @@ bool SAProjectManager::saveOneValue(const SAAbstractDatas *data,const QString &p
 ///
 void SAProjectManager::removeNonExistDatas(const QString &projectFullPath)
 {
-    SA_D(SAProjectManager);
     QString dataPath = getProjectDataFolderPath(projectFullPath);
     QDir dir(dataPath);
     if(!dir.exists())

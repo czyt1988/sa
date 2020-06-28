@@ -224,7 +224,7 @@ template<typename T>
 bool SATableData<T>::getColumnDatas(size_t col, SAVectorVariant *res)
 {
     int row = rowCount();
-    if(col >= columnCount())
+    if((int)col >= columnCount())
     {
         return false;
     }
@@ -238,7 +238,7 @@ template<typename T>
 bool SATableData<T>::getRowDatas(size_t row, SAVectorVariant *res)
 {
     int col = columnCount();
-    if(row >= rowCount())
+    if((int)row >= rowCount())
     {
         return false;
     }

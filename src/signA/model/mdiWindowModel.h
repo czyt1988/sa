@@ -90,7 +90,7 @@ public:
         else if(Qt::Vertical == orientation){//垂直表头
             return QVariant();
         }
-
+        return QVariant();
     }
     void connectMDIArea( QMdiArea* mdi){
         this->m_mdiArea = mdi;

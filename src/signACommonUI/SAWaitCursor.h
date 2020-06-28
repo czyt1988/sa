@@ -15,7 +15,7 @@ public:
 
 
 #ifndef SA_SET_AUTO_WAIT_CURSOR
-#define SA_SET_AUTO_WAIT_CURSOR \
+#define SA_SET_AUTO_WAIT_CURSOR() \
     SAWaitCursor __sa__wait__cursor;\
     Q_UNUSED(__sa__wait__cursor);
 #endif
