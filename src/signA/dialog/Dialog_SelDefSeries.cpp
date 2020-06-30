@@ -5,9 +5,9 @@
 Dialog_SelDefSeries::Dialog_SelDefSeries(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog_SelDefSeries)
-	,m_size(100)
-	,m_detal(1)
-	,m_start(0)
+    ,m_detal(1.0)
+    ,m_start(0.0)
+    ,m_size(100)
 {
     ui->setupUi(this);
 	connect(ui->doubleSpinBox_Start

@@ -5,7 +5,7 @@
 #include <QMainWindow>
 #include "SAFigureWindow.h"
 #include "mainwindow.h"
-#include "CurveSelectDialog.h" //图线选择窗口
+#include "SACurveSelectDialog.h" //图线选择窗口
 
 SAUI::SAUI(MainWindow* mainWnd)
     :m_mainWnd(mainWnd)
@@ -264,7 +264,7 @@ QList<QwtPlotItem *> SAUI::selectPlotItems(SAChart2D *chart, const QSet<int> &fi
     {
         return res;
     }
-    CurveSelectDialog dlg(chart,getMainWindowPtr ());
+    SACurveSelectDialog dlg(chart,getMainWindowPtr ());
     dlg.setItemFilter(filter);
     if(QDialog::Accepted == dlg.exec())
     {

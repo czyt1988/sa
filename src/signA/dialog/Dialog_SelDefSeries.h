@@ -20,11 +20,11 @@ private slots:
 	void valueChanged_start(double d);
 	void valueChanged_detal(double d);
 private:
+    void refleshView();
     Ui::Dialog_SelDefSeries *ui;
 	double m_detal;
 	double m_start;
 	const size_t m_size;
-	void refleshView();
 };
 
 #endif // DIALOG_SELDEFSERIES_H

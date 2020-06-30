@@ -5,7 +5,7 @@
 
 //#include <SAPlotChart.h>
 #include "SAChart2D.h"
-#include "CurveSelectDialog.h"
+#include "SACurveSelectDialog.h"
 //#include <SAChartWidget.h>
 #include "SAFigureWindow.h"
 #include "SAValueManagerModel.h"

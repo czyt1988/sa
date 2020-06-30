@@ -10,8 +10,8 @@
 #include "SACsvStream.h"
 SATabValueViewerWidget::SATabValueViewerWidget(QWidget *parent):
     QTabWidget(parent)
-  ,m_count(0)
   ,m_menuTab(nullptr)
+  ,m_count(0)
 {
     setTabsClosable(true);
 

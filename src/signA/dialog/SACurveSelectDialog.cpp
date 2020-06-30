@@ -1,4 +1,4 @@
-﻿#include "CurveSelectDialog.h"
+﻿#include "SACurveSelectDialog.h"
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #include <algorithm>
@@ -9,7 +9,7 @@
 #define ROLE_PTR Qt::UserRole
 
 
-void CurveSelectDialog::UI::setupUi(CurveSelectDialog *d)
+void SACurveSelectDialog::UI::setupUi(SACurveSelectDialog *d)
 {
     if (d->objectName().isEmpty())
         d->setObjectName(("CurveSelectDialog"));
@@ -52,10 +52,10 @@ void CurveSelectDialog::UI::setupUi(CurveSelectDialog *d)
     QMetaObject::connectSlotsByName(d);
 }
 
-CurveSelectDialog::CurveSelectDialog(SAChart2D *chart , QWidget *parent) :
+SACurveSelectDialog::SACurveSelectDialog(SAChart2D *chart , QWidget *parent) :
     QDialog(parent)
-	,m_chart(chart)
-    ,ui(new CurveSelectDialog::UI)
+    ,ui(new SACurveSelectDialog::UI)
+    ,m_chart(chart)
 {
     ui->setupUi(this);
 
@@ -77,7 +77,7 @@ CurveSelectDialog::CurveSelectDialog(SAChart2D *chart , QWidget *parent) :
 
 }
 
-CurveSelectDialog::~CurveSelectDialog()
+SACurveSelectDialog::~SACurveSelectDialog()
 {
 
 }
@@ -93,7 +93,7 @@ CurveSelectDialog::~CurveSelectDialog()
 /// SAPlotItem::Rtti_PlotMultiBarChart
 /// SAPlotItem::Rtti_PlotMultiBarChart;
 ///
-void CurveSelectDialog::setItemFilter(const QSet<int> &filters)
+void SACurveSelectDialog::setItemFilter(const QSet<int> &filters)
 {
     m_itemFilter = filters;
     updateTable();
@@ -102,7 +102,7 @@ void CurveSelectDialog::setItemFilter(const QSet<int> &filters)
 /// \brief 获取设置的条目过滤
 /// \return
 ///
-QSet<int> CurveSelectDialog::getItemFilter() const
+QSet<int> SACurveSelectDialog::getItemFilter() const
 {
     return m_itemFilter;
 }
@@ -112,10 +112,10 @@ QSet<int> CurveSelectDialog::getItemFilter() const
 /// \param parent 对话框的父窗口
 /// \return 返回选中的条目，如果点击了取消，返回一个空的list
 ///
-QList<QwtPlotCurve *> CurveSelectDialog::getSelCurve(SAChart2D *chart, QWidget *par)
+QList<QwtPlotCurve *> SACurveSelectDialog::getSelCurve(SAChart2D *chart, QWidget *par)
 {
     QList<QwtPlotCurve *> res;
-    CurveSelectDialog dlg(chart,par);
+    SACurveSelectDialog dlg(chart,par);
     dlg.setItemFilter({QwtPlotItem::Rtti_PlotCurve});
     if(QDialog::Accepted == dlg.exec())
     {
@@ -130,10 +130,16 @@ QList<QwtPlotCurve *> CurveSelectDialog::getSelCurve(SAChart2D *chart, QWidget *
     return res;
 }
 
-QList<QwtPlotItem *> CurveSelectDialog::getSelectChartPlotItems(SAChart2D *chart, QWidget *par)
+/**
+ * @brief 获取所有曲线条目
+ * @param chart
+ * @param par
+ * @return
+ */
+QList<QwtPlotItem *> SACurveSelectDialog::getSelectChartPlotItems(SAChart2D *chart, QWidget *par)
 {
     QList<QwtPlotItem *> res;
-    CurveSelectDialog dlg(chart,par);
+    SACurveSelectDialog dlg(chart,par);
     dlg.setItemFilter(SAChart2D::getPlotItemsRTTI().toSet());
     if(QDialog::Accepted == dlg.exec())
     {
@@ -151,7 +157,7 @@ QList<QwtPlotItem *> CurveSelectDialog::getSelectChartPlotItems(SAChart2D *chart
 ///
 /// \brief 根据设定的filter显示条目
 ///
-void CurveSelectDialog::updateTable()
+void SACurveSelectDialog::updateTable()
 {
     QStandardItemModel * model = getTableModel();
     if(nullptr == model)
@@ -185,7 +191,7 @@ void CurveSelectDialog::updateTable()
     });
 }
 
-QStandardItemModel* CurveSelectDialog::getTableModel()
+QStandardItemModel* SACurveSelectDialog::getTableModel()
 {
     return static_cast<QStandardItemModel*>(ui->tableView->model());
 }
@@ -193,7 +199,7 @@ QStandardItemModel* CurveSelectDialog::getTableModel()
 /// \brief 根据过滤条件获取items
 /// \return
 ///
-QList<QwtPlotItem *> CurveSelectDialog::getFilterItems()
+QList<QwtPlotItem *> SACurveSelectDialog::getFilterItems()
 {
     QList<QwtPlotItem*> items = m_chart->itemList();
     QList<QwtPlotItem*> filterItem;
@@ -207,7 +213,7 @@ QList<QwtPlotItem *> CurveSelectDialog::getFilterItems()
 }
 
 
-void CurveSelectDialog::on_pushButton_ok_clicked()
+void SACurveSelectDialog::on_pushButton_ok_clicked()
 {
 	QItemSelectionModel *sel = ui->tableView->selectionModel();
 	QModelIndexList indexList = sel->selectedRows();

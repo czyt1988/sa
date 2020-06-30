@@ -21,8 +21,7 @@ QT += opengl
 QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-win32-msvc*:QMAKE_CXXFLAGS += /wd"4819" #忽略warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-
+win32-msvc*:QMAKE_CXXFLAGS += /wd"4819" #忽略warning C4819: 该文件包含不能在当前代码CP936)中表示的字符。请将该文件保存Unicode 格式以防止数据丢
 TARGET = signA
 TEMPLATE = app
 CONFIG += c++11
@@ -33,13 +32,12 @@ INCLUDEPATH += $$PWD
 SOURCES += main.cpp\
     mainwindow.cpp \
     progressStateWidget.cpp \
-    AboutDialog.cpp \   
+    AboutDialog.cpp \
     SAThemeManager.cpp \
     SATabValueViewerWidget.cpp \
     SADrawDelegate.cpp \
     SAMainWindowDelegate.cpp \
     SAInformationStatusWidget.cpp \
-    CurveSelectDialog.cpp \
     SAPluginManager.cpp \
     SAUI.cpp \
     MainWindowPrivate.cpp \
@@ -57,7 +55,6 @@ HEADERS  += mainwindow.h \
     SAMainWindowDelegate.h \
     SAInformationStatusWidget.h \
     QtPropertyIdStorage.h \
-    CurveSelectDialog.h \
     SAPluginManager.h \
     SAUI.h \
     SAResourDefine.h \

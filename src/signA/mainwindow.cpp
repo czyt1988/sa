@@ -36,7 +36,7 @@
 //----------SA--------------
 
 // |------Dialog------------
-#include "CurveSelectDialog.h"
+#include "SACurveSelectDialog.h"
 #include "SAProjectInfomationSetDialog.h"
 #include "SAAddCurveTypeDialog.h"
 
@@ -1594,7 +1594,7 @@ void MainWindow::onActionChartMoveDataInSelectionRegion(bool on)
             saAddLog("Selection Region Datas Move");
             if(!chart->isCurrentSelectItemsHaveChartItem())
             {
-                QList<QwtPlotItem*> selCur = CurveSelectDialog::getSelectChartPlotItems(chart,this);
+                QList<QwtPlotItem*> selCur = SACurveSelectDialog::getSelectChartPlotItems(chart,this);
                 chart->setCurrentSelectItems(selCur);
             }
             raiseMainDock();
@@ -2056,7 +2056,7 @@ void MainWindow::onActionChartRemoveInRangDataTriggered()
 
     if(!chart->isCurrentSelectItemsHaveChartItem())
     {
-        QList<QwtPlotItem*> selItems = CurveSelectDialog::getSelectChartPlotItems(chart,this);
+        QList<QwtPlotItem*> selItems = SACurveSelectDialog::getSelectChartPlotItems(chart,this);
         if(selItems.isEmpty())
         {
             return;
@@ -2581,7 +2581,7 @@ void MainWindow::onActionPickCurveToDataTriggered()
         showWarningMessageInfo(tr("you should select a figure window"));
         return;
     }
-    QList<QwtPlotCurve*> curs = CurveSelectDialog::getSelCurve(chart,this);
+    QList<QwtPlotCurve*> curs = SACurveSelectDialog::getSelCurve(chart,this);
     if(curs.size()==0)
         return;
     PickCurveDataModeSetDialog pcDlg(this);

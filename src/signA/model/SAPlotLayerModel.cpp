@@ -229,9 +229,7 @@ QModelIndexList SAPlotLayerModel::getIndexFromPlotItems(const QList<QwtPlotItem 
 
 QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) const
 {
-	const int rtti = item->rtti();
     QColor c = SAChart2D::getItemColor(item);
-
     if(alpha<255)
 		c.setAlpha(alpha);
     return c;
