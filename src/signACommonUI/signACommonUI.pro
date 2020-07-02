@@ -15,15 +15,16 @@ TEMPLATE = lib
 CONFIG += dll
 CONFIG(debug, debug|release){
     DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
+    DEPENDPATH += $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
 }else {
     DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
+    DEPENDPATH += $$PWD/../bin_qt$$[QT_VERSION]_release/libs
 }
 
 CONFIG += c++11
-QWT_CONFIG += QwtDll
 DEFINES += SA_COMMON_UI_MAKE #make dll
 DEFINES += SA_COMMON_UI_USE_DYNAMIC #定义使用dynamic_cast 而不是rtti
-DEPENDPATH += ../bin/lib
+
 #czy
 #sa util
 include($$PWD/../signAUtil/signAUtil.pri)

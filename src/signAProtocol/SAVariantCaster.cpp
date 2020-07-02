@@ -461,6 +461,7 @@ QVariant SAVariantCaster::stringToVariant(const QString &var, const QString &typ
                 ,list[8].toDouble(),list[9].toDouble(),list[10].toDouble(),list[11].toDouble()
                 ,list[12].toDouble(),list[13].toDouble(),list[14].toDouble(),list[15].toDouble()
                 );
+        return d;
     }
     case QVariant::Palette:
     {

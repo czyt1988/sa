@@ -28,7 +28,7 @@ std::shared_ptr<SAVariantDatas> saFun::mean(SAAbstractDatas* data)
     if(!SADataConver::converToDoubleVector(data,vd))
     {
         setErrorString(TR("data can not conver to double vector"));
-        return false;
+        return nullptr;
     }
     double meanData = SA::mean(vd.begin(),vd.end());
     return SAValueManager::makeData<SAVariantDatas>(meanData);

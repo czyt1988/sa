@@ -23,11 +23,6 @@ include($$PWD/../../signALib/signALib.pri)
 include($$PWD/../../signACoreFun/signACoreFun.pri)
 include($$PWD/../../signACommonUI/signACommonUIWith3thLib.pri)
 include($$PWD/../../3rdParty/qtpropertybrowser/propertybrowser.pri)
-#sa chart support
-#include($$PWD/../../signAChart/signAChart.pri)
-
-#czy qt api support
-
 include($$PWD/../../signAUtil/signAUtil.pri)
 include($$PWD/../../signAScience/signAScience.pri)
 DEFINES += SA_COMMON_PLUGIN_LIB_MAKE#创建插件必须添加此宏
