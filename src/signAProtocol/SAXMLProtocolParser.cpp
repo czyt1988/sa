@@ -348,7 +348,7 @@ QDomElement SAXMLProtocolParserPrivate::setValue(const QString &keyName, const Q
         QList<QVariant> l = var.toList();
         for (auto i = l.begin();i!=l.end();++i)
         {
-            setValue(QString::null,*i,item);
+            setValue(QString(),*i,item);
         }
     }
     else if (0 == QString::compare(vartype,SA_XML_VAR_ARR_MAP,Qt::CaseInsensitive))
@@ -372,7 +372,7 @@ QDomElement SAXMLProtocolParserPrivate::setValue(const QString &keyName, const Q
         QStringList l = var.toStringList();
         for (auto i = l.begin();i!=l.end();++i)
         {
-            setValue(QString::null,*i,item);
+            setValue(QString(),*i,item);
         }
     }
     else
