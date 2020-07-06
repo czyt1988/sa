@@ -10,8 +10,8 @@ CONFIG(debug, debug|release){
 }
 include($$PWD/../signAChart/signAChart.pri)
 
-# user need add 
+#qwt
 include($$PWD/../3rdParty/qwt/qwt_set.pri)
 
-# 需要在pro中添加
-#include($$[QT_INSTALL_PREFIX]/../Src/qttools/src/shared/qtpropertybrowser/qtpropertybrowser.pri)
+#propertybrowser
+include($$PWD/../3rdParty/qtpropertybrowser/propertyBrowser.pri)

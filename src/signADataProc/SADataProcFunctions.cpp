@@ -5,19 +5,19 @@
 #include "SATcpDataProcessClient.h"
 #include "SAServerDefine.h"
 // 简化的XMLDataPtr的创建
-SASession::XMLDataPtr createXMLDataPtr(int funid);
-SASession::XMLDataPtr createXMLDataPtr(int funid,SASession::XMLDataPtr reqxml);
+SASocketHandle::XMLDataPtr createXMLDataPtr(int funid);
+SASocketHandle::XMLDataPtr createXMLDataPtr(int funid,SASocketHandle::XMLDataPtr reqxml);
 
-SASession::XMLDataPtr createXMLDataPtr(int funid)
+SASocketHandle::XMLDataPtr createXMLDataPtr(int funid)
 {
-    SASession::XMLDataPtr res = SASession::makeXMLDataPtr();
+    SASocketHandle::XMLDataPtr res = SASocketHandle::makeXMLDataPtr();
     res->setClassID(SA::ProtocolTypeXml);
     res->setFunctionID(funid);
     return res;
 }
-SASession::XMLDataPtr createXMLDataPtr(int funid,SASession::XMLDataPtr reqxml)
+SASocketHandle::XMLDataPtr createXMLDataPtr(int funid,SASocketHandle::XMLDataPtr reqxml)
 {
-    SASession::XMLDataPtr res = SASession::makeXMLDataPtr();
+    SASocketHandle::XMLDataPtr res = SASocketHandle::makeXMLDataPtr();
     res->setClassID(SA::ProtocolTypeXml);
     res->setFunctionID(funid);
     QVariant key = reqxml->getDefaultGroupValue("key");

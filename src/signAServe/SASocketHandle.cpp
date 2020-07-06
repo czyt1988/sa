@@ -1,29 +1,27 @@
-#include "SASession.h"
+#include "SASocketHandle.h"
 #include <QMap>
 #include "SAServeHandleFun.h"
 #include "SAServerDefine.h"
 #include "SAXMLProtocolParser.h"
 
-class SASessionPrivate
+
+
+class SASocketHandlePrivate
 {
 public:
-    SA_IMPL_PUBLIC(SASession)
-    SASessionPrivate(SASession* p,SATcpSocket *socket);
-    bool dealXmlRequestToken(const SAProtocolHeader &header,SASession::XMLDataPtr xml );
+    SA_IMPL_PUBLIC(SASocketHandle)
+    SASocketHandlePrivate(SASocketHandle* p);
+    bool dealXmlRequestToken(const SAProtocolHeader &header,SASocketHandle::XMLDataPtr xml );
 public:
-    SATcpSocket* m_socket;
+    SATcpSocket* mSocket;
 };
 
-SASessionPrivate::SASessionPrivate(SASession *p, SATcpSocket *socket):q_ptr(p)
-  ,m_socket(socket)
+SASocketHandlePrivate::SASocketHandlePrivate(SASocketHandle *p):q_ptr(p)
+  ,mSocket(nullptr)
 {
-    if (p != socket->parent())
-    {
-        socket->setParent(p);
-    }
 }
 
-bool SASessionPrivate::dealXmlRequestToken(const SAProtocolHeader &header, SASession::XMLDataPtr xml)
+bool SASocketHandlePrivate::dealXmlRequestToken(const SAProtocolHeader &header, SASocketHandle::XMLDataPtr xml)
 {
     int pid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"pid",0).toInt();
     QString appid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"appid","").toString();
@@ -33,29 +31,57 @@ bool SASessionPrivate::dealXmlRequestToken(const SAProtocolHeader &header, SASes
     reply.setClassID(SA::ProtocolTypeXml);
     reply.setFunctionID(SA::ProtocolFunReplyToken);
     reply.setValue("token",token);
-    return SA::write_xml_protocol(m_socket,&reply,SA::ProtocolFunReplyToken,header.sequenceID,header.extendValue);
+    return SA::write_xml_protocol(mSocket,&reply,SA::ProtocolFunReplyToken,header.sequenceID,header.extendValue);
 }
+
+
+
+SAAbstractSocketHandle::SAAbstractSocketHandle(QObject *par):QObject(par)
+{
+
+}
+
+SAAbstractSocketHandle::~SAAbstractSocketHandle()
+{
+
+}
+
 
 /**
  * @brief socket的生命周期由section管理,且socket的父对象会设置为section
  * @param socket
  * @param par
  */
-SASession::XMLDataPtr SASession::makeXMLDataPtr()
+SASocketHandle::XMLDataPtr SASocketHandle::makeXMLDataPtr()
 {
     return std::make_shared<SAXMLProtocolParser>();
 }
 
-SASession::SASession(SATcpSocket *socket, QObject *par):QObject(par)
-  ,d_ptr(new SASessionPrivate(this,socket))
+SASocketHandle::SASocketHandle(QObject *par):SAAbstractSocketHandle(par)
+  ,d_ptr(new SASocketHandlePrivate(this))
 {
-    connect(socket,&SATcpSocket::receivedData,this,&SASession::onReceivedSocketData);
-    connect(socket,&QAbstractSocket::disconnected, this, &SASession::onSocketDisconnected);
+
 }
 
-SASession::~SASession()
+SASocketHandle::~SASocketHandle()
 {
 
+}
+
+/**
+ * @brief 设置socket
+ * @param s
+ */
+void SASocketHandle::setSocket(SATcpSocket *s)
+{
+    if(d_ptr->mSocket)
+    {
+        disconnect(s,&SATcpSocket::receivedData,this,&SASocketHandle::onRecSocketData);
+        disconnect(s,&QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
+    }
+    d_ptr->mSocket = s;
+    connect(s,&SATcpSocket::receivedData,this,&SASocketHandle::onRecSocketData);
+    connect(s,&QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
 }
 
 
@@ -65,18 +91,17 @@ SASession::~SASession()
  * @param data
  * @return
  */
-bool SASession::write(const SAProtocolHeader &header, const QByteArray &data)
+void SASocketHandle::ensureWrite(const SAProtocolHeader &header, const QByteArray &data)
 {
     if(getSocket())
     {
-        return SA::write(header,data,getSocket());
+        getSocket()->ensureWrite(header,data);
     }
-    return false;
 }
 
-SATcpSocket *SASession::getSocket() const
+SATcpSocket *SASocketHandle::getSocket() const
 {
-    return d_ptr->m_socket;
+    return d_ptr->mSocket;
 }
 
 /**
@@ -89,7 +114,7 @@ SATcpSocket *SASession::getSocket() const
  *
  * @note 此函数默认会调用dealResult，重写时，需要注意
  */
-bool SASession::deal(const SAProtocolHeader &header, const QByteArray &data)
+void SASocketHandle::onRecSocketData(const SAProtocolHeader &header, const QByteArray &data)
 {
     switch (header.protocolTypeID) {
     case SA::ProtocolTypeHeartbreat:
@@ -102,7 +127,8 @@ bool SASession::deal(const SAProtocolHeader &header, const QByteArray &data)
         replyheader.protocolTypeID = SA::ProtocolTypeHeartbreat;
         replyheader.protocolFunID = SA::ProtocolFunReplyHeartbreat;
         replyheader.extendValue = 0; // 心跳返回给客户端，此时值为0
-        return write(replyheader,QByteArray());
+        ensureWrite(replyheader,QByteArray());
+        break;
     }
     case SA::ProtocolTypeXml:
     {
@@ -110,15 +136,15 @@ bool SASession::deal(const SAProtocolHeader &header, const QByteArray &data)
         XMLDataPtr xml = makeXMLDataPtr();
         if(!xml->fromByteArray(data))
         {
-            emit sectionError(InvalidXmlProtocol,tr("Invalid Xml Protocol"));
-            return false;
+            emit error(ErrorInvalidXmlProtocol,tr("Invalid Xml Protocol"));
+            return;
         }
-        return dealXmlProtocol(header,xml);
+        dealXmlProtocol(header,xml);
+        return;
     }
     default:
         break;
     }
-    return false;
 }
 
 /**
@@ -127,7 +153,7 @@ bool SASession::deal(const SAProtocolHeader &header, const QByteArray &data)
  * @param xml
  * @return
  */
-bool SASession::dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml)
+bool SASocketHandle::dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml)
 {
     switch (header.protocolFunID)
     {
@@ -140,15 +166,9 @@ bool SASession::dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml)
 }
 
 
-void SASession::onReceivedSocketData(const SAProtocolHeader &header, const QByteArray &data)
+void SASocketHandle::onSocketDisconnected()
 {
-    //生产者
-    deal(header,data);
 }
 
-void SASession::onSocketDisconnected()
-{
-    emit socketDisconnected();
-}
 
 

@@ -4,7 +4,7 @@
 #include <QQueue>
 #include <memory>
 #include "SAProtocolHeader.h"
-#include "SASession.h"
+#include "SASocketHandle.h"
 class SADataProcSession;
 /**
  * @brief 数据分析用的runable
@@ -15,16 +15,16 @@ class SADataStatisticRunable : public QRunnable
 public:
     SADataStatisticRunable(std::weak_ptr<SADataProcSession> session,
                            const SAProtocolHeader &header,
-                           SASession::XMLDataPtr xml);
+                           SASocketHandle::XMLDataPtr xml);
     //设置值
-    void setDatas(std::weak_ptr<SADataProcSession> session,const SAProtocolHeader &header,SASession::XMLDataPtr xml);
+    void setDatas(std::weak_ptr<SADataProcSession> session,const SAProtocolHeader &header,SASocketHandle::XMLDataPtr xml);
     //2维点的数据描述，计算和、均值、方程等，同时包含最大最小值
     void setup2DPointsDescribe();
 public:
     void run() override;
 protected:
      void run2DPointsDescribe();
-     void write(SASession::XMLDataPtr xml, int funid);
+     void write(SASocketHandle::XMLDataPtr xml, int funid);
 private:
     enum RunFun{
         TwoDPointsDescribe ///< 对应setup2DPointsDescribe
@@ -32,7 +32,7 @@ private:
     QQueue<RunFun> m_step;
     std::weak_ptr<SADataProcSession> m_session;
     SAProtocolHeader m_header;
-    SASession::XMLDataPtr m_xml;
+    SASocketHandle::XMLDataPtr m_xml;
 };
 
 #endif // SADATASTATISTICRUNABLE_H

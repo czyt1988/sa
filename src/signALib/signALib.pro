@@ -24,13 +24,14 @@ CONFIG(debug, debug|release){
 CONFIG += c++11
 
 HEADERS += \
-    /../global/SAGlobals.h \
+    $$PWD/../global/SAGlobals.h \
     SAData.h \
     SADataPackage.h \
     SAItem.h \
     SALibGlobal.h \
     SAPoint.h \
     SATable.h \
+    SAThreadPool.h \
     SAValueManager.h \
     SAValueManagerModel.h \
     SARandColorMaker.h \
@@ -53,6 +54,7 @@ SOURCES += \
     SADataPackage.cpp \
     SAItem.cpp \
     SAPoint.cpp \
+    SAThreadPool.cpp \
     SAValueManager.cpp \
     SAValueManagerModel.cpp \
     SARandColorMaker.cpp \

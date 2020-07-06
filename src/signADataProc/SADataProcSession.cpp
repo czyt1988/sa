@@ -4,12 +4,12 @@
 #include <QThreadPool>
 #include "runnable/SADataStatisticRunable.h"
 
-SASession *createDataProcSession(SATcpSocket *socket, QObject *p)
+SASocketHandle *createDataProcSession(SATcpSocket *socket, QObject *p)
 {
     return new SADataProcSession(socket,p);
 }
 
-SADataProcSession::SADataProcSession(SATcpSocket *socket, QObject *p) : SASession(socket,p)
+SADataProcSession::SADataProcSession(SATcpSocket *socket, QObject *p) : SASocketHandle(socket,p)
 {
 
 }
@@ -21,7 +21,7 @@ SADataProcSession::~SADataProcSession()
 
 bool SADataProcSession::deal(const SAProtocolHeader &header, const QByteArray &data)
 {
-    if(SASession::deal(header,data))
+    if(SASocketHandle::deal(header,data))
     {
         return true;
     }
@@ -31,7 +31,7 @@ bool SADataProcSession::deal(const SAProtocolHeader &header, const QByteArray &d
 
 bool SADataProcSession::dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml)
 {
-    if(SASession::dealXmlProtocol(header,xml))
+    if(SASocketHandle::dealXmlProtocol(header,xml))
     {
         return true;
     }
@@ -56,7 +56,7 @@ bool SADataProcSession::dealXmlProtocol(const SAProtocolHeader &header, XMLDataP
 bool SADataProcSession::safe_write(const SAProtocolHeader &header, const QByteArray &data)
 {
     QMutexLocker lock(&m_writemutex);
-    return SASession::write(header,data);
+    return SASocketHandle::write(header,data);
 }
 
 
@@ -68,7 +68,7 @@ bool SADataProcSession::safe_write(const SAProtocolHeader &header, const QByteAr
  * @param xml xml信息
  * @return
  */
-bool SADataProcSession::deal2DPointsDescribe(const SAProtocolHeader &header, SASession::XMLDataPtr xml)
+bool SADataProcSession::deal2DPointsDescribe(const SAProtocolHeader &header, SASocketHandle::XMLDataPtr xml)
 {
     qDebug() << QStringLiteral("开始执行deal2DPointsDescribe") << xml->toString();
     SADataStatisticRunable* runnable = new SADataStatisticRunable(shared_from_this(),header,xml);
