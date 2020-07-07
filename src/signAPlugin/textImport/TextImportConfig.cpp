@@ -309,7 +309,7 @@ QString TextImportConfig::getRawRow(int row)
 {
     if(!m_parser->isValid())
     {
-        return QString::null;
+        return QString();
     }
     qint64 prePos = m_parser->pos();
     m_parser->seek(0);

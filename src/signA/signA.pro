@@ -3,7 +3,6 @@
 # Project created by QtCreator 2013-07-10T22:16:43
 #
 #-------------------------------------------------
-message("")
 message("--------------SA---------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])

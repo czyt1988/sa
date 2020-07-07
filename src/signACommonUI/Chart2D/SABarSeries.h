@@ -7,9 +7,9 @@ class SAAbstractDatas;
 class SA_COMMON_UI_EXPORT SABarSeries : public QwtPlotBarChart,public SASeriesAndDataPtrMapper
 {
 public:
-    explicit SABarSeries(const QString &title = QString::null);
+    explicit SABarSeries(const QString &title = QString());
     explicit SABarSeries( const QwtText &title );
-    explicit SABarSeries(SAAbstractDatas* intData,const QString &title = QString::null);
+    explicit SABarSeries(SAAbstractDatas* intData,const QString &title = QString());
     using QwtPlotBarChart::setSamples;
     bool setSamples(SAAbstractDatas* intData);
 };

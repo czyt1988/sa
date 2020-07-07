@@ -8,7 +8,7 @@ class SAAbstractDatas;
 class SA_COMMON_UI_EXPORT SAIntervalSeries : public QwtPlotIntervalCurve
 {
 public:
-    explicit SAIntervalSeries( const QString &title = QString::null );
+    explicit SAIntervalSeries( const QString &title = QString() );
     explicit SAIntervalSeries( const QwtText &title );
     explicit SAIntervalSeries(const QString &title,SAAbstractDatas* intervalVal);
     //跨域重载

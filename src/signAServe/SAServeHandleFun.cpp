@@ -305,7 +305,7 @@ void write_variant_to_xml_item(QXmlStreamWriter& xml,const QString& name,const Q
         QList<QVariant> l = value.toList();
         for (auto i = l.begin();i!=l.end();++i)
         {
-            write_variant_to_xml_item(xml,QString::null,*i);
+            write_variant_to_xml_item(xml,QString(),*i);
         }
     }
     else if (0 == QString::compare(vartype,SA_XML_VAR_ARR_MAP,Qt::CaseInsensitive))
@@ -329,7 +329,7 @@ void write_variant_to_xml_item(QXmlStreamWriter& xml,const QString& name,const Q
         QStringList l = value.toStringList();
         for (auto i = l.begin();i!=l.end();++i)
         {
-            write_variant_to_xml_item(xml,QString::null,*i);
+            write_variant_to_xml_item(xml,QString(),*i);
         }
     }
     else

@@ -15,7 +15,7 @@ public:
         ,YValueMarker ///< y值标记，水平线
         ,UserDefineMarker = 0x100///<用户自定义
     };
-    SAAbstractPlotMarker(const QString &title=QString::null);
+    SAAbstractPlotMarker(const QString &title=QString());
     SAAbstractPlotMarker(const QwtText &title);
     virtual ~SAAbstractPlotMarker();
     virtual int markerType() const = 0;
@@ -26,7 +26,7 @@ public:
 class SA_CHART_EXPORT SAPointMarker : public SAAbstractPlotMarker
 {
 public:
-    SAPointMarker(const QString &title=QString::null);
+    SAPointMarker(const QString &title=QString());
     SAPointMarker(const QwtText &title);
     SAPointMarker(const QPointF &point);
     virtual ~SAPointMarker();
@@ -41,7 +41,7 @@ public:
 class SA_CHART_EXPORT SAYValueMarker : public SAAbstractPlotMarker
 {
 public:
-    SAYValueMarker(const QString &title=QString::null);
+    SAYValueMarker(const QString &title=QString());
     SAYValueMarker(const QwtText &title);
     SAYValueMarker(const double &value);
     virtual ~SAYValueMarker();

@@ -7,7 +7,7 @@ class SAAbstractDatas;
 class SA_COMMON_UI_EXPORT SAScatterSeries : public SAXYSeries
 {
 public:
-    explicit SAScatterSeries( const QString &title = QString::null );
+    explicit SAScatterSeries( const QString &title = QString() );
     explicit SAScatterSeries( const QwtText &title );
     explicit SAScatterSeries(const QString &title,SAAbstractDatas* dataPoints);
     //跨域重载

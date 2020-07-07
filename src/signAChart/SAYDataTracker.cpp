@@ -88,7 +88,7 @@ QString SAYDataTracker::curveInfoAt(const QwtPlotCurve *curve, const QPointF &po
 {
     const QLineF line = curveLineAt( curve, pos.x() );
     if ( line.isNull() )
-        return QString::null;
+        return QString();
 
     const double y = line.pointAt(
         ( pos.x() - line.p1().x() ) / line.dx() ).y();
@@ -135,7 +135,7 @@ QString SAYDataTracker::barInfoAt(const QwtPlotBarChart *bar, const QPointF &pos
     const double y = barValueAt( bar, pos.x() );
     if(y == std::numeric_limits<double>::min())
     {
-        return QString::null;
+        return QString();
     }
     QColor clr = bar->symbol()->palette().color(QPalette::Button);
     QString info( "<font color=""%1"">%2</font>" );
