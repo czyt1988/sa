@@ -107,6 +107,7 @@ void SAFigureLayoutWidget::updateCurrentChart()
 {
     if(nullptr == m_figure)
     {
+        ui->comboBoxCurrentChart->clear();//清空combox内容
         m_layoutModel->setPlot(nullptr);
         return;
     }

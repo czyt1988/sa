@@ -1907,6 +1907,10 @@ void MainWindow::onActionFigureEditSubPlotGeometryTriggered(bool on)
     {
         fig->enableSubWindowEditMode(on);
     }
+    else
+    {
+        ui->actionFigureEditSubPlotGeometry->setChecked(false);
+    }
 }
 
 
