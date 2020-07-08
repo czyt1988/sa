@@ -159,7 +159,9 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
         if(clrDlg.exec() == QDialog::Accepted)
         {
             QColor newClr = clrDlg.selectedColor();
+            //在模型中设置颜色
             model->setData (index,newClr,Qt::BackgroundColorRole);
+            //通知其他界面颜色变更
             emit itemColorChanged(plot,item,newClr);
         }
     }

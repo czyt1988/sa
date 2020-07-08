@@ -38,6 +38,8 @@ public:
     };
     //更加强制的replot，就算设置为不实时刷新也能实现重绘
     void replot(QwtPlot* chart);
+    //根据筛选set获取item list
+    static QwtPlotItemList filterPlotItem(const QwtPlot* chart,const QSet<int>& enableRtti);
     //获取当前正在显示的区域
     static QRectF getVisibleRegionRang(QwtPlot* chart);
     //获取当前正在显示的区域
@@ -56,6 +58,7 @@ public:
   ////////////////////// rtti 操作//////////////////////////////
     //通过rtti获取item的颜色
     static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultColor = Qt::black);
+    static void setItemColor(QwtPlotItem *item, const QColor& color);
     //通过rtti获取可绘图的item，
     static QwtPlotItemList getPlotChartItemList(const QwtPlot* chart);
     //通过rtti判断是否是绘图item
@@ -64,8 +67,6 @@ public:
     static QwtPlotItemList getXYSeriesItemList(const QwtPlot* chart);
     //通过rtti判断是否是XY series item
     static bool checkIsXYSeriesItem(const QwtPlotItem *item);
-    //通过rtti获取plot chart item的数据点数，如果不是plot chart item,返回-1
-    static int getPlotChartItemDataCount(const QwtPlotItem* item);
     //通过rtti获取所有plot的数据范围，并做并集
     static void dataRange(const QwtPlot* chart, QwtInterval *yLeft, QwtInterval *yRight, QwtInterval *xBottom, QwtInterval *xTop);
 ////////////////////// 坐标变换相关操作//////////////////////////////
@@ -131,6 +132,9 @@ public:
     ///
     template<typename T>
     static void getSeriesData(QVector<T>& vec, const QwtSeriesStore<T>* series,int startIndex,int endIndex);
+
+    //获取item的数据
+    static int getItemDataSize(const QwtPlotItem* item);
 
     //获取一个曲线的xy值
     static void getXYDatas(const QVector<QPointF>& xys, QVector<double>* xs, QVector<double>* ys);

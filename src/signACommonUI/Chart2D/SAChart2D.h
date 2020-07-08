@@ -48,13 +48,6 @@ public:
     //获取所有xy点的绘图条目包括QwtPlotCurve和SAXYSeries,SABarSeries,QwtBarChart
     static QwtPlotItemList getPlotXYSeriesItemList(const QwtPlot* chart);
 #endif
-    //根据筛选set获取item list
-    static QwtPlotItemList filterPlotItem(const QwtPlot* chart,const QSet<int>& enableRtti);
-    //获取item的颜色,无法获取单一颜色就返回QColor()
-    static QColor getItemColor(const QwtPlotItem *item,const QColor& defaultClr = QColor(0,0,0));
-    //获取item的数据个数，-1为nan
-    static int getItemDataSize(const QwtPlotItem* item);
-
     //根据曲线的size获取曲线的宽度，此函数结果通过setThinLineWidthPointSize设置
     static int getPlotCurWidth(int size);
     //设置细线画笔点数阈值，若大于这个值，默认画图的画笔将会为1，此函数设置会影响getPlotCurWidth函数结果

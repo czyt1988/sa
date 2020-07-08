@@ -15,6 +15,7 @@
 //#include <SAChart.h>
 #include <SAPlotMarker.h>
 #include "SAResourDefine.h"
+#include "SAChart.h"
 
 #define COLUMN_COUNT 4
 SAPlotLayerModel::SAPlotLayerModel(QObject * parent):QAbstractTableModel(parent)
@@ -229,7 +230,7 @@ QModelIndexList SAPlotLayerModel::getIndexFromPlotItems(const QList<QwtPlotItem 
 
 QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) const
 {
-    QColor c = SAChart2D::getItemColor(item);
+    QColor c = SAChart::getItemColor(item);
     if(alpha<255)
 		c.setAlpha(alpha);
     return c;
@@ -237,51 +238,7 @@ QVariant SAPlotLayerModel::getColorFromItem(const QwtPlotItem* item,int alpha) c
 
 void SAPlotLayerModel::setColorForItem(QwtPlotItem *item, QColor clr)
 {
-    const int rtti = item->rtti();
-    switch (rtti)
-    {
-    case QwtPlotItem::Rtti_PlotCurve :
-    {
-        QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item);
-        QPen pen = p->pen();
-        pen.setColor(clr);
-        p->setPen(pen);
-    }break;
-    case QwtPlotItem::Rtti_PlotGrid:
-    {
-        QwtPlotGrid* p = static_cast<QwtPlotGrid*>(item);
-        QPen pen = p->majorPen();
-        pen.setColor(clr);
-        p->setMajorPen(pen);
-    }break;
-    case QwtPlotItem::Rtti_PlotMarker:
-    {
-        QwtPlotMarker* p = static_cast<QwtPlotMarker*>(item);
-        QPen pen = p->linePen();
-        pen.setColor(clr);
-        p->setLinePen(pen);
-    }break;
-    case QwtPlotItem::Rtti_PlotBarChart:
-    {
-        QwtPlotBarChart* bar = static_cast<QwtPlotBarChart*>(item);
-        QwtColumnSymbol* newSym = new QwtColumnSymbol();
-        const QwtColumnSymbol * sym = bar->symbol();
-        if(sym)
-        {
-            newSym->setStyle(sym->style());
-            newSym->setFrameStyle(sym->frameStyle());
-            newSym->setLineWidth(sym->lineWidth());
-            newSym->setPalette(sym->palette());
-        }
-        QPalette p = sym->palette();
-        p.setColor(QPalette::Window,clr);
-        newSym->setPalette(p);
-        bar->setSymbol(newSym);
-        break;
-    }
-    default:
-        return;
-    }
+    SAChart::setItemColor(item,clr);
 }
 
 QVariant SAPlotLayerModel::getTextFromItem(const QwtPlotItem* item) const

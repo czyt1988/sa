@@ -314,7 +314,7 @@ QString QwtPlotItemDataModel::getItemNameFromCol(int col) const
 ///
 int QwtPlotItemDataModel::calcItemDataRowCount(QwtPlotItem* item) const
 {
-    return SAChart::getPlotChartItemDataCount(item);
+    return SAChart::getItemDataSize(item);
 }
 
 ///

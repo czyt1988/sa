@@ -174,10 +174,10 @@ void SACurveSelectDialog::updateTable()
         model->setItem(i,0,item);
 
         item = new QStandardItem;
-        item->setData(SAChart2D::getItemColor(plotItem),Qt::BackgroundRole);
+        item->setData(SAChart::getItemColor(plotItem),Qt::BackgroundRole);
         model->setItem(i,1,item);
 
-        int size = SAChart2D::getItemDataSize(plotItem);
+        int size = SAChart::getItemDataSize(plotItem);
         if(size > 0)
         {
             item = new QStandardItem(QString("%1").arg(size));

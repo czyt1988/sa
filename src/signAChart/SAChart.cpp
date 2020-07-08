@@ -48,6 +48,26 @@ void SAChart::replot(QwtPlot *chart)
         chart->replot();
     }
 }
+
+/**
+ * @brief 根据筛选set获取item list
+ * @param chart
+ * @param enableRtti
+ * @return
+ */
+QwtPlotItemList SAChart::filterPlotItem(const QwtPlot *chart, const QSet<int> &enableRtti)
+{
+    const QwtPlotItemList& items = chart->itemList();
+    QwtPlotItemList res;
+    for(int i=0;i<items.size();++i)
+    {
+        if(enableRtti.contains(items[i]->rtti()))
+        {
+            res.append(items[i]);
+        }
+    }
+    return res;
+}
 ///
 /// \brief 把当前坐标点转换为对应的坐标系的坐标点
 /// \param chart
@@ -421,6 +441,62 @@ bool SAChart::isXAxis(int axisID)
 bool SAChart::isYAxis(int axisID)
 {
     return ((QwtPlot::yLeft == axisID) || (QwtPlot::yRight == axisID));
+}
+
+/**
+ * @brief 获取item的数据个数
+ * @param item
+ * @return -1代表没有数据
+ */
+int SAChart::getItemDataSize(const QwtPlotItem *item)
+{
+    switch (item->rtti()) {
+    case QwtPlotItem::Rtti_PlotCurve:
+    {
+        const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+    {
+        const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+        break;
+    }
+    case QwtPlotItem::Rtti_PlotHistogram:
+    {
+        const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+    }
+    case QwtPlotItem::Rtti_PlotBarChart:
+    {
+        const QwtPlotBarChart* p = static_cast<const QwtPlotBarChart*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+    }
+    case QwtPlotItem::Rtti_PlotMultiBarChart:
+    {
+        const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item);
+        if(p)
+        {
+            return p->data()->size();
+        }
+    }
+    default:
+        break;
+    }
+    return -1;
 }
 ///
 /// \brief SAChart::getXYDatas
@@ -1178,6 +1254,79 @@ QColor SAChart::getItemColor(const QwtPlotItem *item, const QColor &defaultColor
     }
     return defaultColor;
 }
+
+/**
+ * @brief 通过设置item的颜色
+ * @param item
+ * @param color
+ */
+void SAChart::setItemColor(QwtPlotItem *item, const QColor &color)
+{
+    switch(item->rtti())
+    {
+    case QwtPlotItem::Rtti_PlotCurve:
+        if(QwtPlotCurve* p = static_cast<QwtPlotCurve*>(item))
+        {
+            QPen pen = p->pen();
+            pen.setColor(color);
+            p->setPen(pen);
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotIntervalCurve:
+        if(QwtPlotIntervalCurve* p = static_cast<QwtPlotIntervalCurve*>(item))
+        {
+            QPen pen = p->pen();
+            pen.setColor(color);
+            p->setPen(pen);
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotHistogram:
+        if(QwtPlotHistogram* p = static_cast<QwtPlotHistogram*>(item))
+        {
+            QBrush brush = p->brush();
+            brush.setColor(color);
+            p->setBrush(brush);
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotBarChart:
+        if(QwtPlotBarChart* bar = static_cast<QwtPlotBarChart*>(item))
+        {
+            QwtColumnSymbol* newSym = new QwtColumnSymbol();
+            const QwtColumnSymbol * sym = bar->symbol();
+            if(sym)
+            {
+                newSym->setStyle(sym->style());
+                newSym->setFrameStyle(sym->frameStyle());
+                newSym->setLineWidth(sym->lineWidth());
+                newSym->setPalette(sym->palette());
+            }
+            QPalette p = sym->palette();
+            p.setColor(QPalette::Button,color);
+            newSym->setPalette(p);
+            bar->setSymbol(newSym);
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotGrid:
+        if(QwtPlotGrid* grid = static_cast<QwtPlotGrid*>(item))
+        {
+            QPen pen = grid->majorPen();
+            pen.setColor(color);
+            grid->setMajorPen(pen);
+        }
+        break;
+    case QwtPlotItem::Rtti_PlotMarker:
+        if(QwtPlotMarker* marker = static_cast<QwtPlotMarker*>(item))
+        {
+            QPen pen = marker->linePen ();
+            pen.setColor(color);
+            marker->setLinePen(pen);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 ///
 /// \brief 通过rtti获取可绘图的item，
 /// \see dynamicGetPlotChartItemList
@@ -1257,62 +1406,7 @@ bool SAChart::checkIsXYSeriesItem(const QwtPlotItem *item)
     }
     return false;
 }
-///
-/// \brief 通过rtti获取plot chart item的数据点数，如果不是plot chart item,返回-1
-/// \param item
-/// \return
-///
-int SAChart::getPlotChartItemDataCount(const QwtPlotItem *item)
-{
-    switch(item->rtti())
-    {
-    case QwtPlotItem::Rtti_PlotCurve:
-        if(const QwtPlotCurve* p = static_cast<const QwtPlotCurve*>(item))
-        {
-            return p->dataSize();
-        }
-        break;
-    case QwtPlotItem::Rtti_PlotIntervalCurve:
-        if(const QwtPlotIntervalCurve* p = static_cast<const QwtPlotIntervalCurve*>(item))
-        {
-            return p->dataSize();
-        }
-        break;
-    case QwtPlotItem::Rtti_PlotHistogram:
-        if(const QwtPlotHistogram* p = static_cast<const QwtPlotHistogram*>(item))
-        {
-            return p->dataSize();
-        }
-        break;
-    case QwtPlotItem::Rtti_PlotBarChart:
-        if(const QwtPlotBarChart* bar = static_cast<const QwtPlotBarChart*>(item))
-        {
-            return bar->dataSize();
-        }
-        break;
-    case QwtPlotItem::Rtti_PlotSpectroCurve:
-        if(const QwtPlotSpectroCurve* p = static_cast<const QwtPlotSpectroCurve*>(item))
-        {
-            return p->dataSize();
-        }
-        break;
-    case QwtPlotItem::Rtti_PlotTradingCurve:
-        if(const QwtPlotTradingCurve* p = static_cast<const QwtPlotTradingCurve*>(item))
-        {
-            return p->dataSize();
-        }
-        break;
-    case QwtPlotItem::Rtti_PlotMultiBarChart:
-        if(const QwtPlotMultiBarChart* p = static_cast<const QwtPlotMultiBarChart*>(item))
-        {
-            return p->dataSize();
-        }
-        break;
-    default:
-        break;
-    }
-    return -1;
-}
+
 ///
 /// \brief 通过rtti获取所有plot的数据范围，并做并集
 /// 也就是最大的数据范围
@@ -1451,6 +1545,8 @@ int SAChart::closestPoint(const QwtPlotBarChart *bar, const QPoint &pos, double 
 
     return index;
 }
+
+
 
 
 
