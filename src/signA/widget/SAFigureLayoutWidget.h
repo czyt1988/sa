@@ -49,7 +49,13 @@ signals:
     /// \param item
     ///
     void itemRemoved(SAChart2D* chart,QwtPlotItem* item);
-
+    /**
+     * @brief item的描述改变产生的信号
+     * @param chart
+     * @param item
+     * @param title
+     */
+    void itemTitleChanged(SAChart2D* chart,QwtPlotItem* item,const QString& title);
 public slots:
     //更新图层
     void updateLayout();

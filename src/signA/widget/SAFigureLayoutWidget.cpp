@@ -29,6 +29,7 @@ SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     connect(ui->toolButtonDelete,&QToolButton::clicked,this,&SAFigureLayoutWidget::onToolButtonDeleteClicked);
     connect(ui->comboBoxCurrentChart,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             ,this,&SAFigureLayoutWidget::onComboBoxCurrentChartCurrentIndexChanged);
+    connect(m_layoutModel,&QAbstractItemModel::dataChanged,this,&SAFigureLayoutWidget::onDataChanged);
 }
 
 SAFigureLayoutWidget::~SAFigureLayoutWidget()
@@ -165,8 +166,8 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
             emit itemColorChanged(plot,item,newClr);
         }
     }
-    //
 
+    //设置选中
     QItemSelectionModel* selMode = ui->tableView->selectionModel();
     QSet<QwtPlotItem*> itemSets;
     if(selMode)
@@ -258,6 +259,46 @@ void SAFigureLayoutWidget::onCurrentWidgetChanged(QWidget *w)
         if(plots[i] == w)
         {
             ui->comboBoxCurrentChart->setCurrentIndex(i);
+        }
+    }
+}
+
+/**
+ * @brief 仅仅铺抓内容变更信息
+ * @param topLeft
+ * @param bottomRight
+ * @param roles
+ */
+void SAFigureLayoutWidget::onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    Q_UNUSED(bottomRight);
+    if(!roles.isEmpty())
+    {
+        if(roles.first() == Qt::EditRole)
+        {
+            SAPlotLayerModel* model=getLayoutModel();
+            QwtPlotItem* item = model->getPlotItemFromIndex (topLeft);
+            SAChart2D* plot = qobject_cast<SAChart2D*>(model->getPlot());
+            switch (topLeft.column()) {
+            case 0:
+            {
+
+            }
+            case 1:
+            {
+                QColor clr = topLeft.data(Qt::BackgroundColorRole).value<QColor>();
+                emit itemColorChanged(plot,item,clr);
+                break;
+            }
+            case 2:
+            {
+                QString title = topLeft.data(Qt::DisplayRole).toString();
+                emit itemTitleChanged(plot,item,title);
+                break;
+            }
+            default:
+                break;
+            }
         }
     }
 }

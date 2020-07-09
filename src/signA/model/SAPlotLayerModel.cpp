@@ -178,6 +178,8 @@ bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     if(!m_plot)
         return false;
     beginResetModel();
+    QVector<int> roles;
+    roles << role;
     QwtPlotItem* item = getPlotItemFromIndex(index);
     if(!item)
         return false;
@@ -185,6 +187,7 @@ bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     {//显示
         bool show = value.toBool ();
         item->setVisible (show);
+        emit dataChanged(index,index,roles);
         return true;
     }
     else if(index.column() == 2)
@@ -193,6 +196,7 @@ bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, 
             return false;
         QColor clr = value.value<QColor>();
         setColorForItem(item,clr);
+        emit dataChanged(index,index,roles);
         return true;
     }
     else if(index.column() == 3)
@@ -200,6 +204,8 @@ bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         if (value.toString ().isEmpty ())
             return false;
         setTextForItem(item,value.toString ());
+        emit dataChanged(index,index,roles);
+        return true;
     }
     endResetModel();
 	return false;
