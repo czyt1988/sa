@@ -1,6 +1,6 @@
 ﻿#ifndef MAINWINDOWPRIVATE_H
 #define MAINWINDOWPRIVATE_H
-#define RIBBON_CONTEXT_CATEGORY_ID_CHART_SET (10)
+#define RIBBON_CONTEXT_CATEGORY_ID_CHART_SET    (10)
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
@@ -40,11 +40,11 @@ class MainWindow;
 class MainWindowPrivate
 {
 public:
-    MainWindow* Parent;
+    MainWindow *Parent;
 
     QAction *actionOpen;
-    QAction *actionClearRecentOpenFileHistroy;///< 清除最近打开文件记录
-    QAction *actionClearRecentOpenProjectorHistroy;///< 清除最近打开项目记录
+    QAction *actionClearRecentOpenFileHistroy;      ///< 清除最近打开文件记录
+    QAction *actionClearRecentOpenProjectorHistroy; ///< 清除最近打开项目记录
     QAction *actionWindowCascade;
     QAction *actionWindowTile;
     QAction *actionWindowMode;
@@ -107,44 +107,44 @@ public:
     QAction *actionDrawBarChart;
     QAction *actionDrawBoxChart;
     QAction *actionDrawIntervalChart;
-    QAction *actionSelectionRegionMove;///<
-    QAction *actionSelectionRegionDataMove;///<
+    QAction *actionSelectionRegionMove;     ///<
+    QAction *actionSelectionRegionDataMove; ///<
 
-    QAction *actionValueCreateWizard;///< 创建数据向导
-    QAction *actionValueCreateDoubleVector;///< 创建一个维double数据
-    QAction *actionValueCreatePointVector;///< 创建一个维point数据
-    QAction *actionValueCreateVariantTable;///< 创建一个通用表格
+    QAction *actionValueCreateWizard;       ///< 创建数据向导
+    QAction *actionValueCreateDoubleVector; ///< 创建一个维double数据
+    QAction *actionValueCreatePointVector;  ///< 创建一个维point数据
+    QAction *actionValueCreateVariantTable; ///< 创建一个通用表格
 
 
     QAction *actionFigureEditSubPlotGeometry;///< 编辑子窗口位置
 
 
     QAction *actionSelectSkin;///<
-    QActionGroup* actionGroupSkins;
-    QActionGroup* actionGroupSelection;
-    QActionGroup* actionChartEditor;///< 图像编辑器的互斥
+    QActionGroup *actionGroupSkins;
+    QActionGroup *actionGroupSelection;
+    QActionGroup *actionChartEditor;///< 图像编辑器的互斥
 
 
 
     SARibbonBar *menuBar;
-    SARibbonButtonGroupWidget* ribbonRightTopBar;
-    SARibbonApplicationButton* ribbonApplicationButton;
+    SARibbonButtonGroupWidget *ribbonRightTopBar;
+    SARibbonApplicationButton *ribbonApplicationButton;
     //!Main Category Page
 
-    SARibbonCategory* mainRibbonCategory;
-    SARibbonPannel* mainCategoryFilePannel;
-    SARibbonToolButton* ribbonButtonFileOpen;
-    SARibbonToolButton* ribbonButtonOpen;
-    SARibbonToolButton* ribbonButtonSave;
-    SARibbonToolButton* ribbonButtonClearProject;
+    SARibbonCategory *mainRibbonCategory;
+    SARibbonPannel *mainCategoryFilePannel;
+    SARibbonToolButton *ribbonButtonFileOpen;
+    SARibbonToolButton *ribbonButtonOpen;
+    SARibbonToolButton *ribbonButtonSave;
+    SARibbonToolButton *ribbonButtonClearProject;
 
-    SARibbonPannel* mainCategoryChartPannel;
-    SARibbonToolButton* ribbonButtonNewChart;
-    SARibbonToolButton* ribbonButtonLineChart;
-    SARibbonToolButton* ribbonButtonBarChart;
-    SARibbonToolButton* ribbonButtonHistogramChart;
-    SARibbonToolButton* ribbonButtonBoxChart;
-    SARibbonToolButton* ribbonButtonScatterChart;
+    SARibbonPannel *mainCategoryChartPannel;
+    SARibbonToolButton *ribbonButtonNewChart;
+    SARibbonToolButton *ribbonButtonLineChart;
+    SARibbonToolButton *ribbonButtonBarChart;
+    SARibbonToolButton *ribbonButtonHistogramChart;
+    SARibbonToolButton *ribbonButtonBoxChart;
+    SARibbonToolButton *ribbonButtonScatterChart;
     SARibbonMenu *menuFile;
     SARibbonMenu *menuRecentOpenFile;
     SARibbonMenu *menuRecentOpenProject;
@@ -155,79 +155,78 @@ public:
     SARibbonMenu *menuScatterChart;
     SARibbonMenu *menuSkinList;
 
-    SARibbonPannel* mainCategoryValuePannel;
-    SARibbonToolButton* ribbonButtonValueCreateWizard;
-    SARibbonToolButton* ribbonButtonValueCreateDouble1Dim;
-    SARibbonToolButton* ribbonButtonValueCreatePoint1Dim;
-    SARibbonToolButton* ribbonButtonValueCreateVariantTable;
+    SARibbonPannel *mainCategoryValuePannel;
+    SARibbonToolButton *ribbonButtonValueCreateWizard;
+    SARibbonToolButton *ribbonButtonValueCreateDouble1Dim;
+    SARibbonToolButton *ribbonButtonValueCreatePoint1Dim;
+    SARibbonToolButton *ribbonButtonValueCreateVariantTable;
     //! operate Category Page
-    SARibbonCategory* operateRibbonCategory;
+    SARibbonCategory *operateRibbonCategory;
     SARibbonMenu *menuSelection;
-    SARibbonPannel* operateCategoryChartEditorPannel;
-    SARibbonToolButton* ribbonButtonStartSelection;
+    SARibbonPannel *operateCategoryChartEditorPannel;
+    SARibbonToolButton *ribbonButtonStartSelection;
 
-    SARibbonToolButton* ribbonButtonSingleSelection;
-    SARibbonToolButton* ribbonButtonAdditionalSelection;
-    SARibbonToolButton* ribbonButtonSubtractionSelection;
-    SARibbonToolButton* ribbonButtonIntersectionSelection;
-    SARibbonButtonGroupWidget* ribbonButtonGroupSelectionMode;
+    SARibbonToolButton *ribbonButtonSingleSelection;
+    SARibbonToolButton *ribbonButtonAdditionalSelection;
+    SARibbonToolButton *ribbonButtonSubtractionSelection;
+    SARibbonToolButton *ribbonButtonIntersectionSelection;
+    SARibbonButtonGroupWidget *ribbonButtonGroupSelectionMode;
 
-    SARibbonToolButton* ribbonButtonSelectionRegionMove;
+    SARibbonToolButton *ribbonButtonSelectionRegionMove;
 
-    SARibbonPannel* operateCategoryDataViewPannel;
-    SARibbonToolButton* ribbonButtonChartCrossCursor;
-    SARibbonToolButton* ribbonButtonChartPanner;
-    SARibbonToolButton* ribbonButtonChartZoom;
-    SARibbonToolButton* ribbonButtonXYDataPicker;
-    SARibbonToolButton* ribbonButtonYDataPicker;
+    SARibbonPannel *operateCategoryDataViewPannel;
+    SARibbonToolButton *ribbonButtonChartCrossCursor;
+    SARibbonToolButton *ribbonButtonChartPanner;
+    SARibbonToolButton *ribbonButtonChartZoom;
+    SARibbonToolButton *ribbonButtonXYDataPicker;
+    SARibbonToolButton *ribbonButtonYDataPicker;
     SARibbonMenu *menuZoomSet;
 
 
-    SARibbonToolButton* ribbonButtonInRangDataRemove;
-    SARibbonToolButton* ribbonButtonPickCurveToData;
-    SARibbonToolButton* ribbonButtonSelectionRegionDataMove;
+    SARibbonToolButton *ribbonButtonInRangDataRemove;
+    SARibbonToolButton *ribbonButtonPickCurveToData;
+    SARibbonToolButton *ribbonButtonSelectionRegionDataMove;
 
 
     SARibbonMenu *menuDataRemove;
 
 
     //legend pannel
-    SARibbonPannel* chartLegendCategoryWindowPannel;
-    SARibbonToolButton* ribbonButtonShowLegend;
-    SARibbonToolButton* ribbonButtonShowLegendPanel;
+    SARibbonPannel *chartLegendCategoryWindowPannel;
+    SARibbonToolButton *ribbonButtonShowLegend;
+    SARibbonToolButton *ribbonButtonShowLegendPanel;
 
-    SARibbonPannel* chartGridCategoryWindowPannel;
-    SARibbonToolButton* ribbonButtonShowGrid;
-    SARibbonToolButton* ribbonButtonShowHGrid;
-    SARibbonToolButton* ribbonButtonShowVGrid;
-    SARibbonToolButton* ribbonButtonShowCrowdedGrid;
+    SARibbonPannel *chartGridCategoryWindowPannel;
+    SARibbonToolButton *ribbonButtonShowGrid;
+    SARibbonToolButton *ribbonButtonShowHGrid;
+    SARibbonToolButton *ribbonButtonShowVGrid;
+    SARibbonToolButton *ribbonButtonShowCrowdedGrid;
     SARibbonMenu *menuShowCrowdedGrid;
 
     //Figure Operate Category Page
-    SARibbonPannel* figureOptRibbonPannel;
-    SARibbonToolButton* ribbonButtonFigureEditSubplot;
+    SARibbonPannel *figureOptRibbonPannel;
+    SARibbonToolButton *ribbonButtonFigureEditSubplot;
     //! Analysis
-    SARibbonCategory* analysisRibbonCategory;
-    SARibbonPannel* analysisCategoryFunctionPannel;
-    SARibbonToolButton* ribbonButtonAllFuntion;
-    SARibbonGallery* ribbonGalleryFuntions;
+    SARibbonCategory *analysisRibbonCategory;
+    SARibbonPannel *analysisCategoryFunctionPannel;
+    SARibbonToolButton *ribbonButtonAllFuntion;
+    SARibbonGallery *ribbonGalleryFuntions;
     //!View Category Page
-    SARibbonCategory* viewRibbonCategory;
-    SARibbonPannel* viewCategoryWindowPannel;
-    SARibbonToolButton* ribbonButtonFigureViewer;
-    SARibbonToolButton* ribbonButtonDataFeatureDock;
-    SARibbonToolButton* ribbonButtonLayerOutDock;
-    SARibbonToolButton* ribbonButtonValueViewerDock;
-    SARibbonToolButton* ribbonButtonValueManagerDock;
-    SARibbonToolButton* ribbonButtonFigureSetDock;
-    SARibbonToolButton* ribbonButtonAllDock;
-    SARibbonToolButton* ribbonButtonSetDefalutDockPos;
-    SARibbonPannel* windowModeCategoryWindowPannel;
-    SARibbonToolButton* ribbonButtonWindowMode;
-    SARibbonToolButton* ribbonButtonTabMode;
-    SARibbonToolButton* ribbonButtonWindowCascade;
-    SARibbonToolButton* ribbonButtonWindowTile;
-
+    SARibbonCategory *viewRibbonCategory;
+    SARibbonPannel *viewCategoryWindowPannel;
+    SARibbonToolButton *ribbonButtonFigureViewer;
+    SARibbonToolButton *ribbonButtonDataFeatureDock;
+    SARibbonToolButton *ribbonButtonLayerOutDock;
+    SARibbonToolButton *ribbonButtonValueViewerDock;
+    SARibbonToolButton *ribbonButtonValueManagerDock;
+    SARibbonToolButton *ribbonButtonFigureSetDock;
+    SARibbonToolButton *ribbonButtonAllDock;
+    SARibbonToolButton *ribbonButtonSetDefalutDockPos;
+    SARibbonPannel *windowModeCategoryWindowPannel;
+    SARibbonToolButton *ribbonButtonWindowMode;
+    SARibbonToolButton *ribbonButtonTabMode;
+    SARibbonToolButton *ribbonButtonWindowCascade;
+    SARibbonToolButton *ribbonButtonWindowTile;
 
 
 
@@ -266,11 +265,10 @@ public:
 
     //dock chartDataViewer
     QDockWidget *dockWidget_chartDataViewer;
-    SAChartDatasViewWidget* chartDatasViewWidget;
+    SAChartDatasViewWidget *chartDatasViewWidget;
     //dock plotLayer
     QDockWidget *dockWidget_plotLayer;
-    SAFigureLayoutWidget* figureLayoutWidget;
-
+    SAFigureLayoutWidget *figureLayoutWidget;
 
 
 
@@ -290,13 +288,14 @@ public:
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout;
     SAFigureSetWidget *figureSetWidget;
-        //QToolBar *toolBarChartTools;
-    QMenu* menuFigureWindow;///< 绘图窗口菜单
-    QAction* selectCurrentCursorToActiveChart;///< 选中当前光标所定位的图为激活图形
-    QAction* sectionActionForFigureMenuDataView;///< FigureWindow菜单的分区action【data view】
-    MainWindowPrivate(MainWindow* p);
+    //QToolBar *toolBarChartTools;
+    QMenu *menuFigureWindow;                        ///< 绘图窗口菜单
+    QAction *selectCurrentCursorToActiveChart;      ///< 选中当前光标所定位的图为激活图形
+    QAction *sectionActionForFigureMenuDataView;    ///< FigureWindow菜单的分区action【data view】
+    MainWindowPrivate(MainWindow *p);
     void init();
     void retranslateUi(MainWindow *mainWinowPtr);
+
 private:
     void setupUi(MainWindow *mainWinowPtr);
     void setupMenu(MainWindow *mainWinowPtr);

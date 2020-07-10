@@ -1,12 +1,12 @@
 ﻿#include "MainWindowPrivate.h"
 #include "mainwindow.h"
 #include <QDebug>
-MainWindowPrivate::MainWindowPrivate(MainWindow* p)
-    :Parent(p)
-    ,menuFigureWindow(nullptr)
+MainWindowPrivate::MainWindowPrivate(MainWindow *p)
+    : Parent(p)
+    , menuFigureWindow(nullptr)
 {
-
 }
+
 
 void MainWindowPrivate::init()
 {
@@ -14,14 +14,15 @@ void MainWindowPrivate::init()
 }
 
 
-
 void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 {
-    if (mainWinowPtr->objectName().isEmpty())
+    if (mainWinowPtr->objectName().isEmpty()) {
         mainWinowPtr->setObjectName(QStringLiteral("MainWindow"));
+    }
     mainWinowPtr->setWindowIcon(QIcon(":/windowIcons/icons/windowIcon/figureWindow.svg"));
     mainWinowPtr->resize(1219, 689);
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(mainWinowPtr->sizePolicy().hasHeightForWidth());
@@ -383,6 +384,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet = new SARibbonMenu(menuBar);
     menuWindowsViewSet->setObjectName(QStringLiteral("menu_windowsViewSet"));
     QIcon icon46;
+
     icon46.addFile(QStringLiteral(":/icons/icons/windowViewSet.png"), QSize(), QIcon::Normal, QIcon::Off);
     menuWindowsViewSet->setIcon(icon46);
 
@@ -436,7 +438,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 //=======start ribbon set=============================================================================================
-    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton*>(menuBar->applitionButton());
+    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton *>(menuBar->applitionButton());
     ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
     ribbonRightTopBar->addButton(actionAbout);
     //![1] Main Category Page
@@ -510,11 +512,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonSubtractionSelection = ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
     ribbonButtonIntersectionSelection = ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
     operateCategoryChartEditorPannel->addWidget(ribbonButtonGroupSelectionMode
-                                                 ,0,3);
+        , 0, 3);
 
-    SARibbonButtonGroupWidget* tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
+    SARibbonButtonGroupWidget *tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
+
     ribbonButtonSelectionRegionMove = tmpButtonGroup->addButton(actionSelectionRegionMove);
-    operateCategoryChartEditorPannel->addWidget(tmpButtonGroup,3,3);
+    operateCategoryChartEditorPannel->addWidget(tmpButtonGroup, 3, 3);
 
     operateCategoryChartEditorPannel->addSeparator();
 
@@ -532,7 +535,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     operateCategoryDataViewPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
     ribbonButtonChartCrossCursor = operateCategoryDataViewPannel->addLargeAction(actionEnableChartCrossCursor);
     ribbonButtonChartPanner = operateCategoryDataViewPannel->addLargeAction(actionEnableChartPanner);
-    ribbonButtonChartZoom = operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom,menuZoomSet);
+    ribbonButtonChartZoom = operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom, menuZoomSet);
     ribbonButtonXYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionXYDataPicker);
     ribbonButtonYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionYDataPicker);
 
@@ -568,7 +571,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
     //Window Pannel
     viewCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Window"));
-    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock\nView"),QIcon(":/icons/icons/AllDock.png"),QToolButton::InstantPopup);
+    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock\nView"), QIcon(":/icons/icons/AllDock.png"), QToolButton::InstantPopup);
     menuWindowsViewSet->addAction(actionFigureViewer);
     menuWindowsViewSet->addAction(actionFigureSetDock);
     menuWindowsViewSet->addAction(actionDataFeatureDock);
@@ -599,7 +602,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBar->quickAccessBar()->addButton(actionUndo);
     menuBar->quickAccessBar()->addButton(actionRedo);
     menuBar->quickAccessBar()->addSeparator();
-    SARibbonToolButton* ribbonToobBtnSelectSkin = menuBar->quickAccessBar()->addButton(actionSelectSkin);
+    SARibbonToolButton *ribbonToobBtnSelectSkin = menuBar->quickAccessBar()->addButton(actionSelectSkin);
+
     ribbonToobBtnSelectSkin->setMenu(menuSkinList);
     ribbonToobBtnSelectSkin->setPopupMode(QToolButton::InstantPopup);
     menuBar->quickAccessBar()->addSeparator();
@@ -691,6 +695,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     dockWidget_main = new QDockWidget(mainWinowPtr);
     dockWidget_main->setObjectName(QStringLiteral("dockWidget_main"));
     QIcon icon48;
+
     icon48.addFile(QStringLiteral(":/windowIcons/icons/windowIcon/figureWindow.svg"), QSize(), QIcon::Normal, QIcon::Off);
     dockWidget_main->setWindowIcon(icon48);
     dockWidget_main->setFeatures(QDockWidget::AllDockWidgetFeatures);
@@ -765,13 +770,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_plotSet->setWidget(dockWidgetContents);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_plotSet);
-
-
-
-
-
-
-
 
 
 
@@ -857,6 +855,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     QMetaObject::connectSlotsByName(mainWinowPtr);
 }
+
 
 void MainWindowPrivate::setupMenu(MainWindow *mainWinowPtr)
 {
