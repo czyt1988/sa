@@ -187,7 +187,7 @@ bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     {//显示
         bool show = value.toBool ();
         item->setVisible (show);
-        emit dataChanged(index,index,roles);
+        emit itemValueChanged(item,show,ItemVisible,index);
         return true;
     }
     else if(index.column() == 2)
@@ -196,15 +196,17 @@ bool SAPlotLayerModel::setData(const QModelIndex &index, const QVariant &value, 
             return false;
         QColor clr = value.value<QColor>();
         setColorForItem(item,clr);
-        emit dataChanged(index,index,roles);
+        emit itemValueChanged(item,clr,ItemColor,index);
         return true;
     }
     else if(index.column() == 3)
     {//描述
         if (value.toString ().isEmpty ())
+        {
             return false;
+        }
         setTextForItem(item,value.toString ());
-        emit dataChanged(index,index,roles);
+        emit itemValueChanged(item,value,ItemTitle,index);
         return true;
     }
     endResetModel();

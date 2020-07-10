@@ -238,12 +238,15 @@ void MainWindow::initUI()
     connect(ui->actionAbout,&QAction::triggered,this,&MainWindow::onActionAboutTriggered);
     //-------------------------------------
     //图层管理窗口相关槽
-    //图层管理窗口改变了条目的颜色
-    connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemColorChanged
-            ,this,&MainWindow::onLayoutWidgetItemColorChanged);
     //图层管理窗口改变了条目的可见性
     connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemVisibleChanged
             ,this,&MainWindow::onLayoutWidgetItemVisibleChanged);
+    //图层管理窗口改变了条目的颜色
+    connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemColorChanged
+            ,this,&MainWindow::onLayoutWidgetItemColorChanged);
+    //图层管理窗口改变了条目的描述
+    connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemTitleChanged
+            ,this,&MainWindow::onLayoutWidgetItemTitleChanged);
     //图层管理窗口删除了条目
     connect(ui->figureLayoutWidget,&SAFigureLayoutWidget::itemRemoved
             ,this,&MainWindow::onLayoutWidgetItemRemoved);
@@ -679,9 +682,8 @@ void MainWindow::onActionSkinChanged(QAction* act)
 /// \param item
 /// \param on
 ///
-void MainWindow::onLayoutWidgetItemVisibleChanged(SAChart2D *chart, QwtPlotItem *item, bool on)
+void MainWindow::onLayoutWidgetItemVisibleChanged(QwtPlotItem *item, bool on)
 {
-    Q_UNUSED(chart);
     Q_UNUSED(item);
     Q_UNUSED(on);
     ui->figureSetWidget->updatePlotItemsSet();
@@ -692,11 +694,22 @@ void MainWindow::onLayoutWidgetItemVisibleChanged(SAChart2D *chart, QwtPlotItem 
 /// \param item
 /// \param clr
 ///
-void MainWindow::onLayoutWidgetItemColorChanged(SAChart2D *chart, QwtPlotItem *item, QColor clr)
+void MainWindow::onLayoutWidgetItemColorChanged(QwtPlotItem *item, QColor clr)
 {
-    Q_UNUSED(chart);
     Q_UNUSED(item);
     Q_UNUSED(clr);
+    ui->figureSetWidget->updatePlotItemsSet();
+}
+
+/**
+ * @brief 图层管理窗口改变了条目的描述
+ * @param item
+ * @param title
+ */
+void MainWindow::onLayoutWidgetItemTitleChanged(QwtPlotItem *item, const QString &title)
+{
+    Q_UNUSED(item);
+    Q_UNUSED(title);
     ui->figureSetWidget->updatePlotItemsSet();
 }
 ///

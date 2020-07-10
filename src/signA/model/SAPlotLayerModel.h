@@ -9,6 +9,15 @@ class SAPlotLayerModel : public QAbstractTableModel
 public:
 	SAPlotLayerModel(QObject * parent = 0);
 	~SAPlotLayerModel();
+    /**
+     * @brief 定义item的值类型
+     */
+    enum ItemValueType
+    {
+        ItemVisible = 0,///< item的可见性设置
+        ItemColor = 1, ///< item的颜色
+        ItemTitle ///< item的label
+    };
 
 	virtual int rowCount(const QModelIndex &parent) const;
 	virtual int columnCount(const QModelIndex &parent) const;
@@ -21,7 +30,15 @@ public:
 	void updateModel();
     QwtPlotItem* getPlotItemFromIndex(const QModelIndex &index);
     QModelIndexList getIndexFromPlotItems(const QList<QwtPlotItem*>& plotItem);
-
+signals:
+    /**
+     * @brief item值被设置后出发的信号
+     * @param plotItem
+     * @param value
+     * @param type 类型，@sa  ItemValueType
+     * @param index
+     */
+    void itemValueChanged(QwtPlotItem *plotItem,const QVariant& value,ItemValueType type,const QModelIndex &index);
 private slots:
 	void itemAttached (QwtPlotItem *plotItem, bool on);
 private:

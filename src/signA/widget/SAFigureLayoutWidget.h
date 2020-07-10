@@ -2,7 +2,7 @@
 #define SAFIGURELAYOUTWIDGET_H
 
 #include <QWidget>
-class SAPlotLayerModel;
+#include "SAPlotLayerModel.h"
 class SAFigureWindow;
 class SAChart2D;
 class QwtPlotItem;
@@ -35,14 +35,14 @@ signals:
     /// \param item item指针
     /// \param visible 可见性
     ///
-    void itemVisibleChanged(SAChart2D* chart,QwtPlotItem* item,bool visible);
+    void itemVisibleChanged(QwtPlotItem* item,bool visible);
     ///
     /// \brief 图层修改item颜色发送的信号
     /// \param chart 图指针
     /// \param item item指针
     /// \param clr 颜色
     ///
-    void itemColorChanged(SAChart2D* chart,QwtPlotItem* item,QColor clr);
+    void itemColorChanged(QwtPlotItem* item,QColor clr);
     ///
     /// \brief item删除发送的信号
     /// \param chart
@@ -55,7 +55,7 @@ signals:
      * @param item
      * @param title
      */
-    void itemTitleChanged(SAChart2D* chart,QwtPlotItem* item,const QString& title);
+    void itemTitleChanged(QwtPlotItem* item,const QString& title);
 public slots:
     //更新图层
     void updateLayout();
@@ -72,6 +72,8 @@ private slots:
     void onChartAdded(QwtPlot* plot);
     void onChartRemoved(QwtPlot* plot);
     void onCurrentWidgetChanged(QWidget* w);
+    //模型数据发生
+    void onItemValueChanged(QwtPlotItem *plotItem,const QVariant& value,SAPlotLayerModel::ItemValueType type,const QModelIndex &index);
 private:
     Ui::SAFigureLayoutWidget *ui;
     SAPlotLayerModel* m_layoutModel;

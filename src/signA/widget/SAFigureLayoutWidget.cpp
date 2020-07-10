@@ -29,7 +29,7 @@ SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     connect(ui->toolButtonDelete,&QToolButton::clicked,this,&SAFigureLayoutWidget::onToolButtonDeleteClicked);
     connect(ui->comboBoxCurrentChart,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             ,this,&SAFigureLayoutWidget::onComboBoxCurrentChartCurrentIndexChanged);
-    connect(m_layoutModel,&QAbstractItemModel::dataChanged,this,&SAFigureLayoutWidget::onDataChanged);
+    connect(m_layoutModel,&SAPlotLayerModel::itemValueChanged,this,&SAFigureLayoutWidget::onItemValueChanged);
 }
 
 SAFigureLayoutWidget::~SAFigureLayoutWidget()
@@ -151,7 +151,6 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
     if (1==index.column())
     {//可见性
         model->setData (index,!item->isVisible ());
-        emit itemVisibleChanged(plot,item,item->isVisible());
     }
     else if(index.column() == 2)
     {//颜色
@@ -160,10 +159,8 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
         if(clrDlg.exec() == QDialog::Accepted)
         {
             QColor newClr = clrDlg.selectedColor();
-            //在模型中设置颜色
+            //在模型中设置颜色,信号通过onItemValueChanged槽函数触发
             model->setData (index,newClr,Qt::BackgroundColorRole);
-            //通知其他界面颜色变更
-            emit itemColorChanged(plot,item,newClr);
         }
     }
 
@@ -263,45 +260,25 @@ void SAFigureLayoutWidget::onCurrentWidgetChanged(QWidget *w)
     }
 }
 
-/**
- * @brief 仅仅铺抓内容变更信息
- * @param topLeft
- * @param bottomRight
- * @param roles
- */
-void SAFigureLayoutWidget::onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+void SAFigureLayoutWidget::onItemValueChanged(QwtPlotItem *plotItem, const QVariant &value, SAPlotLayerModel::ItemValueType type, const QModelIndex &index)
 {
-    Q_UNUSED(bottomRight);
-    if(!roles.isEmpty())
+    switch(type)
     {
-        if(roles.first() == Qt::EditRole)
-        {
-            SAPlotLayerModel* model=getLayoutModel();
-            QwtPlotItem* item = model->getPlotItemFromIndex (topLeft);
-            SAChart2D* plot = qobject_cast<SAChart2D*>(model->getPlot());
-            switch (topLeft.column()) {
-            case 0:
-            {
-
-            }
-            case 1:
-            {
-                QColor clr = topLeft.data(Qt::BackgroundColorRole).value<QColor>();
-                emit itemColorChanged(plot,item,clr);
-                break;
-            }
-            case 2:
-            {
-                QString title = topLeft.data(Qt::DisplayRole).toString();
-                emit itemTitleChanged(plot,item,title);
-                break;
-            }
-            default:
-                break;
-            }
-        }
+    case SAPlotLayerModel::ItemVisible:
+        emit itemVisibleChanged(plotItem,value.toBool());
+        break;
+    case SAPlotLayerModel::ItemColor:
+        //通知其他界面颜色变更
+        emit itemColorChanged(plotItem,value.value<QColor>());
+        break;
+    case SAPlotLayerModel::ItemTitle:
+        emit itemTitleChanged(plotItem,value.toString());
+        break;
+    default:
+        break;
     }
 }
+
 
 ///
 /// \brief 图表标题改变

@@ -458,9 +458,11 @@ private slots:
 
     ///
     //图层管理窗口改变了条目的可见性
-    void onLayoutWidgetItemVisibleChanged(SAChart2D* chart,QwtPlotItem* item,bool on);
+    void onLayoutWidgetItemVisibleChanged(QwtPlotItem* item, bool on);
     //图层管理窗口改变了条目的颜色
-    void onLayoutWidgetItemColorChanged(SAChart2D* chart,QwtPlotItem* item,QColor clr);
+    void onLayoutWidgetItemColorChanged(QwtPlotItem* item, QColor clr);
+    //图层管理窗口改变了条目的描述
+    void onLayoutWidgetItemTitleChanged(QwtPlotItem* item, const QString& title);
     //图层管理窗口删除了条目
     void onLayoutWidgetItemRemoved(SAChart2D* chart,QwtPlotItem* item);
     //设置窗口改变了图表的标题触发的槽
