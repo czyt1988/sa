@@ -148,7 +148,7 @@ void SASocketHandle::onRecSocketData(const SAProtocolHeader& header, const QByte
             return;
         }
         dealXmlProtocol(header, xml);
-        return;
+        break;
     }
 
     default:
@@ -163,7 +163,7 @@ void SASocketHandle::onRecSocketData(const SAProtocolHeader& header, const QByte
  * @param xml
  * @return
  */
-void SASocketHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr xml)
+bool SASocketHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr xml)
 {
     switch (header.protocolFunID)
     {
@@ -171,13 +171,13 @@ void SASocketHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr 
     {
         int pid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "pid", 0).toInt();
         QString appid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "appid", "").toString();
-        SA::reply_token_xml(getSocket(), header, pid, appid);
-        break;
+        return SA::reply_token_xml(getSocket(), header, pid, appid);
     }
 
     default:
         break;
     }
+    return false;
 }
 
 

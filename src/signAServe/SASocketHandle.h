@@ -70,7 +70,7 @@ public:
     SATcpSocket *getSocket() const;
 
     //处理xml相关请求
-    virtual void dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr xml);
+    virtual bool dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr xml);
 
 signals:
     void error(int errid, const QString& errstring);
