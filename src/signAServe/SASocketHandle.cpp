@@ -3,6 +3,7 @@
 #include "SAServeHandleFun.h"
 #include "SAServerDefine.h"
 #include "SAXMLProtocolParser.h"
+#include "SACRC.h"
 
 
 
@@ -10,40 +11,24 @@ class SASocketHandlePrivate
 {
 public:
     SA_IMPL_PUBLIC(SASocketHandle)
-    SASocketHandlePrivate(SASocketHandle* p);
-    bool dealXmlRequestToken(const SAProtocolHeader &header,SASocketHandle::XMLDataPtr xml );
+    SASocketHandlePrivate(SASocketHandle *p);
 public:
-    SATcpSocket* mSocket;
+    SATcpSocket *mSocket;
 };
 
-SASocketHandlePrivate::SASocketHandlePrivate(SASocketHandle *p):q_ptr(p)
-  ,mSocket(nullptr)
+SASocketHandlePrivate::SASocketHandlePrivate(SASocketHandle *p) : q_ptr(p)
+    , mSocket(nullptr)
 {
 }
 
-bool SASocketHandlePrivate::dealXmlRequestToken(const SAProtocolHeader &header, SASocketHandle::XMLDataPtr xml)
+
+SAAbstractSocketHandle::SAAbstractSocketHandle(QObject *par) : QObject(par)
 {
-    int pid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"pid",0).toInt();
-    QString appid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT,"appid","").toString();
-    QString token = SA::make_token(pid,appid);
-    //回复
-    SAXMLProtocolParser reply;
-    reply.setClassID(SA::ProtocolTypeXml);
-    reply.setFunctionID(SA::ProtocolFunReplyToken);
-    reply.setValue("token",token);
-    return SA::write_xml_protocol(mSocket,&reply,SA::ProtocolFunReplyToken,header.sequenceID,header.extendValue);
 }
 
-
-
-SAAbstractSocketHandle::SAAbstractSocketHandle(QObject *par):QObject(par)
-{
-
-}
 
 SAAbstractSocketHandle::~SAAbstractSocketHandle()
 {
-
 }
 
 
@@ -54,19 +39,20 @@ SAAbstractSocketHandle::~SAAbstractSocketHandle()
  */
 SASocketHandle::XMLDataPtr SASocketHandle::makeXMLDataPtr()
 {
-    return std::make_shared<SAXMLProtocolParser>();
+    return (std::make_shared<SAXMLProtocolParser>());
 }
 
-SASocketHandle::SASocketHandle(QObject *par):SAAbstractSocketHandle(par)
-  ,d_ptr(new SASocketHandlePrivate(this))
+
+SASocketHandle::SASocketHandle(QObject *par) : SAAbstractSocketHandle(par)
+    , d_ptr(new SASocketHandlePrivate(this))
 {
-
 }
+
 
 SASocketHandle::~SASocketHandle()
 {
-
 }
+
 
 /**
  * @brief 设置socket
@@ -74,14 +60,16 @@ SASocketHandle::~SASocketHandle()
  */
 void SASocketHandle::setSocket(SATcpSocket *s)
 {
-    if(d_ptr->mSocket)
-    {
-        disconnect(s,&SATcpSocket::receivedData,this,&SASocketHandle::onRecSocketData);
-        disconnect(s,&QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
+    if (s == d_ptr->mSocket) {
+        return;
+    }
+    if (d_ptr->mSocket) {
+        disconnect(s, &SATcpSocket::receivedData, this, &SASocketHandle::onRecSocketData);
+        disconnect(s, &QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
     }
     d_ptr->mSocket = s;
-    connect(s,&SATcpSocket::receivedData,this,&SASocketHandle::onRecSocketData);
-    connect(s,&QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
+    connect(s, &SATcpSocket::receivedData, this, &SASocketHandle::onRecSocketData);
+    connect(s, &QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
 }
 
 
@@ -91,18 +79,44 @@ void SASocketHandle::setSocket(SATcpSocket *s)
  * @param data
  * @return
  */
-void SASocketHandle::ensureWrite(const SAProtocolHeader &header, const QByteArray &data)
+void SASocketHandle::ensureWrite(const SAProtocolHeader& header, const QByteArray& data)
 {
-    if(getSocket())
-    {
-        getSocket()->ensureWrite(header,data);
+    SATcpSocket *s = getSocket();
+
+    if (s) {
+        s->ensureWrite(header, data);
     }
 }
 
+
+/**
+ * @brief 封装针对xml协议的写操作
+ * @param xml
+ * @param funid
+ * @param sequenceID
+ * @param extendValue
+ */
+void SASocketHandle::ensureWrite(const SAXMLProtocolParser& xml, int funid, int sequenceID, uint32_t extendValue)
+{
+    QByteArray data = xml.toByteArray();
+    SAProtocolHeader header;
+
+    header.init();
+    header.protocolFunID = funid;
+    header.dataSize = data.size();
+    header.protocolTypeID = SA::ProtocolTypeXml;
+    header.dataCrc32 = SACRC::crc32(data);
+    header.sequenceID = sequenceID;
+    header.extendValue = extendValue;
+    ensureWrite(header, data);
+}
+
+
 SATcpSocket *SASocketHandle::getSocket() const
 {
-    return d_ptr->mSocket;
+    return (d_ptr->mSocket);
 }
+
 
 /**
  * @brief 处理收到的数据
@@ -114,38 +128,34 @@ SATcpSocket *SASocketHandle::getSocket() const
  *
  * @note 此函数默认会调用dealResult，重写时，需要注意
  */
-void SASocketHandle::onRecSocketData(const SAProtocolHeader &header, const QByteArray &data)
+void SASocketHandle::onRecSocketData(const SAProtocolHeader& header, const QByteArray& data)
 {
-    switch (header.protocolTypeID) {
+    switch (header.protocolTypeID)
+    {
     case SA::ProtocolTypeHeartbreat:
     {
         //处理心跳请求
-        SAProtocolHeader replyheader;
-        replyheader.init();
-        replyheader.sequenceID = header.sequenceID;
-        replyheader.dataSize = 0;
-        replyheader.protocolTypeID = SA::ProtocolTypeHeartbreat;
-        replyheader.protocolFunID = SA::ProtocolFunReplyHeartbreat;
-        replyheader.extendValue = 0; // 心跳返回给客户端，此时值为0
-        ensureWrite(replyheader,QByteArray());
+        SA::reply_heartbreat_xml(getSocket(),header);
         break;
     }
+
     case SA::ProtocolTypeXml:
     {
         //解析xml协议
         XMLDataPtr xml = makeXMLDataPtr();
-        if(!xml->fromByteArray(data))
-        {
-            emit error(ErrorInvalidXmlProtocol,tr("Invalid Xml Protocol"));
+        if (!xml->fromByteArray(data)) {
+            emit error(ErrorInvalidXmlProtocol, tr("Invalid Xml Protocol"));
             return;
         }
-        dealXmlProtocol(header,xml);
+        dealXmlProtocol(header, xml);
         return;
     }
+
     default:
         break;
     }
 }
+
 
 /**
  * @brief 处理收到的xml协议请求
@@ -153,22 +163,25 @@ void SASocketHandle::onRecSocketData(const SAProtocolHeader &header, const QByte
  * @param xml
  * @return
  */
-bool SASocketHandle::dealXmlProtocol(const SAProtocolHeader &header, XMLDataPtr xml)
+void SASocketHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr xml)
 {
     switch (header.protocolFunID)
     {
-    case SA::ProtocolFunReqToken:
-        return d_ptr->dealXmlRequestToken(header,xml);
+    case SA::ProtocolFunReqToken: //获取token请求
+    {
+        int pid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "pid", 0).toInt();
+        QString appid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "appid", "").toString();
+        SA::reply_token_xml(getSocket(), header, pid, appid);
+        break;
+    }
+
     default:
         break;
     }
-    return false;
 }
 
 
 void SASocketHandle::onSocketDisconnected()
 {
+    d_ptr->mSocket = nullptr;
 }
-
-
-

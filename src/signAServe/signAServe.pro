@@ -27,7 +27,6 @@ HEADERS += \
     $$PWD/../global/SAGlobals.h \
     SAServeGlobal.h \
     SAAbstractServe.h \
-    3rdParty/CRC.h \
     SASocketHandle.h \
     SATcpSocket.h \
     SATcpServe.h \
@@ -35,8 +34,7 @@ HEADERS += \
     SATcpClient.h \
     SAServerDefine.h \
     SATcpDataProcessClient.h \
-    SAServeHandleFun.h \
-    SATcpThreadSocket.h
+    SAServeHandleFun.h
 
 
 
@@ -48,8 +46,7 @@ SOURCES += \
     SAServeShareMemory.cpp \
     SATcpClient.cpp \
     SATcpDataProcessClient.cpp \
-    SAServeHandleFun.cpp \
-    SATcpThreadSocket.cpp
+    SAServeHandleFun.cpp
 
 #sa lib
 include($$PWD/../signALib/signALib.pri)
