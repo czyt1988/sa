@@ -14,7 +14,6 @@
 #include "SAMiniDump.h"
 #include "SAServeShareMemory.h"
 #include "SACsvStream.h"
-#include "SAServeHandleFun.h"
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
   static QFile s_log_file("saDataProcDebug.csv");
@@ -75,7 +74,6 @@ int main(int argc, char *argv[])
     }
     //初始化服务
     qDebug() << QStringLiteral("开始初始化服务句柄");
-    SA::init_serve_funciotn_handle();
 
     //
     QApplication a(argc, argv);

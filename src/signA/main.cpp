@@ -48,8 +48,6 @@ int main(int argc, char *argv[])
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + QDir::separator() + "libs");
     qInstallMessageHandler(sa_log_out_put);
     qDebug() << "==============start at" << QDateTime::currentDateTime() << "=====================";
-    //初始化服务端
-    SA::init_serve_funciotn_handle();
     //初始化日志
     g_log_file = new QFile(get_log_file_path() + QDir::separator() + make_log_file_name());
     if(!g_log_file->open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))

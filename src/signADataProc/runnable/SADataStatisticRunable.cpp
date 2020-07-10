@@ -1,17 +1,17 @@
 #include "SADataStatisticRunable.h"
-#include "SADataProcSession.h"
+#include "SADataProcHandle.h"
 #include "SATcpDataProcessClient.h"
 #include "SAMath.h"
 #include "SAServerDefine.h"
 #include "SADataProcFunctions.h"
 
 
-SADataStatisticRunable::SADataStatisticRunable(std::weak_ptr<SADataProcSession> session, const SAProtocolHeader &header, SASession::XMLDataPtr xml)
+SADataStatisticRunable::SADataStatisticRunable(std::weak_ptr<SADataProcHandle> session, const SAProtocolHeader &header, SASocketHandle::XMLDataPtr xml)
 {
     setDatas(session,header,xml);
 }
 
-void SADataStatisticRunable::setDatas(std::weak_ptr<SADataProcSession> session, const SAProtocolHeader &header, SASession::XMLDataPtr xml)
+void SADataStatisticRunable::setDatas(std::weak_ptr<SADataProcHandle> session, const SAProtocolHeader &header, SASocketHandle::XMLDataPtr xml)
 {
     m_session = session;
     m_header = header;
@@ -42,7 +42,7 @@ void SADataStatisticRunable::run()
 void SADataStatisticRunable::run2DPointsDescribe()
 {
     //返回的结果
-    SASession::XMLDataPtr res = createXMLDataPtr(SA::ProtocolFunReply2DPointsDescribe,m_xml);
+    SASocketHandle::XMLDataPtr res = createXMLDataPtr(SA::ProtocolFunReply2DPointsDescribe,m_xml);
     if(SA::ProtocolFunReq2DPointsDescribe != m_xml->getFunctionID())
     {
         res->setValue("result",0);//标记结果异常
@@ -124,11 +124,11 @@ void SADataStatisticRunable::run2DPointsDescribe()
  * @param xml
  * @param funid
  */
-void SADataStatisticRunable::write(SASession::XMLDataPtr xml, int funid)
+void SADataStatisticRunable::write(SASocketHandle::XMLDataPtr xml, int funid)
 {
     QByteArray data = xml->toByteArray();
     SAProtocolHeader header = createXMLReplyHeader(m_header,data,funid);
-    std::shared_ptr<SADataProcSession> ptr = m_session.lock();
+    std::shared_ptr<SADataProcHandle> ptr = m_session.lock();
     if(ptr)
     {
         ptr->safe_write(header,data);

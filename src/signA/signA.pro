@@ -82,8 +82,6 @@ RESOURCES += \
     theme.qrc
 RC_FILE += logo.rc
 
-#include($$[QT_INSTALL_PREFIX]/../Src/qttools/src/shared/qtpropertybrowser/qtpropertybrowser.pri)
-
 #3thparty
 #{
 #QWT

@@ -24,33 +24,29 @@ DEFINES += SASERVE_MAKE \
            SA_SERVE_DEBUG_PRINT
 
 HEADERS += \
-    /../global/SAGlobals.h \
+    $$PWD/../global/SAGlobals.h \
     SAServeGlobal.h \
     SAAbstractServe.h \
-    3rdParty/CRC.h \
-    SASession.h \
+    SASocketHandle.h \
     SATcpSocket.h \
     SATcpServe.h \
     SAServeShareMemory.h \
     SATcpClient.h \
     SAServerDefine.h \
     SATcpDataProcessClient.h \
-    SAServeHandleFun.h \
-    SATcpThreadSocket.h \
-    ../global/SAGlobals.h
+    SAServeHandleFun.h
 
 
 
 SOURCES += \
     SAAbstractServe.cpp \
-    SASession.cpp \
+    SASocketHandle.cpp \
     SATcpSocket.cpp \
     SATcpServe.cpp \
     SAServeShareMemory.cpp \
     SATcpClient.cpp \
     SATcpDataProcessClient.cpp \
-    SAServeHandleFun.cpp \
-    SATcpThreadSocket.cpp
+    SAServeHandleFun.cpp
 
 #sa lib
 include($$PWD/../signALib/signALib.pri)
