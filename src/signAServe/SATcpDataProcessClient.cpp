@@ -25,43 +25,6 @@ SATcpDataProcessClient::~SATcpDataProcessClient()
 }
 
 
-/**
- * @brief 把点序列转换为variant
- * @param arrs 点序列
- * @return
- */
-QVariant SATcpDataProcessClient::vectorpointsToVariant(const QVector<QPointF>& arrs)
-{
-    QVariantList varlist;
-
-    varlist.reserve(arrs.size());
-    for (const QPointF& v : arrs)
-    {
-        varlist.append(v);
-    }
-    return (QVariant(varlist));
-}
-
-
-/**
- * @brief variant转为QVector<QPointF>
- * @param var
- * @return
- */
-QVector<QPointF> SATcpDataProcessClient::variantToVectorpoints(const QVariant& var)
-{
-    QVector<QPointF> arr;
-    QVariantList varlist = var.toList();
-
-    for (const QVariant& v : varlist)
-    {
-        if (v.canConvert<QPointF>()) {
-            arr.append(v.toPointF());
-        }
-    }
-    return (arr);
-}
-
 
 /**
  * @brief 处理xml协议
@@ -119,7 +82,7 @@ bool SATcpDataProcessClient::request2DPointsDescribe(const QVector<QPointF>& arr
     data.setClassID(SA::ProtocolTypeXml);
     data.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
     data.setValue("key", key);
-    data.setValue("points", vectorpointsToVariant(arrs));
+    data.setValue("points", QVariant::fromValue<QVector<QPointF>>(arrs));
     data.setValue("sort-count", sortcount);
 #ifdef SA_SERVE_DEBUG_PRINT
     qDebug().noquote() << data.toString();

@@ -18,8 +18,6 @@ class SASERVE_EXPORT SATcpDataProcessClient : public SATcpClient
 public:
     SATcpDataProcessClient(QObject *par = nullptr);
     ~SATcpDataProcessClient();
-    static QVariant vectorpointsToVariant(const QVector<QPointF>& arrs);
-    static QVector<QPointF> variantToVectorpoints(const QVariant& var);
 
 protected:
     virtual bool dealXmlProtocol(const SAProtocolHeader& header, SAXMLProtocolParserPtr xml) override;

@@ -4,34 +4,36 @@ class SAThreadPoolPrivate
 {
     SA_IMPL_PUBLIC(SAThreadPool)
 public:
-    SAThreadPoolPrivate(SAThreadPool* p);
-    int maxThreadCnt;///< 最大允许线程数
-    QList<QThread*> threadList;///< 存放线程的列表
-    int currentIndex;///< 记录当前的索引
+    SAThreadPoolPrivate(SAThreadPool *p);
+    int maxThreadCnt;               ///< 最大允许线程数
+    QList<QThread *> threadList;    ///< 存放线程的列表
+    int currentIndex;               ///< 记录当前的索引
 };
 
-SAThreadPoolPrivate::SAThreadPoolPrivate(SAThreadPool *p):q_ptr(p)
-  ,maxThreadCnt(8)
-  ,currentIndex(-1)
+SAThreadPoolPrivate::SAThreadPoolPrivate(SAThreadPool *p) : q_ptr(p)
+    , maxThreadCnt(8)
+    , currentIndex(-1)
 {
-
 }
 
-SAThreadPool::SAThreadPool()
-{
 
+SAThreadPool::SAThreadPool() : d_ptr(new SAThreadPoolPrivate(this))
+{
 }
+
 
 SAThreadPool::~SAThreadPool()
 {
-
 }
 
-SAThreadPool &SAThreadPool::getInstance()
+
+SAThreadPool& SAThreadPool::getInstance()
 {
     static SAThreadPool s_p;
-    return s_p;
+
+    return (s_p);
 }
+
 
 /**
  * @brief 获取允许的最大线程数
@@ -39,8 +41,9 @@ SAThreadPool &SAThreadPool::getInstance()
  */
 int SAThreadPool::getMaxThreadCount() const
 {
-    return d_ptr->maxThreadCnt;
+    return (d_ptr->maxThreadCnt);
 }
+
 
 /**
  * @brief 设置最大线程数
@@ -52,6 +55,7 @@ void SAThreadPool::setMaxThreadCount(int n) const
     d_ptr->maxThreadCnt = n;
 }
 
+
 /**
  * @brief 轮询下一个线程
  * @return
@@ -59,21 +63,22 @@ void SAThreadPool::setMaxThreadCount(int n) const
 QThread *SAThreadPool::next()
 {
     int index = d_ptr->currentIndex;
+
     ++index;
-    if(index >= d_ptr->maxThreadCnt)
-    {
+    if (index >= d_ptr->maxThreadCnt) {
         index = 0;
     }
-    if(index < d_ptr->threadList.size())
-    {
+    if (index < d_ptr->threadList.size()) {
         d_ptr->currentIndex = index;
-        return d_ptr->threadList[index];
+        return (d_ptr->threadList[index]);
     }
-    QThread* p = new QThread();
+    QThread *p = new QThread();
+
     d_ptr->threadList.append(p);
     d_ptr->currentIndex = index;
-    return p;
+    return (p);
 }
+
 
 /**
  * @brief 获取线程
@@ -81,8 +86,9 @@ QThread *SAThreadPool::next()
  */
 QThread *SAThreadPool::getThread()
 {
-    return SAThreadPool::getInstance().next();
+    return (SAThreadPool::getInstance().next());
 }
+
 
 /**
  * @brief 获取当前池管理的最大线程数
@@ -90,7 +96,5 @@ QThread *SAThreadPool::getThread()
  */
 int SAThreadPool::poolMaxThreadCount()
 {
-    return SAThreadPool::getInstance().getMaxThreadCount();
+    return (SAThreadPool::getInstance().getMaxThreadCount());
 }
-
-

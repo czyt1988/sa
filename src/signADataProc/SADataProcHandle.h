@@ -9,7 +9,7 @@
  * @brief 处理数据的session
  */
 class SADataProcHandle : public SASocketHandle,
-              public std::enable_shared_from_this<SASocketHandle> //为了把this通过weak_ptr传递到线程中
+             public std::enable_shared_from_this<SASocketHandle> //为了把this通过weak_ptr传递到线程中
 {
 public:
     SADataProcHandle(QObject *p = nullptr);
@@ -23,6 +23,8 @@ protected:
     virtual bool deal2DPointsDescribe(const SAProtocolHeader& header, SASocketHandle::XMLDataPtr xml);
 
 private:
+    //处理点序列的具体函数
+    bool _deal2DPointsDescribe(const SAProtocolHeader& header, SASocketHandle::XMLDataPtr xml);
 };
 
 #endif // SADATAPROCSECTION_H
