@@ -84,7 +84,7 @@ public slots:
     void onSocketConnected();
 
     //关闭客户端
-    void cloese();
+    void close();
 
 private slots:
     void onReceivedData(const SAProtocolHeader& header, const QByteArray& data);

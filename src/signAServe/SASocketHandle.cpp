@@ -4,6 +4,7 @@
 #include "SAServerDefine.h"
 #include "SAXMLProtocolParser.h"
 #include "SACRC.h"
+#include <QThread>
 
 
 
@@ -51,6 +52,7 @@ SASocketHandle::SASocketHandle(QObject *par) : SAAbstractSocketHandle(par)
 
 SASocketHandle::~SASocketHandle()
 {
+    qDebug() << "deleteing, thread id:" <<(int)QThread::currentThreadId();
 }
 
 
@@ -64,12 +66,17 @@ void SASocketHandle::setSocket(SATcpSocket *s)
         return;
     }
     if (d_ptr->mSocket) {
-        disconnect(s, &SATcpSocket::receivedData, this, &SASocketHandle::onRecSocketData);
-        disconnect(s, &QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
+        //旧的解绑
+        qDebug() << "socket handle disconect old handle";
+        disconnect(d_ptr->mSocket, &SATcpSocket::receivedData, this, &SASocketHandle::onRecSocketData);
+        disconnect(d_ptr->mSocket, &QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
     }
-    d_ptr->mSocket = s;
-    connect(s, &SATcpSocket::receivedData, this, &SASocketHandle::onRecSocketData);
-    connect(s, &QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
+    if (s) {
+        d_ptr->mSocket = s;
+        connect(s, &SATcpSocket::receivedData, this, &SASocketHandle::onRecSocketData);
+        connect(s, &QAbstractSocket::disconnected, this, &SASocketHandle::onSocketDisconnected);
+        qDebug() << "socket handle conect new handle";
+    }
 }
 
 
@@ -135,7 +142,7 @@ void SASocketHandle::onRecSocketData(const SAProtocolHeader& header, const QByte
     case SA::ProtocolTypeHeartbreat:
     {
         //处理心跳请求
-        SA::reply_heartbreat_xml(getSocket(),header);
+        SA::reply_heartbreat_xml(getSocket(), header);
         break;
     }
 
@@ -171,13 +178,13 @@ bool SASocketHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr 
     {
         int pid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "pid", 0).toInt();
         QString appid = xml->getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "appid", "").toString();
-        return SA::reply_token_xml(getSocket(), header, pid, appid);
+        return (SA::reply_token_xml(getSocket(), header, pid, appid));
     }
 
     default:
         break;
     }
-    return false;
+    return (false);
 }
 
 

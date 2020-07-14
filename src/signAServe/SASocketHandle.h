@@ -58,7 +58,7 @@ public:
 
     //socket的生命周期由section管理
     SASocketHandle(QObject *par = nullptr);
-    ~SASocketHandle();
+    virtual ~SASocketHandle();
     //设置socket
     virtual void setSocket(SATcpSocket *s) override;
 

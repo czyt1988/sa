@@ -20,7 +20,7 @@ public:
     bool readFromSocket(void *p, int n);
 
     //设置处理类,如果之前已经设置，会返回之前设置的handle的管理全不规socket管
-    SAAbstractSocketHandle *setupHandle(SAAbstractSocketHandle *handle);
+    void setupHandle(SAAbstractSocketHandle *handle);
 
     //获取处理类
     SAAbstractSocketHandle *getHandle() const;

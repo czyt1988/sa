@@ -37,5 +37,6 @@ signals:
      */
     void reply2DPointsDescribe(const SAProtocolHeader& header, SAXMLProtocolParserPtr res);
 };
+Q_DECLARE_METATYPE(QVector<QPointF>)
 
 #endif // SADATAPROCESSCLIENT_H

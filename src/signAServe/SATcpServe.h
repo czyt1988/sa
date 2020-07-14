@@ -24,10 +24,17 @@ public:
     //关闭一个socket
     void closeSocket(SATcpSocket *s);
 
+signals:
+
+    /**
+     * @brief 新的连接已经建立
+     * @param socket
+     */
+    void newConnected(SATcpSocket *socket);
+
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
 
-protected:
     //多线程模式，不允许调用此函数
     virtual bool hasPendingConnections() const override;
 

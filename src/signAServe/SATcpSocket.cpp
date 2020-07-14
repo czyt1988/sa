@@ -49,17 +49,12 @@ SATcpSocket::SATcpSocket(QObject *par) : QTcpSocket(par)
     , d_ptr(new SATcpSocketPrivate(this))
 {
     connect(this, &QIODevice::readyRead, this, &SATcpSocket::onReadyRead);
-    SASocketHandle *h = new SASocketHandle(this);
-
-    setupHandle(h);
+    setupHandle(new SASocketHandle);
 }
 
 
 SATcpSocket::~SATcpSocket()
 {
-    if (d_ptr->m_handle) {
-        d_ptr->m_handle->deleteLater();
-    }
 }
 
 
@@ -94,16 +89,30 @@ bool SATcpSocket::readFromSocket(void *p, int n)
  * @brief 重新设置socket的处理
  * @param handle socket的处理所有权归socket所有
  */
-SAAbstractSocketHandle *SATcpSocket::setupHandle(SAAbstractSocketHandle *handle)
+void SATcpSocket::setupHandle(SAAbstractSocketHandle *handle)
 {
-    if (handle == d_ptr->m_handle) {
-        return (nullptr);
-    }
+    qDebug() <<"setupHandle";
     SAAbstractSocketHandle *old = d_ptr->m_handle;
 
+    if (handle == old) {
+        return;
+    }
+    if (old) {
+        qDebug() <<"delete old";
+        delete old;
+    }
+    if (nullptr == handle) {
+        return;
+    }
+    qDebug() << "1";
+    if (handle->thread() == this->thread()) {
+        //如果两个同线程，把handle设置为thread的子对象
+        handle->setParent(this);
+    }
+    qDebug() << "2";
     handle->setSocket(this);
     d_ptr->m_handle = handle;
-    return (old);
+    qDebug() << "3";
 }
 
 
@@ -185,7 +194,7 @@ void SATcpSocket::onReadyRead()
         }else {
             //说明一次没把数据接收完
         }
-    }else if (bytesAvailable() >= s_headerSize)   {
+    }else if (bytesAvailable() >= s_headerSize) {
         //说明包头还未接收
         //但socket收到的数据已经满足包头数据需要的数据
 #ifdef SA_SERVE_DEBUG_PRINT

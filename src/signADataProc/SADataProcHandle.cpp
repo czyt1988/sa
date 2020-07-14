@@ -17,6 +17,7 @@ SADataProcHandle::~SADataProcHandle()
 
 bool SADataProcHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr xml)
 {
+    qDebug() << "serve rec:" << xml->toString();
     if (SASocketHandle::dealXmlProtocol(header, xml)) {
         return (true);
     }
