@@ -76,6 +76,7 @@
         <file>icons/createVariantTableValue.png</file>
         <file>icons/createDouble1DimValue.png</file>
         <file>icons/subplotEdit.png</file>
+        <file>icons/colormap.svg</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>

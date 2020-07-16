@@ -357,7 +357,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionColorMapTable = new QAction(mainWinowPtr);
     actionColorMapTable->setObjectName(QStringLiteral("actionColorMapTable"));
-    actionColorMapTable->setIcon(QIcon());
+    actionColorMapTable->setIcon(QIcon(":/icons/icons/colormap.svg"));
 
     menuBar = mainWinowPtr->ribbonBar();
     menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -564,7 +564,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonFigureEditSubplot = figureOptRibbonPannel->addLargeAction(actionFigureEditSubPlotGeometry);
 
     //! table  Context Category
-    tableRibbonContextCategory = menuBar->addContextCategory(QStringLiteral("Table"),Qt::red,TableContextCategory);
+    tableRibbonContextCategory = menuBar->addContextCategory(QStringLiteral("Table"), Qt::red, TableContextCategory);
     tableRibbonCategory = tableRibbonContextCategory->addCategoryPage(QStringLiteral("Table"));
     tableHighLightRibbonPannel = tableRibbonCategory->addPannel("HighLight");
     ribbonButtonHighLightTable = tableHighLightRibbonPannel->addLargeAction(actionColorMapTable);
@@ -1008,7 +1008,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionValueCreatePointVector->setText(QApplication::translate("MainWindow", "point vector", 0));
     actionValueCreateVariantTable->setText(QApplication::translate("MainWindow", "variant table", 0));
     actionFigureEditSubPlotGeometry->setText(QApplication::translate("MainWindow", "Subplot\nEdit", 0));
-    actionColorMapTable->setText(QApplication::translate("MainWindow", "highlight", 0));
+    actionColorMapTable->setText(QApplication::translate("MainWindow", "Highlight\nTable", 0));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
