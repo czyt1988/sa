@@ -100,100 +100,6 @@ SATcpClient::~SATcpClient()
 
 
 /**
- * @brief 向socket安全写数据，此函数会保证数据完整写入
- * @param header
- * @param data
- * @return
- */
-bool SATcpClient::write(const SAProtocolHeader& header, const QByteArray& data)
-{
-    if (getSocket()) {
-        return (SA::write(header, data, getSocket()));
-    }
-    return (false);
-}
-
-
-/**
- * @brief SATcpClient::write
- * @param xml
- * @param funid
- * @param sequenceID
- * @param extendValue
- * @return
- */
-bool SATcpClient::write(const SAXMLProtocolParser& xml, int funid, int sequenceID, uint32_t extendValue)
-{
-    if (getSocket()) {
-        return (SA::write_xml_protocol(getSocket(), &xml, funid, sequenceID, extendValue));
-    }
-    return (false);
-}
-
-
-/**
- * @brief 处理接收数据的虚函数
- * @param header 文件头
- * @param data 数据包
- * @return 返回true代表已经处理此包
- * @note 此函数会执行，任何继承此类重写此函数都需要调用if(SATcpClient::deal(header,data)){ return true;}
- * 来判断是否需要重新写处理的函数
- */
-bool SATcpClient::deal(const SAProtocolHeader& header, const QByteArray& data)
-{
-    switch (header.protocolTypeID)
-    {
-    case SA::ProtocolTypeHeartbreat:
-    {
-        //收到心跳，记录最后时间
-        d_ptr->m_lastRecHeartbreakDatetime = QDateTime::currentDateTime();
-        return (true);
-    }
-
-    case SA::ProtocolTypeXml:
-    {
-        //解析xml协议
-        SAXMLProtocolParserPtr xml = makeXMLProtocolParserPtr();
-        if (!xml->fromByteArray(data)) {
-            emit clientError(InvalidXmlProtocol);
-            return (false);
-        }
-        return (dealXmlProtocol(header, xml));
-    }
-
-    default:
-        break;
-    }
-    return (false);
-}
-
-
-bool SATcpClient::dealXmlProtocol(const SAProtocolHeader& header, SAXMLProtocolParserPtr xml)
-{
-    switch (header.protocolFunID)
-    {
-    case SA::ProtocolFunReplyHeartbreat:
-        d_ptr->m_lastRecHeartbreakDatetime = QDateTime::currentDateTime();
-        return (true);
-
-    case SA::ProtocolFunReplyToken:
-    {
-        QString token = xml->getDefaultGroupValue("token").toString();
-        if (!token.isEmpty()) {
-            emit replyToken(token, header.sequenceID);
-            return (true);
-        }
-    }
-    break;
-
-    default:
-        break;
-    }
-    return (false);
-}
-
-
-/**
  * @brief 获取socket指针
  * @return
  */
@@ -284,7 +190,7 @@ void SATcpClient::setHeartbreakCheck(bool enable)
  */
 void SATcpClient::requestToken(int pid, const QString& appid)
 {
-    SA::request_token_xml(pid, appid, getSocket());
+    getSocket()->requestToken(pid, appid);
 }
 
 
@@ -294,7 +200,7 @@ void SATcpClient::requestToken(int pid, const QString& appid)
 void SATcpClient::requestHeartbreat()
 {
     d_ptr->m_lastRequestHeartbreakDatetime = QDateTime::currentDateTime();
-    SA::request_heartbreat(getSocket());
+    getSocket()->requestHeartbreat();
 }
 
 
@@ -317,12 +223,6 @@ void SATcpClient::close()
 }
 
 
-void SATcpClient::onReceivedData(const SAProtocolHeader& header, const QByteArray& data)
-{
-    deal(header, data);
-}
-
-
 void SATcpClient::onHeartbreatCheckTimeout()
 {
     int intverals = d_ptr->getHeartbreakInterval();
@@ -332,6 +232,18 @@ void SATcpClient::onHeartbreatCheckTimeout()
         emit heartbreatTimeout(d_ptr->m_lastRecHeartbreakDatetime);
     }
     requestHeartbreat();
+}
+
+
+/**
+ * @brief 接收到心跳应答
+ */
+void SATcpClient::onReceivedHeartbreat()
+{
+    d_ptr->m_lastRequestHeartbreakDatetime = QDateTime::currentDateTime();
+    if (d_ptr->m_timer) {
+        d_ptr->m_timer->start();
+    }
 }
 
 
@@ -355,8 +267,9 @@ void SATcpClient::connectSocket()
     connect(d_ptr->m_socket.get(), &QAbstractSocket::disconnected, this, &SATcpClient::disconnectedServe);
     connect(d_ptr->m_socket.get(), static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error)
         , this, &SATcpClient::socketError);
-    connect(d_ptr->m_socket.get(), &SATcpSocket::receivedData, this, &SATcpClient::onReceivedData);
     connect(d_ptr->m_socket.get(), &QIODevice::aboutToClose, this, &SATcpClient::aboutToClose);
+    connect(d_ptr->m_socket.get(), &SATcpSocket::receivedHeartbreat, this, &SATcpClient::onReceivedHeartbreat);
+    connect(d_ptr->m_socket.get(), &SATcpSocket::replyToken, this, &SATcpClient::replyToken);
 }
 
 
@@ -366,6 +279,5 @@ void SATcpClient::disconnectSocket()
     disconnect(d_ptr->m_socket.get(), &QAbstractSocket::disconnected, this, &SATcpClient::disconnectedServe);
     disconnect(d_ptr->m_socket.get(), static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error)
         , this, &SATcpClient::socketError);
-    disconnect(d_ptr->m_socket.get(), &SATcpSocket::receivedData, this, &SATcpClient::onReceivedData);
     disconnect(d_ptr->m_socket.get(), &QIODevice::aboutToClose, this, &SATcpClient::aboutToClose);
 }

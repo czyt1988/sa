@@ -49,18 +49,6 @@ public:
 
     SATcpClient(QObject *par = nullptr);
     ~SATcpClient();
-    //向socket写数据
-    bool write(const SAProtocolHeader& header, const QByteArray& data);
-
-    //向socket写数据
-    bool write(const SAXMLProtocolParser& xml, int funid, int sequenceID, uint32_t extendValue);
-
-    //处理协议数据的函数
-    virtual bool deal(const SAProtocolHeader& header, const QByteArray& data);
-
-    //处理xml协议
-    virtual bool dealXmlProtocol(const SAProtocolHeader& header, SAXMLProtocolParserPtr xml);
-
     //获取socket
     SATcpSocket *getSocket() const;
 
@@ -87,8 +75,10 @@ public slots:
     void close();
 
 private slots:
-    void onReceivedData(const SAProtocolHeader& header, const QByteArray& data);
     void onHeartbreatCheckTimeout();
+
+    //获取到心跳应答
+    void onReceivedHeartbreat();
 
 private:
     void createSocket();

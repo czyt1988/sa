@@ -25,9 +25,6 @@ private slots:
     //检测存活周期到
     void onCkeckLiveTimeout();
 
-    //新连接建立触发的槽
-    void onNewConnected(SATcpSocket *socket);
-
 private:
     uint m_pid;
     bool m_willBeQuit;

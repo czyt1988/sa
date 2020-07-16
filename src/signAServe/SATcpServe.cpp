@@ -6,7 +6,17 @@
 #include <QDateTime>
 #include <QHostAddress>
 #include "SAThreadPool.h"
-#include "SASocketHandle.h"
+
+SATcpSocket *create_default_socket();
+
+SATcpSocket *create_default_socket()
+{
+#ifdef SA_SERVE_DEBUG_PRINT
+    qDebug() << "create_default_socket";
+#endif
+    return (new SATcpSocket());
+}
+
 
 /**
  * @brief 存放客户端信息的结构体
@@ -43,11 +53,14 @@ class SATcpServePrivate
     SA_IMPL_PUBLIC(SATcpServe)
 public:
     SATcpServePrivate(SATcpServe *p);
+    SATcpServe::FunPtrSocketFactory fpSocketFactory;
     QHash<SATcpSocket *, _client_info> socketToInfo;
 };
 
 SATcpServePrivate::SATcpServePrivate(SATcpServe *p) : q_ptr(p)
+    , fpSocketFactory(nullptr)
 {
+    fpSocketFactory = create_default_socket;
 }
 
 
@@ -102,6 +115,16 @@ void SATcpServe::closeSocket(SATcpSocket *s)
 }
 
 
+/**
+ * @brief 注册socket工厂
+ * @param fp
+ */
+void SATcpServe::registSocketFactory(SATcpServe::FunPtrSocketFactory fp)
+{
+    d_ptr->fpSocketFactory = fp;
+}
+
+
 void SATcpServe::incomingConnection(qintptr socketDescriptor)
 {
     FUNCTION_RUN_PRINT();
@@ -113,19 +136,26 @@ void SATcpServe::incomingConnection(qintptr socketDescriptor)
         QTcpSocket tcp;
         tcp.setSocketDescriptor(socketDescriptor);
         tcp.disconnectFromHost();
+#ifdef SA_SERVE_DEBUG_PRINT
+        qDebug() << "too much connections:"<<maxPendingConnections()<<" ,disconnect";
+#endif
         return;
     }
     _client_info clinfo;
     QThread *thread = SAThreadPool::getThread();
     while (thread == QThread::currentThread())
     {
+        //找到一个和当前线程不一致的线程作为socket的线程
         thread = SAThreadPool::getThread();
     }
 
-
+    FunPtrSocketFactory fp = d_ptr->fpSocketFactory;
     clinfo.socketDescriptor = socketDescriptor;
-    std::unique_ptr<SATcpSocket> socket(new SATcpSocket());
+    std::unique_ptr<SATcpSocket> socket(fp());
     if (!(socket->setSocketDescriptor(socketDescriptor))) {
+#ifdef SA_SERVE_DEBUG_PRINT
+        qDebug() << "setSocketDescriptor err,socketDescriptor is "<<socketDescriptor;
+#endif
         return;
     }
     QString ip = socket->peerAddress().toString();
@@ -143,7 +173,9 @@ void SATcpServe::incomingConnection(qintptr socketDescriptor)
     info.port = port;
 
     d_ptr->socketToInfo[info.socket] = info;
-    emit newConnected(info.socket);
+#ifdef SA_SERVE_DEBUG_PRINT
+    qDebug() << "create socket success:ip"<<ip<<",port:"<<port;
+#endif
     emit newConnection();
 }
 

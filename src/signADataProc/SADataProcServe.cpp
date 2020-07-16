@@ -4,11 +4,11 @@
 #include <QCoreApplication>
 #include <QMessageBox>
 #include <QLocalServer>
-#include <QThread>
+#include <QDebug>
 #include <QApplication>
 #include "SAXMLTagDefined.h"
 #include <memory>
-#include "SADataProcHandle.h"
+#include "SADataProcSocket.h"
 
 
 #define ARG_DES_KEY_ID		"key"
@@ -17,13 +17,24 @@
 #ifdef _DEBUG_OUTPUT
 #include <QElapsedTimer>
 #endif
+
+
+SATcpSocket *create_socket();
+
+SATcpSocket *create_socket()
+{
+    qDebug() << "create SADataProcSocket";
+    return (new SADataProcSocket());
+}
+
+
 SADataProcServe::SADataProcServe(QObject *parent, int idealTimeSecond) : SATcpServe(parent)
     , m_pid(0)
     , m_willBeQuit(false)
     , m_checkLiveTime(idealTimeSecond)//存活20s
 {
     connect(&m_liveChecker, &QTimer::timeout, this, &SADataProcServe::onCkeckLiveTimeout);
-    connect(this, &SATcpServe::newConnected, this, &SADataProcServe::onNewConnected);
+    registSocketFactory(create_socket);
 }
 
 
@@ -46,16 +57,4 @@ void SADataProcServe::setPid(const uint& pid)
 
 void SADataProcServe::onCkeckLiveTimeout()
 {
-}
-
-
-/**
- * @brief 新连接建立触发的槽
- * @param socket
- */
-void SADataProcServe::onNewConnected(SATcpSocket *socket)
-{
-    qDebug() << "onNewConnected";
-    socket->setupHandle(new SADataProcHandle);
-    qDebug() << "onNewConnected:success setup new handle";
 }

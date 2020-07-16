@@ -27,7 +27,6 @@ HEADERS += \
     $$PWD/../global/SAGlobals.h \
     SAServeGlobal.h \
     SAAbstractServe.h \
-    SASocketHandle.h \
     SATcpSocket.h \
     SATcpServe.h \
     SAServeShareMemory.h \
@@ -40,7 +39,6 @@ HEADERS += \
 
 SOURCES += \
     SAAbstractServe.cpp \
-    SASocketHandle.cpp \
     SATcpSocket.cpp \
     SATcpServe.cpp \
     SAServeShareMemory.cpp \

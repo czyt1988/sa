@@ -18,19 +18,16 @@ class SASERVE_EXPORT SATcpServe : public QTcpServer
 public:
     SATcpServe(QObject *par = nullptr);
     ~SATcpServe();
+    //socket工厂的函数指针
+    typedef std::function<SATcpSocket *()> FunPtrSocketFactory;
     //获取当前所有socket
     QList<SATcpSocket *> getSockets() const;
 
     //关闭一个socket
     void closeSocket(SATcpSocket *s);
 
-signals:
-
-    /**
-     * @brief 新的连接已经建立
-     * @param socket
-     */
-    void newConnected(SATcpSocket *socket);
+    //注册socket工厂
+    void registSocketFactory(FunPtrSocketFactory fp);
 
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
