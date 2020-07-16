@@ -40,6 +40,10 @@ class MainWindow;
 class MainWindowPrivate
 {
 public:
+    enum RibbonContextCategoryID
+    {
+        TableContextCategory = 1 ///< 表格上下文id
+    };
     MainWindow *Parent;
 
     QAction *actionOpen;
@@ -124,7 +128,7 @@ public:
     QActionGroup *actionGroupSelection;
     QActionGroup *actionChartEditor;///< 图像编辑器的互斥
 
-
+    QAction *actionColorMapTable;///< 对表格进行高亮色阶显示
 
     SARibbonBar *menuBar;
     SARibbonButtonGroupWidget *ribbonRightTopBar;
@@ -228,8 +232,11 @@ public:
     SARibbonToolButton *ribbonButtonWindowCascade;
     SARibbonToolButton *ribbonButtonWindowTile;
 
-
-
+    //Table Operate Context Category Page 表格上下文设置页
+    SARibbonContextCategory *tableRibbonContextCategory; ///< 表格上下文标签
+    SARibbonCategory *tableRibbonCategory; ///< 表格上下文标签
+    SARibbonPannel *tableHighLightRibbonPannel; ///< 高亮面板
+    SARibbonToolButton *ribbonButtonHighLightTable; ///< 高亮表格
     //===========================================================
     SARibbonMenu *menuWindowsViewSet;
 

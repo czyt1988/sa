@@ -355,6 +355,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionValueCreateVariantTable->setObjectName(QStringLiteral("actionValueCreateVariantTable"));
     actionValueCreateVariantTable->setIcon(QIcon(":/icons/icons/createVariantTableValue.png"));
 
+    actionColorMapTable = new QAction(mainWinowPtr);
+    actionColorMapTable->setObjectName(QStringLiteral("actionColorMapTable"));
+    actionColorMapTable->setIcon(QIcon());
+
     menuBar = mainWinowPtr->ribbonBar();
     menuBar->setObjectName(QStringLiteral("menuBar"));
 
@@ -558,6 +562,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     //figure Opt pannel
     figureOptRibbonPannel = operateRibbonCategory->addPannel("Figure Option");
     ribbonButtonFigureEditSubplot = figureOptRibbonPannel->addLargeAction(actionFigureEditSubPlotGeometry);
+
+    //! table  Context Category
+    tableRibbonContextCategory = menuBar->addContextCategory(QStringLiteral("Table"),Qt::red,TableContextCategory);
+    tableRibbonCategory = tableRibbonContextCategory->addCategoryPage(QStringLiteral("Table"));
+    tableHighLightRibbonPannel = tableRibbonCategory->addPannel("HighLight");
+    ribbonButtonHighLightTable = tableHighLightRibbonPannel->addLargeAction(actionColorMapTable);
 
     //! Analysis
     analysisRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Analysis"));
@@ -998,6 +1008,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionValueCreatePointVector->setText(QApplication::translate("MainWindow", "point vector", 0));
     actionValueCreateVariantTable->setText(QApplication::translate("MainWindow", "variant table", 0));
     actionFigureEditSubPlotGeometry->setText(QApplication::translate("MainWindow", "Subplot\nEdit", 0));
+    actionColorMapTable->setText(QApplication::translate("MainWindow", "highlight", 0));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
@@ -1038,6 +1049,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     viewRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "View", 0));
     operateRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Operate", 0));
     analysisRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Analysis", 0));
+    tableRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Table", 0));
+    tableRibbonContextCategory->setContextTitle(QApplication::translate("MainWindow", "Tab.Opt", 0));
 
     mainCategoryFilePannel->setWindowTitle(QApplication::translate("MainWindow", "File", 0));
     mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Operate", 0));
@@ -1045,6 +1058,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
     operateCategoryChartEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Editor", 0));
+    tableHighLightRibbonPannel->setWindowTitle(QApplication::translate("MainWindow", "Hight Light", 0));
+
     ribbonButtonLineChart->setText(menuLineChart->title());
     ribbonButtonBarChart->setText(menuBarChart->title());
     ribbonButtonBoxChart->setText(menuBoxChart->title());

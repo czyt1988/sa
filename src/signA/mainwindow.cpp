@@ -439,6 +439,8 @@ void MainWindow::initUI()
     //SAFigureSetWidget 相关槽连接
     connect(ui->figureSetWidget, &SAFigureSetWidget::chartTitleChanged
         , this, &MainWindow::onChartTitleChanged);
+
+    ui->menuBar->showContextCategory(ui->tableRibbonContextCategory);
 }
 
 
@@ -2755,6 +2757,14 @@ void MainWindow::onActionPickCurveToDataTriggered()
     }
 }
 
+/**
+ * @brief 高亮表格
+ */
+void MainWindow::onActionColorMapTable()
+{
+    //TODO
+}
+
 
 ///
 /// \brief 在当前标签中显示数据内容
@@ -2899,6 +2909,12 @@ void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
             Q_UNUSED(v);
             m_lastForceType = SAUIInterface::ValueManagerFocus;
         }
+        else if (SATabValueViewerWidget* v = qobject_cast<SATabValueViewerWidget*>(now)){
+            Q_UNUSED(v);
+            ui->menuBar->showContextCategory(ui->tableRibbonContextCategory);
+
+        }
+
     }
 }
 

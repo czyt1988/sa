@@ -495,6 +495,14 @@ private slots:
     /// \}
 
 
+    /**
+      * @group table菜单
+      * @{
+    */
+    // 高亮表格
+    void onActionColorMapTable();
+    /** @} */
+
 
     ///
     /// \group about menu slots(关于菜单)
