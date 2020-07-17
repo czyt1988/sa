@@ -93,6 +93,7 @@ public:
     //状态栏 - 显示进度状态
     //显示消息，如果interval大于0，将会在状态栏上也显示，显示的时间为interval(ms)的值
 public slots:
+
     /// \group 进度栏 消息窗口的相关操作
     /// \{
     //在ui界面显示普通信息
@@ -132,12 +133,20 @@ public slots:
     //设置进度条状态栏上的文字
     void setProgressStatusBarText(const QString& text);
 
+    /// \}
+
+
+    /// \group 进度栏 消息窗口的相关操作
+    /// \{
+    //表格操作的上下文标签显示
+    void setTableRibbonContextCategoryVisible(bool on = true);
+
+    /// \}
+public:
+
     //获取进度栏上的进度条指针
     QProgressBar *getProgressStatusBar();
 
-    /// \}
-
-public:
     /// 子窗口相关操作
     /// \group 子窗口相关操作
     /// \{
@@ -496,11 +505,12 @@ private slots:
 
 
     /**
-      * @group table菜单
-      * @{
-    */
+     * @group table菜单
+     * @{
+     */
     // 高亮表格
     void onActionColorMapTable();
+
     /** @} */
 
 

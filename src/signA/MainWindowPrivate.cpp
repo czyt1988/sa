@@ -628,6 +628,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     dockWidget_DataFeature->setObjectName(QStringLiteral("dockWidget_DataFeature"));
     dockWidget_DataFeature->setFloating(false);
     dockWidget_DataFeature->setFeatures(QDockWidget::AllDockWidgetFeatures);
+    dockWidget_DataFeature->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_2 = new QWidget();
     dockWidgetContents_2->setObjectName(QStringLiteral("dockWidgetContents_2"));
     verticalLayout_2 = new QVBoxLayout(dockWidgetContents_2);
@@ -646,6 +647,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_windowList = new QDockWidget(mainWinowPtr);
     dockWidget_windowList->setObjectName(QStringLiteral("dockWidget_windowList"));
+    dockWidget_windowList->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_4 = new QWidget();
     dockWidgetContents_4->setObjectName(QStringLiteral("dockWidgetContents_4"));
     verticalLayout_6 = new QVBoxLayout(dockWidgetContents_4);
@@ -662,6 +664,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_windowList);
     dockWidget_valueManage = new QDockWidget(mainWinowPtr);
     dockWidget_valueManage->setObjectName(QStringLiteral("dockWidget_valueManage"));
+    dockWidget_valueManage->setFocusPolicy(Qt::ClickFocus);
     dockWidget_valueManage->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
     dockWidgetContents_3 = new QWidget();
     dockWidgetContents_3->setObjectName(QStringLiteral("dockWidgetContents_3"));
@@ -687,6 +690,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget_valueManage);
     dockWidget_plotLayer = new QDockWidget(mainWinowPtr);
     dockWidget_plotLayer->setObjectName(QStringLiteral("dockWidget_plotLayer"));
+    dockWidget_plotLayer->setFocusPolicy(Qt::ClickFocus);
     figureLayoutWidget = new SAFigureLayoutWidget(dockWidget_plotLayer);
     figureLayoutWidget->setObjectName(QStringLiteral("SAFigureLayoutWidget"));
     dockWidget_plotLayer->setWidget(figureLayoutWidget);
@@ -694,6 +698,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_plotLayer);
     dockWidget_chartDataViewer = new QDockWidget(mainWinowPtr);
     dockWidget_chartDataViewer->setObjectName(QStringLiteral("dockWidget_chartDataViewer"));
+    dockWidget_chartDataViewer->setFocusPolicy(Qt::ClickFocus);
 
     chartDatasViewWidget = new SAChartDatasViewWidget();
     chartDatasViewWidget->setObjectName(QStringLiteral("chartDatasViewWidget"));
@@ -704,6 +709,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_main = new QDockWidget(mainWinowPtr);
     dockWidget_main->setObjectName(QStringLiteral("dockWidget_main"));
+    dockWidget_main->setFocusPolicy(Qt::ClickFocus);
     QIcon icon48;
 
     icon48.addFile(QStringLiteral(":/windowIcons/icons/windowIcon/figureWindow.svg"), QSize(), QIcon::Normal, QIcon::Off);
@@ -733,6 +739,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(4), dockWidget_main);
     dockWidget_valueViewer = new QDockWidget(mainWinowPtr);
     dockWidget_valueViewer->setObjectName(QStringLiteral("dockWidget_valueViewer"));
+    dockWidget_valueViewer->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_6 = new QWidget();
     dockWidgetContents_6->setObjectName(QStringLiteral("dockWidgetContents_6"));
     verticalLayout_8 = new QVBoxLayout(dockWidgetContents_6);
@@ -749,6 +756,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_valueViewer);
     dockWidget_message = new QDockWidget(mainWinowPtr);
     dockWidget_message->setObjectName(QStringLiteral("dockWidget_message"));
+    dockWidget_message->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_8 = new QWidget();
     dockWidgetContents_8->setObjectName(QStringLiteral("dockWidgetContents_8"));
     verticalLayout_9 = new QVBoxLayout(dockWidgetContents_8);
@@ -766,6 +774,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_message);
     dockWidget_plotSet = new QDockWidget(mainWinowPtr);
     dockWidget_plotSet->setObjectName(QStringLiteral("dockWidget_plotSet"));
+    dockWidget_plotSet->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents = new QWidget();
     dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
     verticalLayout = new QVBoxLayout(dockWidgetContents);

@@ -49,6 +49,7 @@
 #include "SAFigureWindow.h"
 #include "SAChartDatasViewWidget.h"
 #include "SAValueTableWidget.h"
+#include "SAValueDataTableView.h"
 // |------操作
 
 //===signACommonUI
@@ -1665,11 +1666,11 @@ SAAbstractRegionSelectEditor::SelectionMode MainWindow::getCurrentChartRegionSel
 
     if (act == ui->actionSingleSelection) {
         return (SAAbstractRegionSelectEditor::SingleSelection);
-    }else if (act == ui->actionAdditionalSelection)   {
+    }else if (act == ui->actionAdditionalSelection) {
         return (SAAbstractRegionSelectEditor::AdditionalSelection);
-    }else if (act == ui->actionSubtractionSelection)   {
+    }else if (act == ui->actionSubtractionSelection) {
         return (SAAbstractRegionSelectEditor::SubtractionSelection);
-    }else if (act == ui->actionIntersectionSelection)   {
+    }else if (act == ui->actionIntersectionSelection) {
         return (SAAbstractRegionSelectEditor::IntersectionSelection);
     }
     return (SAAbstractRegionSelectEditor::SingleSelection);
@@ -2195,6 +2196,20 @@ void MainWindow::setProgressStatusBarText(const QString& text)
 }
 
 
+/**
+ * @brief 表格操作的上下文标签显示
+ * @param on
+ */
+void MainWindow::setTableRibbonContextCategoryVisible(bool on)
+{
+    if (on) {
+        ui->menuBar->showContextCategory(ui->tableRibbonContextCategory);
+    }else {
+        ui->menuBar->hideContextCategory(ui->tableRibbonContextCategory);
+    }
+}
+
+
 ///
 /// \brief 获取进度栏上的进度条指针
 /// \return
@@ -2478,6 +2493,7 @@ void MainWindow::raiseMessageInfoDock()
 ///
 void MainWindow::raiseValueViewerDock()
 {
+    ui->dockWidget_valueViewer->setFocus();
     ui->dockWidget_valueViewer->raise();
 }
 
@@ -2757,6 +2773,7 @@ void MainWindow::onActionPickCurveToDataTriggered()
     }
 }
 
+
 /**
  * @brief 高亮表格
  */
@@ -2901,20 +2918,28 @@ void MainWindow::setValueView(const QList<SAAbstractDatas *>& datas, bool showIn
 ///
 void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
 {
-    if (old && now) {
+    if (now) {
         if (QwtPlotCanvas *c = qobject_cast<QwtPlotCanvas *>(now)) {
             Q_UNUSED(c);
             m_lastForceType = SAUIInterface::FigureWindowFocus;
-        }else if (SAValueManagerTreeView *v = qobject_cast<SAValueManagerTreeView *>(now))    {
+            setTableRibbonContextCategoryVisible(false);
+        }else if (SAValueManagerTreeView *v = qobject_cast<SAValueManagerTreeView *>(now)) {
             Q_UNUSED(v);
-            m_lastForceType = SAUIInterface::ValueManagerFocus;
-        }
-        else if (SATabValueViewerWidget* v = qobject_cast<SATabValueViewerWidget*>(now)){
+            setTableRibbonContextCategoryVisible(false);
+        }else if (SAValueDataTableView *v = qobject_cast<SAValueDataTableView *>(now)) {
             Q_UNUSED(v);
-            ui->menuBar->showContextCategory(ui->tableRibbonContextCategory);
-
+            m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
+            setTableRibbonContextCategoryVisible(true);
+        } else if (now == ui->dockWidget_valueViewer) {
+            m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
+            setTableRibbonContextCategoryVisible(true);
+        }else if (ui->tabWidget_valueViewer == now) {
+            m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
+            setTableRibbonContextCategoryVisible(true);
+        }else {
+            setTableRibbonContextCategoryVisible(false);
         }
-
+        qDebug() << now->metaObject()->className();
     }
 }
 
@@ -2950,11 +2975,11 @@ void MainWindow::makeValueFromXYSeries(const QString& name, SA::PickDataMode pic
         QVector<double> x;
         SAChart::getXYDatas(xy, &x, nullptr);
         p = SAValueManager::makeData<SAVectorDouble>(name, x);//new SAVectorDouble(name,x);
-    }else if (SA::YOnly == pickMode)   {
+    }else if (SA::YOnly == pickMode) {
         QVector<double> y;
         SAChart::getXYDatas(xy, nullptr, &y);
         p = SAValueManager::makeData<SAVectorDouble>(name, y);  //new SAVectorDouble(name,y);
-    }else if (SA::XYPoint == pickMode)   {
+    }else if (SA::XYPoint == pickMode) {
         p = SAValueManager::makeData<SAVectorPointF>(name, xy); //new SAVectorPointF(name,xy);
     }
     saValueManager->addData(p);
@@ -3002,7 +3027,7 @@ void MainWindow::onActionUndoTriggered()
     if (ui->treeView_valueManager->hasFocus()) {
         logInfo = "valueManager tree undo";
         saValueManager->undo();
-    }else if (ui->tabWidget_valueViewer->isActiveWindow())   {
+    }else if (ui->tabWidget_valueViewer->isActiveWindow()) {
         SAValueTableWidget *w = ui->tabWidget_valueViewer->currentTablePage();
         if (w) {
             if (w->hasFocus()) {
@@ -3034,7 +3059,7 @@ void MainWindow::onActionRedoTriggered()
     if (ui->treeView_valueManager->hasFocus()) {
         logInfo = "valueManager tree redo";
         saValueManager->redo();
-    }else if (ui->tabWidget_valueViewer->isActiveWindow())   {
+    }else if (ui->tabWidget_valueViewer->isActiveWindow()) {
         SAValueTableWidget *w = ui->tabWidget_valueViewer->currentTablePage();
         if (w) {
             if (w->hasFocus()) {
