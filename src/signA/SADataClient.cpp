@@ -8,7 +8,8 @@
 #include <QMap>
 #include <QProcess>
 #include <QTimer>
-#include "SATcpDataProcessClient.h"
+#include "SATcpClient.h"
+#include "SATcpDataProcessSocket.h"
 #include "SATcpSocket.h"
 
 
@@ -38,24 +39,24 @@ SADataClient::~SADataClient()
 void SADataClient::_init()
 {
     qRegisterMetaType<QVector<QPointF> >();
-    m_client = new SATcpDataProcessClient();
+    m_client = new SATcpClient();
+    m_client->registSocketFactory([]()->SATcpSocket *{
+        return (new SATcpDataProcessSocket);
+    });
     m_thread = new QThread();
     m_client->moveToThread(m_thread);
-    connect(m_thread, &QThread::finished, m_client, &SATcpDataProcessClient::deleteLater);
+    connect(m_thread, &QThread::finished, m_client, &SATcpDataProcessSocket::deleteLater);
     connect(m_thread, &QThread::finished, m_thread, &QThread::deleteLater);
     //关闭客户端
-    connect(this, &SADataClient::closeClient, m_client, &SATcpDataProcessClient::close);
-    connect(m_client, &SATcpDataProcessClient::aboutToClose, m_thread, &QThread::quit);
+    connect(this, &SADataClient::closeClient, m_client, &SATcpClient::close);
+    connect(m_client, &SATcpClient::aboutToClose, m_thread, &QThread::quit);
     //非线程相关的信号槽
-    connect(this, &SADataClient::startConnectToServe, m_client, &SATcpDataProcessClient::connectToServe);
-    connect(m_client, &SATcpDataProcessClient::clientError, this, &SADataClient::onClientErrorOccure);
-    connect(m_client, &SATcpDataProcessClient::heartbreatTimeout, this, &SADataClient::onHeartbeatCheckerTimerout);
-    connect(m_client, &SATcpDataProcessClient::connectedServe, this, &SADataClient::onSocketConnected);
-    connect(m_client, &SATcpDataProcessClient::disconnectedServe, this, &SADataClient::onSocketDisconnected);
-    connect(m_client, &SATcpDataProcessClient::socketError, this, &SADataClient::onSocketErrorOccure);
-    //二维点描述的请求和返回
-    connect(this, &SADataClient::req2DPointsDescribe, m_client, &SATcpDataProcessClient::request2DPointsDescribe);
-    connect(m_client, &SATcpDataProcessClient::reply2DPointsDescribe, this, &SADataClient::rec2DPointsDescribe);
+    connect(this, &SADataClient::startConnectToServe, m_client, &SATcpClient::connectToServe);
+    connect(m_client, &SATcpClient::clientError, this, &SADataClient::onClientErrorOccure);
+    connect(m_client, &SATcpClient::heartbreatTimeout, this, &SADataClient::onHeartbeatCheckerTimerout);
+    connect(m_client, &SATcpClient::connectedServe, this, &SADataClient::onSocketConnected);
+    connect(m_client, &SATcpClient::disconnectedServe, this, &SADataClient::onSocketDisconnected);
+    connect(m_client, &SATcpClient::socketError, this, &SADataClient::onSocketErrorOccure);
     //线程启动
     m_thread->start();
 }
@@ -105,9 +106,19 @@ void SADataClient::reconnectToServe()
 /**
  * @brief 客户端连接成功
  */
-void SADataClient::onSocketConnected()
+void SADataClient::onSocketConnected(QAbstractSocket *socket)
 {
     m_connectRetryCount = 0;
+    SATcpDataProcessSocket *ds = qobject_cast<SATcpDataProcessSocket *>(socket);
+
+    if (nullptr == ds) {
+        //不知名客户端连接
+        emit messageInfo(tr("unknow client connect to calc serve"));
+        return;
+    }
+    connect(this, &SADataClient::req2DPointsDescribe, ds, &SATcpDataProcessSocket::request2DPointsDescribe);
+    connect(ds, &SATcpDataProcessSocket::receive2DPointsDescribe, this, &SADataClient::receive2DPointsDescribe);
+
     emit connectedServeResult(true);
     emit messageInfo(tr("connect calc serve success"));
 }

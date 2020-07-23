@@ -7,9 +7,9 @@
 #include <QHostAddress>
 #include "SAThreadPool.h"
 
-SATcpSocket *create_default_socket();
+SATcpSocket *create_default_ser_socket();
 
-SATcpSocket *create_default_socket()
+SATcpSocket *create_default_ser_socket()
 {
 #ifdef SA_SERVE_DEBUG_PRINT
     qDebug() << "create_default_socket";
@@ -60,7 +60,7 @@ public:
 SATcpServePrivate::SATcpServePrivate(SATcpServe *p) : q_ptr(p)
     , fpSocketFactory(nullptr)
 {
-    fpSocketFactory = create_default_socket;
+    fpSocketFactory = create_default_ser_socket;
 }
 
 
@@ -176,6 +176,7 @@ void SATcpServe::incomingConnection(qintptr socketDescriptor)
 #ifdef SA_SERVE_DEBUG_PRINT
     qDebug() << "create socket success:ip"<<ip<<",port:"<<port;
 #endif
+    addPendingConnection(info.socket);
     emit newConnection();
 }
 

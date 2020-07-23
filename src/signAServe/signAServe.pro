@@ -27,23 +27,23 @@ HEADERS += \
     $$PWD/../global/SAGlobals.h \
     SAServeGlobal.h \
     SAAbstractServe.h \
+    SATcpDataProcessSocket.h \
     SATcpSocket.h \
     SATcpServe.h \
     SAServeShareMemory.h \
     SATcpClient.h \
     SAServerDefine.h \
-    SATcpDataProcessClient.h \
     SAServeHandleFun.h
 
 
 
 SOURCES += \
     SAAbstractServe.cpp \
+    SATcpDataProcessSocket.cpp \
     SATcpSocket.cpp \
     SATcpServe.cpp \
     SAServeShareMemory.cpp \
     SATcpClient.cpp \
-    SATcpDataProcessClient.cpp \
     SAServeHandleFun.cpp
 
 #sa lib

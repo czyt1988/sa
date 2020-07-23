@@ -59,7 +59,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     //消息转发
     connect(&m_client, &SADataClient::messageInfo, this, &SADataFeatureWidget::showMessageInfo);
     connect(&m_client, &SADataClient::heartbeatCheckerTimerout, this, &SADataFeatureWidget::onHeartbeatCheckerTimerout);
-    connect(&m_client, &SADataClient::rec2DPointsDescribe, this, &SADataFeatureWidget::onRec2DPointsDescribe);
+    connect(&m_client, &SADataClient::receive2DPointsDescribe, this, &SADataFeatureWidget::onReceive2DPointsDescribe);
     m_client.tryConnectToServe();
 }
 
@@ -333,15 +333,9 @@ void SADataFeatureWidget::onHeartbeatCheckerTimerout()
 }
 
 
-/**
- * @brief 获取服务器反馈
- * @param header
- * @param res
- */
-void SADataFeatureWidget::onRec2DPointsDescribe(const SAProtocolHeader& header, SAXMLProtocolParserPtr res)
+void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, double var, double stdVar, double skewness, double kurtosis, double min, double max, double mid, double peak2peak, const QPointF& minPoint, const QPointF& maxPoint, const QPointF& midPoint, const QVector<QPointF>& tops, const QVector<QPointF>& lows, int sequenceID, uint32_t extendValue)
 {
-    Q_UNUSED(header);
-    qDebug() << "rec : "<<res->toString();
+    qDebug() << "onReceive2DPointsDescribe";
 }
 
 

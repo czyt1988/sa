@@ -1,5 +1,6 @@
 #include "SADataProcSocket.h"
 #include "SAServerDefine.h"
+#include "SAServeHandleFun.h"
 #include "SADataProcFunctions.h"
 #include <QThreadPool>
 #include "SAMath.h"
@@ -57,13 +58,8 @@ bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, cons
  */
 bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
 {
-    SAXMLProtocolParser res = xmlProtocol(SA::ProtocolFunReply2DPointsDescribe, xml);
-
     if (SA::ProtocolFunReq2DPointsDescribe != xml.getFunctionID()) {
-        res.setValue("result", 0);//标记结果异常
-        QByteArray data = res.toByteArray();
-        SAProtocolHeader replyheader = createXMLReplyHeader(header, data, SA::ProtocolFunReply2DPointsDescribe);
-        ensureWrite(replyheader, data);
+        replyError(header, tr("unknow fun id"), SA::ProtocolErrorUnknowFun);
         return (true);
     }
     //获取points
@@ -112,21 +108,6 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
     QPointF minPoint = *points.cbegin();
     QPointF maxPoint = *(points.cend()-1);
     QPointF midPoint = n > 1 ? *(points.cbegin() + int(n/2)) : minPoint;//中位数
-
-    //把结果写入结果xml
-    res.setValue("sum", sum);
-    res.setValue("mean", mean);
-    res.setValue("var", var);
-    res.setValue("stdVar", stdVar);
-    res.setValue("skewness", skewness);
-    res.setValue("kurtosis", kurtosis);
-    res.setValue("min", min);
-    res.setValue("max", max);
-    res.setValue("mid", mid);
-    res.setValue("peak2peak", peak2peak);
-    res.setValue("min-point", minPoint);
-    res.setValue("max-point", maxPoint);
-    res.setValue("mid-point", midPoint);
     int sortedcount = sortcount < n ? sortcount : n;
     QVector<QPointF> tops(sortedcount);
     QVector<QPointF> lows(sortedcount);
@@ -135,11 +116,11 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
     std::copy(points.rbegin(), points.rbegin()+sortedcount, tops.begin());
     //拷贝lows
     std::copy(points.begin(), points.begin()+sortedcount, lows.begin());
-    res.setValue("sorted-lows", QVariant::fromValue(tops));
-    res.setValue("sorted-lows", QVariant::fromValue(lows));
-    QByteArray data = res.toByteArray();
-    SAProtocolHeader replyheader = createXMLReplyHeader(header, data, SA::ProtocolFunReply2DPointsDescribe);
 
-    ensureWrite(replyheader, data);
+
+    SA::reply_2d_points_describe_xml(this, header
+        , sum, mean, var, stdVar, skewness, kurtosis
+        , min, max, mid, peak2peak, minPoint, maxPoint, midPoint
+        , tops, lows);
     return (true);
 }

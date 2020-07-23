@@ -42,7 +42,14 @@ signals:
      * @param token
      * @see SATcpClient::requestToken
      */
-    void replyToken(const QString& token, int sequenceID);
+    void receiveToken(const QString& token, int sequenceID);
+
+    /**
+     * @brief 接收到对方回复的错误
+     * @param token
+     * @param sequenceID
+     */
+    void receiveError(const QString& msg, int errcode, int sequenceID);
 
     /**
      * @brief 错误
@@ -66,6 +73,12 @@ public slots:
 
     //发出token请求
     void requestToken(int pid, const QString& appid);
+
+    //回复错误给对方
+    void replyError(int sequenceID, int extendValue, const QString& msg, int errcode);
+
+    //回复错误给对方
+    void replyError(const SAProtocolHeader& requestHeader, const QString& msg, int errcode);
 
 private slots:
     void onReadyRead();

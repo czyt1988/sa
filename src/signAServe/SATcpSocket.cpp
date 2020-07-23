@@ -156,6 +156,30 @@ void SATcpSocket::requestToken(int pid, const QString& appid)
 
 
 /**
+ * @brief 回复错误给对应端
+ * @param sequenceID
+ * @param extendValue
+ * @param msg
+ * @param errcode
+ */
+void SATcpSocket::replyError(int sequenceID, int extendValue, const QString& msg, int errcode)
+{
+    SA::reply_error_xml(this, sequenceID, extendValue, msg, errcode);
+}
+
+
+/**
+ * @brief 回复错误给对应端
+ * @param msg
+ * @param errcode
+ */
+void SATcpSocket::replyError(const SAProtocolHeader& requestHeader, const QString& msg, int errcode)
+{
+    SA::reply_error_xml(this, requestHeader, msg, errcode);
+}
+
+
+/**
  * @brief readyRead对应的槽函数，处理文件头和数据
  */
 void SATcpSocket::onReadyRead()
@@ -306,22 +330,35 @@ bool SATcpSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLPro
 {
     switch (header.protocolFunID)
     {
+    case SA::ProtocolFunErrorOcc:
+    {
+        //处理错误信息
+        QString msg;
+        int errcode;
+        SA::receive_error_xml(&xml, msg, errcode);
+        emit receiveError(msg, errcode, header.sequenceID);
+        return (true);
+    }
+
     case SA::ProtocolFunReqToken:
     {
         //接收到获取token请求
-        int pid = xml.getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "pid", 0).toInt();
-        QString appid = xml.getValue(SA_SERVER_VALUE_GROUP_SA_DEFAULT, "appid", "").toString();
+        int pid;
+        QString appid;
+        SA::receive_request_token_xml(&xml, pid, appid);
         return (SA::reply_token_xml(this, header, pid, appid));
     }
 
     case SA::ProtocolFunReplyToken:
     {
         //接收到token应答，发射token内容
-        QString token = xml.getDefaultGroupValue("token").toString();
+        QString token;
+        SA::receive_reply_token_xml(&xml, token);
         if (!token.isEmpty()) {
-            emit replyToken(token, header.sequenceID);
+            emit receiveToken(token, header.sequenceID);
             return (true);
         }
+        return (false);
     }
 
     default:

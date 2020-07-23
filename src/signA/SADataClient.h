@@ -5,7 +5,7 @@
 #include <QAbstractSocket>
 #include "../global/SAGlobals.h"
 #include "SAProtocolHeader.h"
-#include "SATcpDataProcessClient.h"
+#include "SATcpClient.h"
 class QThread;
 
 //对于不暴露的接口，不使用impl方式
@@ -64,7 +64,27 @@ signals:
      * @param header 通讯头
      * @param res 描述的协议
      */
-    void rec2DPointsDescribe(const SAProtocolHeader& header, SAXMLProtocolParserPtr res);
+    /**
+     * @brief 返回数据点描述结果
+     * @param res 结果以satree来进行描述
+     */
+    void receive2DPointsDescribe(double sum
+        , double mean
+        , double var
+        , double stdVar
+        , double skewness
+        , double kurtosis
+        , double min
+        , double max
+        , double mid
+        , double peak2peak
+        , const QPointF& minPoint
+        , const QPointF& maxPoint
+        , const QPointF& midPoint
+        , const QVector<QPointF>& tops
+        , const QVector<QPointF>& lows
+        , int sequenceID
+        , uint32_t extendValue);
 
     /**
      * @brief 请求2维数据的统计描述
@@ -82,7 +102,7 @@ public slots:
 
 private slots:
     //连接成功槽
-    Q_SLOT void onSocketConnected();
+    Q_SLOT void onSocketConnected(QAbstractSocket *socket);
 
     //连接失败槽
     Q_SLOT void onSocketDisconnected();
@@ -105,11 +125,11 @@ private:
 
 
 private:
-    SATcpDataProcessClient *m_client;       ///< 客户端实例
+    SATcpClient *m_client;          ///< 客户端实例
     QThread *m_thread;
-    int m_maxConnectRetryCount;             ///< 记录重试连接的最大次数
-    int m_connectRetryCount;                ///< 记录重试连接的次数
-    int m_timeout;                          ///< 连接服务器超时时间
+    int m_maxConnectRetryCount;     ///< 记录重试连接的最大次数
+    int m_connectRetryCount;        ///< 记录重试连接的次数
+    int m_timeout;                  ///< 连接服务器超时时间
 };
 
 #endif // SADATACLIENT_H

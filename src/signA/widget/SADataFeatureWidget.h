@@ -64,7 +64,23 @@ private slots:
     void onHeartbeatCheckerTimerout();
 
     //获取服务器的反馈
-    void onRec2DPointsDescribe(const SAProtocolHeader& header, SAXMLProtocolParserPtr res);
+    void onReceive2DPointsDescribe(double sum
+        , double mean
+        , double var
+        , double stdVar
+        , double skewness
+        , double kurtosis
+        , double min
+        , double max
+        , double mid
+        , double peak2peak
+        , const QPointF& minPoint
+        , const QPointF& maxPoint
+        , const QPointF& midPoint
+        , const QVector<QPointF>& tops
+        , const QVector<QPointF>& lows
+        , int sequenceID
+        , uint32_t extendValue);
 
 private:
     //对MdiSubWindow进行绑定
