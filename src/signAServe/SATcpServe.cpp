@@ -176,6 +176,7 @@ void SATcpServe::incomingConnection(qintptr socketDescriptor)
 #ifdef SA_SERVE_DEBUG_PRINT
     qDebug() << "create socket success:ip"<<ip<<",port:"<<port;
 #endif
+    thread->start();
     addPendingConnection(info.socket);
     emit newConnection();
 }

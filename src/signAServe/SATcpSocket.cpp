@@ -5,6 +5,8 @@
 #include "SAServerDefine.h"
 #include "SACRC.h"
 
+#define SA_SERVE_DEBUG_PRINT_Socket    0
+
 class SATcpSocketPrivate
 {
     SA_IMPL_PUBLIC(SATcpSocket)
@@ -186,12 +188,11 @@ void SATcpSocket::onReadyRead()
 {
     const static unsigned int s_headerSize = sizeof(SAProtocolHeader);
 
-    qDebug() << __LINE__;
     if (d_ptr->m_isReadedMainHeader) {
         //此时已经读取了头
         if (bytesAvailable() >= d_ptr->m_mainHeader.dataSize) {
             //说明数据接收完
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
             qDebug()	<< " rec Data:"<<bytesAvailable()<< " bytes "
                     <<"\n header:"<<d_ptr->m_mainHeader
             ;
@@ -205,7 +206,7 @@ void SATcpSocket::onReadyRead()
                 qDebug() << "socket abort!!!  can not read from socket io!";
                 return;
             }
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
             printQByteArray(d_ptr->m_buffer);
 #endif
             deal(d_ptr->m_mainHeader, d_ptr->m_buffer);
@@ -219,7 +220,7 @@ void SATcpSocket::onReadyRead()
     }else if (bytesAvailable() >= s_headerSize) {
         //说明包头还未接收
         //但socket收到的数据已经满足包头数据需要的数据
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
         qDebug() <<"main header may receive:byte available:"<<bytesAvailable();
 #endif
         if (!readFromSocket((void *)(&(d_ptr->m_mainHeader)), s_headerSize)) {
@@ -228,7 +229,7 @@ void SATcpSocket::onReadyRead()
             abort();
             return;
         }
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
         qDebug()	<< "readed header from socket"
                 << ",type:" << d_ptr->m_mainHeader.protocolTypeID
                 << ",fun:" << d_ptr->m_mainHeader.protocolFunID
@@ -258,7 +259,7 @@ void SATcpSocket::onReadyRead()
         }
 
         if (bytesAvailable() > 0) {
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
             qDebug() << "have avaliable data,size:"<<bytesAvailable()
             ;
 #endif
@@ -276,7 +277,7 @@ void SATcpSocket::onReadyRead()
  */
 bool SATcpSocket::deal(const SAProtocolHeader& header, const QByteArray& data)
 {
-#ifdef SA_SERVE_DEBUG_PRINT
+#ifdef SA_SERVE_DEBUG_PRINT_Socket
     qDebug() << "deal:" << header << " data:" << data;
 #endif
     switch (header.protocolTypeID)

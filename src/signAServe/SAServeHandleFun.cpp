@@ -19,6 +19,8 @@
 #include "SACRC.h"
 #include "SAPoint.h"
 
+#define SA_SERVE_DEBUG_PRINT_HandleFun    0
+
 //把variant写入item里
 void write_variant_property_to_xml(QXmlStreamWriter& xml, const QMap<QString, QVariant>& props);
 void write_variant_item_to_xml(QXmlStreamWriter& xml, const QMap<int, QVariant>& props);
@@ -123,7 +125,9 @@ QString SA::make_token(int pid, const QString& appID)
  */
 bool SA::request_token_xml(int pid, const QString& appid, SATcpSocket *socket, int sequenceID, uint32_t extendValue)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
     FUNCTION_RUN_PRINT();
+#endif
     //请求token
     SAXMLProtocolParser data;
 
@@ -157,7 +161,9 @@ bool SA::receive_request_token_xml(const SAXMLProtocolParser *xml, int& pid, QSt
  */
 bool SA::request_heartbreat(SATcpSocket *socket)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
     FUNCTION_RUN_PRINT();
+#endif
     SAProtocolHeader header;
 
     header.init();
@@ -364,6 +370,9 @@ void write_saitem_to_xml(QXmlStreamWriter& xml, const SAItem *item)
  */
 bool SA::reply_token_xml(SATcpSocket *socket, const SAProtocolHeader& header, int pid, const QString& appid)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
+    FUNCTION_RUN_PRINT();
+#endif
     QString token = SA::make_token(pid, appid);
 
     SAXMLProtocolParser reply;
@@ -396,6 +405,9 @@ bool SA::receive_reply_token_xml(const SAXMLProtocolParser *xml, QString& token)
  */
 bool SA::reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& header)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
+    FUNCTION_RUN_PRINT();
+#endif
     SAProtocolHeader replyheader;
 
     replyheader.init();
@@ -417,6 +429,10 @@ bool SA::reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& heade
  */
 bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPointF>& arrs, uint key, int sortcount)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
+    FUNCTION_RUN_PRINT();
+    qDebug().noquote() << xml.toString();
+#endif
     SAXMLProtocolParser xml;
 
     xml.setClassID(SA::ProtocolTypeXml);
@@ -424,9 +440,7 @@ bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPoin
     xml.setValue("key", key);
     xml.setValue("points", QVariant::fromValue<QVector<QPointF> >(arrs));
     xml.setValue("sort-count", sortcount);
-#ifdef SA_SERVE_DEBUG_PRINT
-    qDebug().noquote() << xml.toString();
-#endif
+
     return (write_xml_protocol(socket, &xml, SA::ProtocolFunReq2DPointsDescribe, key, 0));
 }
 
