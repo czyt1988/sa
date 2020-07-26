@@ -36,6 +36,8 @@ class SASERVE_EXPORT SATcpClient : public QObject
     SA_IMPL(SATcpClient)
     Q_OBJECT
 public:
+    //socket工厂的函数指针
+    typedef std::function<SATcpSocket *()> FunPtrSocketFactory;
     enum ClientError {
         UnknowError			= 0     ///< 未知错误
         , SharedMemoryNotReadyError	= 1     ///< 共享内存还未准备好
@@ -49,24 +51,15 @@ public:
 
     SATcpClient(QObject *par = nullptr);
     ~SATcpClient();
-    //向socket写数据
-    bool write(const SAProtocolHeader& header, const QByteArray& data);
-
-    //向socket写数据
-    bool write(const SAXMLProtocolParser& xml, int funid, int sequenceID, uint32_t extendValue);
-
-    //处理协议数据的函数
-    virtual bool deal(const SAProtocolHeader& header, const QByteArray& data);
-
-    //处理xml协议
-    virtual bool dealXmlProtocol(const SAProtocolHeader& header, SAXMLProtocolParserPtr xml);
-
     //获取socket
     SATcpSocket *getSocket() const;
 
+    //注册socket工厂
+    void registSocketFactory(FunPtrSocketFactory fp);
+
 public slots:
     //连接服务器
-    bool connectToServe(int timeout = 5000);
+    void connectToServe(int timeout = 5000);
 
     //断开和服务器的连接
     void disconnectFromServe();
@@ -84,11 +77,13 @@ public slots:
     void onSocketConnected();
 
     //关闭客户端
-    void cloese();
+    void close();
 
 private slots:
-    void onReceivedData(const SAProtocolHeader& header, const QByteArray& data);
     void onHeartbreatCheckTimeout();
+
+    //获取到心跳应答
+    void onReceivedHeartbreat();
 
 private:
     void createSocket();
@@ -109,7 +104,7 @@ signals:
      * @param token
      * @see SATcpClient::requestToken
      */
-    void replyToken(const QString& token, int sequenceID);
+    void receiveToken(const QString& token, int sequenceID);
 
     /**
      * @brief socket错误
@@ -120,7 +115,7 @@ signals:
     /**
      * @brief socket连接成功的信号
      */
-    void connectedServe();
+    void connectedServe(QAbstractSocket *socket);
 
     /**
      * @brief socket连接丢失的信号

@@ -2,6 +2,7 @@
 #include "SAXMLProtocolParser.h"
 #include "SAServerDefine.h"
 #include "SAXMLTagDefined.h"
+#include <QVariant>
 #include <QCryptographicHash>
 #include <QMap>
 #include <QMutex>
@@ -17,6 +18,8 @@
 #include "SAVariantCaster.h"
 #include "SACRC.h"
 #include "SAPoint.h"
+
+#define SA_SERVE_DEBUG_PRINT_HandleFun    0
 
 //把variant写入item里
 void write_variant_property_to_xml(QXmlStreamWriter& xml, const QMap<QString, QVariant>& props);
@@ -122,7 +125,9 @@ QString SA::make_token(int pid, const QString& appID)
  */
 bool SA::request_token_xml(int pid, const QString& appid, SATcpSocket *socket, int sequenceID, uint32_t extendValue)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
     FUNCTION_RUN_PRINT();
+#endif
     //请求token
     SAXMLProtocolParser data;
 
@@ -135,13 +140,30 @@ bool SA::request_token_xml(int pid, const QString& appid, SATcpSocket *socket, i
 
 
 /**
+ * @brief 解析token请求参数
+ * @param xml
+ * @param pid
+ * @param appid
+ * @return
+ */
+bool SA::receive_request_token_xml(const SAXMLProtocolParser *xml, int& pid, QString& appid)
+{
+    pid = xml->getDefaultGroupValue("pid").toInt();
+    appid = xml->getDefaultGroupValue("appid").toString();
+    return (true);
+}
+
+
+/**
  * @brief 请求心跳
  * @param socket
  * @return
  */
 bool SA::request_heartbreat(SATcpSocket *socket)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
     FUNCTION_RUN_PRINT();
+#endif
     SAProtocolHeader header;
 
     header.init();
@@ -278,7 +300,7 @@ void write_variant_to_xml_item(QXmlStreamWriter& xml, const QString& name, const
         QList<QVariant> l = value.toList();
         for (auto i = l.begin(); i != l.end(); ++i)
         {
-            write_variant_to_xml_item(xml,QString(),*i);
+            write_variant_to_xml_item(xml, QString(), *i);
         }
     } else if (0 == QString::compare(vartype, SA_XML_VAR_ARR_MAP, Qt::CaseInsensitive)) {
         QMap<QString, QVariant> l = value.toMap();
@@ -296,7 +318,7 @@ void write_variant_to_xml_item(QXmlStreamWriter& xml, const QString& name, const
         QStringList l = value.toStringList();
         for (auto i = l.begin(); i != l.end(); ++i)
         {
-            write_variant_to_xml_item(xml,QString(),*i);
+            write_variant_to_xml_item(xml, QString(), *i);
         }
     } else {
         xml.writeCharacters(SAVariantCaster::variantToString(value));
@@ -348,6 +370,9 @@ void write_saitem_to_xml(QXmlStreamWriter& xml, const SAItem *item)
  */
 bool SA::reply_token_xml(SATcpSocket *socket, const SAProtocolHeader& header, int pid, const QString& appid)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
+    FUNCTION_RUN_PRINT();
+#endif
     QString token = SA::make_token(pid, appid);
 
     SAXMLProtocolParser reply;
@@ -360,6 +385,19 @@ bool SA::reply_token_xml(SATcpSocket *socket, const SAProtocolHeader& header, in
 
 
 /**
+ * @brief 解析token请求的xml
+ * @param xml
+ * @param token
+ * @return
+ */
+bool SA::receive_reply_token_xml(const SAXMLProtocolParser *xml, QString& token)
+{
+    token = xml->getDefaultGroupValue("token").toString();
+    return (true);
+}
+
+
+/**
  * @brief 处理心跳请求
  * @param socket
  * @param header
@@ -367,6 +405,9 @@ bool SA::reply_token_xml(SATcpSocket *socket, const SAProtocolHeader& header, in
  */
 bool SA::reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& header)
 {
+#if SA_SERVE_DEBUG_PRINT_HandleFun
+    FUNCTION_RUN_PRINT();
+#endif
     SAProtocolHeader replyheader;
 
     replyheader.init();
@@ -375,5 +416,175 @@ bool SA::reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& heade
     replyheader.protocolTypeID = SA::ProtocolTypeHeartbreat;
     replyheader.protocolFunID = SA::ProtocolFunReplyHeartbreat;
     replyheader.extendValue = 0; // 心跳返回给客户端，此时值为0
-    return write(replyheader, QByteArray(), socket);
+    return (write(replyheader, QByteArray(), socket));
+}
+
+
+/**
+ * @brief 请求2维数据的统计描述
+ * @param socket socket
+ * @param arrs 待计算的点序列
+ * @param key 标致，返回的reply中会带着此key，用于区别请求的回复
+ * @param sortcount 返回排序的前后n个值
+ */
+bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPointF>& arrs, uint key, int sortcount)
+{
+#if SA_SERVE_DEBUG_PRINT_HandleFun
+    FUNCTION_RUN_PRINT();
+    qDebug().noquote() << xml.toString();
+#endif
+    SAXMLProtocolParser xml;
+
+    xml.setClassID(SA::ProtocolTypeXml);
+    xml.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
+    xml.setValue("key", key);
+    xml.setValue("points", QVariant::fromValue<QVector<QPointF> >(arrs));
+    xml.setValue("sort-count", sortcount);
+
+    return (write_xml_protocol(socket, &xml, SA::ProtocolFunReq2DPointsDescribe, key, 0));
+}
+
+
+/**
+ * @brief 异常的回复
+ * @param socket
+ * @param requestHeader
+ * @param msg
+ * @param errcode
+ * @return
+ */
+bool SA::reply_error_xml(SATcpSocket *socket, const SAProtocolHeader& requestHeader, const QString& msg, int errcode)
+{
+    return (SA::reply_error_xml(socket, requestHeader.sequenceID, requestHeader.extendValue, msg, errcode));
+}
+
+
+/**
+ * @brief 异常的回复
+ * @param socket
+ * @param sequenceID
+ * @param extendValue
+ * @param msg 异常信息
+ * @param errcode 错误码
+ * @return
+ */
+bool SA::reply_error_xml(SATcpSocket *socket, int sequenceID, int extendValue, const QString& msg, int errcode)
+{
+    SAXMLProtocolParser xml;
+
+    xml.setClassID(SA::ProtocolTypeXml);
+    xml.setFunctionID(ProtocolFunErrorOcc);
+    xml.setValue("msg", msg);
+    xml.setValue("errcode", errcode);
+    return (write_xml_protocol(socket, &xml, ProtocolFunErrorOcc, sequenceID, extendValue));
+}
+
+
+/**
+ * @brief 接收到错误信息
+ * @param xml
+ * @param sequenceID
+ * @param extendValue
+ * @param msg
+ * @param errcode
+ * @return
+ */
+bool SA::receive_error_xml(const SAXMLProtocolParser *xml, QString& msg, int& errcode)
+{
+    Q_CHECK_PTR(xml);
+    msg = xml->getDefaultGroupValue("msg").toString();
+    errcode = xml->getDefaultGroupValue("errcode").toInt();
+    return (true);
+}
+
+
+/**
+ * @brief 回复2维数组描述
+ * @param socket
+ * @param requestHeader
+ * @param sum
+ * @param mean
+ * @param var
+ * @param stdVar
+ * @param skewness
+ * @param kurtosis
+ * @param min
+ * @param max
+ * @param mid
+ * @param peak2peak
+ * @param minPoint
+ * @param maxPoint
+ * @param midPoint
+ * @param tops
+ * @param lows
+ * @return
+ */
+bool SA::reply_2d_points_describe_xml(SATcpSocket *socket, const SAProtocolHeader& requestHeader, double sum, double mean, double var, double stdVar, double skewness, double kurtosis, double min, double max, double mid, double peak2peak, const QPointF& minPoint, const QPointF& maxPoint, const QPointF& midPoint, const QVector<QPointF>& tops, const QVector<QPointF>& lows)
+{
+    SAXMLProtocolParser xml;
+
+    xml.setClassID(SA::ProtocolTypeXml);
+    xml.setFunctionID(ProtocolFunReply2DPointsDescribe);
+    xml.setValue("sum", sum);
+    xml.setValue("mean", mean);
+    xml.setValue("var", var);
+    xml.setValue("stdVar", stdVar);
+    xml.setValue("skewness", skewness);
+    xml.setValue("kurtosis", kurtosis);
+    xml.setValue("min", min);
+    xml.setValue("max", max);
+    xml.setValue("mid", mid);
+    xml.setValue("peak2peak", peak2peak);
+    xml.setValue("min-point", minPoint);
+    xml.setValue("max-point", maxPoint);
+    xml.setValue("mid-point", midPoint);
+    xml.setValue("sorted-lows", QVariant::fromValue(tops));
+    xml.setValue("sorted-lows", QVariant::fromValue(lows));
+    return (write_xml_protocol(socket, &xml, ProtocolFunReply2DPointsDescribe, requestHeader.sequenceID, requestHeader.extendValue));
+}
+
+
+/**
+ * @brief 解析2维数组描述的回复
+ * @param xml
+ * @param sum
+ * @param mean
+ * @param var
+ * @param stdVar
+ * @param skewness
+ * @param kurtosis
+ * @param min
+ * @param max
+ * @param mid
+ * @param peak2peak
+ * @param minPoint
+ * @param maxPoint
+ * @param midPoint
+ * @param tops
+ * @param lows
+ * @return
+ */
+bool SA::receive_reply_2d_points_describe_xml(const SAXMLProtocolParser *xml,
+    double& sum, double& mean, double& var, double& stdVar,
+    double& skewness, double& kurtosis,
+    double& min, double& max, double& mid, double& peak2peak,
+    QPointF& minPoint, QPointF& maxPoint, QPointF& midPoint,
+    QVector<QPointF>& tops, QVector<QPointF>& lows)
+{
+    sum = xml->getDefaultGroupValue("sum").toDouble();
+    mean = xml->getDefaultGroupValue("mean").toDouble();
+    var = xml->getDefaultGroupValue("var").toDouble();
+    stdVar = xml->getDefaultGroupValue("stdVar").toDouble();
+    skewness = xml->getDefaultGroupValue("skewness").toDouble();
+    kurtosis = xml->getDefaultGroupValue("kurtosis").toDouble();
+    min = xml->getDefaultGroupValue("min").toDouble();
+    max = xml->getDefaultGroupValue("max").toDouble();
+    mid = xml->getDefaultGroupValue("mid").toDouble();
+    peak2peak = xml->getDefaultGroupValue("peak2peak").toDouble();
+    minPoint = xml->getDefaultGroupValue("minPoint").toPointF();
+    maxPoint = xml->getDefaultGroupValue("maxPoint").toPointF();
+    midPoint = xml->getDefaultGroupValue("midPoint").toPointF();
+    tops = xml->getDefaultGroupValue("midPoint").value<QVector<QPointF> >();
+    lows = xml->getDefaultGroupValue("midPoint").value<QVector<QPointF> >();
+    return (true);
 }

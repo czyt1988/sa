@@ -1,23 +1,25 @@
-#include "SADataProcHandle.h"
+#include "SADataProcSocket.h"
 #include "SAServerDefine.h"
+#include "SAServeHandleFun.h"
 #include "SADataProcFunctions.h"
 #include <QThreadPool>
 #include "SAMath.h"
 #include "runnable/SADataStatisticRunable.h"
 
-SADataProcHandle::SADataProcHandle(QObject *p) : SASocketHandle(p)
+SADataProcSocket::SADataProcSocket(QObject *p) : SATcpSocket(p)
 {
 }
 
 
-SADataProcHandle::~SADataProcHandle()
+SADataProcSocket::~SADataProcSocket()
 {
 }
 
 
-bool SADataProcHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPtr xml)
+bool SADataProcSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
 {
-    if (SASocketHandle::dealXmlProtocol(header, xml)) {
+    qDebug() << "serve rec:" << xml.toString();
+    if (SATcpSocket::dealXmlProtocol(header, xml)) {
         return (true);
     }
     //对应SADataProcSection的处理
@@ -25,8 +27,6 @@ bool SADataProcHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPt
     {
     case SA::ProtocolFunReq2DPointsDescribe:
         return (deal2DPointsDescribe(header, xml));
-
-        break;
 
     default:
         break;
@@ -41,9 +41,9 @@ bool SADataProcHandle::dealXmlProtocol(const SAProtocolHeader& header, XMLDataPt
  * @param xml xml信息
  * @return
  */
-bool SADataProcHandle::deal2DPointsDescribe(const SAProtocolHeader& header, SASocketHandle::XMLDataPtr xml)
+bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
 {
-    qDebug() << QStringLiteral("开始执行deal2DPointsDescribe") << xml->toString();
+    qDebug() << QStringLiteral("开始执行deal2DPointsDescribe") << xml.toString();
     //SADataStatisticRunable* runnable = new SADataStatisticRunable(shared_from_this(),header,xml);
     //QThreadPool::globalInstance()->start(runnable);
     return (_deal2DPointsDescribe(header, xml));
@@ -56,15 +56,10 @@ bool SADataProcHandle::deal2DPointsDescribe(const SAProtocolHeader& header, SASo
  * @param xml
  * @return
  */
-bool SADataProcHandle::_deal2DPointsDescribe(const SAProtocolHeader& header, SASocketHandle::XMLDataPtr xml)
+bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
 {
-    SASocketHandle::XMLDataPtr res = createXMLDataPtr(SA::ProtocolFunReply2DPointsDescribe, xml);
-
-    if (SA::ProtocolFunReq2DPointsDescribe != xml->getFunctionID()) {
-        res->setValue("result", 0);//标记结果异常
-        QByteArray data = res->toByteArray();
-        SAProtocolHeader replyheader = createXMLReplyHeader(header, data, SA::ProtocolFunReply2DPointsDescribe);
-        ensureWrite(replyheader, data);
+    if (SA::ProtocolFunReq2DPointsDescribe != xml.getFunctionID()) {
+        replyError(header, tr("unknow fun id"), SA::ProtocolErrorUnknowFun);
         return (true);
     }
     //获取points
@@ -72,7 +67,7 @@ bool SADataProcHandle::_deal2DPointsDescribe(const SAProtocolHeader& header, SAS
     QVector<QPointF> points;
 
     {
-        QVariant pv = xml->getDefaultGroupValue("points");
+        QVariant pv = xml.getDefaultGroupValue("points");
         points = pv.value<QVector<QPointF> >();
     }
     ys.reserve(points.size());
@@ -81,7 +76,7 @@ bool SADataProcHandle::_deal2DPointsDescribe(const SAProtocolHeader& header, SAS
         ys.append(p.y());
     }
     //获取排序数
-    int sortcount = xml->getDefaultGroupValue("sort-count").toInt();
+    int sortcount = xml.getDefaultGroupValue("sort-count").toInt();
 
     if ((sortcount < 0) || (sortcount > 1000)) {
         sortcount = 20;
@@ -113,21 +108,6 @@ bool SADataProcHandle::_deal2DPointsDescribe(const SAProtocolHeader& header, SAS
     QPointF minPoint = *points.cbegin();
     QPointF maxPoint = *(points.cend()-1);
     QPointF midPoint = n > 1 ? *(points.cbegin() + int(n/2)) : minPoint;//中位数
-
-    //把结果写入结果xml
-    res->setValue("sum", sum);
-    res->setValue("mean", mean);
-    res->setValue("var", var);
-    res->setValue("stdVar", stdVar);
-    res->setValue("skewness", skewness);
-    res->setValue("kurtosis", kurtosis);
-    res->setValue("min", min);
-    res->setValue("max", max);
-    res->setValue("mid", mid);
-    res->setValue("peak2peak", peak2peak);
-    res->setValue("min-point", minPoint);
-    res->setValue("max-point", maxPoint);
-    res->setValue("mid-point", midPoint);
     int sortedcount = sortcount < n ? sortcount : n;
     QVector<QPointF> tops(sortedcount);
     QVector<QPointF> lows(sortedcount);
@@ -136,11 +116,11 @@ bool SADataProcHandle::_deal2DPointsDescribe(const SAProtocolHeader& header, SAS
     std::copy(points.rbegin(), points.rbegin()+sortedcount, tops.begin());
     //拷贝lows
     std::copy(points.begin(), points.begin()+sortedcount, lows.begin());
-    res->setValue("sorted-lows", QVariant::fromValue(tops));
-    res->setValue("sorted-lows", QVariant::fromValue(lows));
-    QByteArray data = res->toByteArray();
-    SAProtocolHeader replyheader = createXMLReplyHeader(header, data, SA::ProtocolFunReply2DPointsDescribe);
 
-    ensureWrite(replyheader, data);
+
+    SA::reply_2d_points_describe_xml(this, header
+        , sum, mean, var, stdVar, skewness, kurtosis
+        , min, max, mid, peak2peak, minPoint, maxPoint, midPoint
+        , tops, lows);
     return (true);
 }

@@ -2,33 +2,8 @@
 #include "SAMath.h"
 #include "SAServerDefine.h"
 #include "SACRC.h"
-#include "SATcpDataProcessClient.h"
+#include "SATcpDataProcessSocket.h"
 #include "SAServerDefine.h"
-// 简化的XMLDataPtr的创建
-SASocketHandle::XMLDataPtr createXMLDataPtr(int funid);
-SASocketHandle::XMLDataPtr createXMLDataPtr(int funid, SASocketHandle::XMLDataPtr reqxml);
-
-SASocketHandle::XMLDataPtr createXMLDataPtr(int funid)
-{
-    SASocketHandle::XMLDataPtr res = SASocketHandle::makeXMLDataPtr();
-
-    res->setClassID(SA::ProtocolTypeXml);
-    res->setFunctionID(funid);
-    return (res);
-}
-
-
-SASocketHandle::XMLDataPtr createXMLDataPtr(int funid, SASocketHandle::XMLDataPtr reqxml)
-{
-    SASocketHandle::XMLDataPtr res = SASocketHandle::makeXMLDataPtr();
-
-    res->setClassID(SA::ProtocolTypeXml);
-    res->setFunctionID(funid);
-    QVariant key = reqxml->getDefaultGroupValue("key");
-
-    res->setValue("key", key);
-    return (res);
-}
 
 
 /**
@@ -50,4 +25,23 @@ SAProtocolHeader createXMLReplyHeader(const SAProtocolHeader& requestHeader, con
     rep.sequenceID = requestHeader.sequenceID;
     rep.extendValue = requestHeader.extendValue;
     return (rep);
+}
+
+
+/**
+ * @brief 生成一个应答xml
+ * @param funid
+ * @param reqxml
+ * @return
+ */
+SAXMLProtocolParser xmlProtocol(int funid, const SAXMLProtocolParser& reqxml)
+{
+    SAXMLProtocolParser res;
+
+    res.setClassID(SA::ProtocolTypeXml);
+    res.setFunctionID(funid);
+    QVariant key = reqxml.getDefaultGroupValue("key");
+
+    res.setValue("key", key);
+    return (res);
 }

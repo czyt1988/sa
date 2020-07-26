@@ -58,9 +58,27 @@ SASERVE_EXPORT bool write_xml_protocol(SATcpSocket *socket
 
 /////////////////////////////////////////////////////////////
 ///
-///  xml协议的处理函数
+///  xml协议相关函数
 ///
 /////////////////////////////////////////////////////////////
+
+//回复异常描述
+SASERVE_EXPORT bool reply_error_xml(SATcpSocket *socket
+    , const SAProtocolHeader& requestHeader
+    , const QString& msg
+    , int errcode);
+
+//回复异常描述
+SASERVE_EXPORT bool reply_error_xml(SATcpSocket *socket
+    , int sequenceID
+    , int extendValue
+    , const QString& msg
+    , int errcode);
+
+//接收到错误信息
+SASERVE_EXPORT bool receive_error_xml(const SAXMLProtocolParser *xml
+    , QString& msg
+    , int& errcode);
 
 //客户端-发出token请求
 SASERVE_EXPORT bool request_token_xml(int pid
@@ -69,14 +87,10 @@ SASERVE_EXPORT bool request_token_xml(int pid
     , int sequenceID = 0
     , uint32_t extendValue = 0);
 
-//请求心跳
-SASERVE_EXPORT bool request_heartbreat(SATcpSocket *socket);
-
-/////////////////////////////////////////////////////////////
-///
-///  xml协议的响应函数
-///
-/////////////////////////////////////////////////////////////
+//解析token请求参数
+SASERVE_EXPORT bool receive_request_token_xml(const SAXMLProtocolParser *xml
+    , int& pid
+    , QString& appid);
 
 //处理token请求
 SASERVE_EXPORT bool reply_token_xml(SATcpSocket *socket
@@ -84,9 +98,59 @@ SASERVE_EXPORT bool reply_token_xml(SATcpSocket *socket
     , int pid
     , const QString& appid);
 
-//处理心跳请求
-SASERVE_EXPORT bool reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& header);
+//解析token返回参数
+SASERVE_EXPORT bool receive_reply_token_xml(const SAXMLProtocolParser *xml
+    , QString& token);
 
+//请求心跳
+SASERVE_EXPORT bool request_heartbreat(SATcpSocket *socket);
+
+//处理心跳请求
+SASERVE_EXPORT bool reply_heartbreat_xml(SATcpSocket *socket
+    , const SAProtocolHeader& header);
+
+//请求2维数组描述
+SASERVE_EXPORT bool request_2d_points_describe_xml(SATcpSocket *socket
+    , const QVector<QPointF>& arrs
+    , uint key
+    , int sortcount = 20);
+
+//回复2维数组描述
+SASERVE_EXPORT bool reply_2d_points_describe_xml(SATcpSocket *socket
+    , const SAProtocolHeader& requestHeader
+    , double sum
+    , double mean
+    , double var
+    , double stdVar
+    , double skewness
+    , double kurtosis
+    , double min
+    , double max
+    , double mid
+    , double peak2peak
+    , const QPointF& minPoint
+    , const QPointF& maxPoint
+    , const QPointF& midPoint
+    , const QVector<QPointF>& tops
+    , const QVector<QPointF>& lows);
+
+//解析2维数组描述的回复
+SASERVE_EXPORT bool receive_reply_2d_points_describe_xml(const SAXMLProtocolParser *xml
+    , double& sum
+    , double& mean
+    , double& var
+    , double& stdVar
+    , double& skewness
+    , double& kurtosis
+    , double& min
+    , double& max
+    , double& mid
+    , double& peak2peak
+    , QPointF& minPoint
+    , QPointF& maxPoint
+    , QPointF& midPoint
+    , QVector<QPointF>& tops
+    , QVector<QPointF>& lows);
 }
 
 

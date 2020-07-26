@@ -2,7 +2,10 @@
 #include "SAProtocolHeader.h"
 #include "SAXMLProtocolParser.h"
 #include "SAServeHandleFun.h"
-#include "SASocketHandle.h"
+#include "SAServerDefine.h"
+#include "SACRC.h"
+
+#define SA_SERVE_DEBUG_PRINT_Socket    0
 
 class SATcpSocketPrivate
 {
@@ -49,17 +52,11 @@ SATcpSocket::SATcpSocket(QObject *par) : QTcpSocket(par)
     , d_ptr(new SATcpSocketPrivate(this))
 {
     connect(this, &QIODevice::readyRead, this, &SATcpSocket::onReadyRead);
-    SASocketHandle *h = new SASocketHandle(this);
-
-    setupHandle(h);
 }
 
 
 SATcpSocket::~SATcpSocket()
 {
-    if (d_ptr->m_handle) {
-        d_ptr->m_handle->deleteLater();
-    }
 }
 
 
@@ -91,44 +88,6 @@ bool SATcpSocket::readFromSocket(void *p, int n)
 
 
 /**
- * @brief 重新设置socket的处理
- * @param handle socket的处理所有权归socket所有
- */
-SAAbstractSocketHandle *SATcpSocket::setupHandle(SAAbstractSocketHandle *handle)
-{
-    if (handle == d_ptr->m_handle) {
-        return (nullptr);
-    }
-    SAAbstractSocketHandle *old = d_ptr->m_handle;
-
-    handle->setSocket(this);
-    d_ptr->m_handle = handle;
-    return (old);
-}
-
-
-/**
- * @brief 获取处理类
- * @return
- */
-SAAbstractSocketHandle *SATcpSocket::getHandle() const
-{
-    return (d_ptr->m_handle);
-}
-
-
-/**
- * @brief 读取完整的数据后调用，此类会发射 @sa receivedData 信号
- * @param header
- * @param data
- */
-void SATcpSocket::deal(const SAProtocolHeader& header, const QByteArray& data)
-{
-    emit receivedData(header, data);
-}
-
-
-/**
  * @brief 带重试的写socket
  * @param data
  */
@@ -150,6 +109,79 @@ void SATcpSocket::ensureWrite(const SAProtocolHeader& header, const QByteArray& 
 
 
 /**
+ * @brief 写xml数据
+ * @param xml
+ * @param funid
+ * @param sequenceID
+ * @param extendValue
+ */
+void SATcpSocket::ensureWrite(const SAXMLProtocolParser& xml, int funid, int sequenceID, uint32_t extendValue)
+{
+    QByteArray data = xml.toByteArray();
+    SAProtocolHeader header;
+
+    header.init();
+    header.protocolFunID = funid;
+    header.dataSize = data.size();
+    header.protocolTypeID = SA::ProtocolTypeXml;
+    header.dataCrc32 = SACRC::crc32(data);
+    header.sequenceID = sequenceID;
+    header.extendValue = extendValue;
+    ensureWrite(header, data);
+}
+
+
+/**
+ * @brief 请求心跳
+ */
+void SATcpSocket::requestHeartbreat()
+{
+    SA::request_heartbreat(this);
+}
+
+
+/**
+ * @brief 发出token请求
+ *
+ * 发送协议：
+ * default group:
+ * "pid": int->程序pid
+ * "appid": string->程序id
+ *
+ * @param pid
+ * @param appid
+ */
+void SATcpSocket::requestToken(int pid, const QString& appid)
+{
+    SA::request_token_xml(pid, appid, this);
+}
+
+
+/**
+ * @brief 回复错误给对应端
+ * @param sequenceID
+ * @param extendValue
+ * @param msg
+ * @param errcode
+ */
+void SATcpSocket::replyError(int sequenceID, int extendValue, const QString& msg, int errcode)
+{
+    SA::reply_error_xml(this, sequenceID, extendValue, msg, errcode);
+}
+
+
+/**
+ * @brief 回复错误给对应端
+ * @param msg
+ * @param errcode
+ */
+void SATcpSocket::replyError(const SAProtocolHeader& requestHeader, const QString& msg, int errcode)
+{
+    SA::reply_error_xml(this, requestHeader, msg, errcode);
+}
+
+
+/**
  * @brief readyRead对应的槽函数，处理文件头和数据
  */
 void SATcpSocket::onReadyRead()
@@ -160,7 +192,7 @@ void SATcpSocket::onReadyRead()
         //此时已经读取了头
         if (bytesAvailable() >= d_ptr->m_mainHeader.dataSize) {
             //说明数据接收完
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
             qDebug()	<< " rec Data:"<<bytesAvailable()<< " bytes "
                     <<"\n header:"<<d_ptr->m_mainHeader
             ;
@@ -174,7 +206,7 @@ void SATcpSocket::onReadyRead()
                 qDebug() << "socket abort!!!  can not read from socket io!";
                 return;
             }
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
             printQByteArray(d_ptr->m_buffer);
 #endif
             deal(d_ptr->m_mainHeader, d_ptr->m_buffer);
@@ -185,10 +217,10 @@ void SATcpSocket::onReadyRead()
         }else {
             //说明一次没把数据接收完
         }
-    }else if (bytesAvailable() >= s_headerSize)   {
+    }else if (bytesAvailable() >= s_headerSize) {
         //说明包头还未接收
         //但socket收到的数据已经满足包头数据需要的数据
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
         qDebug() <<"main header may receive:byte available:"<<bytesAvailable();
 #endif
         if (!readFromSocket((void *)(&(d_ptr->m_mainHeader)), s_headerSize)) {
@@ -197,7 +229,7 @@ void SATcpSocket::onReadyRead()
             abort();
             return;
         }
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
         qDebug()	<< "readed header from socket"
                 << ",type:" << d_ptr->m_mainHeader.protocolTypeID
                 << ",fun:" << d_ptr->m_mainHeader.protocolFunID
@@ -227,11 +259,111 @@ void SATcpSocket::onReadyRead()
         }
 
         if (bytesAvailable() > 0) {
-#ifdef SA_SERVE_DEBUG_PRINT
+#if SA_SERVE_DEBUG_PRINT_Socket
             qDebug() << "have avaliable data,size:"<<bytesAvailable()
             ;
 #endif
             onReadyRead();
         }
     }
+}
+
+
+/**
+ * @brief 读取完整的数据后调用，此类会发射 @sa receivedData 信号
+ * @param header
+ * @param data
+ * @return 返回false代表数据没有处理，返回true代表数据已经被处理
+ */
+bool SATcpSocket::deal(const SAProtocolHeader& header, const QByteArray& data)
+{
+#ifdef SA_SERVE_DEBUG_PRINT_Socket
+    qDebug() << "deal:" << header << " data:" << data;
+#endif
+    switch (header.protocolTypeID)
+    {
+    case SA::ProtocolTypeHeartbreat:
+    {
+        //处理心跳请求
+        switch (header.protocolFunID)
+        {
+        case SA::ProtocolFunReplyHeartbreat:
+            //接收到心跳应答，发射信号
+            emit receivedHeartbreat(header);
+            return (true);
+
+        case SA::ProtocolFunReqHeartbreat:
+            //接收到心跳请求，发送心跳应答
+            SA::reply_heartbreat_xml(this, header);
+            return (true);
+
+        default:
+            break;
+        }
+        return (false);
+    }
+
+    case SA::ProtocolTypeXml:
+    {
+        //解析xml协议
+        SAXMLProtocolParser xml;
+        if (!xml.fromByteArray(data)) {
+            emit error_sa(ErrorInvalidXmlProtocol, tr("Invalid Xml Protocol"));
+            return (false);
+        }
+        return (dealXmlProtocol(header, xml));
+    }
+
+    default:
+        break;
+    }
+    return (false);
+}
+
+
+/**
+ * @brief 处理收到的xml协议请求
+ * @param header
+ * @param xml
+ * @return 返回false代表数据没有处理，返回true代表数据已经被处理
+ */
+bool SATcpSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
+{
+    switch (header.protocolFunID)
+    {
+    case SA::ProtocolFunErrorOcc:
+    {
+        //处理错误信息
+        QString msg;
+        int errcode;
+        SA::receive_error_xml(&xml, msg, errcode);
+        emit receiveError(msg, errcode, header.sequenceID);
+        return (true);
+    }
+
+    case SA::ProtocolFunReqToken:
+    {
+        //接收到获取token请求
+        int pid;
+        QString appid;
+        SA::receive_request_token_xml(&xml, pid, appid);
+        return (SA::reply_token_xml(this, header, pid, appid));
+    }
+
+    case SA::ProtocolFunReplyToken:
+    {
+        //接收到token应答，发射token内容
+        QString token;
+        SA::receive_reply_token_xml(&xml, token);
+        if (!token.isEmpty()) {
+            emit receiveToken(token, header.sequenceID);
+            return (true);
+        }
+        return (false);
+    }
+
+    default:
+        break;
+    }
+    return (false);
 }
