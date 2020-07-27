@@ -51,7 +51,7 @@ signals:
         , const QVector<QPointF>& tops
         , const QVector<QPointF>& lows
         , int sequenceID
-        , uint32_t extendValue);
+        , unsigned int extendValue);
 };
 Q_DECLARE_METATYPE(QVector<QPointF>)
 

@@ -54,6 +54,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     , m_lastActiveSubWindow(nullptr)
 {
     ui->setupUi(this);
+    qRegisterMetaType<uint32_t>();
     connect(ui->treeView, &QTreeView::clicked, this, &SADataFeatureWidget::onTreeViewClicked);
     connect(ui->toolButton_clearDataFeature, &QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonClearDataFeatureClicked);
     //消息转发

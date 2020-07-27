@@ -18,8 +18,9 @@ SADataProcSocket::~SADataProcSocket()
 
 bool SADataProcSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
 {
-    qDebug() << "serve rec:" << xml.toString();
+    qDebug() << "serve rec,header fun:" << header.protocolFunID << " type:" << header.protocolTypeID << xml.toString();
     if (SATcpSocket::dealXmlProtocol(header, xml)) {
+        qDebug() << "SATcpSocket::dealXmlProtocol return true";
         return (true);
     }
     //对应SADataProcSection的处理
@@ -43,7 +44,7 @@ bool SADataProcSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAX
  */
 bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
 {
-    qDebug() << QStringLiteral("开始执行deal2DPointsDescribe") << xml.toString();
+    qDebug() << QStringLiteral("开始执行deal2DPointsDescribe");
     //SADataStatisticRunable* runnable = new SADataStatisticRunable(shared_from_this(),header,xml);
     //QThreadPool::globalInstance()->start(runnable);
     return (_deal2DPointsDescribe(header, xml));
@@ -122,5 +123,10 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
         , sum, mean, var, stdVar, skewness, kurtosis
         , min, max, mid, peak2peak, minPoint, maxPoint, midPoint
         , tops, lows);
+
+    qDebug()	<< "reply_2d_points_describe_xml,sum:" << sum << " mean:"  << mean
+            << " var:" << var << " stdVar:"<<stdVar << " skewness:" << skewness
+            << " kurtosis:" << kurtosis << " min:"<< min << " max:" << max << " peak2peak:"<<peak2peak
+            <<" minPoint:" << minPoint << " maxPoint:"<< maxPoint << " midPoint:"<<midPoint;
     return (true);
 }

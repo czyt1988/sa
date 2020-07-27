@@ -39,6 +39,7 @@ SADataClient::~SADataClient()
 void SADataClient::_init()
 {
     qRegisterMetaType<QVector<QPointF> >();
+    qRegisterMetaType<uint32_t>();
     m_client = new SATcpClient();
     m_client->registSocketFactory([]()->SATcpSocket *{
         return (new SATcpDataProcessSocket);

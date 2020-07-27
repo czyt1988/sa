@@ -277,7 +277,10 @@ void SATcpSocket::onReadyRead()
  */
 bool SATcpSocket::deal(const SAProtocolHeader& header, const QByteArray& data)
 {
-#ifdef SA_SERVE_DEBUG_PRINT_Socket
+#ifdef SA_SERVE_DEBUG_PRINT
+    qDebug() << "deal type " << header.protocolTypeID<<" fun "<<header.protocolFunID;
+#endif
+#if SA_SERVE_DEBUG_PRINT_Socket
     qDebug() << "deal:" << header << " data:" << data;
 #endif
     switch (header.protocolTypeID)

@@ -17,6 +17,7 @@ SATcpDataProcessSocketPrivate::SATcpDataProcessSocketPrivate(SATcpDataProcessSoc
 
 SATcpDataProcessSocket::SATcpDataProcessSocket(QObject *par) : SATcpSocket(par)
 {
+    qRegisterMetaType<QVector<QPointF> >();
 }
 
 

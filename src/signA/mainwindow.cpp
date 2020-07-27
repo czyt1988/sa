@@ -2918,6 +2918,7 @@ void MainWindow::setValueView(const QList<SAAbstractDatas *>& datas, bool showIn
 ///
 void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
 {
+    Q_UNUSED(old);
     if (now) {
         if (QwtPlotCanvas *c = qobject_cast<QwtPlotCanvas *>(now)) {
             Q_UNUSED(c);

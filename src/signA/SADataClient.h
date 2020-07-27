@@ -84,7 +84,7 @@ signals:
         , const QVector<QPointF>& tops
         , const QVector<QPointF>& lows
         , int sequenceID
-        , uint32_t extendValue);
+        , unsigned int extendValue);
 
     /**
      * @brief 请求2维数据的统计描述
