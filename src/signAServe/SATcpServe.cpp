@@ -177,7 +177,7 @@ void SATcpServe::incomingConnection(qintptr socketDescriptor)
     qDebug() << "create socket success:ip"<<ip<<",port:"<<port;
 #endif
     thread->start();
-    addPendingConnection(info.socket);
+    //一定不能调用这个函数，会出现内存重复删除addPendingConnection(info.socket);
     emit newConnection();
 }
 

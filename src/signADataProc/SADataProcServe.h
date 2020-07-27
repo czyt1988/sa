@@ -25,6 +25,9 @@ private slots:
     //检测存活周期到
     void onCkeckLiveTimeout();
 
+    //新的连接到来
+    void onNewConnection();
+
 private:
     uint m_pid;
     bool m_willBeQuit;

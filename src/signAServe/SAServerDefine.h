@@ -20,7 +20,6 @@
 #endif
 
 namespace SA {
-
 /**
  * @brief 协议类型
  */
@@ -51,6 +50,7 @@ enum ServeProtocolFunctionType {
 enum ServeProtocolErrorCode {
     ProtocolErrorUnknow = 0         ///< 位置错误
     , ProtocolErrorUnknowFun        ///< 位置功能id
+    , ProtocolErrorContent          ///< 协议内容错误
 };
 }
 

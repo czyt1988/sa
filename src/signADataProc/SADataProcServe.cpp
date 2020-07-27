@@ -31,9 +31,10 @@ SATcpSocket *create_socket()
 SADataProcServe::SADataProcServe(QObject *parent, int idealTimeSecond) : SATcpServe(parent)
     , m_pid(0)
     , m_willBeQuit(false)
-    , m_checkLiveTime(idealTimeSecond)//存活20s
+    , m_checkLiveTime(idealTimeSecond*1000)//存活20s
 {
     connect(&m_liveChecker, &QTimer::timeout, this, &SADataProcServe::onCkeckLiveTimeout);
+    connect(this, &SATcpServe::newConnection, this, &SADataProcServe::onNewConnection);
     registSocketFactory(create_socket);
 }
 
@@ -57,4 +58,15 @@ void SADataProcServe::setPid(const uint& pid)
 
 void SADataProcServe::onCkeckLiveTimeout()
 {
+    if (getSockets().size() <= 0) {
+        //说明没有连接
+        //退出程序
+        QTimer::singleShot(0, qApp, &QApplication::quit);
+    }
+}
+
+
+void SADataProcServe::onNewConnection()
+{
+    m_liveChecker.start(m_checkLiveTime);
 }

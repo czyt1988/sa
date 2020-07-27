@@ -421,31 +421,6 @@ bool SA::reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& heade
 
 
 /**
- * @brief 请求2维数据的统计描述
- * @param socket socket
- * @param arrs 待计算的点序列
- * @param key 标致，返回的reply中会带着此key，用于区别请求的回复
- * @param sortcount 返回排序的前后n个值
- */
-bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPointF>& arrs, uint key, int sortcount)
-{
-#if SA_SERVE_DEBUG_PRINT_HandleFun
-    FUNCTION_RUN_PRINT();
-    qDebug().noquote() << xml.toString();
-#endif
-    SAXMLProtocolParser xml;
-
-    xml.setClassID(SA::ProtocolTypeXml);
-    xml.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
-    xml.setValue("key", key);
-    xml.setValue("points", QVariant::fromValue<QVector<QPointF> >(arrs));
-    xml.setValue("sort-count", sortcount);
-
-    return (write_xml_protocol(socket, &xml, SA::ProtocolFunReq2DPointsDescribe, key, 0));
-}
-
-
-/**
  * @brief 异常的回复
  * @param socket
  * @param requestHeader
@@ -494,6 +469,53 @@ bool SA::receive_error_xml(const SAXMLProtocolParser *xml, QString& msg, int& er
     Q_CHECK_PTR(xml);
     msg = xml->getDefaultGroupValue("msg").toString();
     errcode = xml->getDefaultGroupValue("errcode").toInt();
+    return (true);
+}
+
+
+/**
+ * @brief 请求2维数据的统计描述
+ * @param socket socket
+ * @param arrs 待计算的点序列
+ * @param key 标致，返回的reply中会带着此key，用于区别请求的回复
+ * @param sortcount 返回排序的前后n个值
+ */
+bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPointF>& arrs, uint key, int sortcount)
+{
+#if SA_SERVE_DEBUG_PRINT_HandleFun
+    FUNCTION_RUN_PRINT();
+    qDebug().noquote() << xml.toString();
+#endif
+    SAXMLProtocolParser xml;
+
+    xml.setClassID(SA::ProtocolTypeXml);
+    xml.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
+    xml.setValue("key", key);
+    xml.setValue("points", QVariant::fromValue<QVector<QPointF> >(arrs));
+    xml.setValue("sort-count", sortcount);
+
+    return (write_xml_protocol(socket, &xml, SA::ProtocolFunReq2DPointsDescribe, key, 0));
+}
+
+
+/**
+ * @brief 针对request_2d_points_describe_xml的解析
+ * @param xml
+ * @param arrs
+ * @param key
+ * @param sortcount
+ * @return
+ */
+bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml, QVector<QPointF>& arrs, uint& key, int& sortcount)
+{
+    QVariant pv = xml->getDefaultGroupValue("points");
+
+    if (!pv.canConvert<QVector<QPointF> >()) {
+        return (false);
+    }
+    arrs = pv.value<QVector<QPointF> >();
+    key = xml->getDefaultGroupValue("key").toInt();
+    sortcount = xml->getDefaultGroupValue("sort-count").toInt();
     return (true);
 }
 

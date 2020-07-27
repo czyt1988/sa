@@ -59,6 +59,12 @@ SASERVE_EXPORT bool write_xml_protocol(SATcpSocket *socket
 /////////////////////////////////////////////////////////////
 ///
 ///  xml协议相关函数
+///  每个协议一共涉及4个函数 分别是request_XX_xml,receive_request_XX_xml,reply_XX_xml,receive_reply_XX_xml
+///  request_XX_xml 是请求协议
+///  receive_request_XX_xml 是针对request_XX_xml的xml解析
+///  reply_XX_xml 是回复协议
+///  receive_reply_XX_xml 是针对reply_XX_xml的xml解析
+///
 ///
 /////////////////////////////////////////////////////////////
 
@@ -108,13 +114,18 @@ SASERVE_EXPORT bool request_heartbreat(SATcpSocket *socket);
 //处理心跳请求
 SASERVE_EXPORT bool reply_heartbreat_xml(SATcpSocket *socket
     , const SAProtocolHeader& header);
-
+//////////////////////
 //请求2维数组描述
+/////////////////////
 SASERVE_EXPORT bool request_2d_points_describe_xml(SATcpSocket *socket
     , const QVector<QPointF>& arrs
     , uint key
     , int sortcount = 20);
-
+//
+SASERVE_EXPORT bool receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml
+    , QVector<QPointF>& arrs
+    , uint& key
+    , int& sortcount);
 //回复2维数组描述
 SASERVE_EXPORT bool reply_2d_points_describe_xml(SATcpSocket *socket
     , const SAProtocolHeader& requestHeader

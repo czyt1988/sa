@@ -66,19 +66,19 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
     //获取points
     QVector<double> ys;
     QVector<QPointF> points;
+    uint key;
+    int sortcount = 20;
 
-    {
-        QVariant pv = xml.getDefaultGroupValue("points");
-        points = pv.value<QVector<QPointF> >();
+    if (!SA::receive_request_2d_points_describe_xml(&xml, points, key, sortcount)) {
+        replyError(header, tr("xml content error"), SA::ProtocolErrorContent);
+        return (true);
     }
+
     ys.reserve(points.size());
     for (const QPointF& p : points)
     {
         ys.append(p.y());
     }
-    //获取排序数
-    int sortcount = xml.getDefaultGroupValue("sort-count").toInt();
-
     if ((sortcount < 0) || (sortcount > 1000)) {
         sortcount = 20;
     }

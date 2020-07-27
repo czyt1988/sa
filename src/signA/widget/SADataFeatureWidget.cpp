@@ -334,7 +334,10 @@ void SADataFeatureWidget::onHeartbeatCheckerTimerout()
 }
 
 
-void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, double var, double stdVar, double skewness, double kurtosis, double min, double max, double mid, double peak2peak, const QPointF& minPoint, const QPointF& maxPoint, const QPointF& midPoint, const QVector<QPointF>& tops, const QVector<QPointF>& lows, int sequenceID, uint32_t extendValue)
+void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, double var, double stdVar,
+    double skewness, double kurtosis, double min, double max, double mid, double peak2peak,
+    const QPointF& minPoint, const QPointF& maxPoint, const QPointF& midPoint, const QVector<QPointF>& tops, const QVector<QPointF>& lows,
+    int sequenceID, uint32_t extendValue)
 {
     qDebug() << "onReceive2DPointsDescribe";
 }
