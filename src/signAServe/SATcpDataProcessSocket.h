@@ -27,7 +27,7 @@ private:
 
 public slots:
     //请求2维数据的统计描述
-    bool request2DPointsDescribe(const QVector<QPointF>& arrs, uint key, int sortcount = 20);
+    bool request2DPointsDescribe(const QVector<QPointF>& arrs, int sequenceID, int sortcount = 20);
 
 signals:
 

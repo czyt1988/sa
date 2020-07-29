@@ -96,7 +96,7 @@ bool SATcpDataProcessSocket::dealReply2DPointsDescribe(const SAProtocolHeader& h
  * @param key 标致，返回的reply中会带着此key，用于区别请求的回复
  * @param sortcount 返回排序的前后n个值
  */
-bool SATcpDataProcessSocket::request2DPointsDescribe(const QVector<QPointF>& arrs, uint key, int sortcount)
+bool SATcpDataProcessSocket::request2DPointsDescribe(const QVector<QPointF>& arrs, int sequenceID, int sortcount)
 {
-    return (SA::request_2d_points_describe_xml(this, arrs, key, sortcount));
+    return (SA::request_2d_points_describe_xml(this, arrs, sequenceID, sortcount));
 }

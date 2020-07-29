@@ -114,18 +114,20 @@ SASERVE_EXPORT bool request_heartbreat(SATcpSocket *socket);
 //处理心跳请求
 SASERVE_EXPORT bool reply_heartbreat_xml(SATcpSocket *socket
     , const SAProtocolHeader& header);
+
 //////////////////////
 //请求2维数组描述
 /////////////////////
 SASERVE_EXPORT bool request_2d_points_describe_xml(SATcpSocket *socket
     , const QVector<QPointF>& arrs
-    , uint key
+    , int sequenceID
     , int sortcount = 20);
+
 //
 SASERVE_EXPORT bool receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml
     , QVector<QPointF>& arrs
-    , uint& key
     , int& sortcount);
+
 //回复2维数组描述
 SASERVE_EXPORT bool reply_2d_points_describe_xml(SATcpSocket *socket
     , const SAProtocolHeader& requestHeader

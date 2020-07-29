@@ -480,7 +480,7 @@ bool SA::receive_error_xml(const SAXMLProtocolParser *xml, QString& msg, int& er
  * @param key 标致，返回的reply中会带着此key，用于区别请求的回复
  * @param sortcount 返回排序的前后n个值
  */
-bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPointF>& arrs, uint key, int sortcount)
+bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPointF>& arrs, int sequenceID, int sortcount)
 {
 #if SA_SERVE_DEBUG_PRINT_HandleFun
     FUNCTION_RUN_PRINT();
@@ -490,11 +490,10 @@ bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPoin
 
     xml.setClassID(SA::ProtocolTypeXml);
     xml.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
-    xml.setValue("key", key);
     xml.setValue("points", QVariant::fromValue<QVector<QPointF> >(arrs));
     xml.setValue("sort-count", sortcount);
 
-    return (write_xml_protocol(socket, &xml, SA::ProtocolFunReq2DPointsDescribe, key, 0));
+    return (write_xml_protocol(socket, &xml, SA::ProtocolFunReq2DPointsDescribe, sequenceID, 0));
 }
 
 
@@ -506,7 +505,7 @@ bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPoin
  * @param sortcount
  * @return
  */
-bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml, QVector<QPointF>& arrs, uint& key, int& sortcount)
+bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml, QVector<QPointF>& arrs, int& sortcount)
 {
     QVariant pv = xml->getDefaultGroupValue("points");
 
@@ -514,7 +513,6 @@ bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml, 
         return (false);
     }
     arrs = pv.value<QVector<QPointF> >();
-    key = xml->getDefaultGroupValue("key").toInt();
     sortcount = xml->getDefaultGroupValue("sort-count").toInt();
     return (true);
 }
@@ -541,7 +539,23 @@ bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml, 
  * @param lows
  * @return
  */
-bool SA::reply_2d_points_describe_xml(SATcpSocket *socket, const SAProtocolHeader& requestHeader, double sum, double mean, double var, double stdVar, double skewness, double kurtosis, double min, double max, double mid, double peak2peak, const QPointF& minPoint, const QPointF& maxPoint, const QPointF& midPoint, const QVector<QPointF>& tops, const QVector<QPointF>& lows)
+bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
+    const SAProtocolHeader& requestHeader,
+    double sum,
+    double mean,
+    double var,
+    double stdVar,
+    double skewness,
+    double kurtosis,
+    double min,
+    double max,
+    double mid,
+    double peak2peak,
+    const QPointF& minPoint,
+    const QPointF& maxPoint,
+    const QPointF& midPoint,
+    const QVector<QPointF>& tops,
+    const QVector<QPointF>& lows)
 {
     SAXMLProtocolParser xml;
 

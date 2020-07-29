@@ -8,6 +8,7 @@
 #include <memory>
 #include <QTimer>
 #include <QDateTime>
+#include <QPair>
 #include "SADataClient.h"
 
 
@@ -33,6 +34,16 @@ class SADataFeatureWidget : public QWidget
 public:
     explicit SADataFeatureWidget(QWidget *parent = 0);
     ~SADataFeatureWidget();
+public://数据接收相关的类型
+    class DataInfo {
+public:
+        DataInfo();
+        DataInfo(QwtPlotItem *plotitem, QMdiSubWindow *midwidget, SAChart2D *chartptr);
+        QwtPlotItem *item;
+        QMdiSubWindow *midwidget;
+        SAChart2D *chart;
+        bool operator <(const DataInfo& other);
+    };
 public slots:
     //子窗口激活槽
     void mdiSubWindowActived(QMdiSubWindow *subwnd);
@@ -95,27 +106,22 @@ private:
     //计算绘图窗口的dataFeature
     void calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindow *figure, SADataFeatureTreeModel *model);
 
+    //通过流水号找到对应的model和datainfo，如果没有找到返回nullptr
+    QPair<SADataFeatureTreeModel *, DataInfo> findModelBySsequenceID(int sequenceID);
+
+    //
+
 private:
     //计算一个plot item
-    void calcPlotItemFeature(QMdiSubWindow *subwnd, SAChart2D *chart, SADataFeatureTreeModel *model, QwtPlotItem *plotitem, int key);
+    void calcPlotItemFeature(QMdiSubWindow *subwnd, SAChart2D *chart, SADataFeatureTreeModel *model, QwtPlotItem *plotitem);
 
-public://数据接收相关的类型
 
-    class _DataInfo {
-public:
-        _DataInfo();
-        _DataInfo(QwtPlotItem *plotitem, QMdiSubWindow *midwidget, SAChart2D *chartptr);
-        QwtPlotItem *item;
-        QMdiSubWindow *midwidget;
-        SAChart2D *chart;
-        bool operator <(const _DataInfo& other);
-    };
 
 private:
     Ui::SADataFeatureWidget *ui;
     QMdiSubWindow *m_lastActiveSubWindow;                           ///< 记录最后激活的子窗口
     QMap<QMdiSubWindow *, SADataFeatureTreeModel *> m_mdiToModel;   ///< 子窗口对应的数据模型
-    QMap<int, _DataInfo> m_keyToDatainfo;
+    QMap<int, DataInfo> m_keyToDatainfo;
     SADataClient m_client;
 };
 

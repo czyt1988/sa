@@ -83,9 +83,9 @@ void SADataClient::tryConnectToServe(int retrycount, int timeout)
  * @param arrs
  * @param key
  */
-void SADataClient::request2DPointsDescribe(const QVector<QPointF>& arrs, uint key, int sortcount)
+void SADataClient::request2DPointsDescribe(const QVector<QPointF>& arrs, int sequenceID, int sortcount)
 {
-    emit req2DPointsDescribe(arrs, key, sortcount);
+    emit req2DPointsDescribe(arrs, sequenceID, sortcount);
 }
 
 

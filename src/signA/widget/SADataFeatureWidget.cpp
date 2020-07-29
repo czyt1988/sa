@@ -26,7 +26,7 @@
 
 
 
-SADataFeatureWidget::_DataInfo::_DataInfo() :
+SADataFeatureWidget::DataInfo::DataInfo() :
     item(nullptr)
     , midwidget(nullptr)
     , chart(nullptr)
@@ -34,7 +34,7 @@ SADataFeatureWidget::_DataInfo::_DataInfo() :
 }
 
 
-SADataFeatureWidget::_DataInfo::_DataInfo(QwtPlotItem *plotitem, QMdiSubWindow *midwidget, SAChart2D *chartptr) :
+SADataFeatureWidget::DataInfo::DataInfo(QwtPlotItem *plotitem, QMdiSubWindow *midwidget, SAChart2D *chartptr) :
     item(plotitem)
     , midwidget(midwidget)
     , chart(chartptr)
@@ -42,7 +42,7 @@ SADataFeatureWidget::_DataInfo::_DataInfo(QwtPlotItem *plotitem, QMdiSubWindow *
 }
 
 
-bool SADataFeatureWidget::_DataInfo::operator <(const SADataFeatureWidget::_DataInfo& other)
+bool SADataFeatureWidget::DataInfo::operator <(const SADataFeatureWidget::DataInfo& other)
 {
     return (((int)(this->item) + (int)(this->chart) + (int)(this->midwidget)) < ((int)other.item + (int)other.chart + (int)other.midwidget));
 }
@@ -114,10 +114,6 @@ void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindo
     Q_CHECK_PTR(subwnd);
     Q_CHECK_PTR(figure);
     Q_CHECK_PTR(model);
-    //用于进行请求的key标识，这里将记录key和_DataInfo的关系，以便reply能找到对应是哪个item的内容
-    static int s_key = 0;
-
-    ++s_key;
     //获取所有的chart逐一调用接口进行计算
     QList<SAChart2D *> charts = figure->get2DPlots();
 
@@ -127,9 +123,31 @@ void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindo
         QwtPlotItemList itemList = SADataFeatureTreeModel::filterCanDisplayItems(c->itemList());
         for (auto i : itemList)
         {
-            calcPlotItemFeature(subwnd, c, model, i, s_key);
+            calcPlotItemFeature(subwnd, c, model, i);
         }
     }
+}
+
+
+/**
+ * @brief 通过流水号找到对应的model，如果没有找到返回nullptr
+ * @param sequenceID
+ * @return 如果没有找到,返回QPair(nullptr,DataInfo())
+ */
+QPair<SADataFeatureTreeModel *, SADataFeatureWidget::DataInfo> SADataFeatureWidget::findModelBySsequenceID(int sequenceID)
+{
+    auto ite = m_keyToDatainfo.find(sequenceID);
+
+    if (ite == m_keyToDatainfo.end()) {
+        return (qMakePair(nullptr, DataInfo()));
+    }
+    DataInfo di = ite.value();
+    auto imod = m_mdiToModel.find(di.midwidget);
+
+    if (imod == m_mdiToModel.end()) {
+        return (qMakePair(nullptr, di));
+    }
+    return (qMakePair(imod.value(), di));
 }
 
 
@@ -141,10 +159,10 @@ void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindo
  * @param plotitem 对应的plotitem
  * @param key 赋予的请求序号
  */
-void SADataFeatureWidget::calcPlotItemFeature(QMdiSubWindow *subwnd, SAChart2D *chart, SADataFeatureTreeModel *model, QwtPlotItem *plotitem, int key)
+void SADataFeatureWidget::calcPlotItemFeature(QMdiSubWindow *subwnd, SAChart2D *chart, SADataFeatureTreeModel *model, QwtPlotItem *plotitem)
 {
     Q_CHECK_PTR(chart);
-    _DataInfo d = _DataInfo(plotitem, subwnd, chart);
+    DataInfo d = DataInfo(plotitem, subwnd, chart);
 
     switch (plotitem->rtti())
     {
@@ -152,9 +170,11 @@ void SADataFeatureWidget::calcPlotItemFeature(QMdiSubWindow *subwnd, SAChart2D *
     {
         QVector<QPointF> xys;
         SAChart::getXYDatas(xys, static_cast<const QwtPlotCurve *>(plotitem));
-        m_keyToDatainfo[key] = d;
+        //把plotitem作为key
+        int sequenceID = reinterpret_cast<int>(plotitem);
+        m_keyToDatainfo[sequenceID] = d;
         //建立初步的DataFeatureTreeModel先把类型设置进去
-        m_client.request2DPointsDescribe(xys, key);
+        m_client.request2DPointsDescribe(xys, sequenceID);
 
         break;
     }
@@ -334,12 +354,55 @@ void SADataFeatureWidget::onHeartbeatCheckerTimerout()
 }
 
 
+/**
+ * @brief 接收到服务器返回的计算结果
+ * @param sum
+ * @param mean
+ * @param var
+ * @param stdVar
+ * @param skewness
+ * @param kurtosis
+ * @param min
+ * @param max
+ * @param mid
+ * @param peak2peak
+ * @param minPoint
+ * @param maxPoint
+ * @param midPoint
+ * @param tops
+ * @param lows
+ * @param sequenceID
+ * @param extendValue
+ */
 void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, double var, double stdVar,
     double skewness, double kurtosis, double min, double max, double mid, double peak2peak,
     const QPointF& minPoint, const QPointF& maxPoint, const QPointF& midPoint, const QVector<QPointF>& tops, const QVector<QPointF>& lows,
     int sequenceID, uint32_t extendValue)
 {
-    qDebug() << "onReceive2DPointsDescribe";
+    Q_UNUSED(extendValue);
+    QPair<SADataFeatureTreeModel *, DataInfo> res = findModelBySsequenceID(sequenceID);
+    SADataFeatureTreeModel *model = res.first;
+    DataInfo di = res.second;
+
+    if (nullptr == model) {
+        qDebug() << tr("receive unknow sequenceID when on receive 2D points describe:")<<sequenceID;
+        return;
+    }
+    model->setItemValue(di.item, tr("sum"), sum);
+    model->setItemValue(di.item, tr("mean"), mean);
+    model->setItemValue(di.item, tr("var"), var);
+    model->setItemValue(di.item, tr("std var"), stdVar);
+    model->setItemValue(di.item, tr("skewness"), skewness);
+    model->setItemValue(di.item, tr("kurtosis"), kurtosis);
+    model->setItemValue(di.item, tr("min"), min);
+    model->setItemValue(di.item, tr("max"), max);
+    model->setItemValue(di.item, tr("mid"), mid);
+    model->setItemValue(di.item, tr("peak2peak"), peak2peak);
+    model->setItemValue(di.item, tr("minPoint"), minPoint);
+    model->setItemValue(di.item, tr("maxPoint"), maxPoint);
+    model->setItemValue(di.item, tr("midPoint"), midPoint);
+    model->setItemValue(di.item, tr("midPoint"), midPoint);
+    model->reflash();
 }
 
 
