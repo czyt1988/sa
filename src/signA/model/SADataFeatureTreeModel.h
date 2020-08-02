@@ -74,6 +74,9 @@ private:
     //刷新数据，会把绘图（SAChart2D*）的数据进行更新，但item数据不进行修订
     void resetData();
 
+    //通过saitem查找对应的plotitem
+    QwtPlotItem *findPlotItemFromItem(ItemPtr::element_type *i) const;
+
 private:
     SAFigureWindow *m_fig;
     QList<SAChart2D *> m_2dcharts;                                                  ///< 保存2d绘图的数量，避免每次都调用m_fig->get2DPlots()

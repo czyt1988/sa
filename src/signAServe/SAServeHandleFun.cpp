@@ -574,7 +574,7 @@ bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
     xml.setValue("min-point", minPoint);
     xml.setValue("max-point", maxPoint);
     xml.setValue("mid-point", midPoint);
-    xml.setValue("sorted-lows", QVariant::fromValue(tops));
+    xml.setValue("sorted-tops", QVariant::fromValue(tops));
     xml.setValue("sorted-lows", QVariant::fromValue(lows));
     return (write_xml_protocol(socket, &xml, ProtocolFunReply2DPointsDescribe, requestHeader.sequenceID, requestHeader.extendValue));
 }
@@ -617,10 +617,10 @@ bool SA::receive_reply_2d_points_describe_xml(const SAXMLProtocolParser *xml,
     max = xml->getDefaultGroupValue("max").toDouble();
     mid = xml->getDefaultGroupValue("mid").toDouble();
     peak2peak = xml->getDefaultGroupValue("peak2peak").toDouble();
-    minPoint = xml->getDefaultGroupValue("minPoint").toPointF();
-    maxPoint = xml->getDefaultGroupValue("maxPoint").toPointF();
-    midPoint = xml->getDefaultGroupValue("midPoint").toPointF();
-    tops = xml->getDefaultGroupValue("midPoint").value<QVector<QPointF> >();
-    lows = xml->getDefaultGroupValue("midPoint").value<QVector<QPointF> >();
+    minPoint = xml->getDefaultGroupValue("min-point").toPointF();
+    maxPoint = xml->getDefaultGroupValue("max-point").toPointF();
+    midPoint = xml->getDefaultGroupValue("mid-point").toPointF();
+    tops = xml->getDefaultGroupValue("sorted-tops").value<QVector<QPointF> >();
+    lows = xml->getDefaultGroupValue("sorted-lows").value<QVector<QPointF> >();
     return (true);
 }

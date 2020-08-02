@@ -54,7 +54,7 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
     , m_lastActiveSubWindow(nullptr)
 {
     ui->setupUi(this);
-    qRegisterMetaType<uint32_t>();
+    qRegisterMetaType<QVector<QPointF> >();
     connect(ui->treeView, &QTreeView::clicked, this, &SADataFeatureWidget::onTreeViewClicked);
     connect(ui->toolButton_clearDataFeature, &QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonClearDataFeatureClicked);
     //消息转发
@@ -401,7 +401,9 @@ void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, dou
     model->setItemValue(di.item, tr("minPoint"), minPoint);
     model->setItemValue(di.item, tr("maxPoint"), maxPoint);
     model->setItemValue(di.item, tr("midPoint"), midPoint);
-    model->setItemValue(di.item, tr("midPoint"), midPoint);
+    model->setItemValue(di.item, tr("tops"), QVariant::fromValue<QVector<QPointF> >(tops));
+    model->setItemValue(di.item, tr("lows"), QVariant::fromValue<QVector<QPointF> >(lows));
+    //qDebug() << midPoint << tops;
     model->reflash();
 }
 

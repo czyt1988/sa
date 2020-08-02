@@ -4,6 +4,7 @@
 #include "SAVariantCaster.h"
 #include "SAChart.h"
 #include "SAChart2D.h"
+#include "SAItem.h"
 //#define DEBUG_OUTPUT__
 //#define DEBUG_OUTPUT__INDEX_
 //#define DEBUG_OUTPUT__PARENT_
@@ -72,6 +73,14 @@ QModelIndex SADataFeatureTreeModel::index(int row, int column, const QModelIndex
             return (QModelIndex());
         }
         return (createIndex(row, column, itsp[row]));//3层节点
+    }else {
+        //说明是第四层h
+        qDebug() << "index";
+        ItemPtr::element_type *sai = reinterpret_cast<ItemPtr::element_type *>(parent.internalPointer());
+        if ((row >= sai->childItemCount()) || (column >= 2)) {
+            return (QModelIndex());
+        }
+        return (createIndex(row, column, sai->childItem(row)));//4层节点
     }
     return (QModelIndex());
 }
@@ -94,16 +103,31 @@ QModelIndex SADataFeatureTreeModel::parent(const QModelIndex& index) const
         SAChart2D *chart = static_cast<SAChart2D *>(reinterpret_cast<QwtPlotItem *>(p)->plot());
         return (createIndex(m_2dcharts.indexOf(chart), 0, chart));
     }
+    ItemPtr::element_type *sai = reinterpret_cast<ItemPtr::element_type *>(p);
+    QwtPlotItem *item = findPlotItemFromItem(sai);
 
-    auto ite = m_featureToPlotitem.find(reinterpret_cast<ItemPtr::element_type *>(p));
-
-    if (ite != m_featureToPlotitem.end()) {
-        QwtPlotItem *item = ite.value();
+    if (item) {
         SAChart2D *chart = static_cast<SAChart2D *>(item->plot());
         int i = filterCanDisplayItems(chart->itemList()).indexOf(item);
         if (i >= 0) {
             return (createIndex(i, 0, item));
         }
+    }else if (!sai->isTop()) {
+        //说明是次一级的saitem
+        int parFieldRow = sai->parent()->fieldRow();
+        if (parFieldRow < 0) {
+            //说明这个parent是挂在QwtPlotItem下
+            QwtPlotItem *plotitem = findPlotItemFromItem(sai->parent());
+            if (plotitem) {
+                QList<ItemPtr::element_type *> v = m_plotitemFeatures.value(plotitem);
+                int fieldrow = v.indexOf(sai->parent());
+                if (fieldrow >= 0) {
+                    return (createIndex(fieldrow, 0, sai->parent()));
+                }
+            }
+            return (QModelIndex());
+        }
+        return (createIndex(sai->parent()->fieldRow(), 0, sai->parent()));
     }
     return (QModelIndex());
 }
@@ -140,6 +164,9 @@ int SADataFeatureTreeModel::rowCount(const QModelIndex& parent) const
             return (0);
         }
         return (ite.value().size());
+    }else {
+        ItemPtr::element_type *sai = reinterpret_cast<ItemPtr::element_type *>(parent.internalPointer());
+        return (sai->childItemCount());
     }
     return (0);
 }
@@ -306,7 +333,19 @@ bool SADataFeatureTreeModel::setItemValue(QwtPlotItem *plotitem, const QString& 
 {
     SADataFeatureTreeModel::ItemPtr item = std::make_shared<SAItem>(name);
 
-    item->setProperty(SAItem::RoleValue, value);
+    if (value.isValid()) {
+        if (value.canConvert<QVector<QPointF> >()) {
+            QVector<QPointF> v = value.value<QVector<QPointF> >();
+            for (int i = 0; i < v.size(); ++i)
+            {
+                std::unique_ptr<SAItem> ci = std::make_unique<SAItem>(tr("[%1]").arg(i+1));
+                ci->setProperty(SAItem::RoleValue, v[i]);
+                item->appendChild(ci.release());
+            }
+        }else {
+            item->setProperty(SAItem::RoleValue, value);
+        }
+    }
     return (bindItem(plotitem, item));
 }
 
@@ -382,7 +421,15 @@ QVariant SADataFeatureTreeModel::dataDisplayRole(const QModelIndex& index) const
         if (0 == index.column()) {
             return (i->getName());
         }
-        return (SAVariantCaster::variantToString(i->getProperty(SAItem::RoleValue)));
+        QVariant v = i->getProperty(SAItem::RoleValue);
+        if (v.canConvert<QPoint>()) {
+            QPoint p = v.value<QPoint>();
+            return (QString("(%1,%2)").arg(p.x()).arg(p.y()));
+        }else if (v.canConvert<QPointF>()) {
+            QPointF p = v.value<QPointF>();
+            return (QString("(%1,%2)").arg(p.x()).arg(p.y()));
+        }
+        return (SAVariantCaster::variantToString(v));
     }
     return (QVariant());
 }
@@ -550,4 +597,15 @@ void SADataFeatureTreeModel::resetData()
     m_2dcharts = m_fig->get2DPlots();
     endResetModel();
     reflash();
+}
+
+
+/**
+ * @brief 通过saitem查找对应的plotitem
+ * @param i
+ * @return
+ */
+QwtPlotItem *SADataFeatureTreeModel::findPlotItemFromItem(ItemPtr::element_type *i) const
+{
+    return (m_featureToPlotitem.value(i, nullptr));
 }

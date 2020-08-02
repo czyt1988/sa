@@ -501,9 +501,19 @@ int SAItem::fieldRow() const
  * @brief 判断是否在树节点上
  * @return 如果此item是在satree上，此函数返回true，否则为false
  */
-bool SAItem::isOnRoot() const
+bool SAItem::isOnTree() const
 {
     return ((d_ptr->m_tree) != nullptr);
+}
+
+
+/**
+ * @brief 判断是否是顶层，parent为nullptr既是说明在顶层
+ * @return
+ */
+bool SAItem::isTop() const
+{
+    return ((d_ptr->m_parent) == nullptr);
 }
 
 
@@ -521,7 +531,7 @@ void SAItem::setTree(SATree *tree)
 {
     if (d_ptr->m_tree == tree) {
         return;
-    }else if (d_ptr->m_tree)   {
+    }else if (d_ptr->m_tree) {
         d_ptr->m_tree->takeItemPtr(this);
     }
     d_ptr->m_tree = tree;
