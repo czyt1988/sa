@@ -8,13 +8,15 @@ class SAThemeManager
 {
 public:
     SAThemeManager();
-    static bool setStyle(const QString &styleName,QWidget* mainWindow);
+    static bool setStyle(const QString& styleName, QWidget *mainWindow);
     static QString getThemeDir();
     static QStringList getSkinList();
     static QString currentStyleName();
+
 private:
     static QString getDefaultStyleString();
-    static bool getStyleString(const QString &styleName,QString& mainStyle,QString& ribbonStyle);
+    static bool getStyleString(const QString& styleName, QString& mainStyle, QString& ribbonStyle);
+
     static QString s_currentStyleName;
 };
 

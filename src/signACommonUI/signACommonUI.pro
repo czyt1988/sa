@@ -35,7 +35,6 @@ include($$PWD/../signAProtocol/signAProtocol.pri)
 #sa chart support
 include($$PWD/../signAChart/signAChart.pri)
 #propertybrowser
-#include($$PWD/../3rdParty/qtpropertybrowser/src/qtpropertybrowser.pri)#propertybrowser support
 include($$PWD/../3rdParty/qtpropertybrowser/propertyBrowser.pri)
 #QWT
 include($$PWD/../3rdParty/qwt/qwt_set.pri)

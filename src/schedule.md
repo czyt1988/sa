@@ -1,5 +1,8 @@
 # 进度记录
 
+## [2020/7/16] 开始实现增强表格功能
+- 数据表格添加操作工具栏
+
 ## [2020/3/15] 开始实现SADataProce的功能
 - SAServe轻度封装
 - 在SADataProce中实现signAScience的调用

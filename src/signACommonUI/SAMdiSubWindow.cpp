@@ -17,26 +17,27 @@
 using std::ifstream;
 using std::string;
 
-SAMdiSubWindow::SAMdiSubWindow(QWidget * parent, Qt::WindowFlags flags):
-		QMdiSubWindow (parent, flags),
-		m_birthdate(QDateTime::currentDateTime ().toString(Qt::LocalDate))
+SAMdiSubWindow::SAMdiSubWindow(QWidget *parent, Qt::WindowFlags flags) :
+    QMdiSubWindow(parent, flags),
+    m_birthdate(QDateTime::currentDateTime().toString(Qt::LocalDate))
 {
 	setAttribute(Qt::WA_DeleteOnClose);
-    m_id = int(this);//获取一个唯一id
+    m_id = reinterpret_cast<int>(this);//获取一个唯一id
 }
 
 
-void SAMdiSubWindow::closeEvent( QCloseEvent *e )
+void SAMdiSubWindow::closeEvent(QCloseEvent *e)
 {
-	if (m_confirm_close){
-		switch( 
-            QMessageBox::question(this, windowTitle(),tr("Are You Sure Close Window?"))
+    if (m_confirm_close) {
+        switch (
+            QMessageBox::question(this, windowTitle(), tr("Are You Sure Close Window?"))
 			)
 		{
 		case QMessageBox::Yes:
 			emit closedWindow(this);
 			e->accept();
 			break;
+
 		default:
 			e->ignore();
 			break;
@@ -47,17 +48,19 @@ void SAMdiSubWindow::closeEvent( QCloseEvent *e )
 	}
 }
 
+
 void SAMdiSubWindow::setHidden()
 {
 	hide();
 	emit hiddenWindow(this);
 }
 
+
 bool SAMdiSubWindow::eventFilter(QObject *object, QEvent *e)
 {
-	if (e->type() == QEvent::ContextMenu && object == widget()){
+    if ((e->type() == QEvent::ContextMenu) && (object == widget())) {
         emit showContextMenu();
-        return true;
+        return (true);
 	}
-	return QMdiSubWindow::eventFilter(object, e);
+    return (QMdiSubWindow::eventFilter(object, e));
 }

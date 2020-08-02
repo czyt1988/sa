@@ -29,6 +29,7 @@ SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     connect(ui->toolButtonDelete,&QToolButton::clicked,this,&SAFigureLayoutWidget::onToolButtonDeleteClicked);
     connect(ui->comboBoxCurrentChart,static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             ,this,&SAFigureLayoutWidget::onComboBoxCurrentChartCurrentIndexChanged);
+    connect(m_layoutModel,&SAPlotLayerModel::itemValueChanged,this,&SAFigureLayoutWidget::onItemValueChanged);
 }
 
 SAFigureLayoutWidget::~SAFigureLayoutWidget()
@@ -107,6 +108,7 @@ void SAFigureLayoutWidget::updateCurrentChart()
 {
     if(nullptr == m_figure)
     {
+        ui->comboBoxCurrentChart->clear();//清空combox内容
         m_layoutModel->setPlot(nullptr);
         return;
     }
@@ -149,7 +151,6 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
     if (1==index.column())
     {//可见性
         model->setData (index,!item->isVisible ());
-        emit itemVisibleChanged(plot,item,item->isVisible());
     }
     else if(index.column() == 2)
     {//颜色
@@ -158,12 +159,12 @@ void SAFigureLayoutWidget::onTableViewLayerPressed(const QModelIndex &index)
         if(clrDlg.exec() == QDialog::Accepted)
         {
             QColor newClr = clrDlg.selectedColor();
+            //在模型中设置颜色,信号通过onItemValueChanged槽函数触发
             model->setData (index,newClr,Qt::BackgroundColorRole);
-            emit itemColorChanged(plot,item,newClr);
         }
     }
-    //
 
+    //设置选中
     QItemSelectionModel* selMode = ui->tableView->selectionModel();
     QSet<QwtPlotItem*> itemSets;
     if(selMode)
@@ -258,6 +259,26 @@ void SAFigureLayoutWidget::onCurrentWidgetChanged(QWidget *w)
         }
     }
 }
+
+void SAFigureLayoutWidget::onItemValueChanged(QwtPlotItem *plotItem, const QVariant &value, SAPlotLayerModel::ItemValueType type, const QModelIndex &index)
+{
+    switch(type)
+    {
+    case SAPlotLayerModel::ItemVisible:
+        emit itemVisibleChanged(plotItem,value.toBool());
+        break;
+    case SAPlotLayerModel::ItemColor:
+        //通知其他界面颜色变更
+        emit itemColorChanged(plotItem,value.value<QColor>());
+        break;
+    case SAPlotLayerModel::ItemTitle:
+        emit itemTitleChanged(plotItem,value.toString());
+        break;
+    default:
+        break;
+    }
+}
+
 
 ///
 /// \brief 图表标题改变

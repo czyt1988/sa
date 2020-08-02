@@ -27,7 +27,7 @@ git clone https://github.com/czyt1988/sa.git
 ```
 等待`SA`的拉取
 
-![git clone https://github.com/czyt1988/sa.git](https://github.com/czyt1988/sa/raw/master/doc/build/01.png)
+![git clone https://github.com/czyt1988/sa.git](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/01.png)
 
 ### 2.下载并构建第三方库
 
@@ -39,7 +39,7 @@ git clone https://github.com/czyt1988/sa.git
 打开网址`FFTW For Windows` : [http://www.fftw.org/install/windows.html](http://www.fftw.org/install/windows.html)
 下载对应的版本
 
-![fftw for windows download page](https://github.com/czyt1988/sa/raw/master/doc/build/02.png)
+![fftw for windows download page](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/02.png)
 
 虽然是用MinGW编译的，但是经测试vs2003到vs2015都可以正常使用，所以为了免去不必要麻烦，建议直接使用它们已经编译好的dll,这里我们后续需要用到`libfftw3-3.dll`,`lib`文件和头文件已经在`./src/3rdParty/fftw`中配置好，理论不需要重新配置，若想重新配置`fftw`的`lib`请参考文档：[doc/buildFFTW.md](https://github.com/czyt1988/sa/tree/master/doc/buildFFTW.md)
 
@@ -58,11 +58,11 @@ dll文件具体见[百度网盘-gsl文件](https://pan.baidu.com/s/1Y1xKO9eJELbF
 
 要编译`qwt`只需要用`Qt Creator`运行`src\3rdParty\qwt\qwt.pro`，点build，等待10分钟即可，若不做特殊处理，将会在目录`src\3rdParty`上生成一个build-qwt-xx文件夹：
 
-![build qwt folder](https://github.com/czyt1988/sa/raw/master/doc/build/03.png)
+![build qwt folder](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/03.png)
 
 编译完后会自动在lib文件夹下建立对应版本的目录，如下图（msvc，Qt5.9为例）
 
-![copy qwt lib to folder](https://github.com/czyt1988/sa/raw/master/doc/build/04.png)
+![copy qwt lib to folder](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/04.png)
 
 编译的dll文件(release模式下qwt.dll，debug模式下qwtd.dll)将要放置到sa的`bin_xx_debug/release`目录下,这个目录需要先编译sa.pro才能生成
 
@@ -104,7 +104,7 @@ windows下，直接进入目录双击脚本也可以，如果没有安装gitbash
 
 若想单独编译构建`SARibbon`只需用Qt Creator打开`SARibbon.pro`并构建，若不更改配置，将会生成`src\SARibbonBar\SARibbon\bin_qtx.x.x_{debug/release}\`路径，其中包含一个示例程序和`SARibbonBar.lib`和`SARibbonBar.dll`
 
-![build SARibbon](https://github.com/czyt1988/sa/raw/master/doc/build/05.png)
+![build SARibbon](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/05.png)
 
 生成的`SARibbonBar.lib`文件位置请不要更改，`SA`项目将引用此路径。自此`SARibbonBar`构建完成。
 
@@ -122,18 +122,18 @@ windows下，直接进入目录双击脚本也可以，如果没有安装gitbash
 
 此时`sa`的结构目录为：
 
-![sa tree](https://github.com/czyt1988/sa/raw/master/doc/build/06.png)
+![sa tree](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/06.png)
 
 确认上述文件配置完成，自己通过`Qt Creator`构建`sa.pro`
 
 构建完成后会有程序运行异常提示，同时生成`src/bin_qtx.x.x_{debug/release}`文件夹
 
 
-![finish build](https://github.com/czyt1988/sa/raw/master/doc/build/07.png)
+![finish build](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/07.png)
 
 程序运行异常是因为缺少必要的dll，此时`src/bin_qtx.x.x_{debug/release}`文件夹如下图所示：
 
-![copy dll](https://github.com/czyt1988/sa/raw/master/doc/build/08.png)
+![copy dll](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/08.png)
 
 需要把必要的dll拷贝到此目录下：
 
@@ -151,11 +151,11 @@ windows下，直接进入目录双击脚本也可以，如果没有安装gitbash
 
 此时目录下文件应该如下图所示（Debug模式）
 
-![sa dll files](https://github.com/czyt1988/sa/raw/master/doc/build/09.png)
+![sa dll files](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/09.png)
 
 软件运行起来的截图
 
-![sa ](https://github.com/czyt1988/sa/raw/master/doc/build/ui.png)
+![sa ](https://cdn.jsdelivr.net/gh/czyt1988/sa/doc/build/ui.png)
 
 
 ## Ubuntu下布置

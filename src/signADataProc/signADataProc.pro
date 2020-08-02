@@ -43,14 +43,14 @@ INCLUDEPATH += $$PWD
 SOURCES += main.cpp \
     SADataProcFunctions.cpp \
     SADataProcServe.cpp \
-    SADataProcSession.cpp \
+    SADataProcSocket.cpp \
     SAMiniDump.cpp \
     runnable/SADataStatisticRunable.cpp
 
 HEADERS += \
     SADataProcFunctions.h \
     SADataProcServe.h \
-    SADataProcSession.h \
+    SADataProcSocket.h \
     SAMiniDump.h \
     runnable/SADataStatisticRunable.h
     

@@ -24,109 +24,142 @@ class SAChart2D;
 //SA Common UI
 class SAMdiSubWindow;
 class SAFigureWindow;
+
 class SA_COMMON_UI_EXPORT SAUIInterface : public QObject
 {
     Q_OBJECT
 public:
     SAUIInterface();
     virtual ~SAUIInterface();
-    enum LastFocusType
-    {
-        FigureWindowFocus ///< 最后获取焦点的窗口类型是figure窗口
-        ,ValueManagerFocus ///< 最后欧获取焦点的窗口类型是变量管理窗口
+    enum LastFocusType {
+            FigureWindowFocus               ///< 最后获取焦点的窗口类型是figure窗口
+            , ValueManagerFocus             ///< 最后欧获取焦点的窗口类型是变量管理窗口
+            , ValueTableWidgetFocus       ///< 最后获取焦点的窗口类型是数据表展示窗口
     };
 
 public:
     //获取主界面指针
     virtual QWidget *getMainWindowPtr() = 0;
+
     //如果插件只导入到data import菜单下的条目可以调用此函数，如果需要插入一个QMenu可以使用addDataImportPluginAction
     virtual void addDataImportPluginAction(QAction *action) = 0;
+
     //添加导出数据插件的响应槽
-    virtual QAction* addDataImportPluginMenu(QMenu *menu) = 0;
+    virtual QAction *addDataImportPluginMenu(QMenu *menu) = 0;
+
     //把菜单添加到分析功能的菜单中
     virtual QAction *addAnalysisPluginMenu(QMenu *menu) = 0;
+
 #if SA_USE_RIBBON_UI
     ///
     /// \group Ribbon相关操作
     ///
-    virtual void addAnalysisActionsToRibbonGallery(const QString& name,const QList<QAction*>& actions) = 0;
+    virtual void addAnalysisActionsToRibbonGallery(const QString& name, const QList<QAction *>& actions) = 0;
 #endif
+
 public slots:
 
     /// \group 进度栏 消息窗口的相关操作
     /// \{
     //在ui界面显示普通信息
-    virtual void showNormalMessageInfo(const QString& info,int interval = -1) = 0;
+    virtual void showNormalMessageInfo(const QString& info, int interval = -1) = 0;
+
     //在ui界面显示错误信息
-    virtual void showErrorMessageInfo(const QString& info,int interval = -1) = 0;
+    virtual void showErrorMessageInfo(const QString& info, int interval = -1) = 0;
+
     //在ui界面显示警告信息
-    virtual void showWarningMessageInfo(const QString& info,int interval = -1) = 0;
+    virtual void showWarningMessageInfo(const QString& info, int interval = -1) = 0;
+
     //在ui界面显示询问信息
-    virtual void showQuestionMessageInfo(const QString& info,int interval = -1) = 0;
+    virtual void showQuestionMessageInfo(const QString& info, int interval = -1) = 0;
+
     //显示消息
-    virtual void showMessageInfo(const QString& info,SA::MeaasgeType messageType) = 0;
+    virtual void showMessageInfo(const QString& info, SA::MeaasgeType messageType) = 0;
+
     //接收子窗口发送过来的消息
-    virtual void showWidgetMessageInfo(const QString& info,QWidget *widget,SA::MeaasgeType messageType,int interval) = 0;
+    virtual void showWidgetMessageInfo(const QString& info, QWidget *widget, SA::MeaasgeType messageType, int interval) = 0;
+
     //显示状态栏延时信息
-    virtual void showElapesdMessageInfo(const QString& info,SA::MeaasgeType type =  SA::NormalMessage,int interval = 4000) = 0;
+    virtual void showElapesdMessageInfo(const QString& info, SA::MeaasgeType type = SA::NormalMessage, int interval = 4000) = 0;
 
     //隐藏状态栏的进度条
     virtual void hideProgressStatusBar() = 0;
+
     //显示状态栏的进度条
     virtual void showProgressStatusBar() = 0;
+
     //设置状态栏进度条的可见性
     virtual void setProgressStatusBarVisible(bool isShow) = 0;
+
     //设置状态栏上的进度显示的进度状的百分比
     virtual void setProgressStatusBarPresent(int present) = 0;
+
     //设置进度条状态栏上的文字
     virtual void setProgressStatusBarText(const QString& text) = 0;
+
     //获取进度栏上的进度条指针
-    virtual QProgressBar* getProgressStatusBar() = 0;
-     /// \}
+    virtual QProgressBar *getProgressStatusBar() = 0;
+
+    /// \}
 public:
     ///
     /// \group 数据选择
     /// \{
     //获取选中的数据条目
-    virtual QList<SAAbstractDatas*> getSeletedDatas() const = 0;
+    virtual QList<SAAbstractDatas *> getSeletedDatas() const = 0;
+
     //获取选中的数据条目
-    virtual SAAbstractDatas* getSeletedData() const = 0;
+    virtual SAAbstractDatas *getSeletedData() const = 0;
+
     //获取选中的数据条目，如果没有选中，将弹出数据选择窗口让用户进行选择
-    virtual SAAbstractDatas* getSelectSingleData(bool isAutoSelect = false) = 0;
+    virtual SAAbstractDatas *getSelectSingleData(bool isAutoSelect = false) = 0;
+
     //更新变量管理的树形控件
     virtual void updateValueManagerTreeView() = 0;
+
     /// \}
 
     ///
     /// \group 子窗口相关操作
     /// \{
     //创建一个绘图窗口
-    virtual SAMdiSubWindow* createMdiSubWindow(QWidget* w, const QString& title) = 0;
-    virtual SAMdiSubWindow* createFigureWindow(const QString& title = QString()) = 0;
-    virtual SAMdiSubWindow* createFigureWindow(SAFigureWindow *fig,const QString& title = QString()) = 0;
+    virtual SAMdiSubWindow *createMdiSubWindow(QWidget *w, const QString& title) = 0;
+    virtual SAMdiSubWindow *createFigureWindow(const QString& title = QString()) = 0;
+    virtual SAMdiSubWindow *createFigureWindow(SAFigureWindow *fig, const QString& title = QString()) = 0;
+
     //获取最后显示的绘图窗口的指针
-    virtual SAFigureWindow* getCurrentFigureWindow() = 0;
+    virtual SAFigureWindow *getCurrentFigureWindow() = 0;
+
     //获取所有的figure
-    virtual QList<SAFigureWindow*> getFigureWindowList() const = 0;
+    virtual QList<SAFigureWindow *> getFigureWindowList() const = 0;
+
     //获取当前正在显示的Chart指针
-    virtual SAChart2D* getCurSubWindowChart() = 0;
+    virtual SAChart2D *getCurSubWindowChart() = 0;
+
     //获取当前正在显示的Chart指针,如果是一个subplot，返回多个指针
     virtual QList<SAChart2D *> getCurSubWindowCharts() = 0;
+
     //用于子窗口激活时刷新“图表设置工具栏的选中状态”
-    virtual void updateChartSetToolBar(SAFigureWindow* w) = 0;
+    virtual void updateChartSetToolBar(SAFigureWindow *w) = 0;
+
     //获取所有子窗口指针
-    virtual QList<QMdiSubWindow*> getSubWindowList() const = 0;
+    virtual QList<QMdiSubWindow *> getSubWindowList() const = 0;
+
     //从subwindow指针中查找是否含有SAFigureWindow
-    static SAFigureWindow* getFigureWidgetFromMdiSubWindow(QMdiSubWindow* sub);
+    static SAFigureWindow *getFigureWidgetFromMdiSubWindow(QMdiSubWindow *sub);
+
     //获取当前激活的子窗口
-    virtual QMdiSubWindow* getCurrentActiveSubWindow() const = 0;
+    virtual QMdiSubWindow *getCurrentActiveSubWindow() const = 0;
+
     //判断mdi中是否存在指定的子窗口
-    virtual bool isHaveSubWnd(QMdiSubWindow* wndToCheck) const = 0;
+    virtual bool isHaveSubWnd(QMdiSubWindow *wndToCheck) const = 0;
 
     //记录最后获取焦点的窗口类型，此函数主要用于函数功能模块判断是对图进行操作还是对数据进行操作
     virtual LastFocusType lastFocusWidgetType() const = 0;
+
     //设置多文档激活的窗口和QMdiArea::setActiveSubWindow一样
     virtual void setActiveSubWindow(QMdiSubWindow *window) = 0;
+
     /// \}
 
 
@@ -135,7 +168,7 @@ public:
     /// \param chart
     /// \return
     ///
-    virtual QList<QwtPlotItem*> selectPlotItems(SAChart2D* chart,const QSet<int>& filter) = 0;
+    virtual QList<QwtPlotItem *> selectPlotItems(SAChart2D *chart, const QSet<int>& filter) = 0;
 
 
 
@@ -144,24 +177,32 @@ public:
     /// \{
     //把主dock抬起，主dock包括绘图的窗口
     virtual void raiseMainDock() = 0;
+
     //把信息窗口抬起
     virtual void raiseMessageInfoDock() = 0;
+
     //让ValueViewerDock显示到最前面
     virtual void raiseValueViewerDock() = 0;
+
     //让DataFeatureDock显示到最前面
     virtual void raiseDataFeatureDock() = 0;
+
     //让windowList显示到最前面
     virtual void raiseWindowListDock() = 0;
+
     //让valueManageDock显示到最前面
     virtual void raiseValueManageDock() = 0;
+
     //让ChartLayoutDock显示到最前面
     virtual void raiseChartLayoutDock() = 0;
+
     //让chartDataViewerDock显示到最前面
     virtual void raiseChartDataViewerDock() = 0;
+
     //让ChartSettingDock显示到最前面
     virtual void raiseChartSettingDock() = 0;
-    /// \}
 
+    /// \}
 
 
 
@@ -170,13 +211,13 @@ signals:
     /// \brief 在主界面变量管理树选择发生改变后会发射此信号
     /// \param dataPtr 选中的数据指针，也可以通过 \a getSelectDatas 获取多选状态下的指针
     ///
-    void selectDataChanged(SAAbstractDatas* dataPtr);
+    void selectDataChanged(SAAbstractDatas *dataPtr);
+
     ///
     /// \brief 子窗口激活
     /// \param arg1
     ///
     void mdiAreaSubWindowActivated(QMdiSubWindow *arg1);
-
 };
 
 #endif // SAUIINTERFACE_H

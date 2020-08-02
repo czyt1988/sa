@@ -11,27 +11,31 @@ class QtPropertyIdStorage
 public:
 	QtPropertyIdStorage()
 	{
+    }
 
-	}
+
 	~QtPropertyIdStorage()
 	{
-
 	}
 
+
 public:
-	void rememberTheProperty(const ID_TYPE& propertyIdName,QtProperty* propertyPtr)
+    void rememberTheProperty(const ID_TYPE& propertyIdName, QtProperty *propertyPtr)
 	{
 		m_id2Property[propertyIdName] = propertyPtr;
 		m_Property2id[propertyPtr] = propertyIdName;
 	}
+
+
 	///
 	/// \brief 删除所有property指针
 	///
 	void deleteAllProperty()
 	{
 		//删除所有记录的内容
-		QMapIterator<QtProperty*,ID_TYPE> i(m_Property2id);
-		while(i.hasNext())
+        QMapIterator<QtProperty *, ID_TYPE> i(m_Property2id);
+
+        while (i.hasNext())
 		{
 			i.next();
 			delete i.key();
@@ -39,25 +43,33 @@ public:
 		m_id2Property.clear();
 		m_Property2id.clear();
 	}
+
+
     void deleteProperty(ID_TYPE id)
     {
-        QtProperty* pro = m_id2Property[id];
+        QtProperty *pro = m_id2Property[id];
+
         m_id2Property.remove(id);
         m_Property2id.remove(pro);
     }
 
-	QtProperty* getProperty(const ID_TYPE& propertyIdName) const
+
+    QtProperty *getProperty(const ID_TYPE& propertyIdName) const
 	{
-		return m_id2Property[propertyIdName];
+        return (m_id2Property[propertyIdName]);
 	}
+
+
 	//    QString getPropertyID(QtProperty* property) const
 	//    {
 	//        return m_Property2id[property];
 	//    }
-	ID_TYPE getPropertyID(QtProperty* property) const
+    ID_TYPE getPropertyID(QtProperty *property) const
 	{
-		return m_Property2id[property];
+        return (m_Property2id[property]);
 	}
+
+
 	///
 	/// \brief addDoublePropertyInGroup 添加子对象进属性组里
 	/// \param groupItem 属性组的指针
@@ -65,30 +77,36 @@ public:
 	/// \param propertyIdName 属性标识名，不允许重复
 	/// \param propertyData 属性的值
 	///
-	QtProperty* addDoublePropertyInGroup(QtDoublePropertyManager* doubleManage
-		,QtProperty* groupItem
-		,const QString& propertyName
-		,const ID_TYPE& propertyIdName
-		,double propertyData)
+    QtProperty *addDoublePropertyInGroup(QtDoublePropertyManager *doubleManage
+        , QtProperty *groupItem
+        , const QString& propertyName
+        , const ID_TYPE& propertyIdName
+        , double propertyData)
 	{
-		QtProperty* subitem = doubleManage->addProperty(propertyName);
-		doubleManage->setValue(subitem,propertyData);
+        QtProperty *subitem = doubleManage->addProperty(propertyName);
+
+        doubleManage->setValue(subitem, propertyData);
 		groupItem->addSubProperty(subitem);
-		rememberTheProperty(propertyIdName,subitem);
-		return subitem;
+        rememberTheProperty(propertyIdName, subitem);
+        return (subitem);
 	}
-	QtProperty* addDoublePropertyInGroup(QtVariantPropertyManager* varManage
-		,QtProperty* groupItem
-		,const QString& propertyName
-		,const ID_TYPE& propertyIdName
-		,double propertyData)
+
+
+    QtProperty *addDoublePropertyInGroup(QtVariantPropertyManager *varManage
+        , QtProperty *groupItem
+        , const QString& propertyName
+        , const ID_TYPE& propertyIdName
+        , double propertyData)
 	{
-		QtProperty* subitem = varManage->addProperty(QVariant::Double,propertyName);
-		varManage->setValue(subitem,propertyData);
+        QtProperty *subitem = varManage->addProperty(QVariant::Double, propertyName);
+
+        varManage->setValue(subitem, propertyData);
 		groupItem->addSubProperty(subitem);
-		rememberTheProperty(propertyIdName,subitem);
-		return subitem;
+        rememberTheProperty(propertyIdName, subitem);
+        return (subitem);
 	}
+
+
 	///
 	/// \brief property_addVariantPropertyInGroup 添加子对象进属性组里
 	/// \param groupItem 属性组的指针
@@ -96,19 +114,22 @@ public:
 	/// \param propertyIdName 属性标识名，不允许重复
 	/// \param propertyData 属性的值
 	///
-	QtVariantProperty* addVariantPropertyInGroup(QtVariantPropertyManager* VariantManage
-		,int nType
-		,QtProperty* groupItem
-		,const QString& propertyName
-		,const ID_TYPE& propertyIdName
-		,QVariant propertyData)
+    QtVariantProperty *addVariantPropertyInGroup(QtVariantPropertyManager *VariantManage
+        , int nType
+        , QtProperty *groupItem
+        , const QString& propertyName
+        , const ID_TYPE& propertyIdName
+        , QVariant propertyData)
 	{
-		QtVariantProperty* subitem = VariantManage->addProperty(nType,propertyName);
-		VariantManage->setValue(subitem,propertyData);
+        QtVariantProperty *subitem = VariantManage->addProperty(nType, propertyName);
+
+        VariantManage->setValue(subitem, propertyData);
 		groupItem->addSubProperty(subitem);
-		rememberTheProperty(propertyIdName,subitem);
-		return subitem;
+        rememberTheProperty(propertyIdName, subitem);
+        return (subitem);
 	}
+
+
 	///
 	/// \brief 在一个组里面再加入一个组
 	/// \param pG 组管理指针
@@ -117,27 +138,33 @@ public:
 	/// \param groupIdName 组名id标志
 	/// \return
 	///
-	QtProperty* addGroupInGroup(QtGroupPropertyManager * pG
-		,QtProperty* parentGroupItem
-		,const QString& groupName
-		,const ID_TYPE& groupIdName)
+    QtProperty *addGroupInGroup(QtGroupPropertyManager *pG
+        , QtProperty *parentGroupItem
+        , const QString& groupName
+        , const ID_TYPE& groupIdName)
 	{
-		QtProperty* groupItem = pG->addProperty(groupName);
+        QtProperty *groupItem = pG->addProperty(groupName);
+
 		parentGroupItem->addSubProperty(groupItem);
-		rememberTheProperty(groupIdName,groupItem);
-		return groupItem;
+        rememberTheProperty(groupIdName, groupItem);
+        return (groupItem);
 	}
-	QtProperty* addGroupInGroup(QtVariantPropertyManager * pVar
-		,QtProperty* parentGroupItem
-		,const QString& groupName
-		,const ID_TYPE& groupIdName)
+
+
+    QtProperty *addGroupInGroup(QtVariantPropertyManager *pVar
+        , QtProperty *parentGroupItem
+        , const QString& groupName
+        , const ID_TYPE& groupIdName)
 	{
-		QtProperty* groupItem = pVar->addProperty(QtVariantPropertyManager::groupTypeId()
-			,groupName);
+        QtProperty *groupItem = pVar->addProperty(QtVariantPropertyManager::groupTypeId()
+            , groupName);
+
 		parentGroupItem->addSubProperty(groupItem);
-		rememberTheProperty(groupIdName,groupItem);
-		return groupItem;
+        rememberTheProperty(groupIdName, groupItem);
+        return (groupItem);
 	}
+
+
 	///
 	/// \brief 设置属性表已有的double属性项目的值
 	/// \param doubleManage
@@ -145,17 +172,20 @@ public:
 	/// \param propertyData 值
 	/// \return 成功修改返回true
 	///
-	bool setDoublePropertyData(QtDoublePropertyManager* doubleManage
-		,const ID_TYPE& propertyIdName
-		,double propertyData)
+    bool setDoublePropertyData(QtDoublePropertyManager *doubleManage
+        , const ID_TYPE& propertyIdName
+        , double propertyData)
 	{
-		QtProperty* prop = m_id2Property[propertyIdName];
-		if(nullptr == prop){
-			return false;
+        QtProperty *prop = m_id2Property[propertyIdName];
+
+        if (nullptr == prop) {
+            return (false);
 		}
-		doubleManage->setValue(prop,propertyData);
-		return true;
+        doubleManage->setValue(prop, propertyData);
+        return (true);
 	}
+
+
 	//    bool setVarPropertyData(QtVariantPropertyManager* varManage
 	//                                        , const QString& propertyIdName
 	//                                        , QVariant varData)
@@ -169,13 +199,15 @@ public:
 	//    }
 	bool setVarPropertyData(const ID_TYPE& propertyIdName, QVariant varData)
 	{
-		QtVariantProperty* prop = static_cast<QtVariantProperty*>(m_id2Property[propertyIdName]);
-		if(nullptr == prop){
-			return false;
+        QtVariantProperty *prop = static_cast<QtVariantProperty *>(m_id2Property[propertyIdName]);
+
+        if (nullptr == prop) {
+            return (false);
 		}
 		prop->setValue(varData);
-		return true;
+        return (true);
 	}
+
 
 	//     bool addGroupInTreeProperty(QtTreePropertyBrowser* treePro
 	//                                 ,QtVariantPropertyManager * pVar
@@ -186,8 +218,8 @@ public:
 	//     }
 
 private:
-	QMap<ID_TYPE,QtProperty*> m_id2Property;///< id对应的属性指针
-	QMap<QtProperty*,ID_TYPE> m_Property2id;///<属性指针对应的id
+    QMap<ID_TYPE, QtProperty *> m_id2Property;      ///< id对应的属性指针
+    QMap<QtProperty *, ID_TYPE> m_Property2id;      ///<属性指针对应的id
 };
 
 #endif // QTPROPERTYIDSTORAGE_H

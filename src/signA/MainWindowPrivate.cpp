@@ -1,12 +1,12 @@
 ﻿#include "MainWindowPrivate.h"
 #include "mainwindow.h"
 #include <QDebug>
-MainWindowPrivate::MainWindowPrivate(MainWindow* p)
-    :Parent(p)
-    ,menuFigureWindow(nullptr)
+MainWindowPrivate::MainWindowPrivate(MainWindow *p)
+    : Parent(p)
+    , menuFigureWindow(nullptr)
 {
-
 }
+
 
 void MainWindowPrivate::init()
 {
@@ -14,14 +14,15 @@ void MainWindowPrivate::init()
 }
 
 
-
 void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 {
-    if (mainWinowPtr->objectName().isEmpty())
+    if (mainWinowPtr->objectName().isEmpty()) {
         mainWinowPtr->setObjectName(QStringLiteral("MainWindow"));
+    }
     mainWinowPtr->setWindowIcon(QIcon(":/windowIcons/icons/windowIcon/figureWindow.svg"));
     mainWinowPtr->resize(1219, 689);
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(mainWinowPtr->sizePolicy().hasHeightForWidth());
@@ -354,6 +355,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionValueCreateVariantTable->setObjectName(QStringLiteral("actionValueCreateVariantTable"));
     actionValueCreateVariantTable->setIcon(QIcon(":/icons/icons/createVariantTableValue.png"));
 
+    actionColorMapTable = new QAction(mainWinowPtr);
+    actionColorMapTable->setObjectName(QStringLiteral("actionColorMapTable"));
+    actionColorMapTable->setIcon(QIcon(":/icons/icons/colormap.svg"));
+
     menuBar = mainWinowPtr->ribbonBar();
     menuBar->setObjectName(QStringLiteral("menuBar"));
 
@@ -383,6 +388,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet = new SARibbonMenu(menuBar);
     menuWindowsViewSet->setObjectName(QStringLiteral("menu_windowsViewSet"));
     QIcon icon46;
+
     icon46.addFile(QStringLiteral(":/icons/icons/windowViewSet.png"), QSize(), QIcon::Normal, QIcon::Off);
     menuWindowsViewSet->setIcon(icon46);
 
@@ -436,7 +442,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 //=======start ribbon set=============================================================================================
-    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton*>(menuBar->applitionButton());
+    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton *>(menuBar->applitionButton());
     ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
     ribbonRightTopBar->addButton(actionAbout);
     //![1] Main Category Page
@@ -510,11 +516,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonButtonSubtractionSelection = ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
     ribbonButtonIntersectionSelection = ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
     operateCategoryChartEditorPannel->addWidget(ribbonButtonGroupSelectionMode
-                                                 ,0,3);
+        , 0, 3);
 
-    SARibbonButtonGroupWidget* tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
+    SARibbonButtonGroupWidget *tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
+
     ribbonButtonSelectionRegionMove = tmpButtonGroup->addButton(actionSelectionRegionMove);
-    operateCategoryChartEditorPannel->addWidget(tmpButtonGroup,3,3);
+    operateCategoryChartEditorPannel->addWidget(tmpButtonGroup, 3, 3);
 
     operateCategoryChartEditorPannel->addSeparator();
 
@@ -532,7 +539,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     operateCategoryDataViewPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
     ribbonButtonChartCrossCursor = operateCategoryDataViewPannel->addLargeAction(actionEnableChartCrossCursor);
     ribbonButtonChartPanner = operateCategoryDataViewPannel->addLargeAction(actionEnableChartPanner);
-    ribbonButtonChartZoom = operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom,menuZoomSet);
+    ribbonButtonChartZoom = operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom, menuZoomSet);
     ribbonButtonXYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionXYDataPicker);
     ribbonButtonYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionYDataPicker);
 
@@ -556,6 +563,12 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     figureOptRibbonPannel = operateRibbonCategory->addPannel("Figure Option");
     ribbonButtonFigureEditSubplot = figureOptRibbonPannel->addLargeAction(actionFigureEditSubPlotGeometry);
 
+    //! table  Context Category
+    tableRibbonContextCategory = menuBar->addContextCategory(QStringLiteral("Table"), Qt::red, TableContextCategory);
+    tableRibbonCategory = tableRibbonContextCategory->addCategoryPage(QStringLiteral("Table"));
+    tableHighLightRibbonPannel = tableRibbonCategory->addPannel("HighLight");
+    ribbonButtonHighLightTable = tableHighLightRibbonPannel->addLargeAction(actionColorMapTable);
+
     //! Analysis
     analysisRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Analysis"));
     analysisRibbonCategory->setObjectName(QStringLiteral("analysisRibbonCategory"));
@@ -568,7 +581,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
     //Window Pannel
     viewCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Window"));
-    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock\nView"),QIcon(":/icons/icons/AllDock.png"),QToolButton::InstantPopup);
+    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock\nView"), QIcon(":/icons/icons/AllDock.png"), QToolButton::InstantPopup);
     menuWindowsViewSet->addAction(actionFigureViewer);
     menuWindowsViewSet->addAction(actionFigureSetDock);
     menuWindowsViewSet->addAction(actionDataFeatureDock);
@@ -599,7 +612,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuBar->quickAccessBar()->addButton(actionUndo);
     menuBar->quickAccessBar()->addButton(actionRedo);
     menuBar->quickAccessBar()->addSeparator();
-    SARibbonToolButton* ribbonToobBtnSelectSkin = menuBar->quickAccessBar()->addButton(actionSelectSkin);
+    SARibbonToolButton *ribbonToobBtnSelectSkin = menuBar->quickAccessBar()->addButton(actionSelectSkin);
+
     ribbonToobBtnSelectSkin->setMenu(menuSkinList);
     ribbonToobBtnSelectSkin->setPopupMode(QToolButton::InstantPopup);
     menuBar->quickAccessBar()->addSeparator();
@@ -614,6 +628,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     dockWidget_DataFeature->setObjectName(QStringLiteral("dockWidget_DataFeature"));
     dockWidget_DataFeature->setFloating(false);
     dockWidget_DataFeature->setFeatures(QDockWidget::AllDockWidgetFeatures);
+    dockWidget_DataFeature->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_2 = new QWidget();
     dockWidgetContents_2->setObjectName(QStringLiteral("dockWidgetContents_2"));
     verticalLayout_2 = new QVBoxLayout(dockWidgetContents_2);
@@ -632,6 +647,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_windowList = new QDockWidget(mainWinowPtr);
     dockWidget_windowList->setObjectName(QStringLiteral("dockWidget_windowList"));
+    dockWidget_windowList->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_4 = new QWidget();
     dockWidgetContents_4->setObjectName(QStringLiteral("dockWidgetContents_4"));
     verticalLayout_6 = new QVBoxLayout(dockWidgetContents_4);
@@ -648,6 +664,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_windowList);
     dockWidget_valueManage = new QDockWidget(mainWinowPtr);
     dockWidget_valueManage->setObjectName(QStringLiteral("dockWidget_valueManage"));
+    dockWidget_valueManage->setFocusPolicy(Qt::ClickFocus);
     dockWidget_valueManage->setFeatures(QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable);
     dockWidgetContents_3 = new QWidget();
     dockWidgetContents_3->setObjectName(QStringLiteral("dockWidgetContents_3"));
@@ -673,6 +690,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget_valueManage);
     dockWidget_plotLayer = new QDockWidget(mainWinowPtr);
     dockWidget_plotLayer->setObjectName(QStringLiteral("dockWidget_plotLayer"));
+    dockWidget_plotLayer->setFocusPolicy(Qt::ClickFocus);
     figureLayoutWidget = new SAFigureLayoutWidget(dockWidget_plotLayer);
     figureLayoutWidget->setObjectName(QStringLiteral("SAFigureLayoutWidget"));
     dockWidget_plotLayer->setWidget(figureLayoutWidget);
@@ -680,6 +698,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(2), dockWidget_plotLayer);
     dockWidget_chartDataViewer = new QDockWidget(mainWinowPtr);
     dockWidget_chartDataViewer->setObjectName(QStringLiteral("dockWidget_chartDataViewer"));
+    dockWidget_chartDataViewer->setFocusPolicy(Qt::ClickFocus);
 
     chartDatasViewWidget = new SAChartDatasViewWidget();
     chartDatasViewWidget->setObjectName(QStringLiteral("chartDatasViewWidget"));
@@ -690,7 +709,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_main = new QDockWidget(mainWinowPtr);
     dockWidget_main->setObjectName(QStringLiteral("dockWidget_main"));
+    dockWidget_main->setFocusPolicy(Qt::ClickFocus);
     QIcon icon48;
+
     icon48.addFile(QStringLiteral(":/windowIcons/icons/windowIcon/figureWindow.svg"), QSize(), QIcon::Normal, QIcon::Off);
     dockWidget_main->setWindowIcon(icon48);
     dockWidget_main->setFeatures(QDockWidget::AllDockWidgetFeatures);
@@ -718,6 +739,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(4), dockWidget_main);
     dockWidget_valueViewer = new QDockWidget(mainWinowPtr);
     dockWidget_valueViewer->setObjectName(QStringLiteral("dockWidget_valueViewer"));
+    dockWidget_valueViewer->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_6 = new QWidget();
     dockWidgetContents_6->setObjectName(QStringLiteral("dockWidgetContents_6"));
     verticalLayout_8 = new QVBoxLayout(dockWidgetContents_6);
@@ -734,6 +756,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_valueViewer);
     dockWidget_message = new QDockWidget(mainWinowPtr);
     dockWidget_message->setObjectName(QStringLiteral("dockWidget_message"));
+    dockWidget_message->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents_8 = new QWidget();
     dockWidgetContents_8->setObjectName(QStringLiteral("dockWidgetContents_8"));
     verticalLayout_9 = new QVBoxLayout(dockWidgetContents_8);
@@ -751,6 +774,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_message);
     dockWidget_plotSet = new QDockWidget(mainWinowPtr);
     dockWidget_plotSet->setObjectName(QStringLiteral("dockWidget_plotSet"));
+    dockWidget_plotSet->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents = new QWidget();
     dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
     verticalLayout = new QVBoxLayout(dockWidgetContents);
@@ -765,13 +789,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     dockWidget_plotSet->setWidget(dockWidgetContents);
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_plotSet);
-
-
-
-
-
-
-
 
 
 
@@ -857,6 +874,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     QMetaObject::connectSlotsByName(mainWinowPtr);
 }
+
 
 void MainWindowPrivate::setupMenu(MainWindow *mainWinowPtr)
 {
@@ -999,6 +1017,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionValueCreatePointVector->setText(QApplication::translate("MainWindow", "point vector", 0));
     actionValueCreateVariantTable->setText(QApplication::translate("MainWindow", "variant table", 0));
     actionFigureEditSubPlotGeometry->setText(QApplication::translate("MainWindow", "Subplot\nEdit", 0));
+    actionColorMapTable->setText(QApplication::translate("MainWindow", "Highlight\nTable", 0));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
@@ -1039,6 +1058,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     viewRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "View", 0));
     operateRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Operate", 0));
     analysisRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Analysis", 0));
+    tableRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Table", 0));
+    tableRibbonContextCategory->setContextTitle(QApplication::translate("MainWindow", "Tab.Opt", 0));
 
     mainCategoryFilePannel->setWindowTitle(QApplication::translate("MainWindow", "File", 0));
     mainCategoryChartPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Operate", 0));
@@ -1046,6 +1067,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     viewCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Window", 0));
     windowModeCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Sub Window Mode", 0));
     operateCategoryChartEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Editor", 0));
+    tableHighLightRibbonPannel->setWindowTitle(QApplication::translate("MainWindow", "Hight Light", 0));
+
     ribbonButtonLineChart->setText(menuLineChart->title());
     ribbonButtonBarChart->setText(menuBarChart->title());
     ribbonButtonBoxChart->setText(menuBoxChart->title());
