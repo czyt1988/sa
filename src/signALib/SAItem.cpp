@@ -1,5 +1,6 @@
 ﻿#include "SAItem.h"
-#include <QHash>
+#include <QList>
+#include <QVector>
 #include <QDebug>
 #include "SATree.h"
 //把from的子对象都复制一份到to
@@ -30,11 +31,12 @@ class SAItemPrivate
 public:
     SAItem *m_parent;
     QList<SAItem *> m_childs;
-    int m_fieldRow;///<用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级
-    QString m_name;
+    int m_fieldRow;                 ///<用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级
     int m_id;
     SATree *m_tree;                 ///< 绑定的树
-    QMap<int, QVariant> m_datas;    //在数据量很少的情况下，遍历qlist比hash还快
+    //QMap<int, QVariant> m_datas;    ///< 在数据量很少的情况下，遍历qlist比hash还快
+    QList<int> m_dataIDs;           ///< data的id，使用两个数组来维护，避免短小操作也进行二叉树查找
+    QVector<QVariant> m_datas;      ///< data
     SAItemPrivate(SAItem *par)
         : q_ptr(par)
         , m_parent(nullptr)
@@ -72,44 +74,6 @@ public:
             m_childs[i]->d_ptr->m_fieldRow = i;
         }
     }
-
-
-    /** 当定义为QList<QPair<int,QVariant>> m_datas;时使用
-     * void setProperty(int roleID,const QVariant& var)
-     * {
-     *  auto end = m_datas.end();
-     *  for(auto i = m_datas.begin();i!=end;++i)
-     *  {
-     *      if(roleID == i->first)
-     *      {
-     *          if(var.isValid())
-     *          {
-     *              i->second = var;
-     *              return;
-     *          }
-     *          else
-     *          {
-     *              //无效就把role擦除
-     *              m_datas.erase(i);
-     *              return;
-     *          }
-     *      }
-     *  }
-     *  m_datas.append(qMakePair(roleID,var));
-     * }
-     * bool isHaveProperty(int id) const
-     * {
-     *  auto end = m_datas.end();
-     *  for(auto i = m_datas.begin();i!=end;++i)
-     *  {
-     *      if(i->first == id)
-     *      {
-     *          return true;
-     *      }
-     *  }
-     *  return false;
-     * }
-     */
 };
 
 
