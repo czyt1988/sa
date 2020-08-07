@@ -1,6 +1,7 @@
 #ifndef SASHORTMAP_H
 #define SASHORTMAP_H
 #include <QList>
+#include <QMap>
 
 /**
  * @brief 一种简化的map，通过两个连续容器来保存key和value，而不是用二叉树，对于少量的map数据有更好的性能
@@ -13,8 +14,9 @@ class SAOrderMap
 public:
     SAOrderMap();
     ~SAOrderMap();
-    typedef KEY	key_type;
-    typedef VALUE	value_type;
+    typedef KEY								key_type;
+    typedef VALUE								value_type;
+    typedef SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>	_Myt;///< 学stl
 
     //等同QMap::clear
     void clear();
@@ -366,6 +368,21 @@ public:
 
     iterator erase(iterator it);
 
+    iterator find(const KEY& key);
+    const_iterator find(const KEY& key) const;
+
+    inline VALUE& orderValue(int order) { return (mValues[order]); }
+    inline const VALUE& orderValue(int order) const { return (mValues[order]); }
+    inline KEY& orderKey(int order) { return (mKeys[order]); }
+    inline const KEY& orderKey(int order) const { return (mKeys[order]); }
+    //遍历k,v
+    const QPair<KEY, VALUE> orderPair(int order) const { return (qMakePair<KEY, VALUE>(orderKey(order), orderValue(order))); }
+
+    const VALUE value(const KEY& key, const VALUE& defaultValue = VALUE()) const;
+
+    //转换为qmap
+    QMap<KEY, VALUE> toMap() const;
+
 private:
     CONTAINTER_KEY mKeys;
     CONTAINTER_VALUE mValues;
@@ -460,10 +477,15 @@ VALUE& SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::operator[](cons
     int index = mKeys.indexOf(key);
 
     if (index < 0) {
+        mKeys.append(key);
+        mValues.append(VALUE());
+        return (mValues.last());
     }
+    return (mValues[index]);
 }
 
 
+#include <memory>
 template<typename KEY, typename VALUE, typename CONTAINTER_KEY, typename CONTAINTER_VALUE>
 typename SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::iterator
 SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::erase(iterator it)
@@ -471,6 +493,63 @@ SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::erase(iterator it)
     typename CONTAINTER_KEY::iterator ki = mKeys.erase(it.mIteKey);
     typename CONTAINTER_VALUE::iterator vi = mValues.erase(it.mIteValue);
     return (iterator(ki, vi));
+}
+
+
+template<typename KEY, typename VALUE, typename CONTAINTER_KEY, typename CONTAINTER_VALUE>
+typename SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::iterator
+SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::find(const KEY& key)
+{
+    iterator i = begin();
+    const_iterator e = end();
+
+    while (i != e)
+    {
+        if (i.key() == key) {
+            return (i);
+        }
+    }
+    return (e);
+}
+
+
+template<typename KEY, typename VALUE, typename CONTAINTER_KEY, typename CONTAINTER_VALUE>
+typename SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::const_iterator
+SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::find(const KEY& key) const
+{
+    const_iterator i = begin();
+    const_iterator e = end();
+
+    while (i != e)
+    {
+        if (i.key() == key) {
+            return (i);
+        }
+    }
+    return (e);
+}
+
+
+template<typename KEY, typename VALUE, typename CONTAINTER_KEY, typename CONTAINTER_VALUE>
+const VALUE SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::value(const KEY& key, const VALUE& defaultValue) const
+{
+    const_iterator i = this->find(key);
+
+    return ((i == this->end()) ? defaultValue : i.value());
+}
+
+
+template<typename KEY, typename VALUE, typename CONTAINTER_KEY, typename CONTAINTER_VALUE>
+QMap<KEY, VALUE> SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::toMap() const
+{
+    QMap<KEY, VALUE> r;
+    int s = size();
+
+    for (int i = 0; i < s; ++i)
+    {
+        r.insert(orderKey(i), orderValue(i));
+    }
+    return (r);
 }
 
 
