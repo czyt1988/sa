@@ -508,6 +508,7 @@ SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::find(const KEY& key)
         if (i.key() == key) {
             return (i);
         }
+        ++i;
     }
     return (e);
 }
@@ -525,6 +526,7 @@ SAOrderMap<KEY, VALUE, CONTAINTER_KEY, CONTAINTER_VALUE>::find(const KEY& key) c
         if (i.key() == key) {
             return (i);
         }
+        ++i;
     }
     return (e);
 }

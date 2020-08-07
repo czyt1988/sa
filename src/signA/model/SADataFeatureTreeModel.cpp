@@ -58,6 +58,7 @@ QModelIndex SADataFeatureTreeModel::index(int row, int column, const QModelIndex
 
     if (!gragrapar.isValid()) {
         //说明是3层
+
         SAChart2D *chart = static_cast<SAChart2D *>(grapar.internalPointer());
         QwtPlotItemList items = filterCanDisplayItems(chart->itemList());
         if (parent.row() >= items.size()) {
@@ -72,6 +73,7 @@ QModelIndex SADataFeatureTreeModel::index(int row, int column, const QModelIndex
         if ((row > itsp.size()) || (column >= 2)) {
             return (QModelIndex());
         }
+        qDebug() << "3 index:"<<row<<","<<column<<" name:" << itsp[row]->getName();
         return (createIndex(row, column, itsp[row]));//3层节点
     }else {
         //说明是第四层h
@@ -107,12 +109,14 @@ QModelIndex SADataFeatureTreeModel::parent(const QModelIndex& index) const
     QwtPlotItem *item = findPlotItemFromItem(sai);
 
     if (item) {
+        qDebug() << "1 saitem";
         SAChart2D *chart = static_cast<SAChart2D *>(item->plot());
         int i = filterCanDisplayItems(chart->itemList()).indexOf(item);
         if (i >= 0) {
             return (createIndex(i, 0, item));
         }
     }else if (!sai->isTop()) {
+        qDebug() << "c saitem";
         //说明是次一级的saitem
         int parFieldRow = sai->parent()->fieldRow();
         if (parFieldRow < 0) {
@@ -421,7 +425,9 @@ QVariant SADataFeatureTreeModel::dataDisplayRole(const QModelIndex& index) const
         if (0 == index.column()) {
             return (i->getName());
         }
+        qDebug() << "11";
         QVariant v = i->getProperty(SAItem::RoleValue);
+        qDebug() << "11:" << v;
         if (v.canConvert<QPoint>()) {
             QPoint p = v.value<QPoint>();
             return (QString("(%1,%2)").arg(p.x()).arg(p.y()));
