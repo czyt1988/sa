@@ -24,7 +24,7 @@ public:
         RoleName	= 0,    ///< 名字
         RoleIcon,               ///< 图标
         RoleValue,              ///< 值
-        UserDefine	= 1000  ///< 用户自定义
+        RoleUserDefine	= 1000  ///< 用户自定义
     };
     SAItem(SAItem *parentItem = nullptr);
     SAItem(const QString& text);
