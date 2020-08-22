@@ -73,11 +73,9 @@ QModelIndex SADataFeatureTreeModel::index(int row, int column, const QModelIndex
         if ((row > itsp.size()) || (column >= 2)) {
             return (QModelIndex());
         }
-        qDebug() << "3 index:"<<row<<","<<column<<" name:" << itsp[row]->getName();
         return (createIndex(row, column, itsp[row]));//3层节点
     }else {
         //说明是第四层h
-        qDebug() << "index";
         ItemSmtPtr::element_type *sai = reinterpret_cast<ItemSmtPtr::element_type *>(parent.internalPointer());
         if ((row >= sai->childItemCount()) || (column >= 2)) {
             return (QModelIndex());
@@ -495,14 +493,8 @@ SADataFeatureTreeModel::ItemPtr SADataFeatureTreeModel::toItemPtr(const QModelIn
  */
 SAChart2D *SADataFeatureTreeModel::findChart2D(const QModelIndex& i) const
 {
-    QModelIndex par = i;
-
-    while (par.isValid())
-    {
-        //找到最顶层
-        par = par.parent();
-    }
-    SAChart2D *pc = static_cast<SAChart2D *>(par.internalPointer());
+    QModelIndex top = findTop(i);
+    SAChart2D *pc = static_cast<SAChart2D *>(top.internalPointer());
 
     if (m_2dcharts.contains(pc)) {
         return (pc);
@@ -579,6 +571,23 @@ QString SADataFeatureTreeModel::plotitemToTitleName(QwtPlotItem *item)
         break;
     }
     return (tr("item"));
+}
+
+
+/**
+ * @brief 找到顶层节点
+ * @param i
+ * @return
+ */
+QModelIndex SADataFeatureTreeModel::findTop(const QModelIndex& i)
+{
+    QModelIndex tmp = i;
+
+    while (tmp.parent().isValid())
+    {
+        tmp = tmp.parent();
+    }
+    return (tmp);
 }
 
 

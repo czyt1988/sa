@@ -72,6 +72,9 @@ private:
     //根据指针，返回item的名字
     static QString plotitemToTitleName(QwtPlotItem *item);
 
+    //找到顶层节点
+    static QModelIndex findTop(const QModelIndex& i);
+
     //判断是否记录的chart2d指针
     bool isChart2DPtr(void *p) const;
 

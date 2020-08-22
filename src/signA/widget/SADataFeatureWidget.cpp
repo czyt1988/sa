@@ -259,16 +259,19 @@ SAFigureWindow *SADataFeatureWidget::getFigureFromSubWindow(QMdiSubWindow *sub)
 ///
 void SADataFeatureWidget::onTreeViewClicked(const QModelIndex& index)
 {
+    qDebug() << "click";
     if (!index.isValid()) {
+        qDebug() << "index invalid";
         return;
     }
     if (nullptr == m_lastActiveSubWindow) {
+        qDebug() << "last Active SubWindow NULL";
         return;
     }
     SAFigureWindow *figure = getFigureFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
 
     if (nullptr == figure) {
-        saPrint() << "can not find FigureWindow";
+        qDebug() << "can not find FigureWindow";
         return;
     }
     onToolButtonClearDataFeatureClicked();//先清除标记
@@ -278,7 +281,7 @@ void SADataFeatureWidget::onTreeViewClicked(const QModelIndex& index)
     SADataFeatureTreeModel *featureModel = static_cast<SADataFeatureTreeModel *>(ui->treeView->model());
 
     if ((nullptr == selModel) || (nullptr == featureModel)) {
-        saPrint() << "can not find DataFeatureTreeModel";
+        qDebug() << "can not find DataFeatureTreeModel";
         return;
     }
     //获取所有选中的条目
@@ -288,7 +291,7 @@ void SADataFeatureWidget::onTreeViewClicked(const QModelIndex& index)
     {
         QModelIndex index = indexList[i];
         if (1 != index.column()) {
-            //不是点击第一列的忽略
+            //由于tree在全选时把整行都返回，因此第二列滤掉
             continue;
         }
         SADataFeatureTreeModel::ItemPtr p = featureModel->toItemPtr(index);
@@ -304,7 +307,7 @@ void SADataFeatureWidget::onTreeViewClicked(const QModelIndex& index)
                 SAYValueMarker *valueMark = new SAYValueMarker(data);
                 valueMark->setXValue(c->axisXmax());
                 valueMark->setLinePen(Qt::black, 1);
-                valueMark->setLabel(tr("%1(%2)").arg(p->getName().arg(data)));
+                valueMark->setLabel(tr("%1(%2)").arg(p->getName()).arg(data));
                 valueMark->setLabelAlignment(Qt::AlignTop|Qt::AlignRight);
                 valueMark->setSpacing(1);//设置文字和mark的间隔
                 c->addPlotMarker(valueMark);
