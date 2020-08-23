@@ -1,10 +1,12 @@
 #include "SADataFeatureTreeModel.h"
 #include <QSet>
+#include <QIcon>
 #include "SAFigureWindow.h"
 #include "SAVariantCaster.h"
 #include "SAChart.h"
 #include "SAChart2D.h"
 #include "SAItem.h"
+
 //#define DEBUG_OUTPUT__
 //#define DEBUG_OUTPUT__INDEX_
 //#define DEBUG_OUTPUT__PARENT_
@@ -18,6 +20,10 @@
 #ifndef ROLE_PLOT_ITEM_PTR
 #define ROLE_PLOT_ITEM_PTR	(Qt::UserRole+3)
 #endif
+
+#define ICON_FIGURE		QIcon(":/windowIcons/icons/windowIcon/figureWindow.svg")
+#define ICON_CHART		QIcon(":/icons/icons/lineChart.svg")
+
 SADataFeatureTreeModel::SADataFeatureTreeModel(SAFigureWindow *fig, QObject *parent) : QAbstractItemModel(parent)
     , m_fig(nullptr)
 {
@@ -219,6 +225,9 @@ QVariant SADataFeatureTreeModel::data(const QModelIndex& index, int role) const
 
     case Qt::BackgroundRole:
         return (dataBackgroundRole(index));
+
+    case Qt::DecorationRole:
+        return (dataDecorationRole(index));
 
     default:
         break;
@@ -431,6 +440,29 @@ QVariant SADataFeatureTreeModel::dataBackgroundRole(const QModelIndex& index) co
             color.setAlpha(30);
             return (QBrush(color));
         }
+    }
+    return (QVariant());
+}
+
+
+QVariant SADataFeatureTreeModel::dataDecorationRole(const QModelIndex& index) const
+{
+    void *p = index.internalPointer();
+
+    if (index.column() != 0) {
+        return (QVariant());
+    }
+    if (isChart2DPtr(p)) {
+        return (ICON_FIGURE);
+    }else if (isQwtPlotItemPtr(p)) {
+        return (ICON_CHART);
+    }else {
+        SAItem *i = static_cast<SAItem *>(p);
+        QIcon icon = i->getIcon();
+        if (icon.isNull()) {
+            return (QVariant());
+        }
+        return (icon);
     }
     return (QVariant());
 }

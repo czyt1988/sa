@@ -65,6 +65,7 @@ private:
     bool bindItem(QwtPlotItem *plotitem, ItemSmtPtr item);
     QVariant dataDisplayRole(const QModelIndex& index) const;
     QVariant dataBackgroundRole(const QModelIndex& index) const;
+    QVariant dataDecorationRole(const QModelIndex& index) const;
 
     //判断item是否可用
     static bool isPlotitemCanDisplay(QwtPlotItem *item);

@@ -99,4 +99,21 @@
     <qresource prefix="/windowIcons">
         <file>icons/windowIcon/figureWindow.svg</file>
     </qresource>
+    <qresource prefix="/dataFeatureTree">
+        <file>icons/peakpeak.svg</file>
+        <file>icons/mid.svg</file>
+        <file>icons/min.svg</file>
+        <file>icons/max.svg</file>
+        <file>icons/kurtosis.svg</file>
+        <file>icons/mean.svg</file>
+        <file>icons/skewness.svg</file>
+        <file>icons/var.svg</file>
+        <file>icons/sum.svg</file>
+        <file>icons/std.svg</file>
+        <file>icons/lows.svg</file>
+        <file>icons/tops.svg</file>
+        <file>icons/minPoint.svg</file>
+        <file>icons/maxPoint.svg</file>
+        <file>icons/midPoint.svg</file>
+    </qresource>
 </RCC>

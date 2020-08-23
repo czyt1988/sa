@@ -32,6 +32,22 @@
 //自定义的属性，点值动作，
 #define ITEM_PROPERTY_ACTION_POINT_VALUE	(SAItem::RoleUserDefine + 3)
 
+#define ICON_SUM				QIcon(":/dataFeatureTree/icons/sum.svg")
+#define ICON_VAR				QIcon(":/dataFeatureTree/icons/var.svg")
+#define ICON_STD				QIcon(":/dataFeatureTree/icons/std.svg")
+#define ICON_MAX				QIcon(":/dataFeatureTree/icons/max.svg")
+#define ICON_MIN				QIcon(":/dataFeatureTree/icons/min.svg")
+#define ICON_MID				QIcon(":/dataFeatureTree/icons/mid.svg")
+#define ICON_MEAN				QIcon(":/dataFeatureTree/icons/mean.svg")
+#define ICON_SKEWNESS				QIcon(":/dataFeatureTree/icons/skewness.svg")
+#define ICON_PEAKPEAK				QIcon(":/dataFeatureTree/icons/peakpeak.svg")
+#define ICON_KURTOSIS				QIcon(":/dataFeatureTree/icons/kurtosis.svg")
+#define ICON_MAXPOINT				QIcon(":/dataFeatureTree/icons/maxPoint.svg")
+#define ICON_MINPOINT				QIcon(":/dataFeatureTree/icons/minPoint.svg")
+#define ICON_MIDPOINT				QIcon(":/dataFeatureTree/icons/midPoint.svg")
+#define ICON_TOPS				QIcon(":/dataFeatureTree/icons/tops.svg")
+#define ICON_LOWS				QIcon(":/dataFeatureTree/icons/lows.svg")
+
 SADataFeatureWidget::DataInfo::DataInfo() :
     item(nullptr)
     , midwidget(nullptr)
@@ -335,66 +351,6 @@ void SADataFeatureWidget::onTreeViewClicked(const QModelIndex& index)
             }
         }
     }
-
-    /*
-     *
-     *
-     * for(int i=0;i<indexList.size();++i)
-     * {
-     *  if(1 != indexList[i].column())
-     *  {
-     *      continue;
-     *  }
-     *  SADataFeatureItem* item = static_cast<SADataFeatureItem*>(indexList[i].internalPointer());
-     *  if(nullptr == item)
-     *  {
-     *      continue;
-     *  }
-     *  SADataFeatureItem* topParent = item->topParent();
-     *  //根据topParent找到对应的SAChart2D;
-     *  SAChart2D* c = SADataFeatureTreeModel::getChartPtrFromItem(topParent);
-     *  if(nullptr == c)
-     *  {
-     *      saPrint() << "can not getChartPtrFromItem";
-     *      continue;
-     *  }
-     *  if(!chartPlots.contains(c))
-     *  {
-     *      continue;
-     *  }
-     *  QVariant var = item->getValue();
-     *  switch(var.type())
-     *  {
-     *  case QVariant::PointF:
-     *  case QVariant::Point:
-     *  {
-     *      QPointF point = var.toPointF();
-     *      SAPointMarker* pointMark = new SAPointMarker(point);
-     *      SATriangleMarkSymbol* tra = new SATriangleMarkSymbol();
-     *      pointMark->setSymbol( tra );
-     *      pointMark->setLabel(tr("%1(%2,%3)").arg(item->getName()).arg(point.x()).arg(point.y()));
-     *      pointMark->setLabelAlignment(Qt::AlignTop|Qt::AlignHCenter);
-     *      pointMark->setSpacing(10);//设置文字和mark的间隔
-     *      c->addPlotMarker(pointMark);
-     *      c->replot();
-     *  }break;
-     *  case QVariant::Double:
-     *  {
-     *      double data = var.toDouble();
-     *      SAYValueMarker* valueMark = new SAYValueMarker(data);
-     *      valueMark->setXValue(c->axisXmax());
-     *      valueMark->setLinePen(Qt::black,1);
-     *      valueMark->setLabel(tr("%1(%2)").arg(item->getName().arg(data)));
-     *      valueMark->setLabelAlignment(Qt::AlignTop|Qt::AlignRight);
-     *      valueMark->setSpacing(1);//设置文字和mark的间隔
-     *      c->addPlotMarker(valueMark);
-     *      c->replot();
-     *  }break;
-     *  default:
-     *      return;
-     *  }
-     * }
-     */
 }
 
 
@@ -477,56 +433,88 @@ void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, dou
     SADataFeatureTreeModel::ItemPtr it = nullptr;
 
     it = model->setItemValue(di.item, tr("sum"), sum);
+    if (it) {
+        it->setIcon(ICON_SUM);
+    }
+
     it = model->setItemValue(di.item, tr("mean"), mean);
     if (it) {
         //设置点击反馈
         setupClickedYValueAction(it, mean);
+        it->setIcon(ICON_MEAN);
     }
+
     it = model->setItemValue(di.item, tr("var"), var);
     if (it) {
         //设置点击反馈
         setupClickedYValueAction(it, var);
+        it->setIcon(ICON_VAR);
     }
+
     it = model->setItemValue(di.item, tr("std var"), stdVar);
     if (it) {
         //设置点击反馈
         setupClickedYValueAction(it, stdVar);
+        it->setIcon(ICON_STD);
     }
+
     it = model->setItemValue(di.item, tr("skewness"), skewness);
+    if (it) {
+        it->setIcon(ICON_SKEWNESS);
+    }
+
     it = model->setItemValue(di.item, tr("kurtosis"), kurtosis);
+    if (it) {
+        it->setIcon(ICON_KURTOSIS);
+    }
+
     it = model->setItemValue(di.item, tr("min"), min);
     if (it) {
         //设置点击反馈
         setupClickedYValueAction(it, min);
+        it->setIcon(ICON_MIN);
     }
+
     it = model->setItemValue(di.item, tr("max"), max);
     if (it) {
         //设置点击反馈
         setupClickedYValueAction(it, max);
+        it->setIcon(ICON_MAX);
     }
+
     it = model->setItemValue(di.item, tr("mid"), mid);
     if (it) {
         //设置点击反馈
         setupClickedYValueAction(it, mid);
+        it->setIcon(ICON_MID);
     }
+
     it = model->setItemValue(di.item, tr("peak2peak"), peak2peak);
+    if (it) {
+        it->setIcon(ICON_PEAKPEAK);
+    }
+
     it = model->setItemValue(di.item, tr("minPoint"), minPoint);
     if (it) {
         //设置点击反馈
         setupClickedPointFValueAction(it, minPoint);
+        it->setIcon(ICON_MINPOINT);
     }
     it = model->setItemValue(di.item, tr("maxPoint"), maxPoint);
     if (it) {
         //设置点击反馈
         setupClickedPointFValueAction(it, maxPoint);
+        it->setIcon(ICON_MAXPOINT);
     }
     it = model->setItemValue(di.item, tr("midPoint"), midPoint);
     if (it) {
         //设置点击反馈
+        it->setIcon(ICON_MIDPOINT);
         setupClickedPointFValueAction(it, midPoint);
     }
     it = model->setItemValue(di.item, tr("tops"), QVariant::fromValue<QVector<QPointF> >(tops));
     if (it) {
+        it->setIcon(ICON_TOPS);
         int c = it->childItemCount();
         for (int i = 0; i < c; ++i)
         {
@@ -539,6 +527,7 @@ void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, dou
     }
     it = model->setItemValue(di.item, tr("lows"), QVariant::fromValue<QVector<QPointF> >(lows));
     if (it) {
+        it->setIcon(ICON_LOWS);
         int c = it->childItemCount();
         for (int i = 0; i < c; ++i)
         {
