@@ -135,4 +135,3 @@ include($$PWD/figureSet/figureSet.pri)
 RESOURCES += \
     icon.qrc
 
-

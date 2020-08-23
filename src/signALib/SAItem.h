@@ -21,11 +21,10 @@ public:
      * @brief 预设好的一些属性角色
      */
     enum Role {
-        RoleNone	= 0,
-        RoleName,               ///< 名字
+        RoleName	= 0,    ///< 名字
         RoleIcon,               ///< 图标
         RoleValue,              ///< 值
-        UserDefine	= 1000  ///< 用户自定义
+        RoleUserDefine	= 1000  ///< 用户自定义
     };
     SAItem(SAItem *parentItem = nullptr);
     SAItem(const QString& text);

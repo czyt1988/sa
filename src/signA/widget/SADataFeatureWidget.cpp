@@ -14,6 +14,7 @@
 #include "SAFigureWindow.h"
 #include "SAChart2D.h"
 #include "SALog.h"
+#include "SAItem.h"
 
 #include "qwt_plot_curve.h"
 #include "SAUIReflection.h"
@@ -24,7 +25,28 @@
 #define _DEBUG_PRINT
 #define _DEBUG_OUTPUT
 
+//自定义的属性，y轴数值动作，
+#define ITEM_PROPERTY_ACTION_Y_VALUE		(SAItem::RoleUserDefine + 1)
+//自定义的属性，x轴数值动作，
+#define ITEM_PROPERTY_ACTION_X_VALUE		(SAItem::RoleUserDefine + 2)
+//自定义的属性，点值动作，
+#define ITEM_PROPERTY_ACTION_POINT_VALUE	(SAItem::RoleUserDefine + 3)
 
+#define ICON_SUM				QIcon(":/dataFeatureTree/icons/sum.svg")
+#define ICON_VAR				QIcon(":/dataFeatureTree/icons/var.svg")
+#define ICON_STD				QIcon(":/dataFeatureTree/icons/std.svg")
+#define ICON_MAX				QIcon(":/dataFeatureTree/icons/max.svg")
+#define ICON_MIN				QIcon(":/dataFeatureTree/icons/min.svg")
+#define ICON_MID				QIcon(":/dataFeatureTree/icons/mid.svg")
+#define ICON_MEAN				QIcon(":/dataFeatureTree/icons/mean.svg")
+#define ICON_SKEWNESS				QIcon(":/dataFeatureTree/icons/skewness.svg")
+#define ICON_PEAKPEAK				QIcon(":/dataFeatureTree/icons/peakpeak.svg")
+#define ICON_KURTOSIS				QIcon(":/dataFeatureTree/icons/kurtosis.svg")
+#define ICON_MAXPOINT				QIcon(":/dataFeatureTree/icons/maxPoint.svg")
+#define ICON_MINPOINT				QIcon(":/dataFeatureTree/icons/minPoint.svg")
+#define ICON_MIDPOINT				QIcon(":/dataFeatureTree/icons/midPoint.svg")
+#define ICON_TOPS				QIcon(":/dataFeatureTree/icons/tops.svg")
+#define ICON_LOWS				QIcon(":/dataFeatureTree/icons/lows.svg")
 
 SADataFeatureWidget::DataInfo::DataInfo() :
     item(nullptr)
@@ -152,6 +174,32 @@ QPair<SADataFeatureTreeModel *, SADataFeatureWidget::DataInfo> SADataFeatureWidg
 
 
 /**
+ * @brief 设置点击反馈 - y值
+ *
+ * 设置完点击反馈后，点击item，会在图上显示y值对应的水平线
+ * @param it
+ * @param v
+ */
+void SADataFeatureWidget::setupClickedYValueAction(SADataFeatureTreeModel::ItemPtr it, const double& v)
+{
+    it->setProperty(ITEM_PROPERTY_ACTION_Y_VALUE, v);
+}
+
+
+/**
+ * @brief 设置点击反馈 - 点
+ *
+ * 设置完点击反馈后，点击item，会在图上显示点的标记
+ * @param it
+ * @param v
+ */
+void SADataFeatureWidget::setupClickedPointFValueAction(SADataFeatureTreeModel::ItemPtr it, const QPointF& v)
+{
+    it->setProperty(ITEM_PROPERTY_ACTION_POINT_VALUE, v);
+}
+
+
+/**
  * @brief 计算每个曲线的信息
  * @param subwnd 子窗口
  * @param chart 对应的sa2dchart
@@ -227,88 +275,82 @@ SAFigureWindow *SADataFeatureWidget::getFigureFromSubWindow(QMdiSubWindow *sub)
 ///
 void SADataFeatureWidget::onTreeViewClicked(const QModelIndex& index)
 {
+    qDebug() << "click";
     if (!index.isValid()) {
+        qDebug() << "index invalid";
         return;
     }
     if (nullptr == m_lastActiveSubWindow) {
+        qDebug() << "last Active SubWindow NULL";
         return;
     }
     SAFigureWindow *figure = getFigureFromSubWindow(m_lastActiveSubWindow);//记录当前的绘图窗口
 
     if (nullptr == figure) {
-        saPrint() << "can not find FigureWindow";
+        qDebug() << "can not find FigureWindow";
         return;
     }
     onToolButtonClearDataFeatureClicked();//先清除标记
     QSet<SAChart2D *> chartPlots = figure->get2DPlots().toSet();
 
     QItemSelectionModel *selModel = ui->treeView->selectionModel();
+    SADataFeatureTreeModel *featureModel = static_cast<SADataFeatureTreeModel *>(ui->treeView->model());
 
-    /*
-     * SADataFeatureTreeModel* curFeatureModel = static_cast<SADataFeatureTreeModel*>(ui->treeView->model());
-     * if(!selModel || !curFeatureModel)
-     * {
-     *  saPrint() << "can not find DataFeatureTreeModel";
-     *  return;
-     * }
-     * QModelIndexList indexList = selModel->selectedIndexes();
-     *
-     * for(int i=0;i<indexList.size();++i)
-     * {
-     *  if(1 != indexList[i].column())
-     *  {
-     *      continue;
-     *  }
-     *  SADataFeatureItem* item = static_cast<SADataFeatureItem*>(indexList[i].internalPointer());
-     *  if(nullptr == item)
-     *  {
-     *      continue;
-     *  }
-     *  SADataFeatureItem* topParent = item->topParent();
-     *  //根据topParent找到对应的SAChart2D;
-     *  SAChart2D* c = SADataFeatureTreeModel::getChartPtrFromItem(topParent);
-     *  if(nullptr == c)
-     *  {
-     *      saPrint() << "can not getChartPtrFromItem";
-     *      continue;
-     *  }
-     *  if(!chartPlots.contains(c))
-     *  {
-     *      continue;
-     *  }
-     *  QVariant var = item->getValue();
-     *  switch(var.type())
-     *  {
-     *  case QVariant::PointF:
-     *  case QVariant::Point:
-     *  {
-     *      QPointF point = var.toPointF();
-     *      SAPointMarker* pointMark = new SAPointMarker(point);
-     *      SATriangleMarkSymbol* tra = new SATriangleMarkSymbol();
-     *      pointMark->setSymbol( tra );
-     *      pointMark->setLabel(tr("%1(%2,%3)").arg(item->getName()).arg(point.x()).arg(point.y()));
-     *      pointMark->setLabelAlignment(Qt::AlignTop|Qt::AlignHCenter);
-     *      pointMark->setSpacing(10);//设置文字和mark的间隔
-     *      c->addPlotMarker(pointMark);
-     *      c->replot();
-     *  }break;
-     *  case QVariant::Double:
-     *  {
-     *      double data = var.toDouble();
-     *      SAYValueMarker* valueMark = new SAYValueMarker(data);
-     *      valueMark->setXValue(c->axisXmax());
-     *      valueMark->setLinePen(Qt::black,1);
-     *      valueMark->setLabel(tr("%1(%2)").arg(item->getName().arg(data)));
-     *      valueMark->setLabelAlignment(Qt::AlignTop|Qt::AlignRight);
-     *      valueMark->setSpacing(1);//设置文字和mark的间隔
-     *      c->addPlotMarker(valueMark);
-     *      c->replot();
-     *  }break;
-     *  default:
-     *      return;
-     *  }
-     * }
-     */
+    if ((nullptr == selModel) || (nullptr == featureModel)) {
+        qDebug() << "can not find DataFeatureTreeModel";
+        return;
+    }
+    //获取所有选中的条目
+    QModelIndexList indexList = selModel->selectedIndexes();
+
+    for (int i = 0; i < indexList.size(); ++i)
+    {
+        QModelIndex index = indexList[i];
+        if (1 != index.column()) {
+            //由于tree在全选时把整行都返回，因此第二列滤掉
+            continue;
+        }
+        SADataFeatureTreeModel::ItemPtr p = featureModel->toItemPtr(index);
+        if (nullptr == p) {
+            continue;
+        }
+        QVariant v = p->getProperty(ITEM_PROPERTY_ACTION_Y_VALUE);
+        if (v.isValid()) {
+            //显示水平线
+            SAChart2D *c = featureModel->findChart2D(index);
+            if (c) {
+                double data = v.toDouble();
+                SAYValueMarker *valueMark = new SAYValueMarker(data);
+                valueMark->setXValue(c->axisXmax());
+                valueMark->setLinePen(Qt::black, 1);
+                valueMark->setLabel(tr("%1(%2)").arg(p->getName()).arg(data));
+                valueMark->setLabelAlignment(Qt::AlignTop|Qt::AlignRight);
+                valueMark->setSpacing(1);//设置文字和mark的间隔
+                c->addPlotMarker(valueMark);
+                c->replot();
+            }
+        }
+        v = p->getProperty(ITEM_PROPERTY_ACTION_X_VALUE);
+        if (v.isValid()) {
+            //显示竖直线
+        }
+        v = p->getProperty(ITEM_PROPERTY_ACTION_POINT_VALUE);
+        if (v.isValid()) {
+            //显示点
+            SAChart2D *c = featureModel->findChart2D(index);
+            if (c) {
+                QPointF point = v.toPointF();
+                SAPointMarker *pointMark = new SAPointMarker(point);
+                SATriangleMarkSymbol *tra = new SATriangleMarkSymbol();
+                pointMark->setSymbol(tra);
+                pointMark->setLabel(tr("%1(%2,%3)").arg(p->getName()).arg(point.x()).arg(point.y()));
+                pointMark->setLabelAlignment(Qt::AlignTop|Qt::AlignHCenter);
+                pointMark->setSpacing(10);//设置文字和mark的间隔
+                c->addPlotMarker(pointMark);
+                c->replot();
+            }
+        }
+    }
 }
 
 
@@ -388,21 +430,114 @@ void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, dou
         qDebug() << tr("receive unknow sequenceID when on receive 2D points describe:")<<sequenceID;
         return;
     }
-    model->setItemValue(di.item, tr("sum"), sum);
-    model->setItemValue(di.item, tr("mean"), mean);
-    model->setItemValue(di.item, tr("var"), var);
-    model->setItemValue(di.item, tr("std var"), stdVar);
-    model->setItemValue(di.item, tr("skewness"), skewness);
-    model->setItemValue(di.item, tr("kurtosis"), kurtosis);
-    model->setItemValue(di.item, tr("min"), min);
-    model->setItemValue(di.item, tr("max"), max);
-    model->setItemValue(di.item, tr("mid"), mid);
-    model->setItemValue(di.item, tr("peak2peak"), peak2peak);
-    model->setItemValue(di.item, tr("minPoint"), minPoint);
-    model->setItemValue(di.item, tr("maxPoint"), maxPoint);
-    model->setItemValue(di.item, tr("midPoint"), midPoint);
-    model->setItemValue(di.item, tr("tops"), QVariant::fromValue<QVector<QPointF> >(tops));
-    model->setItemValue(di.item, tr("lows"), QVariant::fromValue<QVector<QPointF> >(lows));
+    SADataFeatureTreeModel::ItemPtr it = nullptr;
+
+    it = model->setItemValue(di.item, tr("sum"), sum);
+    if (it) {
+        it->setIcon(ICON_SUM);
+    }
+
+    it = model->setItemValue(di.item, tr("mean"), mean);
+    if (it) {
+        //设置点击反馈
+        setupClickedYValueAction(it, mean);
+        it->setIcon(ICON_MEAN);
+    }
+
+    it = model->setItemValue(di.item, tr("var"), var);
+    if (it) {
+        //设置点击反馈
+        setupClickedYValueAction(it, var);
+        it->setIcon(ICON_VAR);
+    }
+
+    it = model->setItemValue(di.item, tr("std var"), stdVar);
+    if (it) {
+        //设置点击反馈
+        setupClickedYValueAction(it, stdVar);
+        it->setIcon(ICON_STD);
+    }
+
+    it = model->setItemValue(di.item, tr("skewness"), skewness);
+    if (it) {
+        it->setIcon(ICON_SKEWNESS);
+    }
+
+    it = model->setItemValue(di.item, tr("kurtosis"), kurtosis);
+    if (it) {
+        it->setIcon(ICON_KURTOSIS);
+    }
+
+    it = model->setItemValue(di.item, tr("min"), min);
+    if (it) {
+        //设置点击反馈
+        setupClickedYValueAction(it, min);
+        it->setIcon(ICON_MIN);
+    }
+
+    it = model->setItemValue(di.item, tr("max"), max);
+    if (it) {
+        //设置点击反馈
+        setupClickedYValueAction(it, max);
+        it->setIcon(ICON_MAX);
+    }
+
+    it = model->setItemValue(di.item, tr("mid"), mid);
+    if (it) {
+        //设置点击反馈
+        setupClickedYValueAction(it, mid);
+        it->setIcon(ICON_MID);
+    }
+
+    it = model->setItemValue(di.item, tr("peak2peak"), peak2peak);
+    if (it) {
+        it->setIcon(ICON_PEAKPEAK);
+    }
+
+    it = model->setItemValue(di.item, tr("minPoint"), minPoint);
+    if (it) {
+        //设置点击反馈
+        setupClickedPointFValueAction(it, minPoint);
+        it->setIcon(ICON_MINPOINT);
+    }
+    it = model->setItemValue(di.item, tr("maxPoint"), maxPoint);
+    if (it) {
+        //设置点击反馈
+        setupClickedPointFValueAction(it, maxPoint);
+        it->setIcon(ICON_MAXPOINT);
+    }
+    it = model->setItemValue(di.item, tr("midPoint"), midPoint);
+    if (it) {
+        //设置点击反馈
+        it->setIcon(ICON_MIDPOINT);
+        setupClickedPointFValueAction(it, midPoint);
+    }
+    it = model->setItemValue(di.item, tr("tops"), QVariant::fromValue<QVector<QPointF> >(tops));
+    if (it) {
+        it->setIcon(ICON_TOPS);
+        int c = it->childItemCount();
+        for (int i = 0; i < c; ++i)
+        {
+            SADataFeatureTreeModel::ItemPtr cit = it->childItem(i);
+            if (cit) {
+                QPointF f = cit->getProperty(SAItem::RoleValue).toPointF();
+                setupClickedPointFValueAction(cit, f);
+            }
+        }
+    }
+    it = model->setItemValue(di.item, tr("lows"), QVariant::fromValue<QVector<QPointF> >(lows));
+    if (it) {
+        it->setIcon(ICON_LOWS);
+        int c = it->childItemCount();
+        for (int i = 0; i < c; ++i)
+        {
+            SADataFeatureTreeModel::ItemPtr cit = it->childItem(i);
+            if (cit) {
+                QPointF f = cit->getProperty(SAItem::RoleValue).toPointF();
+                setupClickedPointFValueAction(cit, f);
+            }
+        }
+    }
     //qDebug() << midPoint << tops;
     model->reflash();
 }

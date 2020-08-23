@@ -29,6 +29,7 @@ HEADERS += \
     SADataPackage.h \
     SAItem.h \
     SALibGlobal.h \
+    SAOrderMap.h \
     SAPoint.h \
     SATable.h \
     SAThreadPool.h \

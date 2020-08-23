@@ -1,7 +1,9 @@
 ﻿#include "SAItem.h"
-#include <QHash>
+#include <QList>
+#include <QVector>
 #include <QDebug>
 #include "SATree.h"
+#include "SAOrderMap.h"
 //把from的子对象都复制一份到to
 void copy_childs(const SAItem *from, SAItem *to);
 
@@ -30,11 +32,12 @@ class SAItemPrivate
 public:
     SAItem *m_parent;
     QList<SAItem *> m_childs;
-    int m_fieldRow;///<用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级
-    QString m_name;
+    int m_fieldRow;                                                                 ///<用于记录当前所处的层级，如果parent不为nullptr，这个将返回parent下次item对应的层级
     int m_id;
-    SATree *m_tree;                 ///< 绑定的树
-    QMap<int, QVariant> m_datas;    //在数据量很少的情况下，遍历qlist比hash还快
+    SATree *m_tree;                                                                 ///< 绑定的树
+    SAOrderMap<int, QVariant, QVector<int>, QVector<QVariant> > m_propertys;        ///< 定义属性
+//    QList<int> m_dataIDs;           ///< data的id，使用两个数组来维护，避免短小操作也进行二叉树查找
+//    QVector<QVariant> m_datas;      ///< data
     SAItemPrivate(SAItem *par)
         : q_ptr(par)
         , m_parent(nullptr)
@@ -42,6 +45,9 @@ public:
         , m_id(reinterpret_cast<int>(par))
         , m_tree(nullptr)
     {
+        m_propertys[SAItem::RoleName] = QString();
+        m_propertys[SAItem::RoleIcon] = QIcon();
+        m_propertys[SAItem::RoleValue] = QVariant();
     }
 
 
@@ -72,44 +78,6 @@ public:
             m_childs[i]->d_ptr->m_fieldRow = i;
         }
     }
-
-
-    /** 当定义为QList<QPair<int,QVariant>> m_datas;时使用
-     * void setProperty(int roleID,const QVariant& var)
-     * {
-     *  auto end = m_datas.end();
-     *  for(auto i = m_datas.begin();i!=end;++i)
-     *  {
-     *      if(roleID == i->first)
-     *      {
-     *          if(var.isValid())
-     *          {
-     *              i->second = var;
-     *              return;
-     *          }
-     *          else
-     *          {
-     *              //无效就把role擦除
-     *              m_datas.erase(i);
-     *              return;
-     *          }
-     *      }
-     *  }
-     *  m_datas.append(qMakePair(roleID,var));
-     * }
-     * bool isHaveProperty(int id) const
-     * {
-     *  auto end = m_datas.end();
-     *  for(auto i = m_datas.begin();i!=end;++i)
-     *  {
-     *      if(i->first == id)
-     *      {
-     *          return true;
-     *      }
-     *  }
-     *  return false;
-     * }
-     */
 };
 
 
@@ -172,8 +140,7 @@ SAItem::~SAItem()
 SAItem& SAItem::operator =(const SAItem& item)
 {
     clearChild();
-    d_ptr->m_name = item.d_ptr->m_name;
-    d_ptr->m_datas = item.d_ptr->m_datas;
+    d_ptr->m_propertys = item.d_ptr->m_propertys;
     //复制子对象
     copy_childs(&item, this);
     return (*this);
@@ -186,7 +153,7 @@ SAItem& SAItem::operator =(const SAItem& item)
 ///
 void SAItem::setName(const QString& name)
 {
-    d_ptr->m_name = name;
+    d_ptr->m_propertys.orderValue(static_cast<int>(RoleName)) = name;
 }
 
 
@@ -196,7 +163,7 @@ void SAItem::setName(const QString& name)
 ///
 QString SAItem::getName() const
 {
-    return (d_ptr->m_name);
+    return (d_ptr->m_propertys.orderValue(static_cast<int>(RoleName)).toString());
 }
 
 
@@ -206,7 +173,7 @@ QString SAItem::getName() const
 ///
 void SAItem::setIcon(const QIcon& icon)
 {
-    d_ptr->m_datas[RoleIcon] = icon;
+    d_ptr->m_propertys.orderValue(static_cast<int>(RoleIcon)) = icon;
 }
 
 
@@ -216,12 +183,7 @@ void SAItem::setIcon(const QIcon& icon)
 ///
 QIcon SAItem::getIcon() const
 {
-    auto i = d_ptr->m_datas.find(RoleIcon);
-
-    if (i == d_ptr->m_datas.end()) {
-        return (QIcon());
-    }
-    return (i.value().value<QIcon>());
+    return (d_ptr->m_propertys.orderValue(static_cast<int>(RoleIcon)).value<QIcon>());
 }
 
 
@@ -243,11 +205,7 @@ int SAItem::getID() const
 ///
 void SAItem::setProperty(int roleID, const QVariant& var)
 {
-    if (RoleName == roleID) {
-        d_ptr->m_name = var.toString();
-        return;
-    }
-    d_ptr->m_datas[roleID] = var;
+    d_ptr->m_propertys[roleID] = var;
 }
 
 
@@ -258,10 +216,7 @@ void SAItem::setProperty(int roleID, const QVariant& var)
 ///
 bool SAItem::isHaveProperty(int roleID) const
 {
-    if (RoleName == roleID) {
-        return (true);
-    }
-    return (d_ptr->m_datas.contains(roleID));
+    return (d_ptr->m_propertys.contains(roleID));
 }
 
 
@@ -271,7 +226,7 @@ bool SAItem::isHaveProperty(int roleID) const
 ///
 int SAItem::getPropertyCount() const
 {
-    return (d_ptr->m_datas.size());
+    return (d_ptr->m_propertys.size());
 }
 
 
@@ -282,7 +237,7 @@ int SAItem::getPropertyCount() const
 ///
 const QVariant& SAItem::property(int id) const
 {
-    return (d_ptr->m_datas[id]);
+    return (d_ptr->m_propertys[id]);
 }
 
 
@@ -293,7 +248,7 @@ const QVariant& SAItem::property(int id) const
 ///
 QVariant& SAItem::property(int id)
 {
-    return (d_ptr->m_datas[id]);
+    return (d_ptr->m_propertys[id]);
 }
 
 
@@ -305,7 +260,7 @@ QVariant& SAItem::property(int id)
 ///
 void SAItem::property(int index, int& id, QVariant& var) const
 {
-    auto ite = d_ptr->m_datas.cbegin();
+    auto ite = d_ptr->m_propertys.cbegin();
 
     ite = ite + index;
     id = ite.key();
@@ -321,7 +276,7 @@ void SAItem::property(int index, int& id, QVariant& var) const
  */
 QVariant SAItem::getProperty(int id, const QVariant& defaultvar) const
 {
-    return (d_ptr->m_datas.value(id, defaultvar));
+    return (d_ptr->m_propertys.value(id, defaultvar));
 }
 
 
@@ -331,7 +286,7 @@ QVariant SAItem::getProperty(int id, const QVariant& defaultvar) const
  */
 QMap<int, QVariant> SAItem::getPropertys() const
 {
-    return (d_ptr->m_datas);
+    return (d_ptr->m_propertys.toMap());
 }
 
 
