@@ -42,7 +42,6 @@ HEADERS += \
     SATextReadWriter.h \
     SADataHeader.h \
     SALibResourDefine.h \
-    SADataFeatureItem.h \
     SAValueManagerMimeData.h \
     SAValueManagerListModel.h \
     SAHashTable.h \
@@ -63,7 +62,6 @@ SOURCES += \
     SALog.cpp \
     SATextReadWriter.cpp \
     SADataHeader.cpp \
-    SADataFeatureItem.cpp \
     SAValueManagerMimeData.cpp \
     SAValueManagerListModel.cpp \
     SATree.cpp \

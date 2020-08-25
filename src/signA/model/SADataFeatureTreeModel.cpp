@@ -50,7 +50,7 @@ QModelIndex SADataFeatureTreeModel::index(int row, int column, const QModelIndex
 
     if (!grapar.isValid()) {
         //说明是二层
-        if ((column >= 2) || (grapar.row() >= m_2dcharts.size())) {
+        if ((column >= 2) || (parent.row() >= m_2dcharts.size())) {
             return (QModelIndex());
         }
         SAChart2D *chart = static_cast<SAChart2D *>(parent.internalPointer());
@@ -281,13 +281,13 @@ void SADataFeatureTreeModel::setFigure(SAFigureWindow *fig)
     if (m_fig) {
         //解除绑定
         disconnect(m_fig, &SAFigureWindow::chartAdded, this, &SADataFeatureTreeModel::onChartAdded);
-        disconnect(m_fig, &SAFigureWindow::chartRemoved, this, &SADataFeatureTreeModel::onChartRemoved);
+        disconnect(m_fig, &SAFigureWindow::chartWillRemove, this, &SADataFeatureTreeModel::onChartRemoved);
     }
     m_fig = fig;
     if (m_fig) {
         //建立新绑定
         connect(m_fig, &SAFigureWindow::chartAdded, this, &SADataFeatureTreeModel::onChartAdded);
-        connect(m_fig, &SAFigureWindow::chartRemoved, this, &SADataFeatureTreeModel::onChartRemoved);
+        connect(m_fig, &SAFigureWindow::chartWillRemove, this, &SADataFeatureTreeModel::onChartRemoved);
     }
     resetData();
 }

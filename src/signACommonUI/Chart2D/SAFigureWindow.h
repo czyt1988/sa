@@ -102,7 +102,7 @@ signals:
     void chartAdded(QwtPlot *plot);
 
     //删除了一个绘图发送的信号
-    void chartRemoved(QwtPlot *plot);
+    void chartWillRemove(QwtPlot *plot);
 
     //当前选中的发生改变
     void currentWidgetChanged(QWidget *w);

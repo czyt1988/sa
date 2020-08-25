@@ -864,19 +864,33 @@ SA2DGraph::SA2DGraph(QWidget *parent):QwtPlot(parent)
     setAutoReplot( false );
     setAutoFillBackground(true);
 
+    QwtPlotLayout *pLayout = plotLayout();
+    pLayout->setCanvasMargin(0);
+    pLayout->setAlignCanvasToScales (true);
+
     QwtPlotCanvas* pCanvas = new QwtPlotCanvas();
     //pCanvas->setLineWidth( 0 );
 //    pCanvas->setAutoFillBackground(true);
 //    pCanvas->setFrameStyle( QFrame::Box );
+    pCanvas->setFrameShadow(QwtPlot::Plain);
+    pCanvas->setLineWidth(0);
     pCanvas->setBorderRadius( 0 );//设置圆角为0
-
-    QPalette canvasPalette( Qt::white );
-    //canvasPalette.setColor( QPalette::Foreground, QColor( 133, 190, 232 ) );
-    pCanvas->setPalette( canvasPalette );
+    pCanvas->setCursor(Qt::ArrowCursor);
     setCanvas( pCanvas );
-	setPalette( Qt::white );
+
+    QColor background = QColor(Qt::white);
+    background.setAlpha(255);
+    QPalette palette;
+    palette.setColor(QPalette::Window, background);
+    setPalette(palette);
+    setCanvasBackground (background);
+    setFocusPolicy(Qt::StrongFocus);
+    setFocusProxy(pCanvas);
+    setFrameShape(QFrame::Box);
+    setLineWidth(0);
+
     setAutoReplot( true );
-    canvas()->setCursor(Qt::ArrowCursor);
+
     QwtScaleWidget * ax = axisWidget(QwtPlot::yLeft);
     if(ax)
     {

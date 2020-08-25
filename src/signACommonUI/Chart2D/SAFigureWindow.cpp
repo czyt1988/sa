@@ -201,7 +201,7 @@ void SAFigureWindow::clearAll()
     while (!charts.isEmpty())
     {
         SAChart2D *p = charts.takeLast();
-        emit chartRemoved(p);
+        emit chartWillRemove(p);
         delete p;
     }
 }
@@ -483,7 +483,7 @@ void SAFigureWindow::keyPressEvent(QKeyEvent *e)
     if (Qt::ControlModifier& e->modifiers()) {
         if (Qt::Key_Z == e->key()) {
             undo();
-        }else if (Qt::Key_Y == e->key())   {
+        }else if (Qt::Key_Y == e->key()) {
             redo();
         }
     }

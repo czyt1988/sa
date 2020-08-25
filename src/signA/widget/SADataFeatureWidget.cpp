@@ -21,7 +21,6 @@
 #include "SAUIInterface.h"
 #include "SAMdiSubWindow.h"
 #include "SADataFeatureTreeModel.h"
-#include "SADataFeatureItem.h"
 #define _DEBUG_PRINT
 #define _DEBUG_OUTPUT
 
