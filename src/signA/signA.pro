@@ -29,6 +29,7 @@ INCLUDEPATH += $$PWD
 #include($$PWD/3rdparty/qwtplot3d/qwt3D_set.pri)#the qwt support
 
 SOURCES += main.cpp\
+    SAIconHelper.cpp \
     mainwindow.cpp \
     progressStateWidget.cpp \
     AboutDialog.cpp \
@@ -46,6 +47,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     DebugInfo.h \
+    SAIconHelper.h \
     progressStateWidget.h \
     AboutDialog.h \
     SAThemeManager.h \

@@ -761,7 +761,9 @@ void MainWindow::onLayoutWidgetItemRemoved(SAChart2D *chart, QwtPlotItem *item)
 ///
 void MainWindow::onChartTitleChanged(QwtPlot *plot, const QString& title)
 {
-    ui->figureLayoutWidget->setChartTitle(plot, title);
+    Q_UNUSED(plot);
+    Q_UNUSED(title);
+    ui->figureLayoutWidget->updateModel();
 }
 
 
@@ -2953,12 +2955,6 @@ void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
 QList<SAAbstractDatas *> MainWindow::getSeletedDatas() const
 {
     return (ui->treeView_valueManager->getSeletedDatas());
-}
-
-
-SAPlotLayerModel *MainWindow::getPlotLayerModel() const
-{
-    return (ui->figureLayoutWidget->getLayoutModel());
 }
 
 

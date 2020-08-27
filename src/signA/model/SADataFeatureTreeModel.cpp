@@ -6,7 +6,7 @@
 #include "SAChart.h"
 #include "SAChart2D.h"
 #include "SAItem.h"
-
+#include "SAIconHelper.h"
 //#define DEBUG_OUTPUT__
 //#define DEBUG_OUTPUT__INDEX_
 //#define DEBUG_OUTPUT__PARENT_
@@ -453,9 +453,9 @@ QVariant SADataFeatureTreeModel::dataDecorationRole(const QModelIndex& index) co
         return (QVariant());
     }
     if (isChart2DPtr(p)) {
-        return (ICON_FIGURE);
+        return (SAIconHelper::getFigureWindowIcon());
     }else if (isQwtPlotItemPtr(p)) {
-        return (ICON_CHART);
+        return (SAIconHelper::getIconByPlotItem(static_cast<QwtPlotItem *>(p)));
     }else {
         SAItem *i = static_cast<SAItem *>(p);
         QIcon icon = i->getIcon();
