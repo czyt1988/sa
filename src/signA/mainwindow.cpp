@@ -90,7 +90,6 @@
 #include "SADataFeatureTreeModel.h"
 #include <SAVariantHashTableModel.h>
 #include <SACsvFileTableModel.h>
-#include <SAPlotLayerModel.h>
 //--------3thparty-----------
 #define TR(str)	\
     QApplication::translate("MainWindow", str, 0)

@@ -5,7 +5,6 @@ HEADERS += \
     $$PWD/MdiWindowModel.h \
     $$PWD/SACsvFileTableModel.h \
     $$PWD/SADataFeatureTreeModel.h \
-    $$PWD/SAPlotLayerModel.h \
     $$PWD/SALayerItemDelegate.h \
     $$PWD/SAPlotLayerTreeModel.h \
     $$PWD/SAVariantHashTableModel.h
@@ -17,7 +16,6 @@ HEADERS += \
 SOURCES += \
     $$PWD/SACsvFileTableModel.cpp \
     $$PWD/SADataFeatureTreeModel.cpp \
-    $$PWD/SAPlotLayerModel.cpp \
     $$PWD/SALayerItemDelegate.cpp \
     $$PWD/SAPlotLayerTreeModel.cpp \
     $$PWD/SAVariantHashTableModel.cpp
