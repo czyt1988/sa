@@ -2,6 +2,7 @@
 #include "SAChart2D.h"
 #include "SAChart.h"
 #include "SAIconHelper.h"
+#include "QPixmap"
 
 SAPlotLayerTreeModel::SAPlotLayerTreeModel(SAFigureWindow *fig, QObject *parent) : QAbstractItemModel(parent)
     , m_fig(fig)
@@ -315,13 +316,35 @@ QVariant SAPlotLayerTreeModel::dataDecorationRole(const QModelIndex& index) cons
 {
     void *p = index.internalPointer();
 
-    if (index.column() != 0) {
-        return (QVariant());
-    }
-    if (isChart2DPtr(p)) {
-        return (SAIconHelper::getFigureWindowIcon());
-    }else{
-        return (SAIconHelper::getIconByPlotItem(static_cast<QwtPlotItem *>(p)));
+    if (index.column() == 0) {
+        //图标
+        if (isChart2DPtr(p)) {
+            return (SAIconHelper::getFigureWindowIcon());
+        }else{
+            return (SAIconHelper::getIconByPlotItem(static_cast<QwtPlotItem *>(p)));
+        }
+    }else if (index.column() == 1) {
+        //绘制颜色图标
+        if (isChart2DPtr(p)) {
+            return (QVariant());
+        }else {
+            QwtPlotItem *item = static_cast<QwtPlotItem *>(p);
+            QColor color = SAChart::getItemColor(item, QColor());
+            if (color.isValid()) {
+                QPixmap pixmap(25, 25);
+                pixmap.fill(color);
+                return (QIcon(pixmap));
+            }
+        }
+    }else if (index.column() == 2) {
+        //图层可见性
+        if (isChart2DPtr(p)) {
+            SAChart2D *chart = static_cast<SAChart2D *>(p);
+            return (SAIconHelper::getLayoutVisibleIcon(chart->isVisible()));
+        }else {
+            QwtPlotItem *item = static_cast<QwtPlotItem *>(p);
+            return (SAIconHelper::getLayoutVisibleIcon(item->isVisible()));
+        }
     }
     return (QVariant());
 }

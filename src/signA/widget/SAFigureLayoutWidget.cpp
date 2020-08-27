@@ -18,7 +18,7 @@ SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     ui->treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     auto hh = ui->treeView->header();
 
-    hh->setSectionResizeMode(0, QHeaderView::Interactive);
+    hh->setSectionResizeMode(0, QHeaderView::Stretch);
     hh->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     hh->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     hh->setStretchLastSection(true);

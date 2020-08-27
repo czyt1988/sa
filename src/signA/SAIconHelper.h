@@ -16,6 +16,9 @@ public:
 
     // figure 窗口的icon
     static QIcon getFigureWindowIcon();
+
+    // 获取图层可见性按钮的图标
+    static QIcon getLayoutVisibleIcon(bool visible);
 };
 
 #endif // SAICONHELPER_H
