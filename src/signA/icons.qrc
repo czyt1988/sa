@@ -89,6 +89,7 @@
         <file>icons/zoneItem.svg</file>
         <file>icons/UserDefineItem.svg</file>
         <file>icons/UnknowItem.svg</file>
+        <file>icons/expandAll.svg</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>

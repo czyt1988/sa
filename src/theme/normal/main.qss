@@ -293,7 +293,7 @@ QToolButton {
 QToolButton:hover, QToolButton::menu-button:hover {
     background-color: #DEDEDE;
     border: 1px solid #AFAFAA;
-    padding: 2px;
+    /*padding: 2px;*/
 }
 /*================
 QComboBox

@@ -255,16 +255,20 @@ public:
     SARibbonMenu *menuTool;
 
     QStatusBar *statusBar;
+
     QDockWidget *dockWidget_DataFeature;
     QWidget *dockWidgetContents_2;
     QVBoxLayout *verticalLayout_2;
     SADataFeatureWidget *dataFeatureWidget;
+
     QDockWidget *dockWidget_windowList;
     QWidget *dockWidgetContents_4;
     QVBoxLayout *verticalLayout_6;
     QListView *listView_window;
+
     QDockWidget *dockWidget_valueManage;
     QWidget *dockWidgetContents_3;
+
     QVBoxLayout *verticalLayout_3;
     SAValueManagerTreeView *treeView_valueManager;
 
@@ -282,14 +286,17 @@ public:
     QWidget *dockWidgetContents_7;
     QVBoxLayout *verticalLayout_4;
     QMdiArea *mdiArea;
+
     QDockWidget *dockWidget_valueViewer;
     QWidget *dockWidgetContents_6;
     QVBoxLayout *verticalLayout_8;
     SATabValueViewerWidget *tabWidget_valueViewer;
+
     QDockWidget *dockWidget_message;
     QWidget *dockWidgetContents_8;
     QVBoxLayout *verticalLayout_9;
     SAMessageWidget *saMessageWidget;
+
     QDockWidget *dockWidget_plotSet;
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout;

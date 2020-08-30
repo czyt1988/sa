@@ -82,6 +82,17 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="toolButton_expandAll">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/icons/expandAll.svg</normaloff>:/icons/icons/expandAll.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

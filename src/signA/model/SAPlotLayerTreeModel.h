@@ -26,7 +26,13 @@ public:
     void setFigure(SAFigureWindow *fig);
 
     //index转换为item
-    QwtPlotItem *indexToItem(const QModelIndex& i);
+    QwtPlotItem *indexToItem(const QModelIndex& i) const;
+
+    //index转换为chart
+    SAChart2D *indexToChart2D(const QModelIndex& i) const;
+
+    //返回label
+    QString horizontalLabel(int index) const;
 
 signals:
     //模型重置发出的信号

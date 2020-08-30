@@ -592,6 +592,9 @@ private slots:
     void onActionSkinChanged(QAction *act);
 
     ///
+    //图层选中图表
+    void onLayoutWidgetSelectedChart(SAChart2D *chart);
+
     //图层管理窗口改变了条目的可见性
     void onLayoutWidgetItemVisibleChanged(QwtPlotItem *item, bool on);
 
@@ -721,6 +724,7 @@ private:
     QStringList m_recentOpenFiles;                          ///< 记录最近打开的文件
     QStringList m_recentOpenProjectFolders;                 ///< 记录最近打开的项目目录
 };
+
 
 ///
 /// \brief 子窗口的创建

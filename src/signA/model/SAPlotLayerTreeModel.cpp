@@ -54,7 +54,18 @@ QModelIndex SAPlotLayerTreeModel::parent(const QModelIndex& index) const
     //p不是chart，那么就是item
     //chart下面就是各个item属性
     QwtPlotItem *i = static_cast<QwtPlotItem *>(p);
-    SAChart2D *plot = qobject_cast<SAChart2D *>(i->plot());
+    SAChart2D *plot = nullptr;
+
+    //使用SAChart2D *plot = qobject_cast<SAChart2D *>(i->plot());会出错，因此使用此方法
+    for (SAChart2D *c : m_2dcharts)
+    {
+        if (c->itemList().contains(i)) {
+            plot = c;
+        }
+    }
+    if (plot == nullptr) {
+        qDebug() << "unknow parent:" << index;
+    }
 
     if (plot) {
         int r = m_2dcharts.indexOf(plot);
@@ -100,17 +111,7 @@ QVariant SAPlotLayerTreeModel::headerData(int section, Qt::Orientation orientati
         return (QVariant());
     }
     if (Qt::Horizontal == orientation) {//说明是水平表头
-        switch (section)
-        {
-        case 0:
-            return (tr("name"));
-
-        case 1:
-            return (tr("color"));//值
-
-        case 2:
-            return (tr("visible"));//值
-        }
+        return (horizontalLabel(section));
     }
     return (QVariant());
 }
@@ -203,7 +204,7 @@ void SAPlotLayerTreeModel::setFigure(SAFigureWindow *fig)
  * @param index
  * @return
  */
-QwtPlotItem *SAPlotLayerTreeModel::indexToItem(const QModelIndex& i)
+QwtPlotItem *SAPlotLayerTreeModel::indexToItem(const QModelIndex& i) const
 {
     if (!i.isValid()) {
         return (nullptr);
@@ -217,6 +218,49 @@ QwtPlotItem *SAPlotLayerTreeModel::indexToItem(const QModelIndex& i)
     }
     //par有效，说明i是item
     return (static_cast<QwtPlotItem *>(p));
+}
+
+
+/**
+ * @brief index转换为chart2d
+ * @param i
+ * @return
+ */
+SAChart2D *SAPlotLayerTreeModel::indexToChart2D(const QModelIndex& i) const
+{
+    if (!i.isValid()) {
+        return (nullptr);
+    }
+    void *p = i.internalPointer();
+    QModelIndex par = i.parent();
+
+    if (!par.isValid()) {
+        //par无效，说明i是顶层
+        return (static_cast<SAChart2D *>(p));
+    }
+    return (nullptr);
+}
+
+
+/**
+ * @brief 返回文本
+ * @param index
+ * @return
+ */
+QString SAPlotLayerTreeModel::horizontalLabel(int index) const
+{
+    switch (index)
+    {
+    case 0:
+        return (tr("name"));
+
+    case 1:
+        return (tr("color"));//值
+
+    case 2:
+        return (tr("visible"));//值
+    }
+    return (QString());
 }
 
 

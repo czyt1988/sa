@@ -33,6 +33,19 @@ public:
     void updateModel();
 
 signals:
+
+    /**
+     * @brief 选中了item
+     * @param item
+     */
+    void itemSelected(QwtPlotItem *item);
+
+    /**
+     * @brief 选中了图像
+     * @param chart
+     */
+    void chartSelected(SAChart2D *chart);
+
     ///
     /// \brief 图层修改item的可见性
     /// \param chart 图指针

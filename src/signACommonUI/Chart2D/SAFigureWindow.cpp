@@ -250,14 +250,24 @@ QRectF SAFigureWindow::getWidgetPos(QWidget *w) const
 /// \brief 设置当前的2dplot
 /// \param p
 ///
-void SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
+bool SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
 {
+    if (p == d_ptr->currentPlot) {
+        return (false);
+    }
     if (!d_ptr->centralwidget->isWidgetInContainer(p)) {
-        return;
+        return (false);
     }
     d_ptr->currentPlot = p;
-    setFocusProxy(p);
+    //setFocusProxy(p);
+    //如果在进行子窗口编辑模式，此时需要重新设置编辑
+    if (isSubWindowEditingMode()) {
+        enableSubWindowEditMode(false);
+        enableSubWindowEditMode(true);
+    }
     emit currentWidgetChanged(p);
+
+    return (true);
 }
 
 
@@ -321,6 +331,21 @@ void SAFigureWindow::enableSubWindowEditMode(bool enable, SAFigureChartRubberban
 SAFigureChartRubberbandEditOverlay *SAFigureWindow::subWindowEditModeOverlayWidget() const
 {
     return (d_ptr->chartRubberbandEditor);
+}
+
+
+/**
+ * @brief SAFigureWindow::isSubWindowEditingMode
+ * @return
+ */
+bool SAFigureWindow::isSubWindowEditingMode() const
+{
+    SAFigureChartRubberbandEditOverlay *b = subWindowEditModeOverlayWidget();
+
+    if (b) {
+        return (b->isVisible());
+    }
+    return (false);
 }
 
 

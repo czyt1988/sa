@@ -6,6 +6,7 @@
 #include <QColorDialog>
 #include <QComboBox>
 #include "SAChart.h"
+
 SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SAFigureLayoutWidget)
@@ -18,10 +19,9 @@ SAFigureLayoutWidget::SAFigureLayoutWidget(QWidget *parent) :
     ui->treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     auto hh = ui->treeView->header();
 
-    hh->setSectionResizeMode(0, QHeaderView::Stretch);
+    hh->setSectionResizeMode(0, QHeaderView::Interactive);
     hh->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     hh->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-    hh->setStretchLastSection(true);
     connect(ui->treeView, &QAbstractItemView::pressed, this, &SAFigureLayoutWidget::onTreeViewPressed);
     connect(m_layoutModel, &SAPlotLayerTreeModel::modelReseted, this, &SAFigureLayoutWidget::onModelReseted);
     connect(ui->toolButtonDelete, &QToolButton::clicked, this, &SAFigureLayoutWidget::onToolButtonDeleteClicked);
@@ -67,9 +67,22 @@ void SAFigureLayoutWidget::onTreeViewPressed(const QModelIndex& index)
         return;
     }
     m_lastPressedIndex = index;
-    QColor rgb = index.data(Qt::BackgroundColorRole).value<QColor>();
 
     SAPlotLayerTreeModel *model = getLayoutModel();
+    QwtPlotItem *item = model->indexToItem(index);
+
+    if (item) {
+        //说明是item
+        emit itemSelected(item);
+        return;
+    }
+    SAChart2D *chart = model->indexToChart2D(index);
+
+    if (chart) {
+        //说明点击的是chart
+        emit chartSelected(chart);
+        return;
+    }
 
     /**
      * QwtPlotItem *item = model->getPlotItemFromIndex(index);

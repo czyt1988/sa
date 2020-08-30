@@ -228,6 +228,9 @@ void MainWindow::initUI()
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onActionAboutTriggered);
     //-------------------------------------
     //图层管理窗口相关槽
+    //
+    connect(ui->figureLayoutWidget, &SAFigureLayoutWidget::chartSelected
+        , this, &MainWindow::onLayoutWidgetSelectedChart);
     //图层管理窗口改变了条目的可见性
     connect(ui->figureLayoutWidget, &SAFigureLayoutWidget::itemVisibleChanged
         , this, &MainWindow::onLayoutWidgetItemVisibleChanged);
@@ -696,6 +699,18 @@ void MainWindow::onActionSkinChanged(QAction *act)
     QString name = act->text();
 
     setSkin(name);
+}
+
+
+/**
+ * @brief 当图层选中chart
+ * @param chart
+ */
+void MainWindow::onLayoutWidgetSelectedChart(SAChart2D *chart)
+{
+    SAFigureWindow *fig = getCurrentFigureWindow();
+
+    fig->setCurrent2DPlot(chart);
 }
 
 

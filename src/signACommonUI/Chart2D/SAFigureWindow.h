@@ -55,7 +55,7 @@ public:
     QRectF getWidgetPos(QWidget *w) const;
 
     //设置当前的2dplot
-    void setCurrent2DPlot(SAChart2D *p);
+    bool setCurrent2DPlot(SAChart2D *p);
 
     //通过item查找对应的SAChart2D，如果没有返回nullptr
     SAChart2D *findChartFromItem(QwtPlotItem *item);
@@ -63,6 +63,9 @@ public:
     //开启子窗口编辑模式
     void enableSubWindowEditMode(bool enable = true, SAFigureChartRubberbandEditOverlay *ptr = nullptr);
     SAFigureChartRubberbandEditOverlay *subWindowEditModeOverlayWidget() const;
+
+    //判断是否在进行子窗口编辑
+    bool isSubWindowEditingMode() const;
 
     //使用支持redo/undo模式的改变子窗口大小
     void resizeWidget(QWidget *p, const QRect& newRect, const QRect& oldRect = QRect());

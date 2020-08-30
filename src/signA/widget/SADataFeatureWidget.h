@@ -60,6 +60,7 @@ private slots:
 
     //点击清除属性按钮
     void onToolButtonClearDataFeatureClicked();
+    void onToolButtonExpandAllClicked();
 
     //图片隐藏触发的槽，隐藏绘图需要对显示的信息也隐藏
     void onChartHide();
