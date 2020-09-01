@@ -403,15 +403,12 @@ bool SA::receive_reply_token_xml(const SAXMLProtocolParser *xml, QString& token)
  * @param header
  * @return
  */
-bool SA::reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& header)
+bool SA::reply_heartbreat_xml(SATcpSocket *socket, const SAProtocolHeader& recheader)
 {
-#if SA_SERVE_DEBUG_PRINT_HandleFun
-    FUNCTION_RUN_PRINT();
-#endif
     SAProtocolHeader replyheader;
 
     replyheader.init();
-    replyheader.sequenceID = header.sequenceID;
+    replyheader.sequenceID = recheader.sequenceID;
     replyheader.dataSize = 0;
     replyheader.protocolTypeID = SA::ProtocolTypeHeartbreat;
     replyheader.protocolFunID = SA::ProtocolFunReplyHeartbreat;

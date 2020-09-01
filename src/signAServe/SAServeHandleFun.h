@@ -113,7 +113,7 @@ SASERVE_EXPORT bool request_heartbreat(SATcpSocket *socket);
 
 //处理心跳请求
 SASERVE_EXPORT bool reply_heartbreat_xml(SATcpSocket *socket
-    , const SAProtocolHeader& header);
+    , const SAProtocolHeader& recheader);
 
 //////////////////////
 //请求2维数组描述
