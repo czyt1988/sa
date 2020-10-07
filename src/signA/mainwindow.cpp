@@ -725,6 +725,9 @@ void MainWindow::onLayoutWidgetSelectedChart(SAChart2D *chart)
     SAFigureWindow *fig = getCurrentFigureWindow();
 
     fig->setCurrent2DPlot(chart);
+    ui->setWidget->setFigure(fig);
+    ui->setWidget->setChart(chart);
+
 }
 
 
@@ -2123,6 +2126,7 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
     }
     //设置绘图属性窗口,空指针也接受
     ui->setWidget->setFigure(fig);
+    ui->setWidget->setChart(fig->current2DPlot());
     //更新dock - plotLayer 图层
     ui->figureLayoutWidget->setFigure(fig);
     //更新dock - dataviewer

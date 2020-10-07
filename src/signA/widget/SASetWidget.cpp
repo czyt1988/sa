@@ -83,3 +83,13 @@ void SASetWidget::setPlotItem(QwtPlotItem *it)
 {
     m_chartSetWidget->setChart(qobject_cast<SAChart2D *>(it->plot()));
 }
+
+
+/**
+ * @brief 设置图表
+ * @param chart
+ */
+void SASetWidget::setChart(SAChart2D *chart)
+{
+    m_chartSetWidget->setChart(chart);
+}

@@ -63,7 +63,6 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         q_ptr->setCentralWidget(centralwidget);
         q_ptr->setAcceptDrops(true);
-//        q_ptr->setAutoFillBackground(true);
         q_ptr->setBackgroundColor(QColor(255, 255, 255));
         q_ptr->setWindowIcon(QIcon(":/icon/icons/figureWindow.png"));
     }

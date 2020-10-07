@@ -42,6 +42,9 @@ public:
     //更新某个plotitem的内容
     void setPlotItem(QwtPlotItem *it);
 
+    //设置图表
+    void setChart(SAChart2D *chart);
+
 signals:
     void chartTitleChanged(SAChart2D *chart, const QString& text);
 

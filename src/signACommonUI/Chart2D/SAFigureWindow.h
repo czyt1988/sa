@@ -45,6 +45,9 @@ public:
     //获取当前的2d绘图指针
     SAChart2D *current2DPlot() const;
 
+    //返回在当前光标下的2D图
+    SAChart2D *cursor2DChart() const;
+
     //清空所有图 会连续发送chartRemoved信号
     void clearAll();
 
@@ -84,8 +87,7 @@ public:
     //返回当前光标下的widget
     QWidget *cursorWidget() const;
 
-    //返回在当前光标下的2D图
-    SAChart2D *cursor2DChart() const;
+
 
 public slots:
     //redo

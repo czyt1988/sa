@@ -105,6 +105,9 @@ SAChartSetWidget::~SAChartSetWidget()
 
 void SAChartSetWidget::setChart(SAChart2D *chart)
 {
+    if (ui->chartCtrl == chart) {
+        return;
+    }
     if (ui->chartCtrl && (ui->chartCtrl != chart)) {
         disconnect(ui->chartCtrl, &QObject::destroyed, this, &SAChartSetWidget::onChartDelete);
     }

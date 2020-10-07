@@ -27,25 +27,25 @@
 class SAChartNormalSetWidget::UI
 {
 public:
-    SAChartNormalSetWidget* parentClass;
-    SAChart2D* chart;
+    SAChartNormalSetWidget *parentClass;
+    SAChart2D *chart;
     QVBoxLayout *verticalLayout;
-    SALineEditPropertyItem* titleEdit;
-    SALineEditPropertyItem* footerEdit;
-    SAColorSetPropertyItem* canvasBackgroundEdit;
-    SADoubleSpinBoxPropertyItem* borderRadiusEdit;
-    UI():parentClass(nullptr)
-      ,chart(nullptr)
-      ,verticalLayout(nullptr)
-      ,titleEdit(nullptr)
-      ,footerEdit(nullptr)
-      ,canvasBackgroundEdit(nullptr)
-      ,borderRadiusEdit(nullptr)
+    SALineEditPropertyItem *titleEdit;
+    SALineEditPropertyItem *footerEdit;
+    SAColorSetPropertyItem *canvasBackgroundEdit;
+    SADoubleSpinBoxPropertyItem *borderRadiusEdit;
+    UI() : parentClass(nullptr)
+        , chart(nullptr)
+        , verticalLayout(nullptr)
+        , titleEdit(nullptr)
+        , footerEdit(nullptr)
+        , canvasBackgroundEdit(nullptr)
+        , borderRadiusEdit(nullptr)
     {
-
     }
 
-    void setupUI(SAChartNormalSetWidget* par)
+
+    void setupUI(SAChartNormalSetWidget *par)
     {
         parentClass = par;
         par->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -55,21 +55,21 @@ public:
         //Title
         titleEdit = new SALineEditPropertyItem();
         titleEdit->setObjectName("titleEdit");
-        par->connect(titleEdit,&SALineEditPropertyItem::textChanged
-                     ,par,&SAChartNormalSetWidget::onTitleTextChanged);
+        par->connect(titleEdit, &SALineEditPropertyItem::textChanged
+            , par, &SAChartNormalSetWidget::onTitleTextChanged);
         //Footer
         footerEdit = new SALineEditPropertyItem();
         footerEdit->setObjectName("footerEdit");
-        par->connect(footerEdit,&SALineEditPropertyItem::textChanged
-                     ,par,&SAChartNormalSetWidget::onFooterTextChanged);
+        par->connect(footerEdit, &SALineEditPropertyItem::textChanged
+            , par, &SAChartNormalSetWidget::onFooterTextChanged);
         //Canvas Background
         canvasBackgroundEdit = new SAColorSetPropertyItem();
-        par->connect(canvasBackgroundEdit,&SAColorSetPropertyItem::colorChanged
-                     ,par,&SAChartNormalSetWidget::onCanvasBackgroundColorChanged);
+        par->connect(canvasBackgroundEdit, &SAColorSetPropertyItem::colorChanged
+            , par, &SAChartNormalSetWidget::onCanvasBackgroundColorChanged);
         //borderRadius
         borderRadiusEdit = new SADoubleSpinBoxPropertyItem();
-        par->connect(borderRadiusEdit,&SADoubleSpinBoxPropertyItem::valueChanged
-                     ,par,&SAChartNormalSetWidget::onBorderRadiusChanged);
+        par->connect(borderRadiusEdit, &SADoubleSpinBoxPropertyItem::valueChanged
+            , par, &SAChartNormalSetWidget::onBorderRadiusChanged);
 
         verticalLayout->setSpacing(8);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
@@ -82,6 +82,8 @@ public:
 
         retranslateUi(par);
     }
+
+
     void retranslateUi(SAChartNormalSetWidget *w)
     {
         w->setWindowTitle(QApplication::translate("SAChartNormalSetWidget", "normal set", 0));
@@ -91,28 +93,32 @@ public:
         borderRadiusEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Border Radius", 0));
     } // retranslateUi
 
+
     void setChart(SAChart2D *c)
     {
-        this->chart = c;
-        updateData();
+        if (c != this->chart) {
+            this->chart = c;
+            updateData();
+        }
     }
+
 
     void updateData()
     {
-        if(nullptr == this->chart)
-        {
+        if (nullptr == this->chart) {
             titleEdit->setEditText("");
             footerEdit->setEditText("");
             borderRadiusEdit->setValue(0);
+            canvasBackgroundEdit->setCurrentColor(QColor());
             return;
         }
         titleEdit->setEditText(this->chart->title().text());
         footerEdit->setEditText(this->chart->footer().text());
         canvasBackgroundEdit->setCurrentColor(this->chart->canvasBackground().color());
-        QWidget* w = this->chart->canvas();
-        QwtPlotCanvas* canvas = qobject_cast<QwtPlotCanvas*>(w);
-        if(canvas)
-        {
+        QWidget *w = this->chart->canvas();
+        QwtPlotCanvas *canvas = qobject_cast<QwtPlotCanvas *>(w);
+
+        if (canvas) {
             borderRadiusEdit->setValue(canvas->borderRadius());
         }
     }
@@ -120,17 +126,19 @@ public:
 
 //-----------------------------------------------------
 
-SAChartNormalSetWidget::SAChartNormalSetWidget(QWidget *par):QWidget(par)
-  ,ui(new SAChartNormalSetWidget::UI)
+SAChartNormalSetWidget::SAChartNormalSetWidget(QWidget *par) : QWidget(par)
+    , ui(new SAChartNormalSetWidget::UI)
 {
     ui->setupUI(this);
     setEnabled(false);
 }
 
+
 SAChartNormalSetWidget::~SAChartNormalSetWidget()
 {
     delete ui;
 }
+
 
 void SAChartNormalSetWidget::setChart(SAChart2D *chart)
 {
@@ -138,71 +146,59 @@ void SAChartNormalSetWidget::setChart(SAChart2D *chart)
     setEnabled(nullptr != chart);
 }
 
+
 void SAChartNormalSetWidget::retranslateUi()
 {
     ui->retranslateUi(this);
 }
+
 
 void SAChartNormalSetWidget::updateData()
 {
     ui->updateData();
 }
 
+
 void SAChartNormalSetWidget::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
 }
 
-void SAChartNormalSetWidget::onTitleTextChanged(const QString &text)
+
+void SAChartNormalSetWidget::onTitleTextChanged(const QString& text)
 {
-    if(ui->chart)
-    {
+    if (ui->chart) {
         ui->chart->setTitle(text);
-        emit chartTitleChanged(ui->chart,text);
+        emit chartTitleChanged(ui->chart, text);
     }
 }
 
-void SAChartNormalSetWidget::onFooterTextChanged(const QString &text)
+
+void SAChartNormalSetWidget::onFooterTextChanged(const QString& text)
 {
-    if(ui->chart)
-    {
+    if (ui->chart) {
         ui->chart->setFooter(text);
     }
 }
 
-void SAChartNormalSetWidget::onCanvasBackgroundColorChanged(const QColor &clr)
+
+void SAChartNormalSetWidget::onCanvasBackgroundColorChanged(const QColor& clr)
 {
-    if(ui->chart)
-    {
-        ui->chart->setCanvasBackground(clr);
+    if (ui->chart) {
+        ui->chart->setCanvasBackground(QBrush(clr));
         ui->chart->replot();//update无法刷新界面
     }
 }
 
+
 void SAChartNormalSetWidget::onBorderRadiusChanged(double v)
 {
-    if(ui->chart)
-    {
-        QWidget* w = ui->chart->canvas();
-        QwtPlotCanvas* canvas = qobject_cast<QwtPlotCanvas*>(w);
-        if(canvas)
-        {
+    if (ui->chart) {
+        QWidget *w = ui->chart->canvas();
+        QwtPlotCanvas *canvas = qobject_cast<QwtPlotCanvas *>(w);
+        if (canvas) {
             canvas->setBorderRadius(v);
             ui->chart->replot();
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

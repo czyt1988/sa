@@ -701,7 +701,7 @@ void ScrollZoomer::layoutScrollBars(const QRect& rect)
     if (hScrollBar && hScrollBar->isVisible()) {
         int x = rect.x();
         int y = (hPos == QwtPlot::xTop)
-        ? rect.top() : rect.bottom() - hdim + 1;
+    ? rect.top() : rect.bottom() - hdim + 1;
         int w = rect.width();
 
         if (vScrollBar && vScrollBar->isVisible()) {
@@ -720,7 +720,7 @@ void ScrollZoomer::layoutScrollBars(const QRect& rect)
         }
 
         int x = (vPos == QwtPlot::yLeft)
-        ? rect.left() : rect.right() - vdim + 1;
+    ? rect.left() : rect.right() - vdim + 1;
         int y = rect.y();
 
         int h = rect.height();
@@ -914,7 +914,7 @@ SA2DGraph::SA2DGraph(QWidget *parent) : QwtPlot(parent)
     , d_ptr(new SA2DGraphPrivate(this))
 {
     setAutoReplot(false);
-    setAutoFillBackground(true);
+    //setAutoFillBackground(true);
 
     QwtPlotLayout *pLayout = plotLayout();
 
@@ -926,7 +926,7 @@ SA2DGraph::SA2DGraph(QWidget *parent) : QwtPlot(parent)
     //pCanvas->setLineWidth( 0 );
 //    pCanvas->setAutoFillBackground(true);
     pCanvas->setFrameStyle(QFrame::NoFrame);
-    pCanvas->setFrameShadow(QwtPlot::Plain);
+    //pCanvas->setFrameShadow(QwtPlot::Plain);
     pCanvas->setLineWidth(0);
     pCanvas->setBorderRadius(0);//设置圆角为0
     pCanvas->setCursor(Qt::ArrowCursor);
@@ -935,10 +935,10 @@ SA2DGraph::SA2DGraph(QWidget *parent) : QwtPlot(parent)
     QColor background = QColor(Qt::white);
 
     background.setAlpha(255);
-    QPalette palette;
+//    QPalette palette;
 
-    palette.setColor(QPalette::Window, background);
-    setPalette(palette);
+//    palette.setColor(QPalette::Window, background);
+//    setPalette(palette);
     setCanvasBackground(background);
     setFocusPolicy(Qt::StrongFocus);
     setFocusProxy(pCanvas);
