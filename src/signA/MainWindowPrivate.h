@@ -36,6 +36,7 @@
 #include "SARibbonApplicationButton.h"
 #include "SAChartDatasViewWidget.h"
 #include "SAFigureLayoutWidget.h"
+#include "SASetWidget.h"
 class MainWindow;
 class MainWindowPrivate
 {
@@ -297,10 +298,10 @@ public:
     QVBoxLayout *verticalLayout_9;
     SAMessageWidget *saMessageWidget;
 
-    QDockWidget *dockWidget_plotSet;
+    QDockWidget *dockWidget_set;
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout;
-    SAFigureSetWidget *figureSetWidget;
+    SASetWidget *setWidget;
     //QToolBar *toolBarChartTools;
     QMenu *menuFigureWindow;                        ///< 绘图窗口菜单
     QAction *selectCurrentCursorToActiveChart;      ///< 选中当前光标所定位的图为激活图形

@@ -10,6 +10,7 @@
 #include <QScopedPointer>
 #include <QChildEvent>
 #include <QCursor>
+#include <QPainter>
 //sa chart
 #include "SAChart2D.h"
 #include "SAQwtSerialize.h"
@@ -44,8 +45,10 @@ class SAFigureWindowPrivate
 public:
     SAFigureContainer *centralwidget;
     SAChart2D *currentPlot;
-    SAFigureChartRubberbandEditOverlay *chartRubberbandEditor;///< 编辑模式
+    SAFigureChartRubberbandEditOverlay *chartRubberbandEditor;      ///< 编辑模式
     QUndoStack redoUndoStack;
+    QBrush backgroundBrush;                                         ///< 背景
+
     SAFigureWindowPrivate(SAFigureWindow *p) : q_ptr(p)
         , centralwidget(nullptr)
         , currentPlot(nullptr)
@@ -60,7 +63,7 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         q_ptr->setCentralWidget(centralwidget);
         q_ptr->setAcceptDrops(true);
-        q_ptr->setAutoFillBackground(true);
+//        q_ptr->setAutoFillBackground(true);
         q_ptr->setBackgroundColor(QColor(255, 255, 255));
         q_ptr->setWindowIcon(QIcon(":/icon/icons/figureWindow.png"));
     }
@@ -213,25 +216,28 @@ void SAFigureWindow::clearAll()
 ///
 void SAFigureWindow::setBackgroundColor(const QBrush& brush)
 {
-    if (!autoFillBackground()) {
-        setAutoFillBackground(true);
-    }
-    QPalette p = palette();
-
-    p.setBrush(QPalette::Window, brush);
-    setPalette(p);
+    d_ptr->backgroundBrush = brush;
 }
 
 
+/**
+ * @brief 设置窗体背景
+ * @param clr
+ */
 void SAFigureWindow::setBackgroundColor(const QColor& clr)
 {
-    if (!autoFillBackground()) {
-        setAutoFillBackground(true);
-    }
-    QPalette p = palette();
+    d_ptr->backgroundBrush.setStyle(Qt::SolidPattern);
+    d_ptr->backgroundBrush.setColor(clr);
+}
 
-    p.setColor(QPalette::Window, clr);
-    setPalette(p);
+
+/**
+ * @brief 获取背景颜色
+ * @return
+ */
+const QBrush& SAFigureWindow::getBackgroundColor() const
+{
+    return (d_ptr->backgroundBrush);
 }
 
 
@@ -498,6 +504,20 @@ void SAFigureWindow::undo()
 void SAFigureWindow::clearRedoUndoStack()
 {
     d_ptr->redoUndoStack.clear();
+}
+
+
+/**
+ * @brief SAFigureWindow::paintEvent
+ * @param e
+ */
+void SAFigureWindow::paintEvent(QPaintEvent *e)
+{
+    QPainter p(this);
+
+    p.setBrush(d_ptr->backgroundBrush);
+    p.fillRect(0, 0, width(), height(), d_ptr->backgroundBrush);
+    SAMainWindow::paintEvent(e);
 }
 
 

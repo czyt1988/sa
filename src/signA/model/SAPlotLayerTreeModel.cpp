@@ -279,6 +279,11 @@ void SAPlotLayerTreeModel::onChartWillRemove(QwtPlot *plot)
     Q_UNUSED(plot);
     beginResetModel();
     //触发此信号，plot还未销毁
+    SAChart2D *c = qobject_cast<SAChart2D *>(plot);
+
+    if (c) {
+        disconnect(c, &SAChart2D::itemAttached, this, &SAPlotLayerTreeModel::onChartItemAttached);
+    }
     m_2dcharts = m_fig->get2DPlots();
     endResetModel();
     emit modelReseted();

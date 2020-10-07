@@ -772,9 +772,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     dockWidget_message->setWidget(dockWidgetContents_8);
 
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_message);
-    dockWidget_plotSet = new QDockWidget(mainWinowPtr);
-    dockWidget_plotSet->setObjectName(QStringLiteral("dockWidget_plotSet"));
-    dockWidget_plotSet->setFocusPolicy(Qt::ClickFocus);
+    dockWidget_set = new QDockWidget(mainWinowPtr);
+    dockWidget_set->setObjectName(QStringLiteral("dockWidget_plotSet"));
+    dockWidget_set->setFocusPolicy(Qt::ClickFocus);
     dockWidgetContents = new QWidget();
     dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
     verticalLayout = new QVBoxLayout(dockWidgetContents);
@@ -782,13 +782,13 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     verticalLayout->setContentsMargins(11, 11, 11, 11);
     verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
     verticalLayout->setContentsMargins(0, 0, 0, 0);
-    figureSetWidget = new SAFigureSetWidget(dockWidgetContents);
-    figureSetWidget->setObjectName(QStringLiteral("figureSetWidget"));
+    setWidget = new SASetWidget(dockWidgetContents);
+    setWidget->setObjectName(QStringLiteral("SetWidget"));
 
-    verticalLayout->addWidget(figureSetWidget);
+    verticalLayout->addWidget(setWidget);
 
-    dockWidget_plotSet->setWidget(dockWidgetContents);
-    mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_plotSet);
+    dockWidget_set->setWidget(dockWidgetContents);
+    mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_set);
 
 
 
@@ -1051,7 +1051,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     dockWidget_main->setWindowTitle(QApplication::translate("MainWindow", "Main", 0));
     dockWidget_valueViewer->setWindowTitle(QApplication::translate("MainWindow", "value View", 0));
     dockWidget_message->setWindowTitle(QApplication::translate("MainWindow", "Message", 0));
-    dockWidget_plotSet->setWindowTitle(QApplication::translate("MainWindow", "plot config", 0));
+    dockWidget_set->setWindowTitle(QApplication::translate("MainWindow", "plot config", 0));
 //    toolBarChartTools->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 
     mainRibbonCategory->setWindowTitle(QApplication::translate("MainWindow", "Main", 0));

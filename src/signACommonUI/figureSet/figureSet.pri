@@ -10,7 +10,6 @@ FORMS += \
 HEADERS += \
     $$PWD/SAAxisSelectComboBoxPropertyItem.h \
     $$PWD/SAChartNormalSetWidget.h \
-    $$PWD/SAChartSetWidget.h \
     $$PWD/SACurvePlotItemSetWidget.h \
     $$PWD/SAPlotItemSetWidget.h \
     $$PWD/SAQwtPlotItemVGroupBox.h \
@@ -25,7 +24,6 @@ HEADERS += \
 SOURCES += \
     $$PWD/SAAxisSelectComboBoxPropertyItem.cpp \
     $$PWD/SAChartNormalSetWidget.cpp \
-    $$PWD/SAChartSetWidget.cpp \
     $$PWD/SACurvePlotItemSetWidget.cpp \
     $$PWD/SAPlotItemSetWidget.cpp \
     $$PWD/SAQwtPlotItemVGroupBox.cpp \

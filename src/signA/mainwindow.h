@@ -592,6 +592,9 @@ private slots:
     void onActionSkinChanged(QAction *act);
 
     ///
+    //item选中
+    void onLayoutWidgetItemSelected(QwtPlotItem *item);
+
     //图层选中图表
     void onLayoutWidgetSelectedChart(SAChart2D *chart);
 
@@ -608,7 +611,7 @@ private slots:
     void onLayoutWidgetItemRemoved(SAChart2D *chart, QwtPlotItem *item);
 
     //设置窗口改变了图表的标题触发的槽
-    void onChartTitleChanged(QwtPlot *plot, const QString& title);
+    void onChartTitleChanged(SAChart2D *plot, const QString& title);
 
     //figure窗口请求菜单
     void subwindowMouseRightClicked(const QPoint& pos);

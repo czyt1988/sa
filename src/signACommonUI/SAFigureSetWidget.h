@@ -1,41 +1,36 @@
-﻿#ifndef SAFIUGRESETWIDGET_H
-#define SAFIUGRESETWIDGET_H
+#ifndef SAFIGURESETWIDGET_H
+#define SAFIGURESETWIDGET_H
 
 #include <QWidget>
 #include "SACommonUIGlobal.h"
-#define SAFiugreSetWidget_USE_COMBOX 0
 class SAFigureWindow;
-class SAChart2D;
 
-///
-/// \brief 绘图设置窗口
-///
+/**
+ * @brief The SAFigureSetWidget class
+ */
 class SA_COMMON_UI_EXPORT SAFigureSetWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit SAFigureSetWidget(QWidget *parent = nullptr);
     ~SAFigureSetWidget();
-    void setFigureWidget(SAFigureWindow* fig);
+    //设置图表
+    void setFigureWidget(SAFigureWindow *fig);
+
+    //清空内容
     void clear();
-    //更新内容
-    void updateData();
-    void updatePlotItemsSet();
-    void updateAxesSet();
-    void updateNormalSet();
-signals:
-    void chartTitleChanged(QwtPlot* chart,const QString& title);
+
+protected:
+    // 处理语言切换事件
+    void changeEvent(QEvent *e) override;
+
 private slots:
-    void onFigutrDestroy(QObject* obj);
-    //当前绘图窗口选中的窗体对象发生改变
-    void onCurrentFigureWidgetChanged(QWidget* w);
-private:
-    void setCurrentChart(SAChart2D* chart);
+    void onFigureDestroy(QObject *obj);
+    void onFigureBackgroundColorChanged(const QColor& clr);
 
 private:
     class UI;
-    SAFigureSetWidget::UI * ui;
-    SAFigureWindow* m_fig;
+    SAFigureSetWidget::UI *ui;
 };
 
-#endif // SAFIUGRESETWIDGET_H
+#endif // SAFIGURESETWIDGET_H

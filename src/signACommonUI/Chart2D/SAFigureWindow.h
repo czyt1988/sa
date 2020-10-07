@@ -7,6 +7,7 @@
 #include "SAMainWindow.h"
 #include "SACommonUIGlobal.h"
 #include "qwt_plot_histogram.h"
+class QPaintEvent;
 class QwtPlotCurve;
 class QwtPlotItem;
 class SAFigureOptCommand;
@@ -50,6 +51,7 @@ public:
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
     void setBackgroundColor(const QColor& clr);
+    const QBrush& getBackgroundColor() const;
 
     //获取窗口的位置
     QRectF getWidgetPos(QWidget *w) const;
@@ -99,6 +101,9 @@ public slots:
 protected:
     void keyPressEvent(QKeyEvent *e);
 #endif
+
+protected:
+    virtual void paintEvent(QPaintEvent *e) override;
 
 signals:
     //添加了一个绘图发送的信号

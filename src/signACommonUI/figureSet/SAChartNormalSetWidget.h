@@ -15,23 +15,27 @@ class SAChartNormalSetWidget : public QWidget
 {
     Q_OBJECT
 public:
-    SAChartNormalSetWidget(QWidget* par=nullptr);
+    SAChartNormalSetWidget(QWidget *par = nullptr);
     ~SAChartNormalSetWidget();
     void setChart(SAChart2D *chart);
     virtual void retranslateUi();
     void updateData();
+
 protected:
     void paintEvent(QPaintEvent *e);
+
 private slots:
     Q_SLOT void onTitleTextChanged(const QString& text);
     Q_SLOT void onFooterTextChanged(const QString& text);
     Q_SLOT void onCanvasBackgroundColorChanged(const QColor& clr);
     Q_SLOT void onBorderRadiusChanged(double v);
+
 signals:
-    void chartTitleChanged(QwtPlot* chart,const QString& text);
+    void chartTitleChanged(SAChart2D *chart, const QString& text);
+
 private:
     class UI;
-    SAChartNormalSetWidget::UI* ui;
+    SAChartNormalSetWidget::UI *ui;
 };
 
 #endif // SACHARTNORMALSETWIDGET_H
