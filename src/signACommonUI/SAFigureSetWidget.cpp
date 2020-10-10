@@ -80,6 +80,12 @@ void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
 }
 
 
+SAFigureWindow *SAFigureSetWidget::figure() const
+{
+    return (ui->figure);
+}
+
+
 /**
  * @brief SAFigureSetWidget::clear
  */

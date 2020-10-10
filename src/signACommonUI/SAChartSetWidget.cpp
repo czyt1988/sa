@@ -123,6 +123,12 @@ void SAChartSetWidget::setChart(SAChart2D *chart)
 }
 
 
+SAChart2D *SAChartSetWidget::chart() const
+{
+    return (ui->chartCtrl);
+}
+
+
 void SAChartSetWidget::updateAll()
 {
     updateNormalSet();

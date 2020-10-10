@@ -16,6 +16,7 @@ public:
     SAChartSetWidget(QWidget *parent = nullptr);
     ~SAChartSetWidget();
     void setChart(SAChart2D *chart);
+    SAChart2D *chart() const;
     void updateAll();
     void updatePlotItemsSet();
     void updateAxesSet();

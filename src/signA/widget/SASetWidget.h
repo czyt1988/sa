@@ -37,6 +37,7 @@ public:
     explicit SASetWidget(QWidget *parent = nullptr);
     ~SASetWidget();
     //设置figure
+    SAFigureWindow* currentSettingFigure() const;
     void setFigure(SAFigureWindow *fig);
 
     //更新某个plotitem的内容
@@ -44,7 +45,7 @@ public:
 
     //设置图表
     void setChart(SAChart2D *chart);
-
+    SAChart2D* currentSettingChart() const;
 signals:
     void chartTitleChanged(SAChart2D *chart, const QString& text);
 

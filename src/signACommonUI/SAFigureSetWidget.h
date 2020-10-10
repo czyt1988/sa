@@ -16,6 +16,7 @@ public:
     ~SAFigureSetWidget();
     //设置图表
     void setFigureWidget(SAFigureWindow *fig);
+    SAFigureWindow *figure() const;
 
     //清空内容
     void clear();

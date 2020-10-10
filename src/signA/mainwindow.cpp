@@ -725,9 +725,13 @@ void MainWindow::onLayoutWidgetSelectedChart(SAChart2D *chart)
     SAFigureWindow *fig = getCurrentFigureWindow();
 
     fig->setCurrent2DPlot(chart);
-    ui->setWidget->setFigure(fig);
-    ui->setWidget->setChart(chart);
-
+    if(ui->setWidget->currentSettingChart() != chart)
+    {
+        ui->setWidget->setChart(chart);
+    }
+    if(ui->setWidget->currentSettingFigure() != fig){
+        ui->setWidget->setFigure(fig);
+    }
 }
 
 
@@ -837,6 +841,13 @@ void MainWindow::onActionSelectCurrentCursorToActiveChartTriggered(bool on)
     }
     SA_SET_AUTO_WAIT_CURSOR();
     fig->setCurrent2DPlot(m_figureRightClickChart);
+    if(ui->setWidget->currentSettingChart() != m_figureRightClickChart)
+    {
+        ui->setWidget->setChart(m_figureRightClickChart);
+    }
+    if(ui->setWidget->currentSettingFigure() != fig){
+        ui->setWidget->setFigure(fig);
+    }
 }
 
 

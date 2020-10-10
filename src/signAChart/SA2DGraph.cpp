@@ -922,20 +922,17 @@ SA2DGraph::SA2DGraph(QWidget *parent) : QwtPlot(parent)
     pLayout->setCanvasMargin(0);
     pLayout->setAlignCanvasToScales(true);
 
-    QwtPlotCanvas *pCanvas = new SAPlotCanvas();
+    SAPlotCanvas *pCanvas = new SAPlotCanvas();
 
-    pCanvas->setStyleSheet("");
-    pCanvas->setAttribute(Qt::WA_StyledBackground, false);
     pCanvas->setFrameStyle(QFrame::Box);
-
     pCanvas->setLineWidth(1);
     pCanvas->setBorderRadius(0);//设置圆角为0
     pCanvas->setCursor(Qt::ArrowCursor);
     setCanvas(pCanvas);
-
+    pCanvas->setFocusPolicy(Qt::ClickFocus);
     //设置点击Canvas，plot获得焦点
     pCanvas->setFocusProxy(this);
-    setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::ClickFocus);
     setFrameShape(QFrame::Box);
     setLineWidth(0);
 

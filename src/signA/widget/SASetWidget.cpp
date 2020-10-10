@@ -66,7 +66,17 @@ SASetWidget::~SASetWidget()
 
 
 /**
- * @brief SASetWidget::setFigure
+ * @brief 获取当前设置的figure
+ * @return
+ */
+SAFigureWindow *SASetWidget::currentSettingFigure() const
+{
+    return (m_figureSetWidget->figure());
+}
+
+
+/**
+ * @brief 设置需要设置的fig
  * @param fig
  */
 void SASetWidget::setFigure(SAFigureWindow *fig)
@@ -92,4 +102,14 @@ void SASetWidget::setPlotItem(QwtPlotItem *it)
 void SASetWidget::setChart(SAChart2D *chart)
 {
     m_chartSetWidget->setChart(chart);
+}
+
+
+/**
+ * @brief 获取当前设置的chart
+ * @return
+ */
+SAChart2D *SASetWidget::currentSettingChart() const
+{
+    return (m_chartSetWidget->chart());
 }
