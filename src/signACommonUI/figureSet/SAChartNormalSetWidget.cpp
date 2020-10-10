@@ -21,7 +21,7 @@
 #include "qwt_scale_widget.h"
 #include "qwt_scale_draw.h"
 #include "qwt_date_scale_draw.h"
-
+#include "SAPlotCanvas.h"
 
 
 class SAChartNormalSetWidget::UI
@@ -33,14 +33,22 @@ public:
     SALineEditPropertyItem *titleEdit;
     SALineEditPropertyItem *footerEdit;
     SAColorSetPropertyItem *canvasBackgroundEdit;
-    SADoubleSpinBoxPropertyItem *borderRadiusEdit;
+    SAColorSetPropertyItem *canvasBorderColorEdit;
+    SASpinBoxPropertyItem *borderWidthEdit;
+    QBrush canvasBackBrush;
+    int canvasBorderWidth;
+    QColor canvasBorderColor;
+
     UI() : parentClass(nullptr)
         , chart(nullptr)
         , verticalLayout(nullptr)
         , titleEdit(nullptr)
         , footerEdit(nullptr)
         , canvasBackgroundEdit(nullptr)
-        , borderRadiusEdit(nullptr)
+        , borderWidthEdit(nullptr)
+        , canvasBackBrush(Qt::white)
+        , canvasBorderWidth(1)
+        , canvasBorderColor(Qt::black)
     {
     }
 
@@ -66,10 +74,14 @@ public:
         canvasBackgroundEdit = new SAColorSetPropertyItem();
         par->connect(canvasBackgroundEdit, &SAColorSetPropertyItem::colorChanged
             , par, &SAChartNormalSetWidget::onCanvasBackgroundColorChanged);
-        //borderRadius
-        borderRadiusEdit = new SADoubleSpinBoxPropertyItem();
-        par->connect(borderRadiusEdit, &SADoubleSpinBoxPropertyItem::valueChanged
-            , par, &SAChartNormalSetWidget::onBorderRadiusChanged);
+        //canvas Border Color Edit
+        canvasBorderColorEdit = new SAColorSetPropertyItem();
+        par->connect(canvasBorderColorEdit, &SAColorSetPropertyItem::colorChanged
+            , par, &SAChartNormalSetWidget::onCanvasBorderColorChanged);
+        //border width
+        borderWidthEdit = new SASpinBoxPropertyItem();
+        par->connect(borderWidthEdit, &SASpinBoxPropertyItem::valueChanged
+            , par, &SAChartNormalSetWidget::onBorderWidthChanged);
 
         verticalLayout->setSpacing(8);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
@@ -77,7 +89,8 @@ public:
         verticalLayout->addWidget(titleEdit);
         verticalLayout->addWidget(footerEdit);
         verticalLayout->addWidget(canvasBackgroundEdit);
-        verticalLayout->addWidget(borderRadiusEdit);
+        verticalLayout->addWidget(canvasBorderColorEdit);
+        verticalLayout->addWidget(borderWidthEdit);
         verticalLayout->addStretch();
 
         retranslateUi(par);
@@ -86,11 +99,12 @@ public:
 
     void retranslateUi(SAChartNormalSetWidget *w)
     {
-        w->setWindowTitle(QApplication::translate("SAChartNormalSetWidget", "normal set", 0));
+        w->setWindowTitle(QApplication::translate("SAChartNormalSetWidget", "Normal Set", 0));
         titleEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Title", 0));
         footerEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Footer", 0));
-        canvasBackgroundEdit->setText(QApplication::translate("SAChartNormalSetWidget", "canvas Background", 0));
-        borderRadiusEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Border Radius", 0));
+        canvasBackgroundEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Canvas Background", 0));
+        canvasBorderColorEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Border Color", 0));
+        borderWidthEdit->setText(QApplication::translate("SAChartNormalSetWidget", "Border Width", 0));
     } // retranslateUi
 
 
@@ -108,18 +122,18 @@ public:
         if (nullptr == this->chart) {
             titleEdit->setEditText("");
             footerEdit->setEditText("");
-            borderRadiusEdit->setValue(0);
+            borderWidthEdit->setValue(0);
             canvasBackgroundEdit->setCurrentColor(QColor());
             return;
         }
         titleEdit->setEditText(this->chart->title().text());
         footerEdit->setEditText(this->chart->footer().text());
-        canvasBackgroundEdit->setCurrentColor(this->chart->canvasBackground().color());
-        QWidget *w = this->chart->canvas();
-        QwtPlotCanvas *canvas = qobject_cast<QwtPlotCanvas *>(w);
+        SAPlotCanvas *canvas = qobject_cast<SAPlotCanvas *>(this->chart->canvas());
 
         if (canvas) {
-            borderRadiusEdit->setValue(canvas->borderRadius());
+            canvasBackgroundEdit->setCurrentColor(canvas->getCanvaBackBrush().color());
+            canvasBorderColorEdit->setCurrentColor(canvas->getCanvasBorderColor());
+            borderWidthEdit->setValue(canvas->lineWidth());
         }
     }
 };
@@ -185,20 +199,50 @@ void SAChartNormalSetWidget::onFooterTextChanged(const QString& text)
 void SAChartNormalSetWidget::onCanvasBackgroundColorChanged(const QColor& clr)
 {
     if (ui->chart) {
-        ui->chart->setCanvasBackground(QBrush(clr));
-        ui->chart->replot();//update无法刷新界面
+        SAPlotCanvas *c = qobject_cast<SAPlotCanvas *>(ui->chart->canvas());
+
+        if (nullptr == c) {
+            return;
+        }
+        if (c->testAttribute(Qt::WA_StyledBackground)) {
+            c->setCanvaBackBrush(clr);
+        }else {
+            ui->chart->setCanvasBackground(clr);
+        }
+        ui->chart->replot();
     }
 }
 
 
-void SAChartNormalSetWidget::onBorderRadiusChanged(double v)
+void SAChartNormalSetWidget::onCanvasBorderColorChanged(const QColor& clr)
 {
     if (ui->chart) {
-        QWidget *w = ui->chart->canvas();
-        QwtPlotCanvas *canvas = qobject_cast<QwtPlotCanvas *>(w);
-        if (canvas) {
-            canvas->setBorderRadius(v);
+        SAPlotCanvas *c = qobject_cast<SAPlotCanvas *>(ui->chart->canvas());
+
+        if (nullptr == c) {
+            return;
+        }
+        if (c->testAttribute(Qt::WA_StyledBackground)) {
+            c->setCanvasBorderColor(clr);
             ui->chart->replot();
         }
+    }
+}
+
+
+void SAChartNormalSetWidget::onBorderWidthChanged(int v)
+{
+    if (ui->chart) {
+        ui->canvasBorderColorEdit->setDisabled(v <= 0);
+        SAPlotCanvas *c = qobject_cast<SAPlotCanvas *>(ui->chart->canvas());
+
+        if (nullptr == c) {
+            return;
+        }
+        c->setLineWidth(v);
+        if (c->testAttribute(Qt::WA_StyledBackground)) {
+            c->useQss();
+        }
+        ui->chart->replot();
     }
 }

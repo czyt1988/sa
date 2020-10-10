@@ -19,6 +19,7 @@
 #include "SAYDataTracker.h"
 #include "SAXYDataTracker.h"
 #include "SACrossTracker.h"
+#include "SAPlotCanvas.h"
 //unsigned int ChartWave_qwt::staticValue_nAutoLineID = 0;//静态变量初始化
 
 class SA2DGraphPrivate
@@ -914,39 +915,31 @@ SA2DGraph::SA2DGraph(QWidget *parent) : QwtPlot(parent)
     , d_ptr(new SA2DGraphPrivate(this))
 {
     setAutoReplot(false);
-    //setAutoFillBackground(true);
+    setAutoFillBackground(true);
 
     QwtPlotLayout *pLayout = plotLayout();
 
     pLayout->setCanvasMargin(0);
     pLayout->setAlignCanvasToScales(true);
 
-    QwtPlotCanvas *pCanvas = new QwtPlotCanvas();
+    QwtPlotCanvas *pCanvas = new SAPlotCanvas();
 
-    //pCanvas->setLineWidth( 0 );
-//    pCanvas->setAutoFillBackground(true);
-    pCanvas->setFrameStyle(QFrame::NoFrame);
-    //pCanvas->setFrameShadow(QwtPlot::Plain);
-    pCanvas->setLineWidth(0);
+    pCanvas->setStyleSheet("");
+    pCanvas->setAttribute(Qt::WA_StyledBackground, false);
+    pCanvas->setFrameStyle(QFrame::Box);
+
+    pCanvas->setLineWidth(1);
     pCanvas->setBorderRadius(0);//设置圆角为0
     pCanvas->setCursor(Qt::ArrowCursor);
     setCanvas(pCanvas);
 
-    QColor background = QColor(Qt::white);
-
-    background.setAlpha(255);
-//    QPalette palette;
-
-//    palette.setColor(QPalette::Window, background);
-//    setPalette(palette);
-    setCanvasBackground(background);
+    //设置点击Canvas，plot获得焦点
+    pCanvas->setFocusProxy(this);
     setFocusPolicy(Qt::StrongFocus);
-    setFocusProxy(pCanvas);
     setFrameShape(QFrame::Box);
     setLineWidth(0);
 
     setAutoReplot(true);
-
     QwtScaleWidget *ax = axisWidget(QwtPlot::yLeft);
 
     if (ax) {

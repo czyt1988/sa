@@ -28,7 +28,8 @@ private slots:
     Q_SLOT void onTitleTextChanged(const QString& text);
     Q_SLOT void onFooterTextChanged(const QString& text);
     Q_SLOT void onCanvasBackgroundColorChanged(const QColor& clr);
-    Q_SLOT void onBorderRadiusChanged(double v);
+    Q_SLOT void onCanvasBorderColorChanged(const QColor& clr);
+    Q_SLOT void onBorderWidthChanged(int v);
 
 signals:
     void chartTitleChanged(SAChart2D *chart, const QString& text);

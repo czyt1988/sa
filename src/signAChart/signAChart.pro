@@ -33,6 +33,7 @@ DEFINES += SA_CHART_MAKE #定义此变量后将会构建DEFINES += USE_QWT#定�
 
 HEADERS += \
     SAChartGlobals.h \
+    SAPlotCanvas.h \
     SASeries.h \
     QwtPlotItemDataModel.h \
     QwtPlotItemTreeModel.h \
@@ -58,6 +59,7 @@ SOURCES += \
     QwtPlotItemTreeModel.cpp \
     SAChart3D.cpp \
     SAMarkSymbol.cpp \
+    SAPlotCanvas.cpp \
     SAPlotMarker.cpp \
     SAXYDataTracker.cpp \
     SAYDataTracker.cpp \
