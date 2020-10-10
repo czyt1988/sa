@@ -41,7 +41,7 @@ SASetWidget::SASetWidget(QWidget *parent) :
     s1->setWidgetResizable(true);
     s1->setBackgroundRole(QPalette::NoRole);
     s1->setWidget(m_figureSetWidget);
-    ui->tabWidget->addTab(s1, ICON_FIGSET, QString());
+    ui->tabWidget->addTab(s1, QIcon(), tr("Figure"));
 
 
     QScrollArea *s2 = new QScrollArea();
@@ -52,7 +52,7 @@ SASetWidget::SASetWidget(QWidget *parent) :
     s2->setWidgetResizable(true);
     s2->setBackgroundRole(QPalette::NoRole);
     s2->setWidget(m_chartSetWidget);
-    ui->tabWidget->addTab(s2, ICON_FIGSET, QString());
+    ui->tabWidget->addTab(s2, QIcon(), tr("Chart"));
 
     connect(m_chartSetWidget, &SAChartSetWidget::chartTitleChanged,
         this, &SASetWidget::chartTitleChanged);

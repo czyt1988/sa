@@ -27,6 +27,7 @@ signals:
 
 private slots:
     void onChartDelete(QObject *obj);
+    void onPlotItemAttached(QwtPlotItem *item, bool on);
 
 private:
     class UI;

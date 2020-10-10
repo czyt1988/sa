@@ -5,11 +5,12 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QTabWidget>
 #include <QTreeWidget>
+#include "SAChart.h"
 #include "SAChart2D.h"
 #include "SAChartNormalSetWidget.h"
 #include "SAColorSetPropertyItem.h"
 #include <QScrollArea>
-#include "SAPlotItemSetWidget.h"
+#include "SACurvePlotItemSetWidget.h"
 #include "SAChartAxesSetWidget.h"
 #define TR(str)    QApplication::translate("SAChartSetWidget", str, 0)
 class SAChartSetWidget::UI
@@ -22,7 +23,7 @@ public:
     SAChartNormalSetWidget *chartNormalSetWidget;
     QScrollArea *tabScrollArea1;
     QScrollArea *tabScrollArea2;
-    SAPlotItemSetWidget *plotItemsSetWidget;
+    SACurvePlotItemSetWidget *plotItemsSetWidget;
     SAChartAxesSetWidget *plotAxesSetWidget;
     UI() : chartCtrl(nullptr)
         , verticalLayout(nullptr)
@@ -75,7 +76,7 @@ public:
         plotAxesSetWidget->setObjectName(QStringLiteral("PlotAxesSetWidget"));
         tabScrollArea2->setWidget(plotAxesSetWidget);
         //Tab 3 -- SAPlotItemSetWidget
-        plotItemsSetWidget = new SAPlotItemSetWidget();
+        plotItemsSetWidget = new SACurvePlotItemSetWidget();
         plotItemsSetWidget->setObjectName(QStringLiteral("PlotItemsSetWidget"));
         tabWidget->addTab(plotItemsSetWidget, "");
         tabWidget->setTabIcon(2, QIcon(":/icon/icons/itemSet.png"));
@@ -86,6 +87,9 @@ public:
     void retranslateUi(QWidget *w)
     {
         w->setWindowTitle(TR("Figure Canvas Set Widget"));
+        tabWidget->setTabText(0, TR("Normal"));
+        tabWidget->setTabText(1, TR("Axes"));
+        tabWidget->setTabText(2, TR("Item"));
     } // retranslateUi
 };
 
@@ -110,15 +114,16 @@ void SAChartSetWidget::setChart(SAChart2D *chart)
     }
     if (ui->chartCtrl && (ui->chartCtrl != chart)) {
         disconnect(ui->chartCtrl, &QObject::destroyed, this, &SAChartSetWidget::onChartDelete);
-    }
-    if (chart) {
-        connect(chart, &QObject::destroyed, this, &SAChartSetWidget::onChartDelete);
+        disconnect(ui->chartCtrl, &QwtPlot::itemAttached, this, &SAChartSetWidget::onPlotItemAttached);
     }
     ui->chartCtrl = chart;
     if (chart) {
         ui->chartNormalSetWidget->setChart(chart);
         ui->plotAxesSetWidget->setChart(chart);
-        ui->plotItemsSetWidget->setChart(chart);
+        ui->plotItemsSetWidget->setPlotItems(chart->itemList());
+
+        connect(chart, &QObject::destroyed, this, &SAChartSetWidget::onChartDelete);
+        connect(chart, &QwtPlot::itemAttached, this, &SAChartSetWidget::onPlotItemAttached);
     }
 }
 
@@ -161,5 +166,13 @@ void SAChartSetWidget::onChartDelete(QObject *obj)
     ui->chartCtrl = nullptr;
     ui->chartNormalSetWidget->setChart(nullptr);
     ui->plotAxesSetWidget->setChart(nullptr);
-    ui->plotItemsSetWidget->setChart(nullptr);
+    ui->plotItemsSetWidget->setPlotItems(QwtPlotItemList());
+}
+
+
+void SAChartSetWidget::onPlotItemAttached(QwtPlotItem *item, bool on)
+{
+    if (SAChart::checkIsPlotChartItem(item)) {
+        ui->plotItemsSetWidget->plotItemAttached(item, on);
+    }
 }
