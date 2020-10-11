@@ -51,7 +51,6 @@ class QActionGroup;
 
 class SAInformationStatusWidget;
 class ValueDataViewer;
-class SAPlotLayerModel;
 class SADataFeatureTreeModel;
 class SATabValueViewerWidget;
 class SAValueManagerModel;
@@ -593,6 +592,12 @@ private slots:
     void onActionSkinChanged(QAction *act);
 
     ///
+    //item选中
+    void onLayoutWidgetItemSelected(QwtPlotItem *item);
+
+    //图层选中图表
+    void onLayoutWidgetSelectedChart(SAChart2D *chart);
+
     //图层管理窗口改变了条目的可见性
     void onLayoutWidgetItemVisibleChanged(QwtPlotItem *item, bool on);
 
@@ -606,7 +611,7 @@ private slots:
     void onLayoutWidgetItemRemoved(SAChart2D *chart, QwtPlotItem *item);
 
     //设置窗口改变了图表的标题触发的槽
-    void onChartTitleChanged(QwtPlot *plot, const QString& title);
+    void onChartTitleChanged(SAChart2D *plot, const QString& title);
 
     //figure窗口请求菜单
     void subwindowMouseRightClicked(const QPoint& pos);
@@ -640,9 +645,6 @@ public:
     //把一个XYSeries转换为value
     void makeValueFromXYSeries(const QString& name, SA::PickDataMode pickMode, const QVector<QPointF>& xy);
 
-//-------dock-图层表格相关---------------------
-    //图层表格model
-    SAPlotLayerModel *getPlotLayerModel() const;
 
 //------openfilemanager
     //OpenFileManager* getValueManager() const;
@@ -725,6 +727,7 @@ private:
     QStringList m_recentOpenFiles;                          ///< 记录最近打开的文件
     QStringList m_recentOpenProjectFolders;                 ///< 记录最近打开的项目目录
 };
+
 
 ///
 /// \brief 子窗口的创建

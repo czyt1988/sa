@@ -77,6 +77,20 @@
         <file>icons/createDouble1DimValue.png</file>
         <file>icons/subplotEdit.png</file>
         <file>icons/colormap.svg</file>
+        <file>icons/legend.svg</file>
+        <file>icons/grid.svg</file>
+        <file>icons/Marker.svg</file>
+        <file>icons/SpectroChart.svg</file>
+        <file>icons/IntervalChart.svg</file>
+        <file>icons/multiBarChart.svg</file>
+        <file>icons/shapeChart.svg</file>
+        <file>icons/svgChart.svg</file>
+        <file>icons/TextLabel.svg</file>
+        <file>icons/zoneItem.svg</file>
+        <file>icons/UserDefineItem.svg</file>
+        <file>icons/UnknowItem.svg</file>
+        <file>icons/expandAll.svg</file>
+        <file>icons/figureSet.svg</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>

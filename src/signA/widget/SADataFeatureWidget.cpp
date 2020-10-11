@@ -21,7 +21,6 @@
 #include "SAUIInterface.h"
 #include "SAMdiSubWindow.h"
 #include "SADataFeatureTreeModel.h"
-#include "SADataFeatureItem.h"
 #define _DEBUG_PRINT
 #define _DEBUG_OUTPUT
 
@@ -77,8 +76,10 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     qRegisterMetaType<QVector<QPointF> >();
+
     connect(ui->treeView, &QTreeView::clicked, this, &SADataFeatureWidget::onTreeViewClicked);
     connect(ui->toolButton_clearDataFeature, &QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonClearDataFeatureClicked);
+    connect(ui->toolButton_expandAll,&QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonExpandAllClicked);
     //消息转发
     connect(&m_client, &SADataClient::messageInfo, this, &SADataFeatureWidget::showMessageInfo);
     connect(&m_client, &SADataClient::heartbeatCheckerTimerout, this, &SADataFeatureWidget::onHeartbeatCheckerTimerout);
@@ -111,6 +112,10 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *subwnd)
     if (im != m_mdiToModel.end()) {
         //说明已经有model。把model设置进tree里
         ui->treeView->setModel(im.value());
+        auto hh = ui->treeView->header();
+        hh->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+        hh->setSectionResizeMode(1, QHeaderView::Interactive);
+        ui->treeView->expandAll();
     }else {
         //说明没有对应的内容，把数据下发给数据处理进程进行处理
         SAFigureWindow *figure = getFigureFromSubWindow(subwnd);//记录当前的绘图窗口
@@ -118,6 +123,11 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *subwnd)
             //说明是绘图窗口，进入这个函数，说明是首次建立的窗口，此时就建立空模型
             //先建立空模型，建立模型会把figure的chart和item处理好，等待计算的绑定
             SADataFeatureTreeModel *m = new SADataFeatureTreeModel(figure, this);
+            ui->treeView->setModel(m);
+            auto hh = ui->treeView->header();
+            hh->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+            hh->setSectionResizeMode(1, QHeaderView::Interactive);
+            ui->treeView->expandAll();
             //记录子窗口和模型对应关系
             m_mdiToModel[subwnd] = m;
             //请求远程计算，计算完结果返回后会自动填充进模型中从而在界面上显示
@@ -374,6 +384,11 @@ void SADataFeatureWidget::onToolButtonClearDataFeatureClicked()
     });
 }
 
+void SADataFeatureWidget::onToolButtonExpandAllClicked()
+{
+    ui->treeView->expandAll();
+}
+
 
 void SADataFeatureWidget::onChartHide()
 {
@@ -540,6 +555,7 @@ void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, dou
     }
     //qDebug() << midPoint << tops;
     model->reflash();
+    ui->treeView->expandAll();
 }
 
 

@@ -50,6 +50,7 @@
 #include "SAChartDatasViewWidget.h"
 #include "SAValueTableWidget.h"
 #include "SAValueDataTableView.h"
+#include "SASetWidget.h"
 // |------操作
 
 //===signACommonUI
@@ -90,7 +91,6 @@
 #include "SADataFeatureTreeModel.h"
 #include <SAVariantHashTableModel.h>
 #include <SACsvFileTableModel.h>
-#include <SAPlotLayerModel.h>
 //--------3thparty-----------
 #define TR(str)	\
     QApplication::translate("MainWindow", str, 0)
@@ -229,6 +229,11 @@ void MainWindow::initUI()
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onActionAboutTriggered);
     //-------------------------------------
     //图层管理窗口相关槽
+    //
+    connect(ui->figureLayoutWidget, &SAFigureLayoutWidget::itemSelected
+        , this, &MainWindow::onLayoutWidgetItemSelected);
+    connect(ui->figureLayoutWidget, &SAFigureLayoutWidget::chartSelected
+        , this, &MainWindow::onLayoutWidgetSelectedChart);
     //图层管理窗口改变了条目的可见性
     connect(ui->figureLayoutWidget, &SAFigureLayoutWidget::itemVisibleChanged
         , this, &MainWindow::onLayoutWidgetItemVisibleChanged);
@@ -438,7 +443,7 @@ void MainWindow::initUI()
     ui->actionTabMode->setChecked(QMdiArea::TabbedView == ui->mdiArea->viewMode());
 
     //SAFigureSetWidget 相关槽连接
-    connect(ui->figureSetWidget, &SAFigureSetWidget::chartTitleChanged
+    connect(ui->setWidget, &SASetWidget::chartTitleChanged
         , this, &MainWindow::onChartTitleChanged);
 
     ui->menuBar->showContextCategory(ui->tableRibbonContextCategory);
@@ -498,10 +503,10 @@ void MainWindow::onActionSetDefalutDockPosTriggered()
     splitDockWidget(ui->dockWidget_plotLayer, ui->dockWidget_DataFeature, Qt::Vertical);
     tabifyDockWidget(ui->dockWidget_main, ui->dockWidget_valueViewer);
     tabifyDockWidget(ui->dockWidget_chartDataViewer, ui->dockWidget_message);
-    tabifyDockWidget(ui->dockWidget_windowList, ui->dockWidget_plotSet);
+    tabifyDockWidget(ui->dockWidget_windowList, ui->dockWidget_set);
     ui->dockWidget_valueManage->show();
     //ui->dockWidget_valueManage->resize(QSize(500,ui->dockWidget_valueManage->height()));
-    ui->dockWidget_plotSet->show();
+    ui->dockWidget_set->show();
     ui->dockWidget_windowList->show();
     ui->dockWidget_plotLayer->show();
     ui->dockWidget_chartDataViewer->show();
@@ -674,8 +679,8 @@ void MainWindow::onActionMessageInfoDockTriggered(bool on)
 void MainWindow::onActionFigureSetDockTriggered(bool on)
 {
     Q_UNUSED(on);
-    ui->dockWidget_plotSet->show();
-    ui->dockWidget_plotSet->raise();
+    ui->dockWidget_set->show();
+    ui->dockWidget_set->raise();
 }
 
 
@@ -700,6 +705,36 @@ void MainWindow::onActionSkinChanged(QAction *act)
 }
 
 
+/**
+ * @brief item选中
+ * @param item
+ */
+void MainWindow::onLayoutWidgetItemSelected(QwtPlotItem *item)
+{
+    //选中对应的chart
+    onLayoutWidgetSelectedChart(qobject_cast<SAChart2D *>(item->plot()));
+}
+
+
+/**
+ * @brief 当图层选中chart
+ * @param chart
+ */
+void MainWindow::onLayoutWidgetSelectedChart(SAChart2D *chart)
+{
+    SAFigureWindow *fig = getCurrentFigureWindow();
+
+    fig->setCurrent2DPlot(chart);
+    if(ui->setWidget->currentSettingChart() != chart)
+    {
+        ui->setWidget->setChart(chart);
+    }
+    if(ui->setWidget->currentSettingFigure() != fig){
+        ui->setWidget->setFigure(fig);
+    }
+}
+
+
 ///
 /// \brief 图层管理窗口改变了条目的可见性
 /// \param chart
@@ -708,9 +743,8 @@ void MainWindow::onActionSkinChanged(QAction *act)
 ///
 void MainWindow::onLayoutWidgetItemVisibleChanged(QwtPlotItem *item, bool on)
 {
-    Q_UNUSED(item);
     Q_UNUSED(on);
-    ui->figureSetWidget->updatePlotItemsSet();
+    ui->setWidget->setPlotItem(item);
 }
 
 
@@ -722,9 +756,8 @@ void MainWindow::onLayoutWidgetItemVisibleChanged(QwtPlotItem *item, bool on)
 ///
 void MainWindow::onLayoutWidgetItemColorChanged(QwtPlotItem *item, QColor clr)
 {
-    Q_UNUSED(item);
     Q_UNUSED(clr);
-    ui->figureSetWidget->updatePlotItemsSet();
+    ui->setWidget->setPlotItem(item);
 }
 
 
@@ -735,9 +768,8 @@ void MainWindow::onLayoutWidgetItemColorChanged(QwtPlotItem *item, QColor clr)
  */
 void MainWindow::onLayoutWidgetItemTitleChanged(QwtPlotItem *item, const QString& title)
 {
-    Q_UNUSED(item);
     Q_UNUSED(title);
-    ui->figureSetWidget->updatePlotItemsSet();
+    ui->setWidget->setPlotItem(item);
 }
 
 
@@ -750,7 +782,7 @@ void MainWindow::onLayoutWidgetItemRemoved(SAChart2D *chart, QwtPlotItem *item)
 {
     Q_UNUSED(chart);
     Q_UNUSED(item);
-    ui->figureSetWidget->updatePlotItemsSet();
+    //ui->setWidget->updatePlotItemsSet();
 }
 
 
@@ -759,9 +791,11 @@ void MainWindow::onLayoutWidgetItemRemoved(SAChart2D *chart, QwtPlotItem *item)
 /// \param plot
 /// \param title
 ///
-void MainWindow::onChartTitleChanged(QwtPlot *plot, const QString& title)
+void MainWindow::onChartTitleChanged(SAChart2D *plot, const QString& title)
 {
-    ui->figureLayoutWidget->setChartTitle(plot, title);
+    Q_UNUSED(plot);
+    Q_UNUSED(title);
+    ui->figureLayoutWidget->updateModel();
 }
 
 
@@ -807,6 +841,13 @@ void MainWindow::onActionSelectCurrentCursorToActiveChartTriggered(bool on)
     }
     SA_SET_AUTO_WAIT_CURSOR();
     fig->setCurrent2DPlot(m_figureRightClickChart);
+    if(ui->setWidget->currentSettingChart() != m_figureRightClickChart)
+    {
+        ui->setWidget->setChart(m_figureRightClickChart);
+    }
+    if(ui->setWidget->currentSettingFigure() != fig){
+        ui->setWidget->setFigure(fig);
+    }
 }
 
 
@@ -2095,7 +2136,8 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
         saPrint() << "sub window active:" << arg1->windowTitle() << " but this window have not figure";
     }
     //设置绘图属性窗口,空指针也接受
-    ui->figureSetWidget->setFigureWidget(fig);
+    ui->setWidget->setFigure(fig);
+    ui->setWidget->setChart(fig->current2DPlot());
     //更新dock - plotLayer 图层
     ui->figureLayoutWidget->setFigure(fig);
     //更新dock - dataviewer
@@ -2548,7 +2590,7 @@ void MainWindow::raiseChartDataViewerDock()
 ///
 void MainWindow::raiseChartSettingDock()
 {
-    ui->dockWidget_plotSet->raise();
+    ui->dockWidget_set->raise();
 }
 
 
@@ -2953,12 +2995,6 @@ void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
 QList<SAAbstractDatas *> MainWindow::getSeletedDatas() const
 {
     return (ui->treeView_valueManager->getSeletedDatas());
-}
-
-
-SAPlotLayerModel *MainWindow::getPlotLayerModel() const
-{
-    return (ui->figureLayoutWidget->getLayoutModel());
 }
 
 

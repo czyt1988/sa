@@ -250,6 +250,10 @@ void SATcpClient::onHeartbreatCheckTimeout()
     int sec = d_ptr->m_lastRequestHeartbreakDatetime.secsTo(d_ptr->m_lastRecHeartbreakDatetime);
 
     if (abs(sec) >= abs(intverals)) {
+        qDebug()	<< "HeartbreatCheckTimeout lastRequestHeartbreakDatetime is " << d_ptr->m_lastRequestHeartbreakDatetime
+                << " lastRecHeartbreakDatetime is " << d_ptr->m_lastRecHeartbreakDatetime
+                << " span seconds is "  << sec
+                << " check intverals is " << intverals;
         emit heartbreatTimeout(d_ptr->m_lastRecHeartbreakDatetime);
     }
     requestHeartbreat();
@@ -261,10 +265,7 @@ void SATcpClient::onHeartbreatCheckTimeout()
  */
 void SATcpClient::onReceivedHeartbreat()
 {
-    d_ptr->m_lastRequestHeartbreakDatetime = QDateTime::currentDateTime();
-    if (d_ptr->m_timer) {
-        d_ptr->m_timer->start();
-    }
+    d_ptr->m_lastRecHeartbreakDatetime = QDateTime::currentDateTime();
 }
 
 

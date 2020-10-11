@@ -8,7 +8,6 @@
 #include <memory>
 #include "SAFigureWindow.h"
 #include "SAItem.h"
-#include "SADataFeatureItem.h"
 #include "qwt_plot.h"
 class SAChart2D;
 

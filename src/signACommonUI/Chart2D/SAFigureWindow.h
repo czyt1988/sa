@@ -7,6 +7,7 @@
 #include "SAMainWindow.h"
 #include "SACommonUIGlobal.h"
 #include "qwt_plot_histogram.h"
+class QPaintEvent;
 class QwtPlotCurve;
 class QwtPlotItem;
 class SAFigureOptCommand;
@@ -44,18 +45,22 @@ public:
     //获取当前的2d绘图指针
     SAChart2D *current2DPlot() const;
 
+    //返回在当前光标下的2D图
+    SAChart2D *cursor2DChart() const;
+
     //清空所有图 会连续发送chartRemoved信号
     void clearAll();
 
     //设置画布背景色
     void setBackgroundColor(const QBrush& brush);
     void setBackgroundColor(const QColor& clr);
+    const QBrush& getBackgroundColor() const;
 
     //获取窗口的位置
     QRectF getWidgetPos(QWidget *w) const;
 
     //设置当前的2dplot
-    void setCurrent2DPlot(SAChart2D *p);
+    bool setCurrent2DPlot(SAChart2D *p);
 
     //通过item查找对应的SAChart2D，如果没有返回nullptr
     SAChart2D *findChartFromItem(QwtPlotItem *item);
@@ -63,6 +68,9 @@ public:
     //开启子窗口编辑模式
     void enableSubWindowEditMode(bool enable = true, SAFigureChartRubberbandEditOverlay *ptr = nullptr);
     SAFigureChartRubberbandEditOverlay *subWindowEditModeOverlayWidget() const;
+
+    //判断是否在进行子窗口编辑
+    bool isSubWindowEditingMode() const;
 
     //使用支持redo/undo模式的改变子窗口大小
     void resizeWidget(QWidget *p, const QRect& newRect, const QRect& oldRect = QRect());
@@ -79,8 +87,7 @@ public:
     //返回当前光标下的widget
     QWidget *cursorWidget() const;
 
-    //返回在当前光标下的2D图
-    SAChart2D *cursor2DChart() const;
+
 
 public slots:
     //redo
@@ -97,12 +104,15 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 #endif
 
+protected:
+    virtual void paintEvent(QPaintEvent *e) override;
+
 signals:
     //添加了一个绘图发送的信号
     void chartAdded(QwtPlot *plot);
 
     //删除了一个绘图发送的信号
-    void chartRemoved(QwtPlot *plot);
+    void chartWillRemove(QwtPlot *plot);
 
     //当前选中的发生改变
     void currentWidgetChanged(QWidget *w);

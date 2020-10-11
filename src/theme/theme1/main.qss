@@ -102,7 +102,7 @@ QWidget
 QWidget
 {
     color: #424242;
-    background-color: #f0f0f0;
+    background-color: #FAFAFA;
     selection-background-color:#FDD36A;
     selection-color: #000;
     background-clip: border;
@@ -673,7 +673,8 @@ QDockWidget::title
 QDockWidget::title:focus
 {
   text-align: left;
-  background: #0152E0;
+  background: #3DAEE9;
+  color:#FFFFFF;
   padding-left: 5px;
 }
 /*================
@@ -684,7 +685,7 @@ QTabWidget{
 }
 QTabWidget::pane
 {
-    border-top: 1px solid #9D9D9D;
+    border-top: 0px solid #9D9D9D;
     padding: 0px;
     margin: 0px;
     top: -1px;

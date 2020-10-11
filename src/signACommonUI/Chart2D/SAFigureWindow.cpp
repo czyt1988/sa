@@ -10,6 +10,7 @@
 #include <QScopedPointer>
 #include <QChildEvent>
 #include <QCursor>
+#include <QPainter>
 //sa chart
 #include "SAChart2D.h"
 #include "SAQwtSerialize.h"
@@ -44,8 +45,10 @@ class SAFigureWindowPrivate
 public:
     SAFigureContainer *centralwidget;
     SAChart2D *currentPlot;
-    SAFigureChartRubberbandEditOverlay *chartRubberbandEditor;///< 编辑模式
+    SAFigureChartRubberbandEditOverlay *chartRubberbandEditor;      ///< 编辑模式
     QUndoStack redoUndoStack;
+    QBrush backgroundBrush;                                         ///< 背景
+
     SAFigureWindowPrivate(SAFigureWindow *p) : q_ptr(p)
         , centralwidget(nullptr)
         , currentPlot(nullptr)
@@ -60,7 +63,6 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         q_ptr->setCentralWidget(centralwidget);
         q_ptr->setAcceptDrops(true);
-        q_ptr->setAutoFillBackground(true);
         q_ptr->setBackgroundColor(QColor(255, 255, 255));
         q_ptr->setWindowIcon(QIcon(":/icon/icons/figureWindow.png"));
     }
@@ -201,7 +203,7 @@ void SAFigureWindow::clearAll()
     while (!charts.isEmpty())
     {
         SAChart2D *p = charts.takeLast();
-        emit chartRemoved(p);
+        emit chartWillRemove(p);
         delete p;
     }
 }
@@ -213,25 +215,28 @@ void SAFigureWindow::clearAll()
 ///
 void SAFigureWindow::setBackgroundColor(const QBrush& brush)
 {
-    if (!autoFillBackground()) {
-        setAutoFillBackground(true);
-    }
-    QPalette p = palette();
-
-    p.setBrush(QPalette::Window, brush);
-    setPalette(p);
+    d_ptr->backgroundBrush = brush;
 }
 
 
+/**
+ * @brief 设置窗体背景
+ * @param clr
+ */
 void SAFigureWindow::setBackgroundColor(const QColor& clr)
 {
-    if (!autoFillBackground()) {
-        setAutoFillBackground(true);
-    }
-    QPalette p = palette();
+    d_ptr->backgroundBrush.setStyle(Qt::SolidPattern);
+    d_ptr->backgroundBrush.setColor(clr);
+}
 
-    p.setColor(QPalette::Window, clr);
-    setPalette(p);
+
+/**
+ * @brief 获取背景颜色
+ * @return
+ */
+const QBrush& SAFigureWindow::getBackgroundColor() const
+{
+    return (d_ptr->backgroundBrush);
 }
 
 
@@ -250,14 +255,24 @@ QRectF SAFigureWindow::getWidgetPos(QWidget *w) const
 /// \brief 设置当前的2dplot
 /// \param p
 ///
-void SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
+bool SAFigureWindow::setCurrent2DPlot(SAChart2D *p)
 {
+    if (p == d_ptr->currentPlot) {
+        return (false);
+    }
     if (!d_ptr->centralwidget->isWidgetInContainer(p)) {
-        return;
+        return (false);
     }
     d_ptr->currentPlot = p;
-    setFocusProxy(p);
+    //setFocusProxy(p);
+    //如果在进行子窗口编辑模式，此时需要重新设置编辑
+    if (isSubWindowEditingMode()) {
+        enableSubWindowEditMode(false);
+        enableSubWindowEditMode(true);
+    }
     emit currentWidgetChanged(p);
+
+    return (true);
 }
 
 
@@ -321,6 +336,21 @@ void SAFigureWindow::enableSubWindowEditMode(bool enable, SAFigureChartRubberban
 SAFigureChartRubberbandEditOverlay *SAFigureWindow::subWindowEditModeOverlayWidget() const
 {
     return (d_ptr->chartRubberbandEditor);
+}
+
+
+/**
+ * @brief SAFigureWindow::isSubWindowEditingMode
+ * @return
+ */
+bool SAFigureWindow::isSubWindowEditingMode() const
+{
+    SAFigureChartRubberbandEditOverlay *b = subWindowEditModeOverlayWidget();
+
+    if (b) {
+        return (b->isVisible());
+    }
+    return (false);
 }
 
 
@@ -476,6 +506,20 @@ void SAFigureWindow::clearRedoUndoStack()
 }
 
 
+/**
+ * @brief SAFigureWindow::paintEvent
+ * @param e
+ */
+void SAFigureWindow::paintEvent(QPaintEvent *e)
+{
+    QPainter p(this);
+
+    p.setBrush(d_ptr->backgroundBrush);
+    p.fillRect(0, 0, width(), height(), d_ptr->backgroundBrush);
+    SAMainWindow::paintEvent(e);
+}
+
+
 #if 0
 void SAFigureWindow::keyPressEvent(QKeyEvent *e)
 {
@@ -483,7 +527,7 @@ void SAFigureWindow::keyPressEvent(QKeyEvent *e)
     if (Qt::ControlModifier& e->modifiers()) {
         if (Qt::Key_Z == e->key()) {
             undo();
-        }else if (Qt::Key_Y == e->key())   {
+        }else if (Qt::Key_Y == e->key()) {
             redo();
         }
     }

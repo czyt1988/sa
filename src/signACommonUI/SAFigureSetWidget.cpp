@@ -1,141 +1,130 @@
-﻿#include "SAFigureSetWidget.h"
+#include "SAFigureSetWidget.h"
 #include "SAFigureWindow.h"
-#include "SAChartSetWidget.h"
+#include <QVBoxLayout>
+#include "SAColorSetPropertyItem.h"
+#include <QApplication>
 
-#include <QtCore/QVariant>
-#include <QtWidgets/QAction>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QHeaderView>
-#include <QtWidgets/QTabWidget>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QWidget>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QStackedWidget>
-#include "SAChart2D.h"
-
-class SAFigureSetWidget::UI
-{
+class SAFigureSetWidget::UI {
 public:
-    QVBoxLayout *verticalLayout;
-    SAChartSetWidget* chartSetWidget;
-    QMap<QwtPlot*,SAChartSetWidget*> plotMapToWidget;
-
-    void setupUi(SAFigureSetWidget *p)
+    void setupUI(SAFigureSetWidget *par)
     {
-        if (p->objectName().isEmpty())
-            p->setObjectName(QStringLiteral("SAFiugreSetWidget"));
-        p->resize(308, 464);
-
+        this->figure = nullptr;
+        par->setObjectName(QStringLiteral("SAFigureSetWidget"));
+        par->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         verticalLayout = new QVBoxLayout;
-        verticalLayout->setSpacing(4);
+        verticalLayout->setSpacing(2);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        verticalLayout->setContentsMargins(0, 0, 0, 0);
-        chartSetWidget = new SAChartSetWidget(p);
-        chartSetWidget->setObjectName(QStringLiteral("ChartSetWidget"));
-        chartSetWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-        verticalLayout->addWidget(chartSetWidget);
-        p->setLayout(verticalLayout);
-        p->connect(chartSetWidget,&SAChartSetWidget::chartTitleChanged
-                ,p,&SAFigureSetWidget::chartTitleChanged);
-        retranslateUi(p);
+        verticalLayout->setContentsMargins(3, 5, 3, 5);
+        par->setLayout(verticalLayout);
 
-    } // setupUi
+        backgroundColorItem = new SAColorSetPropertyItem(par);
+        backgroundColorItem->setText(par->tr("background color:"));
+        verticalLayout->addWidget(backgroundColorItem);
 
-    void retranslateUi(QWidget *SAFiugreSetWidget)
+        verticalLayout->addStretch();
+        //设置文本
+        retranslateUi(par);
+        //信号槽
+        par->connect(backgroundColorItem, &SAColorSetPropertyItem::colorChanged,
+            par, &SAFigureSetWidget::onFigureBackgroundColorChanged);
+    }
+
+
+    void retranslateUi(SAFigureSetWidget *w)
     {
-        SAFiugreSetWidget->setWindowTitle(QApplication::translate("SAFiugreSetWidget", "Fiugre Set", 0));
-    } // retranslateUi
+        w->setWindowTitle(QApplication::translate("SAFigureSetWidget", "Figure Set", 0));
+        backgroundColorItem->setText(QApplication::translate("SAFigureSetWidget", "Background Color", 0));
+    }
+
+
+    SAFigureWindow *figure;
+    QVBoxLayout *verticalLayout;
+    SAColorSetPropertyItem *backgroundColorItem;
 };
 
 SAFigureSetWidget::SAFigureSetWidget(QWidget *parent) :
-    QWidget(parent)
-    ,ui(new SAFigureSetWidget::UI)
-    ,m_fig(nullptr)
+    QWidget(parent),
+    ui(new SAFigureSetWidget::UI)
 {
-    ui->setupUi(this);
+    ui->setupUI(this);
 }
+
 
 SAFigureSetWidget::~SAFigureSetWidget()
 {
     delete ui;
 }
 
+
+/**
+ * @brief 设置figure
+ * @param fig 可以为nullptr，此时会清空
+ */
 void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
 {
-    if(m_fig)
-    {
-        disconnect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
-        disconnect(fig,&SAFigureWindow::currentWidgetChanged,this,&SAFigureSetWidget::onCurrentFigureWidgetChanged);
-    }
-    if(nullptr == fig)
-    {
-        clear();
+    if (fig == ui->figure) {
         return;
     }
-    if(nullptr != fig && m_fig != fig)
-    {
-        connect(fig,&QObject::destroyed,this,&SAFigureSetWidget::onFigutrDestroy);
-        connect(fig,&SAFigureWindow::currentWidgetChanged,this,&SAFigureSetWidget::onCurrentFigureWidgetChanged);
+    if (ui->figure) {
+        disconnect(ui->figure, &QObject::destroyed, this, &SAFigureSetWidget::onFigureDestroy);
     }
-    m_fig = nullptr;
-    m_fig = fig;
-    setCurrentChart(fig->current2DPlot());
+    ui->figure = fig;
+    if (nullptr == fig) {
+        clear();
+        return;
+    }else {
+        connect(fig, &QObject::destroyed, this, &SAFigureSetWidget::onFigureDestroy);
+        qDebug() << "setCurrentColor " << fig->getBackgroundColor().color();
+        ui->backgroundColorItem->setCurrentColor(fig->getBackgroundColor().color());
+    }
 }
 
+
+SAFigureWindow *SAFigureSetWidget::figure() const
+{
+    return (ui->figure);
+}
+
+
+/**
+ * @brief SAFigureSetWidget::clear
+ */
 void SAFigureSetWidget::clear()
 {
-    ui->chartSetWidget->setChart(nullptr);
-}
-
-void SAFigureSetWidget::updateData()
-{
-    ui->chartSetWidget->updateAll();
-}
-
-void SAFigureSetWidget::updatePlotItemsSet()
-{
-    ui->chartSetWidget->updatePlotItemsSet();
-}
-
-void SAFigureSetWidget::updateAxesSet()
-{
-    ui->chartSetWidget->updateAxesSet();
-}
-
-void SAFigureSetWidget::updateNormalSet()
-{
-    ui->chartSetWidget->updateNormalSet();
 }
 
 
-
-
-void SAFigureSetWidget::onFigutrDestroy(QObject *obj)
+void SAFigureSetWidget::changeEvent(QEvent *e)
 {
-    Q_UNUSED(obj);
-    m_fig = nullptr;
-}
-
-///
-/// \brief 当前绘图窗口选中的窗体对象发生改变
-/// \param w
-///
-void SAFigureSetWidget::onCurrentFigureWidgetChanged(QWidget *w)
-{
-    if(SAChart2D* chart = qobject_cast<SAChart2D*>(w))
-    {
-        setCurrentChart(chart);
+    if (e->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+    }else{
+        QWidget::changeEvent(e);
     }
 }
 
-///
-/// \brief 设置图表
-/// \param chart
-///
-void SAFigureSetWidget::setCurrentChart(SAChart2D *chart)
+
+/**
+ * @brief figure销毁时触发
+ */
+void SAFigureSetWidget::onFigureDestroy(QObject *obj)
 {
-    ui->chartSetWidget->setChart(chart);
+    if (ui->figure == obj) {
+        ui->figure = nullptr;
+        clear();
+    }
 }
 
 
+/**
+ * @brief 设置背景颜色
+ * @param clr
+ */
+void SAFigureSetWidget::onFigureBackgroundColorChanged(const QColor& clr)
+{
+    if (nullptr == ui->figure) {
+        return;
+    }
+    ui->figure->setBackgroundColor(clr);
+    ui->figure->repaint();
+}

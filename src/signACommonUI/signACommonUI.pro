@@ -81,6 +81,7 @@ HEADERS += \
     SAPlotDataModel.h \
     SAGUIGlobalConfig.h \
     SAFigureSetWidget.h \
+    SAChartSetWidget.h \
     SAMainWindow.h
 
 SOURCES += \
@@ -116,6 +117,7 @@ SOURCES += \
     SAValueTableOptInsertCommand_impl.cpp \
     SAGUIGlobalConfig.cpp \
     SAFigureSetWidget.cpp \
+    SAChartSetWidget.cpp \
     SAMainWindow.cpp
 
 FORMS += \
