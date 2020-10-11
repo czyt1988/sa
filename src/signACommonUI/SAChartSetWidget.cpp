@@ -86,7 +86,7 @@ public:
 
     void retranslateUi(QWidget *w)
     {
-        w->setWindowTitle(TR("Figure Canvas Set Widget"));
+        w->setWindowTitle(TR("Chart Set Widget"));
         tabWidget->setTabText(0, TR("Normal"));
         tabWidget->setTabText(1, TR("Axes"));
         tabWidget->setTabText(2, TR("Item"));
