@@ -215,7 +215,9 @@ void SAFigureWindow::clearAll()
 ///
 void SAFigureWindow::setBackgroundColor(const QBrush& brush)
 {
-    d_ptr->backgroundBrush = brush;
+    SAFigureBackgroundCommand *cmd = new SAFigureBackgroundCommand(this, brush, tr("change background"));
+
+    appendCommand(cmd);
 }
 
 
@@ -225,8 +227,13 @@ void SAFigureWindow::setBackgroundColor(const QBrush& brush)
  */
 void SAFigureWindow::setBackgroundColor(const QColor& clr)
 {
-    d_ptr->backgroundBrush.setStyle(Qt::SolidPattern);
-    d_ptr->backgroundBrush.setColor(clr);
+    QBrush b;
+
+    b.setStyle(Qt::SolidPattern);
+    b.setColor(clr);
+    SAFigureBackgroundCommand *cmd = new SAFigureBackgroundCommand(this, b, tr("change background"));
+
+    appendCommand(cmd);
 }
 
 
@@ -245,9 +252,29 @@ const QBrush& SAFigureWindow::getBackgroundColor() const
 /// \param w
 /// \return
 ///
-QRectF SAFigureWindow::getWidgetPos(QWidget *w) const
+QRectF SAFigureWindow::getWidgetPosPercent(QWidget *w) const
 {
-    return (d_ptr->centralwidget->getWidgetPos(w));
+    return (d_ptr->centralwidget->getWidgetPosPercent(w));
+}
+
+
+/**
+ * @brief 设置窗体的相对位置，不可进行redo、undo
+ * @param w
+ * @param posPercent
+ */
+void SAFigureWindow::setWidgetPosPercent(QWidget *w, const QRectF& posPercent, bool redoundo)
+{
+    if (redoundo) {
+        SAFigureSubChartResizeCommand *cmd = new SAFigureSubChartResizeCommand(this, w, posPercent, tr("resize subchart"));
+        appendCommand(cmd);
+    }else {
+        getFigureContainer()->setWidgetPosPercent(w, posPercent);
+        QRect r = SAFigureContainer::calcWidgetRectByPercent(getFigureContainer(), posPercent);
+        //刷新窗口
+        QResizeEvent e(r.size(), size());
+        QApplication::sendEvent(this, &e);
+    }
 }
 
 
@@ -305,6 +332,7 @@ SAChart2D *SAFigureWindow::findChartFromItem(QwtPlotItem *item)
 void SAFigureWindow::enableSubWindowEditMode(bool enable, SAFigureChartRubberbandEditOverlay *ptr)
 {
     if (enable) {
+        d_ptr->centralwidget->beginResetSubWidget();
         if (nullptr == d_ptr->chartRubberbandEditor) {
             if (ptr) {
                 d_ptr->chartRubberbandEditor = ptr;
@@ -319,6 +347,7 @@ void SAFigureWindow::enableSubWindowEditMode(bool enable, SAFigureChartRubberban
             }
         }
     }else {
+        d_ptr->centralwidget->endResetSubWidget();
         if (d_ptr->chartRubberbandEditor) {
             delete d_ptr->chartRubberbandEditor;
             d_ptr->chartRubberbandEditor = nullptr;
@@ -406,6 +435,16 @@ QWidget *SAFigureWindow::cursorWidget() const
     QPoint p = d_ptr->centralwidget->mapFromGlobal(QCursor::pos());
 
     return (d_ptr->centralwidget->childAt(p));
+}
+
+
+/**
+ * @brief SAFigureWindow::getFigureContainer
+ * @return
+ */
+SAFigureContainer *SAFigureWindow::getFigureContainer()
+{
+    return (d_ptr->centralwidget);
 }
 
 
@@ -520,6 +559,41 @@ void SAFigureWindow::paintEvent(QPaintEvent *e)
 }
 
 
+void SAFigureWindow::_setBackgroundColor(const QBrush& brush)
+{
+    d_ptr->backgroundBrush = brush;
+}
+
+
+void SAFigureWindow::_setBackgroundColor(const QColor& clr)
+{
+    d_ptr->backgroundBrush.setStyle(Qt::SolidPattern);
+    d_ptr->backgroundBrush.setColor(clr);
+}
+
+
+/**
+ * @brief 设置窗口位置，基于百分比
+ * @param w
+ * @param posPercent
+ */
+void SAFigureWindow::_setWidgetPosPercent(QWidget *w, const QRectF& posPercent)
+{
+    d_ptr->centralwidget->setWidgetPosPercent(w, posPercent);
+}
+
+
+/**
+ * @brief SAFigureWindow::_updateWidgetPos
+ * @param w
+ * @param rect
+ */
+void SAFigureWindow::_updateWidgetPos(QWidget *w, const QRect& rect)
+{
+    d_ptr->centralwidget->updateWidgetPos(w, rect);
+}
+
+
 #if 0
 void SAFigureWindow::keyPressEvent(QKeyEvent *e)
 {
@@ -552,7 +626,7 @@ QDataStream& operator <<(QDataStream& out, const SAFigureWindow *p)
 
     for (int i = 0; i < charts.size(); ++i)
     {
-        pos.append(p->getWidgetPos(charts[i]));
+        pos.append(p->getWidgetPosPercent(charts[i]));
     }
     out << pos;
     for (int i = 0; i < charts.size(); ++i)

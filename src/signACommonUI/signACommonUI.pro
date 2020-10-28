@@ -53,6 +53,7 @@ include($$PWD/Chart2D/Chart2D.pri)
 
 HEADERS += \
     SACommonUIGlobal.h \
+    SAFigureWindowChartTableModel.h \
     SAQwtSymbolComboBox.h \
     SACollapsibleGroupBox.h \
     SAVCollapsibleGroupBox.h \
@@ -85,6 +86,7 @@ HEADERS += \
     SAMainWindow.h
 
 SOURCES += \
+    SAFigureWindowChartTableModel.cpp \
     SAUIReflection.cpp \
     SAQwtSymbolComboBox.cpp \
     SACollapsibleGroupBox.cpp \

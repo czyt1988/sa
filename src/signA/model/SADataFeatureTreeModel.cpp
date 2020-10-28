@@ -329,7 +329,9 @@ SADataFeatureTreeModel::ItemPtr SADataFeatureTreeModel::setItemValue(QwtPlotItem
             QVector<QPointF> v = value.value<QVector<QPointF> >();
             for (int i = 0; i < v.size(); ++i)
             {
-                std::unique_ptr<SAItem> ci = std::make_unique<SAItem>(tr("[%1]").arg(i+1));
+                //std::make_unique为cpp14,反馈很多编译器会在这里编译失败，改为cpp11的方法
+                //std::unique_ptr<SAItem> ci = std::make_unique<SAItem>(tr("[%1]").arg(i+1));
+                std::unique_ptr<SAItem> ci(new SAItem(tr("[%1]").arg(i+1)));
                 ci->setProperty(SAItem::RoleValue, v[i]);
                 item->appendChild(ci.release());
             }

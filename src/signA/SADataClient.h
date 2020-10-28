@@ -6,6 +6,8 @@
 #include "../global/SAGlobals.h"
 #include "SAProtocolHeader.h"
 #include "SATcpClient.h"
+#include <QVector>
+#include <QPointF>
 class QThread;
 
 //对于不暴露的接口，不使用impl方式
@@ -131,5 +133,6 @@ private:
     int m_connectRetryCount;        ///< 记录重试连接的次数
     int m_timeout;                  ///< 连接服务器超时时间
 };
+
 
 #endif // SADATACLIENT_H

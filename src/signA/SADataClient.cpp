@@ -21,6 +21,7 @@ SADataClient::SADataClient(QObject *p) : QObject(p)
     , m_timeout(5000)
 {
     _init();
+    qRegisterMetaType<QVector<QPointF> >();
 }
 
 

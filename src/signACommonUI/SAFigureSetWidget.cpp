@@ -3,6 +3,11 @@
 #include <QVBoxLayout>
 #include "SAColorSetPropertyItem.h"
 #include <QApplication>
+#include <QTableView>
+#include <QHeaderView>
+#include "SAFigureWindowChartTableModel.h"
+
+
 
 class SAFigureSetWidget::UI {
 public:
@@ -19,8 +24,19 @@ public:
 
         backgroundColorItem = new SAColorSetPropertyItem(par);
         backgroundColorItem->setText(par->tr("background color:"));
-        verticalLayout->addWidget(backgroundColorItem);
 
+        //添加图表的列表
+        chartposTableview = new QTableView();
+        chartposTableview->clearSpans();
+        chartposTableview->verticalHeader()->setVisible(false);// 水平不可见
+        chartposTableview->horizontalHeader()->setStretchLastSection(true);
+        chartposTableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        chartposListModel = new SAFigureWindowChartTableModel(chartposTableview);
+        chartposTableview->setModel(chartposListModel);
+
+
+        verticalLayout->addWidget(backgroundColorItem);
+        verticalLayout->addWidget(chartposTableview);
         verticalLayout->addStretch();
         //设置文本
         retranslateUi(par);
@@ -38,6 +54,8 @@ public:
 
 
     SAFigureWindow *figure;
+    QTableView *chartposTableview;
+    SAFigureWindowChartTableModel *chartposListModel;
     QVBoxLayout *verticalLayout;
     SAColorSetPropertyItem *backgroundColorItem;
 };
@@ -69,12 +87,12 @@ void SAFigureSetWidget::setFigureWidget(SAFigureWindow *fig)
         disconnect(ui->figure, &QObject::destroyed, this, &SAFigureSetWidget::onFigureDestroy);
     }
     ui->figure = fig;
+    ui->chartposListModel->setFigure(fig);
     if (nullptr == fig) {
         clear();
         return;
     }else {
         connect(fig, &QObject::destroyed, this, &SAFigureSetWidget::onFigureDestroy);
-        qDebug() << "setCurrentColor " << fig->getBackgroundColor().color();
         ui->backgroundColorItem->setCurrentColor(fig->getBackgroundColor().color());
     }
 }
@@ -91,6 +109,8 @@ SAFigureWindow *SAFigureSetWidget::figure() const
  */
 void SAFigureSetWidget::clear()
 {
+    ui->backgroundColorItem->setCurrentColor(QColor());
+    ui->chartposListModel->setFigure(nullptr);
 }
 
 
@@ -110,8 +130,8 @@ void SAFigureSetWidget::changeEvent(QEvent *e)
 void SAFigureSetWidget::onFigureDestroy(QObject *obj)
 {
     if (ui->figure == obj) {
-        ui->figure = nullptr;
         clear();
+        ui->figure = nullptr;
     }
 }
 
