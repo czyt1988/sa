@@ -38,6 +38,22 @@ private:
     bool m_isNeedToDelete;///< 记录是否是此命令对它进行隐藏
 };
 
+///
+/// \brief figure窗体背景改变
+///
+class SA_COMMON_UI_EXPORT SAFigureBackgroundCommand : public SAFigureOptCommand
+{
+public:
+    SAFigureBackgroundCommand(SAFigureWindow *fig, const QBrush& newback, const QString& cmdName, QUndoCommand *parent = Q_NULLPTR);
+    ~SAFigureBackgroundCommand();
+    virtual void redo();
+    virtual void undo();
+
+private:
+    QBrush m_newbrush;
+    QBrush m_oldbrush;
+};
+
 ///////////////////////////////////////////////////////////////////////
 ///
 /// \brief 子窗口位置变更
@@ -47,6 +63,8 @@ class SA_COMMON_UI_EXPORT SAFigureSubChartResizeCommand : public SAFigureOptComm
 public:
     SAFigureSubChartResizeCommand(SAFigureWindow *fig, QWidget *w, const QRect& size, const QString& cmdName, QUndoCommand *parent = Q_NULLPTR);
     SAFigureSubChartResizeCommand(SAFigureWindow *fig, QWidget *w, const QRect& oldSize, const QRect& newSize, const QString& cmdName, QUndoCommand *parent = Q_NULLPTR);
+    SAFigureSubChartResizeCommand(SAFigureWindow *fig, QWidget *w, const QRectF& posPercent, const QString& cmdName, QUndoCommand *parent = Q_NULLPTR);
+
     ~SAFigureSubChartResizeCommand();
     virtual void redo();
     virtual void undo();

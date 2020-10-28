@@ -7,7 +7,7 @@
 #include "qwt_plot_barchart.h"
 #include "SAAbstractRegionSelectEditor.h"
 #include "qwt_series_data.h"
-
+#include "SAFigureContainer.h"
 
 
 ///
@@ -63,6 +63,37 @@ void SAFigureCreateSubWidgetCommand::undo()
 }
 
 
+SAFigureBackgroundCommand::SAFigureBackgroundCommand(SAFigureWindow *fig,
+    const QBrush& newback,
+    const QString& cmdName,
+    QUndoCommand *parent)
+    : SAFigureOptCommand(fig, cmdName, parent)
+    , m_newbrush(newback)
+{
+    m_oldbrush = fig->getBackgroundColor();
+    fig->_setBackgroundColor(m_newbrush);
+}
+
+
+SAFigureBackgroundCommand::~SAFigureBackgroundCommand()
+{
+}
+
+
+void SAFigureBackgroundCommand::redo()
+{
+    figure()->_setBackgroundColor(m_newbrush);
+    figure()->repaint();
+}
+
+
+void SAFigureBackgroundCommand::undo()
+{
+    figure()->_setBackgroundColor(m_oldbrush);
+    figure()->repaint();
+}
+
+
 SAFigureSubChartResizeCommand::SAFigureSubChartResizeCommand(
     SAFigureWindow *fig
     , QWidget *w
@@ -89,6 +120,20 @@ SAFigureSubChartResizeCommand::SAFigureSubChartResizeCommand(
     , m_newSize(newSize)
     , m_oldSize(oldSize)
 {
+}
+
+
+SAFigureSubChartResizeCommand::SAFigureSubChartResizeCommand(
+    SAFigureWindow *fig
+    , QWidget *w
+    , const QRectF& posPercent
+    , const QString& cmdName
+    , QUndoCommand *parent)
+    : SAFigureOptCommand(fig, cmdName, parent)
+    , m_widget(w)
+{
+    m_oldSize = w->frameGeometry();
+    m_newSize = SAFigureContainer::calcWidgetRectByPercent(figure()->getFigureContainer(), posPercent);
 }
 
 

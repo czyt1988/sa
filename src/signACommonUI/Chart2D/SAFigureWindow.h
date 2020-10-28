@@ -26,7 +26,9 @@ class SA_COMMON_UI_EXPORT SAFigureWindow : public SAMainWindow
 {
     Q_OBJECT
     SA_IMPL(SAFigureWindow)
-
+    friend class SAFigureCreateSubWidgetCommand;
+    friend class SAFigureBackgroundCommand;
+    friend class SAFigureSubChartResizeCommand;
 public:
     explicit SAFigureWindow(QWidget *parent = 0);
     ~SAFigureWindow();
@@ -36,8 +38,7 @@ public:
     SAChart2D *create2DPlot();
     SAChart2D *create2DSubPlot(float xPresent, float yPresent, float wPresent, float hPresent);
 
-    //不支持redo/undo的添加窗口操作
-    void _addWidget(QWidget *w, float xPresent, float yPresent, float wPresent, float hPresent);
+
 
     //获取所有的图表
     QList<SAChart2D *> get2DPlots() const;
@@ -51,13 +52,14 @@ public:
     //清空所有图 会连续发送chartRemoved信号
     void clearAll();
 
-    //设置画布背景色
+    //设置画布背景色 - 支持redo-undo
     void setBackgroundColor(const QBrush& brush);
     void setBackgroundColor(const QColor& clr);
     const QBrush& getBackgroundColor() const;
 
-    //获取窗口的位置
-    QRectF getWidgetPos(QWidget *w) const;
+    //获取窗口的位置 - 支持redo-undo
+    void setWidgetPosPercent(QWidget *w, const QRectF& posPercent, bool redoundo = true);
+    QRectF getWidgetPosPercent(QWidget *w) const;
 
     //设置当前的2dplot
     bool setCurrent2DPlot(SAChart2D *p);
@@ -87,7 +89,8 @@ public:
     //返回当前光标下的widget
     QWidget *cursorWidget() const;
 
-
+    //获取窗口容器
+    SAFigureContainer *getFigureContainer();
 
 public slots:
     //redo
@@ -106,6 +109,17 @@ protected:
 
 protected:
     virtual void paintEvent(QPaintEvent *e) override;
+
+    //不支持redo/undo的添加窗口操作
+    void _addWidget(QWidget *w, float xPresent, float yPresent, float wPresent, float hPresent);
+
+    //不支持redo/undo的设置画布背景色
+    void _setBackgroundColor(const QBrush& brush);
+    void _setBackgroundColor(const QColor& clr);
+
+    void _setWidgetPosPercent(QWidget *w, const QRectF& posPercent);
+
+    void _updateWidgetPos(QWidget *w, const QRect& rect);
 
 signals:
     //添加了一个绘图发送的信号
