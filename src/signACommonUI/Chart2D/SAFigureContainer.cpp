@@ -1,4 +1,5 @@
 ﻿#include "SAFigureContainer.h"
+#include <math.h>
 #include <QResizeEvent>
 #include <QDebug>
 #include <QChildEvent>
