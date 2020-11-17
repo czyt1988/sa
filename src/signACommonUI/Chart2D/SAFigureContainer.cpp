@@ -2,7 +2,7 @@
 #include <QResizeEvent>
 #include <QDebug>
 #include <QChildEvent>
-#define PRECISION    3
+#define PRECISION    5
 
 class SAFigureContainerPrivate {
 public:

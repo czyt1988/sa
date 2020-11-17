@@ -47,6 +47,9 @@ public:
     void setChart(SAChart2D *chart);
     SAChart2D *currentSettingChart() const;
 
+    //获取figure设置窗口
+    SAFigureSetWidget *getFigureSetWidget();
+
 signals:
     void chartTitleChanged(SAChart2D *chart, const QString& text);
 

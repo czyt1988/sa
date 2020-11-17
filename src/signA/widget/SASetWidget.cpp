@@ -113,3 +113,13 @@ SAChart2D *SASetWidget::currentSettingChart() const
 {
     return (m_chartSetWidget->chart());
 }
+
+
+/**
+ * @brief 获取figure设置窗口
+ * @return
+ */
+SAFigureSetWidget *SASetWidget::getFigureSetWidget()
+{
+    return (m_figureSetWidget);
+}

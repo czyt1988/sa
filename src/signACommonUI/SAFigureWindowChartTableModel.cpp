@@ -1,6 +1,6 @@
 #include "SAFigureWindowChartTableModel.h"
 #include "SAChart2D.h"
-#define COL_COUNT    6
+#define COL_COUNT    5
 
 class SAFigureWindowChartTableModelPrivate
 {
@@ -39,6 +39,13 @@ void SAFigureWindowChartTableModel::setFigure(SAFigureWindow *fig)
 }
 
 
+void SAFigureWindowChartTableModel::refresh()
+{
+    beginResetModel();
+    endResetModel();
+}
+
+
 int SAFigureWindowChartTableModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
@@ -69,18 +76,15 @@ QVariant SAFigureWindowChartTableModel::headerData(int section, Qt::Orientation 
             return (tr("name"));
 
         case 1:
-            return (tr("visible"));
-
-        case 2:
             return (tr("x"));
 
-        case 3:
+        case 2:
             return (tr("y"));
 
-        case 4:
+        case 3:
             return (tr("w"));
 
-        case 5:
+        case 4:
             return (tr("h"));
 
         default:
@@ -117,19 +121,16 @@ QVariant SAFigureWindowChartTableModel::data(const QModelIndex& index, int role)
             return (chart->title().text());
 
         case 1:
-            return (chart->isVisible());
-
-        case 2:
             return (tr("%1").arg(pos.x()));
 
-        case 3:
+        case 2:
             //把其转换为正常笛卡尔坐标
-            return (tr("%1").arg(1 - pos.y()));
+            return (tr("%1").arg(pos.y()));
 
-        case 4:
+        case 3:
             return (tr("%1").arg(pos.width()));
 
-        case 5:
+        case 4:
             return (tr("%1").arg(pos.height()));
 
         default:
@@ -160,10 +161,6 @@ bool SAFigureWindowChartTableModel::setData(const QModelIndex& index, const QVar
             return (true);
 
         case 1:
-            chart->setVisible(value.toBool());
-            return (true);
-
-        case 2:
         {
             bool isOK = false;
             qreal x = value.toReal(&isOK);
@@ -176,7 +173,7 @@ bool SAFigureWindowChartTableModel::setData(const QModelIndex& index, const QVar
             return (true);
         }
 
-        case 3:
+        case 2:
         {
             bool isOK = false;
             qreal y = value.toReal(&isOK);
@@ -189,7 +186,7 @@ bool SAFigureWindowChartTableModel::setData(const QModelIndex& index, const QVar
             return (true);
         }
 
-        case 4:
+        case 3:
         {
             bool isOK = false;
             qreal w = value.toReal(&isOK);
@@ -202,7 +199,7 @@ bool SAFigureWindowChartTableModel::setData(const QModelIndex& index, const QVar
             return (true);
         }
 
-        case 5:
+        case 4:
         {
             bool isOK = false;
             qreal h = value.toReal(&isOK);
