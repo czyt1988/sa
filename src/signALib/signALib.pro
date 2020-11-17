@@ -31,7 +31,6 @@ HEADERS += \
     SALibGlobal.h \
     SAOrderMap.h \
     SAPoint.h \
-    SAProperties.h \
     SATable.h \
     SAThreadPool.h \
     SAValueManager.h \
@@ -55,7 +54,6 @@ SOURCES += \
     SADataPackage.cpp \
     SAItem.cpp \
     SAPoint.cpp \
-    SAProperties.cpp \
     SAThreadPool.cpp \
     SAValueManager.cpp \
     SAValueManagerModel.cpp \
