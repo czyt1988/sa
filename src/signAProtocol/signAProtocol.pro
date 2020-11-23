@@ -27,6 +27,7 @@ DEFINES += SA_PROTOCOL_MAKE
 
 HEADERS += \
     SAProtocolGlobal.h \
+    SAProperties.h \
     SAVariantCaster.h \
     SAXMLTagDefined.h \
     SAGlobalConfig.h \
@@ -39,6 +40,7 @@ HEADERS += \
 
 SOURCES += \
     SAVariantCaster.cpp \
+    SAProperties.cpp \
     SAGlobalConfig.cpp \
     SAAbstractProtocolParse.cpp \
     SAProtocolHeader.cpp \

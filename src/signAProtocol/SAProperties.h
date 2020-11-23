@@ -2,14 +2,14 @@
 #define SAPROPERTIES_H
 #include <QHash>
 #include <QVariant>
-#include "SALibGlobal.h"
+#include "SAProtocolGlobal.h"
 
 /**
  * @brief 参考Java Properties 类封装的属性类，负责SA的属性传递
  *
  *
  */
-class SALIB_EXPORT SAProperties : public QVariantHash
+class SA_PROTOCOL_EXPORT SAProperties : public QVariantHash
 {
 public:
     SAProperties() = default;
@@ -27,7 +27,7 @@ public:
  * @brief 属性组
  *
  */
-class SALIB_EXPORT SAPropertiesGroup : public QHash<QString, SAProperties>
+class SA_PROTOCOL_EXPORT SAPropertiesGroup : public QHash<QString, SAProperties>
 {
 public:
     SAPropertiesGroup() = default;

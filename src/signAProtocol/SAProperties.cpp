@@ -68,13 +68,13 @@ QVariant SAPropertiesGroup::getProperty(const QString& group, const QString& key
  * @brief 获取一组属性
  * @param group 组
  * @return 一组属性的引用，如果不存在这个分组，会触发断言
- * @sa hasGroup
+ * @sa hasGroup properties getProperties
  */
 const SAProperties& SAPropertiesGroup::constProperties(const QString& group) const
 {
     auto i = find(group);
 
-    Q_ASSERT_X(i != end(), "getProperties", "getProperties receive invalid group");
+    Q_ASSERT_X(i != end(), "constProperties", "constProperties receive invalid group");
     return (i.value());
 }
 
@@ -83,7 +83,7 @@ const SAProperties& SAPropertiesGroup::constProperties(const QString& group) con
  * @brief 获取一组属性的引用，如果没有，会插入一个默认属性
  * @param group 组
  * @return 一组属性的引用，如果不存在这个分组，会插入一个默认属性
- * @sa hasGroup
+ * @sa constProperties getProperties
  */
 SAProperties& SAPropertiesGroup::properties(const QString& group)
 {
@@ -100,6 +100,7 @@ SAProperties& SAPropertiesGroup::properties(const QString& group)
  * @brief 获取一组属性
  * @param group 属性组
  * @return 如果没有，返回一个SAProperties()
+ * @sa properties constProperties
  */
 SAProperties SAPropertiesGroup::getProperties(const QString& group)
 {

@@ -5,6 +5,8 @@
 #include <memory>
 class SAXMLProtocolParserPrivate;
 
+
+
 /**
  * @brief SA XML协议的读写类
  * sa xml协议主要用于保存qvariant类型数据，形如
@@ -41,11 +43,11 @@ class SAXMLProtocolParserPrivate;
  *
  * @code
  * <sa type="xml" classid="" funid="">
- *  <values>
- *   <default-group>
+ *  <props>
+ *   <prop name="__default__">
  *     <item type="int" name="value">1</item>
- *   </default-group>
- *   <group name="g">
+ *   </prop>
+ *   <prop name="g">
  *     <item type="int" name="point-size">4</item>
  *     <item type="int" name="sequenceID">123</item>
  *     <item type="QVariantList" name="points">
@@ -54,8 +56,8 @@ class SAXMLProtocolParserPrivate;
  *        <item type="QPointF">2;3</item>
  *        <item type="QPointF">4;5</item>
  *     </item>
- *   </group>
- *  </values>
+ *   </prop>
+ *  </props>
  * </sa>
  * @endcode
  *
