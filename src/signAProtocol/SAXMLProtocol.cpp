@@ -1,4 +1,4 @@
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #include <QHash>
 #include <QVector>
 #include <QPointF>
@@ -13,15 +13,15 @@
 
 #define DEFAULT_GROUP_NAME    "${sa-default-group}"
 
-class SAXMLProtocolParserPrivate
+class SAXMLProtocolPrivate
 {
-    SA_IMPL_PUBLIC(SAXMLProtocolParser)
+    SA_IMPL_PUBLIC(SAXMLProtocol)
 public:
-    SAXMLProtocolParserPrivate(SAXMLProtocolParser *p);
-    SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate& other, SAXMLProtocolParser *p);
-    ~SAXMLProtocolParserPrivate();
+    SAXMLProtocolPrivate(SAXMLProtocol *p);
+    SAXMLProtocolPrivate(const SAXMLProtocolPrivate& other, SAXMLProtocol *p);
+    ~SAXMLProtocolPrivate();
     //
-    void copy(const SAXMLProtocolParserPrivate *other);
+    void copy(const SAXMLProtocolPrivate *other);
     bool fromByteArray(const QByteArray& data);
     bool fromString(const QString& str);
     bool isHasGroup(const QString& groupName) const;
@@ -45,7 +45,7 @@ public:
 private:
 };
 
-SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(SAXMLProtocolParser *p)
+SAXMLProtocolPrivate::SAXMLProtocolPrivate(SAXMLProtocol *p)
     : q_ptr(p)
     , mClassID(-1)
     , mFunID(-1)
@@ -53,19 +53,19 @@ SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(SAXMLProtocolParser *p)
 }
 
 
-SAXMLProtocolParserPrivate::SAXMLProtocolParserPrivate(const SAXMLProtocolParserPrivate& other, SAXMLProtocolParser *p)
+SAXMLProtocolPrivate::SAXMLProtocolPrivate(const SAXMLProtocolPrivate& other, SAXMLProtocol *p)
 {
     copy(&other);
     q_ptr = p;
 }
 
 
-SAXMLProtocolParserPrivate::~SAXMLProtocolParserPrivate()
+SAXMLProtocolPrivate::~SAXMLProtocolPrivate()
 {
 }
 
 
-void SAXMLProtocolParserPrivate::copy(const SAXMLProtocolParserPrivate *other)
+void SAXMLProtocolPrivate::copy(const SAXMLProtocolPrivate *other)
 {
     this->mClassID = other->mClassID;
     this->mFunID = other->mFunID;
@@ -75,21 +75,21 @@ void SAXMLProtocolParserPrivate::copy(const SAXMLProtocolParserPrivate *other)
 }
 
 
-bool SAXMLProtocolParserPrivate::fromByteArray(const QByteArray& data)
+bool SAXMLProtocolPrivate::fromByteArray(const QByteArray& data)
 {
     clear();
     return (parser(QString(data)));
 }
 
 
-bool SAXMLProtocolParserPrivate::fromString(const QString& str)
+bool SAXMLProtocolPrivate::fromString(const QString& str)
 {
     clear();
     return (parser(str));
 }
 
 
-bool SAXMLProtocolParserPrivate::parser(const QString& str)
+bool SAXMLProtocolPrivate::parser(const QString& str)
 {
     QDomDocument doc;
 
@@ -132,7 +132,7 @@ bool SAXMLProtocolParserPrivate::parser(const QString& str)
         QString name = propEle.attribute(SA_XML_ATT_PROPERTY_GROUP_NAME, QString());
         if (name.isEmpty()) {
             //如果没有name属性，赋予默认值
-            name = SAXMLProtocolParser::defaultGroupName();
+            name = SAXMLProtocol::defaultGroupName();
             if (properties.hasGroup(name)) {
                 //如果已经有默认分组，就把原来解析的默认分组取出
                 prop = properties.getProperties(name);
@@ -149,7 +149,7 @@ bool SAXMLProtocolParserPrivate::parser(const QString& str)
 }
 
 
-void SAXMLProtocolParserPrivate::readProp(QDomElement& propEle, SAProperties& prop)
+void SAXMLProtocolPrivate::readProp(QDomElement& propEle, SAProperties& prop)
 {
     // 获取group下的item信息
     QDomNodeList itemEles = propEle.elementsByTagName(SA_XML_TAG_ITEM);
@@ -167,13 +167,13 @@ void SAXMLProtocolParserPrivate::readProp(QDomElement& propEle, SAProperties& pr
 }
 
 
-bool SAXMLProtocolParserPrivate::isHasGroup(const QString& groupName) const
+bool SAXMLProtocolPrivate::isHasGroup(const QString& groupName) const
 {
     return (this->mPropGroup.contains(groupName));
 }
 
 
-bool SAXMLProtocolParserPrivate::isHasKey(const QString& groupName, const QString& keyName) const
+bool SAXMLProtocolPrivate::isHasKey(const QString& groupName, const QString& keyName) const
 {
     auto i = this->mPropGroup.find(groupName);
 
@@ -184,7 +184,7 @@ bool SAXMLProtocolParserPrivate::isHasKey(const QString& groupName, const QStrin
 }
 
 
-QVariant SAXMLProtocolParserPrivate::readValue(QDomElement item, const QVariant& defaultVal) const
+QVariant SAXMLProtocolPrivate::readValue(QDomElement item, const QVariant& defaultVal) const
 {
     if (item.isNull()) {
         return (defaultVal);
@@ -270,7 +270,7 @@ QVariant SAXMLProtocolParserPrivate::readValue(QDomElement item, const QVariant&
 }
 
 
-QString SAXMLProtocolParserPrivate::toString()
+QString SAXMLProtocolPrivate::toString()
 {
     QDomDocument doc("SA");
     QDomElement root = doc.createElement(SA_XML_TAG_SA);
@@ -300,7 +300,7 @@ QString SAXMLProtocolParserPrivate::toString()
 }
 
 
-void SAXMLProtocolParserPrivate::writeValue(QDomDocument& doc, QDomElement& item, const QString& keyName, const QVariant& var)
+void SAXMLProtocolPrivate::writeValue(QDomDocument& doc, QDomElement& item, const QString& keyName, const QVariant& var)
 {
     QString vartype = var.typeName();
 
@@ -363,7 +363,7 @@ void SAXMLProtocolParserPrivate::writeValue(QDomDocument& doc, QDomElement& item
 }
 
 
-void SAXMLProtocolParserPrivate::clear()
+void SAXMLProtocolPrivate::clear()
 {
     mFunID = -1;
     mClassID = -1;
@@ -372,85 +372,85 @@ void SAXMLProtocolParserPrivate::clear()
 }
 
 
-SAXMLProtocolParser::SAXMLProtocolParser() : SAAbstractProtocolParser()
-    , d_ptr(new SAXMLProtocolParserPrivate(this))
+SAXMLProtocol::SAXMLProtocol() : SAAbstractProtocol()
+    , d_ptr(new SAXMLProtocolPrivate(this))
 {
 }
 
 
-SAXMLProtocolParser::SAXMLProtocolParser(const SAXMLProtocolParser& other) : SAAbstractProtocolParser()
+SAXMLProtocol::SAXMLProtocol(const SAXMLProtocol& other) : SAAbstractProtocol()
 {
     (*this) = other;
 }
 
 
-SAXMLProtocolParser::SAXMLProtocolParser(SAXMLProtocolParser&& other) : SAAbstractProtocolParser()
+SAXMLProtocol::SAXMLProtocol(SAXMLProtocol&& other) : SAAbstractProtocol()
 {
     this->d_ptr.reset(other.d_ptr.take());
     d_ptr->q_ptr = this;//这个尤为关键
 }
 
 
-SAXMLProtocolParser& SAXMLProtocolParser::operator =(const SAXMLProtocolParser& other)
+SAXMLProtocol& SAXMLProtocol::operator =(const SAXMLProtocol& other)
 {
     // 1.防止自身赋值
     if (this == (&other)) {
         return (*this);
     }
-    this->d_ptr.reset(new SAXMLProtocolParserPrivate(*(other.d_ptr.data()), this));
+    this->d_ptr.reset(new SAXMLProtocolPrivate(*(other.d_ptr.data()), this));
     //this->d_ptr->q_ptr = this;//这个尤为关键
     return (*this);
 }
 
 
-SAXMLProtocolParser::~SAXMLProtocolParser()
+SAXMLProtocol::~SAXMLProtocol()
 {
 }
 
 
-void SAXMLProtocolParser::setFunctionID(int funid)
+void SAXMLProtocol::setFunctionID(int funid)
 {
     d_ptr->mFunID = funid;
 }
 
 
-int SAXMLProtocolParser::getFunctionID() const
+int SAXMLProtocol::getFunctionID() const
 {
     return (d_ptr->mFunID);
 }
 
 
-void SAXMLProtocolParser::setClassID(int classid)
+void SAXMLProtocol::setClassID(int classid)
 {
     d_ptr->mClassID = classid;
 }
 
 
-int SAXMLProtocolParser::getClassID() const
+int SAXMLProtocol::getClassID() const
 {
     return (d_ptr->mClassID);
 }
 
 
-void SAXMLProtocolParser::setValue(const QString& groupName, const QString& keyName, const QVariant& var)
+void SAXMLProtocol::setValue(const QString& groupName, const QString& keyName, const QVariant& var)
 {
     d_ptr->mPropGroup.setProperty(groupName, keyName, var);
 }
 
 
-void SAXMLProtocolParser::setValue(const QString& keyName, const QVariant& var)
+void SAXMLProtocol::setValue(const QString& keyName, const QVariant& var)
 {
-    d_ptr->mPropGroup.setProperty(SAXMLProtocolParser::defaultGroupName(), keyName, var);
+    d_ptr->mPropGroup.setProperty(SAXMLProtocol::defaultGroupName(), keyName, var);
 }
 
 
-QStringList SAXMLProtocolParser::getGroupNames() const
+QStringList SAXMLProtocol::getGroupNames() const
 {
     return (d_ptr->mPropGroup.keys());
 }
 
 
-QStringList SAXMLProtocolParser::getKeyNames(const QString& groupName) const
+QStringList SAXMLProtocol::getKeyNames(const QString& groupName) const
 {
     if (!(d_ptr->mPropGroup.hasGroup(groupName))) {
         return (QStringList());
@@ -463,61 +463,61 @@ QStringList SAXMLProtocolParser::getKeyNames(const QString& groupName) const
  * @brief 从默认分组中获取key值
  * @return
  */
-QStringList SAXMLProtocolParser::getKeyNames() const
+QStringList SAXMLProtocol::getKeyNames() const
 {
-    return (getKeyNames(SAXMLProtocolParser::defaultGroupName()));
+    return (getKeyNames(SAXMLProtocol::defaultGroupName()));
 }
 
 
-bool SAXMLProtocolParser::fromString(const QString& str)
+bool SAXMLProtocol::fromString(const QString& str)
 {
     return (d_ptr->fromString(str));
 }
 
 
-QString SAXMLProtocolParser::toString() const
+QString SAXMLProtocol::toString() const
 {
     return (d_ptr->toString());
 }
 
 
-bool SAXMLProtocolParser::fromByteArray(const QByteArray& data)
+bool SAXMLProtocol::fromByteArray(const QByteArray& data)
 {
     return (d_ptr->fromByteArray(data));
 }
 
 
-QByteArray SAXMLProtocolParser::toByteArray() const
+QByteArray SAXMLProtocol::toByteArray() const
 {
     return (toString().toUtf8());
 }
 
 
-QString SAXMLProtocolParser::defaultGroupName()
+QString SAXMLProtocol::defaultGroupName()
 {
     return (DEFAULT_GROUP_NAME);
 }
 
 
-bool SAXMLProtocolParser::isHasGroup(const QString& groupName) const
+bool SAXMLProtocol::isHasGroup(const QString& groupName) const
 {
     return (d_ptr->isHasGroup(groupName));
 }
 
 
-bool SAXMLProtocolParser::isHasKey(const QString& groupName, const QString& keyName) const
+bool SAXMLProtocol::isHasKey(const QString& groupName, const QString& keyName) const
 {
     return (d_ptr->isHasKey(groupName, keyName));
 }
 
 
-QVariant SAXMLProtocolParser::getValue(const QString& groupName, const QString& keyName, const QVariant& defaultVal) const
+QVariant SAXMLProtocol::getValue(const QString& groupName, const QString& keyName, const QVariant& defaultVal) const
 {
     return (d_ptr->mPropGroup.getProperty(groupName, keyName, defaultVal));
 }
 
 
-QVariant SAXMLProtocolParser::getDefaultGroupValue(const QString& keyName, const QVariant& defaultVal) const
+QVariant SAXMLProtocol::getDefaultGroupValue(const QString& keyName, const QVariant& defaultVal) const
 {
     return (getValue(defaultGroupName(), keyName, defaultVal));
 }
@@ -527,7 +527,7 @@ QVariant SAXMLProtocolParser::getDefaultGroupValue(const QString& keyName, const
  * @brief 获取错误信息
  * @return 在@sa setProtocolData 返回false时调用
  */
-QString SAXMLProtocolParser::getErrorString() const
+QString SAXMLProtocol::getErrorString() const
 {
     return (d_ptr->mErrorMsg);
 }
@@ -535,5 +535,5 @@ QString SAXMLProtocolParser::getErrorString() const
 
 SAXMLProtocolParserPtr makeXMLProtocolParserPtr()
 {
-    return (std::make_shared<SAXMLProtocolParser>());
+    return (std::make_shared<SAXMLProtocol>());
 }

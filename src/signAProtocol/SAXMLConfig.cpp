@@ -1,4 +1,4 @@
-﻿#include "SAXMLConfigParser.h"
+﻿#include "SAXMLConfig.h"
 #include <QDir>
 #include <QFile>
 #include <QXmlStreamReader>
@@ -20,13 +20,13 @@
 #define CONFIG_KEY_LIST_NAME		"list"
 
 
-class SAXMLConfigParserPrivate
+class SAXMLConfigPrivate
 {
-    SA_IMPL_PUBLIC(SAXMLConfigParser)
+    SA_IMPL_PUBLIC(SAXMLConfig)
 public:
-    SAXMLConfigParserPrivate(SAXMLConfigParser *par);
-    SAXMLConfigParserPrivate(SAXMLConfigParser *par, const QString& cfgPath);
-    SAXMLConfigParserPrivate(const SAXMLConfigParserPrivate& other, SAXMLConfigParser *p);
+    SAXMLConfigPrivate(SAXMLConfig *par);
+    SAXMLConfigPrivate(SAXMLConfig *par, const QString& cfgPath);
+    SAXMLConfigPrivate(const SAXMLConfigPrivate& other, SAXMLConfig *p);
     bool setCfgFile(const QString& cfgPath);
     bool save(const QString& saveFilePath);
 
@@ -36,14 +36,14 @@ public:
 };
 
 
-SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(SAXMLConfigParser *par)
+SAXMLConfigPrivate::SAXMLConfigPrivate(SAXMLConfig *par)
     : q_ptr(par)
     , m_isDirty(false)
 {
 }
 
 
-SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(SAXMLConfigParser *par, const QString& cfgPath)
+SAXMLConfigPrivate::SAXMLConfigPrivate(SAXMLConfig *par, const QString& cfgPath)
     : q_ptr(par)
     , m_isDirty(false)
 {
@@ -51,7 +51,7 @@ SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(SAXMLConfigParser *par, const
 }
 
 
-SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(const SAXMLConfigParserPrivate& other, SAXMLConfigParser *p)
+SAXMLConfigPrivate::SAXMLConfigPrivate(const SAXMLConfigPrivate& other, SAXMLConfig *p)
 {
     this->q_ptr = p;
     this->m_cfgPath = other.m_cfgPath;
@@ -59,7 +59,7 @@ SAXMLConfigParserPrivate::SAXMLConfigParserPrivate(const SAXMLConfigParserPrivat
 }
 
 
-bool SAXMLConfigParserPrivate::setCfgFile(const QString& cfgPath)
+bool SAXMLConfigPrivate::setCfgFile(const QString& cfgPath)
 {
     m_cfgPath = cfgPath;
     QFile file(cfgPath);
@@ -74,7 +74,7 @@ bool SAXMLConfigParserPrivate::setCfgFile(const QString& cfgPath)
 }
 
 
-bool SAXMLConfigParserPrivate::save(const QString& saveFilePath)
+bool SAXMLConfigPrivate::save(const QString& saveFilePath)
 {
     QFile file(saveFilePath);
 
@@ -92,45 +92,45 @@ bool SAXMLConfigParserPrivate::save(const QString& saveFilePath)
 }
 
 
-SAXMLConfigParser::SAXMLConfigParser() : SAXMLProtocolParser()
-    , d_ptr(new SAXMLConfigParserPrivate(this))
+SAXMLConfig::SAXMLConfig() : SAXMLProtocol()
+    , d_ptr(new SAXMLConfigPrivate(this))
 {
 }
 
 
-SAXMLConfigParser::SAXMLConfigParser(const QString& filepath) : SAXMLProtocolParser()
-    , d_ptr(new SAXMLConfigParserPrivate(this, filepath))
+SAXMLConfig::SAXMLConfig(const QString& filepath) : SAXMLProtocol()
+    , d_ptr(new SAXMLConfigPrivate(this, filepath))
 {
 }
 
 
-SAXMLConfigParser::SAXMLConfigParser(const SAXMLConfigParser& other) : SAXMLProtocolParser()
+SAXMLConfig::SAXMLConfig(const SAXMLConfig& other) : SAXMLProtocol()
 {
     *this = other;
 }
 
 
-SAXMLConfigParser::SAXMLConfigParser(SAXMLConfigParser&& other) : SAXMLProtocolParser()
+SAXMLConfig::SAXMLConfig(SAXMLConfig&& other) : SAXMLProtocol()
 {
     this->d_ptr.reset(other.d_ptr.take());
     d_ptr->q_ptr = this;//这个尤为关键
 }
 
 
-SAXMLConfigParser& SAXMLConfigParser::operator =(const SAXMLConfigParser& other)
+SAXMLConfig& SAXMLConfig::operator =(const SAXMLConfig& other)
 {
     //SAXMLProtocolParser::operator =(*(static_cast<const SAXMLProtocolParser*>(&other)));
     if (this == (&other)) {
         return (*this);
     }
-    SAXMLProtocolParser::operator =(other);
-    this->d_ptr.reset(new SAXMLConfigParserPrivate(*(other.d_ptr.data()), this));
+    SAXMLProtocol::operator =(other);
+    this->d_ptr.reset(new SAXMLConfigPrivate(*(other.d_ptr.data()), this));
     //this->d_ptr->q_ptr = this;//这个尤为关键
     return (*this);
 }
 
 
-SAXMLConfigParser::~SAXMLConfigParser()
+SAXMLConfig::~SAXMLConfig()
 {
 }
 
@@ -140,7 +140,7 @@ SAXMLConfigParser::~SAXMLConfigParser()
  * @param filePath
  * @return
  */
-bool SAXMLConfigParser::setFilePath(const QString& filePath)
+bool SAXMLConfig::setFilePath(const QString& filePath)
 {
     return (d_ptr->setCfgFile(filePath));
 }
@@ -150,7 +150,7 @@ bool SAXMLConfigParser::setFilePath(const QString& filePath)
  * @brief 获取配置文件路径
  * @return
  */
-QString SAXMLConfigParser::getFilePath() const
+QString SAXMLConfig::getFilePath() const
 {
     return (d_ptr->m_cfgPath);
 }
@@ -162,10 +162,10 @@ QString SAXMLConfigParser::getFilePath() const
  * @param keyName
  * @param var
  */
-void SAXMLConfigParser::setValue(const QString& groupName, const QString& keyName, const QVariant& var)
+void SAXMLConfig::setValue(const QString& groupName, const QString& keyName, const QVariant& var)
 {
     d_ptr->m_isDirty = true;
-    SAXMLProtocolParser::setValue(groupName, keyName, var);
+    SAXMLProtocol::setValue(groupName, keyName, var);
 }
 
 
@@ -174,10 +174,10 @@ void SAXMLConfigParser::setValue(const QString& groupName, const QString& keyNam
  * @param keyName
  * @param var
  */
-void SAXMLConfigParser::setValue(const QString& keyName, const QVariant& var)
+void SAXMLConfig::setValue(const QString& keyName, const QVariant& var)
 {
     d_ptr->m_isDirty = true;
-    SAXMLProtocolParser::setValue(keyName, var);
+    SAXMLProtocol::setValue(keyName, var);
 }
 
 
@@ -185,7 +185,7 @@ void SAXMLConfigParser::setValue(const QString& keyName, const QVariant& var)
  * @brief 判断是否有改变
  * @return
  */
-bool SAXMLConfigParser::isDirty() const
+bool SAXMLConfig::isDirty() const
 {
     return (d_ptr->m_isDirty);
 }
@@ -196,7 +196,7 @@ bool SAXMLConfigParser::isDirty() const
  * 如果有打开文件，会保存到已有文件路径，如果没有打开文件，此函数不做任何动作
  * @return 成功返回true
  */
-bool SAXMLConfigParser::save()
+bool SAXMLConfig::save()
 {
     if (d_ptr->m_cfgPath.isEmpty()) {
         return (false);
@@ -210,7 +210,7 @@ bool SAXMLConfigParser::save()
  * @param filePath 文件路径
  * @return 成功返回true
  */
-bool SAXMLConfigParser::saveAs(const QString& filePath)
+bool SAXMLConfig::saveAs(const QString& filePath)
 {
     return (d_ptr->save(filePath));
 }
@@ -221,9 +221,9 @@ bool SAXMLConfigParser::saveAs(const QString& filePath)
  * @param data
  * @return
  */
-bool SAXMLConfigParser::fromByteArray(const QByteArray& data)
+bool SAXMLConfig::fromByteArray(const QByteArray& data)
 {
-    return (SAXMLProtocolParser::fromByteArray(data));
+    return (SAXMLProtocol::fromByteArray(data));
 }
 
 
@@ -233,14 +233,14 @@ bool SAXMLConfigParser::fromByteArray(const QByteArray& data)
  * @param groupName
  * @param keyName
  */
-void SAXMLConfigParser::splitNamePath(const QString& namePath, QString& groupName, QString& keyName)
+void SAXMLConfig::splitNamePath(const QString& namePath, QString& groupName, QString& keyName)
 {
     QStringList pl = namePath.split("/");
 
     if (1 == pl.size()) {
         groupName = "";
         keyName = pl[0];
-    }else if (2 == pl.size())   {
+    }else if (2 == pl.size()) {
         groupName = pl[0];
         keyName = pl[1];
     }else {

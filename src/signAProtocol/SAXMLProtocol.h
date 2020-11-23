@@ -1,9 +1,9 @@
-#ifndef SAXMLPROTOCOLPARSER_H
-#define SAXMLPROTOCOLPARSER_H
+#ifndef SAXMLPROTOCOL_H
+#define SAXMLPROTOCOL_H
 #include "SAProtocolGlobal.h"
-#include "SAAbstractProtocolParser.h"
+#include "SAAbstractProtocol.h"
 #include <memory>
-class SAXMLProtocolParserPrivate;
+class SAXMLProtocolPrivate;
 
 
 
@@ -62,17 +62,17 @@ class SAXMLProtocolParserPrivate;
  * @endcode
  *
  */
-class SA_PROTOCOL_EXPORT SAXMLProtocolParser : public SAAbstractProtocolParser
+class SA_PROTOCOL_EXPORT SAXMLProtocol : public SAAbstractProtocol
 {
-    SA_IMPL(SAXMLProtocolParser)
+    SA_IMPL(SAXMLProtocol)
 public:
-    SAXMLProtocolParser();
-    SAXMLProtocolParser(const SAXMLProtocolParser& other);
+    SAXMLProtocol();
+    SAXMLProtocol(const SAXMLProtocol& other);
     //移动构造函数
-    SAXMLProtocolParser(SAXMLProtocolParser&& other);
-    SAXMLProtocolParser& operator =(const SAXMLProtocolParser& other);
+    SAXMLProtocol(SAXMLProtocol&& other);
+    SAXMLProtocol& operator =(const SAXMLProtocol& other);
 
-    virtual ~SAXMLProtocolParser();
+    virtual ~SAXMLProtocol();
 
 
     //设置协议功能号
@@ -128,7 +128,7 @@ public:
     QString getErrorString() const;
 };
 
-typedef std::shared_ptr<SAXMLProtocolParser> SAXMLProtocolParserPtr;
+typedef std::shared_ptr<SAXMLProtocol> SAXMLProtocolParserPtr;
 SA_PROTOCOL_EXPORT SAXMLProtocolParserPtr makeXMLProtocolParserPtr();
 
 #endif // SAXMLPROTOCOLPARSER_H

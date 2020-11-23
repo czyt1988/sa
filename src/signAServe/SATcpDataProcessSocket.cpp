@@ -1,7 +1,7 @@
 #include "SATcpDataProcessSocket.h"
 #include "SAServeHandleFun.h"
 #include "SAServerDefine.h"
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 
 class SATcpDataProcessSocketPrivate
 {
@@ -32,7 +32,7 @@ SATcpDataProcessSocket::~SATcpDataProcessSocket()
  * @param xml
  * @return
  */
-bool SATcpDataProcessSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
+bool SATcpDataProcessSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
     if (SATcpSocket::dealXmlProtocol(header, xml)) {
         return (true);
@@ -58,7 +58,7 @@ bool SATcpDataProcessSocket::dealXmlProtocol(const SAProtocolHeader& header, con
  * @return
  */
 bool SATcpDataProcessSocket::dealReply2DPointsDescribe(const SAProtocolHeader& header,
-    const SAXMLProtocolParser& xml)
+    const SAXMLProtocol& xml)
 {
     double sum;
     double mean;

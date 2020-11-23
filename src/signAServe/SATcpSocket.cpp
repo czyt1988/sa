@@ -1,6 +1,6 @@
 #include "SATcpSocket.h"
 #include "SAProtocolHeader.h"
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #include "SAServeHandleFun.h"
 #include "SAServerDefine.h"
 #include "SACRC.h"
@@ -115,7 +115,7 @@ void SATcpSocket::ensureWrite(const SAProtocolHeader& header, const QByteArray& 
  * @param sequenceID
  * @param extendValue
  */
-void SATcpSocket::ensureWrite(const SAXMLProtocolParser& xml, int funid, int sequenceID, uint32_t extendValue)
+void SATcpSocket::ensureWrite(const SAXMLProtocol& xml, int funid, int sequenceID, uint32_t extendValue)
 {
     QByteArray data = xml.toByteArray();
     SAProtocolHeader header;
@@ -309,7 +309,7 @@ bool SATcpSocket::deal(const SAProtocolHeader& header, const QByteArray& data)
     case SA::ProtocolTypeXml:
     {
         //解析xml协议
-        SAXMLProtocolParser xml;
+        SAXMLProtocol xml;
         if (!xml.fromByteArray(data)) {
             emit error_sa(ErrorInvalidXmlProtocol, tr("Invalid Xml Protocol"));
             return (false);
@@ -330,7 +330,7 @@ bool SATcpSocket::deal(const SAProtocolHeader& header, const QByteArray& data)
  * @param xml
  * @return 返回false代表数据没有处理，返回true代表数据已经被处理
  */
-bool SATcpSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
+bool SATcpSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
     switch (header.protocolFunID)
     {

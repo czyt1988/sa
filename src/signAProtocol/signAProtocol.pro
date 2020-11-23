@@ -26,26 +26,26 @@ CONFIG += c++11
 DEFINES += SA_PROTOCOL_MAKE
 
 HEADERS += \
+    SAAbstractProtocol.h \
     SAProtocolGlobal.h \
     SAProperties.h \
     SAVariantCaster.h \
+    SAXMLConfig.h \
+    SAXMLProtocol.h \
     SAXMLTagDefined.h \
     SAGlobalConfig.h \
     SAGlobalConfigDefine.h \
     SAProtocolHeader.h \
-    SACRC.h \
-    SAXMLProtocolParser.h \
-    SAAbstractProtocolParser.h \
-    SAXMLConfigParser.h
+    SACRC.h
 
 SOURCES += \
+    SAAbstractProtocol.cpp \
     SAVariantCaster.cpp \
     SAProperties.cpp \
     SAGlobalConfig.cpp \
-    SAAbstractProtocolParse.cpp \
     SAProtocolHeader.cpp \
     SACRC.cpp \
-    SAXMLProtocolParser.cpp \
-    SAXMLConfigParser.cpp
+    SAXMLConfig.cpp \
+    SAXMLProtocol.cpp
 
 OTHER_FILES += readme.md

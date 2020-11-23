@@ -16,7 +16,7 @@ SADataProcSocket::~SADataProcSocket()
 }
 
 
-bool SADataProcSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
+bool SADataProcSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
     qDebug() << "serve rec,header fun:" << header.protocolFunID << " type:" << header.protocolTypeID << xml.toString();
     if (SATcpSocket::dealXmlProtocol(header, xml)) {
@@ -42,7 +42,7 @@ bool SADataProcSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAX
  * @param xml xml信息
  * @return
  */
-bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
+bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
     qDebug() << QStringLiteral("开始执行deal2DPointsDescribe");
     //SADataStatisticRunable* runnable = new SADataStatisticRunable(shared_from_this(),header,xml);
@@ -57,7 +57,7 @@ bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, cons
  * @param xml
  * @return
  */
-bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
+bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
     if (SA::ProtocolFunReq2DPointsDescribe != xml.getFunctionID()) {
         replyError(header, tr("unknow fun id"), SA::ProtocolErrorUnknowFun);
