@@ -772,31 +772,29 @@ QString doubleToString(const double a)
     if (a > 1e6) {
         //当数据非常大时，精度需要根据大小进行调整
         int tmp = a/1e6;
-        while (tmp / 10 != 0 && precision < 16)// precision不大于16
+        while (tmp / 10 != 0)// && precision < 16 precision不大于16
         {
             tmp /= 10;
             ++precision;
         }
         //精度还可以扩充，继续去处理小数位
-        if (precision < 16) {
-            //取出double的小数位
-            double decimal = a - floor(a);
-            //把小数转换为最大可处理的整形以便处理
-            tmp = decimal * pow(10, 16-precision);
-            //把整形的小位的0去除
-            while (tmp)//precision不大于16
-            {
-                if (0 != tmp % 10) {
-                    break;
-                }
-                tmp /= 10;
+        //取出double的小数位
+        double decimal = a - floor(a);
+        //把小数转换为最大可处理的整形以便处理
+        tmp = decimal * pow(10, 9);
+        //把整形的小位的0去除
+        while (tmp)//precision不大于16
+        {
+            if (0 != tmp % 10) {
+                break;
             }
-            //把整形剩余位取出，作为精度
-            while (tmp / 10 != 0 && precision < 16)//precision不大于16
-            {
-                tmp /= 10;
-                ++precision;
-            }
+            tmp /= 10;
+        }
+        //把整形剩余位取出，作为精度
+        while (tmp / 10 != 0)// && precision < 16 precision不大于16
+        {
+            tmp /= 10;
+            ++precision;
         }
     }else if (a < 1e-6) {
         //当数据非常小时

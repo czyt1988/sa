@@ -52,7 +52,6 @@ int SAFigureWindowChartTableModel::rowCount(const QModelIndex& parent) const
     if (nullptr == d_ptr->mFigure) {
         return (0);
     }
-    qDebug() << "rowCount" <<  d_ptr->mFigure->get2DPlots().size();
     return (d_ptr->mFigure->get2DPlots().size());
 }
 

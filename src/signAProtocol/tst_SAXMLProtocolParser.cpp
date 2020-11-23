@@ -72,13 +72,14 @@ void tst_SAXMLProtocolParser::testXMLProtocol()
 
     QFile file("./tst_SAXMLProtocolParser.xml");
 
-    file.open(QIODevice::ReadWrite);
+    file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate);
     QTextStream txt(&file);
 
     txt << protocolstring;
     txt.flush();
 
     qDebug() << "protocol xml save to:" << file.fileName();
+    file.close();
 
     SAXMLProtocolParser reader;
 
@@ -99,12 +100,7 @@ void tst_SAXMLProtocolParser::testXMLProtocol()
     qDebug() << "qAbs(dtest2 - b)" << qAbs(dtest2-b);
     qDebug() << "(qAbs(p1 - p2) * 1000000000000.:" << qAbs(dtest2 - b) * 1000000000000.;
     QVERIFY(saFuzzyCompare(reader.getValue("sa", "double test2").toDouble(), dtest2));
-
     b = reader.getValue("sa", "double large").toDouble();
-    qDebug() << "double large" << dtestlarge;
-    qDebug() << "double large read:" << b;
-    qDebug() << "qAbs(dtestlarge - b)" << qAbs(dtestlarge-b);
-    qDebug() << "(qAbs(p1 - p2) * 1000000000000.:" << qAbs(dtestlarge - b) * 1000000000000.;
     QVERIFY(qFuzzyCompare(reader.getValue("sa", "double large").toDouble(), dtestlarge));
     QVERIFY(saFuzzyCompare(reader.getValue("sa", "double small").toDouble(), dtestsmall));
     QCOMPARE(reader.getValue("sa", "stringlist test").toStringList(), strlist);

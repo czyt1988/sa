@@ -57,7 +57,7 @@ bool SA_PROTOCOL_EXPORT saFuzzyCompare(double a, double b, double esp = 1e-6);
  * 要解决大浮点数的问题，需要从转换上下手
  *
  *  这是一个效率较低的转换，它为了识别精度，做了许多处理，好处是你不用管他要显示多少位，此函数会把
- * 足够精度的浮点数显示出来，最大显示16个数字
+ * 足够精度的浮点数显示出来
  * @param a double
  * @return 精确的浮点数
  */

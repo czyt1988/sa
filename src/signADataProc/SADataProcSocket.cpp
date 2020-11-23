@@ -122,7 +122,7 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
         , sum, mean, var, stdVar, skewness, kurtosis
         , min, max, mid, peak2peak, minPoint, maxPoint, midPoint
         , tops, lows);
-#if 0
+#if 1
     qDebug()	<< "reply_2d_points_describe_xml,sum:" << sum << " mean:"  << mean
             << " var:" << var << " stdVar:"<<stdVar << " skewness:" << skewness
             << " kurtosis:" << kurtosis << " min:"<< min << " max:" << max << " peak2peak:"<<peak2peak
