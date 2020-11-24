@@ -45,9 +45,12 @@ bool SA::ensure_write(const QByteArray& data, SATcpSocket *socket, short maxtry)
 {
     qint64 wed = socket->write(data);
 
-    if (wed < data.size()) {
+    if ((wed < data.size()) && (wed >= 0)) {
         //没写完继续写
         return (ensure_write(data.data() + wed, data.size() - wed, socket, maxtry));
+    }else if (-1 == wed) {
+        qDebug() << "write error:" << socket->errorString();
+        return (false);
     }
     return (true);
 }
@@ -64,6 +67,7 @@ bool SA::write(const SAProtocolHeader& header, const QByteArray& data, SATcpSock
 {
     bool stat = false;
 
+    socket->waitForBytesWritten();
     stat = ensure_write((const char *)(&header), sizeof(SAProtocolHeader), socket);
     if (data.size() > 0) {
         stat &= ensure_write(data, socket);
@@ -93,6 +97,7 @@ bool SA::write_xml_protocol(SATcpSocket *socket, const SAXMLProtocol *xml, int f
     header.dataCrc32 = SACRC::crc32(data);
     header.sequenceID = sequenceID;
     header.extendValue = extendValue;
+
     return (write(header, data, socket));
 }
 

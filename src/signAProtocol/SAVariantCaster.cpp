@@ -796,13 +796,15 @@ QString doubleToString(const double a)
             tmp /= 10;
             ++precision;
         }
-    }else if (a < 1e-6) {
+    }else if ((a < 1e-6) && !qFuzzyCompare(a+1, 1)) {
         //当数据非常小时
         //先把数据上调
+        int i = 0;
         double ta = a;
-        while (ta < 1)
+        while (ta < 1 && i < 308)
         {
             ta *= 10;
+            ++i;//防止ta == 0
         }
         precision = 16;
         int tmp = ta * 1e16;

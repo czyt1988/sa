@@ -44,7 +44,7 @@ bool SADataProcSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAX
  */
 bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
-    qDebug() << QStringLiteral("开始执行deal2DPointsDescribe");
+    qDebug() << QStringLiteral("run _deal2DPointsDescribe");
     //SADataStatisticRunable* runnable = new SADataStatisticRunable(shared_from_this(),header,xml);
     //QThreadPool::globalInstance()->start(runnable);
     return (_deal2DPointsDescribe(header, xml));
@@ -60,6 +60,7 @@ bool SADataProcSocket::deal2DPointsDescribe(const SAProtocolHeader& header, cons
 bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
     if (SA::ProtocolFunReq2DPointsDescribe != xml.getFunctionID()) {
+        qDebug() << "unknow fun id";
         replyError(header, tr("unknow fun id"), SA::ProtocolErrorUnknowFun);
         return (true);
     }
@@ -69,10 +70,10 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
     int sortcount = 20;
 
     if (!SA::receive_request_2d_points_describe_xml(&xml, points, sortcount)) {
+        qDebug() << "receive_request_2d_points_describe_xml but xml content error";
         replyError(header, tr("xml content error"), SA::ProtocolErrorContent);
         return (true);
     }
-
     ys.reserve(points.size());
     for (const QPointF& p : points)
     {
@@ -116,7 +117,6 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
     std::copy(points.rbegin(), points.rbegin()+sortedcount, tops.begin());
     //拷贝lows
     std::copy(points.begin(), points.begin()+sortedcount, lows.begin());
-
 
     SA::reply_2d_points_describe_xml(this, header
         , sum, mean, var, stdVar, skewness, kurtosis
