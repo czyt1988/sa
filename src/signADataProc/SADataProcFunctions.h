@@ -1,7 +1,7 @@
 #ifndef SADATAPROCFUNCTIONS_H
 #define SADATAPROCFUNCTIONS_H
 #include <QFuture>
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #include "SAProtocolHeader.h"
 
 /**
@@ -10,7 +10,7 @@
  */
 
 //生成一个应答xml
-SAXMLProtocolParser xmlProtocol(int funid, const SAXMLProtocolParser& reqxml);
+SAXMLProtocol xmlProtocol(int funid, const SAXMLProtocol& reqxml);
 
 //根据请求头创建回复头
 SAProtocolHeader createXMLReplyHeader(const SAProtocolHeader& requestHeader, const QByteArray& data, int Funid);

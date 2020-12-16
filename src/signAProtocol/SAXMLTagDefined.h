@@ -39,10 +39,26 @@
 #ifndef SA_XML_TAG_VALUES
 #define SA_XML_TAG_VALUES    "values"
 #endif
+/// \def props标签，用于描述属性组，下是prop
+#ifndef SA_XML_TAG_PROPERTIES
+#define SA_XML_TAG_PROPERTIES    "props"
+#endif
 /// \def prop标签，用于描述属性，下是item
 #ifndef SA_XML_TAG_PROPERTY
 #define SA_XML_TAG_PROPERTY    "prop"
 #endif
+/// \def <prop>的属性类名（分组名）<prop name="xxx">
+#ifndef SA_XML_ATT_PROPERTY_GROUP_NAME
+#define SA_XML_ATT_PROPERTY_GROUP_NAME    "name"
+#endif
+
+/// \def item标签 用于标记一个项目
+#ifndef SA_XML_TAG_ITEM
+#define SA_XML_TAG_ITEM    "item"
+#endif
+
+
+
 /// \def default-group标签 用于标记一默认分组
 #ifndef SA_XML_TAG_DEFAULTGROUP
 #define SA_XML_TAG_DEFAULTGROUP    "default-group"
@@ -51,10 +67,9 @@
 #ifndef SA_XML_TAG_GROUP
 #define SA_XML_TAG_GROUP    "group"
 #endif
-/// \def item标签 用于标记一个项目
-#ifndef SA_XML_TAG_ITEM
-#define SA_XML_TAG_ITEM    "item"
-#endif
+
+
+
 /// \def li标签 用于标记一个数组内容
 #ifndef SA_XML_TAG_LI
 #define SA_XML_TAG_LI    "li"

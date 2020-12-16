@@ -6,95 +6,97 @@
 #include <vector>
 #include "SAAbstractDatas.h"
 #include "SAPropertySetDialog.h"
-SADataTableModel::SADataTableModel(QObject* parent):QAbstractTableModel(parent)
-  ,onSetDataFun(nullptr)
-  ,m_rowCount(0)
-  ,m_columnCount(0)
-  ,m_columnShowMin(15)
-  ,m_rowShowMin(35)
+SADataTableModel::SADataTableModel(QObject *parent) : QAbstractTableModel(parent)
+    , onSetDataFun(nullptr)
+    , m_rowCount(0)
+    , m_columnCount(0)
+    , m_columnShowMin(15)
+    , m_rowShowMin(35)
 {
 }
+
 
 void SADataTableModel::setSADataPtr(SAAbstractDatas *data)
 {
-    if(nullptr == data)
-    {
+    if (nullptr == data) {
         clear();
         return;
     }
-    setSADataPtrs({data});
+    setSADataPtrs({ data });
 }
 
-void SADataTableModel::setSADataPtrs(const QList<SAAbstractDatas *> &datas)
+
+void SADataTableModel::setSADataPtrs(const QList<SAAbstractDatas *>& datas)
 {
-    if(datas.size() <= 0)
-    {
+    if (datas.size() <= 0) {
         clear();
         return;
     }
 	beginResetModel();
     m_datas.clear();
-    for(auto i=datas.begin();i!=datas.end();++i)
+    for (auto i = datas.begin(); i != datas.end(); ++i)
     {
-        if((*i)->getDim()<=2)
-        {
+        if ((*i)->getDim() <= 2) {
             m_datas.append(*i);
         }
     }
     reCalcRowAndColumnCount();
     endResetModel();
 }
+
 
 void SADataTableModel::appendSADataPtr(SAAbstractDatas *data)
 {
-    if(nullptr == data)
-    {
+    if (nullptr == data) {
         return;
     }
-    appendSADataPtrs({data});
+    appendSADataPtrs({ data });
 }
 
-void SADataTableModel::appendSADataPtrs(QList<SAAbstractDatas*> datas)
+
+void SADataTableModel::appendSADataPtrs(QList<SAAbstractDatas *> datas)
 {
-    if(datas.size() <= 0)
-    {
+    if (datas.size() <= 0) {
         return;
     }
     beginResetModel();
-    for(auto i=datas.begin();i!=datas.end();++i)
+    for (auto i = datas.begin(); i != datas.end(); ++i)
     {
-        if((*i)->getDim()<=2)
-        {
+        if ((*i)->getDim() <= 2) {
             m_datas.append(*i);
         }
     }
     reCalcRowAndColumnCount();
     endResetModel();
 }
+
+
 ///
 /// \brief 移除显示的数据
 /// \param datas
 ///
-void SADataTableModel::removeDatas(const QList<SAAbstractDatas *> &datas)
+void SADataTableModel::removeDatas(const QList<SAAbstractDatas *>& datas)
 {
     QList<SAAbstractDatas *> newData;
-    for(int i=0;i<m_datas.size();++i)
+
+    for (int i = 0; i < m_datas.size(); ++i)
     {
-        SAAbstractDatas * d = m_datas[i];
-        if(!datas.contains(d))
-        {
+        SAAbstractDatas *d = m_datas[i];
+        if (!datas.contains(d)) {
             newData.append(d);
         }
     }
     setSADataPtrs(newData);
-
 }
+
+
 void SADataTableModel::update()
 {
     beginResetModel();
     reCalcRowAndColumnCount();
     endResetModel();
 }
+
 
 void SADataTableModel::clear()
 {
@@ -122,8 +124,10 @@ bool SADataTableModel::isEmpty() const
 ///
 SAAbstractDatas *SADataTableModel::columnToData(int c)
 {
-    return m_col2Ptr.value(c,nullptr);
+    return (m_col2Ptr.value(c, nullptr));
 }
+
+
 ///
 /// \brief 根据数据获取对应的列范围
 /// \param p
@@ -131,16 +135,18 @@ SAAbstractDatas *SADataTableModel::columnToData(int c)
 /// \param end
 /// \return
 ///
-void SADataTableModel::dataColumnRange(SAAbstractDatas *p, int &start, int &end)
+void SADataTableModel::dataColumnRange(SAAbstractDatas *p, int& start, int& end)
 {
     QList<int> cols = m_ptr2Col.values(p);
-    std::sort(cols.begin(),cols.end());
-    if(cols.size() > 0)
-    {
+
+    std::sort(cols.begin(), cols.end());
+    if (cols.size() > 0) {
         start = *(cols.begin());
         end = *(cols.end()-1);
     }
 }
+
+
 ///
 /// \brief 判断当前行列是否在数据范围里，而不是在空白处
 /// \param row
@@ -149,258 +155,307 @@ void SADataTableModel::dataColumnRange(SAAbstractDatas *p, int &start, int &end)
 ///
 bool SADataTableModel::isInDataRange(int row, int col) const
 {
-    if(col < m_col2Ptr.size ())
-    {
-        SAAbstractDatas* d = m_col2Ptr.value(col,nullptr);
-        if(d)
-        {
+    if (col < m_col2Ptr.size()) {
+        SAAbstractDatas *d = m_col2Ptr.value(col, nullptr);
+        if (d) {
             int r = d->getSize(SA::Dim1);
-            if(row < r)
-            {
-                return true;
+            if (row < r) {
+                return (true);
             }
         }
     }
-    return false;
+    return (false);
 }
 
-const QList<SAAbstractDatas *> &SADataTableModel::getSADataPtrs() const
+
+void SADataTableModel::enableCellColor(bool enable)
 {
-    return m_datas;
+    //TODO
 }
+
+
+const QList<SAAbstractDatas *>& SADataTableModel::getSADataPtrs() const
+{
+    return (m_datas);
+}
+
 
 int SADataTableModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return m_rowCount > m_rowShowMin ? m_rowCount+m_rowShowMin : m_rowShowMin;
+    return (m_rowCount > m_rowShowMin ? m_rowCount+m_rowShowMin : m_rowShowMin);
 }
+
 
 int SADataTableModel::columnCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return (m_columnCount > m_columnShowMin) ? m_columnCount : m_columnShowMin;
+    return ((m_columnCount > m_columnShowMin) ? m_columnCount : m_columnShowMin);
 }
 
 
 QVariant SADataTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole)
-        return QVariant();
-    if(Qt::Horizontal == orientation)
-    {//说明是水平表头
-        if(m_datas.size() <= 0)
-        {
-            return QVariant();
+    if (role != Qt::DisplayRole) {
+        return (QVariant());
+    }
+    if (Qt::Horizontal == orientation) {//说明是水平表头
+        if (m_datas.size() <= 0) {
+            return (QVariant());
         }
-        SAAbstractDatas* d = m_col2Ptr.value(section,nullptr);
-        if(!d)
-        {
-            return QVariant();
+        SAAbstractDatas *d = m_col2Ptr.value(section, nullptr);
+        if (!d) {
+            return (QVariant());
         }
-        switch (d->getDim()) {
+        switch (d->getDim())
+        {
         case 0:
-            return horizontalHeaderToDim0(section,d);
+            return (horizontalHeaderToDim0(section, d));
+
             break;
+
         case 1:
-            return horizontalHeaderToDim1(section,d);
+            return (horizontalHeaderToDim1(section, d));
+
             break;
+
         case 2:
-            return horizontalHeaderToDim2(section,d);
+            return (horizontalHeaderToDim2(section, d));
+
             break;
+
         default:
             break;
         }
-        return QVariant();
+        return (QVariant());
+    }else if (Qt::Vertical == orientation) {//垂直表头
+        return (section+1);
     }
-    else if(Qt::Vertical == orientation)
-    {//垂直表头
-        return section+1;
-    }
-    return QVariant();
+    return (QVariant());
 }
+
 
 QVariant SADataTableModel::data(const QModelIndex& index, int role) const
 {
-    if (!index.isValid())
-        return QVariant();
-
-    if (role == Qt::TextAlignmentRole)
-    { //返回的是对其方式
-        return int(Qt::AlignRight | Qt::AlignVCenter);
+    if (!index.isValid()) {
+        return (QVariant());
     }
-    else if (role == Qt::DisplayRole)
-    { //返回的是显示内容
+
+    if (role == Qt::TextAlignmentRole) {    //返回的是对其方式
+        return (int(Qt::AlignRight | Qt::AlignVCenter));
+    }else if (role == Qt::DisplayRole) {    //返回的是显示内容
         int col = index.column();
         int row = index.row();
-        if(col >= m_col2Ptr.size ())
-        {
-            return QVariant();
+        if (col >= m_col2Ptr.size()) {
+            return (QVariant());
         }
-        SAAbstractDatas* d = m_col2Ptr.value(col,nullptr);
-        if(!d)
-        {
-            return QVariant();
+        SAAbstractDatas *d = m_col2Ptr.value(col, nullptr);
+        if (!d) {
+            return (QVariant());
         }
-        switch (d->getDim()) {
+        switch (d->getDim())
+        {
         case 0:
-            return dataToDim0(row,col,d);
+            return (dataToDim0(row, col, d));
+
             break;
+
         case 1:
-            return dataToDim1(row,col,d);
+            return (dataToDim1(row, col, d));
+
             break;
+
         case 2:
-            return dataToDim2(row,col,d);
+            return (dataToDim2(row, col, d));
+
             break;
+
         default:
             break;
         }
-        return QVariant();
+        return (QVariant());
     }
-    return QVariant();
+    return (QVariant());
 }
+
 
 QVariant SADataTableModel::dataToDim0(int row, int col, SAAbstractDatas *d) const
 {
     Q_UNUSED(col);
-    if(row > 0)
-        return QVariant();
-    return d->displayAt(0);
+    if (row > 0) {
+        return (QVariant());
+    }
+    return (d->displayAt(0));
 }
+
 
 QVariant SADataTableModel::dataToDim1(int row, int col, SAAbstractDatas *d) const
 {
     Q_UNUSED(col);
-    if(row >= d->getSize(SA::Dim1))
-        return QVariant();
-    return d->displayAt(row);
+    if (row >= d->getSize(SA::Dim1)) {
+        return (QVariant());
+    }
+    return (d->displayAt(row));
 }
+
 
 QVariant SADataTableModel::dataToDim2(int row, int col, SAAbstractDatas *d) const
 {
-    if(row >= d->getSize(SA::Dim1))
-    {
-        return QVariant();
+    if (row >= d->getSize(SA::Dim1)) {
+        return (QVariant());
     }
     auto ite = m_ptr2ColMap.find(d);
-    if(ite == m_ptr2ColMap.end())
-    {
-        return QVariant();
+
+    if (ite == m_ptr2ColMap.end()) {
+        return (QVariant());
     }
     auto iteSize = ite->find(col);
-    if(iteSize == ite->end())
-    {
-        return QVariant();
+
+    if (iteSize == ite->end()) {
+        return (QVariant());
     }
-    return d->displayAt(row,*iteSize);
+    return (d->displayAt(row, *iteSize));
 }
+
 
 QVariant SADataTableModel::horizontalHeaderToDim0(int section, SAAbstractDatas *d) const
 {
     Q_UNUSED(section);
-    return d->getName();
+    return (d->getName());
 }
+
 
 QVariant SADataTableModel::horizontalHeaderToDim1(int section, SAAbstractDatas *d) const
 {
     Q_UNUSED(section);
-    return d->getName();
+    return (d->getName());
 }
+
 
 QVariant SADataTableModel::horizontalHeaderToDim2(int section, SAAbstractDatas *d) const
 {
     auto ite = m_ptr2ColMap.find(d);
-    if(ite == m_ptr2ColMap.end())
-    {
-        return QVariant();
+
+    if (ite == m_ptr2ColMap.end()) {
+        return (QVariant());
     }
     auto iteSize = ite->find(section);
-    if(iteSize == ite->end())
-    {
-        return QVariant();
+
+    if (iteSize == ite->end()) {
+        return (QVariant());
     }
     //特化
-    switch(d->getType())
+    switch (d->getType())
     {
     case SA::VectorPoint:
-        switch(*iteSize)
+        switch (*iteSize)
         {
-        case 0:return (0 == section) ? tr("x") : tr("%1-x").arg(d->getName());
-        default:return tr("y");
+        case 0:
+            return ((0 == section) ? tr("x") : tr("%1-x").arg(d->getName()));
+
+        default:
+            return (tr("y"));
         }
         break;
+
     case SA::VectorInterval:
-        switch(*iteSize)
+        switch (*iteSize)
         {
-        case 0:return (0 == section) ? tr("value") : tr("%1-value").arg(d->getName());
-        case 1:return tr("min");
-        default:return tr("max");
+        case 0:
+            return ((0 == section) ? tr("value") : tr("%1-value").arg(d->getName()));
+
+        case 1:
+            return (tr("min"));
+
+        default:
+            return (tr("max"));
         }
         break;
+
     case SA::VectorOHLC:
-        switch(*iteSize)
+        switch (*iteSize)
         {
-        case 0:return (0 == section) ? tr("value") : tr("%1-time").arg(d->getName());
-        case 1:return tr("open");
-        case 2:return tr("high");
-        case 3:return tr("low");
-        default:return tr("close");
+        case 0:
+            return ((0 == section) ? tr("value") : tr("%1-time").arg(d->getName()));
+
+        case 1:
+            return (tr("open"));
+
+        case 2:
+            return (tr("high"));
+
+        case 3:
+            return (tr("low"));
+
+        default:
+            return (tr("close"));
         }
         break;
+
     default:
         break;
     }
 //对于其他，就显示序号
-    if(0 == *iteSize)
-    {
+    if (0 == *iteSize) {
         //第一列把变量名也显示，后面只显示序号
-        return QString("%1(%2)").arg(d->getName()).arg(*iteSize+1);
+        return (QString("%1(%2)").arg(d->getName()).arg(*iteSize+1));
     }
-    return QString("%1").arg(*iteSize+1);
+    return (QString("%1").arg(*iteSize+1));
 }
+
 
 bool SADataTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if(!index.isValid() || nullptr == onSetDataFun || role != Qt::EditRole)
-    {
-        return false;
+    if (!index.isValid() || (nullptr == onSetDataFun) || (role != Qt::EditRole)) {
+        return (false);
+    }
+    if (value.isNull() || !value.isValid()) {
+        return (false);
     }
     const int col = index.column();
     const int row = index.row();
-    return onSetDataFun(row,col,value);
+
+    return (onSetDataFun(row, col, value));
 }
+
 
 Qt::ItemFlags SADataTableModel::flags(const QModelIndex& index) const
 {
-    if(!index.isValid())
-        return Qt::NoItemFlags;
+    if (!index.isValid()) {
+        return (Qt::NoItemFlags);
+    }
 #if 0
     //只有在数据范围内的可以编辑
     Qt::ItemFlags f = (Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    if(isInDataRange(index.row(),index.column()))
-    {
+    if (isInDataRange(index.row(), index.column())) {
         f |= Qt::ItemIsEditable;
     }
-    return f;
+    return (f);
 #else
     return (Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
 #endif
 }
+
+
 ///
 /// \brief 数据区的行号 区别于rowCount是显示区的
 /// \return
 ///
 int SADataTableModel::dataRowCount() const
 {
-    return m_rowCount;
+    return (m_rowCount);
 }
+
+
 ///
 /// \brief 数据区的列号 区别于columnCount是显示区的
 /// \return
 ///
 int SADataTableModel::dataColumnCount() const
 {
-    return m_columnCount;
+    return (m_columnCount);
 }
+
 
 void SADataTableModel::reCalcRowAndColumnCount()
 {
@@ -411,66 +466,57 @@ void SADataTableModel::reCalcRowAndColumnCount()
     m_ptr2ColMap.clear();
     m_ptr2Col.clear();
     int col = 0;
-    for(auto i = m_datas.begin ();i!=m_datas.end ();++i)
+
+    for (auto i = m_datas.begin(); i != m_datas.end(); ++i)
     {
-        if(SA::Dim0 == (*i)->getDim())
-        {
+        if (SA::Dim0 == (*i)->getDim()) {
             //0维也就是单一数字
-            QHash<int,int> col2ptrCol;
-            if(1 > m_rowCount)
+            QHash<int, int> col2ptrCol;
+            if (1 > m_rowCount) {
                 m_rowCount = 1;
+            }
             col2ptrCol[col] = 0;
             m_col2Ptr[col] = (*i);
-            m_ptr2Col.insert(*i,col);
+            m_ptr2Col.insert(*i, col);
             m_ptr2ColMap[(*i)] = col2ptrCol;
             ++col;
-        }
-        else if(SA::Dim1 == (*i)->getDim())
-        {
+        }else if (SA::Dim1 == (*i)->getDim()) {
             //1维也就是向量
-            QHash<int,int> col2ptrCol;
+            QHash<int, int> col2ptrCol;
             int size = (*i)->getSize(SA::Dim1);
-            if(size<0)
+            if (size < 0) {
                 continue;
-            if(size > m_rowCount)
+            }
+            if (size > m_rowCount) {
                 m_rowCount = size;
+            }
             col2ptrCol[col] = 0;
             m_col2Ptr[col] = (*i);
-            m_ptr2Col.insert(*i,col);
+            m_ptr2Col.insert(*i, col);
             m_ptr2ColMap[(*i)] = col2ptrCol;
             ++col;
-        }
-        else if(SA::Dim2 == (*i)->getDim())
-        {
+        }else if (SA::Dim2 == (*i)->getDim()) {
             //2维也就是表
-            QHash<int,int> col2ptrCol;
+            QHash<int, int> col2ptrCol;
             int size = (*i)->getSize(SA::Dim1);
-            if(size<0)
+            if (size < 0) {
                 continue;
-            if(size > m_rowCount)
-            {
+            }
+            if (size > m_rowCount) {
                 m_rowCount = size;
             }
             size = (*i)->getSize(SA::Dim2);
-            int k=0;
-            do{
+            int k = 0;
+            do
+            {
                 m_col2Ptr[col] = (*i);
-                m_ptr2Col.insert(*i,col);
+                m_ptr2Col.insert(*i, col);
                 col2ptrCol[col] = k;
                 ++col;
                 ++k;
-            }while(k<size);
+            }while(k < size);
             m_ptr2ColMap[(*i)] = col2ptrCol;
         }
-
     }
     m_columnCount = col;
-
 }
-
-
-
-
-
-
-

@@ -21,6 +21,8 @@ public:
     //清空内容
     void clear();
 
+    //刷新
+    void refresh();
 protected:
     // 处理语言切换事件
     void changeEvent(QEvent *e) override;

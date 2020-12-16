@@ -3,7 +3,7 @@
 #include <QTcpSocket>
 #include "SAServeGlobal.h"
 #include "SAProtocolHeader.h"
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #include <memory>
 class SATcpSocketPrivate;
 class SAAbstractSocketHandle;
@@ -66,7 +66,7 @@ public slots:
     void ensureWrite(const SAProtocolHeader& header, const QByteArray& data);
 
     //写xml数据
-    void ensureWrite(const SAXMLProtocolParser& xml, int funid, int sequenceID, uint32_t extendValue);
+    void ensureWrite(const SAXMLProtocol& xml, int funid, int sequenceID, uint32_t extendValue);
 
     //请求心跳
     void requestHeartbreat();
@@ -88,7 +88,7 @@ protected:
     virtual bool deal(const SAProtocolHeader& header, const QByteArray& data);
 
     //处理xml相关请求
-    virtual bool dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml);
+    virtual bool dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocol& xml);
 };
 
 #endif // SATCPSOCKET_H

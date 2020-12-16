@@ -1,9 +1,12 @@
-#ifndef SAXMLPROTOCOLPARSER_H
-#define SAXMLPROTOCOLPARSER_H
-#include "SAProtocolGlobal.h"
-#include "SAAbstractProtocolParser.h"
+#ifndef SAXMLPROTOCOL_H
+#define SAXMLPROTOCOL_H
 #include <memory>
-class SAXMLProtocolParserPrivate;
+#include "SAProtocolGlobal.h"
+#include "SAAbstractProtocol.h"
+#include "SAProperties.h"
+class SAXMLProtocolPrivate;
+
+
 
 /**
  * @brief SA XML协议的读写类
@@ -41,11 +44,11 @@ class SAXMLProtocolParserPrivate;
  *
  * @code
  * <sa type="xml" classid="" funid="">
- *  <values>
- *   <default-group>
+ *  <props>
+ *   <prop name="__default__">
  *     <item type="int" name="value">1</item>
- *   </default-group>
- *   <group name="g">
+ *   </prop>
+ *   <prop name="g">
  *     <item type="int" name="point-size">4</item>
  *     <item type="int" name="sequenceID">123</item>
  *     <item type="QVariantList" name="points">
@@ -54,23 +57,23 @@ class SAXMLProtocolParserPrivate;
  *        <item type="QPointF">2;3</item>
  *        <item type="QPointF">4;5</item>
  *     </item>
- *   </group>
- *  </values>
+ *   </prop>
+ *  </props>
  * </sa>
  * @endcode
  *
  */
-class SA_PROTOCOL_EXPORT SAXMLProtocolParser : public SAAbstractProtocolParser
+class SA_PROTOCOL_EXPORT SAXMLProtocol : public SAAbstractProtocol
 {
-    SA_IMPL(SAXMLProtocolParser)
+    SA_IMPL(SAXMLProtocol)
 public:
-    SAXMLProtocolParser();
-    SAXMLProtocolParser(const SAXMLProtocolParser& other);
+    SAXMLProtocol();
+    SAXMLProtocol(const SAXMLProtocol& other);
     //移动构造函数
-    SAXMLProtocolParser(SAXMLProtocolParser&& other);
-    SAXMLProtocolParser& operator =(const SAXMLProtocolParser& other);
+    SAXMLProtocol(SAXMLProtocol&& other);
+    SAXMLProtocol& operator =(const SAXMLProtocol& other);
 
-    virtual ~SAXMLProtocolParser();
+    virtual ~SAXMLProtocol();
 
 
     //设置协议功能号
@@ -121,12 +124,16 @@ public:
     virtual QVariant getValue(const QString& groupName, const QString& keyName, const QVariant& defaultVal = QVariant()) const;
     virtual QVariant getDefaultGroupValue(const QString& keyName, const QVariant& defaultVal = QVariant()) const;
 
+    //转换为SAPropertiesGroup
+    SAPropertiesGroup toPropGroup() const;
+    //从SAPropertiesGroup转换为xml协议
+    void fromPropGroup(const SAPropertiesGroup& props);
 public:
     // 获取错误信息
     QString getErrorString() const;
 };
 
-typedef std::shared_ptr<SAXMLProtocolParser> SAXMLProtocolParserPtr;
+typedef std::shared_ptr<SAXMLProtocol> SAXMLProtocolParserPtr;
 SA_PROTOCOL_EXPORT SAXMLProtocolParserPtr makeXMLProtocolParserPtr();
 
 #endif // SAXMLPROTOCOLPARSER_H

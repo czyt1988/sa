@@ -4,6 +4,11 @@
 #include <math.h>
 #include <vector>
 #include <algorithm>
+
+/**
+ * @file 用于处理序列相关的函数
+ */
+
 namespace SA
 {
 ///

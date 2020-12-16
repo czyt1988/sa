@@ -7,7 +7,7 @@
 #include "SAServeShareMemory.h"
 #include "SATcpSocket.h"
 #include "SACRC.h"
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #include "SAServerDefine.h"
 #include "SAServeHandleFun.h"
 

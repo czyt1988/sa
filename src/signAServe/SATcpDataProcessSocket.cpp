@@ -1,7 +1,7 @@
 #include "SATcpDataProcessSocket.h"
 #include "SAServeHandleFun.h"
 #include "SAServerDefine.h"
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 
 class SATcpDataProcessSocketPrivate
 {
@@ -18,6 +18,7 @@ SATcpDataProcessSocketPrivate::SATcpDataProcessSocketPrivate(SATcpDataProcessSoc
 SATcpDataProcessSocket::SATcpDataProcessSocket(QObject *par) : SATcpSocket(par)
 {
     qRegisterMetaType<QVector<QPointF> >();
+    qRegisterMetaType<SAPropertiesGroup >();
 }
 
 
@@ -32,7 +33,7 @@ SATcpDataProcessSocket::~SATcpDataProcessSocket()
  * @param xml
  * @return
  */
-bool SATcpDataProcessSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml)
+bool SATcpDataProcessSocket::dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocol& xml)
 {
     if (SATcpSocket::dealXmlProtocol(header, xml)) {
         return (true);
@@ -58,34 +59,10 @@ bool SATcpDataProcessSocket::dealXmlProtocol(const SAProtocolHeader& header, con
  * @return
  */
 bool SATcpDataProcessSocket::dealReply2DPointsDescribe(const SAProtocolHeader& header,
-    const SAXMLProtocolParser& xml)
+    const SAXMLProtocol& xml)
 {
-    double sum;
-    double mean;
-    double var;
-    double stdVar;
-    double skewness;
-    double kurtosis;
-    double min;
-    double max;
-    double mid;
-    double peak2peak;
-    QPointF minPoint;
-    QPointF maxPoint;
-    QPointF midPoint;
-    QVector<QPointF> tops;
-    QVector<QPointF> lows;
-
-    SA::receive_reply_2d_points_describe_xml(&xml, sum, mean, var, stdVar,
-        skewness, kurtosis,
-        min, max, mid, peak2peak,
-        minPoint, maxPoint, midPoint,
-        tops, lows);
-    emit receive2DPointsDescribe(sum, mean, var, stdVar,
-        skewness, kurtosis, min, max, mid, peak2peak,
-        minPoint, maxPoint, midPoint, tops, lows,
-        header.sequenceID, header.extendValue);
-
+    qDebug() <<"rec 2DPointsDescribe Reply";
+    emit receive2DPointsDescribe(xml.toPropGroup(),header.sequenceID,header.extendValue);
     return (true);
 }
 

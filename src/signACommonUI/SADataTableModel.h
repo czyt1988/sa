@@ -44,6 +44,9 @@ public:
     FUN_SET_DATA onSetDataFun;
     //判断当前行列是否在数据范围里，而不是在空白处
     bool isInDataRange(int row , int col) const;
+
+    //设置表格颜色
+    void enableCellColor(bool enable = true);
 public:
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
     int columnCount(const QModelIndex &parent=QModelIndex()) const;

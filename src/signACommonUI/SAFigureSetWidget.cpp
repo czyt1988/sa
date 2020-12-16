@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QTableView>
 #include <QHeaderView>
+#include <QLabel>
 #include "SAFigureWindowChartTableModel.h"
 
 
@@ -25,17 +26,22 @@ public:
         backgroundColorItem = new SAColorSetPropertyItem(par);
         backgroundColorItem->setText(par->tr("background color:"));
 
+        //添加说明
+        label_chartpos = new QLabel();
+
         //添加图表的列表
+
         chartposTableview = new QTableView();
         chartposTableview->clearSpans();
         chartposTableview->verticalHeader()->setVisible(false);// 水平不可见
-        chartposTableview->horizontalHeader()->setStretchLastSection(true);
+//        chartposTableview->horizontalHeader()->setStretchLastSection(true);
         chartposTableview->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         chartposListModel = new SAFigureWindowChartTableModel(chartposTableview);
         chartposTableview->setModel(chartposListModel);
 
-
+        //设置布局
         verticalLayout->addWidget(backgroundColorItem);
+        verticalLayout->addWidget(label_chartpos);
         verticalLayout->addWidget(chartposTableview);
         verticalLayout->addStretch();
         //设置文本
@@ -49,10 +55,12 @@ public:
     void retranslateUi(SAFigureSetWidget *w)
     {
         w->setWindowTitle(QApplication::translate("SAFigureSetWidget", "Figure Set", 0));
+        label_chartpos->setText(QApplication::translate("SAFigureSetWidget", "charts postion:", 0));
         backgroundColorItem->setText(QApplication::translate("SAFigureSetWidget", "Background Color", 0));
     }
 
 
+    QLabel *label_chartpos;
     SAFigureWindow *figure;
     QTableView *chartposTableview;
     SAFigureWindowChartTableModel *chartposListModel;
@@ -111,6 +119,20 @@ void SAFigureSetWidget::clear()
 {
     ui->backgroundColorItem->setCurrentColor(QColor());
     ui->chartposListModel->setFigure(nullptr);
+}
+
+
+/**
+ * @brief 刷新界面
+ */
+void SAFigureSetWidget::refresh()
+{
+    if (ui->chartposListModel) {
+        ui->chartposListModel->refresh();
+    }
+    if (ui->figure) {
+        ui->backgroundColorItem->setCurrentColor(ui->figure->getBackgroundColor().color());
+    }
 }
 
 

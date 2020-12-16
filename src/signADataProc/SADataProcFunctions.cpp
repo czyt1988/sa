@@ -34,9 +34,9 @@ SAProtocolHeader createXMLReplyHeader(const SAProtocolHeader& requestHeader, con
  * @param reqxml
  * @return
  */
-SAXMLProtocolParser xmlProtocol(int funid, const SAXMLProtocolParser& reqxml)
+SAXMLProtocol xmlProtocol(int funid, const SAXMLProtocol& reqxml)
 {
-    SAXMLProtocolParser res;
+    SAXMLProtocol res;
 
     res.setClassID(SA::ProtocolTypeXml);
     res.setFunctionID(funid);

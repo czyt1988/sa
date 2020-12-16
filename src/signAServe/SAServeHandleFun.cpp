@@ -1,5 +1,5 @@
 #include "SAServeHandleFun.h"
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #include "SAServerDefine.h"
 #include "SAXMLTagDefined.h"
 #include <QVariant>
@@ -45,9 +45,12 @@ bool SA::ensure_write(const QByteArray& data, SATcpSocket *socket, short maxtry)
 {
     qint64 wed = socket->write(data);
 
-    if (wed < data.size()) {
+    if ((wed < data.size()) && (wed >= 0)) {
         //没写完继续写
         return (ensure_write(data.data() + wed, data.size() - wed, socket, maxtry));
+    }else if (-1 == wed) {
+        qDebug() << "write error:" << socket->errorString();
+        return (false);
     }
     return (true);
 }
@@ -64,6 +67,7 @@ bool SA::write(const SAProtocolHeader& header, const QByteArray& data, SATcpSock
 {
     bool stat = false;
 
+    socket->waitForBytesWritten();
     stat = ensure_write((const char *)(&header), sizeof(SAProtocolHeader), socket);
     if (data.size() > 0) {
         stat &= ensure_write(data, socket);
@@ -81,7 +85,7 @@ bool SA::write(const SAProtocolHeader& header, const QByteArray& data, SATcpSock
  * @param extendValue
  * @return
  */
-bool SA::write_xml_protocol(SATcpSocket *socket, const SAXMLProtocolParser *xml, int funid, int sequenceID, uint32_t extendValue)
+bool SA::write_xml_protocol(SATcpSocket *socket, const SAXMLProtocol *xml, int funid, int sequenceID, uint32_t extendValue)
 {
     QByteArray data = xml->toByteArray();
     SAProtocolHeader header;
@@ -93,6 +97,7 @@ bool SA::write_xml_protocol(SATcpSocket *socket, const SAXMLProtocolParser *xml,
     header.dataCrc32 = SACRC::crc32(data);
     header.sequenceID = sequenceID;
     header.extendValue = extendValue;
+
     return (write(header, data, socket));
 }
 
@@ -129,7 +134,7 @@ bool SA::request_token_xml(int pid, const QString& appid, SATcpSocket *socket, i
     FUNCTION_RUN_PRINT();
 #endif
     //请求token
-    SAXMLProtocolParser data;
+    SAXMLProtocol data;
 
     data.setClassID(SA::ProtocolTypeXml);
     data.setFunctionID(SA::ProtocolFunReqToken);
@@ -146,7 +151,7 @@ bool SA::request_token_xml(int pid, const QString& appid, SATcpSocket *socket, i
  * @param appid
  * @return
  */
-bool SA::receive_request_token_xml(const SAXMLProtocolParser *xml, int& pid, QString& appid)
+bool SA::receive_request_token_xml(const SAXMLProtocol *xml, int& pid, QString& appid)
 {
     pid = xml->getDefaultGroupValue("pid").toInt();
     appid = xml->getDefaultGroupValue("appid").toString();
@@ -181,7 +186,7 @@ bool SA::request_heartbreat(SATcpSocket *socket)
  * @param tree
  * @return
  */
-bool SA::cast_protocol_to_satree(const SAXMLProtocolParser *xml, SATree *tree)
+bool SA::cast_protocol_to_satree(const SAXMLProtocol *xml, SATree *tree)
 {
     tree->setProperty("classid", xml->getClassID());
     tree->setProperty("funid", xml->getFunctionID());
@@ -375,7 +380,7 @@ bool SA::reply_token_xml(SATcpSocket *socket, const SAProtocolHeader& header, in
 #endif
     QString token = SA::make_token(pid, appid);
 
-    SAXMLProtocolParser reply;
+    SAXMLProtocol reply;
 
     reply.setClassID(SA::ProtocolTypeXml);
     reply.setFunctionID(SA::ProtocolFunReplyToken);
@@ -390,7 +395,7 @@ bool SA::reply_token_xml(SATcpSocket *socket, const SAProtocolHeader& header, in
  * @param token
  * @return
  */
-bool SA::receive_reply_token_xml(const SAXMLProtocolParser *xml, QString& token)
+bool SA::receive_reply_token_xml(const SAXMLProtocol *xml, QString& token)
 {
     token = xml->getDefaultGroupValue("token").toString();
     return (true);
@@ -442,7 +447,7 @@ bool SA::reply_error_xml(SATcpSocket *socket, const SAProtocolHeader& requestHea
  */
 bool SA::reply_error_xml(SATcpSocket *socket, int sequenceID, int extendValue, const QString& msg, int errcode)
 {
-    SAXMLProtocolParser xml;
+    SAXMLProtocol xml;
 
     xml.setClassID(SA::ProtocolTypeXml);
     xml.setFunctionID(ProtocolFunErrorOcc);
@@ -461,7 +466,7 @@ bool SA::reply_error_xml(SATcpSocket *socket, int sequenceID, int extendValue, c
  * @param errcode
  * @return
  */
-bool SA::receive_error_xml(const SAXMLProtocolParser *xml, QString& msg, int& errcode)
+bool SA::receive_error_xml(const SAXMLProtocol *xml, QString& msg, int& errcode)
 {
     Q_CHECK_PTR(xml);
     msg = xml->getDefaultGroupValue("msg").toString();
@@ -483,7 +488,7 @@ bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPoin
     FUNCTION_RUN_PRINT();
     qDebug().noquote() << xml.toString();
 #endif
-    SAXMLProtocolParser xml;
+    SAXMLProtocol xml;
 
     xml.setClassID(SA::ProtocolTypeXml);
     xml.setFunctionID(SA::ProtocolFunReq2DPointsDescribe);
@@ -502,7 +507,7 @@ bool SA::request_2d_points_describe_xml(SATcpSocket *socket, const QVector<QPoin
  * @param sortcount
  * @return
  */
-bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml, QVector<QPointF>& arrs, int& sortcount)
+bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocol *xml, QVector<QPointF>& arrs, int& sortcount)
 {
     QVariant pv = xml->getDefaultGroupValue("points");
 
@@ -538,6 +543,7 @@ bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocolParser *xml, 
  */
 bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
     const SAProtocolHeader& requestHeader,
+    unsigned int count,
     double sum,
     double mean,
     double var,
@@ -554,10 +560,11 @@ bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
     const QVector<QPointF>& tops,
     const QVector<QPointF>& lows)
 {
-    SAXMLProtocolParser xml;
+    SAXMLProtocol xml;
 
     xml.setClassID(SA::ProtocolTypeXml);
     xml.setFunctionID(ProtocolFunReply2DPointsDescribe);
+    xml.setValue("count", count);
     xml.setValue("sum", sum);
     xml.setValue("mean", mean);
     xml.setValue("var", var);
@@ -597,13 +604,15 @@ bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
  * @param lows
  * @return
  */
-bool SA::receive_reply_2d_points_describe_xml(const SAXMLProtocolParser *xml,
+bool SA::receive_reply_2d_points_describe_xml(const SAXMLProtocol *xml,
+    unsigned int& count,
     double& sum, double& mean, double& var, double& stdVar,
     double& skewness, double& kurtosis,
     double& min, double& max, double& mid, double& peak2peak,
     QPointF& minPoint, QPointF& maxPoint, QPointF& midPoint,
     QVector<QPointF>& tops, QVector<QPointF>& lows)
 {
+    count = xml->getDefaultGroupValue("count").toUInt();
     sum = xml->getDefaultGroupValue("sum").toDouble();
     mean = xml->getDefaultGroupValue("mean").toDouble();
     var = xml->getDefaultGroupValue("var").toDouble();

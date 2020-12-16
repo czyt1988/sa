@@ -2,10 +2,10 @@ TEMPLATE = subdirs
 SUBDIRS = \
           signAProtocol\
           signALib\
-          signAScience\
           signAServe\
           signAChart\
           signACommonUI\
+          signAScience\
           signACoreFun\
           signAPlugin/FunPlugin \
           signAPlugin/TextImport \
@@ -23,3 +23,5 @@ OTHER_FILES += \
     readme.md\
     schedule.md\
     $$PWD/../doc/dev_records.md
+
+CONFIG   += ordered

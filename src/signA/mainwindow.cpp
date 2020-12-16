@@ -51,6 +51,7 @@
 #include "SAValueTableWidget.h"
 #include "SAValueDataTableView.h"
 #include "SASetWidget.h"
+#include "SARibbonStackedWidget.h"
 // |------操作
 
 //===signACommonUI
@@ -87,6 +88,7 @@
 // |-----宏-----------------
 #include "DebugInfo.h"
 // |-----model class --------------
+
 #include "MdiWindowModel.h"
 #include "SADataFeatureTreeModel.h"
 #include <SAVariantHashTableModel.h>
@@ -725,11 +727,10 @@ void MainWindow::onLayoutWidgetSelectedChart(SAChart2D *chart)
     SAFigureWindow *fig = getCurrentFigureWindow();
 
     fig->setCurrent2DPlot(chart);
-    if(ui->setWidget->currentSettingChart() != chart)
-    {
+    if (ui->setWidget->currentSettingChart() != chart) {
         ui->setWidget->setChart(chart);
     }
-    if(ui->setWidget->currentSettingFigure() != fig){
+    if (ui->setWidget->currentSettingFigure() != fig) {
         ui->setWidget->setFigure(fig);
     }
 }
@@ -841,11 +842,10 @@ void MainWindow::onActionSelectCurrentCursorToActiveChartTriggered(bool on)
     }
     SA_SET_AUTO_WAIT_CURSOR();
     fig->setCurrent2DPlot(m_figureRightClickChart);
-    if(ui->setWidget->currentSettingChart() != m_figureRightClickChart)
-    {
+    if (ui->setWidget->currentSettingChart() != m_figureRightClickChart) {
         ui->setWidget->setChart(m_figureRightClickChart);
     }
-    if(ui->setWidget->currentSettingFigure() != fig){
+    if (ui->setWidget->currentSettingFigure() != fig) {
         ui->setWidget->setFigure(fig);
     }
 }
@@ -2023,6 +2023,12 @@ void MainWindow::onActionFigureEditSubPlotGeometryTriggered(bool on)
 
     if (fig) {
         fig->enableSubWindowEditMode(on);
+        if (!on) {
+            SAFigureSetWidget *fsw = ui->setWidget->getFigureSetWidget();
+            if (fsw) {
+                fsw->refresh();
+            }
+        }
     }else {
         ui->actionFigureEditSubPlotGeometry->setChecked(false);
     }
@@ -2960,29 +2966,39 @@ void MainWindow::setValueView(const QList<SAAbstractDatas *>& datas, bool showIn
 ///
 void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
 {
-    Q_UNUSED(old);
     if (now) {
         if (QwtPlotCanvas *c = qobject_cast<QwtPlotCanvas *>(now)) {
+            //如果选中的窗口是QwtPlotCanvas，说明是选中了绘图就取消TableRibbonContext的激活
             Q_UNUSED(c);
             m_lastForceType = SAUIInterface::FigureWindowFocus;
             setTableRibbonContextCategoryVisible(false);
         }else if (SAValueManagerTreeView *v = qobject_cast<SAValueManagerTreeView *>(now)) {
+            //如果选中的窗口是SAValueManagerTreeView就取消TableRibbonContext的激活
             Q_UNUSED(v);
             setTableRibbonContextCategoryVisible(false);
         }else if (SAValueDataTableView *v = qobject_cast<SAValueDataTableView *>(now)) {
+            //如果选中的窗口是SAValueDataTableView就激活TableRibbonContext
             Q_UNUSED(v);
             m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
             setTableRibbonContextCategoryVisible(true);
-        } else if (now == ui->dockWidget_valueViewer) {
+        } else if (now == ui->dockWidget_valueViewer || now == ui->tabWidget_valueViewer) {
+            // 如果选中的窗口是dockWidget_valueViewer，或者tabWidget_valueViewer等SAValueDataTableView
+            // 的父级窗口，也把TableRibbonContext激活
             m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
             setTableRibbonContextCategoryVisible(true);
-        }else if (ui->tabWidget_valueViewer == now) {
-            m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
-            setTableRibbonContextCategoryVisible(true);
-        }else {
+
+        }else if (SARibbonStackedWidget* v = qobject_cast<SARibbonStackedWidget*>(now) ) {
+            //如果是回到ribbon，就不做任何操作
+
+        }
+        else {
             setTableRibbonContextCategoryVisible(false);
         }
-        qDebug() << now->metaObject()->className();
+
+    }
+    if(old && now)
+    {
+        qDebug() << old->metaObject()->className() << " -> " << now->metaObject()->className();
     }
 }
 

@@ -199,7 +199,7 @@ public:
     SARibbonPannel *chartLegendCategoryWindowPannel;
     SARibbonToolButton *ribbonButtonShowLegend;
     SARibbonToolButton *ribbonButtonShowLegendPanel;
-
+    //
     SARibbonPannel *chartGridCategoryWindowPannel;
     SARibbonToolButton *ribbonButtonShowGrid;
     SARibbonToolButton *ribbonButtonShowHGrid;

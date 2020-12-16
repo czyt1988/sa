@@ -12,11 +12,9 @@ QT += core
 TARGET = signACoreFun
 TEMPLATE = lib
 
-CONFIG(debug, debug|release){
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
-}else {
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
-}
+include(../sa_common.pri)
+DESTDIR = $$SA_LIBDIR
+
 CONFIG += c++11
 
 #常用程序算法封装

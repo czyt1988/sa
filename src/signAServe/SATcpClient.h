@@ -1,12 +1,12 @@
 #ifndef SATCPCLIENT_H
 #define SATCPCLIENT_H
 #include "SAServeGlobal.h"
-#include "SAAbstractProtocolParser.h"
+#include "SAAbstractProtocol.h"
 #include "SAProtocolHeader.h"
 #include <QAbstractSocket>
 #include <QObject>
 #include <memory>
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #define __PRINT_FUNCTION_RUN_INFO    1
 #if __PRINT_FUNCTION_RUN_INFO
 #include <QDebug>
@@ -21,7 +21,7 @@
 #endif
 
 class SATcpClientPrivate;
-class SAXMLProtocolParser;
+class SAXMLProtocol;
 class SATcpSocket;
 
 /**

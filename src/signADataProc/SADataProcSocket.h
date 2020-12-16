@@ -15,15 +15,15 @@ public:
     ~SADataProcSocket();
 
     //处理xml相关请求
-    virtual bool dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml) override;
+    virtual bool dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocol& xml) override;
 
 protected:
     //处理2维点描述
-    virtual bool deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml);
+    virtual bool deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocol& xml);
 
 private:
     //处理点序列的具体函数
-    bool _deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml);
+    bool _deal2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocol& xml);
 };
 
 #endif // SADATAPROCSECTION_H

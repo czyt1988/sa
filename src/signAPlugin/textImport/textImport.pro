@@ -30,11 +30,9 @@ DEFINES += SA_COMMON_PLUGIN_LIB_MAKE#创建插件必须添加此宏
 
 TARGET        = textImport
 
-CONFIG(debug, debug|release){
-    DESTDIR = $$PWD/../../bin_qt$$[QT_VERSION]_debug/plugin
-}else {
-    DESTDIR = $$PWD/../../bin_qt$$[QT_VERSION]_release/plugin
-}
+include(../../sa_common.pri)
+DESTDIR = $$SA_PLUGIN_LIBDIR
+
 HEADERS += \
     SATextDataImport.h \
     TextFileImportDialog.h \

@@ -1,9 +1,5 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
+include(../sa_common.pri)
+LIBS += -L$$SA_LIBDIR -lsignAProtocol
 
-
-CONFIG(debug, debug|release){
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_debug/libs/ -lsignAProtocol
-}else {
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_release/libs/ -lsignAProtocol
-}

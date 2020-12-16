@@ -32,7 +32,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>0</number>
+      <number>1</number>
      </property>
      <item>
       <widget class="QToolButton" name="toolButton_clearDataFeature">
@@ -48,6 +48,9 @@
          <height>22</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>clear all marker in chart</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -56,7 +59,7 @@
          <normaloff>:/icons/icons/clearMarked.png</normaloff>:/icons/icons/clearMarked.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -83,12 +86,26 @@
      </item>
      <item>
       <widget class="QToolButton" name="toolButton_expandAll">
+       <property name="toolTip">
+        <string>expand all</string>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="icon">
         <iconset resource="../icons.qrc">
          <normaloff>:/icons/icons/expandAll.svg</normaloff>:/icons/icons/expandAll.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_requestCalc">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/icons/refresh.svg</normaloff>:/icons/icons/refresh.svg</iconset>
        </property>
       </widget>
      </item>

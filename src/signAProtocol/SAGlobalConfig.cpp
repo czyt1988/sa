@@ -5,7 +5,7 @@
 #include <QSet>
 #include <QDir>
 #include <QFileInfo>
-#include "SAXMLConfigParser.h"
+#include "SAXMLConfig.h"
 
 QString SAGlobalConfig::s_configFilePath = SAGlobalConfig::makeDefaultConfigPath();
 QString SAGlobalConfig::s_configFileName = "sa.config";
@@ -14,7 +14,7 @@ class SAGlobalConfigPrivate
     SA_IMPL_PUBLIC(SAGlobalConfig)
 public:
     SAGlobalConfigPrivate(SAGlobalConfig* par);
-    SAXMLConfigParser m_xmlConfig;
+    SAXMLConfig m_xmlConfig;
 };
 
 SAGlobalConfigPrivate::SAGlobalConfigPrivate(SAGlobalConfig* par):q_ptr(par)
@@ -25,7 +25,7 @@ SAGlobalConfigPrivate::SAGlobalConfigPrivate(SAGlobalConfig* par):q_ptr(par)
 
 //============================================
 
-SAGlobalConfig::SAGlobalConfig(const QString &cfgPath):SAXMLConfigParser(cfgPath)
+SAGlobalConfig::SAGlobalConfig(const QString &cfgPath):SAXMLConfig(cfgPath)
   ,d_ptr(new SAGlobalConfigPrivate(this))
 {
 }

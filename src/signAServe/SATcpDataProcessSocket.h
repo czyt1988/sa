@@ -2,7 +2,7 @@
 #define SATCPDATAPROCESSSOCKET_H
 #include "SAServeGlobal.h"
 #include "SATcpSocket.h"
-#include "SAXMLProtocolParser.h"
+#include "SAXMLProtocol.h"
 #include <memory>
 #include <SAItem.h>
 
@@ -20,10 +20,10 @@ public:
     ~SATcpDataProcessSocket();
 
 protected:
-    virtual bool dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocolParser& xml) override;
+    virtual bool dealXmlProtocol(const SAProtocolHeader& header, const SAXMLProtocol& xml) override;
 
 private:
-    bool dealReply2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocolParser& xml);
+    bool dealReply2DPointsDescribe(const SAProtocolHeader& header, const SAXMLProtocol& xml);
 
 public slots:
     //请求2维数据的统计描述
@@ -35,24 +35,7 @@ signals:
      * @brief 返回数据点描述结果
      * @param res 结果以satree来进行描述
      */
-    void receive2DPointsDescribe(double sum
-        , double mean
-        , double var
-        , double stdVar
-        , double skewness
-        , double kurtosis
-        , double min
-        , double max
-        , double mid
-        , double peak2peak
-        , const QPointF& minPoint
-        , const QPointF& maxPoint
-        , const QPointF& midPoint
-        , const QVector<QPointF>& tops
-        , const QVector<QPointF>& lows
-        , int sequenceID
-        , unsigned int extendValue);
+    void receive2DPointsDescribe(const SAPropertiesGroup& res,int sequenceID,unsigned int extendValue);
 };
 Q_DECLARE_METATYPE(QVector<QPointF>)
-
 #endif // SADATAPROCESSCLIENT_H
