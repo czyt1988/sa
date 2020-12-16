@@ -76,10 +76,11 @@ SADataFeatureWidget::SADataFeatureWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     qRegisterMetaType<QVector<QPointF> >();
-
+    qRegisterMetaType<SAPropertiesGroup>();
     connect(ui->treeView, &QTreeView::clicked, this, &SADataFeatureWidget::onTreeViewClicked);
     connect(ui->toolButton_clearDataFeature, &QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonClearDataFeatureClicked);
-    connect(ui->toolButton_expandAll,&QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonExpandAllClicked);
+    connect(ui->toolButton_expandAll, &QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonExpandAllClicked);
+    connect(ui->toolButton_requestCalc, &QToolButton::clicked, this, &SADataFeatureWidget::onToolButtonRequestCalc);
     //消息转发
     connect(&m_client, &SADataClient::messageInfo, this, &SADataFeatureWidget::showMessageInfo);
     connect(&m_client, &SADataClient::heartbeatCheckerTimerout, this, &SADataFeatureWidget::onHeartbeatCheckerTimerout);
@@ -99,6 +100,36 @@ SADataFeatureWidget::~SADataFeatureWidget()
  * @param arg1
  */
 void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *subwnd)
+{
+    calcFigureFeature(subwnd);
+}
+
+
+///
+/// \brief 计算绘图窗口的dataFeature
+/// \param figure 绘图窗口指针，不允许null
+///
+void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindow *figure, SADataFeatureTreeModel *model)
+{
+    Q_CHECK_PTR(subwnd);
+    Q_CHECK_PTR(figure);
+    Q_CHECK_PTR(model);
+    //获取所有的chart逐一调用接口进行计算
+    QList<SAChart2D *> charts = figure->get2DPlots();
+
+    for (SAChart2D *c : charts)
+    {
+        //把可计算的item筛选出来
+        QwtPlotItemList itemList = SADataFeatureTreeModel::filterCanDisplayItems(c->itemList());
+        for (auto i : itemList)
+        {
+            calcPlotItemFeature(subwnd, c, model, i);
+        }
+    }
+}
+
+
+void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd)
 {
     if (nullptr == subwnd) {
         return;
@@ -137,27 +168,9 @@ void SADataFeatureWidget::mdiSubWindowActived(QMdiSubWindow *subwnd)
 }
 
 
-///
-/// \brief 计算绘图窗口的dataFeature
-/// \param figure 绘图窗口指针，不允许null
-///
-void SADataFeatureWidget::calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindow *figure, SADataFeatureTreeModel *model)
+void SADataFeatureWidget::calcFigureFeature()
 {
-    Q_CHECK_PTR(subwnd);
-    Q_CHECK_PTR(figure);
-    Q_CHECK_PTR(model);
-    //获取所有的chart逐一调用接口进行计算
-    QList<SAChart2D *> charts = figure->get2DPlots();
-
-    for (SAChart2D *c : charts)
-    {
-        //把可计算的item筛选出来
-        QwtPlotItemList itemList = SADataFeatureTreeModel::filterCanDisplayItems(c->itemList());
-        for (auto i : itemList)
-        {
-            calcPlotItemFeature(subwnd, c, model, i);
-        }
-    }
+    calcFigureFeature(m_lastActiveSubWindow);
 }
 
 
@@ -262,6 +275,15 @@ void SADataFeatureWidget::mdiSubWindowClosed(QMdiSubWindow *arg1)
         }
     }
     m_mdiToModel.remove(arg1);
+}
+
+
+/**
+ * @brief 重新请求服务器计算
+ */
+void SADataFeatureWidget::onToolButtonRequestCalc()
+{
+    calcFigureFeature();
 }
 
 
@@ -384,24 +406,10 @@ void SADataFeatureWidget::onToolButtonClearDataFeatureClicked()
     });
 }
 
+
 void SADataFeatureWidget::onToolButtonExpandAllClicked()
 {
     ui->treeView->expandAll();
-}
-
-
-void SADataFeatureWidget::onChartHide()
-{
-}
-
-
-void SADataFeatureWidget::onChartDestroy()
-{
-}
-
-
-void SADataFeatureWidget::onFigureDestroy()
-{
 }
 
 
@@ -431,12 +439,28 @@ void SADataFeatureWidget::onHeartbeatCheckerTimerout()
  * @param sequenceID
  * @param extendValue
  */
-void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, double var, double stdVar,
-    double skewness, double kurtosis, double min, double max, double mid, double peak2peak,
-    const QPointF& minPoint, const QPointF& maxPoint, const QPointF& midPoint, const QVector<QPointF>& tops, const QVector<QPointF>& lows,
-    int sequenceID, uint32_t extendValue)
+void SADataFeatureWidget::onReceive2DPointsDescribe(const SAPropertiesGroup &propgroups,int sequenceID, unsigned int extendValue)
 {
     Q_UNUSED(extendValue);
+    qDebug() << "Receive 2D Points Describe";
+    const SAProperties& prop = propgroups.properties(SAXMLProtocol::defaultGroupName());
+    unsigned int count = prop.getProperty("count").toUInt();
+    double sum = prop.getProperty("sum").toDouble();
+    double mean = prop.getProperty("mean").toDouble();
+    double var = prop.getProperty("var").toDouble();
+    double stdVar = prop.getProperty("stdVar").toDouble();
+    double skewness = prop.getProperty("skewness").toDouble();
+    double kurtosis = prop.getProperty("kurtosis").toDouble();
+    double min = prop.getProperty("min").toDouble();
+    double max = prop.getProperty("max").toDouble();
+    double mid = prop.getProperty("mid").toDouble();
+    double peak2peak = prop.getProperty("peak2peak").toDouble();
+    QPointF minPoint = prop.getProperty("min-point").toPointF();
+    QPointF maxPoint = prop.getProperty("max-point").toPointF();
+    QPointF midPoint = prop.getProperty("mid-point").toPointF();
+    QVector<QPointF> tops = prop.getProperty("sorted-tops").value<QVector<QPointF> >();
+    QVector<QPointF> lows = prop.getProperty("sorted-lows").value<QVector<QPointF> >();
+
     QPair<SADataFeatureTreeModel *, DataInfo> res = findModelBySsequenceID(sequenceID);
     SADataFeatureTreeModel *model = res.first;
     DataInfo di = res.second;
@@ -446,6 +470,11 @@ void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, dou
         return;
     }
     SADataFeatureTreeModel::ItemPtr it = nullptr;
+
+    it = model->setItemValue(di.item, tr("count"), count);
+//    if (it) {
+//        it->setIcon(ICON_SUM);
+//    }
 
     it = model->setItemValue(di.item, tr("sum"), sum);
     if (it) {
@@ -553,35 +582,8 @@ void SADataFeatureWidget::onReceive2DPointsDescribe(double sum, double mean, dou
             }
         }
     }
+
     //qDebug() << midPoint << tops;
     model->reflash();
     ui->treeView->expandAll();
-}
-
-
-/**
- * @brief 对MdiSubWindow进行绑定
- * @param w
- */
-void SADataFeatureWidget::bindMdiSubWindow(QMdiSubWindow *w)
-{
-    if (nullptr == w) {
-        return;
-    }
-    SAFigureWindow *fig = getFigureFromSubWindow(w);
-
-    if (nullptr == fig) {
-        return;
-    }
-    //进行信号绑定
-    connect(fig, &SAFigureWindow::destroyed, this, &SADataFeatureWidget::onFigureDestroy);
-}
-
-
-/**
- * @brief 对已经绑定的MdiSubWindow进行解绑
- * @param w
- */
-void SADataFeatureWidget::unbindMdiSubWindow(QMdiSubWindow *w)
-{
 }

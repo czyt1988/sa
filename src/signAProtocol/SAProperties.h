@@ -21,7 +21,7 @@ public:
     //设置属性
     void setProperty(const QString& key, const QVariant& value);
 };
-
+Q_DECLARE_METATYPE(SAProperties)
 
 /**
  * @brief 属性组
@@ -38,8 +38,9 @@ public:
     //获取一组属性，必须先确保有这个分组
     const SAProperties& constProperties(const QString& group) const;
 
-    //获取一组属性的引用，如果没有，会插入一个默认属性
+    //获取一组属性的引用，如果没有，会插入一个默认属性,但对于常量操作不会插入，而是触发断言
     SAProperties& properties(const QString& group);
+    const SAProperties& properties(const QString& group) const;
 
     //获取一组属性
     SAProperties getProperties(const QString& group);
@@ -53,5 +54,6 @@ public:
     //判断是否存在分组
     bool hasGroup(const QString& group);
 };
+Q_DECLARE_METATYPE(SAPropertiesGroup)
 
 #endif // SAPROPERTIES_H

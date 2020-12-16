@@ -33,6 +33,7 @@ CONFIG(debug, debug|release){
 HEADERS += \
         $$PWD/SAUtilGlobal.h \
         $$PWD/SAAlgorithm.h \
+        SAColorAlgorithm.h \
         SAQtSeriesAlgorithm.h \
         SASeriesAlgorithm.h
 

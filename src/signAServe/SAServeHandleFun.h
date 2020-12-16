@@ -131,6 +131,7 @@ SASERVE_EXPORT bool receive_request_2d_points_describe_xml(const SAXMLProtocol *
 //回复2维数组描述
 SASERVE_EXPORT bool reply_2d_points_describe_xml(SATcpSocket *socket
     , const SAProtocolHeader& requestHeader
+    , unsigned int count
     , double sum
     , double mean
     , double var
@@ -149,6 +150,7 @@ SASERVE_EXPORT bool reply_2d_points_describe_xml(SATcpSocket *socket
 
 //解析2维数组描述的回复
 SASERVE_EXPORT bool receive_reply_2d_points_describe_xml(const SAXMLProtocol *xml
+    , unsigned int& count
     , double& sum
     , double& mean
     , double& var

@@ -543,6 +543,7 @@ bool SA::receive_request_2d_points_describe_xml(const SAXMLProtocol *xml, QVecto
  */
 bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
     const SAProtocolHeader& requestHeader,
+    unsigned int count,
     double sum,
     double mean,
     double var,
@@ -563,6 +564,7 @@ bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
 
     xml.setClassID(SA::ProtocolTypeXml);
     xml.setFunctionID(ProtocolFunReply2DPointsDescribe);
+    xml.setValue("count", count);
     xml.setValue("sum", sum);
     xml.setValue("mean", mean);
     xml.setValue("var", var);
@@ -603,12 +605,14 @@ bool SA::reply_2d_points_describe_xml(SATcpSocket *socket,
  * @return
  */
 bool SA::receive_reply_2d_points_describe_xml(const SAXMLProtocol *xml,
+    unsigned int& count,
     double& sum, double& mean, double& var, double& stdVar,
     double& skewness, double& kurtosis,
     double& min, double& max, double& mid, double& peak2peak,
     QPointF& minPoint, QPointF& maxPoint, QPointF& midPoint,
     QVector<QPointF>& tops, QVector<QPointF>& lows)
 {
+    count = xml->getDefaultGroupValue("count").toUInt();
     sum = xml->getDefaultGroupValue("sum").toDouble();
     mean = xml->getDefaultGroupValue("mean").toDouble();
     var = xml->getDefaultGroupValue("var").toDouble();

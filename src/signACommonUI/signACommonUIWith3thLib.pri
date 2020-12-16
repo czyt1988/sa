@@ -2,12 +2,9 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 INCLUDEPATH += $$PWD/Chart2D
 DEPENDPATH += $$PWD/Chart2D
+include(../sa_common.pri)
+LIBS += -L$$SA_LIBDIR -lsignACommonUI
 
-CONFIG(debug, debug|release){
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_debug/libs/ -lsignACommonUI
-}else {
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_release/libs/ -lsignACommonUI
-}
 include($$PWD/../signAChart/signAChart.pri)
 
 #qwt

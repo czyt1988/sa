@@ -7,11 +7,10 @@ message("--------------SA---------------------------")
 message(Qt version: $$[QT_VERSION])
 message(Qt is installed in $$[QT_INSTALL_PREFIX])
 
-CONFIG(debug, debug|release){
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug
-}else {
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release
-}
+include(../sa_common.pri)
+DESTDIR = $$SA_BIN_DIR
+
+message(SA will build in $$DESTDIR)
 
 QT += core gui
 QT += sql

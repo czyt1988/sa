@@ -13,10 +13,15 @@
 #include "SACsvStream.h"
 #include "SAServeHandleFun.h"
 
+
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
 #pragma execution_character_set("utf-8")
 #endif
-
+#ifdef Q_OS_WIN
+#ifdef _DEBUG
+#include <crtdbg.h>
+#endif
+#endif
 const int max_start_serve_retry_count = 10;
 
 //日志文件指针
@@ -37,8 +42,11 @@ void sa_log_out_put(QtMsgType type, const QMessageLogContext& context, const QSt
 void start_serve_process(int maxTrycount = 20);
 
 
+
 int main(int argc, char *argv[])
 {
+    int r(-1);
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #if defined(_MSC_VER) && (_MSC_VER < 1600)
     QTextCodec::setCodecForTr(QTextCodec::codecForName("GB18030"));
@@ -68,7 +76,8 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    int r = a.exec();
+    r = a.exec();
+
     return (r);
 }
 

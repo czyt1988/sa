@@ -15,11 +15,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signAServe
 TEMPLATE = lib
 
-CONFIG(debug, debug|release){
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/libs
-}else {
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/libs
-}
+include(../sa_common.pri)
+DESTDIR = $$SA_LIBDIR
+
 DEFINES += SASERVE_MAKE \
            SA_SERVE_DEBUG_PRINT
 

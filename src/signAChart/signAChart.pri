@@ -7,9 +7,6 @@ DEPENDPATH += $$PWD
 DEFINES += USE_QWT
 CONFIG += qwt
 QWT_CONFIG  += QwtDll
+include(../sa_common.pri)
+LIBS += -L$$SA_LIBDIR -lsignAChart
 
-CONFIG(debug, debug|release){
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_debug/libs/ -lsignAChart
-}else {
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_release/libs/ -lsignAChart
-}

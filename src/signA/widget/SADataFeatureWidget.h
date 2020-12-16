@@ -55,6 +55,9 @@ signals:
     void showMessageInfo(const QString& info, SA::MeaasgeType messageType = SA::NormalMessage);
 
 private slots:
+    //重新请求服务器计算
+    void onToolButtonRequestCalc();
+
     //树形控件点击
     void onTreeViewClicked(const QModelIndex& index);
 
@@ -62,58 +65,32 @@ private slots:
     void onToolButtonClearDataFeatureClicked();
     void onToolButtonExpandAllClicked();
 
-    //图片隐藏触发的槽，隐藏绘图需要对显示的信息也隐藏
-    void onChartHide();
-
-    //绘图销毁触发的槽，绘图销毁，对数据进行销毁
-    void onChartDestroy();
-
-    //fig窗口销毁
-    void onFigureDestroy();
-
     //心跳超时
     void onHeartbeatCheckerTimerout();
 
     //获取服务器的反馈
-    void onReceive2DPointsDescribe(double sum
-        , double mean
-        , double var
-        , double stdVar
-        , double skewness
-        , double kurtosis
-        , double min
-        , double max
-        , double mid
-        , double peak2peak
-        , const QPointF& minPoint
-        , const QPointF& maxPoint
-        , const QPointF& midPoint
-        , const QVector<QPointF>& tops
-        , const QVector<QPointF>& lows
-        , int sequenceID
-        , uint32_t extendValue);
+    void onReceive2DPointsDescribe(const SAPropertiesGroup& propgroups,int sequenceID,unsigned int extendValue);
 
 
 private:
-    //对MdiSubWindow进行绑定
-    void bindMdiSubWindow(QMdiSubWindow *w);
-
-    //对已经绑定的MdiSubWindow进行解绑
-    void unbindMdiSubWindow(QMdiSubWindow *w);
+    //计算绘图窗口的dataFeature
+    void calcFigureFeature();
+    void calcFigureFeature(QMdiSubWindow *subwnd);
+    void calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindow *figure, SADataFeatureTreeModel *model);
 
     //获取mdisubwindow的FigureWindow
     SAFigureWindow *getFigureFromSubWindow(QMdiSubWindow *sub);
 
-    //计算绘图窗口的dataFeature
-    void calcFigureFeature(QMdiSubWindow *subwnd, SAFigureWindow *figure, SADataFeatureTreeModel *model);
 
     //通过流水号找到对应的model和datainfo，如果没有找到返回nullptr
     QPair<SADataFeatureTreeModel *, DataInfo> findModelBySsequenceID(int sequenceID);
 
     //设置点击反馈
     void setupClickedYValueAction(SADataFeatureTreeModel::ItemPtr it, const double& v);
+
     //设置点击反馈
     void setupClickedPointFValueAction(SADataFeatureTreeModel::ItemPtr it, const QPointF& v);
+
 private:
     //计算一个plot item
     void calcPlotItemFeature(QMdiSubWindow *subwnd, SAChart2D *chart, SADataFeatureTreeModel *model, QwtPlotItem *plotitem);

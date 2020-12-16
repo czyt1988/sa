@@ -33,6 +33,11 @@ SADataClient::~SADataClient()
     }
 }
 
+QString SADataClient::defaultGroupName()
+{
+    return SAXMLProtocol::defaultGroupName();
+}
+
 
 /**
  * @brief 初始化

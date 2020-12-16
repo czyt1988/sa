@@ -1,5 +1,5 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-
-LIBS += -L$$PWD/../bin/libs/ -lsignACoreFun
+include(../sa_common.pri)
+LIBS += -L$$SA_LIBDIR -lsignACoreFun

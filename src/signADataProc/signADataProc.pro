@@ -22,10 +22,10 @@ QT += core gui
 QT += concurrent
 QT += network
 QT += xml
-
+include(../sa_common.pri)
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-
+DESTDIR = $$SA_BIN_DIR
 OTHER_FILES += readme.md
 
 CONFIG(debug, debug|release){

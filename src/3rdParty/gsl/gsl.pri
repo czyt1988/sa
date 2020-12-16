@@ -2,8 +2,14 @@ win32{#win32下需要gnu32
     DEFINES += GSL_DLL#此句不加将会遇到一些连接错误
     INCLUDEPATH += $$PWD\include
     DEPENDPATH += $$PWD
-    LIBS += -L$$PWD\lib -llibgsl
-    LIBS += -L$$PWD\lib -llibgslcblas
+    contains(QT_ARCH, i386) {
+        LIBS += -L$$PWD\lib -llibgsl
+        LIBS += -L$$PWD\lib -llibgslcblas
+    }else {
+        LIBS += -L$$PWD\lib64 -llibgsl-0
+        LIBS += -L$$PWD\lib64 -llibgslcblas-0
+    }
+
 
 #HEADERS += \
 #    $$PWD\include\gsl\gsl_errno.h \

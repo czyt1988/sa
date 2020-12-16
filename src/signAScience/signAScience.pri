@@ -2,9 +2,6 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 HEADERS += \
     $$PWD/SAMath.h 
+include(../sa_common.pri)
+LIBS += -L$$SA_LIBDIR -lsignAScience
 
-CONFIG(debug, debug|release){
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_debug/libs/ -lsignAScience
-}else {
-    LIBS += -L$$PWD/../bin_qt$$[QT_VERSION]_release/libs/ -lsignAScience
-}

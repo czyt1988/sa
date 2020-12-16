@@ -168,6 +168,12 @@ bool SADataTableModel::isInDataRange(int row, int col) const
 }
 
 
+void SADataTableModel::enableCellColor(bool enable)
+{
+    //TODO
+}
+
+
 const QList<SAAbstractDatas *>& SADataTableModel::getSADataPtrs() const
 {
     return (m_datas);
@@ -222,7 +228,7 @@ QVariant SADataTableModel::headerData(int section, Qt::Orientation orientation, 
             break;
         }
         return (QVariant());
-    }else if (Qt::Vertical == orientation)   {//垂直表头
+    }else if (Qt::Vertical == orientation) {//垂直表头
         return (section+1);
     }
     return (QVariant());
@@ -235,9 +241,9 @@ QVariant SADataTableModel::data(const QModelIndex& index, int role) const
         return (QVariant());
     }
 
-    if (role == Qt::TextAlignmentRole) { //返回的是对其方式
+    if (role == Qt::TextAlignmentRole) {    //返回的是对其方式
         return (int(Qt::AlignRight | Qt::AlignVCenter));
-    }else if (role == Qt::DisplayRole)  {//返回的是显示内容
+    }else if (role == Qt::DisplayRole) {    //返回的是显示内容
         int col = index.column();
         int row = index.row();
         if (col >= m_col2Ptr.size()) {
@@ -474,7 +480,7 @@ void SADataTableModel::reCalcRowAndColumnCount()
             m_ptr2Col.insert(*i, col);
             m_ptr2ColMap[(*i)] = col2ptrCol;
             ++col;
-        }else if (SA::Dim1 == (*i)->getDim())   {
+        }else if (SA::Dim1 == (*i)->getDim()) {
             //1维也就是向量
             QHash<int, int> col2ptrCol;
             int size = (*i)->getSize(SA::Dim1);
@@ -489,7 +495,7 @@ void SADataTableModel::reCalcRowAndColumnCount()
             m_ptr2Col.insert(*i, col);
             m_ptr2ColMap[(*i)] = col2ptrCol;
             ++col;
-        }else if (SA::Dim2 == (*i)->getDim())   {
+        }else if (SA::Dim2 == (*i)->getDim()) {
             //2维也就是表
             QHash<int, int> col2ptrCol;
             int size = (*i)->getSize(SA::Dim1);

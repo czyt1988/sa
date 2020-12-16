@@ -1,8 +1,9 @@
 #ifndef SAXMLPROTOCOL_H
 #define SAXMLPROTOCOL_H
+#include <memory>
 #include "SAProtocolGlobal.h"
 #include "SAAbstractProtocol.h"
-#include <memory>
+#include "SAProperties.h"
 class SAXMLProtocolPrivate;
 
 
@@ -123,6 +124,10 @@ public:
     virtual QVariant getValue(const QString& groupName, const QString& keyName, const QVariant& defaultVal = QVariant()) const;
     virtual QVariant getDefaultGroupValue(const QString& keyName, const QVariant& defaultVal = QVariant()) const;
 
+    //转换为SAPropertiesGroup
+    SAPropertiesGroup toPropGroup() const;
+    //从SAPropertiesGroup转换为xml协议
+    void fromPropGroup(const SAPropertiesGroup& props);
 public:
     // 获取错误信息
     QString getErrorString() const;

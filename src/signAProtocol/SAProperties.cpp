@@ -95,6 +95,11 @@ SAProperties& SAPropertiesGroup::properties(const QString& group)
     return (i.value());
 }
 
+const SAProperties &SAPropertiesGroup::properties(const QString &group) const
+{
+    return constProperties(group);
+}
+
 
 /**
  * @brief 获取一组属性

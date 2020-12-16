@@ -74,6 +74,8 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
         replyError(header, tr("xml content error"), SA::ProtocolErrorContent);
         return (true);
     }
+    int count = points.size();
+
     ys.reserve(points.size());
     for (const QPointF& p : points)
     {
@@ -119,7 +121,7 @@ bool SADataProcSocket::_deal2DPointsDescribe(const SAProtocolHeader& header, con
     std::copy(points.begin(), points.begin()+sortedcount, lows.begin());
 
     SA::reply_2d_points_describe_xml(this, header
-        , sum, mean, var, stdVar, skewness, kurtosis
+        , count, sum, mean, var, stdVar, skewness, kurtosis
         , min, max, mid, peak2peak, minPoint, maxPoint, midPoint
         , tops, lows);
 #if 1

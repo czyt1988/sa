@@ -522,6 +522,24 @@ QVariant SAXMLProtocol::getDefaultGroupValue(const QString& keyName, const QVari
     return (getValue(defaultGroupName(), keyName, defaultVal));
 }
 
+/**
+ * @brief 转换为SAPropertiesGroup
+ * @return
+ */
+SAPropertiesGroup SAXMLProtocol::toPropGroup() const
+{
+    return d_ptr->mPropGroup;
+}
+
+/**
+ * @brief 从SAPropertiesGroup转换为xml协议
+ * @param props
+ */
+void SAXMLProtocol::fromPropGroup(const SAPropertiesGroup &props)
+{
+    d_ptr->mPropGroup = props;
+}
+
 
 /**
  * @brief 获取错误信息
