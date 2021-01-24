@@ -8,12 +8,6 @@ class SAAbstractDatas;
 #include <stdio.h>
 #endif
 ///
-/// \def 包含Ribbon界面
-///
-#ifndef SA_USE_RIBBON_UI
-#define SA_USE_RIBBON_UI    1
-#endif
-///
 /// \def 前置声明的定义
 ///
 #ifndef SA_IMPL_FORWARD_DECL

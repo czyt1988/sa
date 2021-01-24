@@ -50,13 +50,11 @@ public:
     //把菜单添加到分析功能的菜单中
     virtual QAction *addAnalysisPluginMenu(QMenu *menu) = 0;
 
-#if SA_USE_RIBBON_UI
+
     ///
     /// \group Ribbon相关操作
     ///
     virtual void addAnalysisActionsToRibbonGallery(const QString& name, const QList<QAction *>& actions) = 0;
-#endif
-
 public slots:
 
     /// \group 进度栏 消息窗口的相关操作

@@ -21,6 +21,8 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     }
     mainWinowPtr->setWindowIcon(QIcon(":/windowIcons/icons/windowIcon/figureWindow.svg"));
     mainWinowPtr->resize(1219, 689);
+    menuBar = mainWinowPtr->ribbonBar();
+    menuBar->setObjectName(QStringLiteral("menuBar"));
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     sizePolicy.setHorizontalStretch(0);
@@ -30,7 +32,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->setAcceptDrops(true);
     mainWinowPtr->setAutoFillBackground(false);
     //mainWinowPtr->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-
+    //! 1 action 创建
     actionOpen = new QAction(mainWinowPtr);
     actionOpen->setObjectName(QStringLiteral("actionOpen"));
     actionOpen->setIcon(QIcon(":/icons/icons/open.png"));
@@ -92,7 +94,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionMessageInfoDock = new QAction(mainWinowPtr);
     actionMessageInfoDock->setObjectName(QStringLiteral("actionMessageInfoDock"));
-
 
     actionEnableChartCrossCursor = new QAction(mainWinowPtr);
     actionEnableChartCrossCursor->setObjectName(QStringLiteral("actionEnableChartPicker"));
@@ -184,7 +185,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionViewValueInNewTab = new QAction(mainWinowPtr);
     actionViewValueInNewTab->setObjectName(QStringLiteral("actionViewValueInNewTab"));
     actionViewValueInNewTab->setIcon(QIcon(":/icons/icons/viewValueInNewTab.png"));
-
 
     actionLayerOutDock = new QAction(mainWinowPtr);
     actionLayerOutDock->setObjectName(QStringLiteral("actionLayerOutDock"));
@@ -330,12 +330,14 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSelectSkin = new QAction(mainWinowPtr);
     actionSelectSkin->setObjectName(QStringLiteral("actionSelectSkin"));
     actionSelectSkin->setIcon(QIcon(":/icons/icons/skin.png"));
+
     actionGroupSkins = new QActionGroup(mainWinowPtr);
     actionGroupSkins->setObjectName(QStringLiteral("actionGroupSkins"));
     actionGroupSkins->setExclusive(true);
 
     actionClearRecentOpenFileHistroy = new QAction(mainWinowPtr);
     actionClearRecentOpenFileHistroy->setObjectName(QStringLiteral("actionClearRecentOpenFileHistroy"));
+
     actionClearRecentOpenProjectorHistroy = new QAction(mainWinowPtr);
     actionClearRecentOpenProjectorHistroy->setObjectName(QStringLiteral("actionClearRecentOpenProjectorHistroy"));
 
@@ -359,102 +361,33 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionColorMapTable->setObjectName(QStringLiteral("actionColorMapTable"));
     actionColorMapTable->setIcon(QIcon(":/icons/icons/colormap.svg"));
 
-    menuBar = mainWinowPtr->ribbonBar();
-    menuBar->setObjectName(QStringLiteral("menuBar"));
+    selectCurrentCursorToActiveChart = new QAction(mainWinowPtr);
+    selectCurrentCursorToActiveChart->setObjectName(QStringLiteral("selectCurrentCursorToActiveChart"));
+    selectCurrentCursorToActiveChart->setEnabled(false);
 
-    menuFile = new SARibbonMenu(menuBar);
-    menuFile->setObjectName(QStringLiteral("menuFile"));
+    //==========================================================================
+    //! 2. 菜单创建
+    menuRecentOpenProject = new SARibbonMenu(menuBar);
+    menuRecentOpenProject->setObjectName(QStringLiteral("menuRecentOpenProject"));
+    menuRecentOpenProject->addSeparator();
+    menuRecentOpenProject->addAction(actionClearRecentOpenProjectorHistroy);
 
     menuRecentOpenFile = new SARibbonMenu(menuBar);
     menuRecentOpenFile->setObjectName(QStringLiteral("menuRecentOpenFile"));
     menuRecentOpenFile->addSeparator();
     menuRecentOpenFile->addAction(actionClearRecentOpenFileHistroy);
 
-    menuRecentOpenProject = new SARibbonMenu(menuBar);
-    menuRecentOpenProject->setObjectName(QStringLiteral("menuRecentOpenProject"));
-    menuRecentOpenProject->addSeparator();
-    menuRecentOpenProject->addAction(actionClearRecentOpenProjectorHistroy);
-
-
-    menuExport = new SARibbonMenu(menuFile);
+    menuExport = new SARibbonMenu(menuBar);
     menuExport->setObjectName(QStringLiteral("menu_export"));
     menuExport->setIcon(QIcon(":/icons/icons/export.png"));
 
-    menuImport = new SARibbonMenu(menuFile);
+    menuImport = new SARibbonMenu(menuBar);
     menuImport->setObjectName(QStringLiteral("menu_import"));
     menuImport->setIcon(QIcon(":/icons/icons/import.png"));
 
 
-    menuWindowsViewSet = new SARibbonMenu(menuBar);
-    menuWindowsViewSet->setObjectName(QStringLiteral("menu_windowsViewSet"));
-    QIcon icon46;
-
-    icon46.addFile(QStringLiteral(":/icons/icons/windowViewSet.png"), QSize(), QIcon::Normal, QIcon::Off);
-    menuWindowsViewSet->setIcon(icon46);
-
-    menuAnalysis = new SARibbonMenu(menuBar);
-    menuAnalysis->setObjectName(QStringLiteral("menuAnalysis"));
-    menuAnalysis->setIcon(QIcon(":/icons/icons/allFunction.svg"));
-
-    menuLineChart = new SARibbonMenu(menuBar);
-    menuLineChart->setObjectName(QStringLiteral("menuLineChart"));
-    menuLineChart->setIcon(QIcon(":/icons/icons/lineChart.svg"));
-
-    menuScatterChart = new SARibbonMenu(menuBar);
-    menuScatterChart->setObjectName(QStringLiteral("menuScatterChart"));
-    menuScatterChart->setIcon(QIcon(":/icons/icons/scatterChart.svg"));
-
-    menuBarChart = new SARibbonMenu(menuBar);
-    menuBarChart->setObjectName(QStringLiteral("menuBarChart"));
-    menuBarChart->setIcon(QIcon(":/icons/icons/barChart.svg"));
-
-    menuHistogramChart = new SARibbonMenu(menuBar);
-    menuHistogramChart->setObjectName(QStringLiteral("menuHistogramChart"));
-    menuHistogramChart->setIcon(QIcon(":/icons/icons/histogramChart.svg"));
-
-    menuBoxChart = new SARibbonMenu(menuBar);
-    menuBoxChart->setObjectName(QStringLiteral("menuBoxChart"));
-    menuBoxChart->setIcon(QIcon(":/icons/icons/boxChart.svg"));
-
-    menuDataManager = new SARibbonMenu(menuBar);
-    menuDataManager->setObjectName(QStringLiteral("menu_dataManager"));
-    menuChartSet = new SARibbonMenu(menuBar);
-    menuChartSet->setObjectName(QStringLiteral("menu_chartSet"));
-    menuGrid = new SARibbonMenu(menuBar);
-    menuGrid->setObjectName(QStringLiteral("menu_grid"));
-    //menuGrid->setIcon(icon18);
-
-    menuZoomSet = new SARibbonMenu(menuBar);
-    menuZoomSet->setIcon(QIcon(":/figureSet/icons/figureSet/zoomChart.png"));
-    menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
-
-    menuSkinList = new SARibbonMenu(menuBar);
-    menuSkinList->setObjectName(QStringLiteral("menuSkinList"));
-
-    menuRegionSelect = new SARibbonMenu(menuBar);
-    menuRegionSelect->setObjectName(QStringLiteral("menuRegionSelect"));
-    menuHelp = new SARibbonMenu(menuBar);
-    menuHelp->setObjectName(QStringLiteral("menuHelp"));
-    menuEdit = new SARibbonMenu(menuBar);
-    menuEdit->setObjectName(QStringLiteral("menuEdit"));
-    menuTool = new SARibbonMenu(menuBar);
-    menuTool->setObjectName(QStringLiteral("menu_tool"));
-
-
-//=======start ribbon set=============================================================================================
-    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton *>(menuBar->applitionButton());
-    ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
-    ribbonRightTopBar->addButton(actionAbout);
-    //![1] Main Category Page
-    mainRibbonCategory = menuBar->addCategoryPage(QStringLiteral("main"));
-    mainRibbonCategory->setObjectName(QStringLiteral("mainRibbonCategory"));
-    //File Pannel
-    mainCategoryFilePannel = mainRibbonCategory->addPannel(QStringLiteral("File"));
-    mainCategoryFilePannel->setObjectName(QStringLiteral("mainCategoryFilePannel"));
-
-    ribbonButtonFileOpen = mainCategoryFilePannel->addLargeAction(actionOpenProject);
-    ribbonButtonFileOpen->setObjectName(QStringLiteral("ribbonButtonFileOpen"));
-    ribbonButtonFileOpen->setPopupMode(QToolButton::MenuButtonPopup);
+    menuFile = new SARibbonMenu(menuBar);
+    menuFile->setObjectName(QStringLiteral("menuFile"));
     menuFile->addAction(actionOpen);
     menuFile->addAction(actionOpenProject);
     menuFile->addMenu(menuRecentOpenFile);
@@ -468,120 +401,10 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuFile->addAction(menuImport->menuAction());
     menuFile->addSeparator();
     menuFile->addAction(actionQuit);
-    ribbonButtonFileOpen->setMenu(menuFile);
 
-    ribbonButtonOpen = mainCategoryFilePannel->addSmallAction(actionOpen);
-    ribbonButtonSave = mainCategoryFilePannel->addSmallAction(actionSave);
-    ribbonButtonClearProject = mainCategoryFilePannel->addSmallAction(actionClearProject);
-
-    //Chart Pannel
-    mainCategoryChartPannel = mainRibbonCategory->addPannel(QStringLiteral("Chart"));
-    ribbonButtonNewChart = mainCategoryChartPannel->addLargeAction(actionNewChart);
-    menuLineChart->addAction(actionNewTrend);
-    ribbonButtonLineChart = mainCategoryChartPannel->addLargeMenu(menuLineChart);
-    ribbonButtonScatterChart = mainCategoryChartPannel->addLargeMenu(menuScatterChart);
-    ribbonButtonBarChart = mainCategoryChartPannel->addLargeMenu(menuBarChart);
-    ribbonButtonHistogramChart = mainCategoryChartPannel->addLargeMenu(menuHistogramChart);
-    ribbonButtonBoxChart = mainCategoryChartPannel->addLargeMenu(menuBoxChart);
-
-    //Value Operate Pannel
-    mainCategoryValuePannel = mainRibbonCategory->addPannel(QStringLiteral("Value"));
-    ribbonButtonValueCreateWizard = mainCategoryValuePannel->addLargeAction(actionValueCreateWizard);
-    ribbonButtonValueCreateDouble1Dim = mainCategoryValuePannel->addSmallAction(actionValueCreateDoubleVector);
-    ribbonButtonValueCreatePoint1Dim = mainCategoryValuePannel->addSmallAction(actionValueCreatePointVector);
-    ribbonButtonValueCreateVariantTable = mainCategoryValuePannel->addSmallAction(actionValueCreateVariantTable);
-    //! operate Category Page
-    operateRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Operate"));
-    operateRibbonCategory->setObjectName(QStringLiteral("operateRibbonCategory"));
-    //Selector Editor
-    operateCategoryChartEditorPannel = operateRibbonCategory->addPannel(QStringLiteral("Select Editor"));
-    operateCategoryChartEditorPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
-
-    ribbonButtonStartSelection = operateCategoryChartEditorPannel->addLargeAction(actionStartRectSelect);
-    menuSelection = new SARibbonMenu(Parent);
-    menuSelection->addAction(actionStartRectSelect);
-    menuSelection->addAction(actionStartEllipseSelect);
-    menuSelection->addAction(actionStartPolygonSelect);
-    menuSelection->addSeparator();
-    menuSelection->addAction(actionClearAllSelectiedRegion);
-
-    ribbonButtonStartSelection->setMenu(menuSelection);
-    ribbonButtonStartSelection->setObjectName(QStringLiteral("ribbonButtonStartSelection"));
-    ribbonButtonStartSelection->setPopupMode(QToolButton::MenuButtonPopup);
-
-
-    ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget(Parent);
-    ribbonButtonSingleSelection = ribbonButtonGroupSelectionMode->addButton(actionSingleSelection);
-    ribbonButtonAdditionalSelection = ribbonButtonGroupSelectionMode->addButton(actionAdditionalSelection);
-    ribbonButtonSubtractionSelection = ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
-    ribbonButtonIntersectionSelection = ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
-    operateCategoryChartEditorPannel->addWidget(ribbonButtonGroupSelectionMode
-        , 0, 3);
-
-    SARibbonButtonGroupWidget *tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
-
-    ribbonButtonSelectionRegionMove = tmpButtonGroup->addButton(actionSelectionRegionMove);
-    operateCategoryChartEditorPannel->addWidget(tmpButtonGroup, 3, 3);
-
-    operateCategoryChartEditorPannel->addSeparator();
-
-    menuDataRemove = new SARibbonMenu(Parent);
-    menuDataRemove->addAction(actionOutRangDataRemove);
-    ribbonButtonInRangDataRemove = operateCategoryChartEditorPannel->addLargeAction(actionInRangDataRemove);
-    ribbonButtonInRangDataRemove->setMenu(menuDataRemove);
-    ribbonButtonInRangDataRemove->setPopupMode(QToolButton::MenuButtonPopup);
-    ribbonButtonPickCurveToData = operateCategoryChartEditorPannel->addLargeAction(actionPickCurveToData);
-
-    ribbonButtonSelectionRegionDataMove = operateCategoryChartEditorPannel->addLargeAction(actionSelectionRegionDataMove);
-
-    //data view editor
-    operateCategoryDataViewPannel = operateRibbonCategory->addPannel(QStringLiteral("Data View"));
-    operateCategoryDataViewPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
-    ribbonButtonChartCrossCursor = operateCategoryDataViewPannel->addLargeAction(actionEnableChartCrossCursor);
-    ribbonButtonChartPanner = operateCategoryDataViewPannel->addLargeAction(actionEnableChartPanner);
-    ribbonButtonChartZoom = operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom, menuZoomSet);
-    ribbonButtonXYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionXYDataPicker);
-    ribbonButtonYDataPicker = operateCategoryDataViewPannel->addSmallAction(actionYDataPicker);
-
-    //legend pannel
-    chartLegendCategoryWindowPannel = operateRibbonCategory->addPannel("legend");
-    ribbonButtonShowLegend = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegend);
-    ribbonButtonShowLegendPanel = chartLegendCategoryWindowPannel->addLargeAction(actionShowLegendPanel);
-    //Grid pannel
-    chartGridCategoryWindowPannel = operateRibbonCategory->addPannel("Grid");
-    ribbonButtonShowGrid = chartGridCategoryWindowPannel->addLargeAction(actionShowGrid);
-    ribbonButtonShowHGrid = chartGridCategoryWindowPannel->addSmallAction(actionShowHGrid);
-    ribbonButtonShowVGrid = chartGridCategoryWindowPannel->addSmallAction(actionShowVGrid);
-    menuShowCrowdedGrid = new SARibbonMenu(menuBar);
-    menuShowCrowdedGrid->setObjectName(QStringLiteral("menuShowCrowdedGrid"));
-    menuShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
-    menuShowCrowdedGrid->addAction(actionShowCrowdedHGrid);
-    menuShowCrowdedGrid->addAction(actionShowCrowdedVGrid);
-    ribbonButtonShowCrowdedGrid = chartGridCategoryWindowPannel->addSmallMenu(menuShowCrowdedGrid);
-    ribbonButtonShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
-    //figure Opt pannel
-    figureOptRibbonPannel = operateRibbonCategory->addPannel("Figure Option");
-    ribbonButtonFigureEditSubplot = figureOptRibbonPannel->addLargeAction(actionFigureEditSubPlotGeometry);
-
-    //! table  Context Category
-    tableRibbonContextCategory = menuBar->addContextCategory(QStringLiteral("Table"), Qt::red, TableContextCategory);
-    tableRibbonCategory = tableRibbonContextCategory->addCategoryPage(QStringLiteral("Table"));
-    tableHighLightRibbonPannel = tableRibbonCategory->addPannel("HighLight");
-    ribbonButtonHighLightTable = tableHighLightRibbonPannel->addLargeAction(actionColorMapTable);
-
-    //! Analysis
-    analysisRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Analysis"));
-    analysisRibbonCategory->setObjectName(QStringLiteral("analysisRibbonCategory"));
-    //Analysis Pannel
-    analysisCategoryFunctionPannel = analysisRibbonCategory->addPannel(QStringLiteral("Function"));
-    ribbonButtonAllFuntion = analysisCategoryFunctionPannel->addLargeMenu(menuAnalysis);
-    ribbonGalleryFuntions = analysisCategoryFunctionPannel->addGallery();
-    //! View Category Page
-    viewRibbonCategory = menuBar->addCategoryPage(QStringLiteral("View"));
-    viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
-    //Window Pannel
-    viewCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Window"));
-    ribbonButtonAllDock = viewCategoryWindowPannel->addLargeToolButton(QStringLiteral("Dock\nView"), QIcon(":/icons/icons/AllDock.png"), QToolButton::InstantPopup);
+    menuWindowsViewSet = new SARibbonMenu(menuBar);
+    menuWindowsViewSet->setObjectName(QStringLiteral("menu_windowsViewSet"));
+    menuWindowsViewSet->setIcon(QIcon(":/icons/icons/windowViewSet.png"));
     menuWindowsViewSet->addAction(actionFigureViewer);
     menuWindowsViewSet->addAction(actionFigureSetDock);
     menuWindowsViewSet->addAction(actionDataFeatureDock);
@@ -590,33 +413,262 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet->addAction(actionValueManagerDock);
     menuWindowsViewSet->addAction(actionValueViewerDock);
     menuWindowsViewSet->addAction(actionMessageInfoDock);
-    ribbonButtonAllDock->setMenu(menuWindowsViewSet);
-    ribbonButtonFigureViewer = viewCategoryWindowPannel->addSmallAction(actionFigureViewer);
-    ribbonButtonFigureSetDock = viewCategoryWindowPannel->addSmallAction(actionFigureSetDock);
-    ribbonButtonDataFeatureDock = viewCategoryWindowPannel->addSmallAction(actionDataFeatureDock);
-    ribbonButtonLayerOutDock = viewCategoryWindowPannel->addSmallAction(actionLayerOutDock);
-    ribbonButtonValueViewerDock = viewCategoryWindowPannel->addSmallAction(actionValueViewerDock);
-    ribbonButtonValueManagerDock = viewCategoryWindowPannel->addSmallAction(actionValueManagerDock);
-    ribbonButtonSetDefalutDockPos = viewCategoryWindowPannel->addLargeAction(actionSetDefalutDockPos);
+
+    menuAnalysis = new SARibbonMenu(menuBar);
+    menuAnalysis->setObjectName(QStringLiteral("menuAnalysis"));
+    menuAnalysis->setIcon(QIcon(":/icons/icons/allFunction.svg"));
+
+    menuLineChart = new SARibbonMenu(menuBar);
+    menuLineChart->setObjectName(QStringLiteral("menuLineChart"));
+    menuLineChart->setIcon(QIcon(":/icons/icons/lineChart.svg"));
+    menuLineChart->addAction(actionNewTrend);
+
+    menuScatterChart = new SARibbonMenu(menuBar);
+    menuScatterChart->setObjectName(QStringLiteral("menuScatterChart"));
+    menuScatterChart->setIcon(QIcon(":/icons/icons/scatterChart.svg"));
+    menuScatterChart->addAction(actionDrawScatterChart);
+
+    menuBarChart = new SARibbonMenu(menuBar);
+    menuBarChart->setObjectName(QStringLiteral("menuBarChart"));
+    menuBarChart->setIcon(QIcon(":/icons/icons/barChart.svg"));
+    menuBarChart->addAction(actionDrawBarChart);
+
+    menuHistogramChart = new SARibbonMenu(menuBar);
+    menuHistogramChart->setObjectName(QStringLiteral("menuHistogramChart"));
+    menuHistogramChart->setIcon(QIcon(":/icons/icons/histogramChart.svg"));
+    menuHistogramChart->addAction(actionDrawHistogramChart);
+    menuHistogramChart->addAction(actionDrawIntervalChart);
+
+    menuBoxChart = new SARibbonMenu(menuBar);
+    menuBoxChart->setObjectName(QStringLiteral("menuBoxChart"));
+    menuBoxChart->setIcon(QIcon(":/icons/icons/boxChart.svg"));
+    menuBoxChart->addAction(actionDrawBoxChart);
+
+    menuDataManager = new SARibbonMenu(menuBar);
+    menuDataManager->setObjectName(QStringLiteral("menuDataManager"));
+    menuDataManager->addAction(actionViewValueInCurrentTab);
+    menuDataManager->addAction(actionViewValueAppendInCurrentTab);
+    menuDataManager->addAction(actionViewValueInNewTab);
+    menuDataManager->addSeparator();
+    menuDataManager->addAction(actionDeleteValue);
+    menuDataManager->addAction(actionRenameValue);
+
+
+
+    menuGrid = new SARibbonMenu(menuBar);
+    menuGrid->setObjectName(QStringLiteral("menuGrid"));
+    menuGrid->addAction(actionShowGrid);
+    menuGrid->addSeparator();
+    menuGrid->addAction(actionShowHGrid);
+    menuGrid->addAction(actionShowVGrid);
+    menuGrid->addSeparator();
+    menuGrid->addAction(actionShowCrowdedHGrid);
+    menuGrid->addAction(actionShowCrowdedVGrid);
+
+
+
+    menuZoomSet = new SARibbonMenu(menuBar);
+    menuZoomSet->setIcon(QIcon(":/figureSet/icons/figureSet/zoomChart.png"));
+    menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
+    menuZoomSet->addAction(actionEnableChartZoom);
+    menuZoomSet->addSeparator();
+    menuZoomSet->addAction(actionZoomIn);
+    menuZoomSet->addAction(actionZoomOut);
+    menuZoomSet->addAction(actionChartZoomReset);
+    menuZoomSet->addAction(actionZoomInBestView);
+    menuZoomSet->addSeparator();
+    menuZoomSet->addAction(actionSetZoomBase);
+
+    menuRegionSelect = new SARibbonMenu(menuBar);
+    menuRegionSelect->setObjectName(QStringLiteral("menuRegionSelect"));
+    menuRegionSelect->addAction(actionStartRectSelect);
+    menuRegionSelect->addAction(actionStartEllipseSelect);
+    menuRegionSelect->addAction(actionStartPolygonSelect);
+    menuRegionSelect->addAction(actionClearAllSelectiedRegion);
+    menuRegionSelect->addSeparator();
+    menuRegionSelect->addAction(actionSingleSelection);
+    menuRegionSelect->addAction(actionAdditionalSelection);
+    menuRegionSelect->addAction(actionSubtractionSelection);
+    menuRegionSelect->addAction(actionIntersectionSelection);
+
+    menuChartSet = new SARibbonMenu(menuBar);
+    menuChartSet->setObjectName(QStringLiteral("menuChartSet"));
+    menuChartSet->addAction(actionEnableChartCrossCursor);
+    menuChartSet->addAction(actionEnableChartPanner);
+    menuChartSet->addAction(menuGrid->menuAction());
+    menuChartSet->addAction(menuZoomSet->menuAction());
+    menuChartSet->addAction(menuRegionSelect->menuAction());
+
+    menuSkinList = new SARibbonMenu(menuBar);
+    menuSkinList->setObjectName(QStringLiteral("menuSkinList"));
+
+
+
+    menuHelp = new SARibbonMenu(menuBar);
+    menuHelp->setObjectName(QStringLiteral("menuHelp"));
+    menuHelp->addAction(actionAbout);
+
+    menuEdit = new SARibbonMenu(menuBar);
+    menuEdit->setObjectName(QStringLiteral("menuEdit"));
+    menuEdit->addAction(actionUndo);
+    menuEdit->addAction(actionRedo);
+
+    menuTool = new SARibbonMenu(menuBar);
+    menuTool->setObjectName(QStringLiteral("menu_tool"));
+    menuTool->addAction(actionProjectSetting);
+
+    menuSelection = new SARibbonMenu(menuBar);
+    menuSelection->addAction(actionStartRectSelect);
+    menuSelection->addAction(actionStartEllipseSelect);
+    menuSelection->addAction(actionStartPolygonSelect);
+    menuSelection->addSeparator();
+    menuSelection->addAction(actionClearAllSelectiedRegion);
+
+    menuDataRemove = new SARibbonMenu(menuBar);
+    menuDataRemove->addAction(actionOutRangDataRemove);
+
+    menuShowCrowdedGrid = new SARibbonMenu(menuBar);
+    menuShowCrowdedGrid->setObjectName(QStringLiteral("menuShowCrowdedGrid"));
+    menuShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
+    menuShowCrowdedGrid->addAction(actionShowCrowdedHGrid);
+    menuShowCrowdedGrid->addAction(actionShowCrowdedVGrid);
+
+    //右键菜单
+    menuFigureWindow = new QMenu(mainWinowPtr);
+    menuFigureWindow->setObjectName(QStringLiteral("menuFigureWindow"));
+    menuFigureWindow->addAction(selectCurrentCursorToActiveChart);
+    sectionActionForFigureMenuDataView = menuFigureWindow->addSection(QStringLiteral("Data View"));
+    menuFigureWindow->addAction(actionEnableChartCrossCursor);
+    menuFigureWindow->addAction(actionEnableChartPanner);
+    menuFigureWindow->addAction(actionYDataPicker);
+    menuFigureWindow->addAction(actionXYDataPicker);
+    menuFigureWindow->addMenu(menuZoomSet);
+
+//=======start ribbon set=============================================================================================
+    //! 3 开始布局ribbon
+
+    //! 3.1 ApplicationButton
+
+    ribbonApplicationButton = qobject_cast<SARibbonApplicationButton *>(menuBar->applicationButton());
+
+    ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
+    ribbonRightTopBar->addButton(actionAbout);
+
+    //! 3.2 Main Category Page
+    mainRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Main"));
+    mainRibbonCategory->setObjectName(QStringLiteral("mainRibbonCategory"));
+    //File Pannel
+    mainCategoryFilePannel = mainRibbonCategory->addPannel(QStringLiteral("File"));
+    mainCategoryFilePannel->setObjectName(QStringLiteral("mainCategoryFilePannel"));
+    mainCategoryFilePannel->addLargeActionMenu(actionOpenProject, menuFile);
+    mainCategoryFilePannel->addSmallAction(actionOpen);
+    mainCategoryFilePannel->addSmallAction(actionSave);
+    mainCategoryFilePannel->addSmallAction(actionClearProject);
+
+    //Chart Pannel
+    mainCategoryChartPannel = mainRibbonCategory->addPannel(QStringLiteral("Chart"));
+    mainCategoryChartPannel->addLargeAction(actionNewChart);
+
+    mainCategoryChartPannel->addLargeMenu(menuLineChart);
+    mainCategoryChartPannel->addLargeMenu(menuScatterChart);
+    mainCategoryChartPannel->addLargeMenu(menuBarChart);
+    mainCategoryChartPannel->addLargeMenu(menuHistogramChart);
+    mainCategoryChartPannel->addLargeMenu(menuBoxChart);
+
+    //Value Operate Pannel
+    mainCategoryValuePannel = mainRibbonCategory->addPannel(QStringLiteral("Value"));
+    mainCategoryValuePannel->addLargeAction(actionValueCreateWizard);
+    mainCategoryValuePannel->addSmallAction(actionValueCreateDoubleVector);
+    mainCategoryValuePannel->addSmallAction(actionValueCreatePointVector);
+    mainCategoryValuePannel->addSmallAction(actionValueCreateVariantTable);
+
+    //! 3.3 operate Category Page
+    operateRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Operate"));
+    operateRibbonCategory->setObjectName(QStringLiteral("operateRibbonCategory"));
+    //Selector Editor
+    operateCategoryChartEditorPannel = operateRibbonCategory->addPannel(QStringLiteral("Select Editor"));
+    operateCategoryChartEditorPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
+    //这里把SARibbonToolButton的指针拿到，用于操作defaultAction
+    ribbonButtonStartSelection = operateCategoryChartEditorPannel->addLargeActionMenu(actionStartRectSelect, menuSelection);
+    ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget(Parent);
+    ribbonButtonGroupSelectionMode->addButton(actionSingleSelection);
+    ribbonButtonGroupSelectionMode->addButton(actionAdditionalSelection);
+    ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
+    ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
+    operateCategoryChartEditorPannel->addSmallWidget(ribbonButtonGroupSelectionMode);
+    SARibbonButtonGroupWidget *tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
+
+    tmpButtonGroup->addButton(actionSelectionRegionMove);
+    operateCategoryChartEditorPannel->addSmallWidget(tmpButtonGroup);
+    operateCategoryChartEditorPannel->addSeparator();
+    operateCategoryChartEditorPannel->addLargeActionMenu(actionInRangDataRemove, menuDataRemove);
+    operateCategoryChartEditorPannel->addLargeAction(actionSelectionRegionDataMove);
+
+    //data view editor
+    operateCategoryDataViewPannel = operateRibbonCategory->addPannel(QStringLiteral("Data View"));
+    operateCategoryDataViewPannel->setObjectName(QStringLiteral("operateCategorySelectEditorPannel"));
+    operateCategoryDataViewPannel->addLargeAction(actionEnableChartCrossCursor);
+    operateCategoryDataViewPannel->addLargeAction(actionEnableChartPanner);
+    operateCategoryDataViewPannel->addLargeActionMenu(actionEnableChartZoom, menuZoomSet);
+    operateCategoryDataViewPannel->addSmallAction(actionXYDataPicker);
+    operateCategoryDataViewPannel->addSmallAction(actionYDataPicker);
+
+    //legend pannel
+    chartLegendCategoryWindowPannel = operateRibbonCategory->addPannel("legend");
+    chartLegendCategoryWindowPannel->addLargeAction(actionShowLegend);
+    chartLegendCategoryWindowPannel->addLargeAction(actionShowLegendPanel);
+    //Grid pannel
+    chartGridCategoryWindowPannel = operateRibbonCategory->addPannel("Grid");
+    chartGridCategoryWindowPannel->addLargeAction(actionShowGrid);
+    chartGridCategoryWindowPannel->addSmallAction(actionShowHGrid);
+    chartGridCategoryWindowPannel->addSmallAction(actionShowVGrid);
+    chartGridCategoryWindowPannel->addSmallMenu(menuShowCrowdedGrid);
+
+    //figure Opt pannel
+    figureOptRibbonPannel = operateRibbonCategory->addPannel("Figure Option");
+    figureOptRibbonPannel->addLargeAction(actionFigureEditSubPlotGeometry);
+
+    //! 3.4 Analysis
+    analysisRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Analysis"));
+    analysisRibbonCategory->setObjectName(QStringLiteral("analysisRibbonCategory"));
+    //Analysis Pannel
+    analysisCategoryFunctionPannel = analysisRibbonCategory->addPannel(QStringLiteral("Function"));
+    analysisCategoryFunctionPannel->addLargeMenu(menuAnalysis);
+    ribbonGalleryFuntions = analysisCategoryFunctionPannel->addGallery();
+    //! 3.5 View Category Page
+    viewRibbonCategory = menuBar->addCategoryPage(QStringLiteral("View"));
+    viewRibbonCategory->setObjectName(QStringLiteral("viewRibbonCategory"));
+    //Window Pannel
+    viewCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Window"));
+    viewCategoryWindowPannel->addLargeMenu(menuWindowsViewSet, QToolButton::InstantPopup);
     //sub window mode
     windowModeCategoryWindowPannel = viewRibbonCategory->addPannel(QStringLiteral("Sub Window Mode"));
-    ribbonButtonTabMode = windowModeCategoryWindowPannel->addLargeAction(actionTabMode);
-    ribbonButtonWindowMode = windowModeCategoryWindowPannel->addLargeAction(actionWindowMode);
-    ribbonButtonWindowCascade = windowModeCategoryWindowPannel->addMediumAction(actionWindowCascade);
-    ribbonButtonWindowTile = windowModeCategoryWindowPannel->addMediumAction(actionWindowTile);
+    windowModeCategoryWindowPannel->addLargeAction(actionTabMode);
+    windowModeCategoryWindowPannel->addLargeAction(actionWindowMode);
+    windowModeCategoryWindowPannel->addMediumAction(actionWindowCascade);
+    windowModeCategoryWindowPannel->addMediumAction(actionWindowTile);
 
-    menuBar->quickAccessBar()->setEnableShowIcon(false);
-    menuBar->quickAccessBar()->addSeparator();
-    menuBar->quickAccessBar()->addButton(actionSave);
-    menuBar->quickAccessBar()->addSeparator();
-    menuBar->quickAccessBar()->addButton(actionUndo);
-    menuBar->quickAccessBar()->addButton(actionRedo);
-    menuBar->quickAccessBar()->addSeparator();
-    SARibbonToolButton *ribbonToobBtnSelectSkin = menuBar->quickAccessBar()->addButton(actionSelectSkin);
+    //! 3.6 table  Context Category
+    tableRibbonContextCategory = menuBar->addContextCategory(QStringLiteral("Table"), Qt::red, TableContextCategory);
+    tableRibbonCategory = tableRibbonContextCategory->addCategoryPage(QStringLiteral("Table"));
+    tableHighLightRibbonPannel = tableRibbonCategory->addPannel("HighLight");
+    tableHighLightRibbonPannel->addLargeAction(actionColorMapTable);
+
+    //! 3.7
+    SARibbonQuickAccessBar *quickAccessBar = menuBar->quickAccessBar();
+
+    quickAccessBar->setEnableShowIcon(false);
+    quickAccessBar->addSeparator();
+    quickAccessBar->addButton(actionSave);
+    quickAccessBar->addSeparator();
+    quickAccessBar->addButton(actionUndo);
+    quickAccessBar->addButton(actionRedo);
+    quickAccessBar->addSeparator();
+    SARibbonToolButton *ribbonToobBtnSelectSkin = quickAccessBar->addButton(actionSelectSkin);
 
     ribbonToobBtnSelectSkin->setMenu(menuSkinList);
     ribbonToobBtnSelectSkin->setPopupMode(QToolButton::InstantPopup);
-    menuBar->quickAccessBar()->addSeparator();
+    quickAccessBar->addSeparator();
     menuBar->setRibbonStyle(SARibbonBar::WpsLiteStyle);
     //menuBar->repaint();
 //=======end ribbon set=======================================================================================
@@ -791,81 +843,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_set);
 
 
-
-    menuDataManager->addAction(actionViewValueInCurrentTab);
-    menuDataManager->addAction(actionViewValueAppendInCurrentTab);
-    menuDataManager->addAction(actionViewValueInNewTab);
-    menuDataManager->addSeparator();
-    menuDataManager->addAction(actionDeleteValue);
-    menuDataManager->addAction(actionRenameValue);
-
-    menuChartSet->addAction(actionEnableChartCrossCursor);
-    menuChartSet->addAction(actionEnableChartPanner);
-    menuChartSet->addAction(menuGrid->menuAction());
-    menuChartSet->addAction(menuZoomSet->menuAction());
-    menuChartSet->addAction(menuRegionSelect->menuAction());
-
-    menuGrid->addAction(actionShowGrid);
-    menuGrid->addSeparator();
-    menuGrid->addAction(actionShowHGrid);
-    menuGrid->addAction(actionShowVGrid);
-    menuGrid->addSeparator();
-    menuGrid->addAction(actionShowCrowdedHGrid);
-    menuGrid->addAction(actionShowCrowdedVGrid);
-
-    menuZoomSet->addAction(actionEnableChartZoom);
-    menuZoomSet->addSeparator();
-    menuZoomSet->addAction(actionZoomIn);
-    menuZoomSet->addAction(actionZoomOut);
-    menuZoomSet->addAction(actionChartZoomReset);
-    menuZoomSet->addAction(actionZoomInBestView);
-    menuZoomSet->addSeparator();
-    menuZoomSet->addAction(actionSetZoomBase);
-
-    menuRegionSelect->addAction(actionStartRectSelect);
-    menuRegionSelect->addAction(actionStartEllipseSelect);
-    menuRegionSelect->addAction(actionStartPolygonSelect);
-    menuRegionSelect->addAction(actionClearAllSelectiedRegion);
-    menuRegionSelect->addSeparator();
-    menuRegionSelect->addAction(actionSingleSelection);
-    menuRegionSelect->addAction(actionAdditionalSelection);
-    menuRegionSelect->addAction(actionSubtractionSelection);
-    menuRegionSelect->addAction(actionIntersectionSelection);
-
-    menuHelp->addAction(actionAbout);
-
-    menuEdit->addAction(actionUndo);
-    menuEdit->addAction(actionRedo);
-
-    menuTool->addAction(actionProjectSetting);
-
-    menuScatterChart->addAction(actionDrawScatterChart);
-
-    menuBarChart->addAction(actionDrawBarChart);
-
-    menuHistogramChart->addAction(actionDrawHistogramChart);
-    menuHistogramChart->addAction(actionDrawIntervalChart);
-
-    menuBoxChart->addAction(actionDrawBoxChart);
-//    toolBar_chart->addAction(actionPickCurveToData);
-//    toolBar_chart->addAction(actionInRangDataRemove);
-//    toolBar_chart->addAction(actionOutRangDataRemove);
-//    toolBar_chartSet->addAction(actionEnableChartPicker);
-//    toolBar_chartSet->addAction(actionEnableChartPanner);
-//    toolBar_chartSet->addAction(actionEnableChartZoom);
-//    toolBar_chartSet->addAction(actionXYDataPicker);
-//    toolBar_chartSet->addAction(actionShowGrid);
-//    toolBar_chartSet->addAction(actionShowLegend);
-//    toolBar_chartSet->addAction(actionLegendPanel);
-//    toolBar_chartSet->addAction(actionChartSet);
-//    toolBar_plot->addAction(actionNewChart);
-//    toolBar_plot->addAction(actionNewTrend);
-//    toolBar_plot->addSeparator();
-
-
-
-    setupMenu(mainWinowPtr);
-
     retranslateUi(mainWinowPtr);
     QObject::connect(actionQuit, SIGNAL(triggered()), mainWinowPtr, SLOT(close()));
 
@@ -878,20 +855,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 void MainWindowPrivate::setupMenu(MainWindow *mainWinowPtr)
 {
-    menuFigureWindow = new QMenu(mainWinowPtr);
-    menuFigureWindow->setObjectName(QStringLiteral("menuFigureWindow"));
-    selectCurrentCursorToActiveChart = new QAction(mainWinowPtr);
-    selectCurrentCursorToActiveChart->setObjectName(QStringLiteral("selectCurrentCursorToActiveChart"));
-    selectCurrentCursorToActiveChart->setEnabled(false);
-
-    menuFigureWindow->addAction(selectCurrentCursorToActiveChart);
-    sectionActionForFigureMenuDataView = menuFigureWindow->addSection(QStringLiteral("Data View"));
-
-    menuFigureWindow->addAction(actionEnableChartCrossCursor);
-    menuFigureWindow->addAction(actionEnableChartPanner);
-    menuFigureWindow->addAction(actionYDataPicker);
-    menuFigureWindow->addAction(actionXYDataPicker);
-    menuFigureWindow->addMenu(menuZoomSet);
 }
 
 
@@ -1069,20 +1032,13 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     operateCategoryChartEditorPannel->setWindowTitle(QApplication::translate("MainWindow", "Chart Editor", 0));
     tableHighLightRibbonPannel->setWindowTitle(QApplication::translate("MainWindow", "Hight Light", 0));
 
-    ribbonButtonLineChart->setText(menuLineChart->title());
-    ribbonButtonBarChart->setText(menuBarChart->title());
-    ribbonButtonBoxChart->setText(menuBoxChart->title());
-    ribbonButtonHistogramChart->setText(menuHistogramChart->title());
-    ribbonButtonScatterChart->setText(menuScatterChart->title());
-    ribbonButtonAllDock->setText(menuWindowsViewSet->title());
-    ribbonButtonAllFuntion->setText(menuAnalysis->title());
 
 
     operateCategoryDataViewPannel->setWindowTitle(QApplication::translate("MainWindow", "Data View", 0));
     chartLegendCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Legend", 0));
     chartGridCategoryWindowPannel->setWindowTitle(QApplication::translate("MainWindow", "Grid", 0));
     figureOptRibbonPannel->setWindowTitle(QApplication::translate("MainWindow", "Figure Operate", 0));
-    ribbonButtonShowCrowdedGrid->setText(QApplication::translate("MainWindow", "Crowded", 0));
+    menuShowCrowdedGrid->setTitle(QApplication::translate("MainWindow", "Crowded", 0));
 
     ribbonApplicationButton->setText(QApplication::translate("MainWindow", "SA", 0));
 // figure window 菜单设置
