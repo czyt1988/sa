@@ -131,114 +131,62 @@ public:
     QAction *actionColorMapTable;           ///< 对表格进行高亮色阶显示
 
     SARibbonBar *menuBar;
+    SARibbonToolButton *ribbonButtonStartSelection;
     SARibbonButtonGroupWidget *ribbonRightTopBar;
     SARibbonApplicationButton *ribbonApplicationButton;
     //!Main Category Page
 
     SARibbonCategory *mainRibbonCategory;
     SARibbonPannel *mainCategoryFilePannel;
-    SARibbonToolButton *ribbonButtonFileOpen;
-    SARibbonToolButton *ribbonButtonOpen;
-    SARibbonToolButton *ribbonButtonSave;
-    SARibbonToolButton *ribbonButtonClearProject;
-
     SARibbonPannel *mainCategoryChartPannel;
-    SARibbonToolButton *ribbonButtonNewChart;
-    SARibbonToolButton *ribbonButtonLineChart;
-    SARibbonToolButton *ribbonButtonBarChart;
-    SARibbonToolButton *ribbonButtonHistogramChart;
-    SARibbonToolButton *ribbonButtonBoxChart;
-    SARibbonToolButton *ribbonButtonScatterChart;
-    SARibbonMenu *menuFile;
-    SARibbonMenu *menuRecentOpenFile;
-    SARibbonMenu *menuRecentOpenProject;
-    SARibbonMenu *menuLineChart;
-    SARibbonMenu *menuBarChart;
-    SARibbonMenu *menuHistogramChart;
-    SARibbonMenu *menuBoxChart;
-    SARibbonMenu *menuScatterChart;
-    SARibbonMenu *menuSkinList;
+
+    QMenu *menuFile;
+    QMenu *menuRecentOpenFile;
+    QMenu *menuRecentOpenProject;
+    QMenu *menuLineChart;
+    QMenu *menuBarChart;
+    QMenu *menuHistogramChart;
+    QMenu *menuBoxChart;
+    QMenu *menuScatterChart;
+    QMenu *menuSkinList;
+    QMenu *menuSelection;
+    QMenu *menuDataRemove;
+    QMenu *menuShowCrowdedGrid;
+    QMenu *menuWindowsViewSet;
 
     SARibbonPannel *mainCategoryValuePannel;
-    SARibbonToolButton *ribbonButtonValueCreateWizard;
-    SARibbonToolButton *ribbonButtonValueCreateDouble1Dim;
-    SARibbonToolButton *ribbonButtonValueCreatePoint1Dim;
-    SARibbonToolButton *ribbonButtonValueCreateVariantTable;
     //! operate Category Page
     SARibbonCategory *operateRibbonCategory;
-    SARibbonMenu *menuSelection;
     SARibbonPannel *operateCategoryChartEditorPannel;
-    SARibbonToolButton *ribbonButtonStartSelection;
-
-    SARibbonToolButton *ribbonButtonSingleSelection;
-    SARibbonToolButton *ribbonButtonAdditionalSelection;
-    SARibbonToolButton *ribbonButtonSubtractionSelection;
-    SARibbonToolButton *ribbonButtonIntersectionSelection;
     SARibbonButtonGroupWidget *ribbonButtonGroupSelectionMode;
 
-    SARibbonToolButton *ribbonButtonSelectionRegionMove;
 
     SARibbonPannel *operateCategoryDataViewPannel;
-    SARibbonToolButton *ribbonButtonChartCrossCursor;
-    SARibbonToolButton *ribbonButtonChartPanner;
-    SARibbonToolButton *ribbonButtonChartZoom;
-    SARibbonToolButton *ribbonButtonXYDataPicker;
-    SARibbonToolButton *ribbonButtonYDataPicker;
     SARibbonMenu *menuZoomSet;
-
-
-    SARibbonToolButton *ribbonButtonInRangDataRemove;
-    SARibbonToolButton *ribbonButtonPickCurveToData;
-    SARibbonToolButton *ribbonButtonSelectionRegionDataMove;
-
-
-    SARibbonMenu *menuDataRemove;
-
 
     //legend pannel
     SARibbonPannel *chartLegendCategoryWindowPannel;
-    SARibbonToolButton *ribbonButtonShowLegend;
-    SARibbonToolButton *ribbonButtonShowLegendPanel;
     //
     SARibbonPannel *chartGridCategoryWindowPannel;
-    SARibbonToolButton *ribbonButtonShowGrid;
-    SARibbonToolButton *ribbonButtonShowHGrid;
-    SARibbonToolButton *ribbonButtonShowVGrid;
-    SARibbonToolButton *ribbonButtonShowCrowdedGrid;
-    SARibbonMenu *menuShowCrowdedGrid;
+
 
     //Figure Operate Category Page
     SARibbonPannel *figureOptRibbonPannel;
-    SARibbonToolButton *ribbonButtonFigureEditSubplot;
     //! Analysis
     SARibbonCategory *analysisRibbonCategory;
     SARibbonPannel *analysisCategoryFunctionPannel;
-    SARibbonToolButton *ribbonButtonAllFuntion;
     SARibbonGallery *ribbonGalleryFuntions;
     //!View Category Page
     SARibbonCategory *viewRibbonCategory;
     SARibbonPannel *viewCategoryWindowPannel;
-    SARibbonToolButton *ribbonButtonFigureViewer;
-    SARibbonToolButton *ribbonButtonDataFeatureDock;
-    SARibbonToolButton *ribbonButtonLayerOutDock;
-    SARibbonToolButton *ribbonButtonValueViewerDock;
-    SARibbonToolButton *ribbonButtonValueManagerDock;
-    SARibbonToolButton *ribbonButtonFigureSetDock;
-    SARibbonToolButton *ribbonButtonAllDock;
-    SARibbonToolButton *ribbonButtonSetDefalutDockPos;
     SARibbonPannel *windowModeCategoryWindowPannel;
-    SARibbonToolButton *ribbonButtonWindowMode;
-    SARibbonToolButton *ribbonButtonTabMode;
-    SARibbonToolButton *ribbonButtonWindowCascade;
-    SARibbonToolButton *ribbonButtonWindowTile;
 
     //Table Operate Context Category Page 表格上下文设置页
     SARibbonContextCategory *tableRibbonContextCategory;    ///< 表格上下文标签
     SARibbonCategory *tableRibbonCategory;                  ///< 表格上下文标签
     SARibbonPannel *tableHighLightRibbonPannel;             ///< 高亮面板
-    SARibbonToolButton *ribbonButtonHighLightTable;         ///< 高亮表格
     //===========================================================
-    SARibbonMenu *menuWindowsViewSet;
+
 
     //
 

@@ -28,12 +28,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 DESTDIR = $$SA_BIN_DIR
 OTHER_FILES += readme.md
 
-CONFIG(debug, debug|release){
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_debug/
-}else {
-    DESTDIR = $$PWD/../bin_qt$$[QT_VERSION]_release/
-}
-
 TARGET = signADataProc
 TEMPLATE = app
 CONFIG += c++11

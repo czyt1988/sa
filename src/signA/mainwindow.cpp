@@ -1,11 +1,5 @@
 ﻿#include "mainwindow.h"
-
-#ifdef SA_USE_RIBBON_UI
 #include "MainWindowPrivate.h"
-#else
-#include "ui_mainwindow.h"
-#endif
-
 #include <functional>
 #include <QElapsedTimer>
 //#include "TxtQuickImportWizDlg.h"
@@ -100,13 +94,8 @@
 
 
 MainWindow::MainWindow(QWidget *parent) :
-#ifdef SA_USE_RIBBON_UI
-    SARibbonMainWindow(parent),
-    ui(new MainWindowPrivate(this))
-#else
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-#endif
+    SARibbonMainWindow(parent)
+    , ui(new MainWindowPrivate(this))
     , m_uiInterface(new SAUI(this))
     , ui_status_progress(nullptr)
     , ui_status_info(nullptr)
@@ -117,20 +106,13 @@ MainWindow::MainWindow(QWidget *parent) :
     saAddLog("start app");
 
     saStartElapsed("start main app init");
-#ifdef SA_USE_RIBBON_UI
     ui->init();
-#else
-    ui->setupUi(this);
-#endif
     init();
     initUI();
     initUIReflection();
     saElapsed("init ui and menu");
 
     saStartElapsed("start load plugin");
-#ifndef SA_USE_RIBBON_UI
-    ui->toolBar_chartSet->setEnabled(false);
-#endif
     initPlugin();
     saElapsed("loaded plugins");
 
@@ -297,19 +279,6 @@ void MainWindow::initUI()
     //区间缩放
     connect(ui->actionEnableChartZoom, &QAction::triggered
         , this, &MainWindow::onActionChartEnableZoomTriggered);
-
-#ifndef SA_USE_RIBBON_UI
-    QToolButton *toolbtn = qobject_cast<QToolButton *>(ui->toolBar_chartSet->widgetForAction(ui->actionEnableChartZoom));
-    if (toolbtn) {
-        QMenu *m1 = new QMenu(toolbtn);
-        m1->addAction(ui->actionZoomIn);
-        m1->addAction(ui->actionZoomOut);
-        m1->addAction(ui->actionZoomBase);
-        m1->addAction(ui->actionChartZoomReset);
-        toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
-        toolbtn->setMenu(m1);
-    }
-#endif
     connect(ui->actionSetZoomBase, &QAction::triggered
         , this, &MainWindow::onActionSetChartZoomToBaseTriggered);
     connect(ui->actionChartZoomReset, &QAction::triggered
@@ -340,8 +309,7 @@ void MainWindow::initUI()
     //清除所有选区
     connect(ui->actionClearAllSelectiedRegion, &QAction::triggered
         , this, &MainWindow::onActionChartClearAllSelectiedRegionTriggered);
-    ui->ribbonButtonStartSelection->setDefaultAction(ui->actionStartRectSelect);
-    ui->ribbonButtonStartSelection->setChecked(false);
+    ui->actionStartRectSelect->setChecked(false);
     //选区数据变换
     connect(ui->actionSelectionRegionMove, &QAction::triggered
         , this, &MainWindow::onActionChartSelectionRegionMove);
@@ -372,30 +340,9 @@ void MainWindow::initUI()
     connect(ui->actionXYDataPicker, &QAction::triggered, this, &MainWindow::onActionXYDataPickerTriggered);
     //选区范围内的数据移动
     connect(ui->actionSelectionRegionDataMove, &QAction::triggered, this, &MainWindow::onActionChartMoveDataInSelectionRegion);
-#ifndef SA_USE_RIBBON_UI
-    toolbtn = qobject_cast<QToolButton *>(ui->toolBar_chartSet->widgetForAction(ui->actionXYDataPicker));
-    if (toolbtn) {
-        QMenu *m = new QMenu(toolbtn);
-        m->addAction(ui->actionYDataPicker);
-        toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
-        toolbtn->setMenu(m);
-    }
-#endif
     //网格
     ui->actionShowGrid->setCheckable(true);
     connect(ui->actionShowGrid, &QAction::triggered, this, &MainWindow::onActionShowGridTriggered);
-#ifndef SA_USE_RIBBON_UI
-    toolbtn = qobject_cast<QToolButton *>(ui->toolBar_chartSet->widgetForAction(ui->actionShowGrid));
-    if (toolbtn) {
-        QMenu *m1 = new QMenu(toolbtn);
-        m1->addAction(ui->actionShowHGrid);
-        m1->addAction(ui->actionShowCrowdedHGrid);
-        m1->addAction(ui->actionShowVGrid);
-        m1->addAction(ui->actionShowCrowdedVGrid);
-        toolbtn->setPopupMode(QToolButton::MenuButtonPopup);
-        toolbtn->setMenu(m1);
-    }
-#endif
     //显示水平网格
     ui->actionShowHGrid->setCheckable(true);
     connect(ui->actionShowHGrid, &QAction::triggered, this, &MainWindow::onActionShowHGridTriggered);
@@ -877,9 +824,6 @@ SAUIInterface *MainWindow::uiInterface()
 MainWindow::~MainWindow()
 {
     saveSetting();
-#ifndef SA_USE_RIBBON_UI
-    delete ui;
-#endif
 }
 
 
@@ -2132,10 +2076,6 @@ void MainWindow::onMdiAreaSubWindowActivated(QMdiSubWindow *arg1)
     SAFigureWindow *fig = getFigureWidgetFromMdiSubWindow(arg1);
 
     if (fig) {
-#ifdef SA_USE_RIBBON_UI
-#else
-        ui->toolBar_chartSet->setEnabled(true);
-#endif
         //刷新toolbar
         updateChartSetToolBar(fig);
     }else {
@@ -2632,7 +2572,6 @@ QAction *MainWindow::addAnalysisPluginMenu(QMenu *menu)
 }
 
 
-#ifdef SA_USE_RIBBON_UI
 ///
 /// \brief 把action加入 ribbon界面的Gallery
 /// \param name
@@ -2645,8 +2584,6 @@ void MainWindow::addAnalysisActionsToRibbonGallery(const QString& name, const QL
     group->setEnableIconText(true);
 }
 
-
-#endif
 
 ///
 /// \brief 在ui界面显示普通信息
@@ -2981,23 +2918,18 @@ void MainWindow::onFocusChanged(QWidget *old, QWidget *now)
             Q_UNUSED(v);
             m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
             setTableRibbonContextCategoryVisible(true);
-        } else if (now == ui->dockWidget_valueViewer || now == ui->tabWidget_valueViewer) {
+        } else if ((now == ui->dockWidget_valueViewer) || (now == ui->tabWidget_valueViewer)) {
             // 如果选中的窗口是dockWidget_valueViewer，或者tabWidget_valueViewer等SAValueDataTableView
             // 的父级窗口，也把TableRibbonContext激活
             m_lastForceType = SAUIInterface::ValueTableWidgetFocus;
             setTableRibbonContextCategoryVisible(true);
-
-        }else if (SARibbonStackedWidget* v = qobject_cast<SARibbonStackedWidget*>(now) ) {
+        }else if (SARibbonStackedWidget *v = qobject_cast<SARibbonStackedWidget *>(now)) {
             //如果是回到ribbon，就不做任何操作
-
-        }
-        else {
+        }else {
             setTableRibbonContextCategoryVisible(false);
         }
-
     }
-    if(old && now)
-    {
+    if (old && now) {
         qDebug() << old->metaObject()->className() << " -> " << now->metaObject()->className();
     }
 }

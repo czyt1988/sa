@@ -1,18 +1,14 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "../global/SAGlobals.h"
-#ifdef SA_USE_RIBBON_UI
+
 #include "SARibbonMainWindow.h"
 
 #define _CFG_LAYOUT_SELECT_CHANG_QSS    0
 
 #include <QScopedPointer>
 class MainWindowPrivate;
-#else
-namespace Ui {
-class MainWindow;
-}
-#endif
+
 #include <memory>
 #include <QMainWindow>
 //#include "SAChartSupport.h"
@@ -64,11 +60,8 @@ class SARectRegionSelectEditor;
 /// \brief The MainWindow class
 /// \todo 更改project model
 ///
-#ifdef SA_USE_RIBBON_UI
+
 class MainWindow : public SARibbonMainWindow
-#else
-class MainWindow : public QMainWindow
-#endif
 {
     Q_OBJECT
     friend class SAUI;
@@ -236,10 +229,10 @@ public:
     //把菜单添加到分析功能的菜单中
     QAction *addAnalysisPluginMenu(QMenu *menu);
 
-#ifdef SA_USE_RIBBON_UI
+
     //把action加入 ribbon界面的Gallery
     void addAnalysisActionsToRibbonGallery(const QString& name, const QList<QAction *>& actions);
-#endif
+
     /// \}
 
     ///
@@ -706,11 +699,7 @@ private:
     void updateChartEditorActionState(SAChart2D *chart);
 
 private:
-#ifdef SA_USE_RIBBON_UI
     QScopedPointer<MainWindowPrivate> ui;
-#else
-    Ui::MainWindow *ui;
-#endif
     SAUI *m_uiInterface;
     progressStateWidget *ui_status_progress;        ///< 状态栏上的进度信息
     SAInformationStatusWidget *ui_status_info;      ///< 状态栏上的特殊信息
