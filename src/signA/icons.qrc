@@ -92,6 +92,7 @@
         <file>icons/expandAll.svg</file>
         <file>icons/figureSet.svg</file>
         <file>icons/refresh.svg</file>
+        <file>icons/ribbonStyle.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>logo.png</file>

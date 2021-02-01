@@ -584,6 +584,9 @@ private slots:
     // 皮肤切换
     void onActionSkinChanged(QAction *act);
 
+    //ribbon样式改变槽
+    void onActionGroupRibbonStyleTriggered(QAction *act);
+
     ///
     //item选中
     void onLayoutWidgetItemSelected(QwtPlotItem *item);
@@ -709,8 +712,6 @@ private:
     SAMdiSubWindowManager m_mdiManager;
     SAChart2D *m_figureRightClickChart;                     ///< 记录绘图右击时的2d图
     QScopedPointer<SADrawDelegate> m_drawDelegate;          ///< 绘图代理
-    QActionGroup *m_chartRegionSelectionShapeActionGroup;   ///<选区选择形状的action group
-    QActionGroup *m_chartRegionSelectionModeActionGroup;    ///<选区选择模式的action group
     int m_lastForceType;                                    ///< 记录最后的焦点信息
     unsigned int m_nUserChartCount;
     QStringList m_recentOpenFiles;                          ///< 记录最近打开的文件

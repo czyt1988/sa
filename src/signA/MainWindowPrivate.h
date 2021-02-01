@@ -98,21 +98,30 @@ public:
     QAction *actionSetZoomBase;
     QAction *actionZoomIn;
     QAction *actionZoomOut;
+
+
+    QActionGroup *actionGroupSelection; ///< Selection group ,管理actionStartRectSelect，actionStartEllipseSelect，actionStartPolygonSelect
     QAction *actionStartRectSelect;
     QAction *actionStartEllipseSelect;
     QAction *actionStartPolygonSelect;
+
     QAction *actionClearAllSelectiedRegion;
+
+    QActionGroup *actionGroupchartRegionSelectionMode;///< Selection Mode group
     QAction *actionSingleSelection;
     QAction *actionAdditionalSelection;
     QAction *actionIntersectionSelection;
     QAction *actionSubtractionSelection;
+
     QAction *actionDrawScatterChart;
     QAction *actionDrawHistogramChart;
     QAction *actionDrawBarChart;
     QAction *actionDrawBoxChart;
     QAction *actionDrawIntervalChart;
-    QAction *actionSelectionRegionMove;     ///<
-    QAction *actionSelectionRegionDataMove; ///<
+
+    QActionGroup *actionGroupChartEditor;   ///< 图像编辑器的互斥,管理actionSelectionRegionMove，actionSelectionRegionDataMove
+    QAction *actionSelectionRegionMove;     ///< 基于组群actionSelectionRegionMove
+    QAction *actionSelectionRegionDataMove; ///< 基于组群actionSelectionRegionMove
 
     QAction *actionValueCreateWizard;       ///< 创建数据向导
     QAction *actionValueCreateDoubleVector; ///< 创建一个维double数据
@@ -123,15 +132,23 @@ public:
     QAction *actionFigureEditSubPlotGeometry;///< 编辑子窗口位置
 
 
-    QAction *actionSelectSkin;///<
-    QActionGroup *actionGroupSkins;
-    QActionGroup *actionGroupSelection;
-    QActionGroup *actionChartEditor;        ///< 图像编辑器的互斥
+    QAction *actionSelectSkin;      ///<
+    QActionGroup *actionGroupSkins; ///< 管理皮肤的actiongroup
+
+
 
     QAction *actionColorMapTable;           ///< 对表格进行高亮色阶显示
 
+    QActionGroup *actionGroupRibbonStyle;   ///< 管理ribbon的风格action的group
+    QAction *actionRibbonStyleOffice3Line;  ///< ribbon的风格 - office 3行
+    QAction *actionRibbonStyleWps3Line;     ///< ribbon的风格 - wps 3行
+    QAction *actionRibbonStyleOffice2Line;  ///< ribbon的风格 - office 2行
+    QAction *actionRibbonStyleWps2Line;     ///< ribbon的风格 - wps 2行
+
+
+
     SARibbonBar *menuBar;
-    SARibbonToolButton *ribbonButtonStartSelection;
+    SARibbonToolButton *ribbonButtonStartSelection;///< 所有
     SARibbonButtonGroupWidget *ribbonRightTopBar;
     SARibbonApplicationButton *ribbonApplicationButton;
     //!Main Category Page
@@ -153,6 +170,7 @@ public:
     QMenu *menuDataRemove;
     QMenu *menuShowCrowdedGrid;
     QMenu *menuWindowsViewSet;
+    QMenu *menuRibbonStyle;///< 选择ribbon的样式
 
     SARibbonPannel *mainCategoryValuePannel;
     //! operate Category Page
@@ -260,7 +278,6 @@ public:
 
 private:
     void setupUi(MainWindow *mainWinowPtr);
-    void setupMenu(MainWindow *mainWinowPtr);
 };
 
 #endif // MAINWINDOWPRIVATE_H

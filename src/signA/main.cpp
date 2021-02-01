@@ -14,9 +14,10 @@
 #include "SAServeHandleFun.h"
 
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1600)
-#pragma execution_character_set("utf-8")
-#endif
+//#if defined(_MSC_VER) && (_MSC_VER >= 1600)
+//#pragma execution_character_set("utf-8")
+//#endif
+
 #ifdef Q_OS_WIN
 #ifdef _DEBUG
 #include <crtdbg.h>
@@ -27,7 +28,7 @@ const int max_start_serve_retry_count = 10;
 //日志文件指针
 static QFile *g_log_file = nullptr;
 //按照QLocal加载语言
-void load_local_language();
+void load_local_language(QApplication& app);
 
 //获取日志文件夹路径
 QString get_log_file_path();
@@ -69,7 +70,8 @@ int main(int argc, char *argv[])
     qDebug() << "libs path:" << QCoreApplication::libraryPaths();
 
     //加载本地语言
-    load_local_language();
+    load_local_language(a);
+
     //启动服务程序
     start_serve_process(max_start_serve_retry_count);
     //样式设置
@@ -105,21 +107,23 @@ void start_serve_process(int maxTrycount)
 ///
 /// \brief 加载语言
 ///
-void load_local_language()
+void load_local_language(QApplication& app)
 {
     QScopedPointer<QTranslator> translator(new QTranslator);
     QLocale loc;
 
-    qDebug() << loc.uiLanguages();
+    qDebug() << "init uiLanguages " << loc.uiLanguages();
+    qDebug() << "init QLocale.bcp47Name " << loc.bcp47Name();
     if ("zh" == loc.bcp47Name()) {
-        QFont f = qApp->font();
+        QFont f = app.font();
         f.setFamily(QStringLiteral("微软雅黑"));
-        qApp->setFont(f);
+        app.setFont(f);
     }
 
     QString lngPath = qApp->applicationDirPath();
 
     lngPath = lngPath + QDir::separator() + "language";
+    qDebug() << "language dir：" << lngPath;
     if (translator->load(loc, QString(), QString(), lngPath)) {
         qApp->installTranslator(translator.take());
     }
