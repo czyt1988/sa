@@ -33,7 +33,7 @@
 #include "SACurveSelectDialog.h"
 #include "SAProjectInfomationSetDialog.h"
 #include "SAAddCurveTypeDialog.h"
-
+#include <AboutDialog.h>
 #include <PickCurveDataModeSetDialog.h>
 #include <SAPropertySetDialog.h>
 
@@ -123,6 +123,7 @@ MainWindow::MainWindow(QWidget *parent) :
     saElapsed("loaded settings");
 
     showNormalMessageInfo(QStringLiteral("程序初始化完成"));
+    qDebug() << "window font:" << font().family();
 }
 
 
@@ -267,6 +268,8 @@ void MainWindow::initUI()
     connect(ui->actionMessageInfoDock, &QAction::triggered, this, &MainWindow::onActionMessageInfoDockTriggered);
     //显示隐藏figure set窗口
     connect(ui->actionFigureSetDock, &QAction::triggered, this, &MainWindow::onActionFigureSetDockTriggered);
+    //
+    connect(ui->actionGroupRibbonStyle, &QActionGroup::triggered, this, &MainWindow::onActionGroupRibbonStyleTriggered);
     //===========================================================
     //- 图表设置菜单及工具栏的关联
     //十字光标
@@ -290,11 +293,7 @@ void MainWindow::initUI()
     connect(ui->actionZoomInBestView, &QAction::triggered
         , this, &MainWindow::onActionChartZoomInBestView);
 
-    //选区菜单
-    m_chartRegionSelectionShapeActionGroup = new QActionGroup(this);
-    ui->actionStartRectSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
-    ui->actionStartEllipseSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
-    ui->actionStartPolygonSelect->setActionGroup(m_chartRegionSelectionShapeActionGroup);
+
     //ui->actionClearAllSelectiedRegion->setActionGroup(m_chartRegionSelectionShapeActionGroup);
     //ui->actionClearAllSelectiedRegion->setChecked(true);
     //矩形选框
@@ -313,12 +312,6 @@ void MainWindow::initUI()
     //选区数据变换
     connect(ui->actionSelectionRegionMove, &QAction::triggered
         , this, &MainWindow::onActionChartSelectionRegionMove);
-    //
-    m_chartRegionSelectionModeActionGroup = new QActionGroup(this);
-    ui->actionSingleSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
-    ui->actionAdditionalSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
-    ui->actionSubtractionSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
-    ui->actionIntersectionSelection->setActionGroup(m_chartRegionSelectionModeActionGroup);
     //选区单选模式
     connect(ui->actionSingleSelection, &QAction::triggered
         , this, &MainWindow::onActionChartActiveSingleSelectionTriggered);
@@ -655,6 +648,24 @@ void MainWindow::onActionSkinChanged(QAction *act)
 
 
 /**
+ * @brief ribbon样式改变槽
+ * @param act
+ */
+void MainWindow::onActionGroupRibbonStyleTriggered(QAction *act)
+{
+    if (act == ui->actionRibbonStyleOffice3Line) {
+        ribbonBar()->setRibbonStyle(SARibbonBar::OfficeStyle);
+    }else if (act == ui->actionRibbonStyleWps3Line) {
+        ribbonBar()->setRibbonStyle(SARibbonBar::WpsLiteStyle);
+    }else if (act == ui->actionRibbonStyleOffice2Line) {
+        ribbonBar()->setRibbonStyle(SARibbonBar::OfficeStyleTwoRow);
+    }else if (act == ui->actionRibbonStyleWps2Line) {
+        ribbonBar()->setRibbonStyle(SARibbonBar::WpsLiteStyleTwoRow);
+    }
+}
+
+
+/**
  * @brief item选中
  * @param item
  */
@@ -801,15 +812,18 @@ void MainWindow::onActionSelectCurrentCursorToActiveChartTriggered(bool on)
 void MainWindow::setSkin(const QString& name)
 {
     saStartElapsed(tr("start use skin:%1").arg(name));
-    SAThemeManager::setStyle(name, this);
-    QList<QAction *> acts = ui->actionGroupSkins->actions();
+    if (SAThemeManager::setStyle(name, this)) {
+        QList<QAction *> acts = ui->actionGroupSkins->actions();
 
-    for (int i = 0; i < acts.size(); ++i)
-    {
-        if (acts[i]->text() == name) {
-            acts[i]->setChecked(true);
-            break;
+        for (int i = 0; i < acts.size(); ++i)
+        {
+            if (acts[i]->text() == name) {
+                acts[i]->setChecked(true);
+                break;
+            }
         }
+    }else{
+        qDebug() << tr("set style error,style name is:") << name;
     }
     saElapsed(tr("end use skin"));
 }
@@ -1647,7 +1661,7 @@ void MainWindow::onActionChartMoveDataInSelectionRegion(bool on)
 ///
 SAAbstractRegionSelectEditor::SelectionMode MainWindow::getCurrentChartRegionSelectionMode() const
 {
-    QAction *act = m_chartRegionSelectionModeActionGroup->checkedAction();
+    QAction *act = ui->actionGroupchartRegionSelectionMode->checkedAction();
 
     if (act == ui->actionSingleSelection) {
         return (SAAbstractRegionSelectEditor::SingleSelection);
@@ -2971,7 +2985,6 @@ void MainWindow::makeValueFromXYSeries(const QString& name, SA::PickDataMode pic
 }
 
 
-#include <AboutDialog.h>
 void MainWindow::onActionAboutTriggered()
 {
     AboutDialog aboutDlg;

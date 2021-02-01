@@ -23,6 +23,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->resize(1219, 689);
     menuBar = mainWinowPtr->ribbonBar();
     menuBar->setObjectName(QStringLiteral("menuBar"));
+    menuBar->setRibbonStyle(SARibbonBar::WpsLiteStyle);
     QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     sizePolicy.setHorizontalStretch(0);
@@ -238,26 +239,28 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionZoomInBestView->setObjectName(QStringLiteral("actionZoomInBestView"));
     //actionZoomInBestView->setIcon(QIcon(":/icons/icons/zoomOut.png"));
 
-    actionGroupSelection = new QActionGroup(mainWinowPtr);
-    actionGroupSelection->setObjectName(QStringLiteral("actionGroupSelection"));
-    actionGroupSelection->setExclusive(true);
+
 
     actionStartRectSelect = new QAction(mainWinowPtr);
     actionStartRectSelect->setIcon(QIcon(":/icons/icons/StartRectSelect.svg"));
     actionStartRectSelect->setObjectName(QStringLiteral("actionStartRectSelect"));
     actionStartRectSelect->setCheckable(true);
-    actionGroupSelection->addAction(actionStartRectSelect);
 
     actionStartEllipseSelect = new QAction(mainWinowPtr);
     actionStartEllipseSelect->setIcon(QIcon(":/icons/icons/StartEllipseSelect.svg"));
     actionStartEllipseSelect->setObjectName(QStringLiteral("actionStartEllipseSelect"));
     actionStartEllipseSelect->setCheckable(true);
-    actionGroupSelection->addAction(actionStartEllipseSelect);
 
     actionStartPolygonSelect = new QAction(mainWinowPtr);
     actionStartPolygonSelect->setIcon(QIcon(":/icons/icons/StartPolygonSelect.svg"));
     actionStartPolygonSelect->setObjectName(QStringLiteral("actionStartPolygonSelect"));
     actionStartPolygonSelect->setCheckable(true);
+
+    actionGroupSelection = new QActionGroup(mainWinowPtr);
+    actionGroupSelection->setObjectName(QStringLiteral("actionGroupSelection"));
+    actionGroupSelection->setExclusive(true);
+    actionGroupSelection->addAction(actionStartRectSelect);
+    actionGroupSelection->addAction(actionStartEllipseSelect);
     actionGroupSelection->addAction(actionStartPolygonSelect);
 
     actionClearAllSelectiedRegion = new QAction(mainWinowPtr);
@@ -285,6 +288,14 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSubtractionSelection->setObjectName(QStringLiteral("actionSubtractionSelection"));
     actionSubtractionSelection->setCheckable(true);
     actionSubtractionSelection->setIcon(QIcon(":/icons/icons/SubtractionSelection.png"));
+
+    actionGroupchartRegionSelectionMode = new QActionGroup(mainWinowPtr);
+    actionGroupchartRegionSelectionMode->setExclusive(true);
+    actionGroupchartRegionSelectionMode->addAction(actionSingleSelection);
+    actionGroupchartRegionSelectionMode->addAction(actionAdditionalSelection);
+    actionGroupchartRegionSelectionMode->addAction(actionIntersectionSelection);
+    actionGroupchartRegionSelectionMode->addAction(actionSubtractionSelection);
+
 
     actionDrawScatterChart = new QAction(mainWinowPtr);
     actionDrawScatterChart->setObjectName(QStringLiteral("actionDrawScatterChart"));
@@ -316,16 +327,40 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionSelectionRegionDataMove->setCheckable(true);
     actionSelectionRegionDataMove->setIcon(QIcon(":/icons/icons/selectionRegionDataMove.png"));
 
+    actionGroupChartEditor = new QActionGroup(mainWinowPtr);
+    actionGroupChartEditor->setExclusive(true);
+    actionGroupChartEditor->addAction(actionSelectionRegionMove);
+    actionGroupChartEditor->addAction(actionSelectionRegionDataMove);
+
     actionFigureEditSubPlotGeometry = new QAction(mainWinowPtr);
     actionFigureEditSubPlotGeometry->setObjectName(QStringLiteral("actionFigureEditSubPlotGeometry"));
     actionFigureEditSubPlotGeometry->setCheckable(true);
     actionFigureEditSubPlotGeometry->setIcon(QIcon(":/icons/icons/subplotEdit.png"));
 
+    actionRibbonStyleOffice3Line = new QAction(mainWinowPtr); // ribbon的风格 - office 3行
+    actionRibbonStyleOffice3Line->setObjectName(QStringLiteral("actionRibbonStyleOffice3Line"));
+    actionRibbonStyleOffice3Line->setCheckable(true);
 
-    actionChartEditor = new QActionGroup(mainWinowPtr);
-    actionChartEditor->setExclusive(true);
-    actionChartEditor->addAction(actionSelectionRegionMove);
-    actionChartEditor->addAction(actionSelectionRegionDataMove);
+    actionRibbonStyleWps3Line = new QAction(mainWinowPtr); // ribbon的风格 - wps 3行
+    actionRibbonStyleWps3Line->setObjectName(QStringLiteral("actionRibbonStyleWps3Line"));
+    actionRibbonStyleWps3Line->setCheckable(true);
+
+    actionRibbonStyleOffice2Line = new QAction(mainWinowPtr); // ribbon的风格 - office 2行
+    actionRibbonStyleOffice2Line->setObjectName(QStringLiteral("actionRibbonStyleOffice2Line"));
+    actionRibbonStyleOffice2Line->setCheckable(true);
+
+    actionRibbonStyleWps2Line = new QAction(mainWinowPtr); // ribbon的风格 - wps 2行
+    actionRibbonStyleWps2Line->setObjectName(QStringLiteral("actionRibbonStyleWps2Line"));
+    actionRibbonStyleWps2Line->setCheckable(true);
+
+    actionGroupRibbonStyle = new QActionGroup(mainWinowPtr);
+    actionGroupRibbonStyle->setExclusive(true);
+    actionGroupRibbonStyle->addAction(actionRibbonStyleOffice3Line);
+    actionGroupRibbonStyle->addAction(actionRibbonStyleWps3Line);
+    actionGroupRibbonStyle->addAction(actionRibbonStyleOffice2Line);
+    actionGroupRibbonStyle->addAction(actionRibbonStyleWps2Line);
+
+
 
     actionSelectSkin = new QAction(mainWinowPtr);
     actionSelectSkin->setObjectName(QStringLiteral("actionSelectSkin"));
@@ -367,26 +402,26 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     //==========================================================================
     //! 2. 菜单创建
-    menuRecentOpenProject = new SARibbonMenu(menuBar);
+    menuRecentOpenProject = new SARibbonMenu(mainWinowPtr);
     menuRecentOpenProject->setObjectName(QStringLiteral("menuRecentOpenProject"));
     menuRecentOpenProject->addSeparator();
     menuRecentOpenProject->addAction(actionClearRecentOpenProjectorHistroy);
 
-    menuRecentOpenFile = new SARibbonMenu(menuBar);
+    menuRecentOpenFile = new SARibbonMenu(mainWinowPtr);
     menuRecentOpenFile->setObjectName(QStringLiteral("menuRecentOpenFile"));
     menuRecentOpenFile->addSeparator();
     menuRecentOpenFile->addAction(actionClearRecentOpenFileHistroy);
 
-    menuExport = new SARibbonMenu(menuBar);
+    menuExport = new SARibbonMenu(mainWinowPtr);
     menuExport->setObjectName(QStringLiteral("menu_export"));
     menuExport->setIcon(QIcon(":/icons/icons/export.png"));
 
-    menuImport = new SARibbonMenu(menuBar);
+    menuImport = new SARibbonMenu(mainWinowPtr);
     menuImport->setObjectName(QStringLiteral("menu_import"));
     menuImport->setIcon(QIcon(":/icons/icons/import.png"));
 
 
-    menuFile = new SARibbonMenu(menuBar);
+    menuFile = new SARibbonMenu(mainWinowPtr);
     menuFile->setObjectName(QStringLiteral("menuFile"));
     menuFile->addAction(actionOpen);
     menuFile->addAction(actionOpenProject);
@@ -402,7 +437,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuFile->addSeparator();
     menuFile->addAction(actionQuit);
 
-    menuWindowsViewSet = new SARibbonMenu(menuBar);
+    menuWindowsViewSet = new SARibbonMenu(mainWinowPtr);
     menuWindowsViewSet->setObjectName(QStringLiteral("menu_windowsViewSet"));
     menuWindowsViewSet->setIcon(QIcon(":/icons/icons/windowViewSet.png"));
     menuWindowsViewSet->addAction(actionFigureViewer);
@@ -414,37 +449,37 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuWindowsViewSet->addAction(actionValueViewerDock);
     menuWindowsViewSet->addAction(actionMessageInfoDock);
 
-    menuAnalysis = new SARibbonMenu(menuBar);
+    menuAnalysis = new SARibbonMenu(mainWinowPtr);
     menuAnalysis->setObjectName(QStringLiteral("menuAnalysis"));
     menuAnalysis->setIcon(QIcon(":/icons/icons/allFunction.svg"));
 
-    menuLineChart = new SARibbonMenu(menuBar);
+    menuLineChart = new SARibbonMenu(mainWinowPtr);
     menuLineChart->setObjectName(QStringLiteral("menuLineChart"));
     menuLineChart->setIcon(QIcon(":/icons/icons/lineChart.svg"));
     menuLineChart->addAction(actionNewTrend);
 
-    menuScatterChart = new SARibbonMenu(menuBar);
+    menuScatterChart = new SARibbonMenu(mainWinowPtr);
     menuScatterChart->setObjectName(QStringLiteral("menuScatterChart"));
     menuScatterChart->setIcon(QIcon(":/icons/icons/scatterChart.svg"));
     menuScatterChart->addAction(actionDrawScatterChart);
 
-    menuBarChart = new SARibbonMenu(menuBar);
+    menuBarChart = new SARibbonMenu(mainWinowPtr);
     menuBarChart->setObjectName(QStringLiteral("menuBarChart"));
     menuBarChart->setIcon(QIcon(":/icons/icons/barChart.svg"));
     menuBarChart->addAction(actionDrawBarChart);
 
-    menuHistogramChart = new SARibbonMenu(menuBar);
+    menuHistogramChart = new SARibbonMenu(mainWinowPtr);
     menuHistogramChart->setObjectName(QStringLiteral("menuHistogramChart"));
     menuHistogramChart->setIcon(QIcon(":/icons/icons/histogramChart.svg"));
     menuHistogramChart->addAction(actionDrawHistogramChart);
     menuHistogramChart->addAction(actionDrawIntervalChart);
 
-    menuBoxChart = new SARibbonMenu(menuBar);
+    menuBoxChart = new SARibbonMenu(mainWinowPtr);
     menuBoxChart->setObjectName(QStringLiteral("menuBoxChart"));
     menuBoxChart->setIcon(QIcon(":/icons/icons/boxChart.svg"));
     menuBoxChart->addAction(actionDrawBoxChart);
 
-    menuDataManager = new SARibbonMenu(menuBar);
+    menuDataManager = new SARibbonMenu(mainWinowPtr);
     menuDataManager->setObjectName(QStringLiteral("menuDataManager"));
     menuDataManager->addAction(actionViewValueInCurrentTab);
     menuDataManager->addAction(actionViewValueAppendInCurrentTab);
@@ -455,7 +490,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 
-    menuGrid = new SARibbonMenu(menuBar);
+    menuGrid = new SARibbonMenu(mainWinowPtr);
     menuGrid->setObjectName(QStringLiteral("menuGrid"));
     menuGrid->addAction(actionShowGrid);
     menuGrid->addSeparator();
@@ -467,7 +502,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
 
 
-    menuZoomSet = new SARibbonMenu(menuBar);
+    menuZoomSet = new SARibbonMenu(mainWinowPtr);
     menuZoomSet->setIcon(QIcon(":/figureSet/icons/figureSet/zoomChart.png"));
     menuZoomSet->setObjectName(QStringLiteral("menuZoomSet"));
     menuZoomSet->addAction(actionEnableChartZoom);
@@ -479,7 +514,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuZoomSet->addSeparator();
     menuZoomSet->addAction(actionSetZoomBase);
 
-    menuRegionSelect = new SARibbonMenu(menuBar);
+    menuRegionSelect = new SARibbonMenu(mainWinowPtr);
     menuRegionSelect->setObjectName(QStringLiteral("menuRegionSelect"));
     menuRegionSelect->addAction(actionStartRectSelect);
     menuRegionSelect->addAction(actionStartEllipseSelect);
@@ -491,7 +526,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuRegionSelect->addAction(actionSubtractionSelection);
     menuRegionSelect->addAction(actionIntersectionSelection);
 
-    menuChartSet = new SARibbonMenu(menuBar);
+    menuChartSet = new SARibbonMenu(mainWinowPtr);
     menuChartSet->setObjectName(QStringLiteral("menuChartSet"));
     menuChartSet->addAction(actionEnableChartCrossCursor);
     menuChartSet->addAction(actionEnableChartPanner);
@@ -499,39 +534,48 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     menuChartSet->addAction(menuZoomSet->menuAction());
     menuChartSet->addAction(menuRegionSelect->menuAction());
 
-    menuSkinList = new SARibbonMenu(menuBar);
+    menuSkinList = new SARibbonMenu(mainWinowPtr);
     menuSkinList->setObjectName(QStringLiteral("menuSkinList"));
 
 
 
-    menuHelp = new SARibbonMenu(menuBar);
+    menuHelp = new SARibbonMenu(mainWinowPtr);
     menuHelp->setObjectName(QStringLiteral("menuHelp"));
     menuHelp->addAction(actionAbout);
 
-    menuEdit = new SARibbonMenu(menuBar);
+    menuEdit = new SARibbonMenu(mainWinowPtr);
     menuEdit->setObjectName(QStringLiteral("menuEdit"));
     menuEdit->addAction(actionUndo);
     menuEdit->addAction(actionRedo);
 
-    menuTool = new SARibbonMenu(menuBar);
+    menuTool = new SARibbonMenu(mainWinowPtr);
     menuTool->setObjectName(QStringLiteral("menu_tool"));
     menuTool->addAction(actionProjectSetting);
 
-    menuSelection = new SARibbonMenu(menuBar);
+    menuSelection = new SARibbonMenu(mainWinowPtr);
     menuSelection->addAction(actionStartRectSelect);
     menuSelection->addAction(actionStartEllipseSelect);
     menuSelection->addAction(actionStartPolygonSelect);
     menuSelection->addSeparator();
     menuSelection->addAction(actionClearAllSelectiedRegion);
 
-    menuDataRemove = new SARibbonMenu(menuBar);
+    menuDataRemove = new SARibbonMenu(mainWinowPtr);
     menuDataRemove->addAction(actionOutRangDataRemove);
 
-    menuShowCrowdedGrid = new SARibbonMenu(menuBar);
+    menuShowCrowdedGrid = new SARibbonMenu(mainWinowPtr);
     menuShowCrowdedGrid->setObjectName(QStringLiteral("menuShowCrowdedGrid"));
     menuShowCrowdedGrid->setIcon(QIcon(":/figureSet/icons/figureSet/GridXOnly.png"));
     menuShowCrowdedGrid->addAction(actionShowCrowdedHGrid);
     menuShowCrowdedGrid->addAction(actionShowCrowdedVGrid);
+
+    //ribbon 样式
+    menuRibbonStyle = new SARibbonMenu(mainWinowPtr);
+    menuRibbonStyle->setObjectName(QStringLiteral("menuRibbonStyle"));
+    menuRibbonStyle->setIcon(QIcon(":/icons/icons/ribbonStyle.png"));
+    menuRibbonStyle->addAction(actionRibbonStyleOffice3Line);
+    menuRibbonStyle->addAction(actionRibbonStyleWps3Line);
+    menuRibbonStyle->addAction(actionRibbonStyleOffice2Line);
+    menuRibbonStyle->addAction(actionRibbonStyleWps2Line);
 
     //右键菜单
     menuFigureWindow = new QMenu(mainWinowPtr);
@@ -666,10 +710,13 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     quickAccessBar->addSeparator();
     SARibbonToolButton *ribbonToobBtnSelectSkin = quickAccessBar->addButton(actionSelectSkin);
 
+    quickAccessBar->addButton(menuRibbonStyle->menuAction());
+
+
     ribbonToobBtnSelectSkin->setMenu(menuSkinList);
     ribbonToobBtnSelectSkin->setPopupMode(QToolButton::InstantPopup);
     quickAccessBar->addSeparator();
-    menuBar->setRibbonStyle(SARibbonBar::WpsLiteStyle);
+
     //menuBar->repaint();
 //=======end ribbon set=======================================================================================
 
@@ -853,11 +900,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 }
 
 
-void MainWindowPrivate::setupMenu(MainWindow *mainWinowPtr)
-{
-}
-
-
 void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 {
     mainWinowPtr->setWindowTitle(QApplication::translate("MainWindow", "SA - Signal Analysis", 0));
@@ -872,13 +914,13 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionOpen->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", 0));
     actionWindowCascade->setText(QApplication::translate("MainWindow", "Cascade", 0));
     actionWindowTile->setText(QApplication::translate("MainWindow", "Tile", 0));
-    actionWindowMode->setText(QApplication::translate("MainWindow", "Window\nMode", 0));
-    actionTabMode->setText(QApplication::translate("MainWindow", "Tab \n Mode", 0));
+    actionWindowMode->setText(QApplication::translate("MainWindow", "Window Mode", 0));
+    actionTabMode->setText(QApplication::translate("MainWindow", "Tab Mode", 0));
     actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
     actionSave->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", 0));
     actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0));
     actionDataFeatureDock->setText(QApplication::translate("MainWindow", "Data Feature", 0));
-    actionNewChart->setText(QApplication::translate("MainWindow", "New\nChart", 0));
+    actionNewChart->setText(QApplication::translate("MainWindow", "New Chart", 0));
 #ifndef QT_NO_TOOLTIP
     actionNewChart->setToolTip(QApplication::translate("MainWindow", "New Chart with dialog", 0));
 #endif // QT_NO_TOOLTIP
@@ -887,10 +929,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionNewTrend->setToolTip(QApplication::translate("MainWindow", "Plot Trend With User Select Data Value", 0));
 #endif // QT_NO_TOOLTIP
     actionClearProject->setText(QApplication::translate("MainWindow", "Clear", 0));
-    actionInRangDataRemove->setText(QApplication::translate("MainWindow", "remove\nin", 0));
-    actionOutRangDataRemove->setText(QApplication::translate("MainWindow", "remove\nout", 0));
+    actionInRangDataRemove->setText(QApplication::translate("MainWindow", "remove in", 0));
+    actionOutRangDataRemove->setText(QApplication::translate("MainWindow", "remove out", 0));
 
-    actionSubWindowListDock->setText(QApplication::translate("MainWindow", "SubWindow\nList", 0));
+    actionSubWindowListDock->setText(QApplication::translate("MainWindow", "SubWindow List", 0));
     actionEnableChartCrossCursor->setText(QApplication::translate("MainWindow", "Cross", 0));
     actionEnableChartPanner->setText(QApplication::translate("MainWindow", "Panner", 0));
     actionEnableChartZoom->setText(QApplication::translate("MainWindow", "Zoom", 0));
@@ -915,33 +957,33 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
 #endif // QT_NO_TOOLTIP
     actionShowCrowdedHGrid->setText(QApplication::translate("MainWindow", "Crowded H Grid", 0));
 #ifndef QT_NO_TOOLTIP
-    actionShowCrowdedHGrid->setToolTip(QApplication::translate("MainWindow", "Crowded\nH Grid", 0));
+    actionShowCrowdedHGrid->setToolTip(QApplication::translate("MainWindow", "Crowded H Grid", 0));
 #endif // QT_NO_TOOLTIP
-    actionShowCrowdedVGrid->setText(QApplication::translate("MainWindow", "Crowded\nV Grid", 0));
+    actionShowCrowdedVGrid->setText(QApplication::translate("MainWindow", "Crowded V Grid", 0));
     actionShowLegend->setText(QApplication::translate("MainWindow", "Legend", 0));
     actionShowLegend->setIconText(QApplication::translate("MainWindow", "Legend", 0));
 #ifndef QT_NO_TOOLTIP
     actionShowLegend->setToolTip(QApplication::translate("MainWindow", "Show/Hide Legend", 0));
 #endif // QT_NO_TOOLTIP
-    actionShowLegendPanel->setText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
-    actionShowLegendPanel->setIconText(QApplication::translate("MainWindow", "Legend\nPanel", 0));
+    actionShowLegendPanel->setText(QApplication::translate("MainWindow", "Legend Panel", 0));
+    actionShowLegendPanel->setIconText(QApplication::translate("MainWindow", "Legend Panel", 0));
     actionChartZoomReset->setText(QApplication::translate("MainWindow", "Zoom Reset", 0));
-    actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick\nData", 0));
+    actionPickCurveToData->setText(QApplication::translate("MainWindow", "Pick Data", 0));
     actionAbout->setText(QApplication::translate("MainWindow", "About", 0));
     actionUndo->setText(QApplication::translate("MainWindow", "Rescind", 0));
     actionUndo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Z", 0));
     actionRedo->setText(QApplication::translate("MainWindow", "Redo", 0));
     actionRedo->setShortcut(QApplication::translate("MainWindow", "Ctrl+Shift+Z", 0));
     actionValueManagerDock->setText(QApplication::translate("MainWindow", "Value Manager", 0));
-    actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "View Value In\nCurrent Tab", 0));
-    actionViewValueAppendInCurrentTab->setText(QApplication::translate("MainWindow", "View Value Append\nIn Current Tab", 0));
-    actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "View Value In\nNew Tab", 0));
+    actionViewValueInCurrentTab->setText(QApplication::translate("MainWindow", "View Value In Current Tab", 0));
+    actionViewValueAppendInCurrentTab->setText(QApplication::translate("MainWindow", "View Value Append In Current Tab", 0));
+    actionViewValueInNewTab->setText(QApplication::translate("MainWindow", "View Value In New Tab", 0));
     actionLayerOutDock->setText(QApplication::translate("MainWindow", "Layerout", 0));
     actionRenameValue->setText(QApplication::translate("MainWindow", "Rename Value", 0));
 #ifndef QT_NO_TOOLTIP
     actionRenameValue->setToolTip(QApplication::translate("MainWindow", "Rename Value", 0));
 #endif // QT_NO_TOOLTIP
-    actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "Defalut\nView", 0));
+    actionSetDefalutDockPos->setText(QApplication::translate("MainWindow", "Defalut View", 0));
     actionValueViewerDock->setText(QApplication::translate("MainWindow", "Value View", 0));
     actionFigureViewer->setText(QApplication::translate("MainWindow", "Figure View", 0));
     actionMessageInfoDock->setText(QApplication::translate("MainWindow", "Message View", 0));
@@ -950,7 +992,7 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "Delete Value", 0));
     actionSelectSkin->setToolTip(QApplication::translate("MainWindow", "select skin", 0));
 #endif // QT_NO_TOOLTIP
-    actionOpenProject->setText(QApplication::translate("MainWindow", "Open\nProject", 0));
+    actionOpenProject->setText(QApplication::translate("MainWindow", "Open Project", 0));
     actionSaveAs->setText(QApplication::translate("MainWindow", "Save As", 0));
     actionProjectSetting->setText(QApplication::translate("MainWindow", "Project Setting", 0));
     actionSetZoomBase->setText(QApplication::translate("MainWindow", "Set Zoom Base", 0));
@@ -959,10 +1001,10 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionZoomOut->setText(QApplication::translate("MainWindow", "Zoom Out", 0));
     actionZoomOut->setShortcut(QApplication::translate("MainWindow", "Ctrl+-", 0));
     actionZoomInBestView->setText(QApplication::translate("MainWindow", "Best View", 0));
-    actionStartRectSelect->setText(QApplication::translate("MainWindow", "Rect\nSelect", 0));
-    actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "Ellipse\nSelect", 0));
-    actionStartPolygonSelect->setText(QApplication::translate("MainWindow", "Polygon\nSelect", 0));
-    actionClearAllSelectiedRegion->setText(QApplication::translate("MainWindow", "Clear\nSelect", 0));
+    actionStartRectSelect->setText(QApplication::translate("MainWindow", "Rect Select", 0));
+    actionStartEllipseSelect->setText(QApplication::translate("MainWindow", "Ellipse Select", 0));
+    actionStartPolygonSelect->setText(QApplication::translate("MainWindow", "Polygon Select", 0));
+    actionClearAllSelectiedRegion->setText(QApplication::translate("MainWindow", "Clear Select", 0));
     actionSingleSelection->setText(QApplication::translate("MainWindow", "New Select", 0));
     actionAdditionalSelection->setText(QApplication::translate("MainWindow", "Add Select", 0));
     actionDrawIntervalChart->setText(QApplication::translate("MainWindow", "Add Interval", 0));
@@ -973,18 +1015,24 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionDrawHistogramChart->setText(QApplication::translate("MainWindow", "Histogram", 0));
     actionDrawBoxChart->setText(QApplication::translate("MainWindow", "Box", 0));
     actionSelectionRegionMove->setText(QApplication::translate("MainWindow", "Transform", 0));
-    actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Move\nDatas", 0));
+    actionSelectionRegionDataMove->setText(QApplication::translate("MainWindow", "Move Datas", 0));
     actionFigureSetDock->setText(QApplication::translate("MainWindow", "Figure Setting", 0));
-    actionValueCreateWizard->setText(QApplication::translate("MainWindow", "Value Create\n Wizard", 0));
+    actionValueCreateWizard->setText(QApplication::translate("MainWindow", "Value Create Wizard", 0));
     actionValueCreateDoubleVector->setText(QApplication::translate("MainWindow", "double vector", 0));
     actionValueCreatePointVector->setText(QApplication::translate("MainWindow", "point vector", 0));
     actionValueCreateVariantTable->setText(QApplication::translate("MainWindow", "variant table", 0));
-    actionFigureEditSubPlotGeometry->setText(QApplication::translate("MainWindow", "Subplot\nEdit", 0));
-    actionColorMapTable->setText(QApplication::translate("MainWindow", "Highlight\nTable", 0));
+    actionFigureEditSubPlotGeometry->setText(QApplication::translate("MainWindow", "Subplot Edit", 0));
+    actionColorMapTable->setText(QApplication::translate("MainWindow", "Highlight Table", 0));
+
+    actionRibbonStyleOffice3Line->setText(QApplication::translate("MainWindow", "3 line office stype", 0));
+    actionRibbonStyleWps3Line->setText(QApplication::translate("MainWindow", "3 line wps style", 0));
+    actionRibbonStyleOffice2Line->setText(QApplication::translate("MainWindow", "2 line office stype", 0));
+    actionRibbonStyleWps2Line->setText(QApplication::translate("MainWindow", "2 line wps style", 0));
+
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));
     menuImport->setTitle(QApplication::translate("MainWindow", "Import", 0));
-    menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "Windows\nView", 0));
+    menuWindowsViewSet->setTitle(QApplication::translate("MainWindow", "Windows View", 0));
     menuAnalysis->setTitle(QApplication::translate("MainWindow", "Analysis", 0));
     menuDataManager->setTitle(QApplication::translate("MainWindow", "Data Manager", 0));
     menuChartSet->setTitle(QApplication::translate("MainWindow", "Chart Set", 0));
