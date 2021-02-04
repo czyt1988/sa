@@ -132,7 +132,6 @@ public:
     QAction *actionFigureEditSubPlotGeometry;///< 编辑子窗口位置
 
 
-    QAction *actionSelectSkin;      ///<
     QActionGroup *actionGroupSkins; ///< 管理皮肤的actiongroup
 
 

@@ -360,12 +360,6 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     actionGroupRibbonStyle->addAction(actionRibbonStyleOffice2Line);
     actionGroupRibbonStyle->addAction(actionRibbonStyleWps2Line);
 
-
-
-    actionSelectSkin = new QAction(mainWinowPtr);
-    actionSelectSkin->setObjectName(QStringLiteral("actionSelectSkin"));
-    actionSelectSkin->setIcon(QIcon(":/icons/icons/skin.png"));
-
     actionGroupSkins = new QActionGroup(mainWinowPtr);
     actionGroupSkins->setObjectName(QStringLiteral("actionGroupSkins"));
     actionGroupSkins->setExclusive(true);
@@ -536,7 +530,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     menuSkinList = new SARibbonMenu(mainWinowPtr);
     menuSkinList->setObjectName(QStringLiteral("menuSkinList"));
-
+    menuSkinList->setIcon(QIcon(":/icons/icons/skin.png"));
 
 
     menuHelp = new SARibbonMenu(mainWinowPtr);
@@ -596,7 +590,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     ribbonApplicationButton = qobject_cast<SARibbonApplicationButton *>(menuBar->applicationButton());
 
     ribbonRightTopBar = menuBar->activeTabBarRightButtonGroup();
-    ribbonRightTopBar->addButton(actionAbout);
+    ribbonRightTopBar->addAction(actionAbout);
 
     //! 3.2 Main Category Page
     mainRibbonCategory = menuBar->addCategoryPage(QStringLiteral("Main"));
@@ -635,14 +629,14 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     //这里把SARibbonToolButton的指针拿到，用于操作defaultAction
     ribbonButtonStartSelection = operateCategoryChartEditorPannel->addLargeActionMenu(actionStartRectSelect, menuSelection);
     ribbonButtonGroupSelectionMode = new SARibbonButtonGroupWidget(Parent);
-    ribbonButtonGroupSelectionMode->addButton(actionSingleSelection);
-    ribbonButtonGroupSelectionMode->addButton(actionAdditionalSelection);
-    ribbonButtonGroupSelectionMode->addButton(actionSubtractionSelection);
-    ribbonButtonGroupSelectionMode->addButton(actionIntersectionSelection);
+    ribbonButtonGroupSelectionMode->addAction(actionSingleSelection);
+    ribbonButtonGroupSelectionMode->addAction(actionAdditionalSelection);
+    ribbonButtonGroupSelectionMode->addAction(actionSubtractionSelection);
+    ribbonButtonGroupSelectionMode->addAction(actionIntersectionSelection);
     operateCategoryChartEditorPannel->addSmallWidget(ribbonButtonGroupSelectionMode);
     SARibbonButtonGroupWidget *tmpButtonGroup = new SARibbonButtonGroupWidget(Parent);
 
-    tmpButtonGroup->addButton(actionSelectionRegionMove);
+    tmpButtonGroup->addAction(actionSelectionRegionMove);
     operateCategoryChartEditorPannel->addSmallWidget(tmpButtonGroup);
     operateCategoryChartEditorPannel->addSeparator();
     operateCategoryChartEditorPannel->addLargeActionMenu(actionInRangDataRemove, menuDataRemove);
@@ -703,18 +697,13 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     quickAccessBar->setEnableShowIcon(false);
     quickAccessBar->addSeparator();
-    quickAccessBar->addButton(actionSave);
+    quickAccessBar->addAction(actionSave);
     quickAccessBar->addSeparator();
-    quickAccessBar->addButton(actionUndo);
-    quickAccessBar->addButton(actionRedo);
+    quickAccessBar->addAction(actionUndo);
+    quickAccessBar->addAction(actionRedo);
     quickAccessBar->addSeparator();
-    SARibbonToolButton *ribbonToobBtnSelectSkin = quickAccessBar->addButton(actionSelectSkin);
-
-    quickAccessBar->addButton(menuRibbonStyle->menuAction());
-
-
-    ribbonToobBtnSelectSkin->setMenu(menuSkinList);
-    ribbonToobBtnSelectSkin->setPopupMode(QToolButton::InstantPopup);
+    quickAccessBar->addMenu(menuSkinList);
+    quickAccessBar->addMenu(menuRibbonStyle);
     quickAccessBar->addSeparator();
 
     //menuBar->repaint();
@@ -990,7 +979,6 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionDeleteValue->setText(QApplication::translate("MainWindow", "Delete Value", 0));
 #ifndef QT_NO_TOOLTIP
     actionDeleteValue->setToolTip(QApplication::translate("MainWindow", "Delete Value", 0));
-    actionSelectSkin->setToolTip(QApplication::translate("MainWindow", "select skin", 0));
 #endif // QT_NO_TOOLTIP
     actionOpenProject->setText(QApplication::translate("MainWindow", "Open Project", 0));
     actionSaveAs->setText(QApplication::translate("MainWindow", "Save As", 0));
@@ -1048,6 +1036,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     menuBarChart->setTitle(QApplication::translate("MainWindow", "Bar", 0));
     menuBoxChart->setTitle(QApplication::translate("MainWindow", "Box", 0));
     menuHistogramChart->setTitle(QApplication::translate("MainWindow", "Histogram", 0));
+    menuSkinList->setTitle(QApplication::translate("MainWindow", "Skin", 0));
+    menuRibbonStyle->setTitle(QApplication::translate("MainWindow", "Ribbon UI Style", 0));
     dockWidget_DataFeature->setWindowTitle(QApplication::translate("MainWindow", "Data Feature", 0));
 //    toolBar_chart->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
 //    toolBar_chartSet->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0));
