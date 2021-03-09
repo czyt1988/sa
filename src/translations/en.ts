@@ -233,765 +233,767 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="900"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="894"/>
         <source>SA - Signal Analysis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="901"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="895"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="902"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="896"/>
         <source>Recent Open Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="903"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="897"/>
         <source>Recent Open Projects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="904"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="905"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="926"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="898"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="899"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="920"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="907"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="901"/>
         <source>Open File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="909"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="903"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="910"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="904"/>
         <source>Cascade</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="911"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="905"/>
         <source>Tile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="912"/>
-        <source>Window
-Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="913"/>
-        <source>Tab 
- Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="914"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="908"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="915"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="909"/>
         <source>Ctrl+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="916"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="910"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="917"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1040"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="911"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1041"/>
         <source>Data Feature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="918"/>
-        <source>New
-Chart</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="920"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="914"/>
         <source>New Chart with dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="922"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="916"/>
         <source>Trend Chart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="924"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="918"/>
         <source>Plot Trend With User Select Data Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="927"/>
-        <source>remove
-in</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="928"/>
-        <source>remove
-out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="930"/>
-        <source>SubWindow
-List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="931"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="925"/>
         <source>Cross</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="932"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="926"/>
         <source>Panner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="933"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="934"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="927"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="928"/>
         <source>Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="929"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="930"/>
+        <source>Y Picker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="931"/>
+        <source>XY Picker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="933"/>
+        <source>Pick Y Data in Chart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../signA/MainWindowPrivate.cpp" line="935"/>
         <location filename="../signA/MainWindowPrivate.cpp" line="936"/>
-        <source>Y Picker</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="937"/>
-        <source>XY Picker</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="939"/>
-        <source>Pick Y Data in Chart</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="941"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="942"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1028"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1083"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1027"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1077"/>
         <source>Grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="943"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="944"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="937"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="938"/>
         <source>H Grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="946"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="940"/>
         <source>Horizontal Grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="948"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="949"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="942"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="943"/>
         <source>V Grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="951"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="945"/>
         <source>Vertical Grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="953"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="947"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="949"/>
         <source>Crowded H Grid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="955"/>
-        <source>Crowded
-H Grid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="957"/>
-        <source>Crowded
-V Grid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="958"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="959"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1082"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="952"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="953"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1076"/>
         <source>Legend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="961"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="955"/>
         <source>Show/Hide Legend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="963"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="964"/>
-        <source>Legend
-Panel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="965"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="959"/>
         <source>Zoom Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="966"/>
-        <source>Pick
-Data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="967"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="961"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="968"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="962"/>
         <source>Rescind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="969"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="963"/>
         <source>Ctrl+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="970"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="964"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="971"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="965"/>
         <source>Ctrl+Shift+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="972"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="966"/>
         <source>Value Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="973"/>
-        <source>View Value In
-Current Tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="974"/>
-        <source>View Value Append
-In Current Tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="975"/>
-        <source>View Value In
-New Tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="976"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="970"/>
         <source>Layerout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="977"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="979"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="971"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="973"/>
         <source>Rename Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="981"/>
-        <source>Defalut
-View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="982"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="976"/>
         <source>Value View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="983"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="977"/>
         <source>Figure View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="984"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="978"/>
         <source>Message View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="985"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="987"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="979"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="981"/>
         <source>Delete Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="988"/>
-        <source>select skin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="990"/>
-        <source>Open
-Project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="991"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="984"/>
         <source>Save As</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="992"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="985"/>
         <source>Project Setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="993"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="986"/>
         <source>Set Zoom Base</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="994"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="987"/>
         <source>Zoom In</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="995"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="988"/>
         <source>Ctrl+=</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="996"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="989"/>
         <source>Zoom Out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="997"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="990"/>
         <source>Ctrl+-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="998"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="991"/>
         <source>Best View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="999"/>
-        <source>Rect
-Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1000"/>
-        <source>Ellipse
-Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1001"/>
-        <source>Polygon
-Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1002"/>
-        <source>Clear
-Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1003"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="996"/>
         <source>New Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1004"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="997"/>
         <source>Add Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1005"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="998"/>
         <source>Add Interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1006"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="999"/>
         <source>Int Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1007"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1000"/>
         <source>Sub Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1008"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1036"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1001"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1035"/>
         <source>Scatter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1009"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1037"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1002"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1036"/>
         <source>Bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1010"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1039"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1003"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1038"/>
         <source>Histogram</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1011"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1038"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1004"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1037"/>
         <source>Box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1012"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1005"/>
         <source>Transform</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1013"/>
-        <source>Move
-Datas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1014"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1007"/>
         <source>Figure Setting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1015"/>
-        <source>Value Create
- Wizard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1016"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1009"/>
         <source>double vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1017"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1010"/>
         <source>point vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1018"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1011"/>
         <source>variant table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1019"/>
-        <source>Subplot
-Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../signA/MainWindowPrivate.cpp" line="1020"/>
-        <source>Highlight
-Table</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1021"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1064"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1065"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1022"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1021"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1023"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1022"/>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1024"/>
-        <source>Windows
-View</source>
+        <location filename="../signA/MainWindowPrivate.cpp" line="906"/>
+        <source>Window Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1025"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1060"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="907"/>
+        <source>Tab Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="912"/>
+        <source>New Chart</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="921"/>
+        <source>remove in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="922"/>
+        <source>remove out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="924"/>
+        <source>SubWindow List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="951"/>
+        <source>Crowded V Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="957"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="958"/>
+        <source>Legend Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="960"/>
+        <source>Pick Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="967"/>
+        <source>View Value In Current Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="968"/>
+        <source>View Value Append In Current Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="969"/>
+        <source>View Value In New Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="975"/>
+        <source>Defalut View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="983"/>
+        <source>Open Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="992"/>
+        <source>Rect Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="993"/>
+        <source>Ellipse Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="994"/>
+        <source>Polygon Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="995"/>
+        <source>Clear Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1006"/>
+        <source>Move Datas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1008"/>
+        <source>Value Create Wizard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1012"/>
+        <source>Subplot Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1013"/>
+        <source>Highlight Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1015"/>
+        <source>3 line office stype</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1016"/>
+        <source>3 line wps style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1017"/>
+        <source>2 line office stype</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1018"/>
+        <source>2 line wps style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1023"/>
+        <source>Windows View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1024"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1061"/>
         <source>Analysis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1026"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1025"/>
         <source>Data Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1027"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1026"/>
         <source>Chart Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1029"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1028"/>
         <source>Zoom Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1031"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1030"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1032"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1031"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1033"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1032"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1034"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1033"/>
         <source>Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1035"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1034"/>
         <source>Line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1044"/>
-        <source>Window List</source>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1039"/>
+        <source>Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1040"/>
+        <source>Ribbon UI Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../signA/MainWindowPrivate.cpp" line="1045"/>
-        <source>Value Manage</source>
+        <source>Window List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../signA/MainWindowPrivate.cpp" line="1046"/>
-        <source>Layout</source>
+        <source>Value Manage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../signA/MainWindowPrivate.cpp" line="1047"/>
+        <source>Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1048"/>
         <source>Chart Data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1051"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1057"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1052"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1058"/>
         <source>Main</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1052"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1053"/>
         <source>value View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1053"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1054"/>
         <source>Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1054"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1055"/>
         <source>plot config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1058"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1059"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1059"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1060"/>
         <source>Operate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1061"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1062"/>
         <source>Table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1062"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1063"/>
         <source>Tab.Opt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1065"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1066"/>
         <source>Chart Operate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1066"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1067"/>
         <source>Value Operate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1067"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1068"/>
         <source>Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1068"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1069"/>
         <source>Sub Window Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1069"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1070"/>
         <source>Chart Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1070"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1071"/>
         <source>Hight Light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1081"/>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1090"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1075"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1084"/>
         <source>Data View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1084"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1078"/>
         <source>Figure Operate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1085"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1079"/>
         <source>Crowded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1087"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1081"/>
         <source>SA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/MainWindowPrivate.cpp" line="1089"/>
+        <location filename="../signA/MainWindowPrivate.cpp" line="1083"/>
         <source>set to active chart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="457"/>
+        <location filename="../signA/mainwindow.cpp" line="404"/>
         <source>load %1 plugins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="815"/>
+        <location filename="../signA/mainwindow.cpp" line="814"/>
         <source>start use skin:%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../signA/mainwindow.cpp" line="826"/>
+        <source>set style error,style name is:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/mainwindow.cpp" line="828"/>
         <source>end use skin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="1169"/>
+        <location filename="../signA/mainwindow.cpp" line="1168"/>
         <source>all support files(%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="1170"/>
+        <location filename="../signA/mainwindow.cpp" line="1169"/>
         <source>all files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="1184"/>
+        <location filename="../signA/mainwindow.cpp" line="1183"/>
         <source>can not open file:%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="1245"/>
+        <location filename="../signA/mainwindow.cpp" line="1244"/>
         <source>can not open project:%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="1263"/>
-        <location filename="../signA/mainwindow.cpp" line="1280"/>
+        <location filename="../signA/mainwindow.cpp" line="1262"/>
+        <location filename="../signA/mainwindow.cpp" line="1279"/>
         <source>you need to set a project name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="1997"/>
+        <location filename="../signA/mainwindow.cpp" line="2002"/>
         <source>Question</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="1998"/>
+        <location filename="../signA/mainwindow.cpp" line="2003"/>
         <source>Are you sure clean project？
  this operator will clean all datas and view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="2018"/>
+        <location filename="../signA/mainwindow.cpp" line="2023"/>
         <source>clean project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="2123"/>
-        <location filename="../signA/mainwindow.cpp" line="2745"/>
+        <location filename="../signA/mainwindow.cpp" line="2125"/>
+        <location filename="../signA/mainwindow.cpp" line="2744"/>
         <source>you should select a figure window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="2129"/>
+        <location filename="../signA/mainwindow.cpp" line="2131"/>
         <source>I can not find any chart in figure!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="2234"/>
-        <location filename="../signA/mainwindow.cpp" line="2258"/>
+        <location filename="../signA/mainwindow.cpp" line="2236"/>
+        <location filename="../signA/mainwindow.cpp" line="2260"/>
         <source>figure[%1]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="3222"/>
+        <location filename="../signA/mainwindow.cpp" line="3219"/>
         <source>Are you sure remove:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="3228"/>
+        <location filename="../signA/mainwindow.cpp" line="3225"/>
         <source>
  datas?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/mainwindow.cpp" line="3229"/>
+        <location filename="../signA/mainwindow.cpp" line="3226"/>
         <source>Quesstion</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1120,8 +1122,13 @@ View</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../signAProtocol/SAXMLProtocolParser.cpp" line="147"/>
+        <location filename="../signAProtocol/SAXMLProtocol.cpp" line="102"/>
         <source>root element error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signAProtocol/SAXMLProtocol.cpp" line="106"/>
+        <source>root element name error,require %1 but get %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1175,7 +1182,7 @@ View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/main.cpp" line="92"/>
+        <location filename="../signA/main.cpp" line="103"/>
         <source>start data process server , cost:%1 ms</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1727,28 +1734,33 @@ View</source>
 <context>
     <name>SAChartNormalSetWidget</name>
     <message>
-        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="87"/>
-        <source>normal set</source>
+        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="102"/>
+        <source>Normal Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="88"/>
+        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="103"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="89"/>
+        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="104"/>
         <source>Footer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="90"/>
-        <source>canvas Background</source>
+        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="105"/>
+        <source>Canvas Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="91"/>
-        <source>Border Radius</source>
+        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="106"/>
+        <source>Border Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/figureSet/SAChartNormalSetWidget.cpp" line="107"/>
+        <source>Border Width</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1783,32 +1795,32 @@ View</source>
 <context>
     <name>SADataClient</name>
     <message>
-        <location filename="../signA/SADataClient.cpp" line="117"/>
+        <location filename="../signA/SADataClient.cpp" line="123"/>
         <source>unknow client connect to calc serve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/SADataClient.cpp" line="124"/>
+        <location filename="../signA/SADataClient.cpp" line="130"/>
         <source>connect calc serve success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/SADataClient.cpp" line="134"/>
+        <location filename="../signA/SADataClient.cpp" line="140"/>
         <source>calc serve disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/SADataClient.cpp" line="163"/>
+        <location filename="../signA/SADataClient.cpp" line="169"/>
         <source>shared memory not ready,will reconnect after 1 second</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/SADataClient.cpp" line="169"/>
+        <location filename="../signA/SADataClient.cpp" line="175"/>
         <source>data process serve return invalid port</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/SADataClient.cpp" line="184"/>
+        <location filename="../signA/SADataClient.cpp" line="190"/>
         <source>data client error,code:%1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1816,72 +1828,72 @@ View</source>
 <context>
     <name>SADataFeatureTreeModel</name>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="191"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="197"/>
         <source>property</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="194"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="200"/>
         <source>value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="323"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="334"/>
         <source>[%1]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="391"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="402"/>
         <source>chart %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="544"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="578"/>
         <source>curve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="547"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="581"/>
         <source>mult bar chart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="550"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="584"/>
         <source>scale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="553"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="587"/>
         <source>bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="556"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="590"/>
         <source>histogram</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="559"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="593"/>
         <source>spectro curve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="562"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="596"/>
         <source>interval curve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="565"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="599"/>
         <source>spectrogram</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="568"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="602"/>
         <source>trading curve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="573"/>
+        <location filename="../signA/model/SADataFeatureTreeModel.cpp" line="607"/>
         <source>item</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1895,106 +1907,121 @@ View</source>
     </message>
     <message>
         <location filename="../signA/widget/SADataFeatureWidget.ui" line="52"/>
+        <source>clear all marker in chart</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/widget/SADataFeatureWidget.ui" line="55"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="91"/>
+        <location filename="../signA/widget/SADataFeatureWidget.ui" line="90"/>
+        <source>expand all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="139"/>
         <source>data feature[%1]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="310"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="358"/>
         <source>%1(%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="330"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="378"/>
         <source>%1(%2,%3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="379"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="418"/>
         <source>data process serve heartbreat time out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="414"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="469"/>
         <source>receive unknow sequenceID when on receive 2D points describe:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="419"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="474"/>
+        <source>count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="479"/>
         <source>sum</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="420"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="484"/>
         <source>mean</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="425"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="491"/>
         <source>var</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="430"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="498"/>
         <source>std var</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="435"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="505"/>
         <source>skewness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="436"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="510"/>
         <source>kurtosis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="437"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="515"/>
         <source>min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="442"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="522"/>
         <source>max</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="447"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="529"/>
         <source>mid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="452"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="536"/>
         <source>peak2peak</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="453"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="541"/>
         <source>minPoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="458"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="547"/>
         <source>maxPoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="463"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="553"/>
         <source>midPoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="468"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="559"/>
         <source>tops</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="480"/>
+        <location filename="../signA/widget/SADataFeatureWidget.cpp" line="572"/>
         <source>lows</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2002,12 +2029,12 @@ View</source>
 <context>
     <name>SADataProcSocket</name>
     <message>
-        <location filename="../signADataProc/SADataProcSocket.cpp" line="63"/>
+        <location filename="../signADataProc/SADataProcSocket.cpp" line="64"/>
         <source>unknow fun id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signADataProc/SADataProcSocket.cpp" line="72"/>
+        <location filename="../signADataProc/SADataProcSocket.cpp" line="74"/>
         <source>xml content error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2015,63 +2042,63 @@ View</source>
 <context>
     <name>SADataTableModel</name>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="327"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="354"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="327"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="354"/>
         <source>%1-x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="328"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="357"/>
         <source>y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="334"/>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="342"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="365"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="379"/>
         <source>value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="334"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="365"/>
         <source>%1-value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="335"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="368"/>
         <source>min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="336"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="371"/>
         <source>max</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="342"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="379"/>
         <source>%1-time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="343"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="382"/>
         <source>open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="344"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="385"/>
         <source>high</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="345"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="388"/>
         <source>low</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/SADataTableModel.cpp" line="346"/>
+        <location filename="../signACommonUI/SADataTableModel.cpp" line="391"/>
         <source>close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2144,7 +2171,7 @@ View</source>
 <context>
     <name>SAFigureChartRubberbandEditOverlay</name>
     <message>
-        <location filename="../signACommonUI/Chart2D/SAFigureChartRubberbandEditOverlay.cpp" line="393"/>
+        <location filename="../signACommonUI/Chart2D/SAFigureChartRubberbandEditOverlay.cpp" line="390"/>
         <source>resize</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2156,47 +2183,98 @@ View</source>
         <source>Figure Layout</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>SAFigureSetWidget</name>
     <message>
-        <location filename="../signA/widget/SAFigureLayoutWidget.ui" line="43"/>
-        <source>当前图像:</source>
+        <location filename="../signACommonUI/SAFigureSetWidget.cpp" line="27"/>
+        <source>background color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signA/widget/SAFigureLayoutWidget.cpp" line="123"/>
-        <location filename="../signA/widget/SAFigureLayoutWidget.cpp" line="301"/>
-        <source>untitle[%1]</source>
+        <location filename="../signACommonUI/SAFigureSetWidget.cpp" line="57"/>
+        <source>Figure Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/SAFigureSetWidget.cpp" line="58"/>
+        <source>charts postion:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/SAFigureSetWidget.cpp" line="59"/>
+        <source>Background Color</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SAFigureWindow</name>
     <message>
-        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="71"/>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="73"/>
         <source>Figure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="130"/>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="132"/>
         <source>create 2D chart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="143"/>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="145"/>
         <source>memory out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="337"/>
-        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="339"/>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="218"/>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="234"/>
+        <source>change background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="269"/>
+        <source>resize subchart</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="396"/>
+        <location filename="../signACommonUI/Chart2D/SAFigureWindow.cpp" line="398"/>
         <source>resize</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>SAFiugreSetWidget</name>
+    <name>SAFigureWindowChartTableModel</name>
     <message>
-        <location filename="../signACommonUI/SAFigureSetWidget.cpp" line="47"/>
-        <source>Fiugre Set</source>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="75"/>
+        <source>name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="78"/>
+        <source>x</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="81"/>
+        <source>y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="84"/>
+        <source>w</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="87"/>
+        <source>h</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="123"/>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="127"/>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="130"/>
+        <location filename="../signACommonUI/SAFigureWindowChartTableModel.cpp" line="133"/>
+        <source>%1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2483,6 +2561,124 @@ View</source>
     </message>
 </context>
 <context>
+    <name>SAPlotLayerTreeModel</name>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="255"/>
+        <source>name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="258"/>
+        <source>color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="261"/>
+        <source>visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="332"/>
+        <source>chart %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="418"/>
+        <source>Unspecific</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="421"/>
+        <source>Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="424"/>
+        <source>Scale Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="427"/>
+        <source>Legend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="430"/>
+        <source>Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="433"/>
+        <source>Curve Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="436"/>
+        <source>Spectro Curve Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="439"/>
+        <source>Interval Curve Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="442"/>
+        <source>Histogram Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="445"/>
+        <source>Spectrogram Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="448"/>
+        <source>SVG Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="451"/>
+        <source>Trading Curve Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="454"/>
+        <source>Bar Chart Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="457"/>
+        <source>MultiBar Chart Plot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="460"/>
+        <source>Shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="463"/>
+        <source>Text Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="466"/>
+        <source>Zone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="469"/>
+        <source>User Define</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/model/SAPlotLayerTreeModel.cpp" line="474"/>
+        <source>unknow item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SAPluginManager</name>
     <message>
         <location filename="../signA/SAPluginManager.cpp" line="124"/>
@@ -2754,6 +2950,100 @@ View</source>
     </message>
 </context>
 <context>
+    <name>SARibbonActionsManagerModel</name>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="362"/>
+        <source>action name</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SARibbonCategoryLayout</name>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCategoryLayout.cpp" line="126"/>
+        <source>in SARibbonCategoryLayout cannot addItem,use addPannel instead</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SARibbonCustomizeWidget</name>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="627"/>
+        <source>SARibbonCustomizeWidget</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="628"/>
+        <source>从下列选项卡选择命令：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="631"/>
+        <source>查找命令</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="632"/>
+        <source>添加 &gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="633"/>
+        <source>&lt;&lt; 删除</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="634"/>
+        <source>自定义功能区：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="635"/>
+        <source>主选项卡</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="636"/>
+        <source>所有选项卡</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="637"/>
+        <source>新建选项卡</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="638"/>
+        <source>新建组</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="639"/>
+        <source>重命名</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="985"/>
+        <source>new category[customize]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="1001"/>
+        <source>new pannel[customize]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="1035"/>
+        <source>rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SARibbonBar/SARibbon/src/SARibbonBar/SARibbonCustomizeWidget.cpp" line="1036"/>
+        <source>name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SASelectRegionDataEditor</name>
     <message>
         <location filename="../signACommonUI/Chart2D/SASelectRegionDataEditor.cpp" line="454"/>
@@ -2771,6 +3061,24 @@ View</source>
     <message>
         <location filename="../signACommonUI/Chart2D/SASelectRegionEditor.cpp" line="100"/>
         <source>move region</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SASetWidget</name>
+    <message>
+        <location filename="../signA/widget/SASetWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/widget/SASetWidget.cpp" line="44"/>
+        <source>Figure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../signA/widget/SASetWidget.cpp" line="55"/>
+        <source>Chart</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

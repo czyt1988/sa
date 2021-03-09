@@ -58,6 +58,8 @@ public:
     //获取sa的配置文件名
     static QString getConfigFullPath();
 
+    //获取自定义界面路径
+    static QString getRibbonCustomizeFilePath();
 public:
     static SAGlobalConfig& getInstance();
 

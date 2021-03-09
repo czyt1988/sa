@@ -394,6 +394,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     selectCurrentCursorToActiveChart->setObjectName(QStringLiteral("selectCurrentCursorToActiveChart"));
     selectCurrentCursorToActiveChart->setEnabled(false);
 
+    actionCustomizeRibbon = new QAction(mainWinowPtr);
+    actionCustomizeRibbon->setObjectName(QStringLiteral("actionCustomizeRibbon"));
+    actionCustomizeRibbon->setIcon(QIcon(":/icons/icons/customize.svg"));
     //==========================================================================
     //! 2. 菜单创建
     menuRecentOpenProject = new SARibbonMenu(mainWinowPtr);
@@ -705,6 +708,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     quickAccessBar->addMenu(menuSkinList);
     quickAccessBar->addMenu(menuRibbonStyle);
     quickAccessBar->addSeparator();
+    quickAccessBar->addAction(actionCustomizeRibbon);
 
     //menuBar->repaint();
 //=======end ribbon set=======================================================================================
@@ -879,6 +883,9 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
     mainWinowPtr->addDockWidget(static_cast<Qt::DockWidgetArea>(8), dockWidget_set);
 
 
+    m_ribbonActionMgr = new SARibbonActionsManager(mainWinowPtr);
+    m_ribbonActionMgr->autoRegisteActions(mainWinowPtr);
+
     retranslateUi(mainWinowPtr);
     QObject::connect(actionQuit, SIGNAL(triggered()), mainWinowPtr, SLOT(close()));
 
@@ -1016,6 +1023,8 @@ void MainWindowPrivate::retranslateUi(MainWindow *mainWinowPtr)
     actionRibbonStyleWps3Line->setText(QApplication::translate("MainWindow", "3 line wps style", 0));
     actionRibbonStyleOffice2Line->setText(QApplication::translate("MainWindow", "2 line office stype", 0));
     actionRibbonStyleWps2Line->setText(QApplication::translate("MainWindow", "2 line wps style", 0));
+
+    actionCustomizeRibbon->setText(QApplication::translate("MainWindow", "customization", 0));
 
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
     menuExport->setTitle(QApplication::translate("MainWindow", "Export", 0));

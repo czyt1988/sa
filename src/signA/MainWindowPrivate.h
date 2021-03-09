@@ -36,6 +36,7 @@
 #include "SARibbonApplicationButton.h"
 #include "SAChartDatasViewWidget.h"
 #include "SAFigureLayoutWidget.h"
+#include "SARibbonActionsManager.h"
 #include "SASetWidget.h"
 class MainWindow;
 class MainWindowPrivate
@@ -271,10 +272,12 @@ public:
     QMenu *menuFigureWindow;                        ///< 绘图窗口菜单
     QAction *selectCurrentCursorToActiveChart;      ///< 选中当前光标所定位的图为激活图形
     QAction *sectionActionForFigureMenuDataView;    ///< FigureWindow菜单的分区action【data view】
+    QAction* actionCustomizeRibbon; ///< 自定义ribbon界面
     MainWindowPrivate(MainWindow *p);
     void init();
     void retranslateUi(MainWindow *mainWinowPtr);
 
+    SARibbonActionsManager* m_ribbonActionMgr;///< 用于管理所有action
 private:
     void setupUi(MainWindow *mainWinowPtr);
 };

@@ -206,7 +206,7 @@ QString SAGlobalConfig::makeDefaultConfigPath()
         QDir dir(path);
         dir.mkpath(path);
     }
-    return std::move(path);
+    return path;
 }
 ///
 /// \brief 获取配置文件名
@@ -220,6 +220,15 @@ QString SAGlobalConfig::getConfigFileName()
 QString SAGlobalConfig::getConfigFullPath()
 {
     return s_configFilePath +  QDir::separator() + s_configFileName;
+}
+
+/**
+ * @brief 获取自定义ribbon配置文件路
+ * @return
+ */
+QString SAGlobalConfig::getRibbonCustomizeFilePath()
+{
+    return getConfigPath() + QDir::separator() + "sa-ribbon-customize.cfg";
 }
 
 

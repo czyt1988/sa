@@ -615,6 +615,8 @@ private slots:
     //设置当前鼠标下的为激活的图形
     void onActionSelectCurrentCursorToActiveChartTriggered(bool on);
 
+    //自定义action点击
+    void onActionCustomizeRibbonTriggered(bool on);
 public:
     //设置皮肤
     void setSkin(const QString& name);

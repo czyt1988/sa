@@ -28,7 +28,7 @@
 #include <memory>
 
 //----------SA--------------
-
+#include "SARibbonCustomizeDialog.h"
 // |------Dialog------------
 #include "SACurveSelectDialog.h"
 #include "SAProjectInfomationSetDialog.h"
@@ -357,6 +357,8 @@ void MainWindow::initUI()
     //figure subplot 编辑
     ui->actionFigureEditSubPlotGeometry->setChecked(false);
     connect(ui->actionFigureEditSubPlotGeometry, &QAction::triggered, this, &MainWindow::onActionFigureEditSubPlotGeometryTriggered);
+    //自定义ribbon
+    connect(ui->actionCustomizeRibbon, &QAction::triggered, this, &MainWindow::onActionCustomizeRibbonTriggered);
 
     //窗口激活对应数据特性的mdiSubWindowActived
     connect(ui->mdiArea, &QMdiArea::subWindowActivated
@@ -387,6 +389,7 @@ void MainWindow::initUI()
     //SAFigureSetWidget 相关槽连接
     connect(ui->setWidget, &SASetWidget::chartTitleChanged
         , this, &MainWindow::onChartTitleChanged);
+
 
     ui->menuBar->showContextCategory(ui->tableRibbonContextCategory);
 }
@@ -809,6 +812,24 @@ void MainWindow::onActionSelectCurrentCursorToActiveChartTriggered(bool on)
 }
 
 
+/**
+ * @brief 自定义action点击，弹出自定义对话框
+ * @param on
+ */
+void MainWindow::onActionCustomizeRibbonTriggered(bool on)
+{
+    QString cfgpath = saConfig.getRibbonCustomizeFilePath();
+    SARibbonCustomizeDialog dlg(this, this);
+
+    dlg.setupActionsManager(ui->m_ribbonActionMgr);
+    dlg.fromXml(cfgpath);
+    if (QDialog::Accepted == dlg.exec()) {
+        dlg.applys();
+        dlg.toXml(cfgpath);
+    }
+}
+
+
 void MainWindow::setSkin(const QString& name)
 {
     saStartElapsed(tr("start use skin:%1").arg(name));
@@ -871,6 +892,7 @@ void MainWindow::loadSetting()
     }else{
         setSkin("normal");
     }
+    sa_apply_customize_from_xml_file(saConfig.getRibbonCustomizeFilePath(), this, ui->m_ribbonActionMgr);
     loadRecentPath();
 }
 
