@@ -22,11 +22,11 @@ CONFIG += c++11
 
 HEADERS += \
     $$PWD/../global/SAGlobals.h \
+    SAColorList.h \
     SAData.h \
     SADataPackage.h \
     SAItem.h \
     SALibGlobal.h \
-    SALineGradientColorList.h \
     SAOrderMap.h \
     SAPoint.h \
     SATable.h \
@@ -48,10 +48,10 @@ HEADERS += \
 
 
 SOURCES += \
+    SAColorList.cpp \
     SAData.cpp \
     SADataPackage.cpp \
     SAItem.cpp \
-    SALineGradientColorList.cpp \
     SAPoint.cpp \
     SAThreadPool.cpp \
     SAValueManager.cpp \

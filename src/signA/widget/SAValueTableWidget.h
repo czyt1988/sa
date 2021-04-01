@@ -43,6 +43,8 @@ public:
     //redo / undo
     void redo();
     void undo();
+    //
+    void enableColorCell(bool on = true);
 protected:
     //获取model
     SADataTableModel* getDataModel() const;

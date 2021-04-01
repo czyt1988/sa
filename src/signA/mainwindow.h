@@ -501,7 +501,7 @@ private slots:
      * @{
      */
     // 高亮表格
-    void onActionColorMapTable();
+    void onActionColorMapTable(bool on);
 
     /** @} */
 

@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QList>
 #include "SACommonUIGlobal.h"
+#include "SAColorList.h"
 #include <QHash>
 #include <QMultiHash>
 #include <functional>
@@ -46,7 +47,12 @@ public:
     bool isInDataRange(int row , int col) const;
 
     //设置表格颜色
-    void enableCellColor(bool enable = true);
+    void enableColorCell(bool enable = true);
+    bool isColorCell() const;
+    //设置颜色系列
+    void setColorList(const SAColorList& clrlist);
+    //获取颜色系列
+    const SAColorList& getColorList() const;
 public:
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
     int columnCount(const QModelIndex &parent=QModelIndex()) const;
@@ -65,19 +71,35 @@ private:
     QVariant dataToDim1(int row,int col, SAAbstractDatas* d) const;
     QVariant dataToDim2(int row,int col, SAAbstractDatas* d) const;
 
+    double valueToDim0(int row,int col, SAAbstractDatas* d) const;
+    double valueToDim1(int row,int col, SAAbstractDatas* d) const;
+    double valueToDim2(int row,int col, SAAbstractDatas* d) const;
+
     QVariant horizontalHeaderToDim0(int section, SAAbstractDatas* d) const;
     QVariant horizontalHeaderToDim1(int section, SAAbstractDatas* d) const;
     QVariant horizontalHeaderToDim2(int section, SAAbstractDatas* d) const;
+
+    double present(SAAbstractDatas *d,double v) const;
 private:
     int m_rowCount;
     int m_columnCount;
     int m_columnShowMin;
     int m_rowShowMin;
+    struct _range{
+        double low = NAN;
+        double hight = NAN;
+        double peakpeak = NAN;
+        bool isvalid = false;
+        bool ispeakpeakNull = true;
+    };
+
     QList<SAAbstractDatas*> m_datas;
+    QMap<SAAbstractDatas*,_range> m_datasrange;
     QHash<int,SAAbstractDatas*> m_col2Ptr;
     QMultiHash<SAAbstractDatas*,int> m_ptr2Col;///记录指针对应的列表的所有列号，此用来加快删除速度
-
+    bool m_isColorCell;///< 单元格显示颜色
     QHash<SAAbstractDatas*,QHash<int,int> >m_ptr2ColMap;///< 记录指针对应的列号映射表
+    SAColorList m_colorlist;///< 颜色系列
 };
 
 #endif // SADATATABLEMODEL_H

@@ -388,6 +388,7 @@ void MainWindowPrivate::setupUi(MainWindow *mainWinowPtr)
 
     actionColorMapTable = new QAction(mainWinowPtr);
     actionColorMapTable->setObjectName(QStringLiteral("actionColorMapTable"));
+    actionColorMapTable->setCheckable(true);
     actionColorMapTable->setIcon(QIcon(":/icons/icons/colormap.svg"));
 
     selectCurrentCursorToActiveChart = new QAction(mainWinowPtr);

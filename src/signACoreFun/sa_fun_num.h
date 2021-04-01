@@ -49,6 +49,8 @@ SA_CORE_FUN__EXPORT QMap<QString,double> statistics(const QVector<double>& data)
 ///
 SA_CORE_FUN__EXPORT std::shared_ptr<SAVectorInterval> hist(const SAAbstractDatas* wave,unsigned section);
 
+//求最小值最大值
+SA_CORE_FUN__EXPORT std::pair<double,double> minmax_value(const SAAbstractDatas* data);
 }
 
 #endif // SAFUNSTATISTICS_H

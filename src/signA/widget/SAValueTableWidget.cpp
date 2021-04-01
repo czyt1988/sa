@@ -43,6 +43,9 @@ SAValueTableWidget::SAValueTableWidget(QWidget *parent) :
     m_undo->setIcon(QIcon(":/icons/icons/undo.png"));
     m_redo->setIcon(QIcon(":/icons/icons/redo.png"));
     SADataTableModel* model = new SADataTableModel(ui->tableView);
+    SAColorList clrs;
+    clrs.setColorRange(QColor(99,190,123),QColor(248,105,107),20);
+    model->setColorList(clrs);
     ui->tableView->setModel (model);
 
     //设置model的setData的操作
@@ -284,6 +287,12 @@ void SAValueTableWidget::undo()
     m_undo->activate(QAction::Trigger);
     getDataModel()->update();
     saUI->updateValueManagerTreeView();
+}
+
+void SAValueTableWidget::enableColorCell(bool on)
+{
+    SADataTableModel * model = getDataModel();
+    model->enableColorCell(on);
 }
 
 void SAValueTableWidget::onTableViewCustomContextMenuRequested(const QPoint &pos)

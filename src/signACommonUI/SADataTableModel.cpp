@@ -6,12 +6,14 @@
 #include <vector>
 #include "SAAbstractDatas.h"
 #include "SAPropertySetDialog.h"
+#include "sa_fun_num.h"
 SADataTableModel::SADataTableModel(QObject *parent) : QAbstractTableModel(parent)
     , onSetDataFun(nullptr)
     , m_rowCount(0)
     , m_columnCount(0)
     , m_columnShowMin(15)
     , m_rowShowMin(35)
+    , m_isColorCell(false)
 {
 }
 
@@ -168,9 +170,44 @@ bool SADataTableModel::isInDataRange(int row, int col) const
 }
 
 
-void SADataTableModel::enableCellColor(bool enable)
+void SADataTableModel::enableColorCell(bool enable)
 {
-    //TODO
+    if(enable){
+        for(SAAbstractDatas* d : m_datas){
+            std::pair<double,double> res = saFun::minmax_value(d);
+            _range rang;
+            rang.low = res.first;
+            rang.hight = res.second;
+            rang.peakpeak = rang.hight - rang.low;
+            rang.isvalid = (!std::isnan(rang.low)) && (!std::isnan(rang.hight));
+            rang.ispeakpeakNull = qFuzzyIsNull(rang.peakpeak);
+            m_datasrange[d] = rang;
+        }
+    }
+    m_isColorCell = enable;
+}
+
+bool SADataTableModel::isColorCell() const
+{
+    return m_isColorCell;
+}
+
+/**
+ * @brief 设置颜色系列
+ * @param clrlist
+ */
+void SADataTableModel::setColorList(const SAColorList &clrlist)
+{
+    m_colorlist = clrlist;
+}
+
+/**
+ * @brief 获取颜色系列
+ * @return
+ */
+const SAColorList &SADataTableModel::getColorList() const
+{
+    return m_colorlist;
 }
 
 
@@ -274,6 +311,47 @@ QVariant SADataTableModel::data(const QModelIndex& index, int role) const
             break;
         }
         return (QVariant());
+    }else if(role == Qt::BackgroundRole){//显示颜色
+        if(!isColorCell() || getColorList().isEmpty()){
+            return (QVariant());
+        }
+        int col = index.column();
+        int row = index.row();
+        if (col >= m_col2Ptr.size()) {
+            return (QVariant());
+        }
+        SAAbstractDatas *d = m_col2Ptr.value(col, nullptr);
+        if (!d) {
+            return (QVariant());
+        }
+        switch (d->getDim())
+        {
+        case 0:
+            break;
+
+        case 1:
+        {
+            double v = valueToDim1(row, col, d);
+            double pre = present(d,v);
+            if(pre>=0){
+                return getColorList().getColor(pre);
+            }
+        }
+            break;
+
+        case 2:
+        {
+            double v = valueToDim2(row, col, d);
+            double pre = present(d,v);
+            if(pre>=0){
+                return getColorList().getColor(pre);
+            }
+        }
+            break;
+
+        default:
+            break;
+        }
     }
     return (QVariant());
 }
@@ -315,6 +393,48 @@ QVariant SADataTableModel::dataToDim2(int row, int col, SAAbstractDatas *d) cons
         return (QVariant());
     }
     return (d->displayAt(row, *iteSize));
+}
+
+double SADataTableModel::valueToDim0(int row, int col, SAAbstractDatas *d) const
+{
+    Q_UNUSED(col);
+    if (row > 0) {
+        return (NAN);
+    }
+    bool isok = false;
+    double v = d->getAt(0).toDouble(&isok);
+    return (isok ? v : NAN);
+}
+
+double SADataTableModel::valueToDim1(int row, int col, SAAbstractDatas *d) const
+{
+    Q_UNUSED(col);
+    if (row >= d->getSize(SA::Dim1)) {
+        return (NAN);
+    }
+    bool isok = false;
+    double v = d->getAt(row).toDouble(&isok);
+    return (isok ? v : NAN);
+}
+
+double SADataTableModel::valueToDim2(int row, int col, SAAbstractDatas *d) const
+{
+    if (row >= d->getSize(SA::Dim1)) {
+        return (NAN);
+    }
+    auto ite = m_ptr2ColMap.find(d);
+
+    if (ite == m_ptr2ColMap.end()) {
+        return (NAN);
+    }
+    auto iteSize = ite->find(col);
+
+    if (iteSize == ite->end()) {
+        return (NAN);
+    }
+    bool isok = false;
+    double v = d->getAt(row, *iteSize).toDouble(&isok);
+    return (isok ? v : NAN);
 }
 
 
@@ -401,6 +521,23 @@ QVariant SADataTableModel::horizontalHeaderToDim2(int section, SAAbstractDatas *
         return (QString("%1(%2)").arg(d->getName()).arg(*iteSize+1));
     }
     return (QString("%1").arg(*iteSize+1));
+}
+
+double SADataTableModel::present(SAAbstractDatas *d, double v) const
+{
+    _range range = m_datasrange.value(d);
+    if(range.ispeakpeakNull || !range.isvalid){
+        return -1;
+    }
+    v -= range.low;
+    v = v / (range.peakpeak);
+    if(v > 1){
+        v = 1;
+    }
+    if(v<0){
+        v = 0;
+    }
+    return v;
 }
 
 

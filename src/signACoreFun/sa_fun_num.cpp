@@ -228,5 +228,18 @@ QMap<QString, double> saFun::statistics(const QVector<double> &data)
 }
 
 
-
-
+/**
+ * @brief 获取最大最小值
+ * @param data
+ * @return
+ */
+std::pair<double, double> saFun::minmax_value(const SAAbstractDatas *data)
+{
+    QVector<double> ys;
+    if(!saFun::getDoubleVector(data,ys))
+    {
+        return std::make_pair(NAN,NAN);
+    }
+    return std::make_pair(*(std::min_element(ys.begin(),ys.end()))
+                          ,*(std::max_element(ys.begin(),ys.end())));
+}

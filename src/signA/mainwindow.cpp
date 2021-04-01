@@ -65,6 +65,7 @@
 #include "SAProjectManager.h"
 #include "SAValueManagerMimeData.h"
 #include "SAGlobalConfig.h"
+#include "SAColorList.h"
 //===SAChart
 #include "SAChart.h"
 #include "SAQwtSerialize.h"
@@ -370,6 +371,8 @@ void MainWindow::initUI()
     connect(ui->selectCurrentCursorToActiveChart, &QAction::triggered
         , this, &MainWindow::onActionSelectCurrentCursorToActiveChartTriggered);
 
+    connect(ui->actionColorMapTable,&QAction::triggered
+            ,this,&MainWindow::onActionColorMapTable);
     //窗口关闭的消息在 on_subWindow_close里
 
 
@@ -389,9 +392,6 @@ void MainWindow::initUI()
     //SAFigureSetWidget 相关槽连接
     connect(ui->setWidget, &SASetWidget::chartTitleChanged
         , this, &MainWindow::onChartTitleChanged);
-
-
-    ui->menuBar->showContextCategory(ui->tableRibbonContextCategory);
 }
 
 
@@ -2798,9 +2798,11 @@ void MainWindow::onActionPickCurveToDataTriggered()
 /**
  * @brief 高亮表格
  */
-void MainWindow::onActionColorMapTable()
+void MainWindow::onActionColorMapTable(bool on)
 {
     //TODO
+
+    ui->tabWidget_valueViewer->currentTablePage()->enableColorCell(on);
 }
 
 

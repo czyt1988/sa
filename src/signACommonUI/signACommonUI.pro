@@ -31,6 +31,8 @@ include($$PWD/../signALib/signALib.pri)
 include($$PWD/../signAProtocol/signAProtocol.pri)
 #sa chart support
 include($$PWD/../signAChart/signAChart.pri)
+#sa core fun support
+include($$PWD/../signACoreFun/signACoreFun.pri)
 #propertybrowser
 include($$PWD/../3rdParty/qtpropertybrowser/propertyBrowser.pri)
 #QWT
